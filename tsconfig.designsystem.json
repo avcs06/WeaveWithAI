@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
+  },
+  "include": ["tokens.ts", "packages/**/*.ts", "packages/**/*.tsx"],
+  "exclude": ["node_modules", "**/*.stories.*", "**/*.test.*", "**/*.spec.*"]
+}

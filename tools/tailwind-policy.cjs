@@ -1,0 +1,266 @@
+require('ts-node').register({
+  transpileOnly: true,
+  compilerOptions: { module: 'commonjs', moduleResolution: 'node' },
+});
+
+const { tokens } = require('../tokens.ts');
+
+const spacingKeys = Object.keys(tokens.spacing);
+const iconSizeKeys = Object.keys(tokens.iconSize);
+const minBounds = ['0', 'full', 'screen'];
+const maxBounds = ['0', 'none', 'full', 'screen'];
+
+const prefixed = (prefixes, values) =>
+  prefixes.flatMap((prefix) => values.map((value) => `${prefix}-${value}`));
+
+const pairClasses = (prefixes, values) =>
+  prefixes.flatMap((prefix) =>
+    values.flatMap((first) => values.map((second) => `${prefix}-${first}-${second}`)),
+  );
+
+const compoundTailwindClasses = new Set([
+  ...prefixed(
+    ['flex-row-gap', 'flex-col-gap', 'inline-flex-row-gap', 'inline-flex-col-gap'],
+    spacingKeys,
+  ),
+  'flex-fill-x',
+  'flex-fill-y',
+  ...pairClasses(['p', 'px', 'py', 'm', 'mx', 'my'], spacingKeys),
+  ...minBounds.flatMap((minimum) =>
+    maxBounds.flatMap((maximum) => [
+      `w-minmax-${minimum}-${maximum}`,
+      `h-minmax-${minimum}-${maximum}`,
+    ]),
+  ),
+  ...prefixed(['icon-size'], iconSizeKeys),
+]);
+
+const layoutTailwindClasses = new Set([
+  'block',
+  'inline-block',
+  'inline',
+  'inline-flex',
+  'grid',
+  'inline-grid',
+  'hidden',
+  'static',
+  'relative',
+  'absolute',
+  'fixed',
+  'sticky',
+  'flex-row-reverse',
+  'flex-col-reverse',
+  'flex-wrap',
+  'flex-wrap-reverse',
+  'flex-nowrap',
+  'items-start',
+  'items-end',
+  'items-center',
+  'items-baseline',
+  'items-stretch',
+  'justify-start',
+  'justify-end',
+  'justify-center',
+  'justify-between',
+  'justify-around',
+  'justify-evenly',
+  'content-start',
+  'content-end',
+  'content-center',
+  'content-between',
+  'content-around',
+  'content-evenly',
+  'content-stretch',
+  'self-auto',
+  'self-start',
+  'self-end',
+  'self-center',
+  'self-stretch',
+  'self-baseline',
+  'place-items-start',
+  'place-items-end',
+  'place-items-center',
+  'place-items-baseline',
+  'place-items-stretch',
+  'flex-1',
+  'flex-auto',
+  'flex-initial',
+  'flex-none',
+  'grow',
+  'grow-0',
+  'shrink',
+  'shrink-0',
+  'visible',
+  'invisible',
+  'collapse',
+  'truncate',
+  'text-ellipsis',
+  'whitespace-nowrap',
+  'text-left',
+  'text-center',
+  'align-middle',
+  'sr-only',
+  'cursor-pointer',
+  'animate-spin',
+  'isolate',
+  'isolation-auto',
+  'box-border',
+  'box-content',
+  'object-contain',
+  'object-cover',
+  'object-fill',
+  'object-none',
+  'object-scale-down',
+  'squircle',
+  'group',
+  'selected',
+  ...prefixed(
+    [
+      'gap',
+      'gap-x',
+      'gap-y',
+      'p',
+      'px',
+      'py',
+      'pt',
+      'pr',
+      'pb',
+      'pl',
+      'm',
+      'mx',
+      'my',
+      'mt',
+      'mr',
+      'mb',
+      'ml',
+      'size',
+      'w',
+      'h',
+      'min-w',
+      'max-w',
+      'min-h',
+      'max-h',
+      'inset',
+      'inset-x',
+      'inset-y',
+      'top',
+      'right',
+      'bottom',
+      'left',
+    ],
+    spacingKeys,
+  ),
+  'w-auto',
+  'w-full',
+  'w-screen',
+  'w-min',
+  'w-max',
+  'w-fit',
+  'h-auto',
+  'h-full',
+  'h-screen',
+  'h-min',
+  'h-max',
+  'h-fit',
+  'min-w-0',
+  'min-w-full',
+  'min-w-min',
+  'min-w-max',
+  'min-w-fit',
+  'max-w-0',
+  'max-w-none',
+  'max-w-full',
+  'max-w-min',
+  'max-w-max',
+  'max-w-fit',
+  'min-h-0',
+  'min-h-full',
+  'min-h-screen',
+  'min-h-min',
+  'min-h-max',
+  'min-h-fit',
+  'max-h-0',
+  'max-h-none',
+  'max-h-full',
+  'max-h-screen',
+  'max-h-min',
+  'max-h-max',
+  'max-h-fit',
+  'overflow-auto',
+  'overflow-hidden',
+  'overflow-clip',
+  'overflow-visible',
+  'overflow-scroll',
+  'overflow-x-auto',
+  'overflow-x-hidden',
+  'overflow-x-clip',
+  'overflow-x-visible',
+  'overflow-x-scroll',
+  'overflow-y-auto',
+  'overflow-y-hidden',
+  'overflow-y-clip',
+  'overflow-y-visible',
+  'overflow-y-scroll',
+  ...compoundTailwindClasses,
+]);
+
+const forbiddenTailwindClasses = new Set(['flex', 'flex-row', 'flex-col']);
+
+const forbiddenVanillaExtractProperties = new Set([
+  'display',
+  'flex',
+  'flexBasis',
+  'flexGrow',
+  'flexShrink',
+  'flexDirection',
+  'flexWrap',
+  'flexFlow',
+  'alignContent',
+  'alignItems',
+  'alignSelf',
+  'justifyContent',
+  'justifyItems',
+  'justifySelf',
+  'placeContent',
+  'placeItems',
+  'placeSelf',
+]);
+
+const conditionalStyleKeys = new Set([
+  'selectors',
+  '@media',
+  '@supports',
+  '@container',
+  '@layer',
+]);
+
+// Outside design-system paths: a static class list longer than this, or more
+// lists than this on one element, moves its styles to vanilla-extract.
+const maxClassListLength = 50;
+const maxClassListsPerElement = 2;
+
+const normalizeTailwindClass = (className) =>
+  className.startsWith('!') ? className.slice(1) : className;
+
+const isLayoutTailwindClass = (className) =>
+  layoutTailwindClasses.has(normalizeTailwindClass(className));
+
+const isForbiddenTailwindClass = (className) =>
+  forbiddenTailwindClasses.has(normalizeTailwindClass(className));
+
+module.exports = {
+  compoundTailwindClasses,
+  conditionalStyleKeys,
+  forbiddenTailwindClasses,
+  forbiddenVanillaExtractProperties,
+  iconSizeKeys,
+  isForbiddenTailwindClass,
+  isLayoutTailwindClass,
+  layoutTailwindClasses,
+  maxBounds,
+  maxClassListLength,
+  maxClassListsPerElement,
+  minBounds,
+  normalizeTailwindClass,
+  spacingKeys,
+};

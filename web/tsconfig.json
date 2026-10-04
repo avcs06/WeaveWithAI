@@ -1,0 +1,45 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "types": ["node"],
+    // Same aliases as tsconfig.base.json, relative to this folder: Next.js
+    // resolves paths from the app's tsconfig directory when baseUrl is unset.
+    "paths": {
+      "@packages/ui/*": ["../packages/ui/src/*"],
+      "@packages/styles/*": ["../packages/styles/src/*"],
+      "@packages/utils/*": ["../packages/utils/src/*"],
+      "@app/shared/*": ["./app/shared/*"],
+      "@app/components/*": ["./app/components/*"],
+      "@app/entities/*": ["./app/entities/*"],
+      "@app/blocks/*": ["./app/blocks/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    ".next/types/**/*.ts",
+    "../dist/web/.next/types/**/*.ts",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "jest.config.ts",
+    "jest.config.cts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
+  ]
+}
