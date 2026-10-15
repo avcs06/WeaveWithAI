@@ -9,7 +9,7 @@
     "storybook": "storybook dev -p 6006 -c packages/ui/.storybook --no-open",
     "lint": "nx run-many -t lint -p web,ui,styles,utils",
     "typecheck": "tsc --project web/tsconfig.json --noEmit",
-    "test": "nx test web --runInBand",
+    "test": "nx run-many -t test --runInBand --passWithNoTests",
     "mcp:setup": "npm --prefix tools/weave-design-system-mcp ci --no-audit --no-fund && npm --prefix tools/weave-design-system-mcp run build",
     "mcp:build": "npm --prefix tools/weave-design-system-mcp run build",
     "mcp:start": "node tools/design-system-mcp.mjs",
