@@ -15,7 +15,7 @@ describe('Chip', () => {
       <>
         <Chip active={false}>Default</Chip>
         <Chip active>Active</Chip>
-        <Chip active radius="rounded">
+        <Chip active look="rounded">
           Pill
         </Chip>
       </>,
@@ -46,14 +46,14 @@ describe('Chip', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it('applies variant and selection; in a group the mode sets the selection', async () => {
+  it('applies variant and look; in a group the mode picks outline or filled', async () => {
     const { container } = renderUI(
       <>
-        <Chip variant="ghost" selection="filled" active>
+        <Chip variant="base" look="ghost filled" active>
           Ghost
         </Chip>
         <ChipGroup mode="single" defaultValue="design" aria-label="Team">
-          <Chip value="design" selection="filled">
+          <Chip value="design" look="filled">
             Design
           </Chip>
         </ChipGroup>
@@ -65,7 +65,8 @@ describe('Chip', () => {
       </>,
     );
     expect(screen.getByRole('checkbox', { name: 'Ghost' })).toHaveClass(
-      variants.variant.ghost,
+      variants.variant.base,
+      variants.ghost.true,
       variants.selection.filled,
     );
     expect(screen.getByRole('radio', { name: 'Design' })).toHaveClass(

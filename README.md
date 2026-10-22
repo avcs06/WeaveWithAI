@@ -25,7 +25,7 @@ node tools/generate.mjs . ../my-fullstack-app --include-server
 
 `--include-server=true` and `--include-server=false` are also accepted.
 After copying and updating configuration, the generator installs root dependencies,
-runs `mcp:setup` to install/build the vendored MCP, then runs `mcp:check` to verify
+runs `mcp:setup` to install/build the MCP, then runs `mcp:check` to verify
 that tokens and components load. Commands run sequentially inside the target.
 It does not start development or MCP servers. Setup errors stop subsequent steps,
 preserve the generated files, and print recovery instructions.

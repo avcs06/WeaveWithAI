@@ -11,32 +11,31 @@ import { tokens as tokenValues } from '../../../tokens';
 export const ringGap = createVar('ringGap');
 export const ringWidth = createVar('ringWidth');
 export const ringBlur = createVar('ringBlur');
-// How much accent the ring takes: over transparent on regular controls, over
-// the hover background on filled accent controls.
-export const ringMix = createVar('ringMix');
-export const ringAccentMix = createVar('ringAccentMix');
+export const ringGlow = createVar('ringGlow');
+export const ringOpacity = createVar('ringOpacity');
 
+// Halo and offset draw the ring as an outline; glow blurs a shadow instead.
 export const focusRings = {
   halo: {
     [ringGap]: '0px',
     [ringWidth]: '3px',
     [ringBlur]: '0px',
-    [ringMix]: '20%',
-    [ringAccentMix]: '0%',
+    [ringGlow]: '0px',
+    [ringOpacity]: '20%',
   },
   offset: {
     [ringGap]: '2px',
     [ringWidth]: '2px',
     [ringBlur]: '0px',
-    [ringMix]: '100%',
-    [ringAccentMix]: '100%',
+    [ringGlow]: '0px',
+    [ringOpacity]: '100%',
   },
   glow: {
     [ringGap]: '0px',
-    [ringWidth]: '2px',
+    [ringWidth]: '0px',
     [ringBlur]: '8px',
-    [ringMix]: '50%',
-    [ringAccentMix]: '50%',
+    [ringGlow]: '2px',
+    [ringOpacity]: '50%',
   },
 };
 

@@ -134,7 +134,7 @@ export async function generate(
       const name = basename(path);
       if (!local) return true;
       if (excluded.has(name) || name.endsWith('.tsbuildinfo')) return false;
-      // Only the root manifest is pruned; the vendored MCP keeps its own lockfile.
+      // Only the root manifest is pruned; the MCP keeps its own lockfile.
       if (!includeServer && (local === 'server' || lockfiles.has(local)))
         return false;
       return true;

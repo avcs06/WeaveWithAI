@@ -1,6 +1,14 @@
 // eslint-disable-next-line
 import { colorTokens } from '../../../colors';
 
+import {
+  ringBlur,
+  ringGap,
+  ringGlow,
+  ringOpacity,
+  ringWidth,
+} from './focusRing.css';
+
 // Plain module (not .css.ts) so these functions can be exported and called
 // from .css.ts and .recipes.ts files at build time.
 
@@ -10,6 +18,24 @@ const disabledMix = '50%';
 /** Border drawn inside the element with box-shadow, so it never changes size. */
 export const borderShadow = (color: string) =>
   `0 0 0 ${borderWidth} ${color} inset`;
+
+/**
+ * The focus ring in `color`, a control's own variable, to spread into its
+ * focus rule. `shadows` are the control's own, drawn above the ring.
+ */
+export const focusRing = (color: string, ...shadows: string[]) => {
+  const ring = `color-mix(in srgb, ${color} ${ringOpacity}, transparent)`;
+  return {
+    boxShadow: [
+      ...shadows,
+      borderShadow(color),
+      `0 0 ${ringBlur} ${ringGlow} ${ring}`,
+    ].join(', '),
+    // An outline, so the gap shows whatever is behind the control.
+    outline: `${ringWidth} solid ${ring}`,
+    outlineOffset: ringGap,
+  };
+};
 
 /**
  * Disabled version of a color: mixed halfway into the base background, so it

@@ -2,6 +2,7 @@ import nx from '@nx/eslint-plugin';
 import tailwindLayoutPlugin from './tools/eslint/tailwind-layout-plugin.mjs';
 import importPlugin from 'eslint-plugin-import';
 import importRulesPlugin from './tools/eslint/import-rules-plugin.mjs';
+import disabledReasonsPlugin from './tools/eslint/disabled-reasons-plugin.mjs';
 
 export default [
   ...nx.configs['flat/base'],
@@ -38,10 +39,7 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: [
-            '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
-            '^@app/.*',
-          ],
+          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$', '^@app/.*'],
           depConstraints: [
             { sourceTag: 'layer:1-assets', onlyDependOnLibsWithTags: [] },
             {
@@ -62,6 +60,15 @@ export default [
             },
             {
               sourceTag: 'layer:5-web',
+              onlyDependOnLibsWithTags: [
+                'layer:1-assets',
+                'layer:2-styles',
+                'layer:3-utils',
+                'layer:4-ui',
+              ],
+            },
+            {
+              sourceTag: 'layer:5-recipes',
               onlyDependOnLibsWithTags: [
                 'layer:1-assets',
                 'layer:2-styles',
@@ -103,6 +110,13 @@ export default [
       'tailwind-layout/restricted-classes': 'error',
       'tailwind-layout/prefer-tailwind': 'error',
     },
+  },
+
+  // A control that blocks the user says why, or a comment says why it can't.
+  {
+    files: ['**/*.tsx', '**/*.jsx'],
+    plugins: { 'disabled-reasons': disabledReasonsPlugin },
+    rules: { 'disabled-reasons/with-reason-or-comment': 'error' },
   },
 
   // Sort imports into groups (builtin → external → @packages/* in layer order → relative) with blank lines between

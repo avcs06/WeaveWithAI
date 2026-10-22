@@ -50,7 +50,8 @@ export const ExpandAllCell = memo(({ rows, rowKey }: ExpandAllCellProps) => {
       <div className="flex-row-gap-0 items-center">
         <IconButton
           size="xs"
-          variant="ghost"
+          variant="base"
+          look="ghost"
           aria-label={label}
           tooltip={label}
           disabled={scopeKeys.length === 0}

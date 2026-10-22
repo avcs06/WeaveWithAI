@@ -1,1 +1,3 @@
-export { Truncate, type TruncateProps } from './Truncate';
+export { Truncate } from './Truncate';
+export type { TruncateProps } from './Truncate.types';
+export { useTruncation } from './useTruncation';

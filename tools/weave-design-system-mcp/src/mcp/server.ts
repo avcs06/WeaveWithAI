@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 import { McpServer } from '@modelcontextprotocol/server';
@@ -7,11 +8,10 @@ import type { DesignSystem } from '../model/types.js';
 
 export const SERVER_NAME = 'weave-design-system-mcp';
 
-// Read from package.json rather than duplicated here: the version a client
-// sees should be the version that was published, and a second copy only ever
-// drifts from it at release time.
+// Package-root files resolve the same from src/mcp and dist/mcp.
 const require = createRequire(import.meta.url);
 export const SERVER_VERSION = (require('../../package.json') as { version: string }).version;
+const INSTRUCTIONS = readFileSync(new URL('../../instructions.md', import.meta.url), 'utf8').trim();
 
 function json(value: unknown) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }] };
@@ -20,15 +20,6 @@ function json(value: unknown) {
 function text(value: string) {
   return { content: [{ type: 'text' as const, text: value }] };
 }
-
-const INSTRUCTIONS =
-  'Design system reference and validator, generic across whatever project points a ' +
-  'designsystem.config.json at it. Before using a component, call get_recipe: it shows each ' +
-  'distinct way to use that component here and when to use it; adapt the case that fits. Search ' +
-  'or list to find what ' +
-  'exists and the real token names — never invent a color, spacing value, or component prop, ' +
-  'and never hand-build an element the system already has a component for. Call validate on ' +
-  'the code you generate afterward; fix every finding it returns before considering the task done.';
 
 /**
  * Builds an MCP server wired to an already-loaded `DesignSystem`. The
@@ -40,11 +31,9 @@ const INSTRUCTIONS =
  * per protocol era), so the factory itself must stay cheap — no I/O here.
  */
 export function createServer(system: DesignSystem): McpServer {
-  // The project's brief follows the generic instructions, so it loads with them.
-  const brief = system.brief();
   const server = new McpServer(
     { name: SERVER_NAME, version: SERVER_VERSION },
-    { instructions: brief ? `${INSTRUCTIONS}\n\n${brief}` : INSTRUCTIONS },
+    { instructions: INSTRUCTIONS },
   );
 
   server.registerTool(

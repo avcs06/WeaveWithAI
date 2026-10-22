@@ -9,7 +9,7 @@ import React, { useState } from 'react';
  * Content cards: a grid of items (a gallery view). A grid of cards is a list,
  * so render each as an `<li>` with `asChild`. Columns that fit phones:
  * `repeat(auto-fill, minmax(min(100%, 280px), 1fr))`, set in a .css.ts.
- * `elevated` adds a shadow; `variant="ghost"` drops the border and fill.
+ * `look="elevated"` adds a shadow; `look="ghost"` drops the border and fill.
  */
 const ContentCards = () => (
   <ul className="grid gap-4">
@@ -19,7 +19,7 @@ const ContentCards = () => (
         <p>Talks on tokens, theming and docs.</p>
       </li>
     </Card>
-    <Card asChild elevated>
+    <Card asChild look="elevated">
       <li>
         <strong>Frontend summit</strong>
         <p>A day of talks on the web platform.</p>

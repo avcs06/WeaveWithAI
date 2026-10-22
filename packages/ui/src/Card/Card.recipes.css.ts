@@ -7,19 +7,18 @@ import {
   cardBgHover,
   cardBgActive,
   cardBorder,
-  cardFocusBoxShadow,
   cardShadow,
   cardActiveText,
   cardActiveBg,
   cardActiveBgHover,
   cardActiveBorder,
   cardActiveBoxShadow,
-  cardActiveFocusBoxShadow,
+  cardActiveFocusColor,
+  cardFocusColor,
   card,
 } from './Card.css';
 
 const colors = tokens.color;
-const controlShadow = tokens.controlShadow;
 
 const activeBorder = (color: string) => `inset 0 0 0 1px ${color}`;
 
@@ -32,7 +31,7 @@ const cardSelections = {
         [cardActiveBgHover]: colors.hoverBg,
         [cardActiveBorder]: colors.accentBorder,
         [cardActiveBoxShadow]: activeBorder(colors.accentBorder),
-        [cardActiveFocusBoxShadow]: `${activeBorder(colors.accentBorder)}, ${controlShadow.focus}`,
+        [cardActiveFocusColor]: colors.focus,
       },
     },
     base: {
@@ -42,7 +41,7 @@ const cardSelections = {
         [cardActiveBgHover]: colors.base.hoverBg,
         [cardActiveBorder]: colors.base.accentBorder,
         [cardActiveBoxShadow]: activeBorder(colors.base.accentBorder),
-        [cardActiveFocusBoxShadow]: `${activeBorder(colors.base.accentBorder)}, ${controlShadow.base.focus}`,
+        [cardActiveFocusColor]: colors.base.focus,
       },
     },
   },
@@ -54,7 +53,7 @@ const cardSelections = {
         [cardActiveBgHover]: colors.accentHoverBg,
         [cardActiveBorder]: colors.accentBorder,
         [cardActiveBoxShadow]: activeBorder(colors.accentBorder),
-        [cardActiveFocusBoxShadow]: `${activeBorder(colors.accentBorder)}, ${controlShadow.accentFocus}`,
+        [cardActiveFocusColor]: colors.accentFocus,
       },
     },
     base: {
@@ -64,7 +63,7 @@ const cardSelections = {
         [cardActiveBgHover]: colors.base.accentHoverBg,
         [cardActiveBorder]: colors.base.accentBorder,
         [cardActiveBoxShadow]: activeBorder(colors.base.accentBorder),
-        [cardActiveFocusBoxShadow]: `${activeBorder(colors.base.accentBorder)}, ${controlShadow.base.accentFocus}`,
+        [cardActiveFocusColor]: colors.base.accentFocus,
       },
     },
   },
@@ -81,7 +80,7 @@ export const cardRecipe = recipe({
           [cardBgHover]: colors.base.hoverBg,
           [cardBgActive]: colors.base.hoverBg,
           [cardBorder]: colors.base.divider,
-          [cardFocusBoxShadow]: controlShadow.focus,
+          [cardFocusColor]: colors.focus,
         },
       },
       base: {
@@ -91,17 +90,7 @@ export const cardRecipe = recipe({
           [cardBgHover]: colors.base.hoverBg,
           [cardBgActive]: colors.base.hoverBg,
           [cardBorder]: colors.base.divider,
-          [cardFocusBoxShadow]: controlShadow.base.focus,
-        },
-      },
-      ghost: {
-        vars: {
-          [cardText]: colors.base.fg,
-          [cardBg]: 'transparent',
-          [cardBgHover]: colors.base.hoverBg,
-          [cardBgActive]: colors.base.hoverBg,
-          [cardBorder]: 'transparent',
-          [cardFocusBoxShadow]: controlShadow.base.focus,
+          [cardFocusColor]: colors.base.focus,
         },
       },
     },
@@ -113,6 +102,16 @@ export const cardRecipe = recipe({
     elevated: {
       true: { vars: { [cardShadow]: tokens.boxShadow.card } },
       false: { vars: { [cardShadow]: '0 0 transparent' } },
+    },
+    // Borderless and unfilled until hovered.
+    ghost: {
+      true: {
+        vars: {
+          [cardBg]: 'transparent',
+          [cardBorder]: 'transparent',
+        },
+      },
+      false: {},
     },
   },
   compoundVariants: [
@@ -132,18 +131,11 @@ export const cardRecipe = recipe({
       variants: { variant: 'base', selection: 'filled' },
       style: cardSelections.filled.base,
     },
-    {
-      variants: { variant: 'ghost', selection: 'outline' },
-      style: cardSelections.outline.base,
-    },
-    {
-      variants: { variant: 'ghost', selection: 'filled' },
-      style: cardSelections.filled.base,
-    },
   ],
   defaultVariants: {
     variant: 'default',
     selection: 'outline',
-    elevated: true,
+    elevated: false,
+    ghost: false,
   },
 });

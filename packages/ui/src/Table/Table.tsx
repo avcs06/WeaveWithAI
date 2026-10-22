@@ -10,7 +10,7 @@ import { TablePagination } from './pagination';
 import { TableReorder } from './reorder';
 import { TableSelection } from './selection';
 import { TableSort } from './sorting';
-import { TableStoreProvider } from './store';
+import { TableProvider } from './store';
 import { TableContent, type TableContentProps } from './TableContent';
 
 import type { TableProps } from './Table.types';
@@ -23,10 +23,10 @@ import type { TableProps } from './Table.types';
  */
 export function Table<T>({ children, ...props }: TableProps<T>) {
   return (
-    <TableStoreProvider>
+    <TableProvider>
       {children}
       <TableContent {...(props as unknown as TableContentProps)} />
-    </TableStoreProvider>
+    </TableProvider>
   );
 }
 

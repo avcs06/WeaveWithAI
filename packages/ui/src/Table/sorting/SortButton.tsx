@@ -21,9 +21,9 @@ const ARIA_SORT = {
 export const toAriaSort = (direction?: TableSortDirection) =>
   ARIA_SORT[direction ?? 'none'];
 
-export type SortButtonProps = Omit<
+export type SortButtonProps = Pick<
   ButtonProps,
-  'variant' | 'size' | 'rightIcon'
+  'id' | 'className' | 'onClick' | 'children'
 > & {
   direction?: TableSortDirection;
 };
@@ -31,7 +31,8 @@ export type SortButtonProps = Omit<
 /** Ghost button with the current sort direction as its right icon. */
 export const SortButton = ({ direction, ...props }: SortButtonProps) => (
   <Button
-    variant="ghost"
+    variant="base"
+    look="ghost"
     size="sm"
     rightIcon={SORT_ICONS[direction ?? 'none']}
     {...props}

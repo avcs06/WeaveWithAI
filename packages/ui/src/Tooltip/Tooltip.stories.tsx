@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 
-import { StoryButton, StorySwitch } from '../StoryControls';
+import { Button } from '../Button';
+import { StorySwitch } from '../StoryControls';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
-import { Tooltip, type TooltipProps } from './Tooltip';
+import { Tooltip } from './Tooltip';
+
+import type { TooltipProps } from './Tooltip.types';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -45,7 +48,7 @@ const TooltipStories = () => {
         <div className="flex-row-gap-4 flex-wrap">
           {sides.map((side) => (
             <Tooltip key={side} tooltip={`On the ${side}`} side={side}>
-              <StoryButton>{side}</StoryButton>
+              <Button variant="base">{side}</Button>
             </Tooltip>
           ))}
         </div>
@@ -59,7 +62,7 @@ const TooltipStories = () => {
               tooltip={`Aligned to the ${align}`}
               align={align}
             >
-              <StoryButton>A wider trigger, aligned {align}</StoryButton>
+              <Button variant="base">A wider trigger, aligned {align}</Button>
             </Tooltip>
           ))}
         </div>
@@ -68,13 +71,13 @@ const TooltipStories = () => {
       <StorySection title="Content">
         <div className="flex-row-gap-4 flex-wrap">
           <Tooltip tooltip="Saves a draft">
-            <StoryButton>One line</StoryButton>
+            <Button variant="base">One line</Button>
           </Tooltip>
           <Tooltip tooltip="Saves a draft of the event, so you can come back to it later and publish it when it's ready.">
-            <StoryButton>Wraps at 280px</StoryButton>
+            <Button variant="base">Wraps at 280px</Button>
           </Tooltip>
           <Tooltip tooltip="Supercalifragilisticexpialidocious-and-then-some-more-letters">
-            <StoryButton>Long word</StoryButton>
+            <Button variant="base">Long word</Button>
           </Tooltip>
         </div>
       </StorySection>
@@ -92,7 +95,7 @@ const TooltipStories = () => {
           tooltip={['Saves a draft', reason && 'Offline: saved on this device']}
           portal={portal}
         >
-          <StoryButton>Save</StoryButton>
+          <Button variant="base">Save</Button>
         </Tooltip>
       </StorySection>
     </StoryPage>

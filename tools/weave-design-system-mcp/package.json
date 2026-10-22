@@ -1,48 +1,12 @@
 {
-  "name": "@avcs/weave-design-system-mcp",
+  "name": "weave-design-system-mcp",
   "version": "1.0.3",
-  "description": "Generic MCP server that makes any design system (tokens + components) queryable by coding agents, and agent-generated UI checkable against it.",
+  "private": true,
+  "description": "MCP server that makes this repository's design system queryable by coding agents, and agent-generated UI checkable against it.",
   "license": "MIT",
-  "keywords": [
-    "mcp",
-    "model-context-protocol",
-    "design-system",
-    "design-tokens",
-    "vanilla-extract",
-    "tailwind",
-    "storybook",
-    "ai-agents"
-  ],
-  "homepage": "https://github.com/avcs06/weave-design-system-mcp#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/avcs06/weave-design-system-mcp.git"
-  },
-  "bugs": {
-    "url": "https://github.com/avcs06/weave-design-system-mcp/issues"
-  },
   "type": "module",
   "engines": {
     "node": "^22.18.0 || >=24.11.0"
-  },
-  "bin": {
-    "weave-design-system-mcp": "dist/mcp/stdio.js"
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "publishConfig": {
-    "access": "public"
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",
@@ -52,8 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write \"src/**/*.ts\" \"*.{json,md}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"*.{json,md}\"",
-    "prepublishOnly": "npm run build"
+    "format:check": "prettier --check \"src/**/*.ts\" \"*.{json,md}\""
   },
   "dependencies": {
     "@babel/parser": "^8.0.4",

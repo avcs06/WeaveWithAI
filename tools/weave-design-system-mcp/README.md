@@ -1,25 +1,18 @@
 # weave-design-system-mcp
 
-[![CI](https://github.com/avcs06/weave-design-system-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/avcs06/weave-design-system-mcp/actions/workflows/ci.yml)
-
 Coding agents generate UI that drifts from the design system, because the system lives in docs,
 Storybook, and reviewer heads — none of that is queryable at generation time, and nothing checks
-the output afterward. This is an [MCP](https://modelcontextprotocol.io) server that makes a design
-system queryable by an agent before it writes code, and its output checkable against that same
-system afterward. Nothing about a specific design system, token set, or component library is
-hardcoded — everything comes from a `designsystem.config.json` in whatever workspace you point
-it at.
-
-Your workspace — the codebase holding the design system — keeps its own
-`designsystem.config.json`, and you point the server at that folder when you register it.
+the output afterward. This [MCP](https://modelcontextprotocol.io) server makes this repository's
+design system queryable by an agent before it writes code, and its output checkable against that
+same system afterward. It reads the design system from the root `designsystem.config.json`, and
+gives agents the rules in [`instructions.md`](instructions.md).
 
 ## Worked example: before / after
 
-This runs against the public example design system bundled in `examples/`, so you can see it work
-before setting up your own.
+This runs against the example design system in `examples/`, which the tests also use.
 
-[`examples/synthetic-design-system/`](examples/synthetic-design-system/) is a small, fully public
-design system (fictional tokens, one `Button` with its recipe, an agent brief) demonstrating the CSS-in-TS + utility
+[`examples/synthetic-design-system/`](examples/synthetic-design-system/) is a small design system
+(fictional tokens, one `Button` with its recipe) demonstrating the CSS-in-TS + utility
 class split this MCP was built around — run it from inside there (`cd
 examples/synthetic-design-system && node ../../dist/mcp/stdio.js`) to try this yourself.
 
@@ -171,11 +164,11 @@ never in a shared grab-bag.
 from what it inspects to findings — listed in that validator's registry. Adding a scenario you've
 seen in practice is one new file plus one line in the registry:
 
-| Validator              | Registry: what each rule sees                                                       |
-| ---------------------- | ----------------------------------------------------------------------------------- |
+| Validator              | Registry: what each rule sees                                                             |
+| ---------------------- | ----------------------------------------------------------------------------------------- |
 | `tsx-adapter.ts`       | `fileRules`: the whole file · `importRules`: one import · `elementRules`: one JSX element |
-| `styles-adapter.ts`    | `styleRules`: one style object · `inlineStyleRules`: one inline `style={{}}`        |
-| `classname-adapter.ts` | `classRules`: one class (first objection wins) · `valueRules`: one `className` value |
+| `styles-adapter.ts`    | `styleRules`: one style object · `inlineStyleRules`: one inline `style={{}}`              |
+| `classname-adapter.ts` | `classRules`: one class (first objection wins) · `valueRules`: one `className` value      |
 
 **Rules flag invalid implementations, not imperfect ones.** A rule checks that the valid pattern
 is used — a form field goes through Controller and is connected to its `field`, a control is the
@@ -282,71 +275,19 @@ to list; there's no cross-file name-matching to get wrong.
 
 ## Setup
 
-Node `^22.18.0` or `>=24.11.0` (pinned in `.nvmrc`).
-
-There's nothing to install or keep running — your MCP client starts the server as a subprocess and
-stops it with the session, and `npx` fetches it on first use.
-
-### 1. Describe your design system
-
-Add `designsystem.config.json` to the root of your workspace. Paths are relative to that file:
-
-```json
-{
-  "tokens": ["src/styles/theme.css.ts"],
-  "components": ["src/components/**/*.tsx"],
-  "recipes": ["src/components/**/*.recipe.tsx"],
-  "brief": "docs/agent-brief.md"
-}
-```
-
-See the [config reference](#config-reference) for
-every field. Writing this by hand is optional: point your coding agent at that
-reference and ask it to write the config for the repo it's sitting in.
-
-Components are read through the real TypeScript checker, so your workspace also needs its own
-dependencies installed for them to resolve.
-
-### 2. Register it with your client
-
-Claude Code:
+Node `^22.18.0` or `>=24.11.0` (pinned in `.nvmrc`). From the repository root:
 
 ```bash
-claude mcp add weave-design-system-mcp -- npx -y @avcs/weave-design-system-mcp /path/to/your-workspace
+pnpm mcp:setup   # npm install and build into dist/
+pnpm mcp:check   # confirms the config loads components and tokens
 ```
 
-Any client using `mcpServers` JSON (Claude Desktop, Cursor, Windsurf):
+Clients start the server through `tools/design-system-mcp.mjs`: `.mcp.json` registers it for
+Claude Code and `.vscode/mcp.json` for VS Code. After changing `src/`, run `pnpm mcp:build`; after
+changing `src/` or `instructions.md`, restart the server.
 
-```json
-{
-  "mcpServers": {
-    "weave-design-system-mcp": {
-      "command": "npx",
-      "args": ["-y", "@avcs/weave-design-system-mcp", "/absolute/path/to/your-workspace"]
-    }
-  }
-}
-```
-
-`DESIGN_SYSTEM_PATH` works instead of the argument if you'd rather use an environment variable.
-With neither, the server reads the folder it was started in.
-
-### 3. Confirm it found your design system
-
-In Claude Code, `/mcp` lists the server and its six tools. Then ask something only the design
-system can answer — "what spacing tokens exist?" — and you should see it call `list_tokens`.
-
-That's the whole setup. If the answers come back empty, a client only shows you that the tools
-exist and not what they loaded, so you can optionally start the server yourself to see the counts
-it found — it prints a summary, then waits for protocol traffic, so `Ctrl-C` out:
-
-```bash
-npx -y @avcs/weave-design-system-mcp /path/to/your-workspace
-# weave-design-system-mcp ready on stdio — 408 tokens, 103 components
-```
-
-`0 components` almost always means the workspace's dependencies aren't installed, or the
-`components` globs don't match its layout.
+`tools/generate.mjs` copies this folder into a new project without `node_modules` or `dist`, then
+runs both commands there.
 
 ## Config reference
 
@@ -358,7 +299,6 @@ npx -y @avcs/weave-design-system-mcp /path/to/your-workspace
 | `components` | Your workspace's own React component files. Everything under their folders is design-system code.                           |
 | `packages`   | _Optional._ Installed packages whose components join the inventory.                                                         |
 | `recipes`    | _Optional._ Globs for recipe files: each component's distinct cases, served by `get_recipe`.                                |
-| `brief`      | _Optional._ Markdown file of the project's rules for agents, added to the server instructions.                              |
 
 **Tokens** (`tokens[]`) — file paths. Each file's format and exports are inferred:
 
@@ -372,31 +312,27 @@ npx -y @avcs/weave-design-system-mcp /path/to/your-workspace
   it's bound to.
 
 **Components** (`components[]`) — reads React component prop contracts through the real TypeScript type checker
-  (`react-docgen-typescript`, the same tool Storybook's autodocs use), which is what lets a variant
-  prop typed as `keyof typeof someTokenObject` resolve to its actual allowed values rather than
-  only a union written out literally. Also reads each component's `@invalidAlternative` JSDoc tag
-  (see above). Entries are globs; a `!`-prefixed one excludes.
-  Each glob is read with the `tsconfig.json` nearest its folder, which is what resolves path
-  aliases like a monorepo's `@app/*`.
+(`react-docgen-typescript`, the same tool Storybook's autodocs use), which is what lets a variant
+prop typed as `keyof typeof someTokenObject` resolve to its actual allowed values rather than
+only a union written out literally. Also reads each component's `@invalidAlternative` JSDoc tag
+(see above). Entries are globs; a `!`-prefixed one excludes.
+Each glob is read with the `tsconfig.json` nearest its folder, which is what resolves path
+aliases like a monorepo's `@app/*`.
 
 **Packages** (`packages[]`) — reads an installed package's components from its type declarations, so an icon
-  library or a set of headless primitives becomes part of the queryable inventory rather than
-  something an agent has to guess at. Fields: `package` (the package name, resolved from your
-  workspace), `names` (`"*"` or omitted for everything it exports, or an array of
-  specific names).
+library or a set of headless primitives becomes part of the queryable inventory rather than
+something an agent has to guess at. Fields: `package` (the package name, resolved from your
+workspace), `names` (`"*"` or omitted for everything it exports, or an array of
+specific names).
 
 **Recipes** (`recipes[]`) — globs for recipe files, each holding working examples of one
-  component as an app uses it: one case per distinct use (single or multiple choice, client or
-  server data), each with a comment saying when to use it, mentioning options like sizes once
-  rather than showing each. Name it after the component and keep it beside it
-  (`Table/Table.recipe.tsx`): a recipe covers the components declared in the file of its own name,
-  or in its folder's `index` barrel, and `get_recipe` finds it by either name. The file is served
-  as written, so make it code that typechecks and passes your lint; a test that renders every
-  recipe keeps them working. Recipe files are never read as components.
-
-**Brief** (`brief`) — a Markdown file with the project's own rules: workflow, what is already
-  tested, styling conventions. It follows the server's generic instructions, so a client loads it
-  with them; keep it short.
+component as an app uses it: one case per distinct use (single or multiple choice, client or
+server data), each with a comment saying when to use it, mentioning options like sizes once
+rather than showing each. Name it after the component and keep it beside it
+(`Table/Table.recipe.tsx`): a recipe covers the components declared in the file of its own name,
+or in its folder's `index` barrel, and `get_recipe` finds it by either name. The file is served
+as written, so make it code that typechecks and passes your lint; a test that renders every
+recipe keeps them working. Recipe files are never read as components.
 
 Style-defining code is always checked as vanilla-extract and `className` as Tailwind. The host
 workspace passes its own rules for both (`vanillaExtract` and `tailwind` on the config given to
@@ -425,27 +361,16 @@ A format that isn't listed here needs a new adapter — see [Architecture](#arch
 
 ## Development
 
-```bash
-git clone https://github.com/avcs06/weave-design-system-mcp.git
-cd weave-design-system-mcp
-npm install
-npm run build
-```
-
-Point a client at a local build with `node ./dist/mcp/stdio.js /path/to/your-workspace` in place
-of the `npx` invocation above.
+From this folder:
 
 ```bash
 npm run format:check   # prettier
 npm run typecheck      # tsc --noEmit
-npm test               # vitest
+npm test               # vitest, also `pnpm mcp:test` from the root
 npm run build          # tsc -> dist/
 ```
 
-CI runs all four on Node 22 and 24, then starts the built server against the example design system
-to confirm the published entrypoint actually loads one.
-
-Runs against [`examples/synthetic-design-system/`](examples/synthetic-design-system/) — the same
+Tests run against [`examples/synthetic-design-system/`](examples/synthetic-design-system/) — the same
 fixture the worked example above uses, not a second copy that can drift from it — plus unit tests
 per implementation for cases the example doesn't cover (`styles/vanilla-extract.test.ts`,
 `styles/object.test.ts`) and a dispatcher-level test

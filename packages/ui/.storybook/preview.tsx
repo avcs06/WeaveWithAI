@@ -11,8 +11,9 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import React from 'react';
 
 import { ErrorBoundary } from '../src/ErrorBoundary';
-// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
-import { ToastQueue } from '../src/Toast/ToastQueue';
+// Toast isn't available yet: restore with it.
+// // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
+// import { ToastQueue } from '../src/Toast/ToastQueue';
 
 import type { Decorator, Preview } from '@storybook/react-vite';
 
@@ -35,7 +36,7 @@ const withUIRoot: Decorator = (Story, context) => {
       <ErrorBoundary>
         <Story />
       </ErrorBoundary>
-      <ToastQueue />
+      {/* <ToastQueue /> */}
     </TooltipPrimitive.Provider>
   );
 };

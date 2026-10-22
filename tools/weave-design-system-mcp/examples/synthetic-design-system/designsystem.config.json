@@ -1,6 +1,5 @@
 {
   "tokens": ["theme.css.ts", "tokens.ts"],
   "components": ["components/**/*.tsx"],
-  "recipes": ["components/**/*.recipe.tsx"],
-  "brief": "agent-brief.md"
+  "recipes": ["components/**/*.recipe.tsx"]
 }

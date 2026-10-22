@@ -48,7 +48,7 @@ const designSystemRoots = components
     const wildcard = segments.findIndex((segment) => /[*?[{]/.test(segment));
     return resolve(repoRoot, segments.slice(0, wildcard === -1 ? -1 : wildcard).join('/'));
   });
-const isDesignSystemFile = (filename) =>
+export const isDesignSystemFile = (filename) =>
   !recipeGlobs.some((glob) => matchesGlob(filename, glob)) &&
   designSystemRoots.some((root) => !relative(root, filename).startsWith('..'));
 

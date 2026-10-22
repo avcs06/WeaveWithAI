@@ -23,6 +23,10 @@ export type ColorSet = {
   accentBorder: string;
   /** Accent background on hover; also the selected accent fill. */
   accentHoverBg: string;
+  /** Focus ring on regular controls; the ring preset sets its opacity. */
+  focus: string;
+  /** Focus ring on filled accent controls; the ring preset sets its opacity. */
+  accentFocus: string;
   /** Shadow color only; components own offset, blur, spread and opacity. */
   shadow: string;
 };
@@ -43,11 +47,13 @@ export const colors = {
       fg: '#18181B',
       fgMuted: '#52525B',
       border: '#C4C4CC',
-      hoverBg: '#F7F7F8',
+      hoverBg: '#FAFAFA',
       accentBg: '#18181B',
       accentFg: '#FAFAFA',
       accentBorder: '#18181B',
       accentHoverBg: '#2F2F32',
+      focus: '#64748B',
+      accentFocus: '#18181B',
       shadow: '#000000',
       divider: '#ECEBE7',
       backdrop: '#1A1A17',
@@ -63,6 +69,8 @@ export const colors = {
       accentFg: '#18181B',
       accentBorder: '#FAFAFA',
       accentHoverBg: '#D9D9DE',
+      focus: '#FAFAFA',
+      accentFocus: '#FAFAFA',
       shadow: '#000000',
       divider: '#2A2926',
       backdrop: '#000000',
@@ -78,8 +86,10 @@ export const colors = {
       hoverBg: '#F2E2FC',
       accentBg: '#8E4EC6',
       accentFg: '#FFFFFF',
-      accentBorder: '#8347B9',
+      accentBorder: '#8C4DC3',
       accentHoverBg: '#8347B9',
+      focus: '#8E4EC6',
+      accentFocus: '#7542A1',
       shadow: '#000000',
     } satisfies ColorSet,
     dark: {
@@ -90,8 +100,10 @@ export const colors = {
       hoverBg: '#3D224E',
       accentBg: '#8E4EC6',
       accentFg: '#FFFFFF',
-      accentBorder: '#9A5CD0',
+      accentBorder: '#9051C8',
       accentHoverBg: '#8347B9',
+      focus: '#8E4EC6',
+      accentFocus: '#A573D2',
       shadow: '#000000',
     } satisfies ColorSet,
   },
@@ -107,6 +119,8 @@ export const colors = {
         accentFg: '#FFFFFF',
         accentBorder: '#34634A',
         accentHoverBg: '#3C7055',
+        focus: '#447E5F',
+        accentFocus: '#2E5441',
         shadow: '#000000',
       } satisfies ColorSet,
       warning: {
@@ -119,6 +133,8 @@ export const colors = {
         accentFg: '#4F3422',
         accentBorder: '#9D6B3B',
         accentHoverBg: '#EFC06A',
+        focus: '#F1C978',
+        accentFocus: '#825A35',
         shadow: '#000000',
       } satisfies ColorSet,
       error: {
@@ -127,10 +143,12 @@ export const colors = {
         fgMuted: '#953D3B',
         border: '#B74D48',
         hoverBg: '#FFDBDC',
-        accentBg: '#B74D48',
+        accentBg: '#C44B46',
         accentFg: '#FFFFFF',
-        accentBorder: '#953D3B',
-        accentHoverBg: '#A54440',
+        accentBorder: '#BE4743',
+        accentHoverBg: '#B63E39',
+        focus: '#C44B46',
+        accentFocus: '#9D3E3B',
         shadow: '#000000',
       } satisfies ColorSet,
       info: {
@@ -143,6 +161,8 @@ export const colors = {
         accentFg: '#FFFFFF',
         accentBorder: '#305E90',
         accentHoverBg: '#366AA1',
+        focus: '#3D76B3',
+        accentFocus: '#2B5079',
         shadow: '#000000',
       } satisfies ColorSet,
     },
@@ -157,6 +177,8 @@ export const colors = {
         accentFg: '#0E1512',
         accentBorder: '#73CE9A',
         accentHoverBg: '#5EA97F',
+        focus: '#589E76',
+        accentFocus: '#8ED7AD',
         shadow: '#000000',
       } satisfies ColorSet,
       warning: {
@@ -169,6 +191,8 @@ export const colors = {
         accentFg: '#16120C',
         accentBorder: '#F1CE6F',
         accentHoverBg: '#F3D872',
+        focus: '#F1C978',
+        accentFocus: '#F3D78B',
         shadow: '#000000',
       } satisfies ColorSet,
       error: {
@@ -177,10 +201,12 @@ export const colors = {
         fgMuted: '#ECA19E',
         border: '#ECA19E',
         hoverBg: '#500F1C',
-        accentBg: '#CD6360',
-        accentFg: '#191111',
-        accentBorder: '#ECA19E',
-        accentHoverBg: '#D5726F',
+        accentBg: '#D76360',
+        accentFg: '#FFFFFF',
+        accentBorder: '#DB6C69',
+        accentHoverBg: '#DE7370',
+        focus: '#D76360',
+        accentFocus: '#E18886',
         shadow: '#000000',
       } satisfies ColorSet,
       info: {
@@ -193,6 +219,8 @@ export const colors = {
         accentFg: '#0D1520',
         accentBorder: '#87B7E9',
         accentHoverBg: '#619FE2',
+        focus: '#4B92DE',
+        accentFocus: '#9EC4EC',
         shadow: '#000000',
       } satisfies ColorSet,
     },

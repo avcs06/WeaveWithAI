@@ -1,5 +1,5 @@
 import { tokens } from '@packages/styles/tokens.css';
-import { disabledColor } from '@packages/styles/utils';
+import { disabledColor, focusRing } from '@packages/styles/utils';
 import { createVar, style } from '@vanilla-extract/css';
 
 export const cardText = createVar('cardText');
@@ -7,14 +7,14 @@ export const cardBg = createVar('cardBg');
 export const cardBgHover = createVar('cardBgHover');
 export const cardBgActive = createVar('cardBgActive');
 export const cardBorder = createVar('cardBorder');
-export const cardFocusBoxShadow = createVar('cardFocusBoxShadow');
 export const cardShadow = createVar('cardShadow');
 export const cardActiveText = createVar('cardActiveText');
 export const cardActiveBg = createVar('cardActiveBg');
 export const cardActiveBgHover = createVar('cardActiveBgHover');
 export const cardActiveBorder = createVar('cardActiveBorder');
 export const cardActiveBoxShadow = createVar('cardActiveBoxShadow');
-export const cardActiveFocusBoxShadow = createVar('cardActiveFocusBoxShadow');
+export const cardFocusColor = createVar('cardFocusColor');
+export const cardActiveFocusColor = createVar('cardActiveFocusColor');
 
 export const card = style({
   paddingInline: tokens.spacing[5],
@@ -40,7 +40,7 @@ export const card = style({
       cursor: 'pointer',
     },
     '&:focus-visible': {
-      boxShadow: `${cardFocusBoxShadow}, ${cardShadow}`,
+      ...focusRing(cardFocusColor, cardShadow),
     },
     '&[data-state="checked"]': {
       color: cardActiveText,
@@ -52,7 +52,7 @@ export const card = style({
       background: cardActiveBgHover,
     },
     '&[data-state="checked"]:focus-visible': {
-      boxShadow: `${cardActiveFocusBoxShadow}, ${cardShadow}`,
+      ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
     },
     '&[data-disabled="true"]': {
       color: disabledColor(cardText),

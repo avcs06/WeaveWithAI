@@ -8,23 +8,16 @@ import React, { forwardRef } from 'react';
 import {
   Selectable,
   SelectableGroup,
-  type SelectableGroupProps,
-  type SelectableProps,
   useSelectableGroup,
   useSelectableVariant,
 } from '../Selectable';
+import { createLook } from '../utils';
 
 import { cardRecipe } from './Card.recipes.css';
 
-import type { RecipeVariants } from '@vanilla-extract/recipes';
+import type { CardGroupProps, CardProps, CardSurfaceProps } from './Card.types';
 
-type CardRecipeVariants = NonNullable<RecipeVariants<typeof cardRecipe>>;
-
-type CardSurfaceProps = React.ComponentPropsWithoutRef<'div'> & {
-  asChild?: boolean;
-  disabled?: boolean;
-  clickable?: boolean;
-};
+const cardLook = createLook(cardRecipe);
 
 const CardSurface = forwardRef<HTMLDivElement, CardSurfaceProps>(
   ({ asChild, disabled, clickable, onClick, tabIndex, ...props }, ref) => {
@@ -44,19 +37,11 @@ const CardSurface = forwardRef<HTMLDivElement, CardSurfaceProps>(
   },
 );
 
-export type CardProps = CardSurfaceProps &
-  CardRecipeVariants &
-  Pick<
-    SelectableProps,
-    'value' | 'active' | 'defaultActive' | 'onActiveChange'
-  >;
-
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
     {
       variant,
-      selection,
-      elevated = false,
+      look,
       value,
       active,
       defaultActive,
@@ -69,11 +54,12 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   ) => {
     const { disabled: groupDisabled } = useSelectableGroup();
     const isDisabled = disabled || groupDisabled;
+    const { selection, ...lookVariants } = cardLook(look);
     const selectableVariant = useSelectableVariant(selection);
     const cardClassName = cardRecipe({
       variant,
+      ...lookVariants,
       selection: selectableVariant,
-      elevated,
     });
 
     return (
@@ -95,8 +81,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   },
 );
 Card.displayName = 'Card';
-
-export type CardGroupProps = SelectableGroupProps;
 
 export const CardGroup = forwardRef<HTMLDivElement, CardGroupProps>(
   (props, ref) => <SelectableGroup ref={ref} {...props} />,

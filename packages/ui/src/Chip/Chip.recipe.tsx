@@ -30,7 +30,7 @@ const SingleChoice = () => {
 /**
  * Multiple choice: any number of options on, like checkboxes (status filters).
  * Chips are `size="sm"` by default; use `size="md"` beside md inputs, and
- * `radius="rounded"` for pill shapes.
+ * `look="rounded"` for pill shapes.
  */
 const MultipleChoice = () => {
   const [statuses, setStatuses] = useState<string[]>(['Published']);

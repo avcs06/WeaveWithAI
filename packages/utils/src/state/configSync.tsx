@@ -33,22 +33,24 @@ const ConfigSyncContext = createContext<ConfigSyncContextValue | null>(null);
  * its first commit is done: a parent's layout effect runs after every child's.
  */
 export const ConfigSyncProvider = ({
-  useGetStore,
+  useStore,
   children,
 }: {
-  /** The owner's store hook, e.g. the second hook from `createStoreContext`. */
-  useGetStore: () => { useStore: SyncStore };
+  /** The owner's store, e.g. `useStore` from its `createStoreContext` context. */
+  useStore: SyncStore;
   children: ReactNode;
 }) => {
   const [mounted, setMounted] = useState(false);
-  const { useStore: store } = useGetStore();
 
   useLayoutEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
 
-  const value = useMemo(() => ({ store, mounted }), [store, mounted]);
+  const value = useMemo(
+    () => ({ store: useStore, mounted }),
+    [useStore, mounted],
+  );
 
   return (
     <ConfigSyncContext.Provider value={value}>

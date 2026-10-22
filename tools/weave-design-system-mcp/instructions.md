@@ -5,11 +5,14 @@
 1. For each component you use, call `get_recipe`, pick the case that fits
    (each says when to use it) and adapt it. Recipes are the supported usage;
    don't read the component's source.
-2. For a whole page, put its data in `web/app/entities/<name>` and build the
+2. Search or list to find what exists and the real token names. Never invent
+   a color, spacing value or component prop, and never hand-build an element
+   the system already has a component for.
+3. For a whole page, put its data in `web/app/entities/<name>` and build the
    page in its route folder, `web/app/(routes)/<path>/`: `page.tsx` with its
    page-only components and controllers beside it. Move a piece to `blocks`
    or `components` only once a second route uses it.
-3. Run `validate` on each file you write. At the end, run once:
+4. Run `validate` on each file you write and fix every finding. At the end, run once:
    `pnpm typecheck`, `pnpm nx lint web` and `pnpm verify <route>`. All three
    passing means done.
 

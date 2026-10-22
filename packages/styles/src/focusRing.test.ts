@@ -1,15 +1,16 @@
 import {
   focusRingClasses,
   focusRings,
-  ringAccentMix,
   ringBlur,
   ringGap,
-  ringMix,
+  ringGlow,
+  ringOpacity,
   ringWidth,
 } from './focusRing.css';
 import { tokens } from './tokens.css';
+import { focusRing } from './utils';
 
-const ringVars = [ringGap, ringWidth, ringBlur, ringMix, ringAccentMix];
+const ringVars = [ringGap, ringWidth, ringBlur, ringGlow, ringOpacity];
 
 describe('focus rings', () => {
   it('every preset sets every ring variable and has a class', () => {
@@ -25,19 +26,13 @@ describe('focus rings', () => {
     expect(Object.keys(focusRings)).toContain(tokens.focusRing);
   });
 
-  it('every color set draws its rings in the shared shape', () => {
-    const { controlShadow } = tokens;
-    const sets = [
-      controlShadow,
-      controlShadow.base,
-      controlShadow.success,
-      controlShadow.warning,
-      controlShadow.error,
-      controlShadow.info,
-    ];
-    for (const set of sets)
-      for (const ring of [set.focus, set.accentFocus])
-        for (const ringVar of [ringGap, ringWidth, ringBlur])
-          expect(ring).toContain(ringVar);
+  it("draws the ring in the control's color, shaped by the preset", () => {
+    const ring = focusRing('var(--color)', 'var(--own)');
+    expect(ring.boxShadow.startsWith('var(--own), ')).toBe(true);
+    expect(ring.outline).toContain(ringWidth);
+    expect(ring.outline).toContain('var(--color)');
+    expect(ring.outlineOffset).toBe(ringGap);
+    for (const ringVar of [ringBlur, ringGlow, ringOpacity])
+      expect(ring.boxShadow).toContain(ringVar);
   });
 });

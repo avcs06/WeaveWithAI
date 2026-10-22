@@ -1,27 +1,14 @@
 'use client';
 
 import { classNames } from '@packages/styles/classNames';
-import React, {
-  type ComponentPropsWithoutRef,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Tooltip } from '../Tooltip';
 
 import { avatarImage } from './Avatar.css';
 import { avatarRecipe } from './Avatar.recipes.css';
 
-import type { RecipeVariants } from '@vanilla-extract/recipes';
-
-type AvatarRecipeVariants = NonNullable<RecipeVariants<typeof avatarRecipe>>;
-
-export type AvatarProps = ComponentPropsWithoutRef<'span'> &
-  AvatarRecipeVariants & {
-    name: string;
-    src?: string;
-  };
+import type { AvatarProps } from './Avatar.types';
 
 const getInitials = (name: string) => {
   const words = name.trim().split(/\s+/).filter(Boolean);

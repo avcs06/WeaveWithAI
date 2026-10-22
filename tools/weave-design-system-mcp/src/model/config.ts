@@ -22,8 +22,6 @@ const ConfigSchema = z.object({
   packages: z.union([PackageSchema, z.array(PackageSchema).min(1)]).optional(),
   /** Globs for recipe files: working examples of each component's distinct cases, kept beside it. Recipes are app code. */
   recipes: z.array(z.string().min(1)).min(1).optional(),
-  /** A Markdown file of the project's rules for agents, added to the server instructions. */
-  brief: z.string().min(1).optional(),
 });
 
 export interface ResolvedConfig {
@@ -31,7 +29,6 @@ export interface ResolvedConfig {
   components: string[];
   packages?: PackageConfig[];
   recipes?: string[];
-  brief?: string;
   /** Styles are always vanilla-extract and classNames always Tailwind; the host workspace supplies its rules for both. */
   vanillaExtract?: VanillaExtractPolicy;
   tailwind?: TailwindPolicy;
@@ -43,7 +40,6 @@ const EXAMPLE_CONFIG = `{
   "tokens": ["src/styles/theme.css.ts"],
   "components": ["src/components/**/*.tsx"],
   "recipes": ["src/components/**/*.recipe.tsx"],
-  "brief": "docs/agent-brief.md",
   "packages": { "package": "lucide-react", "names": "*" }
 }`;
 
@@ -77,16 +73,12 @@ export function loadConfig(cwd: string = process.cwd()): ResolvedConfig {
     throw new Error(`${configPath} is invalid:\n${formatZodError(result.error)}`);
   }
 
-  const { tokens, components, packages = [], recipes, brief } = result.data;
-  if (brief && !existsSync(resolve(dirname(configPath), brief))) {
-    throw new Error(`${configPath} is invalid:\n  - brief: ${brief} does not exist`);
-  }
+  const { tokens, components, packages = [], recipes } = result.data;
   return {
     tokens,
     components,
     packages: Array.isArray(packages) ? packages : [packages],
     recipes,
-    brief,
     configDir: resolve(dirname(configPath)),
   };
 }

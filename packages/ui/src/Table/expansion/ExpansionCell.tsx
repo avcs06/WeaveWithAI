@@ -32,7 +32,8 @@ export const ExpansionCell = memo(
           <div className="flex-row-gap-0 items-center">
             <IconButton
               size="xs"
-              variant="ghost"
+              variant="base"
+              look="ghost"
               aria-label={`${expanded ? 'Collapse' : 'Expand'} row ${position}`}
               aria-expanded={expanded}
               disabled={disabled}

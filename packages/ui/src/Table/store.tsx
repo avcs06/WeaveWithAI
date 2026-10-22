@@ -47,13 +47,19 @@ export const useTableStore = _useTableStore;
 export const useGetTableStore = _useGetTableStore;
 
 /** One store per table, created on mount; config components write into it. */
-export const TableProvider = ({ children }: { children: ReactNode }) => {
+export const TableProvider = ({ children }: { children: ReactNode }) => (
+  <TableStoreProvider>
+    <TableConfigSync>{children}</TableConfigSync>
+  </TableStoreProvider>
+);
+
+// Inside the store's provider, so it can read the table's store.
+const TableConfigSync = ({ children }: { children: ReactNode }) => {
+  const { useStore } = useGetTableStore();
   return (
-    <TableStoreProvider>
-      <ConfigSyncProvider useGetStore={useGetTableStore}>
-        <ColumnOrderProvider>{children}</ColumnOrderProvider>
-      </ConfigSyncProvider>
-    </TableStoreProvider>
+    <ConfigSyncProvider useStore={useStore}>
+      <ColumnOrderProvider>{children}</ColumnOrderProvider>
+    </ConfigSyncProvider>
   );
 };
 

@@ -1,29 +1,38 @@
-import { createVar, globalStyle, style } from '@vanilla-extract/css';
+import { disabledColor, focusRing } from '@packages/styles/utils';
+import { createVar, style } from '@vanilla-extract/css';
 
-export const chipActiveText = createVar('chipActiveText');
+export const chipActiveFg = createVar('chipActiveFg');
 export const chipActiveBg = createVar('chipActiveBg');
-export const chipActiveBgHover = createVar('chipActiveBgHover');
-export const chipActiveBoxShadow = createVar('chipActiveBoxShadow');
-export const chipActiveFocusBoxShadow = createVar('chipActiveFocusBoxShadow');
+export const chipActiveHoverBg = createVar('chipActiveHoverBg');
+export const chipActiveBorder = createVar('chipActiveBorder');
+export const chipActiveFocusColor = createVar('chipActiveFocusColor');
 
+// Thicker than a button's border, so an active chip reads as selected.
+const activeBorder = (color: string) => `0 0 0 2px ${color} inset`;
+
+/** The active look over the button look; colors come from the vars. */
 export const chip = style({
   selectors: {
     '&[data-state="checked"]': {
-      color: chipActiveText,
+      color: chipActiveFg,
       background: chipActiveBg,
-      boxShadow: chipActiveBoxShadow,
+      boxShadow: activeBorder(chipActiveBorder),
     },
-    '&[data-state="checked"]:hover, &[data-state="checked"]:active': {
-      background: chipActiveBgHover,
-      boxShadow: chipActiveBoxShadow,
+    '&[data-state="checked"]:not([data-disabled]):hover': {
+      color: chipActiveFg,
+      background: chipActiveHoverBg,
+      boxShadow: activeBorder(chipActiveBorder),
     },
-    '&[data-state="checked"]:focus-visible, &[data-state="checked"][data-focus-visible="true"]':
+    '&[data-state="checked"]:not([data-disabled]):is(:focus-visible, :active, [data-focus-visible="true"])':
       {
-        boxShadow: chipActiveFocusBoxShadow,
+        color: chipActiveFg,
+        background: chipActiveHoverBg,
+        ...focusRing(chipActiveFocusColor, activeBorder(chipActiveBorder)),
       },
+    '&[data-state="checked"][data-disabled]': {
+      color: disabledColor(chipActiveFg),
+      background: disabledColor(chipActiveBg),
+      boxShadow: activeBorder(disabledColor(chipActiveBorder)),
+    },
   },
-});
-
-globalStyle(`${chip}[data-state="checked"] [data-slot='icon']`, {
-  color: chipActiveText,
 });

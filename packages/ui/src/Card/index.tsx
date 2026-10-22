@@ -1,1 +1,2 @@
-export { Card, CardGroup, type CardGroupProps, type CardProps } from './Card';
+export { Card, CardGroup } from './Card';
+export type { CardGroupProps, CardProps } from './Card.types';

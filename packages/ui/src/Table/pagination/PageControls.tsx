@@ -65,7 +65,8 @@ const PageNumber = ({
   onClick,
 }: PageNumberProps) => (
   <Button
-    variant={current ? 'default' : 'ghost'}
+    variant={current ? 'default' : 'base'}
+    look={current ? undefined : 'ghost'}
     size="sm"
     aria-label={`Page ${pageIndex + 1}`}
     aria-current={current ? 'page' : undefined}

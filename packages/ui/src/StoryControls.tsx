@@ -1,33 +1,12 @@
 // Stand-ins for stories until the design system has these components; swap
 // each for the real one when it lands.
-import { classNames } from '@packages/styles/classNames';
-import React, { type ComponentProps } from 'react';
-
-import { border, borderColor, controlRadius } from './StoryStyles.css';
+import React from 'react';
 
 type StoryChoiceProps = {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
-
-// Spreads its props, so a wrapping Tooltip's handlers and ref reach the button.
-export const StoryButton = ({
-  className,
-  ...props
-}: ComponentProps<'button'>) => (
-  <button
-    type="button"
-    {...props}
-    className={classNames(
-      border,
-      borderColor,
-      controlRadius,
-      'px-3 py-1.5',
-      className,
-    )}
-  />
-);
 
 export const StoryCheckbox = ({
   label,

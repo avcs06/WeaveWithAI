@@ -168,7 +168,8 @@ const ClientTable = () => {
             >
               <IconButton
                 size="xs"
-                variant="ghost"
+                variant="base"
+                look="ghost"
                 aria-label={`Actions for ${event.name}`}
               >
                 <Ellipsis />
@@ -308,12 +309,7 @@ const ReorderableRows = () => {
           setRows(next)
         }
       />
-      <Table.Column<Event>
-        id="name"
-        title="Name"
-        dataKey="name"
-        width={220}
-      />
+      <Table.Column<Event> id="name" title="Name" dataKey="name" width={220} />
       <Table.Column<Event>
         id="organizer"
         title="Organizer"

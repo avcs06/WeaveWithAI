@@ -26,7 +26,7 @@ export const tooltip = style({
   borderRadius: tokens.radius.surface,
   fontSize: tokens.fontSize.caption,
   fontWeight: tokens.fontWeight.medium,
-  lineHeight: tokens.lineHeight[4],
+  lineHeight: tokens.lineHeight.caption,
   overflowWrap: 'anywhere',
   userSelect: 'none',
   color: colors.accentFg,

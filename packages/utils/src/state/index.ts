@@ -7,6 +7,8 @@ export {
   useValueSync,
 } from './configSync';
 
+export { createContext } from './createContext';
+
 export {
   createPersistentStore,
   createStore,

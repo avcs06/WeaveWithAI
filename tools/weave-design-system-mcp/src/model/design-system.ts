@@ -183,10 +183,6 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
       return recipeFiles.map((recipe) => recipe.name);
     },
 
-    brief() {
-      return config.brief ? readFileSync(resolve(config.configDir, config.brief), 'utf8').trim() : undefined;
-    },
-
     validate(code, filename) {
       return runValidate(system, code, filename, {
         vanillaExtract: config.vanillaExtract ?? {},

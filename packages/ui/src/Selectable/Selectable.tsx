@@ -4,11 +4,15 @@ import { FROZEN_EMPTY_ARRAY } from '@packages/utils/constants';
 import { useControlledValue } from '@packages/utils/hooks';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import React, { forwardRef, type ReactElement } from 'react';
+import React, { forwardRef } from 'react';
 
 import { SelectableGroupProvider, useSelectableGroup } from './context';
 
-export type SelectableVariant = 'outline' | 'filled';
+import type {
+  SelectableGroupProps,
+  SelectableProps,
+  SelectableVariant,
+} from './Selectable.types';
 
 const modeVariants = { single: 'outline', multiple: 'filled' } as const;
 
@@ -42,15 +46,6 @@ export const useSelectedValues = (
     );
 
   return [values, toggle] as const;
-};
-
-export type SelectableProps = {
-  value?: string;
-  active?: boolean;
-  defaultActive?: boolean;
-  onActiveChange?: (active: boolean) => void;
-  disabled?: boolean;
-  children: ReactElement;
 };
 
 export const Selectable = ({
@@ -117,29 +112,6 @@ export const Selectable = ({
     </CheckboxPrimitive.Root>
   );
 };
-
-type SelectableGroupRootProps = Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'defaultValue' | 'onChange' | 'dir'
-> & {
-  disabled?: boolean;
-};
-
-export type SelectableGroupProps = SelectableGroupRootProps &
-  (
-    | {
-        mode?: 'single';
-        value?: string;
-        defaultValue?: string;
-        onChange?: (value: string) => void;
-      }
-    | {
-        mode: 'multiple';
-        value?: string[];
-        defaultValue?: string[];
-        onChange?: (value: string[]) => void;
-      }
-  );
 
 const SingleGroup = forwardRef<
   HTMLDivElement,

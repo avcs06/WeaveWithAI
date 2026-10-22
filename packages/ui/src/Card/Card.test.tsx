@@ -31,14 +31,15 @@ describe('Card', () => {
     );
   });
 
-  it('applies variant, selection and elevated', () => {
+  it('applies variant and look', () => {
     renderUI(
-      <Card variant="ghost" selection="filled" elevated>
+      <Card variant="base" look="ghost filled elevated">
         Content
       </Card>,
     );
     expect(screen.getByText('Content')).toHaveClass(
-      variants.variant.ghost,
+      variants.variant.base,
+      variants.ghost.true,
       variants.selection.filled,
       variants.elevated.true,
     );
@@ -47,7 +48,7 @@ describe('Card', () => {
   it('toggles as a checkbox once it opts in', async () => {
     const onActiveChange = jest.fn();
     const { container } = renderUI(
-      <Card elevated onActiveChange={onActiveChange}>
+      <Card look="elevated" onActiveChange={onActiveChange}>
         Backups
       </Card>,
     );
@@ -70,10 +71,10 @@ describe('CardGroup', () => {
         onChange={onChange}
         aria-label="Plan"
       >
-        <Card value="free" elevated>
+        <Card value="free" look="elevated">
           Free
         </Card>
-        <Card value="pro" elevated selection="filled">
+        <Card value="pro" look="elevated filled">
           Pro
         </Card>
       </CardGroup>,
@@ -99,10 +100,10 @@ describe('CardGroup', () => {
         onChange={onChange}
         aria-label="Extras"
       >
-        <Card value="backups" elevated>
+        <Card value="backups" look="elevated">
           Backups
         </Card>
-        <Card value="support" elevated>
+        <Card value="support" look="elevated">
           Support
         </Card>
       </CardGroup>,

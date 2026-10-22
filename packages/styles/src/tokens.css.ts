@@ -4,13 +4,6 @@ import { colorTokens, type ColorSet } from '../../../colors';
 // eslint-disable-next-line
 import { tokens as tokenValues } from '../../../tokens';
 
-import {
-  ringAccentMix,
-  ringBlur,
-  ringGap,
-  ringMix,
-  ringWidth,
-} from './focusRing.css';
 import { borderShadow } from './utils';
 
 const shadowColor = colorTokens.base.shadow;
@@ -24,29 +17,12 @@ const dropShadow = (
 ) => `0 ${y} ${blur} 0 color-mix(in srgb, ${color} ${opacity}%, transparent)`;
 
 /**
- * Accent border, then a gap in the page color, then the ring; focusRing.css.ts
- * sets their sizes.
- */
-const focusRing = (border: string, ring: string) =>
-  `${borderShadow(border)}, 0 0 0 ${ringGap} ${colorTokens.base.bg}, 0 0 ${ringBlur} calc(${ringGap} + ${ringWidth}) ${ring}`;
-
-/**
- * Control borders and focus ring from a color set, drawn with box-shadow so
- * they never change the element's size.
+ * Control borders from a color set, drawn with box-shadow so they never change
+ * the element's size. Focus rings are in focusRing.css.ts.
  */
 const controlShadow = (set: ColorSet) => ({
   border: borderShadow(set.border),
   accentBorder: borderShadow(set.accentBorder),
-  // Non-accent controls (inputs, base/ghost buttons): ring of faded accent.
-  focus: focusRing(
-    set.accentBorder,
-    `color-mix(in srgb, ${set.accentBg} ${ringMix}, transparent)`,
-  ),
-  // Filled accent controls: ring of the hover background, tinted with accent.
-  accentFocus: focusRing(
-    set.accentBorder,
-    `color-mix(in srgb, ${set.accentBg} ${ringAccentMix}, ${set.hoverBg})`,
-  ),
 });
 
 export const tokens = {

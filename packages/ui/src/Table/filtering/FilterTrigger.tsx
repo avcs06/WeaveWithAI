@@ -10,13 +10,13 @@ export type FilterTriggerProps = Omit<IconButtonProps, 'children'> & {
 
 /** Filled funnel, and "active" in its name, while the column is filtered. */
 export const FilterTrigger = forwardRef<HTMLButtonElement, FilterTriggerProps>(
-  ({ active, label, ...props }, ref) => (
+  ({ active, label }, ref) => (
     <IconButton
       size="xs"
       ref={ref}
-      variant="ghost"
+      variant="base"
+      look="ghost"
       aria-label={active ? `Filter ${label} (active)` : `Filter ${label}`}
-      {...props}
     >
       <Filter fill={active ? 'currentColor' : 'none'} />
     </IconButton>

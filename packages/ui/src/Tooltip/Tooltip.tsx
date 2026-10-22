@@ -2,23 +2,11 @@
 
 import { classNames } from '@packages/styles/classNames';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import React, { type ReactElement, type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 import { tooltip as tooltipClassName } from './Tooltip.css';
 
-export type TooltipProps = {
-  /**
-   * What the tooltip shows. Entries of an array stack 8px apart, in order;
-   * empty entries are skipped. With nothing to show, it never opens.
-   */
-  tooltip?: ReactNode | ReactNode[];
-  /** The trigger: an element, or a component that passes its props to one. */
-  children: ReactElement;
-  side?: TooltipPrimitive.TooltipContentProps['side'];
-  align?: TooltipPrimitive.TooltipContentProps['align'];
-  portal?: boolean;
-  className?: string;
-};
+import type { TooltipProps } from './Tooltip.types';
 
 const isShown = (entry: ReactNode) =>
   entry !== undefined && entry !== null && entry !== false && entry !== '';

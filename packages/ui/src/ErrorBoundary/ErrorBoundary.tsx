@@ -2,24 +2,17 @@
 
 import { classNames } from '@packages/styles/classNames';
 import { CircleAlert } from 'lucide-react';
-import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import React, { Component, type ErrorInfo } from 'react';
 
 import {
   fallback as fallbackClassName,
   fallbackIcon,
 } from './ErrorBoundary.css';
 
-export type ErrorBoundaryProps = {
-  children: ReactNode;
-  /**
-   * Rendered instead of `children` once something below throws; `null`
-   * renders nothing. Without it, the boundary shows "Something went wrong."
-   */
-  fallback?: ReactNode;
-  onError?: (error: Error, info: ErrorInfo) => void;
-};
-
-type ErrorBoundaryState = { failed: boolean };
+import type {
+  ErrorBoundaryProps,
+  ErrorBoundaryState,
+} from './ErrorBoundary.types';
 
 /**
  * Shows a fallback in place of `children` once they throw while rendering.

@@ -1,0 +1,17 @@
+{
+  "name": "recipes",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/recipes/src",
+  "projectType": "library",
+  "tags": ["layer:5-recipes"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "tsc -p tsconfig.json",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

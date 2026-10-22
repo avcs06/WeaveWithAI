@@ -3,63 +3,55 @@
 import { classNames } from '@packages/styles/classNames';
 import React, { forwardRef } from 'react';
 
-import { Button, type ButtonProps } from '../Button';
+// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- Button without its look, for controls that bring their own.
+import { ButtonBase } from '../Button/Button';
 import {
   Selectable,
   SelectableGroup,
-  type SelectableGroupProps,
-  type SelectableProps,
   useSelectableGroup,
   useSelectableVariant,
 } from '../Selectable';
-import { useIsDisabled } from '../utils';
+import { createLook, useIsDisabled } from '../utils';
 
 import { chipRecipe } from './Chip.recipes.css';
 
-import type { RecipeVariants } from '@vanilla-extract/recipes';
+import type { ChipGroupProps, ChipProps } from './Chip.types';
 
-type ChipRecipeVariants = NonNullable<RecipeVariants<typeof chipRecipe>>;
-
-export type ChipProps = Omit<
-  ButtonProps,
-  'variant' | 'size' | 'radius' | 'isPlain' | 'overrideTokens' | 'value'
-> &
-  Omit<ChipRecipeVariants, 'disabled'> &
-  Pick<
-    SelectableProps,
-    'value' | 'active' | 'defaultActive' | 'onActiveChange'
-  >;
+const chipLook = createLook(chipRecipe);
 
 export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
   (
     {
       variant,
-      selection,
       size,
-      radius,
+      look,
       value,
       active,
       defaultActive = false,
       onActiveChange,
+      disabled,
+      disabledWithReason,
       className,
       ...props
     },
     ref,
   ) => {
     const { disabled: groupDisabled } = useSelectableGroup();
+    const { selection, ...lookVariants } = chipLook(look);
     const selectableVariant = useSelectableVariant(selection);
 
-    const { isDisabled } = useIsDisabled({
-      ...props,
-      disabled: props.disabled || groupDisabled,
-    });
+    // A disabled group disables its chips; a chip's own reason still shows.
+    const disabledState = disabledWithReason
+      ? { disabledWithReason }
+      : { disabled: disabled || groupDisabled };
+
+    const { isDisabled } = useIsDisabled({ ...props, ...disabledState });
 
     const chipClassName = chipRecipe({
       variant,
-      selection: selectableVariant,
       size,
-      radius,
-      disabled: isDisabled,
+      ...lookVariants,
+      selection: selectableVariant,
     });
 
     return (
@@ -70,11 +62,10 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
         onActiveChange={onActiveChange}
         disabled={isDisabled}
       >
-        <Button
+        <ButtonBase
           ref={ref}
-          isPlain
           {...props}
-          disabled={isDisabled}
+          {...disabledState}
           className={classNames(chipClassName, className)}
         />
       </Selectable>
@@ -82,8 +73,6 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
   },
 );
 Chip.displayName = 'Chip';
-
-export type ChipGroupProps = SelectableGroupProps;
 
 export const ChipGroup = forwardRef<HTMLDivElement, ChipGroupProps>(
   (props, ref) => <SelectableGroup ref={ref} {...props} />,

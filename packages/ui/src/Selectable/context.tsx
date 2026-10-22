@@ -1,11 +1,11 @@
 import { createContext } from '@packages/utils/state';
 
-export type SelectableGroupContextValue = {
-  mode?: 'single' | 'multiple';
-  values?: string[];
-  disabled?: boolean;
-  onToggle?: (value: string) => void;
-};
+import type { SelectableGroupContextValue } from './Selectable.types';
 
 export const [SelectableGroupProvider, useSelectableGroup] =
-  createContext<SelectableGroupContextValue>({});
+  createContext<SelectableGroupContextValue>({
+    mode: undefined,
+    values: undefined,
+    disabled: undefined,
+    onToggle: undefined,
+  });

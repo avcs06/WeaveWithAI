@@ -17,11 +17,15 @@ export const createStoreContext = <T,>(
 ) => {
   const StoreContext = createContext<StoreContextProps<T> | null>(null);
 
+  const createInstance = () => {
+    const useStore = createStore();
+    return { useStore, store: utilifyStore(useStore) };
+  };
+
   const StoreProvider = ({ children }: { children: ReactNode }) => {
-    const [{ useStore, store }] = useState(() => {
-      const useStore = createStore();
-      return { useStore, store: utilifyStore(useStore) };
-    });
+    // By reference: the React Compiler moves an inline initializer out of
+    // this closure, where `createStore` isn't defined.
+    const [{ useStore, store }] = useState(createInstance);
 
     return (
       <StoreContext.Provider value={{ useStore, store }}>

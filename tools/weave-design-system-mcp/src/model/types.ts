@@ -165,8 +165,6 @@ export interface DesignSystem {
   recipe(name: string): Recipe | undefined;
   /** Every recipe's name. */
   recipes(): string[];
-  /** The project's rules for agents, when the config names a brief. */
-  brief(): string | undefined;
   /** Ranked token search across name, group, reference and value — for "is there a token for X?" */
   searchTokens(query: string, limit?: number): SearchHit[];
   /** Ranked component search across name, description, category and prop names — for "is there a component for X?" */

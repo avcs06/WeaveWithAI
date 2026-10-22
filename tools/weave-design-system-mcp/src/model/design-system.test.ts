@@ -23,7 +23,6 @@ beforeAll(() => {
     ],
     components: ['components/**/*.tsx'],
     recipes: ['components/**/*.recipe.tsx'],
-    brief: 'agent-brief.md',
     configDir: EXAMPLE,
   });
 });
@@ -335,10 +334,6 @@ describe('recipes', () => {
 
   it('never lists a recipe as a component', () => {
     expect(system.components().map((c) => c.name)).not.toContain('ButtonRecipe');
-  });
-
-  it('reads the brief', () => {
-    expect(system.brief()).toContain("Get a component's recipe before using it");
   });
 });
 
