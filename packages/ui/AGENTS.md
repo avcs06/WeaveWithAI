@@ -36,7 +36,7 @@ Instead, a disabled element:
 Disabled props, shared by controls:
 
 - `disabled`, `readOnly` and `loading` all make the control disabled. `disableWhileLoading={false}` keeps a loading control pressable, like a button that both starts and stops a task.
-- `disabledReason`, `readOnlyReason` and `loadingReason` give the message shown in the tooltip. A reason on its own also disables the control.
+- `disabledWithReason`, `readOnlyWithReason` and `loadingWithReason` give the message shown in the tooltip. A reason on its own also disables the control.
 - When several apply, the message comes from the first that applies: disabled, then read-only, then loading.
 - The message shows under any regular tooltip the control has.
 

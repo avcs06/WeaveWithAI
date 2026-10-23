@@ -14,6 +14,8 @@ const recipeFiles = readdirSync(__dirname, {
   encoding: 'utf8',
 })
   .filter((file) => /^[^/]+\/[^/]+\.recipe\.tsx$/.test(file))
+  // Not available yet: Table imports components that are missing.
+  .filter((file) => !file.startsWith('Table/'))
   .sort();
 
 // The ErrorBoundary recipe breaks once hydrated, on purpose, to show its

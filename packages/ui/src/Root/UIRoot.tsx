@@ -7,8 +7,9 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import React from 'react';
 
 import { ErrorBoundary } from '../ErrorBoundary';
-// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
-import { ToastQueue } from '../Toast/ToastQueue';
+// Not available yet: Toast is missing.
+// // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
+// import { ToastQueue } from '../Toast/ToastQueue';
 
 export const UIRoot = ({ children }: { children: React.ReactNode }) => {
   const lightThemeClass = getThemeClass('light');
@@ -39,7 +40,7 @@ export const UIRoot = ({ children }: { children: React.ReactNode }) => {
       <body>
         <TooltipPrimitive.Provider delayDuration={200}>
           <ErrorBoundary>{children}</ErrorBoundary>
-          <ToastQueue />
+          {/* <ToastQueue /> */}
         </TooltipPrimitive.Provider>
       </body>
     </html>
