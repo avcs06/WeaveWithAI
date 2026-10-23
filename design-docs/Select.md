@@ -39,7 +39,6 @@ type SelectProps = FormFieldOwnProps &
       selected: SelectOptionData[];
       open: boolean;
     }) => ReactNode;
-    menuClassName?: string;
     onBlur?: () => void;
   };
 

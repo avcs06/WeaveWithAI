@@ -18,18 +18,14 @@ type DropdownProps = DisabledState & {
   onOpenChange?: (open: boolean) => void;
   modal?: boolean;
   align?: 'start' | 'end';
-  header?: ReactNode;
-  footer?: ReactNode;
-  menuClassName?: string;
-  'aria-label'?: string;
 };
 ```
 
 `DisabledState` is the one from `packages/ui/src/utils`.
 
 `children` is always one trigger element that forwards refs, events and
-attributes. `aria-label` labels the menu content; without it, the content is
-named by the trigger. `modal` defaults to `true` and `align` to `end`.
+attributes. The menu content is named by the trigger. `modal` defaults to
+`true` and `align` to `end`.
 
 `menu` is the menu's content, rendered as authored inside the Menu shell. To
 render a list, map it to Dropdown parts in `menu`. Fragments and wrapper
@@ -51,13 +47,9 @@ type DropdownGroupProps = MenuGroupProps & {
 
 type DropdownSeparatorProps = MenuSeparatorProps;
 
-type DropdownSearchProps = InputProps;
-
 type DropdownSubMenuProps = {
   children: ReactElement<DropdownItemProps, typeof Dropdown.Item>;
   menu: ReactNode;
-  header?: ReactNode;
-  footer?: ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -72,22 +64,20 @@ definition of the look.
   the row's content; the icons, add-ons, `selected` and `nested` are
   MenuItem's) and adds `onSelect`, the disabled state, and `textValue`.
   `textValue` is the text typeahead matches; it is required when the children
-  aren't plain text, and `aria-label` names such a row. Icons are decorative;
-  custom content holds no other interactive controls.
+  aren't plain text. Icons are decorative; custom content holds no other
+  interactive controls.
   A `role` replaces `menuitem` (Select presents its rows as `option`s); keyboard
   behavior stays the same.
 - `Dropdown.Group` is a `MenuGroup`. It takes every MenuGroup prop and adds
   `label`, drawn as a `MenuLabel` that labels the group.
 - `Dropdown.Separator` is a `MenuSeparator`.
-- `Dropdown.Search` is a [SearchInput](Input.md) inside the menu.
 - A submenu's content is a `Menu`.
 
 Item and SubMenu forward refs to their interactive rows; Group and Separator
 forward refs to their DOM elements. Use these parts, not bare Menu parts, inside
 a Dropdown: a bare `MenuItem` has the look but no menu behavior.
 
-SubMenu: `children` is the trigger and `menu` is the nested content. `header`
-and `footer` go in the submenu's Menu, as the root's do.
+SubMenu: `children` is the trigger and `menu` is the nested content.
 
 - The trigger must be exactly one `Dropdown.Item`. Anything else throws an error
   in development saying the SubMenu trigger has to be a `Dropdown.Item`.
@@ -107,11 +97,6 @@ Menus support roving focus, typeahead, pointer interaction, Escape and outside
 dismissal, and focus restoration. Activating an enabled item
 closes the menu unless its `onSelect` event is default-prevented; `onSelect`
 runs exactly once.
-
-Without a `Dropdown.Search`, typeahead works as usual. With one, keys typed in
-it work as in a text field instead of driving typeahead and keyboard
-navigation, and moving between it and the items by keyboard needs to be
-handled.
 
 Submenus keep pointer grace and keyboard entry and exit. Escape and arrow
 keys return focus correctly through nested menus. Submenus stay within the
@@ -163,9 +148,7 @@ const actions: readonly Action[] = [
               </Dropdown.Item>
             </Dropdown.Group>
             <Dropdown.Separator />
-            <Dropdown.Item disabledWithReason="You need permission to invite people">
-              Invite people
-            </Dropdown.Item>
+            <Dropdown.Item disabledWithReason="You need permission to invite people">Invite people</Dropdown.Item>
           </>
         }
       >

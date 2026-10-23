@@ -23,14 +23,10 @@ Exported from `@packages/ui/Menu`:
 | `MenuSeparator` | a line between groups |
 
 Every part forwards its ref and every other prop to its root element, so a Radix
-part renders it with `asChild`. Roles, ARIA attributes and data attributes
-come from the Radix part; Menu adds none and overrides none.
+part renders it with `asChild`.
 
 ```ts
-type MenuProps = ComponentPropsWithRef<'div'> & {
-  header?: ReactNode;
-  footer?: ReactNode;
-};
+type MenuProps = ComponentPropsWithRef<'div'>;
 
 type MenuItemProps = ComponentPropsWithRef<'div'> &
   Pick<IconAddonProps, 'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn'> & {
@@ -57,11 +53,7 @@ type MenuSeparatorProps = ComponentPropsWithRef<'div'>;
 - Thin `base.divider` ring plus a drop shadow, `boxShadow.dropdown` by default.
   A surface using Menu, such as a later Popover, can give it another shadow
   without changing Menu.
-- Order: header, list, footer. Header and footer are optional and stay outside
-  the list. The list scrolls within the shell's max height, and the header and
-  footer stay in view.
-- A 1px `base.divider` line below the header and above the footer, only when the
-  list has content; vertical margin 4px.
+- The list scrolls within the shell's max height.
 - The layer (`zIndex.dropdown`) and placement belong to the component using Menu.
 
 ## Rows
@@ -94,6 +86,4 @@ type MenuSeparatorProps = ComponentPropsWithRef<'div'>;
 
 ## Customization
 
-Following AGENTS.md: the header, list, footer and each row's parts carry
-`data-slot`. Menu is portalled by the components that use it, so they expose its
-class as a `menuClassName` prop.
+Following AGENTS.md: the list and each row's parts carry `data-slot`.

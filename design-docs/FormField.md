@@ -79,25 +79,19 @@ rest are FormField's. So this is the whole wiring:
 ```
 
 - The control's id is `id` when given, otherwise a generated one. The label's
-  `htmlFor` is that id, and `aria-labelledby` points at the label, so controls
-  that aren't native inputs are labelled too.
+  `htmlFor` is that id.
 - The control's name is `name` when given, otherwise the `label`, then the
   `placeholder`, then that same id.
-- `required` shows the `*` after the label and sets `aria-required` on the
-  control.
-- `error` sets the error status and `aria-invalid` on the control. It appears
+- `required` shows the `*` after the label.
+- `error` sets the error status. It appears
   when validation fails and goes away when the value becomes valid, because
   `Controller` passes the current error.
-- `aria-describedby` on the control lists the help text's id and the status
-  message's id, for whichever is shown.
 - `ref` reaches the control's focusable element, so the form focuses the first
   invalid field on submit.
 - `onBlur` is the control's own and fires when focus leaves the control.
 - `disabled`, `readOnly` and `loading`, with or without a reason, disable the
   control following AGENTS.md, with the reason in the box's tooltip. A disabled
   control blocks its own changes.
-- No native `required`, `pattern` or other constraint attributes:
-  react-hook-form does all validation, and the browser never shows its own.
 
 ## Layout
 
