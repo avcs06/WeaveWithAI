@@ -1,5 +1,4 @@
 import { tokens } from '@packages/styles/tokens.css';
-import { borderShadow } from '@packages/styles/utils';
 import { keyframes, style } from '@vanilla-extract/css';
 
 const enterFrom = (x: string, y: string) =>
@@ -29,9 +28,13 @@ export const tooltip = style({
   lineHeight: tokens.lineHeight.caption,
   overflowWrap: 'anywhere',
   userSelect: 'none',
+  // A modal menu turns pointer events off on the body; resting on the
+  // tooltip must still keep it open.
+  pointerEvents: 'auto',
   color: colors.accentFg,
   background: colors.accentBg,
-  boxShadow: `${borderShadow(colors.border)}, ${tokens.boxShadow.tooltip}`,
+  // No border: a light line around the dark surface reads as a focus ring.
+  boxShadow: tokens.boxShadow.tooltip,
   '@media': {
     '(prefers-reduced-motion: no-preference)': {
       selectors: {

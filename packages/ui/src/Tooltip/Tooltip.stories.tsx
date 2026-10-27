@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button } from '../Button';
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -35,7 +35,6 @@ export default meta;
 type Story = StoryObj;
 
 const TooltipStories = () => {
-  const [portal, setPortal] = useState(true);
   const [reason, setReason] = useState(true);
 
   return (
@@ -84,16 +83,12 @@ const TooltipStories = () => {
 
       <StorySection title="Features">
         <div className="flex-row-gap-4 flex-wrap">
-          <StorySwitch label="Portal" checked={portal} onChange={setPortal} />
-          <StorySwitch
-            label="Second entry"
-            checked={reason}
-            onChange={setReason}
-          />
+          <Checkbox checked={reason} onCheckedChange={setReason}>
+            Second entry
+          </Checkbox>
         </div>
         <Tooltip
           tooltip={['Saves a draft', reason && 'Offline: saved on this device']}
-          portal={portal}
         >
           <Button variant="base">Save</Button>
         </Tooltip>

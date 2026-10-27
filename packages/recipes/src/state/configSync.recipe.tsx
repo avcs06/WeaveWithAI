@@ -1,13 +1,35 @@
 /**
  * configSync: components that only collect config. They render nothing: they
  * write their props into the store of the component they configure (the
- * owner), which renders from it. For declarative APIs like
- * `<Table><TableColumn … /></Table>`, so the owner gets its children's
- * settings without reading React children. Pick the hook by what the config
- * is:
- * - `useConfigSync`: settings the owner only reads.
- * - `useValueSync`: a value the owner also changes, controlled or not.
- * - `useStoreSync`: any other write, like registering an item with an action.
+ * owner), which renders from it. For authoring a reusable component with a
+ * declarative API, like `<Tour><TourStep … /></Tour>`, so the owner gets its
+ * children's settings without reading React children. Pick the hook by what
+ * the config is:
+ * - `useConfigSync(key, config)`: settings the owner only reads. They go back
+ *   to their initial values on unmount.
+ * - `useValueSync(value, defaultValue, apply)`: a value the owner also
+ *   changes, controlled or not.
+ * - `useStoreSync(write, deps)`: any other write, like registering an item
+ *   with an action. Undo it on unmount yourself.
+ *
+ * Not for: a page using a component, where the config is props or data (a
+ * `steps` array and a `step` prop); this is for the code of a component whose
+ * users write children. Not for state the children also render (createContext).
+ *
+ * Pitfalls:
+ * - Items are listed in the order they mount, so one that mounts later, like
+ *   a step shown by a condition, lands last: see configOrder.
+ * - The values of a `useConfigSync` config are its deps: pass callbacks
+ *   through `usePersistentCallback`, and memoize objects and arrays.
+ * - A controlled `value` that turns `undefined` applies nothing: the owner
+ *   keeps the last value.
+ * - `apply` and `write` get `initial`, true for the first write: use it to
+ *   tell a starting value from a change made later.
+ * - Make the owner's store with `serverSnapshot: 'current'`, so the server
+ *   render and hydration read what the config components wrote.
+ * - Config components must sit inside the owner's `ConfigSyncProvider`;
+ *   `useConfigSyncContext()` gives `{ store, mounted }` to write a hook of
+ *   your own.
  */
 import { Button } from '@packages/ui/Button';
 import { usePersistentCallback } from '@packages/utils/hooks';
@@ -20,133 +42,150 @@ import {
   useStoreSync,
   useValueSync,
 } from '@packages/utils/state';
-import { type ReactNode, useLayoutEffect, useState } from 'react';
+import React, {
+  type ReactNode,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
-type Field = 'name' | 'date';
-type Column = { field: Field; title: string };
-type Sort = { field: Field; direction: 'asc' | 'desc' };
+// Usage: the patterns to copy.
+type Step = { id: string; title: string; content: ReactNode };
 
-type EventList = {
-  columns: Column[];
-  setColumn: (column: Column) => void;
-  removeColumn: (field: Field) => void;
-  sort: Sort;
-  sortConfig: { controlled: boolean; onChange?: (sort: Sort) => void };
-  applySort: ApplyValue<Sort>;
-  toggleSort: (field: Field) => void;
+type TourStore = {
+  steps: Step[];
+  setStep: (step: Step) => void;
+  removeStep: (id: string) => void;
+  current: string;
+  positionConfig: { controlled: boolean; onChange?: (id: string) => void };
+  applyCurrent: ApplyValue<string>;
+  goTo: (id: string) => void;
 };
 
-const events = [
-  { name: 'Launch party', date: '2026-11-02' },
-  { name: 'Community meetup', date: '2026-10-28' },
-];
-
 /** The owner keeps a store per instance, which its config components write. */
-const [useEventList, useEventListContext, EventListStore] = createStoreContext(
-  () =>
-    createStore<EventList>(
-      (set, get) => ({
-        columns: [],
-        setColumn: (column) =>
-          set(({ columns }) => ({
-            columns: [
-              ...columns.filter(({ field }) => field !== column.field),
-              column,
-            ],
-          })),
-        removeColumn: (field) =>
-          set(({ columns }) => ({
-            columns: columns.filter((column) => column.field !== field),
-          })),
-        sort: { field: 'date', direction: 'asc' },
-        sortConfig: { controlled: false },
-        applySort: (sort) => set({ sort }),
-        // Controlled, the new sort waits for the parent to pass it back.
-        toggleSort: (field) => {
-          const { sort, sortConfig } = get();
-          const ascending = sort.field !== field || sort.direction === 'desc';
-          const next: Sort = { field, direction: ascending ? 'asc' : 'desc' };
+const [useTour, useTourContext, TourProvider] = createStoreContext(() =>
+  createStore<TourStore>(
+    (set, get) => ({
+      steps: [],
+      // A step that changes keeps its place in the list.
+      setStep: (step) =>
+        set(({ steps }) => ({
+          steps: steps.some(({ id }) => id === step.id)
+            ? steps.map((entry) => (entry.id === step.id ? step : entry))
+            : [...steps, step],
+        })),
+      removeStep: (id) =>
+        set(({ steps }) => ({ steps: steps.filter((step) => step.id !== id) })),
+      current: '',
+      positionConfig: { controlled: false },
+      applyCurrent: (id) => set({ current: id }),
+      // Controlled, the new step waits for the parent to pass it back.
+      goTo: (id) => {
+        const { positionConfig } = get();
 
-          if (!sortConfig.controlled) set({ sort: next });
-          sortConfig.onChange?.(next);
-        },
-      }),
-      // The server render reads what the config components wrote, not the
-      // initial state.
-      { serverSnapshot: 'current' },
-    ),
+        if (!positionConfig.controlled) set({ current: id });
+        positionConfig.onChange?.(id);
+      },
+    }),
+    { serverSnapshot: 'current' },
+  ),
 );
 
 /**
- * `useStoreSync`: any write, here an action that registers a column, written
- * again when `field` or `title` change. Undo it on unmount yourself.
+ * `useStoreSync`: any write, here an action that registers a step, written
+ * again when its title or content change.
  */
-const EventColumn = ({ field, title }: Column) => {
-  const { store } = useEventListContext();
+const TourStep = ({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: ReactNode;
+}) => {
+  const { store } = useTourContext();
 
-  useStoreSync(() => store('setColumn')({ field, title }), [field, title]);
-  useLayoutEffect(() => () => store('removeColumn')(field), [store, field]);
+  useStoreSync(
+    () => store('setStep')({ id, title, content: children }),
+    [id, title, children],
+  );
+  useLayoutEffect(() => () => store('removeStep')(id), [store, id]);
 
   return null;
 };
 
-type EventSortProps = {
-  value?: Sort;
-  defaultValue?: Sort;
-  onChange?: (sort: Sort) => void;
+type TourPositionProps = {
+  value?: string;
+  defaultValue?: string;
+  onChange?: (id: string) => void;
 };
 
 /**
- * `useValueSync`: a value the owner also changes. `value` is applied whenever
- * it changes; without it, `defaultValue` is applied once. `useConfigSync`:
- * settings the owner only reads, put back to their initial values on
- * unmount. Its values are deps, so the callback is made stable.
+ * `useValueSync`: the step shown, which the owner also changes. `value` is
+ * applied whenever it changes; without it, `defaultValue` is applied once.
+ * `useConfigSync`: how the owner reports a change.
  */
-const EventSort = ({ value, defaultValue, onChange }: EventSortProps) => {
-  const { store } = useEventListContext();
+const TourPosition = ({ value, defaultValue, onChange }: TourPositionProps) => {
+  const { store } = useTourContext();
   const stableOnChange = usePersistentCallback(onChange);
 
-  useConfigSync('sortConfig', {
+  useConfigSync('positionConfig', {
     controlled: value !== undefined,
     onChange: stableOnChange,
   });
-  useValueSync(value, defaultValue, store('applySort'));
+  useValueSync(value, defaultValue, store('applyCurrent'));
 
   return null;
 };
 
-const EventRows = () => {
-  const columns = useEventList('columns');
-  const { field, direction } = useEventList('sort');
-  const toggleSort = useEventList('toggleSort');
+/** The owner renders from its store: the step, and the controls to move. */
+const TourView = ({ label }: { label: string }) => {
+  const steps = useTour('steps');
+  const current = useTour('current');
+  const goTo = useTour('goTo');
+  const title = useRef<HTMLHeadingElement>(null);
 
-  const order = direction === 'asc' ? 1 : -1;
-  const sorted = [...events].sort(
-    (a, b) => a[field].localeCompare(b[field]) * order,
-  );
+  const found = steps.findIndex(({ id }) => id === current);
+  const index = Math.max(found, 0);
+  const step = steps[index];
+  const previous = steps[index - 1];
+  const next = steps[index + 1];
+
+  const move = (target: Step) => {
+    goTo(target.id);
+    title.current?.focus();
+  };
+
+  if (!step) return null;
 
   return (
-    <div className="flex-col-gap-2">
+    <section aria-label={label} className="flex-col-gap-2 items-start">
+      <p role="status">
+        Step {index + 1} of {steps.length}
+      </p>
+      <h3 ref={title} tabIndex={-1}>
+        {step.title}
+      </h3>
+      <div>{step.content}</div>
       <div className="flex-row-gap-2">
-        {columns.map((column) => (
-          <Button
-            key={column.field}
-            variant="base"
-            look="ghost"
-            onClick={() => toggleSort(column.field)}
-          >
-            {column.title}
-          </Button>
-        ))}
+        <Button
+          variant="base"
+          {...(previous
+            ? {}
+            : { disabledWithReason: 'This is the first step' })}
+          onClick={() => previous && move(previous)}
+        >
+          Back
+        </Button>
+        <Button
+          {...(next ? {} : { disabledWithReason: 'This is the last step' })}
+          onClick={() => next && move(next)}
+        >
+          Next
+        </Button>
       </div>
-      <ul>
-        {sorted.map((event) => (
-          <li key={event.name}>
-            {columns.map((column) => event[column.field]).join(' · ')}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </section>
   );
 };
 
@@ -154,48 +193,67 @@ const EventRows = () => {
  * Config components go before the content: while the owner mounts they write
  * during render, so the content's first render already reads their values.
  */
-const EventListContent = ({ children }: { children: ReactNode }) => {
-  const { useStore } = useEventListContext();
+const TourContent = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) => {
+  const { useStore } = useTourContext();
   return (
     <ConfigSyncProvider useStore={useStore}>
       {children}
-      <EventRows />
+      <TourView label={label} />
     </ConfigSyncProvider>
   );
 };
 
-const EventListView = ({ children }: { children: ReactNode }) => (
-  <EventListStore>
-    <EventListContent>{children}</EventListContent>
-  </EventListStore>
+const Tour = ({ label, children }: { label: string; children: ReactNode }) => (
+  <TourProvider>
+    <TourContent label={label}>{children}</TourContent>
+  </TourProvider>
 );
 
-/** Uncontrolled: starts from `defaultValue`, then the owner keeps the sort. */
-const UncontrolledSort = () => (
-  <EventListView>
-    <EventColumn field="name" title="Name" />
-    <EventColumn field="date" title="Date" />
-    <EventSort defaultValue={{ field: 'name', direction: 'desc' }} />
-  </EventListView>
+/** Uncontrolled: starts from `defaultValue`, then the tour keeps the step. */
+const VenueTour = () => (
+  <Tour label="Venue tour">
+    <TourStep id="doors" title="Doors">
+      Doors open at 18:00.
+    </TourStep>
+    <TourStep id="hall" title="Main hall">
+      The hall seats 400.
+    </TourStep>
+    <TourPosition defaultValue="hall" />
+  </Tour>
 );
 
-/** Controlled: the sort lives in the parent, which `onChange` tells. */
-const ControlledSort = () => {
-  const [sort, setSort] = useState<Sort>({ field: 'date', direction: 'asc' });
+/** Controlled: the step lives in the parent, which `onChange` tells. */
+const OrganizerTour = () => {
+  const [step, setStep] = useState('doors');
   return (
-    <EventListView>
-      <EventColumn field="name" title="Name" />
-      <EventColumn field="date" title="Date" />
-      <EventSort value={sort} onChange={setSort} />
-    </EventListView>
+    <div className="flex-col-gap-2">
+      <Tour label="Organizer tour">
+        <TourStep id="doors" title="Doors">
+          Check the guest list at the doors.
+        </TourStep>
+        <TourStep id="hall" title="Main hall">
+          Brief the stage crew.
+        </TourStep>
+        <TourPosition value={step} onChange={setStep} />
+      </Tour>
+      <Button variant="base" onClick={() => setStep('doors')}>
+        Restart tour
+      </Button>
+    </div>
   );
 };
 
 export default function ConfigSyncRecipe() {
   return (
     <div className="flex-col-gap-6">
-      <UncontrolledSort />
-      <ControlledSort />
+      <VenueTour />
+      <OrganizerTour />
     </div>
   );
 }

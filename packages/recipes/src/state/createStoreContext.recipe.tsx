@@ -1,49 +1,83 @@
 /**
  * createStoreContext: a store for each instance of a component, shared by
- * the parts inside it. For a component whose parts read and update the same
- * state, when a page can show several of it: a wizard, an editor, a table.
- * Each provider makes its own store.
+ * the parts inside it. Returns `[useStore, useStoreContext, StoreProvider]`:
+ * `useStore` subscribes like a createStore hook, `useStoreContext()` gives
+ * `{ store, useStore }` for reading and writing without subscribing.
+ * For a component whose parts read and update the same state, when a page
+ * can show several of it: a wizard, an editor, a table. Each provider makes
+ * its own store.
+ *
+ * Not for: state one component owns (useState), a value that is only passed
+ * down (createContext), or state shared across the whole app (createStore).
+ *
+ * Pitfalls:
+ * - The hooks throw outside their provider.
+ * - The store is made once per provider mount, from the props the provider
+ *   gets on its first render: a later change of those props doesn't reach
+ *   it. A new `key` on the provider starts a new store, which is how to reset
+ *   it or start it from new props.
+ * - Subscribe to the fields a part renders. For a handler that needs the
+ *   state when it runs, read it with `store`, so the part doesn't re-render
+ *   with every change.
  */
 import { Button } from '@packages/ui/Button';
 import { createStore, createStoreContext } from '@packages/utils/state';
+import React, { useState } from 'react';
 
-const lastStep = 3;
+// Usage: the patterns to copy.
+type Wizard = {
+  step: number;
+  lastStep: number;
+  attendees: string[];
+  next: () => void;
+  back: () => void;
+  addAttendee: (name: string) => void;
+};
 
-type Wizard = { step: number; next: () => void; back: () => void };
-
-const [useWizard, useWizardContext, WizardProvider] = createStoreContext(() =>
-  createStore<Wizard>((set) => ({
-    step: 1,
-    next: () => set(({ step }) => ({ step: step + 1 })),
-    back: () => set(({ step }) => ({ step: step - 1 })),
-  })),
+const [useWizard, useWizardContext, WizardProvider] = createStoreContext(
+  ({ attendees = [] }: { attendees?: string[] }) =>
+    createStore<Wizard>((set) => ({
+      step: 1,
+      lastStep: 3,
+      attendees,
+      next: () =>
+        set(({ step, lastStep }) => ({ step: Math.min(step + 1, lastStep) })),
+      back: () => set(({ step }) => ({ step: Math.max(step - 1, 1) })),
+      addAttendee: (name) =>
+        set(({ attendees }) => ({ attendees: [...attendees, name] })),
+    })),
 );
 
 /** Each part subscribes to its own instance's fields. */
 const StepLabel = () => (
-  <p>
-    Step {useWizard('step')} of {lastStep}
+  <p role="status">
+    Step {useWizard('step')} of {useWizard('lastStep')}
   </p>
 );
 
-/** In a handler, `store` reads this instance without subscribing to it. */
+/** The buttons follow the step; the limits live in the store's actions. */
 const WizardActions = () => {
-  const { store } = useWizardContext();
   const step = useWizard('step');
+  const lastStep = useWizard('lastStep');
+  const next = useWizard('next');
+  const back = useWizard('back');
 
   return (
     <div className="flex-row-gap-2">
       <Button
         variant="base"
-        disabledWithReason={step === 1 ? 'This is the first step' : undefined}
-        onClick={() => store().back()}
+        {...(step === 1
+          ? { disabledWithReason: 'This is the first step' }
+          : {})}
+        onClick={back}
       >
         Back
       </Button>
       <Button
-        onClick={() => {
-          if (store('step') < lastStep) store('next')(); // or store().next();
-        }}
+        {...(step === lastStep
+          ? { disabledWithReason: 'This is the last step' }
+          : {})}
+        onClick={next}
       >
         Next
       </Button>
@@ -51,21 +85,69 @@ const WizardActions = () => {
   );
 };
 
-const CheckoutWizard = () => (
-  <WizardProvider>
-    <div className="flex-col-gap-2">
-      <StepLabel />
-      <WizardActions />
+/**
+ * `store` reads the whole state in the handler, so this button never
+ * re-renders as the wizard moves.
+ */
+const SaveDraft = () => {
+  const { store } = useWizardContext();
+  const [saved, setSaved] = useState('');
+
+  return (
+    <div className="flex-row-gap-2 items-center">
+      <Button
+        variant="base"
+        onClick={() => {
+          const { step, attendees } = store();
+          setSaved(`Saved at step ${step} with ${attendees.length} attendees`);
+        }}
+      >
+        Save draft
+      </Button>
+      <p role="status">{saved}</p>
     </div>
-  </WizardProvider>
-);
+  );
+};
+
+const AddAttendee = () => {
+  const addAttendee = useWizard('addAttendee');
+  const count = useWizard(({ attendees }) => attendees.length);
+
+  return (
+    <Button variant="base" onClick={() => addAttendee(`Guest ${count + 1}`)}>
+      Add attendee ({count})
+    </Button>
+  );
+};
+
+/**
+ * The provider's props seed the store: here the attendees already chosen.
+ * A new `key` makes a new store: Start over resets the whole wizard.
+ */
+const CheckoutWizard = ({ attendees }: { attendees?: string[] }) => {
+  const [run, setRun] = useState(0);
+
+  return (
+    <WizardProvider key={run} attendees={attendees}>
+      <div className="flex-col-gap-2 items-start">
+        <StepLabel />
+        <WizardActions />
+        <AddAttendee />
+        <SaveDraft />
+        <Button variant="base" onClick={() => setRun(run + 1)}>
+          Start over
+        </Button>
+      </div>
+    </WizardProvider>
+  );
+};
 
 // Two wizards, two stores: each keeps its own step.
 export default function CreateStoreContextRecipe() {
   return (
     <div className="flex-col-gap-6">
       <CheckoutWizard />
-      <CheckoutWizard />
+      <CheckoutWizard attendees={['Ada Lovelace']} />
     </div>
   );
 }
