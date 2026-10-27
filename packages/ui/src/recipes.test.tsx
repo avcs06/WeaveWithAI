@@ -8,12 +8,14 @@ import { renderToString } from 'react-dom/server';
 import { Providers } from './test-utils';
 
 // Every recipe renders on the server and hydrates in the browser, as a page
-// in the app does, without a mismatch or a logged error.
+// in the app does, without a mismatch or a logged error. The scan takes any
+// `.recipe.tsx` at any depth, so a recipe added in a new folder shape is
+// tested too instead of silently skipped.
 const recipeFiles = readdirSync(__dirname, {
   recursive: true,
   encoding: 'utf8',
 })
-  .filter((file) => /^[^/]+\/[^/]+\.recipe\.tsx$/.test(file))
+  .filter((file) => file.endsWith('.recipe.tsx'))
   .sort();
 
 // The ErrorBoundary recipe breaks once hydrated, on purpose, to show its
@@ -61,4 +63,13 @@ describe.each(recipeFiles)('%s', (file) => {
 
 it('finds the recipes', () => {
   expect(recipeFiles.length).toBeGreaterThan(0);
+  // The newest components' recipes are in the scan, not skipped by it.
+  expect(recipeFiles).toEqual(
+    expect.arrayContaining([
+      'Checkbox/Checkbox.recipe.tsx',
+      'Radio/Radio.recipe.tsx',
+      'Textarea/Textarea.recipe.tsx',
+      'ScrollArea/ScrollArea.recipe.tsx',
+    ]),
+  );
 });

@@ -7,12 +7,15 @@ import {
   useStore,
 } from 'zustand';
 import { persist, type PersistOptions } from 'zustand/middleware';
-
-import type { UnknownRecord } from '../types';
+import { useShallow } from 'zustand/react/shallow';
 
 export type StoreSelector<T, U> = (state: T) => U;
 
-/** Subscribes to one field by key, or to what a selector returns. */
+/**
+ * Subscribes to one field by key, or to what a selector returns. The result
+ * compares shallowly: a selector can return an array or object of fields,
+ * but not objects it builds, which are new on every call.
+ */
 export type StoreHook<T> = {
   <const K extends keyof T>(key: K): T[K];
   <U>(selector: StoreSelector<T, U>): U;
@@ -30,7 +33,10 @@ type CreateStoreOptions<T> = {
   /**
    * What the server render and hydration read:
    * - `'initial'`: the initial state (zustand's own hook).
-   * - `'current'`: whatever the store holds now.
+   * - `'current'`: whatever the store holds now. Only for a store made per
+   *   component instance (createStoreContext) and written while rendering:
+   *   on the server a module-level store is shared by every request, and a
+   *   persisted one differs from the server's render.
    */
   serverSnapshot?: 'initial' | 'current';
 };
@@ -40,7 +46,7 @@ const toSelector = <T, U>(keyOrSelector: keyof T | StoreSelector<T, U>) =>
     ? keyOrSelector
     : (state: T) => state[keyOrSelector] as U;
 
-export const createStore = <T extends UnknownRecord>(
+export const createStore = <T extends object>(
   initializer: StateCreator<T>,
   {
     persist: persistOptions,
@@ -58,14 +64,16 @@ export const createStore = <T extends UnknownRecord>(
       )
     : createVanillaStore<T>()(initializer);
 
+  // Shallow, so a selector returning a new array or object of the same
+  // values gives the same snapshot, which `useSyncExternalStore` requires.
   const useInitialSnapshot = <U,>(
     keyOrSelector: keyof T | StoreSelector<T, U>,
-  ) => useStore(store, toSelector(keyOrSelector));
+  ) => useStore(store, useShallow(toSelector(keyOrSelector)));
 
   const useCurrentSnapshot = <U,>(
     keyOrSelector: keyof T | StoreSelector<T, U>,
   ) => {
-    const selector = toSelector(keyOrSelector);
+    const selector = useShallow(toSelector(keyOrSelector));
     const getSnapshot = () => selector(store.getState());
     return useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
   };
@@ -77,7 +85,7 @@ export const createStore = <T extends UnknownRecord>(
 };
 
 /** `createStore` saved to storage under `name`; `keys` limits what is saved. */
-export const createPersistentStore = <T extends UnknownRecord>(
+export const createPersistentStore = <T extends object>(
   initializer: StateCreator<T>,
   name: string,
   keys?: readonly (keyof T)[],
@@ -88,8 +96,9 @@ export type StoreGetter<T> = {
   <const K extends keyof T>(key: K): T[K];
 };
 
-/** Reads the store outside React: `get()` for the state, `get('key')` for one field.
- *  This is not reactive
+/**
+ * Reads the store outside React: `get()` for the state, `get('key')` for one
+ * field. It doesn't subscribe, so nothing re-renders when the state changes.
  */
 export const utilifyStore = <T,>(store: Pick<StoreApi<T>, 'getState'>) =>
   ((key?: keyof T) =>

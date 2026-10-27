@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -8,7 +8,6 @@ import { Link } from './Link';
 import { linkRecipe } from './Link.recipes.css';
 
 import type { LinkProps } from './Link.types';
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const variants = Object.keys(linkRecipe.classNames.variants.variant) as Array<
@@ -28,6 +27,7 @@ type Story = StoryObj;
 const LinkStories = () => {
   const [disabled, setDisabled] = useState(false);
   const [reason, setReason] = useState(false);
+  const [plain, setPlain] = useState(false);
   // A reason replaces plain `disabled`: they can't be set together.
   const disabledState = reason
     ? { disabledWithReason: 'Opens once the event has ended' }
@@ -75,6 +75,23 @@ const LinkStories = () => {
         </div>
       </StorySection>
 
+      <StorySection title="Destinations">
+        <div className="flex-row-gap-4 flex-wrap">
+          <Link
+            href="https://example.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Event website (opens in a new tab)
+          </Link>
+          <Link href="mailto:events@example.com">Email the organizer</Link>
+          <Link href="tel:+15550100">Call the organizer</Link>
+          <Link href="/files/attendance-report.pdf" download>
+            Download attendance report (PDF)
+          </Link>
+        </div>
+      </StorySection>
+
       {/* The child stands in for a router's link, like Next.js's. */}
       <StorySection title="asChild">
         <div className="flex-row-gap-4 flex-wrap">
@@ -89,16 +106,15 @@ const LinkStories = () => {
 
       <StorySection title="Features">
         <div className="flex-row-gap-4 flex-wrap">
-          <StorySwitch
-            label="Disabled"
-            checked={disabled}
-            onChange={setDisabled}
-          />
-          <StorySwitch
-            label="Disabled reason"
-            checked={reason}
-            onChange={setReason}
-          />
+          <Checkbox checked={disabled} onCheckedChange={setDisabled}>
+            Disabled
+          </Checkbox>
+          <Checkbox checked={reason} onCheckedChange={setReason}>
+            Disabled reason
+          </Checkbox>
+          <Checkbox checked={plain} onCheckedChange={setPlain}>
+            Look: plain
+          </Checkbox>
         </div>
         <div className="flex-row-gap-4 flex-wrap">
           {variants.map((variant) => (
@@ -106,6 +122,7 @@ const LinkStories = () => {
               key={variant}
               href="#link"
               variant={variant}
+              look={plain ? 'plain' : undefined}
               {...disabledState}
             >
               Attendance report ({variant})
@@ -113,31 +130,6 @@ const LinkStories = () => {
           ))}
         </div>
       </StorySection>
-
-      {/*
-        Commented out until it loads again: next/link reads `process.env`,
-        which Storybook's Vite build doesn't define. Restoring it takes
-        `import { NextLink } from './auxiliary';`.
-
-      <StorySection title="NextLink">
-        <p className={`${caption} ${mutedText}`}>
-          Link around Next.js&apos;s Link. Outside a Next.js app it navigates
-          like a plain anchor.
-        </p>
-        <div className="flex-row-gap-4 flex-wrap">
-          {variants.map((variant) => (
-            <NextLink
-              key={variant}
-              href="#next-link"
-              variant={variant}
-              {...disabledState}
-            >
-              Attendance report ({variant})
-            </NextLink>
-          ))}
-        </div>
-      </StorySection>
-      */}
     </StoryPage>
   );
 };

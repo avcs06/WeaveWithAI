@@ -21,7 +21,7 @@ export type TableHeaderProps = {
 /** Always visible: it lives outside the body's scroll area. One cell per slot. */
 export const TableHeader = memo(
   ({ viewportRef, slots, rows, rowKey }: TableHeaderProps) => (
-    <Primitives.HeaderViewport ref={viewportRef}>
+    <Primitives.HeaderViewport ref={viewportRef} data-slot="header-viewport">
       <Primitives.Table>
         <TableColumnGroup slots={slots} />
         <Primitives.Header>
@@ -32,7 +32,7 @@ export const TableHeader = memo(
                 case 'reorder':
                   // Header cells need text, not only an aria-label.
                   return (
-                    <Primitives.HeaderCell key={key}>
+                    <Primitives.HeaderCell key={key} data-slot="header-cell">
                       <span className="sr-only">Reorder</span>
                     </Primitives.HeaderCell>
                   );

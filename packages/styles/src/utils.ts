@@ -12,12 +12,16 @@ import {
 // Plain module (not .css.ts) so these functions can be exported and called
 // from .css.ts and .recipes.ts files at build time.
 
-const borderWidth = '0.75px';
+const borderWidth = '1px';
 const disabledMix = '50%';
 
 /** Border drawn inside the element with box-shadow, so it never changes size. */
 export const borderShadow = (color: string) =>
   `0 0 0 ${borderWidth} ${color} inset`;
+
+/** `borderShadow` on the bottom side only; `width` for a heavier line. */
+export const bottomBorderShadow = (color: string, width = borderWidth) =>
+  `0 -${width} 0 0 ${color} inset`;
 
 /**
  * The focus ring in `color`, a control's own variable, to spread into its

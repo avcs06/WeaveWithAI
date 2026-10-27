@@ -3,19 +3,27 @@ import '@packages/styles/global-tailwind.css';
 
 import { fontClasses } from '@packages/styles/fonts';
 import { getThemeClass } from '@packages/styles/theme';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import React from 'react';
 
-import { ErrorBoundary } from '../ErrorBoundary';
-// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
-import { ToastQueue } from '../Toast/ToastQueue';
+import { UIProviders } from './auxiliary';
 
-export const UIRoot = ({ children }: { children: React.ReactNode }) => {
+import type { UIRootProps } from './UIRoot.types';
+
+/**
+ * The app's `<html>` and `<body>`, rendered once, in the root layout: the
+ * global styles, the light or dark theme before first paint and the tooltip
+ * provider. The app puts its own error boundary inside it, around its pages.
+ *
+ * @invalidAlternative html, body, TooltipProvider
+ */
+export const UIRoot = ({ lang = 'en', children }: UIRootProps) => {
   const lightThemeClass = getThemeClass('light');
   const darkThemeClass = getThemeClass('dark');
+  // Reading storage throws where it's blocked; the system theme applies then.
   const systemThemeScript = `
 (() => {
-  const stored = localStorage.getItem('theme-mode');
+  let stored = null;
+  try { stored = localStorage.getItem('theme-mode'); } catch {}
   const isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
   const root = document.documentElement;
   root.classList.remove(isDark ? ${JSON.stringify(lightThemeClass)} : ${JSON.stringify(darkThemeClass)});
@@ -26,7 +34,7 @@ export const UIRoot = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html
-      lang="en"
+      lang={lang}
       // eslint-disable-next-line tailwind-layout/restricted-classes
       className={`${fontClasses} ${lightThemeClass}`}
       data-light-class={lightThemeClass}
@@ -37,10 +45,7 @@ export const UIRoot = ({ children }: { children: React.ReactNode }) => {
         <script dangerouslySetInnerHTML={{ __html: systemThemeScript }} />
       </head>
       <body>
-        <TooltipPrimitive.Provider delayDuration={200}>
-          <ErrorBoundary>{children}</ErrorBoundary>
-          <ToastQueue />
-        </TooltipPrimitive.Provider>
+        <UIProviders>{children}</UIProviders>
       </body>
     </html>
   );

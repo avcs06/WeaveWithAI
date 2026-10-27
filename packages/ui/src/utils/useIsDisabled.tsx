@@ -50,6 +50,12 @@ export const useIsDisabled = ({
   return {
     isLoading,
     isDisabled: shouldDisable,
+    // Only read-only: a field's value can still be focused, read and copied.
+    isReadOnly:
+      isReadOnly && !isDisabled && !(isLoading && disableWhileLoading),
+    // A reason must be reachable by keyboard, so a control with one keeps its
+    // tab stop; without one it leaves the tab order, as a native one would.
+    isFocusable: !shouldDisable || Boolean(stateTooltip),
     stateTooltip,
   };
 };

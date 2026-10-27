@@ -45,14 +45,13 @@ export const ExpandAllCell = memo(({ rows, rowKey }: ExpandAllCellProps) => {
 
   const label = allExpanded ? 'Collapse all rows' : 'Expand all rows';
   return (
-    <Primitives.HeaderCell>
+    <Primitives.HeaderCell data-slot="header-cell">
       {/* A block, so the cell centers it; inline, it sits on the baseline. */}
-      <div className="flex-row-gap-0 items-center">
+      <div className="flex-row-gap-0 items-center justify-center">
         <IconButton
           size="xs"
           variant="base"
           look="ghost"
-          aria-label={label}
           tooltip={label}
           disabled={scopeKeys.length === 0}
           onClick={() => store('setRowsExpanded')(scopeKeys, !allExpanded)}

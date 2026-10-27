@@ -7,7 +7,7 @@ import {
 import React, { useId } from 'react';
 
 import { Button, IconButton } from '../../Button';
-import { Select } from '../../Select';
+import { Select, SelectOption } from '../../Select';
 
 import * as styles from './TablePaginationBar.css';
 import { getPageWindow } from './utils';
@@ -37,7 +37,6 @@ const PageButton = ({
     <IconButton
       size="sm"
       variant="base"
-      aria-label={label}
       tooltip={label}
       disabled={disabled}
       onClick={onClick}
@@ -118,21 +117,29 @@ export const PageControls = ({
 
   return (
     // Wraps on narrow screens; the page buttons wrap as one group.
-    <nav aria-label={label} className="flex-row-gap-2 flex-wrap items-center">
+    <nav
+      aria-label={label}
+      data-slot="pagination-nav"
+      className="flex-row-gap-2 flex-wrap items-center"
+    >
       <Select
         name={pageSizeName}
         aria-label="Rows per page"
         className={styles.pageSizeSelect}
         disabled={disabled}
+        allowSearch={false}
+        allowClear={false}
         value={String(pageSize)}
         onChange={(value) => value && onPageSizeChange(Number(value))}
-        options={pageSizeOptions.map((option) => ({
-          key: option,
-          type: 'option',
-          label: `${option} / page`,
-          value: String(option),
-        }))}
-      />
+      >
+        {pageSizeOptions.map((option) => (
+          <SelectOption
+            key={option}
+            value={String(option)}
+            label={`${option} / page`}
+          />
+        ))}
+      </Select>
       <div className="flex-row-gap-2 flex-wrap items-center">
         {isFull && (
           <PageButton

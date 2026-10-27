@@ -24,6 +24,13 @@ export const linkRecipe = recipe({
         },
       },
     },
+    plain: {
+      true: {
+        backgroundImage: 'none',
+        selectors: { '&[data-disabled]': { backgroundImage: 'none' } },
+      },
+      false: {},
+    },
   },
-  defaultVariants: { variant: 'default' },
+  defaultVariants: { variant: 'default', plain: false },
 });

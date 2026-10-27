@@ -14,12 +14,11 @@ const SORT_ICONS = {
 const ARIA_SORT = {
   asc: 'ascending',
   desc: 'descending',
-  none: 'none',
 } as const;
 
-/** `aria-sort` for the header cell of a sortable column. */
-export const toAriaSort = (direction?: TableSortDirection) =>
-  ARIA_SORT[direction ?? 'none'];
+/** `aria-sort` for the sorted column's header cell; also its spoken name. */
+export const toAriaSort = (direction: TableSortDirection) =>
+  ARIA_SORT[direction];
 
 export type SortButtonProps = Pick<
   ButtonProps,
@@ -31,6 +30,7 @@ export type SortButtonProps = Pick<
 /** Ghost button with the current sort direction as its right icon. */
 export const SortButton = ({ direction, ...props }: SortButtonProps) => (
   <Button
+    data-slot="sort"
     variant="base"
     look="ghost"
     size="sm"

@@ -1,7 +1,8 @@
 import { classNames } from '@packages/styles/classNames';
-import React, { memo } from 'react';
+import React, { memo, type RefObject, useLayoutEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { Button } from '../../Button';
 import { useGetTableStore, useTableStore } from '../store';
 
 import { PageControls } from './PageControls';
@@ -22,6 +23,48 @@ export type TablePaginationBarProps = {
   dataCount: number;
   mode: TableMode;
   loading: boolean;
+  /** The table's element, which takes focus when the load button goes. */
+  tableRef: RefObject<HTMLElement | null>;
+};
+
+type LoadMoreButtonProps = Pick<
+  TablePaginationBarProps,
+  'loading' | 'tableRef'
+> & {
+  onLoadMore: () => void;
+};
+
+/**
+ * Scrolling loads more rows by itself; this is the keyboard's way. It goes
+ * once every row is loaded, and hands its focus to the table.
+ */
+const LoadMoreButton = ({
+  loading,
+  onLoadMore,
+  tableRef,
+}: LoadMoreButtonProps) => {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // Runs before the button leaves the page, while it can still hold focus.
+  useLayoutEffect(() => {
+    const button = ref.current;
+    const table = tableRef.current;
+    return () => {
+      if (button && button === document.activeElement) table?.focus();
+    };
+  }, [tableRef]);
+
+  return (
+    <Button
+      ref={ref}
+      variant="base"
+      size="sm"
+      loadingWithReason={loading ? 'Loading more rows' : undefined}
+      onClick={onLoadMore}
+    >
+      Load more rows
+    </Button>
+  );
 };
 
 const selectConfig = ({
@@ -34,11 +77,12 @@ const selectConfig = ({
   pageSizeOptions: config?.pageSizeOptions ?? DEFAULT_PAGE_SIZE_OPTIONS,
   totalItems: config?.totalItems ?? infiniteScrollConfig?.totalItems,
   unfilteredTotalItems: config?.unfilteredTotalItems,
+  onLoadMore: infiniteScrollConfig?.onLoadMore,
 });
 
 /**
- * Info on the left; with `Table.Pagination`, page controls on the right,
- * centered to each other.
+ * Info on the left; on the right, page controls with `Table.Pagination`, or
+ * a load more button with `Table.InfiniteScroll`. Centered to each other.
  */
 export const TablePaginationBar = memo(
   ({
@@ -47,6 +91,7 @@ export const TablePaginationBar = memo(
     dataCount,
     mode,
     loading,
+    tableRef,
   }: TablePaginationBarProps) => {
     const isClient = mode === 'client';
     const { store } = useGetTableStore();
@@ -58,6 +103,7 @@ export const TablePaginationBar = memo(
       pageSizeOptions,
       totalItems,
       unfilteredTotalItems,
+      onLoadMore,
     } = useTableStore(useShallow(selectConfig));
     const page = useTableStore('page');
     const filtered = useTableStore(
@@ -75,6 +121,7 @@ export const TablePaginationBar = memo(
 
     return (
       <div
+        data-slot="pagination"
         className={classNames(
           styles.paginationBar,
           'flex-row-gap-3 items-center justify-between flex-wrap px-1.5 py-2',
@@ -107,6 +154,13 @@ export const TablePaginationBar = memo(
             disabled={loading}
             onPageIndexChange={store('setPageIndex')}
             onPageSizeChange={store('setPageSize')}
+          />
+        )}
+        {!isClient && onLoadMore && rowCount < filteredCount && (
+          <LoadMoreButton
+            loading={loading}
+            onLoadMore={onLoadMore}
+            tableRef={tableRef}
           />
         )}
       </div>

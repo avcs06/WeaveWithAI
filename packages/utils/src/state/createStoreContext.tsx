@@ -12,24 +12,25 @@ type StoreContextProps<T> = {
   useStore: StoreStateHook<T>;
 };
 
-export const createStoreContext = <T,>(
-  createStore: () => StoreStateHook<T>,
+export const createStoreContext = <T, P extends object = object>(
+  createStore: (props: P) => StoreStateHook<T>,
 ) => {
   const StoreContext = createContext<StoreContextProps<T> | null>(null);
 
-  const createInstance = () => {
-    const useStore = createStore();
+  const createInstance = (props: P) => {
+    const useStore = createStore(props);
     return { useStore, store: utilifyStore(useStore) };
   };
 
-  const StoreProvider = ({ children }: { children: ReactNode }) => {
-    // By reference: the React Compiler moves an inline initializer out of
-    // this closure, where `createStore` isn't defined.
-    const [{ useStore, store }] = useState(createInstance);
+  /** Makes its store once, from the props of its first render. */
+  const StoreProvider = (props: P & { children: ReactNode }) => {
+    // Bound, not an inline arrow: the React Compiler moves an inline
+    // initializer out of this closure, where `createStore` isn't defined.
+    const [instance] = useState(createInstance.bind(null, props));
 
     return (
-      <StoreContext.Provider value={{ useStore, store }}>
-        {children}
+      <StoreContext.Provider value={instance}>
+        {props.children}
       </StoreContext.Provider>
     );
   };

@@ -1,15 +1,17 @@
 'use client';
 
-import { FROZEN_EMPTY_ARRAY } from '@packages/utils/constants';
-import { useControlledValue } from '@packages/utils/hooks';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import React, { forwardRef } from 'react';
+import React, { type FocusEvent } from 'react';
+
+import { type ControlProps, FormControl } from '../FormControl';
 
 import { SelectableGroupProvider, useSelectableGroup } from './context';
 
 import type {
+  SelectableGroupOwnProps,
   SelectableGroupProps,
+  SelectableGroupState,
   SelectableProps,
   SelectableVariant,
 } from './Selectable.types';
@@ -23,157 +25,238 @@ export const useSelectableVariant = (
   return mode ? modeVariants[mode] : variant;
 };
 
-// Radix toggles on click, which only buttons fire for Space.
-const toggleOnSpace = (event: React.KeyboardEvent<HTMLElement>) => {
-  if (event.key !== ' ' || event.currentTarget instanceof HTMLButtonElement)
-    return;
-  event.preventDefault();
-  event.currentTarget.click();
+// Radix toggles on click, which only a native button fires for Space: on
+// key up, as a button does. A PlainButton child sees the key up handled and
+// doesn't click again.
+const isSpaceOnNonButton = (event: React.KeyboardEvent<HTMLElement>) =>
+  event.key === ' ' && !(event.currentTarget instanceof HTMLButtonElement);
+
+const spaceKeys = {
+  // Space would scroll the page.
+  onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => {
+    if (isSpaceOnNonButton(event)) event.preventDefault();
+  },
+  onKeyUp: (event: React.KeyboardEvent<HTMLElement>) => {
+    if (!isSpaceOnNonButton(event) || event.defaultPrevented) return;
+    event.preventDefault();
+    event.currentTarget.click();
+  },
 };
 
-export const useSelectedValues = (
-  value: string[] | undefined,
-  defaultValue: string[] = FROZEN_EMPTY_ARRAY<string>(),
-  onChange?: (value: string[]) => void,
-) => {
-  const [values, setValues] = useControlledValue(value, defaultValue, onChange);
-
-  const toggle = (item: string) =>
-    setValues(
-      values.includes(item)
-        ? values.filter((selected) => selected !== item)
-        : [...values, item],
-    );
-
-  return [values, toggle] as const;
-};
+function assertGroupItemValue(
+  value: string | undefined,
+): asserts value is string {
+  if (process.env.NODE_ENV === 'production') return;
+  if (value !== undefined) return;
+  throw new Error(
+    'Selectable: each item of a group (CardGroup, ChipGroup, CheckboxGroup, RadioGroup) needs a `value`',
+  );
+}
 
 export const Selectable = ({
-  value = '',
+  value,
   active,
-  defaultActive,
   onActiveChange,
   disabled,
   children,
 }: SelectableProps) => {
-  const { mode, values = [], onToggle } = useSelectableGroup();
+  const { mode, values = [], name, onToggle } = useSelectableGroup();
 
-  const [isActive = false, setIsActive] = useControlledValue(
-    active,
-    defaultActive,
-    onActiveChange,
-  );
+  if (mode) {
+    assertGroupItemValue(value);
 
-  const toggles =
-    active !== undefined ||
-    defaultActive !== undefined ||
-    onActiveChange !== undefined;
-
-  if (mode === 'single') {
-    return (
+    return mode === 'single' ? (
       <RadioGroupPrimitive.Item
         asChild
         value={value}
         disabled={disabled}
-        onKeyDown={toggleOnSpace}
+        {...spaceKeys}
       >
         {children}
       </RadioGroupPrimitive.Item>
-    );
-  }
-
-  if (mode === 'multiple') {
-    return (
+    ) : (
       <CheckboxPrimitive.Root
         asChild
+        name={name}
+        value={value}
         disabled={disabled}
         tabIndex={0}
         checked={values.includes(value)}
         onCheckedChange={() => onToggle?.(value)}
-        onKeyDown={toggleOnSpace}
+        {...spaceKeys}
       >
         {children}
       </CheckboxPrimitive.Root>
     );
   }
 
-  if (!toggles) return children;
+  if (active === undefined) return children;
 
   return (
     <CheckboxPrimitive.Root
       asChild
       disabled={disabled}
       tabIndex={0}
-      checked={isActive}
-      onCheckedChange={(checked) => setIsActive(checked === true)}
-      onKeyDown={toggleOnSpace}
+      checked={active}
+      onCheckedChange={(checked) => onActiveChange?.(checked === true)}
+      {...spaceKeys}
     >
       {children}
     </CheckboxPrimitive.Root>
   );
 };
 
-const SingleGroup = forwardRef<
-  HTMLDivElement,
-  Extract<SelectableGroupProps, { mode?: 'single' }>
->(
-  (
-    { mode: _mode, value: _value, defaultValue, onChange, disabled, ...props },
-    ref,
-  ) => {
-    const [value, setValue] = useControlledValue(
-      _value,
-      defaultValue,
-      onChange,
-    );
+type GroupElementProps = Omit<ControlProps, 'isDisabled' | 'tabIndex'> & {
+  onBlur: (event: FocusEvent<HTMLDivElement>) => void;
+};
 
-    return (
-      <SelectableGroupProvider mode="single" disabled={disabled}>
-        <RadioGroupPrimitive.Root
-          ref={ref}
-          value={value}
-          onValueChange={setValue}
-          disabled={disabled}
-          {...props}
-        />
-      </SelectableGroupProvider>
-    );
-  },
-);
+type GroupRootProps = {
+  group: SelectableGroupOwnProps;
+  element: GroupElementProps;
+  state: SelectableGroupState;
+};
 
-const MultipleGroup = forwardRef<
-  HTMLDivElement,
-  Extract<SelectableGroupProps, { mode: 'multiple' }>
->(
-  (
-    { mode, value: _value, defaultValue, onChange, disabled, ...props },
-    ref,
-  ) => {
-    const [values, onToggle] = useSelectedValues(
-      _value,
-      defaultValue,
-      onChange,
-    );
+// FormControl also merges its box state into these props; a group draws none.
+const GroupRoot = ({ group, element, state }: GroupRootProps) => {
+  if (group.mode === 'multiple') {
+    const { mode, value, onChange, ...props } = group;
+    // A plain group takes no `aria-required`, `aria-invalid` or
+    // `aria-readonly`: its message is in its description, and its items say
+    // they're read-only.
+    const {
+      'aria-required': _required,
+      'aria-invalid': _invalid,
+      'aria-readonly': _readOnly,
+      name,
+      ...attributes
+    } = element;
+    // react-hook-form's value is `undefined` until the form has a default.
+    const values = value ?? [];
 
     return (
       <SelectableGroupProvider
         mode={mode}
         values={values}
-        disabled={disabled}
-        onToggle={onToggle}
+        // Each item's own checkbox submits it; a div takes no name.
+        name={name}
+        {...state}
+        onToggle={(item) =>
+          onChange(
+            values.includes(item)
+              ? values.filter((selected) => selected !== item)
+              : [...values, item],
+          )
+        }
       >
-        <div ref={ref} role="group" {...props} />
+        {/* Focus from its label or a failed submit reads the group's name
+            and message; Tab goes to the items. */}
+        <div {...props} {...attributes} role="group" tabIndex={-1} />
       </SelectableGroupProvider>
     );
-  },
-);
+  }
 
-export const SelectableGroup = forwardRef<HTMLDivElement, SelectableGroupProps>(
-  (props, ref) =>
-    props.mode === 'multiple' ? (
-      <MultipleGroup ref={ref} {...props} />
-    ) : (
-      <SingleGroup ref={ref} {...props} />
-    ),
-);
-SelectableGroup.displayName = 'SelectableGroup';
+  const { mode: _mode, value, onChange, ...props } = group;
+  return (
+    <SelectableGroupProvider mode="single" {...state}>
+      {/* Radix keeps the root's tab stop, which hands focus to the chosen
+          item, else the first. */}
+      <RadioGroupPrimitive.Root
+        {...props}
+        {...element}
+        // react-hook-form's value is `undefined` until the form has a default.
+        value={value ?? ''}
+        onValueChange={onChange}
+        // With a reason its items stay reachable by the arrow keys, and
+        // each blocks its own activation.
+        disabled={Boolean(state.disabled)}
+      />
+    </SelectableGroupProvider>
+  );
+};
+
+/**
+ * The items' group, as a form field: FormControl gives it its label, help
+ * text and message, and `{...field}` from Controller is all it needs.
+ */
+export const SelectableGroup = ({
+  id,
+  name,
+  label,
+  hint,
+  labelRightSlot,
+  helpText,
+  error,
+  warning,
+  success,
+  required,
+  disabled,
+  disabledWithReason,
+  readOnly,
+  readOnlyWithReason,
+  onBlur,
+  ref,
+  'aria-labelledby': ariaLabelledBy,
+  ...group
+}: SelectableGroupProps) => {
+  const leaveGroup = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) onBlur?.();
+  };
+
+  const disabledState =
+    disabledWithReason === undefined ? { disabled } : { disabledWithReason };
+  const readOnlyState =
+    readOnlyWithReason === undefined ? { readOnly } : { readOnlyWithReason };
+
+  return (
+    <FormControl
+      id={id}
+      name={name}
+      label={label}
+      hint={hint}
+      labelRightSlot={labelRightSlot}
+      helpText={helpText}
+      error={error}
+      warning={warning}
+      success={success}
+      required={required}
+      {...disabledState}
+      {...readOnlyState}
+      ref={ref}
+      aria-labelledby={ariaLabelledBy}
+      withControlBox={false}
+    >
+      {({ isDisabled: _isDisabled, tabIndex: _tabIndex, ...controlProps }) => (
+        <GroupRoot
+          group={group}
+          element={{ ...controlProps, onBlur: leaveGroup }}
+          state={{ ...disabledState, ...readOnlyState }}
+        />
+      )}
+    </FormControl>
+  );
+};
+
+/**
+ * An item's state for `useIsDisabled`: its own, and under it its group's. A
+ * disabled or read-only group gives its items its state and reason; an
+ * item's own reason wins.
+ */
+export const useSelectableItemState = ({
+  disabled,
+  disabledWithReason,
+  readOnly,
+  readOnlyWithReason,
+}: SelectableGroupState) => {
+  const group = useSelectableGroup();
+  const disabledReason = disabledWithReason || group.disabledWithReason;
+  const readOnlyReason = readOnlyWithReason || group.readOnlyWithReason;
+
+  return {
+    ...(disabledReason
+      ? { disabledWithReason: disabledReason }
+      : { disabled: disabled || group.disabled }),
+    ...(readOnlyReason
+      ? { readOnlyWithReason: readOnlyReason }
+      : { readOnly: readOnly || group.readOnly }),
+  };
+};

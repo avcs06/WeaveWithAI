@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { usePersistentCallback } from '@packages/utils/hooks';
+import { omit } from 'lodash-es';
 
 import type { TableRowKey } from '../Table.types';
 
@@ -47,6 +48,10 @@ export const useSortableRow = ({
     dragging: isDragging,
     style: { transform: CSS.Translate.toString(transform), transition },
     handleRef: setActivatorNodeRef,
-    handleProps: { ...attributes, ...listeners },
+    // The handle's Button sets these from its own disabled state.
+    handleProps: {
+      ...omit(attributes, ['role', 'tabIndex', 'aria-disabled']),
+      ...listeners,
+    },
   };
 };

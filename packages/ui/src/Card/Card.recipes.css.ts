@@ -110,6 +110,12 @@ export const cardRecipe = recipe({
           [cardBg]: 'transparent',
           [cardBorder]: 'transparent',
         },
+        selectors: {
+          '&[data-clickable]:not([data-disabled]):not([data-state="checked"]):hover':
+            {
+              borderColor: colors.base.border,
+            },
+        },
       },
       false: {},
     },

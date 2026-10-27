@@ -12,6 +12,12 @@ try {
       'The design-system configuration must load components and tokens.',
     );
   }
+  const diagnostics = system.diagnostics();
+  if (diagnostics.length) {
+    throw new Error(
+      `${diagnostics.length} declaration(s) can't be used:\n${diagnostics.map((line) => `  ${line}`).join('\n')}`,
+    );
+  }
   console.log(
     `MCP configuration loaded: ${system.components().length} components, ${system.tokens().length} tokens.`,
   );

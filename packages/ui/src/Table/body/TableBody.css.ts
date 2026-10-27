@@ -24,10 +24,11 @@ export const skeleton = style({
   },
 });
 
-// Scroll anchoring stays off: it would undo scrolling whenever virtualized
-// rows above the view change.
-export const bodyViewport = style({
-  overflowAnchor: 'none',
+// Rows out of date while new ones load. Not `inert`: that would take focus
+// from a control inside them, which is what keeping them mounted saves.
+export const staleRows = style({
+  opacity: 0.5,
+  pointerEvents: 'none',
 });
 
 // Radix scrollbars sit over the scroll area's edges on a transparent track.
@@ -40,4 +41,10 @@ globalStyle(`${bodyScrollArea}:has(> [data-orientation="vertical"])`, {
 });
 globalStyle(`${bodyScrollArea}:has(> [data-orientation="horizontal"])`, {
   paddingBottom: tokens.spacing[3.5],
+});
+
+// Scroll anchoring stays off: it would undo scrolling whenever virtualized
+// rows above the view change.
+globalStyle(`${bodyScrollArea} > [data-slot="viewport"]`, {
+  overflowAnchor: 'none',
 });

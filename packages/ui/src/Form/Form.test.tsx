@@ -11,7 +11,7 @@ import { Controller, useCanSubmitForm, useController } from '.';
 type FieldProps = ComponentProps<'input'> & {
   label: string;
   required?: boolean;
-  error?: string;
+  error?: string | true;
 };
 
 const Field = ({ label, required, error, ...props }: FieldProps) => {

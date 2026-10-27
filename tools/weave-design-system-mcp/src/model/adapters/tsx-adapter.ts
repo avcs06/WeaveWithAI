@@ -1,9 +1,11 @@
-import type { Expression, File, ImportDeclaration, JSXAttribute, JSXOpeningElement } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
+import type { Expression, File, JSXOpeningElement, Node } from '@babel/types';
 
 import type { ComponentContract, DesignSystem, Finding, Rule, TailwindPolicy } from '../types.js';
 import { traverse } from './ast.js';
 import * as classNameAdapter from './classname-adapter.js';
 import * as stylesAdapter from './styles-adapter.js';
+import { moduleReference, type ModuleReference } from './tsx/modules.js';
 import { fieldOutsideController } from './tsx/rules/field-outside-controller.js';
 import {
   invalidAlternativeElement,
@@ -14,24 +16,36 @@ import { manualFormState } from './tsx/rules/manual-form-state.js';
 import { unknownVariant } from './tsx/rules/unknown-variant.js';
 import { unlinkedControllerField } from './tsx/rules/unlinked-controller-field.js';
 
-export { buildInvalidAlternativeOwners, type InvalidAlternativeOwners } from './tsx/rules/invalid-alternative.js';
+export {
+  buildInvalidAlternativeOwners,
+  type InvalidAlternativeOwners,
+} from './tsx/rules/invalid-alternative.js';
 
-/** One prop on an element: its literal value where it has one, and the attribute to point a finding at. */
+/** One prop on an element: the literals it can take, and the node to point a finding at. */
 export interface JsxAttribute {
+  /** Its string literal, from `prop="x"` or `prop={"x"}`. */
   value: string | undefined;
-  node: JSXAttribute;
+  /** Every literal it can take: a string, number or boolean as written, an expression-free template, or either branch of a conditional. */
+  values: string[];
+  /** Whether `values` is all it can take, with no part computed at runtime. */
+  complete: boolean;
+  node: Node;
 }
 
-/** What an element rule sees: one element whose tag is a plain identifier (`button`, `Button` — not `Menu.Item`). */
+/** What an element rule sees: one element, named by an identifier (`button`, `Button`) or a member (`Form.Item`). */
 export interface JsxElement {
   node: JSXOpeningElement;
   tag: string;
   /** The design-system component the tag names, if any. */
   component?: ComponentContract;
+  /** Its props, including the keys of a spread object literal (`{...{ role: 'menu' }}`). */
   attributes: Map<string, JsxAttribute>;
+  /** Whether it spreads props that can't be read (`{...props}`), so any attribute may be set. */
+  openSpread: boolean;
   /** The classes its `className` could produce, when it has one. */
   classes?: Set<string>;
   owners: InvalidAlternativeOwners;
+  designSystem: boolean;
   filePath?: string;
 }
 
@@ -41,11 +55,12 @@ export interface JsxFile {
   designSystem: boolean;
 }
 
-/** What an import rule sees: one import that reaches runtime. */
-export interface JsxImport {
-  node: ImportDeclaration;
+/** What an import rule sees: one place the file brings in a module at runtime, with the exports it uses. */
+export interface JsxImport extends ModuleReference {
   owners: InvalidAlternativeOwners;
   designSystem: boolean;
+  /** A file the config lets import what other components supersede. */
+  importException: boolean;
   filePath?: string;
 }
 
@@ -78,17 +93,74 @@ function literalAttrValue(attr: JSXOpeningElement['attributes'][number]): string
   return undefined;
 }
 
-function readAttributes(node: JSXOpeningElement): Map<string, JsxAttribute> {
-  const attributes = new Map<string, JsxAttribute>();
-  for (const attr of node.attributes) {
-    if (attr.type !== 'JSXAttribute' || attr.name.type !== 'JSXIdentifier') continue;
-    attributes.set(attr.name.name, { value: literalAttrValue(attr), node: attr });
+/** The literals an expression can evaluate to, and whether those are all. */
+function literals(node: Node): Pick<JsxAttribute, 'values' | 'complete'> {
+  switch (node.type) {
+    case 'StringLiteral':
+    case 'NumericLiteral':
+    case 'BooleanLiteral':
+      return { values: [String(node.value)], complete: true };
+    case 'TemplateLiteral':
+      return node.expressions.length === 0
+        ? { values: [node.quasis[0]?.value.cooked ?? ''], complete: true }
+        : { values: [], complete: false };
+    case 'ConditionalExpression': {
+      const [consequent, alternate] = [literals(node.consequent), literals(node.alternate)];
+      return {
+        values: [...consequent.values, ...alternate.values],
+        complete: consequent.complete && alternate.complete,
+      };
+    }
+    default:
+      return { values: [], complete: false };
   }
-  return attributes;
+}
+
+function readAttributes(node: JSXOpeningElement): Pick<JsxElement, 'attributes' | 'openSpread'> {
+  const attributes = new Map<string, JsxAttribute>();
+  let openSpread = false;
+  for (const attr of node.attributes) {
+    if (attr.type === 'JSXAttribute') {
+      if (attr.name.type !== 'JSXIdentifier') continue;
+      const read = !attr.value
+        ? { values: ['true'], complete: true }
+        : literals(attr.value.type === 'JSXExpressionContainer' ? attr.value.expression : attr.value);
+      attributes.set(attr.name.name, { value: literalAttrValue(attr), ...read, node: attr });
+      continue;
+    }
+
+    // `{...{ role: 'menu' }}` sets its keys as plainly as writing them out; any other spread could set anything.
+    if (attr.argument.type !== 'ObjectExpression') {
+      openSpread = true;
+      continue;
+    }
+    for (const property of attr.argument.properties) {
+      const key =
+        property.type !== 'ObjectProperty' || property.computed
+          ? undefined
+          : property.key.type === 'Identifier'
+            ? property.key.name
+            : property.key.type === 'StringLiteral'
+              ? property.key.value
+              : undefined;
+      if (key === undefined || property.type !== 'ObjectProperty') openSpread = true;
+      else attributes.set(key, { value: undefined, ...literals(property.value), node: property });
+    }
+  }
+  return { attributes, openSpread };
+}
+
+/** `Form.Item` for `<Form.Item>`; `undefined` for a namespaced name like `<svg:rect>`. */
+function tagName(name: JSXOpeningElement['name']): string | undefined {
+  if (name.type === 'JSXIdentifier') return name.name;
+  if (name.type !== 'JSXMemberExpression') return undefined;
+  const object = tagName(name.object);
+  return object && `${object}.${name.property.name}`;
 }
 
 /**
- * Runs `fileRules` on the whole file, then walks it once: every runtime import through `importRules`, every
+ * Runs `fileRules` on the whole file, then walks it once: every runtime import, re-export, `require()` and
+ * `import()` through `importRules`, every
  * JSX opening tag (self-closing or not — Babel represents both as
  * `JSXOpeningElement`) through `elementRules`. An inline `style` prop goes
  * to the styles adapter (`style={{}}` is a React feature, not tied to any
@@ -100,39 +172,39 @@ export function validateJsx(
   system: DesignSystem,
   tailwind: TailwindPolicy,
   owners: InvalidAlternativeOwners,
-  options: { designSystem?: boolean; filePath?: string } = {},
+  options: { designSystem?: boolean; importException?: boolean; filePath?: string } = {},
 ): Finding[] {
-  const { designSystem = false, filePath } = options;
+  const { designSystem = false, importException = false, filePath } = options;
   const findings: Finding[] = fileRules.flatMap((rule) => rule({ ast, designSystem }));
 
+  const checkModule = (nodePath: NodePath) => {
+    const reference = moduleReference(nodePath);
+    if (!reference) return;
+    const subject: JsxImport = { ...reference, owners, designSystem, importException, filePath };
+    findings.push(...importRules.flatMap((rule) => rule(subject)));
+  };
+
   traverse(ast, {
-    ImportDeclaration(nodePath) {
-      const node = nodePath.node;
-      // A type-only import never reaches runtime.
-      if (node.importKind === 'type') return;
-      if (
-        node.specifiers.length > 0 &&
-        node.specifiers.every(
-          (specifier) => specifier.type === 'ImportSpecifier' && specifier.importKind === 'type',
-        )
-      )
-        return;
-      const subject: JsxImport = { node, owners, designSystem, filePath };
-      findings.push(...importRules.flatMap((rule) => rule(subject)));
-    },
+    ImportDeclaration: checkModule,
+    ExportNamedDeclaration: checkModule,
+    ExportAllDeclaration: checkModule,
+    ImportExpression: checkModule,
+    CallExpression: checkModule,
     JSXOpeningElement(nodePath) {
       const node = nodePath.node;
       const classNameValue = findAttributeValue(node, 'className');
 
-      if (node.name.type === 'JSXIdentifier') {
-        const tag = node.name.name;
+      const tag = tagName(node.name);
+      if (tag) {
         const subject: JsxElement = {
           node,
           tag,
-          component: system.component(tag),
-          attributes: readAttributes(node),
+          // A lowercase tag is a native element, never a component.
+          component: /^[a-z]/.test(tag) ? undefined : system.component(tag),
+          ...readAttributes(node),
           classes: classNameValue ? classNameAdapter.classNameTokens(classNameValue) : undefined,
           owners,
+          designSystem,
           filePath,
         };
         findings.push(...elementRules.flatMap((rule) => rule(subject)));
@@ -149,5 +221,13 @@ export function validateJsx(
     },
   });
 
-  return findings;
+  // An element can be both a declared tag and a superseded import's export; one finding says it.
+  const reported = new Set<string>();
+  return findings.filter((finding) => {
+    if (finding.rule !== 'invalid-alternative') return true;
+    const at = `${finding.line}:${finding.column}`;
+    if (reported.has(at)) return false;
+    reported.add(at);
+    return true;
+  });
 }

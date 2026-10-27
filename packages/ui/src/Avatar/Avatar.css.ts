@@ -1,4 +1,5 @@
 import { tokens } from '@packages/styles/tokens.css';
+import { focusRing } from '@packages/styles/utils';
 import { style } from '@vanilla-extract/css';
 
 export const avatar = style({
@@ -8,6 +9,9 @@ export const avatar = style({
   background: tokens.color.accentBg,
   lineHeight: 1,
   userSelect: 'none',
+  outline: 'none',
+  // Alone, it takes a tab stop to show the name in its tooltip.
+  selectors: { '&:focus-visible': focusRing(tokens.color.focus) },
 });
 
 export const avatarImage = style({

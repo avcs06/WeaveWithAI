@@ -1,2 +1,3 @@
+export { Popover } from './Popover';
 export { PopoverButton } from './auxiliary';
-export type { PopoverButtonProps } from './Popover.types';
+export type { PopoverButtonProps, PopoverProps } from './Popover.types';

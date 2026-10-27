@@ -15,7 +15,15 @@ import { guardActivation } from './Button';
 
 import type { ActivationHandlers, PlainButtonProps } from './Button.types';
 
-/** Button behavior, no look: the child is the button. */
+/**
+ * Button behavior with no look, for an element that must act as a button but
+ * keep its own look: an avatar, an info icon, an image. Its one child, a
+ * non-interactive element like a `span` or `img`, becomes the button: named,
+ * focusable, pressed by Enter and Space. A styled action is a Button or
+ * IconButton; a card is a Card.
+ *
+ * @invalidAlternative [role="button"], div[onClick]:not([role]), span[onClick]:not([role]), li[onClick]:not([role]), p[onClick]:not([role]), i[onClick]:not([role]), img[onClick], svg[onClick], a[onClick]:not([href]), Avatar[onClick]
+ */
 export const PlainButton = ({
   tooltip,
   disabled,
@@ -25,6 +33,7 @@ export const PlainButton = ({
   loading,
   loadingWithReason,
   disableWhileLoading,
+  type,
   tabIndex,
   onClick,
   onPointerDown,
@@ -33,7 +42,7 @@ export const PlainButton = ({
   children,
   ...props
 }: PlainButtonProps) => {
-  const { isDisabled, stateTooltip } = useIsDisabled({
+  const { isDisabled, isReadOnly, isFocusable, stateTooltip } = useIsDisabled({
     disabled,
     disabledWithReason,
     readOnly,
@@ -84,13 +93,17 @@ export const PlainButton = ({
   return (
     <Tooltip tooltip={[tooltip, stateTooltip]}>
       <Slot
-        type={isNativeButton ? 'button' : undefined}
+        // Only on a native button: a wrapper's `type`, like Radix's, would
+        // land on a non-button child.
+        {...(isNativeButton && { type: type ?? 'button' })}
         role={isNativeButton ? undefined : 'button'}
         {...props}
-        aria-disabled={isDisabled || undefined}
+        // Read-only isn't disabled; a child with a role that has a read-only
+        // state, like a checkbox, says so itself.
+        aria-disabled={(isDisabled && !isReadOnly) || undefined}
         data-disabled={isDisabled || undefined}
         tabIndex={
-          isDisabled ? -1 : (tabIndex ?? (isNativeButton ? undefined : 0))
+          isFocusable ? (tabIndex ?? (isNativeButton ? undefined : 0)) : -1
         }
       >
         {guardedChild}

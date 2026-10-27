@@ -3,7 +3,10 @@ import React from 'react';
 
 export type CheckIconProps = LucideProps;
 
-/** @invalidAlternative Check */
+/**
+ * The check mark of checkboxes and selected rows, drawn heavier than a plain icon to read at small sizes.
+ * General check glyphs come from lucide-react.
+ */
 export const CheckIcon = (props: CheckIconProps) => {
   return <Check strokeWidth={3} {...props} />;
 };

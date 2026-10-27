@@ -17,13 +17,19 @@ export const DataCell = memo(({ columnId, row }: DataCellProps) => {
   const render = useTableStore((state) => state.columnRenders[columnId]);
   const value = column ? getCellValue(column, row) : undefined;
 
+  // A Date's own text depends on the time zone, which can differ between the
+  // server and the browser; its ISO text doesn't.
+  let text = isNil(value) ? '' : String(value);
+  if (value instanceof Date && !Number.isNaN(value.getTime()))
+    text = value.toISOString();
+
   return (
-    <Primitives.Cell align={column?.align}>
-      {render ? (
-        render(value, row)
-      ) : (
-        <Truncate>{isNil(value) ? '' : String(value)}</Truncate>
-      )}
+    <Primitives.Cell
+      data-slot="cell"
+      align={column?.align}
+      rowHeader={column?.rowHeader}
+    >
+      {render ? render(value, row) : <Truncate>{text}</Truncate>}
     </Primitives.Cell>
   );
 });

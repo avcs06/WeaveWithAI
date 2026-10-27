@@ -1,7 +1,7 @@
 import { globSync } from 'node:fs';
 import { basename, dirname, isAbsolute, resolve } from 'node:path';
 
-import { parse, withCustomConfig, type ComponentDoc } from 'react-docgen-typescript';
+import { withCompilerOptions, type ComponentDoc } from 'react-docgen-typescript';
 import ts from 'typescript';
 
 import type { ComponentContract } from '../../types.js';
@@ -16,6 +16,28 @@ import { toProps } from './props.js';
  */
 const NOT_A_COMPONENT_FILE = /\.(stories|story|test|spec|recipe)\.[jt]sx?$/;
 
+/** Splits on commas and newlines outside `[…]`, `(…)`, `{…}` and quotes, so `import('x'){A, B}` and `[a="b, c"]` stay whole. */
+function splitDeclarations(raw: string): string[] {
+  const declarations: string[] = [];
+  let current = '';
+  let depth = 0;
+  let quote: string | undefined;
+  for (const char of raw) {
+    if (quote) {
+      if (char === quote) quote = undefined;
+    } else if (char === '"' || char === "'") quote = char;
+    else if ('[({'.includes(char)) depth++;
+    else if (')]}'.includes(char)) depth--;
+    else if (depth === 0 && (char === ',' || char === '\n')) {
+      declarations.push(current);
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  return [...declarations, current];
+}
+
 /**
  * What a component declares as an invalid stand-in for itself, via an
  * `@invalidAlternative` JSDoc tag (`@invalidAlternative button` or a
@@ -26,13 +48,20 @@ const NOT_A_COMPONENT_FILE = /\.(stories|story|test|spec|recipe)\.[jt]sx?$/;
  * Case is preserved, since `MuiButton` is a component and `button` is an
  * element. Each declaration is kept whole — a selector such as
  * `Input[type="password"]` or a package as `import('@radix-ui/react-tabs')`
- * — and parsed by the JSX check. Commas inside `[...]` or `(...)` don't split.
+ * — and parsed by the JSX check. Commas inside `[...]`, `(...)` or `{...}`
+ * don't split.
  */
 function declaredInvalidAlternatives(doc: ComponentDoc): string[] {
-  const raw = doc.tags?.invalidAlternative;
-  if (!raw) return [];
-  return raw
-    .split(/\n|,(?![^[(]*[\])])/)
+  const tags = doc.tags ?? {};
+  if (!('invalidAlternative' in tags)) return [];
+  // TypeScript reads a scoped package written outside `import('…')`, such as
+  // `@radix-ui/react-tabs`, as a tag `radix-ui` with the text `/react-tabs, …`.
+  // Rejoining it keeps the rest of that line and lets the check report it.
+  const splitOff = Object.entries(tags)
+    .filter(([name, text]) => name !== 'invalidAlternative' && text.startsWith('/'))
+    .map(([name, text]) => `@${name}${text}`);
+  return [tags.invalidAlternative ?? '', ...splitOff]
+    .flatMap(splitDeclarations)
     .map((declaration) => declaration.trim().replace(/[<>`]/g, ''))
     .filter(Boolean);
 }
@@ -59,10 +88,24 @@ export function componentRoots(patterns: string[], configDir: string): string[] 
   return patterns.filter((pattern) => !isExclusion(pattern)).map((pattern) => globRoot(configDir, pattern));
 }
 
-function parserFor(tsconfig: string | undefined): { parse: (files: string[]) => ComponentDoc[] } {
-  const options = { shouldExtractLiteralValuesFromEnum: true, shouldRemoveUndefinedFromOptional: true };
-  return tsconfig ? withCustomConfig(tsconfig, options) : { parse: (files) => parse(files, options) };
+/** One TypeScript program per tsconfig: docgen reads components from it, and it tells a type export from a value. */
+function programFor(tsconfig: string | undefined, files: string[]): ts.Program {
+  if (!tsconfig) return ts.createProgram(files, { jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true });
+  const { config } = ts.readConfigFile(tsconfig, ts.sys.readFile);
+  const { options } = ts.parseJsonConfigFileContent(config, ts.sys, dirname(tsconfig), {}, tsconfig);
+  return ts.createProgram(files, options);
 }
+
+/** A doc for an export with no runtime value, like `export type { ButtonProps }`, which docgen reads when it has a JSDoc. */
+function isTypeOnly(doc: ComponentDoc, checker: ts.TypeChecker): boolean {
+  const symbol = doc.rootExpression;
+  if (!symbol) return false;
+  const target = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+  return !(target.flags & ts.SymbolFlags.Value);
+}
+
+/** An export marked `@internal`: the code may import it, the inventory leaves it out. */
+const isInternal = (doc: ComponentDoc) => 'internal' in (doc.tags ?? {});
 
 /**
  * `filePath` is passed in rather than read off `doc.filePath`:
@@ -116,7 +159,14 @@ export function loadComponents(patterns: string[], configDir: string): Component
   for (const [tsconfig, fileSet] of filesByTsconfig) {
     const files = [...fileSet];
     // Build one TypeScript program per tsconfig, not one per file in the component inventory.
-    for (const doc of parserFor(tsconfig).parse(files)) {
+    const program = programFor(tsconfig, files);
+    const parser = withCompilerOptions(program.getCompilerOptions(), {
+      shouldExtractLiteralValuesFromEnum: true,
+      shouldRemoveUndefinedFromOptional: true,
+      shouldIncludeExpression: true,
+    });
+    for (const doc of parser.parseWithProgramProvider(files, () => program)) {
+      if (isTypeOnly(doc, program.getTypeChecker()) || isInternal(doc)) continue;
       const file =
         files.find((candidate) => candidate === resolve(doc.filePath)) ??
         files.find((candidate) => candidate.endsWith(doc.filePath));

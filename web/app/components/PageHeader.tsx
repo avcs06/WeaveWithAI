@@ -3,8 +3,8 @@
 import { classNames } from '@packages/styles/classNames';
 import { useThemeMode } from '@packages/styles/useThemeMode';
 import { Button } from '@packages/ui/Button';
-import Link from 'next/link';
 
+import { NextLink } from './NextLink';
 import * as styles from './PageHeader.css';
 
 export const PageHeader = () => {
@@ -14,7 +14,9 @@ export const PageHeader = () => {
     <header
       className={classNames(styles.header, 'flex-row-gap-4 items-center px-6')}
     >
-      <Link href="/">Application starter</Link>
+      <NextLink href="/" look="plain">
+        Application starter
+      </NextLink>
       <div className="flex-1" />
       <Button onClick={toggle}>
         {mode === 'light' ? 'Dark mode' : 'Light mode'}

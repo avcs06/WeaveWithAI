@@ -1,9 +1,7 @@
-import { useStoreSync } from '@packages/utils/state';
+import { useConfigOrder, useStoreSync } from '@packages/utils/state';
 import { useLayoutEffect } from 'react';
 
 import { useGetTableStore } from '../store';
-
-import { useColumnOrder } from './useColumnOrder';
 
 import type {
   NoComputed,
@@ -29,10 +27,11 @@ export function TableColumn<
     width,
     align,
     filter,
+    rowHeader,
     children,
   } = props as unknown as AnyTableColumnProps;
   const { store } = useGetTableStore();
-  useColumnOrder(id);
+  useConfigOrder(id);
 
   useStoreSync(() => {
     store('setColumn')({
@@ -44,8 +43,9 @@ export function TableColumn<
       width,
       align,
       filter,
+      rowHeader,
     });
-  }, [id, title, dataKey, computed, sortable, width, align, filter]);
+  }, [id, title, dataKey, computed, sortable, width, align, filter, rowHeader]);
 
   // Separate, so a new renderer only re-renders this column's cells.
   useStoreSync(() => {

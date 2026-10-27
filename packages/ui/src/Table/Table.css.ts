@@ -51,11 +51,11 @@ export const body = style({
   },
 });
 
-// Data rows only: header, expanded content, spacer and message rows carry a
-// data-slot and stay flat.
+// Hover is for data rows (slot "row"): header, expanded content, spacer and
+// message rows carry other slots and stay flat.
 export const row = style({
   selectors: {
-    [`${body} > &:hover:not([data-slot]), &[data-selected="true"]`]: {
+    [`${body} > &[data-slot="row"]:hover, &[data-selected="true"]`]: {
       background: colors.base.hoverBg,
     },
     '&[data-clickable="true"]': { cursor: 'pointer' },
@@ -82,6 +82,8 @@ export const columnHeaderCell = style({
 
 export const cell = style({
   ...clipToCell,
+  // A row header is a `th`, which is bold by default.
+  fontWeight: 'inherit',
   paddingBlock: tokens.spacing[2],
   paddingInline: tokens.spacing[1.5],
   borderBottom: divider,

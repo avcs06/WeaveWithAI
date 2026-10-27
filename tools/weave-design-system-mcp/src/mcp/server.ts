@@ -61,9 +61,11 @@ export function createServer(system: DesignSystem): McpServer {
     {
       title: 'List components',
       description:
-        'List the component inventory: name, one-line purpose, category, and which props are ' +
-        'variant-like. Call this before writing any UI code to see what already exists — do not ' +
-        "reach for a raw HTML element or another library's component without checking here first.",
+        'List the component inventory: name, one-line purpose, category, which props are ' +
+        'variant-like, and its invalid alternatives — the elements, selectors and package imports ' +
+        'it supersedes, which validate rejects. Call this before writing any UI code to see what ' +
+        "already exists — do not reach for a raw HTML element or another library's component " +
+        'without checking here first.',
       inputSchema: z.object({
         category: z.string().optional().describe('Restrict results to one component category.'),
       }),
@@ -86,7 +88,13 @@ export function createServer(system: DesignSystem): McpServer {
         "render on the server and on phones, so there is no need to read the component's source. " +
         'Call this before using any component. An unknown name returns the recipes that exist.',
       inputSchema: z.object({
-        name: z.string().min(1).describe('Component or recipe name, e.g. "Table" or "IconButton".'),
+        name: z
+          .string()
+          .min(1)
+          .describe(
+            'Component, recipe or exported hook name, e.g. "Table", "IconButton" or "useValueSync" ' +
+              '(an export with no recipe of its own gets the recipe that uses it).',
+          ),
       }),
     },
     async ({ name }) => {
@@ -126,9 +134,10 @@ export function createServer(system: DesignSystem): McpServer {
       title: 'Search components',
       description:
         'Find components by a free-text query, ranked by relevance — searches names, ' +
-        'descriptions, categories and prop names. Use this before building any UI element from ' +
-        'scratch: search for what you are about to write ("modal", "dropdown", "icon") and use ' +
-        'what already exists instead of reimplementing it.',
+        'descriptions, categories, prop names and invalid alternatives, so searching for an ' +
+        'element, role or package you are about to use ("combobox", "DropdownMenu") finds the ' +
+        'component that replaces it. Use this before building any UI element from scratch and ' +
+        'use what already exists instead of reimplementing it.',
       inputSchema: z.object({
         query: z.string().min(1).describe('What to look for, e.g. "dialog" or "icon".'),
         limit: z.number().int().positive().max(100).optional().describe('Maximum results (default 20).'),

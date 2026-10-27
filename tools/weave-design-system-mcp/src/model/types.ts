@@ -139,6 +139,8 @@ export interface ComponentSummary {
   description: string;
   category: string;
   variantProps: string[];
+  /** What it supersedes, so an agent sees what not to reach for before writing it. */
+  invalidAlternatives: string[];
 }
 
 /** One ranked result from `searchTokens`/`searchComponents`. */
@@ -148,6 +150,8 @@ export interface SearchHit {
   description: string;
   /** A token's Tailwind class, when one applies it. */
   className?: string;
+  /** A component's invalid alternatives, when it declares any. */
+  invalidAlternatives?: string[];
   /** Relevance, higher is better — an exact name match outranks a substring match, which outranks a body-text match. */
   score: number;
 }
@@ -161,13 +165,15 @@ export interface DesignSystem {
   component(name: string): ComponentContract | undefined;
   /** Fuzzy component name matches. */
   closestComponents(name: string, limit?: number): string[];
-  /** The recipe named `name`, or the one covering the component named `name`. */
+  /** The recipe named `name`, the one covering the component named `name`, or else the one that imports `name`. */
   recipe(name: string): Recipe | undefined;
   /** Every recipe's name. */
   recipes(): string[];
   /** Ranked token search across name, group, reference and value — for "is there a token for X?" */
   searchTokens(query: string, limit?: number): SearchHit[];
-  /** Ranked component search across name, description, category and prop names — for "is there a component for X?" */
+  /** Ranked component search across name, description, category, prop names and invalid alternatives — for "is there a component for X?" */
   searchComponents(query: string, limit?: number): SearchHit[];
+  /** Problems found while loading, one line each — such as an `@invalidAlternative` declaration the check can't read. */
+  diagnostics(): string[];
   validate(code: string, filename?: string): ValidateResult;
 }

@@ -26,7 +26,7 @@ export const tag = style({
   },
 });
 
-globalStyle(`${tag} [data-slot='icon']`, {
+globalStyle(`${tag} > [data-slot='icon']`, {
   width: tagIconSize,
   height: tagIconSize,
 });

@@ -1,7 +1,9 @@
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { render, type RenderOptions } from '@testing-library/react';
 import { configureAxe } from 'jest-axe';
 import React, { type ReactElement, type ReactNode } from 'react';
+
+// Not the barrel: UIRoot loads next/font, which jest can't.
+import { UIProviders } from './Root/auxiliary';
 
 /**
  * Page-level rules (landmarks) don't apply to a component rendered alone.
@@ -9,11 +11,9 @@ import React, { type ReactElement, type ReactNode } from 'react';
  */
 export const axe = configureAxe({ rules: { region: { enabled: false } } });
 
+// Tooltips open at once, so a test needn't wait for them.
 export const Providers = ({ children }: { children: ReactNode }) => (
-  // `Root` provides this in the app; tooltips need it.
-  <TooltipPrimitive.Provider delayDuration={0}>
-    {children}
-  </TooltipPrimitive.Provider>
+  <UIProviders tooltipDelay={0}>{children}</UIProviders>
 );
 
 /** Renders inside the providers `Root` gives the app. */

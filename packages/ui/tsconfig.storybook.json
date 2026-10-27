@@ -4,5 +4,11 @@
     "noEmit": true
   },
   "exclude": [],
-  "include": ["src/**/*.stories.ts", "src/**/*.stories.tsx"]
+  "include": [
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
+  ]
 }

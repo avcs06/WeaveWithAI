@@ -8,8 +8,10 @@ export const cellControl = style({
   marginInline: `calc(${tokens.spacing[1.5]} * -1)`,
 });
 
-// Scoped to the cell, so it outranks the button's own styles.
+// Scoped to the cell, so it outranks the button's own styles. A touch on the
+// handle drags the row instead of scrolling the page.
 export const dragHandle = style({
+  touchAction: 'none',
   selectors: {
     [`${cell} &`]: { cursor: 'grab' },
     [`${cell} &[data-disabled="true"]`]: { cursor: 'not-allowed' },

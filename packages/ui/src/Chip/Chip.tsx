@@ -8,7 +8,7 @@ import { ButtonBase } from '../Button/Button';
 import {
   Selectable,
   SelectableGroup,
-  useSelectableGroup,
+  useSelectableItemState,
   useSelectableVariant,
 } from '../Selectable';
 import { createLook, useIsDisabled } from '../utils';
@@ -19,6 +19,14 @@ import type { ChipGroupProps, ChipProps } from './Chip.types';
 
 const chipLook = createLook(chipRecipe);
 
+/**
+ * A compact toggle that shows whether it's on: a filter on its own
+ * (`active`, "Starred only"), or one choice of a ChipGroup. Read as a
+ * checkbox, or a radio in a single-choice group. A chosen value the user
+ * removes is a Tag; an action is a Button.
+ *
+ * @invalidAlternative button[aria-pressed], Button[aria-pressed], Tag[onClick], .chip
+ */
 export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
   (
     {
@@ -27,25 +35,25 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
       look,
       value,
       active,
-      defaultActive = false,
       onActiveChange,
       disabled,
       disabledWithReason,
+      readOnly,
+      readOnlyWithReason,
       className,
       ...props
     },
     ref,
   ) => {
-    const { disabled: groupDisabled } = useSelectableGroup();
     const { selection, ...lookVariants } = chipLook(look);
     const selectableVariant = useSelectableVariant(selection);
-
-    // A disabled group disables its chips; a chip's own reason still shows.
-    const disabledState = disabledWithReason
-      ? { disabledWithReason }
-      : { disabled: disabled || groupDisabled };
-
-    const { isDisabled } = useIsDisabled({ ...props, ...disabledState });
+    const itemState = useSelectableItemState({
+      disabled,
+      disabledWithReason,
+      readOnly,
+      readOnlyWithReason,
+    });
+    const { isFocusable } = useIsDisabled({ ...props, ...itemState });
 
     const chipClassName = chipRecipe({
       variant,
@@ -54,18 +62,20 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
       selection: selectableVariant,
     });
 
+    const toggle = active === undefined ? {} : { active, onActiveChange };
+
     return (
       <Selectable
         value={value}
-        active={active}
-        defaultActive={defaultActive}
-        onActiveChange={onActiveChange}
-        disabled={isDisabled}
+        {...toggle}
+        // Radix's `disabled` takes a chip out of the arrow keys and the tab
+        // order: only one with no reason to show leaves them.
+        disabled={!isFocusable}
       >
         <ButtonBase
           ref={ref}
           {...props}
-          {...disabledState}
+          {...itemState}
           className={classNames(chipClassName, className)}
         />
       </Selectable>
@@ -74,7 +84,14 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(
 );
 Chip.displayName = 'Chip';
 
-export const ChipGroup = forwardRef<HTMLDivElement, ChipGroupProps>(
-  (props, ref) => <SelectableGroup ref={ref} {...props} />,
+/**
+ * A set of Chips for 2 to about 8 short, always-visible choices: one
+ * (`mode="single"`, the default, like radio buttons) or any number
+ * (`mode="multiple"`, like checkboxes). Named by `label`, `aria-label` or
+ * `aria-labelledby`. It's a form field, with its label, help text and
+ * message; in a form, `{...field}` from Controller is all it needs. Longer
+ * lists are a Select or MultiSelect.
+ */
+export const ChipGroup = (props: ChipGroupProps) => (
+  <SelectableGroup {...props} />
 );
-ChipGroup.displayName = 'ChipGroup';

@@ -7,10 +7,10 @@ import {
 } from '@packages/styles/focusRing.css';
 import { themeClasses } from '@packages/styles/themes.css';
 import { tokens } from '@packages/styles/tokens.css';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import React from 'react';
 
 import { ErrorBoundary } from '../src/ErrorBoundary';
+import { TooltipProvider } from '../src/Tooltip';
 // Toast isn't available yet: restore with it.
 // // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
 // import { ToastQueue } from '../src/Toast/ToastQueue';
@@ -18,7 +18,7 @@ import { ErrorBoundary } from '../src/ErrorBoundary';
 import type { Decorator, Preview } from '@storybook/react-vite';
 
 // Mirrors UIRoot (which renders <html> and can't be used here): theme class on
-// the document root, the Radix tooltip provider around every story, and the
+// the document root, the tooltip provider around every story, and the
 // toast queue, so `toast()` shows something. The focus ring class is
 // Storybook-only, to compare rings; apps take the one set in tokens.ts.
 const withUIRoot: Decorator = (Story, context) => {
@@ -32,12 +32,12 @@ const withUIRoot: Decorator = (Story, context) => {
   root.style.colorScheme = mode;
 
   return (
-    <TooltipPrimitive.Provider delayDuration={200}>
+    <TooltipProvider delayDuration={200}>
       <ErrorBoundary>
         <Story />
       </ErrorBoundary>
       {/* <ToastQueue /> */}
-    </TooltipPrimitive.Provider>
+    </TooltipProvider>
   );
 };
 

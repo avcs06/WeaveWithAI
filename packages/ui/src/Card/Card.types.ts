@@ -1,26 +1,61 @@
 import type { cardRecipe } from './Card.recipes.css';
-import type { SelectableGroupProps, SelectableProps } from '../Selectable';
+import type {
+  SelectableGroupProps,
+  SelectableProps,
+  SelectableToggleProps,
+} from '../Selectable';
+import type { DisabledState, ReadOnlyState, SetByComponent } from '../utils';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
-import type { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithRef, MouseEventHandler, Ref } from 'react';
 
 type CardRecipeVariants = NonNullable<RecipeVariants<typeof cardRecipe>>;
 
-export type CardSurfaceProps = ComponentPropsWithoutRef<'div'> & {
+export type CardSurfaceProps = Omit<ComponentPropsWithRef<'div'>, 'ref'> & {
   asChild?: boolean;
+  ref?: Ref<HTMLElement>;
+  /** Left out, the props pass through untouched. */
   disabled?: boolean;
-  clickable?: boolean;
+  /** Why it is disabled, shown as a tooltip. */
+  reason?: string;
+  /** Radix's button props, meaningless on a card. */
+  type?: string;
+  value?: string;
 };
 
-export type CardProps = CardSurfaceProps &
-  Pick<CardRecipeVariants, 'variant'> & {
-    /**
-     * Space-separated styles, in any order: `outline` or `filled` (in a group,
-     * its mode picks one), `elevated`, `ghost`.
-     */
-    look?: string;
-  } & Pick<
-    SelectableProps,
-    'value' | 'active' | 'defaultActive' | 'onActiveChange'
-  >;
+type CardOwnProps = Pick<CardRecipeVariants, 'variant'> & {
+  /**
+   * Space-separated styles, in any order: `outline` or `filled` (in a group,
+   * its mode picks one), `elevated`, `ghost`.
+   */
+  look?: string;
+} & DisabledState &
+  ReadOnlyState &
+  Pick<SelectableProps, 'value'> &
+  SelectableToggleProps &
+  // Set from the card's mode, states and `onClick`.
+  SetByComponent<'role' | 'aria-checked' | 'aria-disabled' | 'tabIndex'>;
+
+export type CardProps = Omit<
+  ComponentPropsWithRef<'div'>,
+  keyof CardOwnProps | 'onClick' | 'ref'
+> &
+  CardOwnProps &
+  (
+    | {
+        asChild?: false;
+        ref?: Ref<HTMLDivElement>;
+        /**
+         * Makes the whole card a button. Not with `asChild`: the child
+         * would become a button too.
+         */
+        onClick?: MouseEventHandler<HTMLElement>;
+      }
+    | {
+        /** Render the child element as the card, such as an `li` of a list. */
+        asChild: true;
+        ref?: Ref<HTMLElement>;
+        onClick?: never;
+      }
+  );
 
 export type CardGroupProps = SelectableGroupProps;

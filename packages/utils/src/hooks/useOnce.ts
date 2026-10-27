@@ -1,9 +1,12 @@
 import { useState } from 'react';
 
-import type { Callable } from '../types';
+/**
+ * The value `init` returns on mount, kept for the component's life.
+ *
+ * @invalidAlternative import('ahooks'){useCreation}
+ */
+export const useOnce = <V>(init: () => V) => {
+  const [value] = useState<V>(init);
 
-export const useOnce = <T extends Callable>(callback: T) => {
-  const [value] = useState(callback);
-
-  return value as ReturnType<T>;
+  return value;
 };

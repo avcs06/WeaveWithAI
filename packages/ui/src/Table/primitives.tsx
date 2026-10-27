@@ -141,14 +141,18 @@ HeaderCell.displayName = 'HeaderCell';
 
 export type CellProps = ComponentPropsWithoutRef<'td'> & {
   align?: TableAlign;
+  /** A cell of the column that names each row. */
+  rowHeader?: boolean;
 };
 export const Cell = forwardRef<HTMLTableCellElement, CellProps>(
-  ({ className, align, ...props }, ref) => {
+  ({ className, align, rowHeader = false, ...props }, ref) => {
     const alignClassName = alignRecipe({ align });
+    const Element = rowHeader ? 'th' : 'td';
     return (
-      <td
+      <Element
         ref={ref}
-        role="cell"
+        scope={rowHeader ? 'row' : undefined}
+        role={rowHeader ? 'rowheader' : 'cell'}
         {...props}
         className={classNames(styles.cell, alignClassName, className)}
       />

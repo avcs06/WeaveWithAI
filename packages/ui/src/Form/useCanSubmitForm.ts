@@ -3,9 +3,11 @@
 import { type Control, type FieldValues, useFormState } from 'react-hook-form';
 
 /**
- * Whether the form has no errors. Errors exist only once validation has run,
- * so a pristine form can submit and show what's wrong; once an error shows,
- * submitting waits until it's fixed.
+ * Whether the form's submit button can be pressed: `false` while any error
+ * shows. Errors exist only once validation has run, so a pristine form can
+ * submit and show what's wrong; once an error shows, submitting waits until
+ * it's fixed. Gate the button with `disabledWithReason`. An error set on
+ * `root`, like a server's, counts until `clearErrors('root')`.
  */
 export const useCanSubmitForm = <
   TFieldValues extends FieldValues,

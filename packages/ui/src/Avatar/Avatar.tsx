@@ -14,10 +14,9 @@ const getInitials = (name: string) => {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '?';
   return (
-    words
-      .slice(0, 2)
+    [words[0], words.length > 1 ? words[words.length - 1] : '']
       // By code point, so a letter outside the BMP (𝓐, emoji) stays whole.
-      .map((word) => Array.from(word)[0])
+      .map((word) => Array.from(word)[0] ?? '')
       .join('')
       .toUpperCase()
   );
@@ -46,8 +45,12 @@ const useImageFailed = (src: string | undefined) => {
 };
 
 /**
- * Hidden from assistive tech by default: it usually sits beside the visible
- * name. Pass `aria-hidden={false}` when it stands for the person on its own.
+ * A round picture of a person, or their initials without one. Hidden from
+ * assistive tech by default, with no tooltip: it usually sits beside the
+ * visible name. Pass `aria-hidden={false}` when it stands for the person on
+ * its own, and it can be focused to show the name in a tooltip.
+ *
+ * @invalidAlternative img.rounded-full, Image.rounded-full
  */
 export const Avatar = ({
   name,
@@ -58,17 +61,36 @@ export const Avatar = ({
   ...props
 }: AvatarProps) => {
   const image = useImageFailed(src);
-  const showImage = src !== undefined && !image.failed;
+  const showImage = !!src && !image.failed;
   const avatarClassName = avatarRecipe({ size });
 
+  const ref = useRef<HTMLSpanElement>(null);
+  const [focusable, setFocusable] = useState(false);
+  const isHidden = ariaHidden || !name.trim();
+
+  // Inside a link or button, that control is the tab stop; a second one
+  // inside it would nest controls.
+  useEffect(() => {
+    setFocusable(
+      !isHidden &&
+        !ref.current?.parentElement?.closest(
+          'a[href], button, summary, [tabindex]',
+        ),
+    );
+  }, [isHidden]);
+
   return (
-    <Tooltip tooltip={name}>
+    // Beside a visible name, a tooltip would only repeat it.
+    <Tooltip tooltip={isHidden ? null : name} description={null}>
       <span
-        // Initials stand for the person: the whole avatar is one image.
-        role={showImage ? undefined : 'img'}
-        aria-label={showImage ? undefined : name}
+        ref={ref}
+        // The photo and the initials are one image, named once.
+        role="img"
+        aria-label={name}
         // An image with no name would fail assistive tech: hidden instead.
-        aria-hidden={ariaHidden || !name.trim() || undefined}
+        aria-hidden={isHidden || undefined}
+        // Without a tab stop, keyboard users can't reach the name tooltip.
+        tabIndex={focusable ? 0 : undefined}
         {...props}
         className={classNames(
           avatarClassName,
@@ -80,12 +102,15 @@ export const Avatar = ({
           <img
             ref={image.ref}
             src={src}
-            alt={name}
+            alt=""
+            data-slot="image"
             onError={image.onError}
             className={avatarImage}
           />
         ) : (
-          <span aria-hidden>{getInitials(name)}</span>
+          <span aria-hidden data-slot="initials">
+            {getInitials(name)}
+          </span>
         )}
       </span>
     </Tooltip>

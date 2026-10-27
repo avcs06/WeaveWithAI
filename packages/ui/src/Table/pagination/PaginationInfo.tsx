@@ -2,8 +2,12 @@ import React, { type ReactNode } from 'react';
 
 import * as styles from './TablePaginationBar.css';
 
+// A fixed locale: the runtime's default can differ between the server and the
+// browser, and the text around the numbers is English.
+const numberFormat = new Intl.NumberFormat('en-US');
+
 const Count = ({ value }: { value: number }) => (
-  <strong className={styles.count}>{value.toLocaleString()}</strong>
+  <strong className={styles.count}>{numberFormat.format(value)}</strong>
 );
 
 const plural = (count: number, one: string, many: string) =>
@@ -37,6 +41,7 @@ export const PaginationInfo = ({
 }: PaginationInfoProps) => {
   const details: ReactNode[] = [];
 
+  // Announces page and filter changes.
   details.push(
     <span key="showing" aria-live="polite">
       Showing{' '}
@@ -70,8 +75,7 @@ export const PaginationInfo = ({
     );
 
   return (
-    <div className="flex-col-gap-0.5">
-      {/* Announces page and filter changes. */}
+    <div data-slot="pagination-info" className="flex-col-gap-0.5">
       {details.length > 0 && (
         <span>
           {details.flatMap((detail, index) =>

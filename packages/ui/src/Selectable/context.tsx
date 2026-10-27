@@ -6,6 +6,10 @@ export const [SelectableGroupProvider, useSelectableGroup] =
   createContext<SelectableGroupContextValue>({
     mode: undefined,
     values: undefined,
+    name: undefined,
     disabled: undefined,
+    disabledWithReason: undefined,
+    readOnly: undefined,
+    readOnlyWithReason: undefined,
     onToggle: undefined,
   });

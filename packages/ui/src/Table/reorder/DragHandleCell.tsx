@@ -14,9 +14,13 @@ type HandleListeners = Pick<
   'onPointerDown' | 'onKeyDown'
 >;
 
-export type DragHandleCellProps = DraggableAttributes &
+export type DragHandleCellProps = Omit<
+  DraggableAttributes,
+  'role' | 'tabIndex' | 'aria-disabled'
+> &
   HandleListeners & {
-    position: number;
+    /** Names the row, to tell handles apart. */
+    label: string;
     sortActive: boolean;
     dragDisabled: boolean;
   };
@@ -24,14 +28,15 @@ export type DragHandleCellProps = DraggableAttributes &
 /** Receives the sortable activator ref, attributes and (stable) listeners. */
 export const DragHandleCell = memo(
   forwardRef<HTMLButtonElement, DragHandleCellProps>(
-    ({ position, sortActive, dragDisabled, ...props }, ref) => (
-      <Primitives.Cell>
+    ({ label, sortActive, dragDisabled, ...props }, ref) => (
+      <Primitives.Cell data-slot="drag-cell">
         <IconButton
           size="xs"
           ref={ref}
           variant="base"
           look="ghost"
-          aria-label={`Reorder row ${position}`}
+          tooltip="Reorder"
+          aria-label={`Reorder ${label}`}
           {...(sortActive
             ? { disabledWithReason: 'Clear sorting to reorder rows' }
             : { disabled: dragDisabled })}

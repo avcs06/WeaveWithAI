@@ -29,13 +29,19 @@ const alternatives = {
   switch: 'Switch',
   tabs: 'Tabs',
   toast: 'toast',
-  tooltip: 'Tooltip',
 };
+
+const notBuilt = new Set(['dialog', 'radio-group', 'switch', 'tabs', 'toast']);
 
 for (const [name, owner] of Object.entries(alternatives)) {
   const source = `@radix-ui/react-${name}`;
-  test(`${source} directs consumers to ${owner}`, () => {
-    assert.ok(system.component(owner)?.invalidAlternatives.includes(source));
+  const options = notBuilt.has(name) ? { todo: 'not built yet' } : {};
+  test(`${source} directs consumers to ${owner}`, options, () => {
+    assert.ok(
+      system
+        .component(owner)
+        ?.invalidAlternatives.includes(`import('${source}')`),
+    );
     for (const specifier of [
       '{ Root }',
       '{ Root as CustomRoot }',

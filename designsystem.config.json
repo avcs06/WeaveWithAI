@@ -1,9 +1,19 @@
 {
   "tokens": ["packages/styles/src/tokens.css.ts"],
-  "components": ["packages/ui/src/*/index.{ts,tsx}"],
+  "components": [
+    "packages/ui/src/*/index.{ts,tsx}",
+    "packages/utils/src/hooks/index.ts",
+    "web/app/components/*.tsx",
+    "web/app/components/*/index.{ts,tsx}",
+    "!packages/ui/src/Selectable/index.tsx",
+    "!packages/ui/src/utils/index.tsx"
+  ],
   "recipes": [
     "packages/ui/src/*/*.recipe.tsx",
     "packages/utils/src/*/*.recipe.tsx",
-    "packages/recipes/src/*/*.recipe.tsx"
-  ]
+    "packages/recipes/src/*/*.recipe.tsx",
+    "web/app/components/*/*.recipe.tsx",
+    "web/app/shared/*.recipe.tsx"
+  ],
+  "importExceptions": ["packages/ui/src/Selectable/Selectable.tsx"]
 }

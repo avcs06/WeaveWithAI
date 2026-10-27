@@ -20,6 +20,14 @@ export type ControllerProps<
   ) => ReactElement;
 };
 
+/**
+ * Puts one form field under react-hook-form: its validation goes in `rules`,
+ * and `{...field}` gives the control its name, value, `onChange`, focus on a
+ * failed submit, `required` mark and `error`. Every field in a `useForm` form
+ * renders through it.
+ *
+ * @invalidAlternative import('react-hook-form'){Controller}
+ */
 export const Controller = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -28,6 +36,6 @@ export const Controller = <
   children,
   ...props
 }: ControllerProps<TFieldValues, TName, TTransformedValues>) => {
-  const fieldState = useController(props);
-  return children(fieldState);
+  const controller = useController(props);
+  return children(controller);
 };

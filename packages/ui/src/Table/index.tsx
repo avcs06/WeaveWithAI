@@ -1,4 +1,4 @@
-export { Table } from './Table';
+export { createTable, Table } from './Table';
 export type {
   TableAlign,
   TableColumnFilter,

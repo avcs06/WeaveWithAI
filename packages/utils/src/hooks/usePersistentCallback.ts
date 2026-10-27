@@ -3,15 +3,30 @@ import { useOnce } from './useOnce';
 
 import type { Callable } from '../types';
 
-/** A function with a fixed identity that always calls the latest `callback`. */
-export const usePersistentCallback = <T extends Callable>(
-  callback: T = (() => undefined) as T,
-) => {
+/**
+ * A function with a fixed identity that always calls the latest `callback`.
+ * For a callback run on an event, like `onChange`, that an effect or a store
+ * holds: a new reference from the caller doesn't rerun the effect. Not for a
+ * function called while rendering: React Compiler keeps that stable until its
+ * inputs change, and a fixed identity would hide those changes.
+ *
+ * An optional `callback` gives a function that returns `undefined` while
+ * it's missing.
+ *
+ * @invalidAlternative import('ahooks'){useMemoizedFn}
+ */
+export function usePersistentCallback<T extends Callable>(
+  callback: T,
+): (...args: Parameters<T>) => ReturnType<T>;
+export function usePersistentCallback<T extends Callable>(
+  callback?: T,
+): (...args: Parameters<T>) => ReturnType<T> | undefined;
+export function usePersistentCallback<T extends Callable>(callback?: T) {
   const callbackRef = useLatestRef(callback);
 
   return useOnce(
     () =>
       (...args: Parameters<T>) =>
-        callbackRef.current(...args) as ReturnType<T> | undefined,
+        callbackRef.current?.(...args) as ReturnType<T> | undefined,
   );
-};
+}

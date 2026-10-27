@@ -45,9 +45,9 @@ export const colors = {
     light: {
       bg: '#FFFFFF',
       fg: '#18181B',
-      fgMuted: '#52525B',
+      fgMuted: '#5C5C64',
       border: '#C4C4CC',
-      hoverBg: '#FAFAFA',
+      hoverBg: '#F4F4F5',
       accentBg: '#18181B',
       accentFg: '#FAFAFA',
       accentBorder: '#18181B',
@@ -62,7 +62,7 @@ export const colors = {
     dark: {
       bg: '#18181B',
       fg: '#FAFAFA',
-      fgMuted: '#A1A1AA',
+      fgMuted: '#ABABB2',
       border: '#52525B',
       hoverBg: '#27272A',
       accentBg: '#FAFAFA',

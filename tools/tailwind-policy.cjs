@@ -150,6 +150,7 @@ const layoutTailwindClasses = new Set([
     ],
     spacingKeys,
   ),
+  ...prefixed(['z'], Object.keys(tokens.zIndex)),
   'w-auto',
   'w-full',
   'w-screen',

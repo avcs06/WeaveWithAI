@@ -17,10 +17,10 @@ export default { title: 'Showcase' };
 // import { Dialog } from './Dialog';
 // import { Dropdown } from './Dropdown';
 // import {
-//   formFieldStatuses,
+//   controlStatuses,
 //   inputSizes,
 //   inputVariants,
-// } from './FormField/FormField.recipes.css';
+// } from './FormControl/FormControl.recipes.css';
 // import { LoadingIcon } from './Icons';
 // import { Input, NumberInput, PasswordInput, SearchInput } from './Input';
 // import { Link } from './Link';
@@ -311,7 +311,7 @@ export default { title: 'Showcase' };
 //       type: ['text', 'password', 'number', 'search'],
 //       variant: inputVariants,
 //       size: inputSizes,
-//       status: formFieldStatuses,
+//       status: controlStatuses,
 //     }}
 //     flags={{
 //       label: true,
@@ -359,7 +359,7 @@ export default { title: 'Showcase' };
 //     choices={{
 //       variant: inputVariants,
 //       size: inputSizes,
-//       status: formFieldStatuses,
+//       status: controlStatuses,
 //     }}
 //     flags={{
 //       multiple: false,
@@ -399,7 +399,7 @@ export default { title: 'Showcase' };
 //     choices={{
 //       variant: inputVariants,
 //       size: inputSizes,
-//       status: formFieldStatuses,
+//       status: controlStatuses,
 //     }}
 //     flags={{ helpText: false, disabled: false }}
 //     render={(c, f) => (

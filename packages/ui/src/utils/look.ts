@@ -7,7 +7,7 @@ type Recipe = RuntimeFn<NonNullable<Parameters<typeof recipe>[0]['variants']>>;
  * What `look` can set: every variant except the color scheme and the size.
  * Read from the recipe's options: `RecipeVariants` loses its keys here.
  */
-export type LookVariants<R extends Recipe> = Omit<
+type LookVariants<R extends Recipe> = Omit<
   NonNullable<Parameters<R>[0]>,
   'variant' | 'size'
 >;

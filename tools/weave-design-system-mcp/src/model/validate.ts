@@ -13,6 +13,8 @@ interface ValidateContext {
   designSystemRoots: string[];
   /** Recipe files: inside those folders, but app code. */
   recipeFiles: ReadonlySet<string>;
+  /** Files the import rule skips, from the config's `importExceptions`. */
+  importExceptions: ReadonlySet<string>;
   /** Directory a relative `filename` resolves against. */
   configDir: string;
   /** Prebuilt tag lookup, owned by the design system so it isn't rebuilt per call. */
@@ -50,6 +52,7 @@ export function validate(
       ...validateStyles(ast, system, context.vanillaExtract),
       ...validateJsx(ast, system, context.tailwind, context.invalidAlternatives, {
         designSystem: !recipe && isDesignSystemFile(filePath, context),
+        importException: filePath !== undefined && context.importExceptions.has(filePath),
         filePath: recipe ? undefined : filePath,
       }),
     ];

@@ -23,7 +23,7 @@ export const chip = style({
       background: chipActiveHoverBg,
       boxShadow: activeBorder(chipActiveBorder),
     },
-    '&[data-state="checked"]:not([data-disabled]):is(:focus-visible, :active, [data-focus-visible="true"])':
+    '&[data-state="checked"]:not([data-disabled]):is(:focus-visible, :active)':
       {
         color: chipActiveFg,
         background: chipActiveHoverBg,
@@ -34,5 +34,9 @@ export const chip = style({
       background: disabledColor(chipActiveBg),
       boxShadow: activeBorder(disabledColor(chipActiveBorder)),
     },
+    '&[data-state="checked"][data-disabled]:focus-visible': focusRing(
+      disabledColor(chipActiveFocusColor),
+      activeBorder(disabledColor(chipActiveBorder)),
+    ),
   },
 });

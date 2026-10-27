@@ -5,7 +5,8 @@ import React, {
   useState,
 } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
+import { Link, type LinkProps } from '../Link';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -30,16 +31,9 @@ export default meta;
 type Story = StoryObj;
 
 // Stands in for a link component like Next.js's `Link`, which doesn't load in
-// Storybook. It handles `disabled` by dropping its `href`.
-const StoryLink = ({
-  disabled,
-  href,
-  children,
-  ...props
-}: ComponentPropsWithRef<'a'> & { disabled?: boolean }) => (
-  <a {...props} href={disabled ? undefined : href}>
-    {children}
-  </a>
+// Storybook. Link handles `disabled` by dropping its `href`.
+const StoryLink = (props: Extract<LinkProps, { href: string }>) => (
+  <Link {...props} />
 );
 
 const Row = ({ label, children }: { label: string; children: ReactNode }) => (
@@ -57,9 +51,12 @@ const ButtonStories = () => {
   const [leftAddOn, setLeftAddOn] = useState(false);
   const [rightAddOn, setRightAddOn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingReason, setLoadingReason] = useState(false);
   const [disableWhileLoading, setDisableWhileLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [reason, setReason] = useState(false);
+  const [readOnly, setReadOnly] = useState(false);
+  const [readOnlyReason, setReadOnlyReason] = useState(false);
   const [tooltip, setTooltip] = useState(false);
 
   const features = {
@@ -68,10 +65,15 @@ const ButtonStories = () => {
     rightIcon: rightIcon ? <ArrowRight /> : undefined,
     leftAddOn: leftAddOn ? <kbd>⌘</kbd> : undefined,
     rightAddOn: rightAddOn ? <kbd>N</kbd> : undefined,
-    loading,
     disableWhileLoading,
     // A reason replaces plain `disabled`: they can't be set together.
     ...(reason ? { disabledWithReason: 'Add a date first' } : { disabled }),
+    ...(readOnlyReason
+      ? { readOnlyWithReason: 'This event is archived' }
+      : { readOnly }),
+    ...(loadingReason
+      ? { loadingWithReason: 'Saving the event' }
+      : { loading }),
     tooltip: tooltip ? 'Creates a draft event' : undefined,
   };
 
@@ -93,6 +95,9 @@ const ButtonStories = () => {
             </Button>
             <Button variant={variant} loading>
               Saving
+            </Button>
+            <Button variant={variant} loadingWithReason="Saving the event">
+              Loading with a reason
             </Button>
             <Button variant={variant} disabled>
               Disabled
@@ -145,18 +150,24 @@ const ButtonStories = () => {
                 key={size}
                 variant={variant}
                 size={size}
-                aria-label={`Settings, ${size}`}
-                tooltip="Settings"
+                tooltip={`Settings, ${size}`}
               >
                 <Settings />
               </IconButton>
             ))}
-            <IconButton variant={variant} loading aria-label="Refreshing">
+            <IconButton variant={variant} loading tooltip="Refreshing">
               <Settings />
             </IconButton>
             <IconButton
               variant={variant}
-              aria-label="Delete"
+              tooltip="Refreshing"
+              loadingWithReason="Saving the event"
+            >
+              <Settings />
+            </IconButton>
+            <IconButton
+              variant={variant}
+              tooltip="Delete"
               disabledWithReason="Only owners can delete"
             >
               <Trash2 />
@@ -170,7 +181,7 @@ const ButtonStories = () => {
           <Button as={StoryLink} href="#button" variant="base">
             Help center
           </Button>
-          <IconButton as={StoryLink} href="#button" aria-label="Settings">
+          <IconButton as={StoryLink} href="#button" tooltip="Settings">
             <Settings />
           </IconButton>
           <Button
@@ -193,57 +204,54 @@ const ButtonStories = () => {
 
       <StorySection title="Features">
         <div className="flex-row-gap-4 flex-wrap">
-          <StorySwitch
-            label="Rounded"
-            checked={rounded}
-            onChange={setRounded}
-          />
-          <StorySwitch label="Ghost" checked={ghost} onChange={setGhost} />
-          <StorySwitch
-            label="Left icon"
-            checked={leftIcon}
-            onChange={setLeftIcon}
-          />
-          <StorySwitch
-            label="Right icon"
-            checked={rightIcon}
-            onChange={setRightIcon}
-          />
-          <StorySwitch
-            label="Left add-on"
-            checked={leftAddOn}
-            onChange={setLeftAddOn}
-          />
-          <StorySwitch
-            label="Right add-on"
-            checked={rightAddOn}
-            onChange={setRightAddOn}
-          />
-          <StorySwitch
-            label="Loading"
-            checked={loading}
-            onChange={setLoading}
-          />
-          <StorySwitch
-            label="disableWhileLoading"
+          <Checkbox checked={rounded} onCheckedChange={setRounded}>
+            Rounded
+          </Checkbox>
+          <Checkbox checked={ghost} onCheckedChange={setGhost}>
+            Ghost
+          </Checkbox>
+          <Checkbox checked={leftIcon} onCheckedChange={setLeftIcon}>
+            Left icon
+          </Checkbox>
+          <Checkbox checked={rightIcon} onCheckedChange={setRightIcon}>
+            Right icon
+          </Checkbox>
+          <Checkbox checked={leftAddOn} onCheckedChange={setLeftAddOn}>
+            Left add-on
+          </Checkbox>
+          <Checkbox checked={rightAddOn} onCheckedChange={setRightAddOn}>
+            Right add-on
+          </Checkbox>
+          <Checkbox checked={loading} onCheckedChange={setLoading}>
+            Loading
+          </Checkbox>
+          <Checkbox checked={loadingReason} onCheckedChange={setLoadingReason}>
+            Loading reason
+          </Checkbox>
+          <Checkbox
             checked={disableWhileLoading}
-            onChange={setDisableWhileLoading}
-          />
-          <StorySwitch
-            label="Disabled"
-            checked={disabled}
-            onChange={setDisabled}
-          />
-          <StorySwitch
-            label="Disabled reason"
-            checked={reason}
-            onChange={setReason}
-          />
-          <StorySwitch
-            label="Tooltip"
-            checked={tooltip}
-            onChange={setTooltip}
-          />
+            onCheckedChange={setDisableWhileLoading}
+          >
+            disableWhileLoading
+          </Checkbox>
+          <Checkbox checked={disabled} onCheckedChange={setDisabled}>
+            Disabled
+          </Checkbox>
+          <Checkbox checked={reason} onCheckedChange={setReason}>
+            Disabled reason
+          </Checkbox>
+          <Checkbox checked={readOnly} onCheckedChange={setReadOnly}>
+            Read-only
+          </Checkbox>
+          <Checkbox
+            checked={readOnlyReason}
+            onCheckedChange={setReadOnlyReason}
+          >
+            Read-only reason
+          </Checkbox>
+          <Checkbox checked={tooltip} onCheckedChange={setTooltip}>
+            Tooltip
+          </Checkbox>
         </div>
         {(['sm', 'md'] as const).map((size) => (
           <Row key={size} label={size}>

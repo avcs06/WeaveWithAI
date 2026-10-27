@@ -1,7 +1,11 @@
 import type { chipRecipe } from './Chip.recipes.css';
 import type { ButtonProps } from '../Button';
-import type { SelectableGroupProps, SelectableProps } from '../Selectable';
-import type { DisabledProps } from '../utils';
+import type {
+  SelectableGroupProps,
+  SelectableProps,
+  SelectableToggleProps,
+} from '../Selectable';
+import type { DisabledProps, SetByComponent } from '../utils';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
 import type { ComponentPropsWithoutRef } from 'react';
 
@@ -18,10 +22,10 @@ type ChipOwnProps = Pick<ChipRecipeVariants, 'variant' | 'size'> & {
     ButtonProps,
     'tooltip' | 'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn'
   > &
-  Pick<
-    SelectableProps,
-    'value' | 'active' | 'defaultActive' | 'onActiveChange'
-  >;
+  Pick<SelectableProps, 'value'> &
+  SelectableToggleProps &
+  // Set from the chip's mode, `active` and states: a checkbox or a radio.
+  SetByComponent<'role' | 'aria-checked' | 'aria-disabled' | 'aria-busy'>;
 
 export type ChipProps = Omit<
   ComponentPropsWithoutRef<'button'>,
