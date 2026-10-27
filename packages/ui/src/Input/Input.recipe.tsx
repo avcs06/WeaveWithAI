@@ -228,22 +228,6 @@ const AttendeeNote = () => {
   );
 };
 
-/** A large heading-like field: `size="md"` and `look="open"` drop the box. */
-const HeadlineTitle = () => {
-  const [title, setTitle] = useState('Launch party');
-
-  return (
-    <Input
-      label="Headline"
-      size="md"
-      look="open"
-      autoComplete="off"
-      value={title}
-      onChange={setTitle}
-    />
-  );
-};
-
 /** `leftAddOn` and `rightAddOn` show fixed text around what the user types. */
 const EventPageAddress = () => {
   const [address, setAddress] = useState('launch-party');
@@ -436,7 +420,7 @@ const PriceFilter = () => {
   const isInverted = from !== null && to !== null && from > to;
 
   return (
-    <div className="flex-row-gap-4 items-start">
+    <div className="flex-row-gap-4 flex-wrap items-start">
       <NumberInput
         label="From"
         autoComplete="off"
@@ -751,7 +735,6 @@ export default function InputRecipe() {
       <PromoCode />
       <Tagline />
       <AttendeeNote />
-      <HeadlineTitle />
       <EventPageAddress />
       <StreamLink />
       <ShareLink />

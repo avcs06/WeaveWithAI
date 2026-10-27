@@ -7,12 +7,14 @@ import { createDesignSystem } from './weave-design-system-mcp/dist/index.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const system = createDesignSystem(await loadWorkspaceConfig(root));
-test('discovery is limited to component-level public barrels', () => {
+// The entry points designsystem.config.json lists: the ui barrels, the
+// hooks barrel, and the web components.
+const entryPoint =
+  /\/(packages\/ui\/src\/[^/]+\/index\.tsx?|packages\/utils\/src\/hooks\/index\.ts|web\/app\/components\/([^/]+\.tsx|[^/]+\/index\.tsx?))$/;
+
+test('discovery is limited to the configured entry points', () => {
   for (const { name } of system.components()) {
-    assert.match(
-      system.component(name).filePath,
-      /\/packages\/ui\/src\/[^/]+\/index\.tsx?$/,
-    );
+    assert.match(system.component(name).filePath, entryPoint);
   }
   assert.ok(system.component('Button'));
   assert.ok(system.component('Input'));
@@ -31,7 +33,7 @@ const alternatives = {
   toast: 'toast',
 };
 
-const notBuilt = new Set(['dialog', 'radio-group', 'switch', 'tabs', 'toast']);
+const notBuilt = new Set(['toast']);
 
 for (const [name, owner] of Object.entries(alternatives)) {
   const source = `@radix-ui/react-${name}`;

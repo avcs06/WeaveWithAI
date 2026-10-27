@@ -16,6 +16,7 @@ export const iconSize = createVar('checkboxIconSize');
 
 const checked = ':is([data-state="checked"], [data-state="indeterminate"])';
 const enabled = ':not([data-disabled])';
+const focused = ':is(:focus-visible, :active)';
 
 /** The box; its color scheme sets the checked colors and focus rings. */
 export const checkboxBox = style({
@@ -29,7 +30,7 @@ export const checkboxBox = style({
   transition: `background-color ${transition}, box-shadow ${transition}`,
   selectors: {
     [`&${enabled}:hover`]: { background: colors.hoverBg },
-    [`&${enabled}:focus-visible`]: {
+    [`&${enabled}${focused}`]: {
       background: colors.hoverBg,
       ...focusRing(uncheckedFocus, dropShadow),
     },
@@ -38,7 +39,7 @@ export const checkboxBox = style({
       boxShadow: `${borderShadow(checkedBorder)}, ${dropShadow}`,
     },
     [`&${checked}${enabled}:hover`]: { background: checkedHoverBg },
-    [`&${checked}${enabled}:focus-visible`]: {
+    [`&${checked}${enabled}${focused}`]: {
       background: checkedHoverBg,
       ...focusRing(checkedFocus, dropShadow),
     },

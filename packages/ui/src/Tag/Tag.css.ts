@@ -34,8 +34,14 @@ globalStyle(`${tag} > [data-slot='icon']`, {
 // Square around its icon. Its own padding is pulled back in: toward the
 // label, and off the tag's height, so the tag stays padding + line height.
 export const tagClose = style({
-  paddingBlock: tagClosePadding,
-  paddingInline: tagClosePadding,
-  marginBlock: `calc(-1 * ${tagClosePadding})`,
-  marginLeft: `calc(-1 * ${tagClosePadding} + ${tokens.spacing[0.75]})`,
+  selectors: {
+    // Button's rules carry its class three times, so an `as` target's
+    // classes can't restyle it; four outrank them.
+    '&&&&': {
+      paddingBlock: tagClosePadding,
+      paddingInline: tagClosePadding,
+      marginBlock: `calc(-1 * ${tagClosePadding})`,
+      marginLeft: `calc(-1 * ${tagClosePadding} + ${tokens.spacing[0.75]})`,
+    },
+  },
 });

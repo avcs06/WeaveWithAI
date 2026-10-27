@@ -3,7 +3,7 @@ import { configureAxe } from 'jest-axe';
 import React, { type ReactElement, type ReactNode } from 'react';
 
 // Not the barrel: UIRoot loads next/font, which jest can't.
-import { UIProviders } from './Root/auxiliary';
+import { UIProviders } from './Root/UIProviders';
 
 /**
  * Page-level rules (landmarks) don't apply to a component rendered alone.

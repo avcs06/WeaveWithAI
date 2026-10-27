@@ -20,8 +20,10 @@ import {
 const colors = tokens.color;
 const spacing = tokens.spacing;
 
-// While the control has focus, and while the box is pressed.
-const focused = '&:not([data-disabled]):is(:focus-within, :active)';
+// While the control has focus, while the box is pressed, and while its menu
+// is open: focus moves into the menu then.
+const focused =
+  '&:not([data-disabled]):is(:focus-within, :active, [data-state="open"])';
 // A disabled field with a reason keeps its tab stop: its focus shows, dimmed.
 const focusedDisabled = '&[data-disabled]:focus-within';
 

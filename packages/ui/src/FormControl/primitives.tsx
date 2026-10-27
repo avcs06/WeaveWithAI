@@ -114,20 +114,23 @@ export const ControlLabel = ({
   required,
   hint,
   rightAddOn,
+  tooltip,
   onClick,
 }: ControlLabelProps) => {
   if (!label) return null;
 
   return (
     <div data-slot="label-row" className="flex-row-gap-2 items-center px-1">
-      <div className="flex-fill-x inline-flex-row-gap-0.5 items-center">
+      <div className="flex-fill-x inline-flex-row-gap-1 items-center">
         <label
           id={id}
           htmlFor={htmlFor}
           onClick={onClick}
           className={classNames(controlLabel, 'inline-flex-row-gap-0 min-w-0')}
         >
-          <Truncate className="min-w-0">{label}</Truncate>
+          <Truncate className="min-w-0" tooltip={tooltip}>
+            {label}
+          </Truncate>
           {required && (
             <span aria-hidden className={classNames(requiredMark, 'relative')}>
               *

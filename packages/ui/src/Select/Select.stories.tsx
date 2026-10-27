@@ -182,9 +182,10 @@ const SelectStories = () => {
       ? { loadingWithReason: 'Loading the countries' }
       : { loading }),
   };
+  // Select searches by default: turning it off takes `allowSearch={false}`.
   const features: DemoProps = searchable
     ? { ...sharedFeatures, allowSearch: true as const }
-    : sharedFeatures;
+    : { ...sharedFeatures, allowSearch: false as const };
 
   return (
     <StoryPage>

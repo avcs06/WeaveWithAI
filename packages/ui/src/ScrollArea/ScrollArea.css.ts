@@ -6,6 +6,9 @@ const colors = tokens.color.base;
 const transition = '120ms ease';
 
 export const viewport = style({
+  // Clips absolutely placed content too, like visually hidden text, which
+  // would otherwise widen the page.
+  position: 'relative',
   borderRadius: 'inherit',
   outline: 'none',
   selectors: {

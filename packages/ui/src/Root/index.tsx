@@ -1,2 +1,2 @@
-export { UIProviders } from './auxiliary';
+export { UIProviders } from './UIProviders';
 export { UIRoot } from './UIRoot';

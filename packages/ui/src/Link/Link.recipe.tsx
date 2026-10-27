@@ -63,17 +63,6 @@ const Download = () => (
 );
 
 /**
- * `variant="base"`: the neutral color. It changes the text, the dotted line
- * and the focus ring, not only the ring. Use it for links in quiet places,
- * like a footer or a table cell.
- */
-const Base = () => (
-  <Link href="https://example.com/help" variant="base">
-    Help center
-  </Link>
-);
-
-/**
  * Disabled with a reason: it can't be followed, and hovering or focusing it
  * says why.
  * `disabledWithReason` on its own disables it; `disabled` disables it
@@ -97,7 +86,6 @@ export default function LinkRecipe() {
       <Email />
       <Phone />
       <Download />
-      <Base />
       <DisabledWithReason />
     </div>
   );

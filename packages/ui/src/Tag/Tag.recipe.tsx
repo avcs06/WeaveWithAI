@@ -103,37 +103,6 @@ const ChosenFilters = () => {
 };
 
 /**
- * Variants: `base` is the default and fits a neutral label; `default` and
- * `accent` mark a category; `info`, `success`, `warning` and `error` carry
- * a status. Color never stands alone: the text says the status too.
- */
-const Variants = () => (
-  <div className="flex-row-gap-2 flex-wrap">
-    <Tag>Base</Tag>
-    <Tag variant="default">Default</Tag>
-    <Tag variant="accent">Featured</Tag>
-    <Tag variant="info">Info</Tag>
-    <Tag variant="success">On sale</Tag>
-    <Tag variant="warning">Almost full</Tag>
-    <Tag variant="error">Sold out</Tag>
-  </div>
-);
-
-/**
- * Sizes and look: `xs` is 24px tall for dense rows, `sm` (the default) 32px.
- * `look="!bordered"` drops the border for a tag on a busy background.
- */
-const SizesAndLook = () => (
-  <div className="flex-row-gap-2 flex-wrap items-center">
-    <Tag size="xs">Extra small</Tag>
-    <Tag size="sm">Small</Tag>
-    <Tag look="!bordered" variant="accent">
-      No border
-    </Tag>
-  </div>
-);
-
-/**
  * Icon and count: `rightIcon` follows the label, and `leftAddOn` takes an
  * element before it. The unit is in visually hidden text, so the number is
  * read with its meaning and the visible number is skipped.
@@ -164,8 +133,6 @@ export default function TagRecipe() {
     <div className="flex-col-gap-6">
       <Status />
       <ChosenFilters />
-      <Variants />
-      <SizesAndLook />
       <IconsAndCount />
       <WithTooltip />
     </div>

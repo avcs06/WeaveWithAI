@@ -9,6 +9,7 @@
 - Don't restate styles the global styles already set in global-vanilla.css.ts, such as the font family.
 - Comments explain what the code can't say. No comments that repeat a name or the obvious.
 - A component's types go in `<Name>.types.ts`; the component file imports them.
+- `auxiliary.tsx` holds side components built on top of the folder's main component: PlainButton beside Button, PasswordInput and NumberInput beside Input, CheckboxGroup beside Checkbox. The main component's own parts and its context providers never go in `auxiliary.tsx`: keep them in the main component's file, or in files of their own when they're large, one per component or one for several small ones.
 - An `aria-*` attribute is set once, by the component whose props decide it: `aria-disabled` from `disabled`, `aria-busy` from `loading`. That component types the attribute `never` with `SetByComponent`, since leaving it out of the type doesn't stop JSX from accepting it. Callers pass the prop, never the attribute: no `aria-disabled` on a Button.
 
 ## Recipes

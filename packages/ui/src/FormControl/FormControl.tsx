@@ -6,8 +6,8 @@ import React, { type MouseEvent, useId, useRef } from 'react';
 
 import { hasContent, joinIds, mergeRefs, useIsDisabled } from '../utils';
 
-import { ControlBox, ControlLabel, ControlMessage } from './auxiliary';
 import { controlMessage } from './FormControl.css';
+import { ControlBox, ControlLabel, ControlMessage } from './primitives';
 
 import type {
   ControlBoxState,

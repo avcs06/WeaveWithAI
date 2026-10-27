@@ -71,19 +71,6 @@ const Navigation = () => (
 );
 
 /**
- * `look="plain"`: no dotted line, for a link its place already marks as one,
- * like the site's name in its header. Never in a sentence, where the line is
- * what tells a link from the text around it.
- */
-const SiteName = () => (
-  <header className="flex-row-gap-4 items-center">
-    <NextLink href="/" look="plain">
-      Eventful
-    </NextLink>
-  </header>
-);
-
-/**
  * Disabled with a reason: it can't be followed, and hovering or focusing it
  * says why.
  */
@@ -167,7 +154,6 @@ export default function NextLinkRecipe() {
       <KeepScroll />
       <ReplaceHistory />
       <Navigation />
-      <SiteName />
       <DisabledWithReason />
       <GuardedNavigation />
       <RouteAsButton />

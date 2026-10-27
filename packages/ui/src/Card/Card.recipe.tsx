@@ -68,29 +68,6 @@ const ContentCards = () => (
 );
 
 /**
- * Looks: `ghost` drops the border and fill for cards on a busy page,
- * `outline` and `filled` are how a selected card shows (set by a group's
- * mode otherwise). `variant="base"` uses the neutral color instead of the
- * theme's.
- */
-const Looks = () => (
-  <div className="flex-col-gap-4">
-    <Card look="ghost">
-      <h3>Ghost</h3>
-      <p>No border or fill.</p>
-    </Card>
-    <Card look="elevated">
-      <h3>Elevated</h3>
-      <p>A shadow lifts it off the page.</p>
-    </Card>
-    <Card variant="base" look="filled !elevated">
-      <h3>Base variant</h3>
-      <p>Neutral colors.</p>
-    </Card>
-  </div>
-);
-
-/**
  * Link card: the title is the link and the card stays static, so the link is
  * a normal tab stop that is read by its text.
  */
@@ -358,7 +335,6 @@ export default function CardRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContentCards />
-      <Looks />
       <LinkCard />
       <CardWithActions />
       <ClickableCard />

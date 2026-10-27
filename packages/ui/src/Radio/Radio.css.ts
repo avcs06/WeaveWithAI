@@ -16,6 +16,7 @@ export const dotSize = createVar('radioDotSize');
 
 const checked = '[data-state="checked"]';
 const enabled = ':not([data-disabled])';
+const focused = ':is(:focus-visible, :active)';
 
 /** The round box; its color scheme sets the checked colors and focus rings. */
 export const radioBox = style({
@@ -28,7 +29,7 @@ export const radioBox = style({
   transition: `background-color ${transition}, box-shadow ${transition}`,
   selectors: {
     [`&${enabled}:hover`]: { background: colors.hoverBg },
-    [`&${enabled}:focus-visible`]: {
+    [`&${enabled}${focused}`]: {
       background: colors.hoverBg,
       ...focusRing(uncheckedFocus, dropShadow),
     },
@@ -37,7 +38,7 @@ export const radioBox = style({
       boxShadow: `${borderShadow(checkedBorder)}, ${dropShadow}`,
     },
     [`&${checked}${enabled}:hover`]: { background: checkedHoverBg },
-    [`&${checked}${enabled}:focus-visible`]: {
+    [`&${checked}${enabled}${focused}`]: {
       background: checkedHoverBg,
       ...focusRing(checkedFocus, dropShadow),
     },

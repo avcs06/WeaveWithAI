@@ -136,31 +136,6 @@ const SelectAllSessions = () => {
 };
 
 /**
- * Sizes: `sm` (the default) in lists and forms, `md` beside `md` inputs and
- * buttons. `variant="base"` fills a checked box in neutral instead of the
- * theme color, for a dense checklist where the accent is too loud.
- */
-const CheckInChecklist = () => {
-  const [badge, setBadge] = useState(true);
-  const [lanyard, setLanyard] = useState(true);
-  const [dietary, setDietary] = useState(false);
-
-  return (
-    <div className="flex-col-gap-2">
-      <Checkbox size="md" checked={badge} onCheckedChange={setBadge}>
-        Badge printed
-      </Checkbox>
-      <Checkbox variant="base" checked={lanyard} onCheckedChange={setLanyard}>
-        Lanyard handed out
-      </Checkbox>
-      <Checkbox variant="base" checked={dietary} onCheckedChange={setDietary}>
-        Dietary needs noted
-      </Checkbox>
-    </div>
-  );
-};
-
-/**
  * Boxes that can't be changed say why on hover, on a press, and to screen
  * readers: `disabledWithReason` for a choice that's unavailable,
  * `readOnlyWithReason` for one that's set elsewhere.
@@ -311,7 +286,6 @@ export default function CheckboxRecipe() {
       <CodeOfConduct />
       <ReminderSetting />
       <SelectAllSessions />
-      <CheckInChecklist />
       <TicketExtras />
       <NotificationChannels />
       <SessionTracks />

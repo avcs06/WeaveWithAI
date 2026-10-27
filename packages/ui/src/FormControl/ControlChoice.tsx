@@ -5,15 +5,15 @@ import React, { useId, useRef } from 'react';
 
 import { hasContent, joinIds } from '../utils';
 
-import { ControlLabel } from './auxiliary';
 import { controlChoice } from './FormControl.css';
+import { ControlLabel } from './primitives';
 
 import type { ControlChoiceProps } from './FormControl.types';
 
 /**
- * A checkbox or radio with its label to its right: the label, its required
- * mark and hint are a ControlLabel. The box, a PlainButton, shows its own
- * tooltip and reason.
+ * A checkbox, radio or switch with its label to its right: the label, its
+ * required mark and hint are a ControlLabel. The box, a PlainButton, shows its
+ * own tooltip and reason.
  *
  * @internal
  */
@@ -24,6 +24,8 @@ export const ControlChoice = ({
   hint,
   required,
   isDisabled,
+  isReadOnly,
+  reason,
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
   className,
@@ -43,6 +45,7 @@ export const ControlChoice = ({
     <div
       data-slot={slot}
       data-disabled={isDisabled || undefined}
+      data-readonly={isReadOnly || undefined}
       style={style}
       className={classNames(
         controlChoice,
@@ -65,10 +68,14 @@ export const ControlChoice = ({
         required={required}
         hint={hint}
         rightAddOn={null}
-        // The box isn't a native control, so the label presses it itself.
+        // Hover only: the box's own tooltip and description carry the reason
+        // to the keyboard and screen readers.
+        tooltip={reason}
+        // The box isn't a native control, so the label presses it itself. A
+        // blocked box ignores its label, as a native disabled one does.
         onClick={(event) => {
           event.preventDefault();
-          boxRef.current?.click();
+          if (!isDisabled) boxRef.current?.click();
         }}
       />
       {hasHint && (

@@ -7,6 +7,7 @@ import { PlainButton } from '../Button';
 import { ControlChoice } from '../FormControl';
 import {
   Selectable,
+  SelectableGroup,
   useSelectableGroup,
   useSelectableItemState,
 } from '../Selectable';
@@ -14,7 +15,7 @@ import { useIsDisabled } from '../utils';
 
 import { radioRecipe } from './Radio.recipes.css';
 
-import type { RadioProps } from './Radio.types';
+import type { RadioGroupProps, RadioProps } from './Radio.types';
 
 const assertInGroup = (mode: string | undefined) => {
   if (process.env.NODE_ENV === 'production') return;
@@ -46,7 +47,8 @@ export const Radio = ({
 
   // Its own state comes first, then its group's.
   const itemState = useSelectableItemState({ disabled, disabledWithReason });
-  const { isDisabled, isFocusable } = useIsDisabled(itemState);
+  const { isDisabled, isReadOnly, isFocusable, stateTooltip } =
+    useIsDisabled(itemState);
   const boxClassName = radioRecipe({ size, variant });
 
   return (
@@ -57,6 +59,8 @@ export const Radio = ({
       hint={hint}
       required={false}
       isDisabled={isDisabled}
+      isReadOnly={isReadOnly}
+      reason={stateTooltip}
       aria-labelledby={props['aria-labelledby']}
       aria-describedby={props['aria-describedby']}
       className={className}
@@ -81,7 +85,10 @@ export const Radio = ({
           >
             <span
               data-slot="box"
-              className={classNames(boxClassName, 'grid place-items-center')}
+              className={classNames(
+                boxClassName,
+                'grid place-items-center shrink-0',
+              )}
             >
               <span data-slot="dot" />
             </span>
@@ -91,3 +98,15 @@ export const Radio = ({
     </ControlChoice>
   );
 };
+
+/**
+ * Radios for one choice from a few that stay visible: a ticket type, a
+ * pickup option. It's a form field, with its label, help text and error. It
+ * adds no layout: lay the radios out with its `className`.
+ *
+ * @invalidAlternative [role="radiogroup"]
+ * @invalidAlternative import('@radix-ui/react-radio-group')
+ */
+export const RadioGroup = (props: RadioGroupProps) => (
+  <SelectableGroup {...props} mode="single" />
+);

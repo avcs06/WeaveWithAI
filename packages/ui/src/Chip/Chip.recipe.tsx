@@ -161,39 +161,6 @@ const WithCount = () => {
 };
 
 /**
- * Looks, set with `look`, space-separated: `filled` for an independent chip
- * that should stand out when on, `ghost` for a quiet one in a toolbar,
- * `rounded` for a pill. `variant="base"` is the neutral color, and
- * `size="md"` sits beside md inputs; the default size is `sm`.
- */
-const Looks = () => {
-  const [on, setOn] = useState(true);
-
-  return (
-    <div className="flex-row-gap-2 flex-wrap items-center">
-      <Chip look="outline" active={on} onActiveChange={setOn}>
-        Outline
-      </Chip>
-      <Chip look="filled" active={on} onActiveChange={setOn}>
-        Filled
-      </Chip>
-      <Chip look="rounded" active={on} onActiveChange={setOn}>
-        Rounded
-      </Chip>
-      <Chip look="ghost" active={on} onActiveChange={setOn}>
-        Ghost
-      </Chip>
-      <Chip variant="base" active={on} onActiveChange={setOn}>
-        Base
-      </Chip>
-      <Chip size="md" active={on} onActiveChange={setOn}>
-        Medium
-      </Chip>
-    </div>
-  );
-};
-
-/**
  * States: `disabledWithReason`, `readOnlyWithReason` and `loadingWithReason`
  * say why on hover and to screen readers. Loading chips stay put and can't
  * be pressed until done.
@@ -308,7 +275,6 @@ export default function ChipRecipe() {
       <IndependentToggle />
       <StartsOn />
       <WithCount />
-      <Looks />
       <States />
       <DisabledGroup />
       <InterestsForm />

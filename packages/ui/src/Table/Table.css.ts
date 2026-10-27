@@ -25,6 +25,9 @@ export const root = style({
 // Radix scrollbars overlay content. While the body scrolls vertically, the
 // header leaves the same room as the body, so their columns stay aligned.
 export const headerViewport = style({
+  // Clips the header's visually hidden text, which would otherwise widen the
+  // page.
+  position: 'relative',
   border: outline,
   borderBottom: 'none',
   borderTopLeftRadius: radius,

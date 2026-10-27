@@ -5,7 +5,7 @@ import React from 'react';
 import { axe } from '../test-utils';
 import { Tooltip } from '../Tooltip';
 
-import { UIProviders } from './auxiliary';
+import { UIProviders } from './UIProviders';
 
 // `renderUI` would wrap in these same providers, hiding their absence, so
 // these render bare. `UIRoot` itself loads next/font, which jest can't, and

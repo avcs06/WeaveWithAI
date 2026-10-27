@@ -94,26 +94,6 @@ const FormActions = () => (
 );
 
 /**
- * Variants and looks: `danger` for an action that can't be undone, `ghost`
- * for a quiet one in a toolbar or row, `rounded` for a pill shape. `size="md"`
- * sits beside md inputs; the default is `sm`.
- */
-const Variants = () => (
-  <div className="flex-row-gap-2 flex-wrap items-center">
-    <Button variant="danger">Cancel event</Button>
-    <Button variant="base" look="ghost">
-      Duplicate
-    </Button>
-    <Button look="ghost">Invite</Button>
-    <Button variant="danger" look="ghost">
-      Remove
-    </Button>
-    <Button look="rounded">Register</Button>
-    <Button size="md">Medium</Button>
-  </div>
-);
-
-/**
  * Icons: `leftIcon` before the label, `rightIcon` after it. Icons are
  * decoration; the text names the button.
  */
@@ -392,7 +372,6 @@ export default function ButtonRecipe() {
     <div className="flex-col-gap-4 items-start">
       <SaveForm />
       <FormActions />
-      <Variants />
       <WithIcons />
       <WithShortcut />
       <WithTooltip />

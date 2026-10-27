@@ -34,6 +34,9 @@ const photo = `data:image/svg+xml;utf8,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="hsl(210 55% 55%)"/><circle cx="32" cy="25" r="12" fill="white" fill-opacity="0.85"/><rect x="10" y="42" width="44" height="32" rx="16" fill="white" fill-opacity="0.85"/></svg>',
 )}`;
 
+// A photo that fails to load: data that isn't an image, so no request.
+const brokenPhoto = 'data:,not-an-image';
+
 const attendees = ['Ada Lovelace', 'Grace Hopper', 'Alan Turing'];
 
 // Usage: the patterns to copy.
@@ -113,7 +116,7 @@ const AccountMenu = () => {
 const WithPhoto = () => (
   <div className="flex-row-gap-2 items-center">
     <Avatar src={photo} name="Grace Hopper" />
-    <Avatar src="/missing-photo.png" name="Grace Hopper" />
+    <Avatar src={brokenPhoto} name="Grace Hopper" />
   </div>
 );
 
@@ -147,15 +150,6 @@ const AssigneeSelect = () => {
   );
 };
 
-/** Sizes: `sm` 28px, `md` 36px (default), `lg` 56px for profile headers. */
-const Sizes = () => (
-  <div className="flex-row-gap-3 items-center">
-    <Avatar size="sm" name="Alan Turing" />
-    <Avatar size="md" name="Alan Turing" />
-    <Avatar size="lg" name="Alan Turing" />
-  </div>
-);
-
 export default function AvatarRecipe() {
   return (
     <div className="flex-col-gap-6">
@@ -166,7 +160,6 @@ export default function AvatarRecipe() {
       <WithPhoto />
       <Unknown />
       <AssigneeSelect />
-      <Sizes />
     </div>
   );
 }

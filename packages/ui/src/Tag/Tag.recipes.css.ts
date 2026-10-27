@@ -42,7 +42,7 @@ export const tagRecipe = recipe({
         fontSize: tokens.fontSize.label,
         lineHeight: tokens.lineHeight.label,
         vars: {
-          [tagClosePadding]: tokens.spacing[0.75],
+          [tagClosePadding]: tokens.spacing[0.5],
           [tagIconSize]: tokens.iconSize.label,
           [tagCloseGap]: tokens.spacing[0.5],
         },
@@ -55,7 +55,7 @@ export const tagRecipe = recipe({
         fontSize: tokens.fontSize.body,
         lineHeight: tokens.lineHeight.body,
         vars: {
-          [tagClosePadding]: '5px',
+          [tagClosePadding]: tokens.spacing[1],
           [tagIconSize]: tokens.iconSize.body,
           [tagCloseGap]: tokens.spacing[0.75],
         },

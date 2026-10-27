@@ -1,5 +1,5 @@
 import { tokens } from '@packages/styles/tokens.css';
-import { focusRing } from '@packages/styles/utils';
+import { disabledColor, focusRing } from '@packages/styles/utils';
 import {
   createVar,
   globalStyle,
@@ -107,7 +107,7 @@ export const hintButton = style({
   background: 'transparent',
   outline: 'none',
   selectors: {
-    '&:focus-visible': focusRing(colors.focus),
+    '&:is(:focus-visible, :active)': focusRing(colors.focus),
   },
 });
 
@@ -139,6 +139,12 @@ globalStyle(`${controlChoice} label`, {
 globalStyle(`${controlChoice}[data-disabled] label`, {
   cursor: 'default',
 });
+
+// Disabled, the label dims with the box; read-only, it stays readable.
+globalStyle(
+  `${controlChoice}[data-disabled]:not([data-readonly]) :is(label, ${requiredMark})`,
+  { color: disabledColor(colors.base.fg) },
+);
 
 /** Help text and the status message. */
 export const controlMessage = style({

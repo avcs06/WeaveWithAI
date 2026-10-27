@@ -55,7 +55,8 @@ export const Checkbox = ({
     readOnly,
     readOnlyWithReason,
   });
-  const { isDisabled, isReadOnly, isFocusable } = useIsDisabled(itemState);
+  const { isDisabled, isReadOnly, isFocusable, stateTooltip } =
+    useIsDisabled(itemState);
 
   const isChecked =
     isInGroup && value !== undefined ? values.includes(value) : checked;
@@ -70,6 +71,8 @@ export const Checkbox = ({
       hint={hint}
       required={required}
       isDisabled={isDisabled}
+      isReadOnly={isReadOnly}
+      reason={stateTooltip}
       aria-labelledby={props['aria-labelledby']}
       aria-describedby={props['aria-describedby']}
       className={className}
@@ -88,7 +91,10 @@ export const Checkbox = ({
           >
             <span
               data-slot="box"
-              className={classNames(boxClassName, 'grid place-items-center')}
+              className={classNames(
+                boxClassName,
+                'grid place-items-center shrink-0',
+              )}
             >
               {isChecked && <Mark aria-hidden data-slot="icon" />}
             </span>

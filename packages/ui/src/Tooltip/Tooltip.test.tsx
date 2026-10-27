@@ -11,8 +11,8 @@ import React, { type ReactNode } from 'react';
 import { Button } from '../Button';
 import { axe, renderUI } from '../test-utils';
 
-import { TooltipProvider } from './auxiliary';
 import { Tooltip } from './Tooltip';
+import { TooltipProvider } from './TooltipProvider';
 
 const trigger = (name = 'Save') => screen.getByRole('button', { name });
 

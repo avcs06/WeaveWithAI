@@ -5,7 +5,7 @@ import { fontClasses } from '@packages/styles/fonts';
 import { getThemeClass } from '@packages/styles/theme';
 import React from 'react';
 
-import { UIProviders } from './auxiliary';
+import { UIProviders } from './UIProviders';
 
 import type { UIRootProps } from './UIRoot.types';
 

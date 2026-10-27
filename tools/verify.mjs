@@ -153,9 +153,12 @@ async function recipeTargets() {
     (entry) => entry.type === 'story' && entry.id.startsWith('recipes--'),
   );
   const storyIds = new Set(stories.map((story) => story.id));
+  // Storybook hyphenates the words of an id: ScrollArea's is `scroll-area`.
+  const storyId = (name) =>
+    `recipes--${name.replace(/(?<=[a-z0-9])(?=[A-Z])/g, '-').toLowerCase()}`;
   const missing = globSync('packages/ui/src/*/*.recipe.tsx', { cwd: root })
     .map((file) => basename(file, '.recipe.tsx'))
-    .filter((name) => !storyIds.has(`recipes--${name.toLowerCase()}`));
+    .filter((name) => !storyIds.has(storyId(name)));
   if (missing.length)
     throw new Error(
       `No story in Recipes.stories.tsx for: ${missing.join(', ')}.`,
@@ -165,15 +168,24 @@ async function recipeTargets() {
     url: `${storybookUrl}/iframe.html?id=${story.id}&viewMode=story`,
     // Breaks on purpose to show its fallbacks, and React logs each error a
     // boundary catches.
-    allowConsoleErrors: story.id === 'recipes--errorboundary',
+    allowConsoleErrors: story.id === storyId('ErrorBoundary'),
   }));
 }
 
-// Runs in the page. Only a table scrolls sideways, inside its own scroller;
-// anything else that does is cut off or pushes content off screen.
+// Runs in the page. Only a table, or a ScrollArea made to scroll sideways
+// (like a tab list), scrolls sideways; anything else that does is cut off or
+// pushes content off screen.
 const measureLayout = () => {
   const scrolls = (element) =>
     ['auto', 'scroll'].includes(getComputedStyle(element).overflowX);
+  // A ScrollArea that scrolls sideways shows its horizontal scrollbar.
+  const isSidewaysScrollArea = (element) =>
+    element.matches('[data-slot="viewport"]') &&
+    Boolean(
+      element.parentElement?.querySelector(
+        ':scope > [data-slot="scrollbar"][data-orientation="horizontal"]',
+      ),
+    );
   const scroller = (element) => {
     for (let parent = element.parentElement; parent; parent = parent.parentElement)
       if (scrolls(parent)) return parent;
@@ -194,7 +206,8 @@ const measureLayout = () => {
         (element) =>
           scrolls(element) &&
           element.scrollWidth > element.clientWidth + 1 &&
-          !tableScrollers.has(element),
+          !tableScrollers.has(element) &&
+          !isSidewaysScrollArea(element),
       )
       .map(
         (element) =>

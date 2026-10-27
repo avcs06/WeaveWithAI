@@ -37,6 +37,7 @@ export const card = style({
     },
     '&[data-clickable]:not([data-disabled]):active': {
       background: cardBgActive,
+      ...focusRing(cardFocusColor, cardShadow),
     },
     '&:focus-visible': {
       ...focusRing(cardFocusColor, cardShadow),
@@ -51,6 +52,9 @@ export const card = style({
       background: cardActiveBgHover,
     },
     '&[data-state="checked"]:focus-visible': {
+      ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
+    },
+    '&[data-state="checked"]:not([data-disabled]):active': {
       ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
     },
     '&[data-disabled]': {

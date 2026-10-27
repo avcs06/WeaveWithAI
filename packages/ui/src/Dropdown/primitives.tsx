@@ -51,7 +51,7 @@ import type {
 } from './Dropdown.types';
 
 // Between the trigger and the menu, and kept from the viewport's edges.
-const sideOffset = 4;
+const sideOffset = 6;
 const collisionPadding = 8;
 // Radix sets it on the menu it places: a menu never outgrows the space left.
 const availableHeight = 'var(--radix-dropdown-menu-content-available-height)';
