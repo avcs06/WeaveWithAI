@@ -1,0 +1,20 @@
+{
+  "name": "weave",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generator agent: idea to flows, design, contracts and a deployable app, on Meta's Muse models.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "weave": "tsx src/cli.ts",
+    "smoke": "tsx src/smoke.ts",
+    "typecheck": "tsc -p src --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "template:setup": "pnpm --dir template install --frozen-lockfile && pnpm --dir template mcp:setup && pnpm --dir template mcp:check",
+    "ds:export": "node template/tools/export-design-system.mjs"
+  }
+}

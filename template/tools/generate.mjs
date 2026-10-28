@@ -4,6 +4,7 @@ import {
   readdir,
   readFile,
   realpath,
+  rmdir,
   stat,
   writeFile,
 } from 'node:fs/promises';
@@ -124,7 +125,13 @@ export async function generate(
     if (error.code !== 'ENOENT') throw error;
   }
 
-  await mkdir(target, { recursive: true });
+  // cp creates the target itself; an existing (empty) target makes newer
+  // Node versions fail with ERR_FS_CP_EEXIST under errorOnExist.
+  await mkdir(dirname(target), { recursive: true });
+  // Only an empty target gets here (checked above); rmdir refuses anything else.
+  await rmdir(target).catch((error) => {
+    if (error.code !== 'ENOENT') throw error;
+  });
   await cp(source, target, {
     recursive: true,
     force: false,
