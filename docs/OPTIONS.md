@@ -1,0 +1,758 @@
+# Implementation options
+
+Every way to build each agent that came up across your spec (**Y**), the first
+plan (**P**), the second response (**R2**) and the third (**R3**), plus a few
+new ones. Tick what you want to keep, strike or delete what you don't, and
+write changes in **Notes**.
+
+How the coding agent reads this file: in a decision where nothing is ticked,
+the option marked **(default)** applies. A ticked option overrides the default.
+"Pick one" means tick a single box; "pick any" means tick all that apply.
+
+## Where the proposals disagreed
+
+| Topic                  | Y                                   | P                              | R2                                | R3                            | Default here                                            |
+| ---------------------- | ----------------------------------- | ------------------------------ | --------------------------------- | ----------------------------- | ------------------------------------------------------- |
+| Model access           | not set                             | Meta API + Muse Code           | Meta API, own tool loop           | Vercel AI SDK, any provider   | Meta API via `openai` SDK (D1.3); engine per D9.1       |
+| Artifact schemas       | not set                             | zod                            | JSON Schema + Ajv + TypeBox       | zod                           | zod v4 (D1.2)                                           |
+| Design components      | DS components, restyled             | DS components only             | DS components + scoped variants   | DS components only            | DS first, new components allowed with reasons (D3.1)    |
+| Design restyling       | restyle if over 20% different       | tokens only                    | tokens, then scoped variants      | tokens only                   | tokens, then `look` variants (D3.4); 20% rule is C      |
+| Design format          | not set                             | flat node list                 | screen/state spec + previews      | pages, sections               | screens, sections, nodes (D3.2)                         |
+| Contract format        | not set                             | resource DSL                   | operations + rich semantics       | OpenAPI-like + DB tables      | domain model + operations, HTTP by convention (D4.1)    |
+| Reconciliation         | two loops                           | coverage matrix, two loops     | ordered procedure, freeze         | one code differ               | one differ, run in R2's order, then freeze (D5.1)       |
+| Validation error code  | not set                             | 400                            | not set                           | 422                           | 400, Fastify's default (D4.3)                           |
+| Database               | SQL                                 | Postgres + Drizzle             | Postgres + Drizzle                | SQLite                        | Postgres + Drizzle (D6.3)                               |
+| Auth                   | utilities                           | own sessions                   | Better Auth                       | JWT cookie                    | Better Auth after a spike, own sessions fallback (D6.4) |
+| Proxy and TLS          | nginx + SSL scripts                 | Caddy                          | Caddy                             | none                          | Caddy (D6.8)                                            |
+| Packaging              | one Dockerfile                      | compose, 4 services            | compose + one-shot migration      | compose, 1 service            | compose with migration service (D6.9)                   |
+| Coding engine          | agents                              | Muse Code headless             | own tool loop                     | page-by-page generation       | own loop, spike Muse Code first (D9.1)                  |
+| Test IDs               | added on request by testing agent   | from screen node IDs           | role and label locators first     | testid on every interactive   | IDs on every node, tests prefer role and label (D7.4)   |
+| Git                    | commit, release, workflows, merge   | full PR flow                   | PR auto, merge explicit           | commit only                   | PR auto, merge and release on command (D10.1)           |
+| Loop limit             | until satisfied                     | 3                              | 2                                 | 2                             | 3 drafting, 2 per reconciliation loop (D1.6)            |
+
+---
+
+## 0. Repository
+
+### D0.1 Repository layout (pick one)
+
+- [ ] **A. One repo: root agent, `template/`, `mcps/design-system/` (default) (Y).** Everything a
+      coding agent needs is in one checkout; the template stays a standalone
+      pnpm/Nx workspace that `cp -r` can copy; `mcps/design-system/` is shared by the agent and
+      the template. Cost: two toolchains in one repo, kept apart on purpose.
+      `scripts/migrate-repo.sh` does this and was tested on a copy of the repo.
+- [ ] **B. New agent repo, design system as a git submodule at `template/`.** The DS
+      repo stays clean and publishable. Submodules add friction to every commit,
+      and coding agents handle them poorly.
+- [ ] **C. New agent repo that fetches the template at run time** (git clone or an
+      npm package). Cleanest separation; every DS change needs a publish step.
+- [ ] **D. Keep the DS at the root and add `agent/` inside.** Least moving, but the
+      template's ESLint, Nx and tsconfig would govern the agent's code, and every
+      generated app would need `agent/` excluded.
+
+Why A: the generator's value is the tight loop between the DS, its MCP and the
+stages. One repo keeps that loop fast this week; the template can be split
+out later with `git subtree split` if you want to publish it alone.
+
+Notes:
+
+### D0.2 Name of the copy-source folder (pick one)
+
+- [ ] **A. `template/` (default)**
+- [ ] **B. `starter/`**
+- [ ] **C. `boilerplate/`** (what `generate.mjs` calls it in its error message)
+
+Notes:
+
+### D0.3 How generated apps get the MCP (pick one)
+
+- [ ] **A. Link and copy (default).** `template/tools/weave-design-system-mcp`
+      is a symlink to `../../mcps/design-system`; `generate.mjs` copies through it, so each app
+      gets a real, self-contained MCP. No template script changes. Tested.
+- [ ] **B. Package dependency.** Template scripts import `weave-design-system-mcp`
+      by name; this repo uses `link:../mcp`, generated apps a published package
+      or `file:` path. Cleaner long term; more edits now, and a publish step.
+- [ ] **C. Not shipped.** The orchestrator validates centrally; generated apps
+      lose the AI-friendly MCP for future edits.
+
+Notes:
+
+### D0.4 GitHub repository name (pick one)
+
+- [ ] **A. Keep `weave-design-system` for now (default).** Rename before submission.
+- [ ] **B. Rename to `weave` now.** GitHub redirects the old URL.
+
+Notes:
+
+---
+
+## 1. Orchestration and model layer
+
+### D1.1 Orchestrator style (pick one)
+
+- [ ] **A. Plain TypeScript state machine (default) (P, R2, R3).** Fixed stage
+      order, checkpoints, resumable, debuggable; the model works only inside a stage.
+- [ ] **B. A supervisor model decides what runs next**, like the product-manager
+      profile in Meta's multi-agent cookbook. Flexible and impressive in a demo;
+      non-deterministic, hard to debug, and costs a call per decision.
+- [ ] **C. Muse Code workflows** (JavaScript workflow scripts). Meta tooling
+      points; documented as rollout-gated and missing on Apple silicon.
+- [ ] **D. Task board with comment threads** (the Hermes Kanban pattern). Every
+      negotiation is durable and replayable; a lot of machinery for 7 days.
+
+Notes:
+
+### D1.2 Schema library for artifacts (pick one)
+
+- [ ] **A. zod v4 (default) (P, R3).** Types and runtime checks in one place;
+      `z.toJSONSchema` feeds structured output; the MCP already uses zod v4.
+- [ ] **B. JSON Schema + Ajv, TypeBox for types (R2).** Standard JSON Schema
+      first; Fastify-native if the backend uses TypeBox too.
+
+Notes:
+
+### D1.3 Model client (pick one)
+
+- [ ] **A. `openai` npm SDK pointed at `https://api.meta.ai/v1` (default).** Meta
+      documents this exact setup, with a TypeScript structured-output example.
+- [ ] **B. Vercel AI SDK `generateObject` with an OpenAI-compatible provider (R3).**
+      Nice ergonomics, provider swapping. Unverified: how it sends structured
+      output to Meta's endpoint; check before choosing.
+- [ ] **C. Raw `fetch`.** No dependency; you write retries and types yourself.
+
+Notes:
+
+### D1.4 How structured output is requested (pick one)
+
+- [ ] **A. `response_format` JSON Schema, constrained decoding (default).** Output
+      always parses; validators only check meaning.
+- [ ] **B. One "submit" tool whose parameters are the schema.** Works on endpoints
+      with tool calling but no JSON Schema mode.
+- [ ] **C. Prompt for JSON, then parse and repair.** Avoid; this is the brittle
+      path every proposal warned against.
+
+Notes:
+
+### D1.5 How a round's issues go back to the model (pick one)
+
+- [ ] **A. Multi-turn (default) (P).** Keep the model's last JSON in the
+      conversation, add "fix only these mandatory issues, return the full JSON".
+- [ ] **B. Fresh call (R3).** Re-send the prompt plus the issue list; the model
+      regenerates from scratch, which can fix one thing and break another.
+- [ ] **C. Patch operations only.** The model returns changes by ID. Used for
+      reconciliation (D5.4); heavier to implement for first drafts.
+
+Notes:
+
+### D1.6 Loop limits (pick one)
+
+- [ ] **A. 3 drafting rounds, 2 per reconciliation loop, 2 per coding repair (default).**
+- [ ] **B. 2 everywhere (R2, R3).** Cheaper; first drafts of big artifacts often
+      need a third round.
+- [ ] **C. Your numbers:** ___
+
+Notes:
+
+### D1.7 Questions the agents raise (pick one)
+
+- [ ] **A. Autonomous.** Every question has a default answer that is used (R2:
+      default minor decisions).
+- [ ] **B. Always interactive.** The run pauses on any question.
+- [ ] **C. Autonomous by default, `--interactive` pauses for blocking ones (default).**
+      Blocking means the answer changes scope, permissions, business rules or
+      data. Answers are saved to `input/answers.json` and reused on reruns.
+
+Notes:
+
+### D1.8 Model routing (pick one)
+
+- [ ] **A. `muse-spark-1.3` for everything.**
+- [ ] **B. Spark by default; `muse-wonder-1.0` for a round that failed twice (default) (P).**
+- [ ] **C. B, plus `muse-spark-1.3-contributor` for development runs.** Much
+      cheaper; Meta may train on everything sent, including your DS code and recipes.
+
+Notes:
+
+### D1.9 Replay cache (pick one)
+
+- [ ] **A. On in development (default).** Identical requests return the recorded
+      response; iterate on validators and renderers for free.
+- [ ] **B. Off.**
+
+Notes:
+
+### D1.10 How a run is shown (pick any)
+
+- [ ] **A. CLI output plus markdown renderings of each artifact (default now).**
+- [ ] **B. A small dashboard reading `events.jsonl` (default for the demo, Phase 9).**
+      Timeline, validator results, coverage matrix, screenshots.
+- [ ] **C. HTML wireframes of the design spec** (see D3.6 option D).
+
+Notes:
+
+---
+
+## 2. User flow agent
+
+### D2.1 Generation shape (pick one)
+
+- [ ] **A. One call: idea to flows (R3).** Cheapest; misses coverage on larger
+      ideas; no point to answer questions before flows get written.
+- [ ] **B. Two calls: scope, then flows (default) (R2).** Scope fixes roles,
+      vocabulary, capabilities, assumptions and questions; flows build on it.
+- [ ] **C. Catalog, then expand each flow in parallel.** Scales to big apps;
+      needs a consistency pass because flows written apart drift on field names.
+
+Combine with (pick any):
+
+- [ ] **D. Critic pass.** A reviewer call lists flows a typical user would expect
+      but are missing; findings become warnings or a revision round.
+
+Notes:
+
+### D2.2 Step granularity (pick one)
+
+- [ ] **A. Paired steps (default) (R2, R3).** Each step = what the user does +
+      what the website visibly does. Reads like your example.
+- [ ] **B. Separate user and system steps (P).**
+- [ ] **C. Numbered free text with light structure.** Most natural to read,
+      weakest for validation and test generation.
+
+Notes:
+
+### D2.3 Form field detail (pick one)
+
+- [ ] **A. Full (default) (R2).** Name, label, business meaning, type, required,
+      limits, options, example.
+- [ ] **B. Minimal (R3).** Name, type, required.
+
+Notes:
+
+### D2.4 Alternative paths (pick one)
+
+- [ ] **A. Required where they apply (default) (R2).** Invalid input and failure
+      for submissions, empty for lists, confirm or undo for deletes, denied for
+      restricted actions, cancel for forms.
+- [ ] **B. Optional.**
+
+Notes:
+
+### D2.5 Capability boundary (pick one)
+
+- [ ] **A. Capability list in the prompt (default) (R2).** Unsupported needs
+      (payments, uploads, email, realtime, maps, external APIs) go to
+      out-of-scope with a placeholder behavior.
+- [ ] **B. No boundary.** The flows describe whatever the idea implies.
+
+Notes:
+
+### D2.6 Data effects on steps (pick one)
+
+- [ ] **A. Each step names the nouns it creates, lists, reads, updates or deletes
+      (default).** Plain business terms, no endpoints. Lets contracts map steps
+      to operations by code.
+- [ ] **B. Leave effects out**, keeping flows purely behavioral as in your spec;
+      the contract agent infers them.
+
+Notes:
+
+### D2.7 Banned vocabulary (pick one)
+
+- [ ] **A. Technology words mandatory, layout words warning (default).** "API",
+      "endpoint", "database", HTTP verbs fail; "sidebar", "modal", "left"
+      warn. "Page", "screen" and "clicks" stay allowed, as in your example.
+- [ ] **B. Both mandatory.**
+- [ ] **C. No word checks.**
+
+Notes:
+
+---
+
+## 3. Design agent
+
+### D3.1 Component policy (pick one)
+
+- [ ] **A. DS components only (P, R3).** You ruled this out: the DS doesn't cover
+      every scenario yet.
+- [ ] **B. DS first; new components allowed with reasons (default, your pointer).**
+      The prompt shows the inventory as inspiration and strongly prefers it. A
+      screen may use a new component only if it's declared with purpose, the
+      closest DS components considered and why they don't fit, parts, states,
+      keyboard map and ARIA pattern. Exact or near duplicates of DS components
+      fail or warn. Each run writes a DS gap report of proposed components.
+- [ ] **C. Design freely, then map to the DS.** The agent designs without seeing
+      the inventory; a mapping pass picks DS components and turns the rest into
+      new ones. Most original look; more reconciliation work.
+
+Notes:
+
+### D3.2 Design representation (pick one)
+
+- [ ] **A. Section level (R3).** Pages, then sections with a type, components
+      used, primary action and fields. Easy for the model; renderer decides details.
+- [ ] **B. Flat node list per screen (P).** Every element is a node with a
+      component, props, role, states, flow steps and data. Directly renderable;
+      big outputs.
+- [ ] **C. Screens, then typed sections, then nodes (default).** Sections carry
+      intent (hero, form, list, detail), nodes carry components and coverage.
+- [ ] **D. Code first (R2's "use the actual components from the beginning").** The
+      agent writes prototype pages in TSX; specs are read from annotations.
+      Strongest fidelity, weakest structured validation.
+- [ ] **E. Image first.** Muse Image draws mockups; a vision call extracts
+      layout and colors into a spec. Strong demo and Meta tooling; least control.
+
+Notes:
+
+### D3.3 Theme generation (pick one)
+
+- [ ] **A. The model writes every color**, a validator checks contrast and asks
+      for fixes. Simple; 24+ hex values per theme invite contrast failures.
+- [ ] **B. The model picks a seed hue, mood, density, fonts, radius and focus ring;
+      code builds the palette (default).** OKLCH steps map onto the DS's 12
+      color roles in light and dark, nudged until WCAG contrast passes.
+- [ ] **C. B, seeded by a Muse Image moodboard.** Dominant colors from the image
+      seed the palette; the moodboard also serves as hero art.
+- [ ] **D. The user supplies brand colors**; code fills the rest as in B.
+
+Notes:
+
+### D3.4 Customization policy, your "20% rule" (pick one)
+
+- [ ] **A. Tokens only (R3).** Theme colors, entity colors, radius, fonts, focus
+      ring. A validator rejects any other change to DS files.
+- [ ] **B. Tokens, then existing variants and `look` tokens, then a new scoped
+      `look` value when nothing fits (default) (R2).** Behavior, keyboard handling
+      and structure never change; component checks rerun after style changes.
+- [ ] **C. Your rule, made measurable.** Per component, compare these design-intent
+      properties with the component's defaults: radius step, padding step, height
+      step, border weight, shadow level, font weight, color role. If at least 20%
+      of the compared properties differ, add a `look` value for that component
+      (never edit base styles). Gives "20%" a denominator.
+- [ ] **D. Free restyling of component styles (Y original).** Most freedom; can
+      break the accessibility and focus work the DS guarantees.
+
+Notes:
+
+### D3.5 Layout vocabulary (pick one)
+
+- [ ] **A. Layout templates plus section kinds (default).** Templates such as
+      app-shell list, detail, form, auth, landing, dashboard, editor, settings.
+- [ ] **B. Free nested containers with layout properties.**
+
+Notes:
+
+### D3.6 Rendering the design (pick any)
+
+- [ ] **A. No rendering until the frontend stage (R3).**
+- [ ] **B. Deterministic renderer:** spec to pages through one small adapter per DS
+      component (P). Hard for components whose props are code (Table columns,
+      render props).
+- [ ] **C. The model writes prototype pages from the spec, using recipes; checked
+      by MCP validate, typecheck and `pnpm verify` (default for Phase 7).** Builds
+      new components for real.
+- [ ] **D. HTML wireframe preview:** labeled boxes per section and node, no DS
+      (default for Phase 3, optional task). Cheap human review and demo material.
+
+Notes:
+
+### D3.7 Design validation layers (pick any)
+
+- [ ] **A. Static spec rules (default, Phase 3).** Coverage, states, focal points,
+      density, headings, labels, reachability, DS prop values, new-component rules.
+- [ ] **B. Rendered checks on prototypes (default, Phase 7).** axe, contrast,
+      keyboard walk, target size, overflow, above-the-fold action.
+- [ ] **C. Visual rubric by a vision model on screenshots (default, Phase 7,
+      warnings only).**
+
+Notes:
+
+### D3.8 Visual rubric scale (pick one)
+
+- [ ] **A. 0 to 4 per concern with evidence (screen, element, reason); average 3+
+      as a tuning target (default) (R2).**
+- [ ] **B. One 0 to 100 score, pass at 70 (R3).**
+
+Notes:
+
+### D3.9 Viewports for rendered checks (pick one)
+
+- [ ] **A. 320, 390, 768, 1440 (R2).**
+- [ ] **B. 320, 375, 1280: what `template/tools/verify.mjs` already uses (default).**
+- [ ] **C. B plus 768.**
+
+Notes:
+
+### D3.10 Where new components live in a generated app (pick one)
+
+- [ ] **A. `web/app/components/<Name>/` following the DS conventions (default):**
+      types file, `.css.ts` with tokens, `data-slot` parts, `data-*` states,
+      a test with axe.
+- [ ] **B. Added to `packages/ui` inside the generated app.**
+- [ ] **C. A, and the gap report proposes them back to your DS.**
+
+Notes:
+
+### D3.11 How screens are generated (pick one)
+
+- [ ] **A. One call for every screen, section and node.** Simplest; large
+      outputs (300 nodes is about 30k output tokens) and one bad screen reruns all.
+- [ ] **B. One call for the information architecture (navigation, screens,
+      sections, new components), then one call per screen for its nodes, 2 to 4
+      in parallel (default).** Smaller calls, per-screen validation and reruns.
+
+Notes:
+
+---
+
+## 4. Contract agent
+
+### D4.1 Contract representation (pick one)
+
+- [ ] **A. Resource DSL (P).** Entities plus endpoints with a kind (list, get,
+      create, update, delete, action); code derives everything else.
+- [ ] **B. Operations with schemas and access policies (R2).**
+- [ ] **C. OpenAPI 3.1 + database tables written by the model (R3).** Standard
+      and tool-rich; the largest surface for model mistakes.
+- [ ] **D. Domain model + operations; HTTP shape by convention (default).** Merges
+      A, B and C: the model decides meaning (entities, fields, ownership,
+      operations, errors), code decides paths, status codes and wire format, and
+      can still export OpenAPI.
+
+Notes:
+
+### D4.2 What the contract decides (pick any)
+
+- [ ] **A. Entities, relations, lifecycle states (default)**
+- [ ] **B. Field semantics: required, nullable, limits, enums, defaults (default)**
+- [ ] **C. Operations including list filters, sorting and pagination (default)**
+- [ ] **D. Errors per operation (default)**
+- [ ] **E. Authentication and authorization per operation (default)**
+- [ ] **F. Server-assigned versus client-supplied fields; sensitive fields (default)**
+- [ ] **G. Seed data plus invalid and boundary examples (default)**
+- [ ] **H. Transactions for multi-entity writes (default, warning only)**
+- [ ] **I. Idempotency for retries and double submits** (R2; not default)
+- [ ] **J. Concurrency: version checks on update** (R2; not default)
+
+Notes:
+
+### D4.3 Validation error status (pick one)
+
+- [ ] **A. 400 (default).** What Fastify returns for schema failures.
+- [ ] **B. 422 (R3).**
+
+Notes:
+
+### D4.4 Pagination (pick one)
+
+- [ ] **A. Page and page size with a total (default).** Matches the DS
+      `Table.Pagination`.
+- [ ] **B. Cursor (P).** Matches `Table.InfiniteScroll`; no page numbers.
+
+Notes:
+
+### D4.5 Record IDs (pick one)
+
+- [ ] **A. UUID (default)**
+- [ ] **B. Auto-increment integers**
+
+Notes:
+
+### D4.6 Semantic reviewer (pick one)
+
+- [ ] **A. Off (default).** Screen-data coverage is checked by code in reconciliation.
+- [ ] **B. On, warnings only:** "does each operation give the flow what it needs?"
+
+Notes:
+
+---
+
+## 5. Reconciliation
+
+### D5.1 Structure (pick one)
+
+- [ ] **A. Your two loops (Y, P).** Design with flows first; contract with design
+      only after design is final.
+- [ ] **B. One code differ, mismatches routed to the owner (R3).**
+- [ ] **C. R2's ordered procedure with a freeze.**
+- [ ] **D. B's differ run in C's order (default).** Pass 1 reconciles flows and
+      design; if flows changed, the contract is refreshed; pass 2 reconciles
+      design data and actions with the contract; then everything freezes. Your two
+      loops become two passes of one differ.
+
+Notes:
+
+### D5.2 Business-rule gaps (pick one)
+
+- [ ] **A. A contract gap that is a missing business rule goes to the flow agent
+      as a question (default) (R2).** Example: a screen shows "available slots"
+      but no flow says what makes a slot available.
+- [ ] **B. The contract agent invents the rule and records it as an assumption.**
+
+Notes:
+
+### D5.3 Source of truth when artifacts disagree (pick one)
+
+- [ ] **A. Flows own business meaning; design owns presentation; the contract owns
+      technical shape (default).**
+- [ ] **B. Your call per conflict, in interactive mode.**
+
+Notes:
+
+### D5.4 Change format (pick one)
+
+- [ ] **A. Regenerate the whole artifact with the issues.** Simplest; unrelated
+      parts can drift.
+- [ ] **B. Typed upserts and removals by ID (default).** Unchanged items stay
+      byte-identical.
+- [ ] **C. JSON Patch (RFC 6902).** Standard; path mistakes are common.
+
+Notes:
+
+### D5.5 Unresolved blockers after the last round (pick one)
+
+- [ ] **A. Stop and report the exact issues (default) (R2).**
+- [ ] **B. Continue with warnings.**
+- [ ] **C. Ask you interactively.**
+
+Notes:
+
+---
+
+## 6. Backend agent (Phase 6; decide by Oct 30)
+
+### D6.1 Server framework (pick one)
+
+- [ ] **A. Fastify (default) (P, R2, R3).** Schema validation, plugins, `inject` for tests.
+- [ ] **B. Express**, which `template/server` uses today.
+
+Notes:
+
+### D6.2 Request and response schemas (pick one)
+
+- [ ] **A. Zod (default).** One schema language for agent, frontend and backend.
+- [ ] **B. TypeBox (R2).** Fastify-native JSON Schema.
+
+Notes:
+
+### D6.3 Database (pick one)
+
+- [ ] **A. Postgres + Drizzle (default) (P, R2).**
+- [ ] **B. SQLite + Drizzle (R3).** Simplest demo, one container.
+- [ ] **C. Drizzle with both dialects**, SQLite for dev and tests, Postgres in Docker.
+
+Notes:
+
+### D6.4 Authentication (pick one)
+
+- [ ] **A. Better Auth (default, after a 1-hour spike) (R2).** Established library;
+      documented Fastify integration and a Drizzle adapter (verify both).
+- [ ] **B. Own sessions: argon2 hashes, sessions table, httpOnly cookie (P).**
+      About 150 lines you control.
+- [ ] **C. JWT in an httpOnly cookie (R3).** Simple; no server-side revocation.
+
+Notes:
+
+### D6.5 How backend code gets written (pick one)
+
+- [ ] **A. A generator writes CRUD from the contract; the agent writes only custom
+      operations (default) (P).**
+- [ ] **B. The agent writes every resource with the utilities (R3).**
+- [ ] **C. The agent writes freely, then validators check it.**
+
+Notes:
+
+### D6.6 Utility set (pick any; names are proposals)
+
+- [ ] **A. `createServer`**: compression, static, redirects, error envelope, health, shutdown (P, Y)
+- [ ] **B. `defineOperation` / `defineResource`**: register routes from the contract (R2, P)
+- [ ] **C. Auth adapter**: current user, `requireAuth`, `requireRole` (all)
+- [ ] **D. Scoped repository**: owner filter on every read and write (R2)
+- [ ] **E. Pagination helper**: bounded limits, allowed sort and filter fields (R2)
+- [ ] **F. Transaction helper** (R2)
+- [ ] **G. Errors**: `badRequest`, `notFound`, `conflict`, `forbidden` (P, R3)
+- [ ] **H. Config loader**: validated env at startup (R2)
+- [ ] **I. Logging and health**: request IDs, redaction, liveness, readiness (R2)
+- [ ] **J. DB scripts**: start, create user, migrate, seed, backup, restore (Y)
+
+All ticked by default.
+
+Notes:
+
+### D6.7 Utility-usage validator (pick one)
+
+- [ ] **A. ESLint restricted imports and syntax plus a `ts-morph` check, rules
+      generated from `@invalidAlternative` tags on the utilities (default) (P, R2, Y).**
+- [ ] **B. Regex over generated files (R3).**
+
+Notes:
+
+### D6.8 Proxy and TLS (pick one)
+
+- [ ] **A. Caddy, automatic HTTPS (default) (P, R2).**
+- [ ] **B. nginx with certificate scripts (Y).**
+- [ ] **C. None; the app serves HTTP and the host handles TLS (R3).**
+
+Notes:
+
+### D6.9 Packaging (pick one)
+
+- [ ] **A. Compose: postgres, one-shot migrate, api, web, caddy (default) (R2).**
+- [ ] **B. Compose with one app service and SQLite (R3).**
+- [ ] **C. One image running everything under a process manager (Y).**
+
+Notes:
+
+### D6.10 Command interface in generated apps (pick one)
+
+- [ ] **A. Fixed pnpm scripts (default) (R2):** `setup`, `dev`, `check`,
+      `test:api`, `test:e2e`, `deploy:up`, `deploy:status`, `db:backup`, `db:restore`.
+- [ ] **B. Your list:** ___
+
+Notes:
+
+---
+
+## 7. Frontend agent (Phase 7)
+
+### D7.1 Approach (pick one)
+
+- [ ] **A. Prototype pages from the design, then wire data (default) (P).**
+- [ ] **B. Page by page straight from the design spec (R3).**
+- [ ] **C. The whole app in one coding session.**
+
+Notes:
+
+### D7.2 Data layer (pick one)
+
+- [ ] **A. A typed client and TanStack Query hooks generated from the contract (default).**
+- [ ] **B. Hand-written calls through the template's `Server` helper.**
+
+Notes:
+
+### D7.3 Test IDs and locators (pick one)
+
+- [ ] **A. `data-testid` from the node ID on every node; tests use it (P, R3).**
+- [ ] **B. Role and label locators; test IDs only where those are ambiguous (R2).**
+- [ ] **C. IDs on every node, tests prefer role and label and fall back to the ID (default).**
+
+Notes:
+
+### D7.4 Frontend validators (pick any)
+
+- [ ] **A. `tsc` (default)**
+- [ ] **B. MCP `validate` on every changed file (default)**
+- [ ] **C. Template ESLint, including import direction and Tailwind policy (default)**
+- [ ] **D. `next build` (default)**
+- [ ] **E. `pnpm verify <route>` for runtime errors and overflow (default)**
+
+Notes:
+
+---
+
+## 8. Testing agent (Phase 8)
+
+### D8.1 When acceptance tests are made (pick one)
+
+- [ ] **A. From the frozen flows, before implementation (default) (R2).** Tests
+      can't drift toward whatever got built.
+- [ ] **B. After implementation.**
+
+Notes:
+
+### D8.2 How tests are written (pick one)
+
+- [ ] **A. Code generates one Playwright test per flow from steps, fields and node
+      IDs; the model only turns outcomes into assertions (default) (P).**
+- [ ] **B. The model writes specs from the flows and a list of test IDs (R3).**
+
+Notes:
+
+### D8.3 Failure routing (pick one)
+
+- [ ] **A. Evidence table (P) plus structured repair requests (R2) (default).**
+      Missing element goes to frontend; 5xx or a response failing its schema goes
+      to backend; each request names flow, operation, rule, expected, actual, evidence.
+- [ ] **B. A model triages each failure.**
+
+Notes:
+
+### D8.4 Extra backend checks (pick any)
+
+- [ ] **A. Unauthenticated access rejected (default)**
+- [ ] **B. User A can't touch user B's records (default)**
+- [ ] **C. Responses match the contract schemas (default)**
+- [ ] **D. Data survives a restart (default)**
+- [ ] **E. Forced mid-transaction failure leaves no partial write**
+- [ ] **F. Migrations run twice safely**
+- [ ] **G. No secrets or stack traces in responses and logs**
+
+Notes:
+
+---
+
+## 9. Coding engine for code-writing stages (Phase 6 onward)
+
+### D9.1 Engine (pick one)
+
+- [ ] **A. Muse Code headless (`muse exec --json --prompt-file`) (P).** Skills from
+      your recipes, hooks running MCP validate per edit, subagents. Most Meta
+      tooling; less control; its Linux sandbox needs bubblewrap.
+- [ ] **B. Own tool loop on the Meta Model API (R2).** Tools: read file, write
+      file, apply patch, run an allowed check. Full control of file ownership and
+      logs; you build the loop (about 200 lines).
+- [ ] **C. OpenCode `opencode run` with the Meta provider**, as in Meta's cookbook.
+- [ ] **D. Structured file generation:** the model returns whole files for a
+      listed set (R3's page-by-page). No tools; best for small, independent files.
+- [ ] **E. B as the default, D for single new files, after a 1-hour spike of A
+      (default).** Switch to A if the spike shows headless runs work with your
+      skills, hooks and MCP on WSL.
+
+Notes:
+
+---
+
+## 10. Git agent
+
+### D10.1 What the script does (pick one)
+
+- [ ] **A. Commit only (R3).**
+- [ ] **B. Commit, push, PR, wait for checks, merge, tag, release (P, Y).**
+- [ ] **C. B up to a passing PR; merge and release on an explicit command (default) (R2).**
+
+Notes:
+
+---
+
+## 11. Deployment target
+
+### D11.1 Where the demo app runs (pick one)
+
+- [ ] **A. Local compose plus one VM with a domain for the demo (default).**
+- [ ] **B. Local only.**
+- [ ] **C. A platform (Fly.io, Render, Railway).**
+
+Notes:
+
+---
+
+## 12. Demo and evaluation
+
+### D12.1 Reference ideas (pick any)
+
+- [ ] **A. Project tracker: development idea, end to end (default)**
+- [ ] **B. Client notes: unseen test, end to end (default)**
+- [ ] **C. Dashboard editor (your widget example): new-component stress test, planning stages (default)**
+- [ ] **D. Appointment booking: business-rule stress test, planning stages (default)**
+
+Notes:
+
+### D12.2 What the demo measures (pick any)
+
+- [ ] **A. Complete runs / attempted runs (default)**
+- [ ] **B. Flows passing e2e / flows in scope (default)**
+- [ ] **C. Checks passing before repair, and repairs that succeeded (default)**
+- [ ] **D. Share of code written by generators versus models (default)**
+- [ ] **E. Time, model calls, tokens and cost per run (default)**
+- [ ] **F. Remaining warnings and known gaps, stated plainly (default)**
+
+Notes:

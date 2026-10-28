@@ -53,12 +53,6 @@ async function fixture(t) {
     'web/.next/cache/example': 'cache',
     'dist/server/main.js': 'build',
     'web/tsconfig.tsbuildinfo': 'cache',
-    '.mcp.json': JSON.stringify({
-      mcpServers: {
-        'weave-design-system': { command: 'node', args: ['/old/launcher'] },
-        other: { command: 'other' },
-      },
-    }),
     'designsystem.config.json': '{}',
     'tsconfig.designsystem.json': '{}',
     'tools/eslint/tailwind-equivalents.mjs': 'policy',
@@ -128,11 +122,6 @@ test('frontend-only copy prunes server dependencies and keeps shared files', asy
     [{ plugin: '@nx/next/plugin' }],
   );
   await access(join(source, 'server/src/main.ts'));
-  const mcp = JSON.parse(await readFile(join(target, '.mcp.json'), 'utf8'));
-  assert.deepEqual(mcp.mcpServers['weave-design-system'].args, [
-    join(target, 'tools/design-system-mcp.mjs'),
-  ]);
-  assert.deepEqual(mcp.mcpServers.other, { command: 'other' });
   assert.equal(
     JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
       .dependencies.express,

@@ -4,6 +4,7 @@ import {
   readdir,
   readFile,
   realpath,
+  rmdir,
   stat,
   writeFile,
 } from 'node:fs/promises';
@@ -124,10 +125,18 @@ export async function generate(
     if (error.code !== 'ENOENT') throw error;
   }
 
-  await mkdir(target, { recursive: true });
+  // cp creates the target itself; an existing (empty) target makes newer
+  // Node versions fail with ERR_FS_CP_EEXIST under errorOnExist.
+  await mkdir(dirname(target), { recursive: true });
+  // Only an empty target gets here (checked above); rmdir refuses anything else.
+  await rmdir(target).catch((error) => {
+    if (error.code !== 'ENOENT') throw error;
+  });
   await cp(source, target, {
     recursive: true,
     force: false,
+    // tools/weave-design-system-mcp is a link to ../../mcps/design-system; copy its files.
+    dereference: true,
     errorOnExist: true,
     filter(path) {
       const local = relative(source, path);
@@ -140,21 +149,6 @@ export async function generate(
       return true;
     },
   });
-
-  // Not every client expands workspaceFolder or sets cwd: change only our
-  // launcher path.
-  const mcpPath = join(target, '.mcp.json');
-  try {
-    const config = JSON.parse(await readFile(mcpPath, 'utf8'));
-    const server = config.mcpServers?.['weave-design-system'];
-    if (server) {
-      server.command = 'node';
-      server.args = [join(target, 'tools/design-system-mcp.mjs')];
-      await writeFile(mcpPath, `${JSON.stringify(config, null, 2)}\n`);
-    }
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-  }
 
   if (!includeServer) {
     for (const section of [
