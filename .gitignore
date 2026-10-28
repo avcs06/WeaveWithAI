@@ -1,4 +1,4 @@
-# dependencies and build output, anywhere (mcp/ relies on this)
+# dependencies and build output, anywhere (mcps/ relies on this)
 node_modules
 dist
 *.tsbuildinfo

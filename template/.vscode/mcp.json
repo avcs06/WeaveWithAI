@@ -1,9 +1,0 @@
-{
-  "servers": {
-    "weave-design-system": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["${workspaceFolder}/tools/design-system-mcp.mjs"]
-    }
-  }
-}

@@ -16,13 +16,13 @@ of times.
 | ----------- | ---------------------------------------------------------------------------------------------- |
 | `src/`      | The generator: CLI, stage runner, stages, validators                                           |
 | `template/` | The design-system workspace that every generated app is copied from: packages, web, server     |
-| `mcp/`      | weave-design-system-mcp, which makes the design system queryable and checkable by agents       |
+| `mcps/`     | MCP servers, one folder each; `design-system` makes the design system queryable and checkable |
 | `docs/`     | Plan, implementation options, architecture and stage specs                                     |
 | `fixtures/` | Reference idea briefs and golden artifacts                                                     |
 
 ## Quick start
 
-Requires Node 22.18+ (24.11 recommended, see `mcp/.nvmrc`) and pnpm.
+Requires Node 22.18+ (24.11 recommended, see `mcps/design-system/.nvmrc`) and pnpm.
 
 ```sh
 pnpm template:setup        # install the template, build and check the MCP

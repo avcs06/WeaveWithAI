@@ -8,7 +8,7 @@ Hackathon (submissions close 2026-11-05 07:30 IST).
 | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `src/`      | The generator: CLI, stage runner, stages, validators, renderers                                | You, through tasks in `docs/PLAN.md`                 |
 | `template/` | The design-system workspace (packages, web, server, tools). Copied into every generated app    | Only tasks that name `template/`                     |
-| `mcp/`      | weave-design-system-mcp: design-system lookup and code validation                              | Only tasks that name `mcp/`                          |
+| `mcps/`     | MCP servers, one folder each; `design-system` does design-system lookup and code validation    | Only tasks that name `mcps/`                         |
 | `docs/`     | Plan, options, architecture, stage specs                                                       | Tick tasks in `PLAN.md`; never change decisions      |
 | `fixtures/` | Reference idea briefs and golden artifacts used by tests and runs                              | Add files; don't rewrite existing ones               |
 | `runs/`     | Output of generator runs (gitignored)                                                          | Written by the generator only                        |
@@ -55,10 +55,11 @@ back into it.
   `{{placeholders}}`; no prompt prose inside TypeScript.
 - One stage per folder: `schema.ts`, `prompt*.md`, `validate.ts`,
   `validate.test.ts`, `render.ts`, `stage.ts`. Keep files under about 300 lines.
-- `template/` and `mcp/` keep their own tooling (pnpm and Nx in `template/`,
-  npm in `mcp/`). Never add them to a root workspace. Run their commands with
+- `template/` and each MCP in `mcps/` keep their own tooling (pnpm and Nx in
+  `template/`, npm in the MCPs). Never add them to a root workspace. Run their commands with
   `pnpm --dir template <script>`.
-- `template/tools/weave-design-system-mcp` is a symlink to `../../mcp`. Keep it.
+- `template/tools/weave-design-system-mcp` is a symlink to
+  `../../mcps/design-system`. Keep it.
 - Never put a `tsconfig.json` at the repo root: the template's `ts-node` finds
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
