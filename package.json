@@ -1,5 +1,5 @@
 {
-  "name": "weave",
+  "name": "WeaveWithAI",
   "version": "0.0.0",
   "private": true,
   "description": "Generator agent: idea to flows, design, contracts and a deployable app, on Meta's Muse models.",

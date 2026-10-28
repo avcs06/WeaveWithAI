@@ -3,31 +3,46 @@
 Start: Wed 2026-10-28, 15:30 IST. Submit by Wed 2026-11-04 evening IST (the
 portal closes Thu 2026-11-05, 07:30 IST). About 8 to 10 hours a day.
 
-Phases 0 to 5 (restructure, foundation, flows, design, contracts,
-reconciliation) are broken into tasks. Phases 6 to 10 are milestones; each
-starts with a task that expands it into tasks, after you confirm the matching
-decisions in OPTIONS.md.
+**Pivot, 2026-10-28 evening.** The backend and deployment agents are parked.
+Everything after the frozen spec goes into the frontend: the contract becomes
+mock data and a mock API inside the generated app (a create adds a row to a
+JSON file), the frontend is built on top of that, and a benchmark stage runs
+right after generation and reports every frontend quality number in one
+table: duplicate implementations, performance, accessibility, screen reader,
+keyboard navigation and code quality. Tests and bounded repairs follow. The
+original backend, packaging and deployment work stays in OPTIONS.md sections 6,
+10 and 11, marked parked, for after the hackathon.
 
-**How to use this file** (full rules in `AGENTS.md`): take the first unticked
-task whose dependencies are ticked; read the linked spec and decisions; do
-only that task; run its **Done when**; tick it, append `(done YYYY-MM-DD)`,
-commit as `<task id>: <summary>`. Blocked: add `> Blocked: <reason>` under it
-and move to the next independent task.
+**How to use this file.** Every task has a step file in `docs/steps/`
+(`NN-<id>-<slug>.md`, numbered in execution order; the index is
+[steps/README.md](steps/README.md)). The step file says how to build the task:
+files, signatures, libraries, commands, tests, and the checks that prove it.
+The loop for each task:
+
+1. You read the next step file, change what you want, and say go.
+2. The agent implements exactly what the step file says, runs its **Done
+   when**, ticks the task here (`- [x] … (done YYYY-MM-DD)`) and leaves every
+   change unstaged.
+3. You review, stage and commit (`<task id>: <summary>`).
+
+Blocked: the agent adds `> Blocked: <reason>` under the task and stops for
+you. Work discovered on the way becomes a new unticked task with one line
+saying why, never extra work in the current step.
 
 ## Milestones
 
 | Gate | When          | Done when                                                                                       |
 | ---- | ------------- | ----------------------------------------------------------------------------------------------- |
-| G0   | Oct 28, 16:30 | Repo restructured; template checks pass from `template/`                                        |
+| G0   | Oct 28, 16:30 | Repo restructured; template checks pass from `template/` (done)                                 |
 | G1   | Oct 29, 01:30 | The three tuning ideas produce scope and flows with zero mandatory issues; client notes (unseen) run once and recorded; golden fixtures saved |
 | G2   | Oct 29, night | Every golden idea produces brief, theme and screens with zero mandatory issues; gap report works |
 | G3   | Oct 30, 13:00 | Every golden idea produces a contract, in parallel with design; seeds validate                 |
 | G4   | Oct 30, night | Every golden spec set frozen; seeded defects found and fixed within limits                     |
-| G5   | Oct 31        | Project tracker's API runs in Docker from the frozen contract; CRUD written by a generator; contract tests pass |
-| G6   | Nov 1         | Project tracker works end to end by hand: themed frontend, new components built, data wired    |
-| G7   | Nov 2         | Project tracker's e2e tests, generated from flows, pass after bounded repairs                  |
-| G8   | Nov 3         | Two end-to-end ideas generated without manual edits (or every edit logged); one deployed; release script and dashboard work |
-| G9   | Nov 4         | Demo video recorded, README has real numbers, submitted                                        |
+| G5   | Oct 31        | Project tracker scaffolded and themed from the frozen spec; typed client, hooks and mock API generated from the contract; contract tests pass against the mock; the app builds |
+| G6   | Nov 1         | Project tracker works end to end by hand on the mock API: pages from the screens, new components built, hooks wired, rendered checks pass |
+| G7   | Nov 2         | Benchmark table generated for the project tracker; e2e tests generated from the frozen flows pass after bounded repairs |
+| G8   | Nov 3         | Two ideas generated end to end without manual edits (or every edit logged); both benchmarked; one run on Muse Spark Open through Modal; run dashboard works |
+| G9   | Nov 4         | Demo video recorded, README has real numbers and separates hackathon work from the design system, submitted |
 
 ---
 
@@ -39,7 +54,7 @@ Done on 2026-10-28 on branch `hackathonv2`. Decisions: D0.1 to D0.4.
   - `hackathon` holds the finished design system and stays as it is.
 
 - [x] **M2** Restructure the repository (done 2026-10-28). Depends: M1
-  - Everything moved into `template/`, the MCP into `mcps/design-system/`
+  - Everything moved into `template/`, the MCP into `mcps/frontend/`
     with `template/tools/weave-design-system-mcp` linking back to it, and the
     agent kit landed at the root. Agent and MCP client configs that only served
     the template were removed.
@@ -53,16 +68,17 @@ Done on 2026-10-28 on branch `hackathonv2`. Decisions: D0.1 to D0.4.
   - Branches stay separate: `hackathon` (design system), `hackathonv2`
     (restructure), `hackathonv3` (agent work; everything from here on).
 
-- [ ] **M5** Read the official rules and submission form (15 min)
+- [x] **M5** Read the official rules and submission form (15 min) (done 2026-10-28)
   - You: the dates and judging weights in `docs/README.md` come from a press
     summary of the official page. Check the official rules and the submission
     form for anything that changes what to build: demo length, repository
     visibility, required write-up, track and theme.
   - Done when: `docs/README.md` "Facts" says what you confirmed, with the link.
 
-## Phase 1: Agent foundation (Oct 28, 16:30 to 20:15)
+## Phase 1: Agent foundation (Oct 28, evening)
 
-Spec: [ARCHITECTURE.md](ARCHITECTURE.md). Decisions: D1.1 to D1.9.
+Spec: [ARCHITECTURE.md](ARCHITECTURE.md). Decisions: D1.1 to D1.9, D1.11.
+Steps 01 to 08.
 
 - [ ] **F1** Root package and tooling (20 min). Depends: M3
   - `pnpm add openai zod execa p-limit` and
@@ -116,16 +132,36 @@ Spec: [ARCHITECTURE.md](ARCHITECTURE.md). Decisions: D1.1 to D1.9.
 
 - [ ] **F7** CLI (30 min). Depends: F6
   - `src/cli.ts` with `node:util` `parseArgs`:
-    `run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay]`,
+    `run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]`,
     `validate <runId> [stage]` (validators only, no model calls), `show <runId>`,
-    `ds` (filled in by DS1).
+    `ds` (filled in by DS1), `bench <runId>` (filled in by B7).
   - Done when: `pnpm weave run fixtures/ideas/project-tracker.md --to scope`
     creates a run folder (with a stub stage until FL5) and `pnpm weave show
     <id>` prints its stage table and token totals.
 
-## Phase 2: Scope and flows (Oct 28, 20:45 to Oct 29, 01:30)
+- [ ] **F8** Open-weight model backends (2 h). Depends: F4, F7. Decision D1.11.
+  - Added 2026-10-28: the user wants runs on Modal and locally as well as on
+    the Model API, so Weave qualifies for the open-weights prize.
+  - `LLM_BACKEND=meta|modal|local` (default `meta`) selects the base URL, key
+    and model from `MODAL_BASE_URL`, `MODAL_API_KEY`, `MODAL_MODEL`,
+    `LOCAL_BASE_URL`, `LOCAL_MODEL` (added to `.env.example` and `env.ts`).
+    The backend and model go into every event and into the replay key.
+  - Modal: deploy Muse Spark Open behind an OpenAI-compatible endpoint (Modal's
+    vLLM example), paid from the Modal credits. Local: the same model family on
+    a local server (llama.cpp or Ollama on CPU; vLLM if a GPU is available).
+  - `pnpm smoke --backend <name>` runs the F4 toy schema. Record in
+    ARCHITECTURE "Model layer" how each server handles `json_schema` output and
+    what the schema bridge had to change.
+  - Done when: `pnpm smoke --backend modal` and `pnpm smoke --backend local`
+    print a parsed object; `pnpm weave run fixtures/ideas/project-tracker.md
+    --to scope --backend modal` completes; `events.jsonl` names the backend and
+    model per call; the Meta API run is unchanged and its tests still pass.
+    If local cannot run a model at usable speed, say so in ARCHITECTURE.md and
+    keep Modal.
 
-Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7.
+## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
+
+Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
 
 - [ ] **FL1** Capabilities and schemas (40 min). Depends: F2
   - `src/config/capabilities.ts` and `src/stages/flows/schema.ts`, as in the spec.
@@ -170,7 +206,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7.
 
 ## Phase 3: Design (Thu Oct 29)
 
-Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11.
+Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 23.
 
 - [ ] **DS1** Design-system inventory (45 min). Depends: F1
   - `src/ds/inventory.ts`: runs `node template/tools/export-design-system.mjs`
@@ -196,7 +232,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11.
   - `pnpm add culori` (add types if your editor wants them).
   - `src/stages/design/theme.ts`: brief to Theme, OKLCH targets from the spec,
     lightness nudged until contrast passes; entity sets; contrast table.
-    THEME-001, 002, 004 with tests (THEME-003 lands with the apply step in Phase 6).
+    THEME-001, 002, 004 with tests (THEME-003 lands with the apply step in S1).
   - Done when: for 12 hues times 3 chroma levels every theme passes THEME-001
     in light and dark (a property-style test).
 
@@ -228,7 +264,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11.
 
 ## Phase 4: Contracts (Fri Oct 30, morning)
 
-Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6.
+Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 24 to 29.
 
 - [ ] **C1** Conventions and schema (40 min). Depends: FL1
   - `src/stages/contracts/conventions.ts` (the conventions table as data and
@@ -260,7 +296,7 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6.
 
 ## Phase 5: Reconciliation and freeze (Fri Oct 30, afternoon to night)
 
-Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.5.
+Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.5. Steps 30 to 35.
 
 - [ ] **R1** Coverage matrix (60 min). Depends: C6, DS9
   - `src/stages/reconcile/matrix.ts`: `buildMatrix`, data resolution as in the spec.
@@ -290,74 +326,241 @@ Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.
     then freeze every golden idea.
   - Done when: **G4**.
 
+## Phase 6: Scaffold, theme and mock API (Sat Oct 31)
+
+Decisions: D6M.1 to D6M.4, D7.2, D9.1. Steps 36 to 40. Replaces the backend:
+the frozen contract is compiled into types, a typed client, TanStack Query
+hooks, seed data and a mock API of Next.js route handlers backed by a JSON
+file, all inside the generated app, by code and without model calls.
+
+- [ ] **S1** Scaffold and theme apply (90 min). Depends: R6, DS4
+  - `src/app/scaffold.ts`: copy `template/` to `runs/<id>/app` with
+    `generate.mjs`, install, build the MCP. `src/app/theme.ts`: apply
+    `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets),
+    `tokens.ts` (radius, focus ring) and `packages/styles/src/fonts.ts`;
+    THEME-003 checks base, surface and status sets are untouched.
+  - Done when: `pnpm weave run … --to scaffold` on the golden project tracker
+    yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
+    pass, with the theme's colors in `colors.ts`.
+
+- [ ] **S2** Contract codegen: types, client, hooks (90 min). Depends: S1, C2
+  - `src/codegen/entities.ts` writes `web/app/entities/<entity>/` (zod schemas
+    and types from `compile.ts`, `api.ts` on `Server`, `hooks.ts` on TanStack
+    Query, `index.ts`) and `web/app/entities/auth/` (session hooks). `Server`
+    learns the error envelope. A file ledger records every generated file.
+  - Done when: the generated app typechecks and lints; a test compiles the
+    golden contract and snapshots the output.
+
+- [ ] **S3** Mock API: route handlers and JSON store (2.5 h). Depends: S2
+  - `src/codegen/mockApi.ts` writes `web/mocks/seed.json`, `web/mocks/db.json`,
+    `web/app/api/_mock/` (store with a write queue, http helpers, session) and
+    one `route.ts` per path from the conventions: list, get, create, update,
+    delete, action, and the four auth routes. Validation, access, pagination,
+    filters, search, sort, relations on delete, lifecycle transitions, latency
+    and forced failures come from the contract and the conventions.
+  - Done when: `curl` against `pnpm dev` of the generated app creates a row
+    that appears in `web/mocks/db.json` and in the next list call; every error
+    code in the contract is reproducible.
+
+- [ ] **S4** Contract tests against the mock (60 min). Depends: S3
+  - `src/codegen/apiTests.ts` writes `web/app/api/__tests__/<entity>.test.ts`
+    per entity: every operation's happy path and every listed error, pagination
+    and sort, cascade on delete, unauthenticated and cross-user access, and data
+    surviving a store reload (D8.4 A to D, applied to the mock).
+  - Done when: `pnpm nx test web` passes in the generated project tracker.
+
+- [ ] **S5** Golden project tracker to app (45 min). Depends: S4
+  - `weave run … --to codegen` end to end; `pnpm build` of the app; record
+    sizes and timings; fix codegen bugs found on the way.
+  - Done when: **G5**.
+
+## Phase 7: Frontend (Sun Nov 1)
+
+Spec: [specs/design.md](specs/design.md) "Rendered checks". Decisions: D3.6 C,
+D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
+
+- [ ] **FE1** Coding engine: action loop with ownership and checks (2 h). Depends: F8, S2
+  - `src/engine/loop.ts`: a structured-output action loop on the model layer
+    (read, write, list, recipe, check, done), bounded turns and tokens,
+    allowed write paths per session, every write recorded in the ledger,
+    checks run through the app's own tools (validate, typecheck, lint, verify).
+  - Done when: tests with a fake model show a write outside the allowed paths
+    refused, a failing check fed back, and the loop ending on `done`.
+
+- [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
+  - `src/codegen/pages.ts`: for every page screen a route folder with a
+    `page.tsx` shell (H1, sections with their node manifests as comments,
+    `data-testid` per node), dialogs and drawers as files beside their page,
+    navigation in `PageHeader`, a sign-in guard for `signedIn` screens.
+  - Done when: the generated app builds and every route renders its H1;
+    `pnpm verify` passes on every route.
+
+- [ ] **FE3** New components (60 min). Depends: FE1, FE2
+  - One loop session per `newComponents` entry writing
+    `web/app/components/<Name>/` with the DS conventions and an axe test;
+    validate, typecheck, lint and `nx test web` as checks.
+  - Done when: the dashboard editor's new component passes its checks.
+
+- [ ] **FE4** Pages: sections wired to hooks (2.5 h). Depends: FE3
+  - One loop session per screen filling the shell's sections from the nodes,
+    using recipes, the entity hooks and the DS, with loading, empty, error,
+    invalid and submitting states; `pnpm verify <route>` as the last check.
+  - Done when: every project-tracker route passes validate, typecheck, lint
+    and verify, and the core loop works by hand.
+
+- [ ] **FE5** Rendered checks (90 min). Depends: FE2
+  - `src/checks/`: DESIGN-R-001 to 009 with Playwright (axe, contrast, keyboard
+    walk, target size, overflow, first viewport, type size, color variables,
+    proximity), written as reusable collectors the benchmark reuses.
+  - Done when: each rule has a test on a fixture page; the project tracker's
+    routes pass the mandatory rules.
+
+- [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
+  - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence
+    (D3.8 A); warnings only.
+  - Done when: a rubric report exists for the project tracker.
+
+- [ ] **FE7** Golden project tracker end to end (60 min). Depends: FE4, FE5
+  - `weave run … --to frontend`; walk every flow by hand on the mock API.
+  - Done when: **G6**.
+
+## Phase 8: Benchmark (Mon Nov 2, morning)
+
+Decisions: D13.1 to D13.5. Steps 48 to 54. Runs right after generation and
+again after repairs; one table with every number.
+
+- [ ] **B1** Production build and server (45 min). Depends: S5
+  - `src/bench/server.ts`: `next build`, then `next start` on a free port with
+    a fresh seeded store; gzip, ETag and immutable static caching confirmed by
+    the runner; security headers in the template's `next.config.js`.
+  - Done when: the runner starts and stops the server and asserts
+    `content-encoding: gzip` on a page response.
+
+- [ ] **B2** Lighthouse (60 min). Depends: B1
+  - `src/bench/lighthouse.ts`: Lighthouse 13 through its Node API on
+    Playwright's Chromium, mobile and desktop, per route, signed in through a
+    cookie header; scores, LCP, FCP, CLS, TBT, Speed Index, bytes, DOM size;
+    JSON and HTML reports saved.
+  - Done when: `benchmark/lighthouse/*.json` exists for every route of the
+    project tracker.
+
+- [ ] **B3** Accessibility: axe, contrast, targets (45 min). Depends: FE5, B1
+  - Reuse the FE5 collectors on the production server: axe violations by
+    impact, contrast failures, small targets, per route and state.
+  - Done when: `benchmark/accessibility.json` lists counts per route.
+
+- [ ] **B4** Screen reader (60 min). Depends: B1
+  - `src/bench/screenReader.ts`: the accessibility tree per route (aria
+    snapshot) and a virtual screen reader pass: unnamed controls, landmark
+    coverage, heading outline, labelled fields, dialog naming and focus, live
+    regions, and the spoken phrase log saved per route.
+  - Done when: `benchmark/screen-reader/*.txt` and counts per route exist.
+
+- [ ] **B5** Keyboard navigation (60 min). Depends: FE5, B1
+  - `src/bench/keyboard.ts`: Tab walk per route: reachability, focus visible,
+    order against reading order, traps, Escape on dialogs, Enter and Space on
+    controls, skip link.
+  - Done when: `benchmark/keyboard.json` has percentages per route.
+
+- [ ] **B6** Code quality and duplicates (90 min). Depends: S5
+  - `src/bench/code.ts`: tsc, ESLint by rule, MCP validate by rule (with a new
+    `--json` flag), jscpd clones and duplicated percentage, design-system
+    duplicates (hand-built elements, near-named components, native controls
+    in new components, data access outside entities), knip unused code,
+    first-load JS per route from the build manifests, lines by origin from
+    the ledger.
+  - Done when: `benchmark/code.json` exists for the project tracker with a
+    deliberately planted duplicate detected.
+
+- [ ] **B7** Benchmark table and CLI (60 min). Depends: B2 to B6
+  - `src/bench/report.ts`: `benchmark.json` (every metric with value, unit,
+    threshold, verdict) and `05-benchmark.md` (summary, per-route table, code
+    table, deltas against the previous benchmark of the run). `weave bench
+    <runId>`; `weave run` runs it after `frontend` and after `repair`.
+  - Done when: **G7** part one: the project tracker's table is generated and
+    every threshold has a verdict.
+
+## Phase 9: Tests and repair (Mon Nov 2, afternoon to Tue Nov 3)
+
+Spec: [specs/flows.md](specs/flows.md) for the inputs. Decisions: D8.1 to
+D8.4. Steps 55 to 58.
+
+- [ ] **T1** Playwright tests from the frozen flows (2 h). Depends: R6, FE2
+  - `src/stages/tests/`: one `@playwright/test` spec per flow in `web/e2e/`,
+    generated by code from steps, fields, alternatives and node IDs; the model
+    only turns outcomes into assertions (structured call); a Playwright config
+    with a seeded store and a `pnpm test:e2e` script in the app.
+  - Done when: the golden project tracker gets one spec per flow that compiles.
+
+- [ ] **T2** Run, evidence, repair requests (60 min). Depends: T1, FE7
+  - Run the specs, map failures to flow, step and screen, attach screenshot
+    and trace, and write typed repair requests (D8.3 A); `06-e2e.md`.
+  - Done when: the evidence table and the requests exist for a run with a
+    planted defect.
+
+- [ ] **T3** Bounded repair (90 min). Depends: T2, FE1
+  - A loop session per repair request, allowed paths limited to the screen's
+    route and components, tests read-only, 2 rounds, rerun only the failed
+    specs; benchmark again after repairs.
+  - Done when: the planted defect is repaired within the limits; a spec edit
+    attempted by the model is refused and logged.
+
+- [ ] **T4** Golden project tracker e2e green (45 min). Depends: T3
+  - Done when: **G7**.
+
+## Phase 10: Prove and submit (Tue Nov 3 to Wed Nov 4)
+
+Decisions: D1.10 B, D12.1, D12.2. Steps 59 to 62.
+
+- [ ] **P1** Run dashboard (90 min). Depends: B7
+  - `src/dashboard/`: one static `dashboard.html` per run from `events.jsonl`,
+    reports, the benchmark and screenshots.
+  - Done when: `pnpm weave show <id> --html` opens a dashboard with the
+    timeline, issues per round, the coverage matrix and the benchmark table.
+
+- [ ] **P2** Two full runs, a Modal run, benchmarks (3 h). Depends: T4, F8, P1
+  - Project tracker and client notes end to end without manual edits (or every
+    edit logged); one run on Muse Spark Open through Modal; both benchmarked;
+    numbers into `fixtures/golden/README.md`.
+  - Done when: **G8**.
+
+- [ ] **P3** README and submission answers (90 min). Depends: P2
+  - Root `README.md` with the pipeline, the numbers, the gaps, and a section
+    that separates the hackathon work from the pre-existing design system
+    (required by the rules); `docs/SUBMISSION.md` with the form's answers.
+  - Done when: a reader can tell what was built this week from the README alone.
+
+- [ ] **P4** Demo video and submit (2 h). Depends: P3
+  - 3-minute script and recording; upload; submit the form; optional X post.
+  - Done when: **G9**.
+
 ---
 
-## Track B (optional, in parallel): backend template
+## Parked (after the hackathon)
 
-Independent of Phases 1 to 5; it only touches `template/server`,
-`template/package.json` and compose files. Run it in a second agent session on
-a git worktree (`git worktree add ../weave-track-b -b track-b`) and merge
-before Phase 6. Decisions: D6.1 to D6.10. If nobody runs it, it becomes the
-first half of Phase 6.
-
-- [ ] **B1** Auth spike (60 min): D6.4 A on Fastify with Drizzle and Postgres;
-  fall back to B if it doesn't work in an hour. Done when: sign up, sign in,
-  `me`, sign out work with curl against a local Postgres.
-- [ ] **B2** Replace the Express starter in `template/server` with Fastify,
-  Drizzle and Postgres (2 h). Done when: `pnpm --dir template nx serve server`
-  (or a plain `tsx` script) answers `/api/health`.
-- [ ] **B3** Backend kit utilities (3 h): the D6.6 set, each with a recipe file
-  and `@invalidAlternative` tags, mirroring the frontend recipes. Done when:
-  each utility has tests.
-- [ ] **B4** A hand-written `Project` resource on the kit (2 h). Done when:
-  tests pass for validation, auth rejection, user A versus user B isolation,
-  and responses matching their schemas.
-- [ ] **B5** Compose and scripts (2 h): D6.8, D6.9, D6.10. Done when:
-  `pnpm deploy:up` starts postgres, runs migrations once, then api, web and
-  Caddy; data survives `docker compose restart`.
-
----
-
-## Phases 6 to 10 (milestones; expanded when Phase 5 closes)
-
-Each phase starts with an **expand** task: read OPTIONS.md sections for the
-phase, list the tasks in this file in the same format, then start.
-
-- [ ] **P6** Scaffold and backend (Sat Oct 31). Decisions: D6.x, D9.1.
-  Scaffold an app from `template/` with `generate.mjs`, apply the theme
-  (`ts-morph` edits; THEME-003), generate `packages/contract`, Drizzle schema
-  and CRUD from the frozen contract, spike the coding engine (D9.1), let the
-  backend agent write only custom operations, run the code validators (D6.7).
-  Gate **G5**.
-- [ ] **P7** Frontend (Sun Nov 1). Decisions: D3.6 C, D3.7, D7.x.
-  Prototype pages from `02-screens.json` with fixture data, build the new
-  components in `web/app/components/`, wire the generated client and hooks,
-  run rendered checks and the visual rubric. Gate **G6**.
-- [ ] **P8** Tests and repair (Mon Nov 2). Decisions: D8.x.
-  Playwright tests from the frozen flows (generated before P7's wiring if
-  possible), API contract tests, triage, structured repair requests, bounded
-  repairs; agents can't edit tests. Gate **G7**.
-- [ ] **P9** Package, release, prove (Tue Nov 3). Decisions: D6.9, D10.1, D11.1, D1.10 B.
-  Compose packaging, release script with PR and checks, deploy one app, full
-  runs on the two end-to-end ideas, run dashboard. Gate **G8**.
-- [ ] **P10** Demo and submit (Wed Nov 4). Decisions: D12.x.
-  Record the demo (idea, flows, design, contract, generated app, a caught
-  defect and its repair, tests green, release, live URL, the numbers); README
-  with real metrics and stated gaps; submit in the evening. Gate **G9**.
+Backend (OPTIONS.md section 6, Track B), packaging and deployment (sections
+10 and 11). The mock API keeps the contract's HTTP shape, so a real backend
+replaces it behind the same typed client.
 
 ## If a day slips, cut in this order
 
-1. Wireframe HTML (D3.6 D) and the OpenAPI export
-2. Visual rubric (keep the rendered code checks)
+The benchmark is the proof of the project: nothing in Phase 8 is cut, and
+its routes, states and tools stay as D13 says.
+
+1. Wireframe HTML (D3.6 D) and the OpenAPI export (about 45 min)
+2. Visual rubric (FE6, 45 min)
 3. Muse Image moodboard (D3.3 C) if it was ever started
-4. Parallel design and contracts (run them one after the other)
-5. Second round of each reconciliation pass
-6. The test repair loop (report failures instead)
-7. Public deployment (keep compose and DEPLOY.md)
+4. The dashboard (P1) trimmed to the timeline and the benchmark table (saves
+   about 45 min); the markdown reports carry the rest
+5. The Modal run (P2) stopped after `freeze` instead of a full run (saves
+   about 1 h; the open-weights prize needs the run to exist, not to be long)
+6. Parallel design and contracts (run them one after the other)
+7. Second round of each reconciliation pass
+8. The second repair round (T3); report what is still open instead
 
 Never cut: schemas, validators, golden fixtures, the coverage matrix, the
-template-based scaffold. They are what keeps the output from drifting, which
-is the whole idea.
+template-based scaffold, the whole benchmark phase. They are what keeps the
+output from drifting and what proves it, which is the whole idea.
 
 ## Risks
 
@@ -366,6 +569,8 @@ is the whole idea.
 | Meta's API rejects a schema shape                            | F2 sanitizes and F4 smoke-tests every construct used; keep schemas flat                     |
 | Credits run out                                              | Replay cache, golden fixtures for offline work, Spark by default, costs logged per call     |
 | Design outputs too big or inconsistent                       | IA first, then per-screen nodes (D3.11 B); per-screen reruns                                |
-| Phases 6 to 9 get one day each                               | Track B in parallel now; the contract compiler (C2) is reused as the backend generator      |
-| `muse exec` doesn't run headless on WSL                       | D9.1 E: own tool loop by default; Muse Code only if its spike passes                        |
+| Phases 6 to 9 get one day each                               | The contract compiler (C2) feeds codegen; page shells are code; the model fills sections    |
+| The model writes outside its files or edits tests           | The loop refuses writes outside the allowed paths and logs the attempt (FE1)                |
+| Lighthouse or the browser won't start on WSL                 | Playwright's Chromium with `--headless=new`; every tool in the benchmark is optional per run |
 | Prompt tuning turns into validator weakening                 | AGENTS.md forbids it; rule changes go through you                                           |
+| Local open-weight run too slow, or a server rejects `json_schema` | Modal with vLLM is the verified path for the prize; local is CPU-only here and best effort  |

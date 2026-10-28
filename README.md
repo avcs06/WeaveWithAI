@@ -22,7 +22,7 @@ of times.
 
 ## Quick start
 
-Requires Node 22.18+ (24.11 recommended, see `mcps/design-system/.nvmrc`) and pnpm.
+Requires Node 22.18+ (24.11 recommended, see `mcps/frontend/.nvmrc`) and pnpm.
 
 ```sh
 pnpm template:setup        # install the template, build and check the MCP

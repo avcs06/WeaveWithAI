@@ -1,4 +1,4 @@
-# @weave/design-system
+# weave-template
 
 A React design system in an Nx workspace: components (`packages/ui`), tokens
 and themes (`packages/styles`), and hooks and state helpers (`packages/utils`),

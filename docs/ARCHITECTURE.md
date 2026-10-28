@@ -14,16 +14,17 @@ idea.md (+ answers.json)
         └─ contracts                                Phase 4   specs/contracts.md
               (design and contracts run in parallel from the same flows version)
   └─ reconcile ─ freeze (spec.lock.json)            Phase 5   specs/reconciliation.md
-  └─ scaffold app from template/ ─ apply theme      Phase 6+
-        ├─ backend: codegen from contract, agent fills custom operations
-        └─ frontend: prototype from screens, agent wires data and builds new components
-  └─ tests from frozen flows ─ run ─ triage ─ repair (bounded)
-  └─ package (compose) ─ release (git, CI, tag)
+  └─ scaffold app from template/ ─ apply theme      Phase 6   steps 36, 37
+        └─ codegen from the contract: types, client, hooks, seed, mock API, API tests
+  └─ frontend: page shells (code) ─ new components ─ pages (model sessions)   Phase 7
+  └─ benchmark: build, serve, Lighthouse, axe, screen reader, keyboard, code  Phase 8
+  └─ tests from frozen flows ─ run ─ evidence ─ repair (bounded) ─ benchmark again   Phase 9
 ```
 
-Phases 2 to 5 are planned in detail in `PLAN.md`. Phase 6 onward is expanded
-into tasks when Phase 5 closes, after the user confirms the decisions in
-OPTIONS.md sections 6 to 11.
+Every phase is planned as tasks in `PLAN.md`, with one step file per task in
+`docs/steps/`. Pivot 2026-10-28: no backend and no deployment this week. The
+contract becomes a mock API inside the generated app (OPTIONS.md 6M) and a
+benchmark stage (section 13) reports the frontend's quality in one table.
 
 ## Principles
 
@@ -75,6 +76,23 @@ src/
     design/              brief, theme (code), screens: same layout
     contracts/           domain + operations: same layout, plus compile.ts
     reconcile/           matrix.ts, patch.ts, procedure.ts, prompts
+    tests/               e2e specs generated from the frozen flows, run, evidence
+  app/
+    scaffold.ts          template copy, install, MCP build
+    theme.ts             02-theme.json applied with ts-morph (THEME-003)
+  codegen/
+    ledger.ts            every file written into an app, with its origin
+    entities.ts          web/app/entities/<entity>: schemas, client, hooks
+    mockApi.ts           web/app/api/**/route.ts, web/mocks/*.json, store, session
+    apiTests.ts          contract tests against the mock
+    pages.ts             routes, navigation and page shells from 02-screens.json
+  engine/
+    loop.ts              the action loop: read, write, list, recipe, check, done
+    tools.ts             the checks a session may run, through the app's tools
+  checks/                rendered checks (DESIGN-R-*), reusable collectors
+  bench/                 server, lighthouse, accessibility, screenReader,
+                         keyboard, code, report
+  dashboard/             one static HTML per run
 fixtures/
   ideas/                 reference idea briefs
   golden/<idea>/         accepted artifacts, so later stages develop offline
@@ -93,6 +111,10 @@ runs/<runId>/
   03-contract.json  03-contract.md
   04-matrix.json  04-reconcile.md
   spec.lock.json               frozen versions for implementation
+  app/                         the generated app (a template copy plus generated code)
+  app.ledger.json              every generated file with its origin and step
+  benchmark/                   raw tool output; benchmark.json and 05-benchmark.md beside it
+  06-e2e.md                    evidence table and repair requests
   reports/<stage>.json         issues per round
   llm/<stage>-r<round>.json    request and response, for audit and replay
   events.jsonl                 one line per stage start, round, issue count, tokens, cost
@@ -180,6 +202,11 @@ corrected JSON (D1.5 default). After the last round the runner throws a
   a prompt or schema changes the key, so stale replays can't happen.
 - Model routing: `default` uses `LLM_MODEL`; `strong` uses `LLM_MODEL_STRONG`
   for a round that failed twice (D1.8).
+- Backends (D1.11): `LLM_BACKEND` picks the Meta Model API (default), a Modal
+  endpoint serving Muse Spark Open, or a local OpenAI-compatible server. Same
+  client, same schema bridge; the backend and model are logged per call and
+  are part of the replay key. F8 records how each server handles
+  `json_schema` output.
 
 ## Design-system inventory (`src/ds/inventory.ts`)
 
@@ -194,6 +221,33 @@ plus all tokens. Loading takes about 7 seconds, so the result is cached in
 Prompts receive a slim summary (name, one-line description, variant values,
 about 4 KB for 43 components). Validators receive the full inventory.
 
+## Generated app
+
+A run's app is a copy of `template/` plus generated code. Everything the
+generator writes is recorded in `app.ledger.json` with its origin.
+
+```text
+runs/<runId>/app/
+  colors.ts  tokens.ts  packages/styles/src/fonts.ts     themed by code (S1)
+  web/mocks/seed.json  web/mocks/db.json                  seed rows and the live store (S3)
+  web/app/api/_mock/{store,http,session}.ts               store queue, envelope, cookie session (S3)
+  web/app/api/<kebab-plural>/route.ts                     list, create (S3)
+  web/app/api/<kebab-plural>/[id]/route.ts                get, update, delete (S3)
+  web/app/api/<kebab-plural>/[id]/<kebab-verb>/route.ts   actions (S3)
+  web/app/api/auth/{sign-up,sign-in,sign-out,me}/route.ts (S3)
+  web/app/api/__tests__/<entity>.test.ts                  contract tests (S4)
+  web/app/entities/<entity>/{schema,api,hooks,index}.ts   compiled contract (S2)
+  web/app/entities/auth/{api,hooks,index}.ts              session (S2)
+  web/app/components/<Name>/                              new components (FE3, model)
+  web/app/components/PageHeader.tsx                       navigation from the IA (FE2)
+  web/app/(routes)/<route>/page.tsx                       shell by code (FE2), filled by the model (FE4)
+  web/app/(routes)/<route>/<Dialog>.tsx                   dialogs and drawers of that page
+  web/e2e/<flow>.spec.ts  playwright.config.ts            tests from the frozen flows (T1)
+```
+
+Imports keep the template's direction: shared → entities → components →
+blocks → (routes). Route folders never import each other.
+
 ## Meta tooling map
 
 | Where                            | Meta product                                                    |
@@ -202,4 +256,5 @@ about 4 KB for 43 components). Validators receive the full inventory.
 | Repairs that failed twice        | Muse Wonder (D1.8)                                              |
 | Screenshot review of prototypes  | Muse Spark image understanding (D3.7)                           |
 | Moodboard and hero art, optional | Muse Image, $0.01 per image (D3.3 option C)                     |
-| Coding stages                    | Muse Code headless or an own tool loop on the Model API (D9.1)  |
+| Coding stages                    | An action loop on the Model API (D9.1 B); the same loop on Muse Spark Open through Modal (D1.11) |
+| Assertions in generated tests    | Muse Spark structured output turns flow outcomes into assertions (D8.2 A) |

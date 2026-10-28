@@ -36,9 +36,9 @@ the option marked **(default)** applies. A ticked option overrides the default.
 
 ### D0.1 Repository layout (pick one)
 
-- [ ] **A. One repo: root agent, `template/`, `mcps/design-system/` (default) (Y).** Everything a
+- [ ] **A. One repo: root agent, `template/`, `mcps/frontend/` (default) (Y).** Everything a
       coding agent needs is in one checkout; the template stays a standalone
-      pnpm/Nx workspace that `cp -r` can copy; `mcps/design-system/` is shared by the agent and
+      pnpm/Nx workspace that `cp -r` can copy; `mcps/frontend/` is shared by the agent and
       the template. Cost: two toolchains in one repo, kept apart on purpose.
       In place since 2026-10-28.
 - [ ] **B. New agent repo, design system as a git submodule at `template/`.** The DS
@@ -67,10 +67,10 @@ Notes:
 ### D0.3 How generated apps get the MCP (pick one)
 
 - [ ] **A. Link and copy (default).** `template/tools/weave-design-system-mcp`
-      is a symlink to `../../mcps/design-system`; `generate.mjs` copies through it, so each app
+      is a symlink to `../../mcps/frontend`; `generate.mjs` copies through it, so each app
       gets a real, self-contained MCP. No template script changes. Tested.
-- [ ] **B. Package dependency.** Template scripts import `weave-design-system-mcp`
-      by name; this repo uses `link:../mcps/design-system`, generated apps a published package
+- [ ] **B. Package dependency.** Template scripts import `weave-frontend-mcp`
+      by name; this repo uses `link:../mcps/frontend`, generated apps a published package
       or `file:` path. Cleaner long term; more edits now, and a publish step.
 - [ ] **C. Not shipped.** The orchestrator validates centrally; generated apps
       lose the AI-friendly MCP for future edits.
@@ -189,6 +189,26 @@ Notes:
 - [ ] **C. HTML wireframes of the design spec** (see D3.6 option D).
 
 Notes:
+
+### D1.11 Model backends (pick any)
+
+- [x] **A. Meta Model API (default).** `muse-spark-1.3` and `muse-wonder-1.0` as
+      routed by D1.8. Paid from the $150 credits.
+- [x] **B. Meta open-weight models on Modal.** Muse Spark Open (or Muse Glimmer)
+      behind an OpenAI-compatible endpoint on Modal, paid from the $100 Modal
+      credits. This is the run the infrastructure partner verifies for the $10k
+      "Best Build on Meta Open Weight Models" prize.
+- [x] **C. Meta open-weight models on own hardware.** The same models through a
+      local OpenAI-compatible server (vLLM with a GPU; llama.cpp or Ollama on
+      CPU for a small Glimmer). The development machine shows no GPU in WSL and
+      has 15 GB RAM, so expect CPU speed; best effort.
+
+One client and one schema bridge serve all three; `LLM_BACKEND` picks the base
+URL, key and model. Structured output (`response_format: json_schema`) is the
+part that differs per server and is checked in F8.
+
+Notes: A, B and C ticked on the user's instruction, 2026-10-28, to be eligible
+for the open-weights prize. B is the path that counts; C is a test.
 
 ---
 
@@ -518,7 +538,12 @@ Notes:
 
 ---
 
-## 6. Backend agent (Phase 6; decide by Oct 30)
+## 6. Backend agent (parked 2026-10-28)
+
+Parked on the user's instruction: this week has no backend agent. Section 6M
+below replaces it with a mock API inside the generated app. The decisions here
+stay for after the hackathon; a real backend replaces the mock behind the same
+typed client.
 
 ### D6.1 Server framework (pick one)
 
@@ -612,6 +637,64 @@ Notes:
 
 ---
 
+## 6M. Mock data and API (Phase 6, replaces the backend for now)
+
+Added 2026-10-28. The frozen contract is compiled into the generated app by
+code: types, a typed client, hooks, seed data and a mock API. No model calls.
+
+### D6M.1 Mock API shape (pick one)
+
+- [x] **A. Next.js route handlers generated from the contract, backed by a JSON
+      file (default; user, 2026-10-28).** One `route.ts` per path from the
+      contract conventions (`web/app/api/<kebab-plural>/…`), validation with the
+      compiled zod schemas, the real error envelope and status codes. Data lives
+      in `web/mocks/db.json`: a create adds a row to the file. Real HTTP, so the
+      typed client, the e2e tests and the benchmark all exercise the same path a
+      backend will later serve.
+- [ ] **B. In-browser store** (`createStore` from `@packages/utils/state` plus
+      `localStorage`), hooks call it directly. No HTTP, nothing for Lighthouse
+      or Playwright to see on the network; swapping in a backend rewrites the
+      hooks.
+- [ ] **C. Mock Service Worker (MSW)** intercepting `fetch` in the browser.
+      Real-looking requests; data is per tab and gone on reload unless persisted.
+
+Notes:
+
+### D6M.2 Persistence and reset (pick one)
+
+- [x] **A. `web/mocks/seed.json` (pristine, from the contract's seed rows and a
+      demo user) and `web/mocks/db.json` (live) (default; user, 2026-10-28).**
+      `pnpm mock:reset` copies seed over db. The store serializes writes
+      through one promise queue and writes atomically (temp file, rename).
+      `MOCK_DB_PATH` points tests and benchmarks at their own copy.
+- [ ] **B. In-memory only**, reseeded on every server start.
+
+Notes:
+
+### D6M.3 Auth in the mock (pick one)
+
+- [x] **A. Session cookie (default; user, 2026-10-28).** `POST /api/auth/sign-up`,
+      `sign-in`, `sign-out` and `GET /api/auth/me` from the conventions; users
+      in the store with a salted SHA-256 `passwordHash` (a mock, not for
+      production); an httpOnly `weave_session` cookie holding a session id;
+      `owner` access filters by `ownerId`; `role` access checks `user.role`.
+- [ ] **B. No auth**: every request runs as the demo user. Simpler; the auth
+      flows and the denied alternatives can't be tested.
+
+Notes:
+
+### D6M.4 Latency and failure simulation (pick one)
+
+- [x] **A. Configurable (default; user, 2026-10-28).** `MOCK_LATENCY_MS` (150 in
+      `pnpm dev`, 0 under tests and benchmarks) so loading states are visible;
+      a request header `x-mock-fail: <code>` forces that error, which the e2e
+      tests use for the failure alternatives through `page.route`.
+- [ ] **B. None.**
+
+Notes:
+
+---
+
 ## 7. Frontend agent (Phase 7)
 
 ### D7.1 Approach (pick one)
@@ -676,7 +759,7 @@ Notes:
 
 Notes:
 
-### D8.4 Extra backend checks (pick any)
+### D8.4 Extra backend checks (pick any; this week they run against the mock API, S4)
 
 - [ ] **A. Unauthenticated access rejected (default)**
 - [ ] **B. User A can't touch user B's records (default)**
@@ -711,24 +794,28 @@ Notes:
 
 ---
 
-## 10. Git agent
+## 10. Git agent (parked 2026-10-28)
+
+Parked with deployment. The generator commits nothing this week; the user
+commits generated apps by hand if needed.
 
 ### D10.1 What the script does (pick one)
 
-- [ ] **A. Commit only (R3).**
+- [x] **A. Commit only (R3) (user, 2026-10-28: parked, nothing automated this week).**
 - [ ] **B. Commit, push, PR, wait for checks, merge, tag, release (P, Y).**
-- [ ] **C. B up to a passing PR; merge and release on an explicit command (default) (R2).**
+- [ ] **C. B up to a passing PR; merge and release on an explicit command (R2).** Was the default; parked.
 
 Notes:
 
 ---
 
-## 11. Deployment target
+## 11. Deployment target (parked 2026-10-28)
 
 ### D11.1 Where the demo app runs (pick one)
 
-- [ ] **A. Local compose plus one VM with a domain for the demo (default).**
-- [ ] **B. Local only.**
+- [ ] **A. Local compose plus one VM with a domain for the demo.** Was the default; parked.
+- [x] **B. Local only (user, 2026-10-28).** The benchmark's production server
+      (`next build` and `next start`) is the closest thing to a deployment this week.
 - [ ] **C. A platform (Fly.io, Render, Railway).**
 
 Notes:
@@ -754,5 +841,85 @@ Notes:
 - [ ] **D. Share of code written by generators versus models (default)**
 - [ ] **E. Time, model calls, tokens and cost per run (default)**
 - [ ] **F. Remaining warnings and known gaps, stated plainly (default)**
+- [x] **G. The benchmark table per generated app (user, 2026-10-28).** Every
+      number from section 13, before and after repairs.
+
+Notes:
+
+---
+
+## 13. Benchmark (Phase 8)
+
+Added 2026-10-28 on the user's instruction: after a website is generated, one
+run measures every frontend quality concern and writes one table. Thresholds
+are reported, never looped on by the model; repairs come from the tests.
+
+### D13.1 What is measured (pick any; all ticked by the user, 2026-10-28)
+
+- [x] **A. Performance: Lighthouse 13** through its Node API on Playwright's
+      Chromium, mobile and desktop presets, per route, signed in by cookie.
+      Scores (performance, accessibility, best practices, SEO), LCP, FCP, CLS,
+      TBT, Speed Index, total bytes, unused JavaScript, DOM size.
+- [x] **B. Accessibility: axe-core** (`@axe-core/playwright`, WCAG 2.2 AA tags)
+      per route and state, violations by impact; computed-style contrast and
+      target size from the FE5 collectors.
+- [x] **C. Screen reader:** the accessibility tree per route (Playwright
+      `ariaSnapshot`) scored for unnamed controls, landmarks, heading outline,
+      labelled fields, dialog naming and focus, live regions; plus a virtual
+      screen reader pass (`@guidepup/virtual-screen-reader`) whose spoken
+      phrase log is saved per route.
+- [x] **D. Keyboard navigation:** a Playwright Tab walk per route: reachable
+      controls, visible focus, order against reading order, traps, Escape on
+      dialogs, Enter and Space on controls, skip link.
+- [x] **E. Duplicate implementations:** jscpd clones and duplicated percentage
+      over `web/app`; design-system duplicates: MCP `invalid-alternative`
+      findings (hand-built elements the DS has), new components whose names are
+      within edit distance 2 of a DS component, native controls rendered inside
+      new components, data access outside `entities`, the same component name in
+      two route folders.
+- [x] **F. Code quality:** tsc errors, ESLint findings by rule, MCP validate
+      findings by rule, knip unused files, exports and dependencies, first-load
+      JavaScript per route (gzip) from the build manifests, lines of code by
+      origin (template, codegen, model, repair) from the ledger.
+
+Notes:
+
+### D13.2 Production server for the measurements (pick one)
+
+- [x] **A. `next build` then `next start` (default; user, 2026-10-28).** Next's
+      server gzips responses (`compress: true`), sets ETags and immutable
+      caching for `/_next/static`; the template's `next.config.js` adds security
+      headers. The runner asserts `content-encoding: gzip` before measuring.
+- [ ] **B. A Node reverse proxy with Brotli** (`compression` or a Caddy
+      container in front of `next start`). Better compression numbers; one more
+      process to manage.
+
+Notes:
+
+### D13.3 Thresholds (reported as pass, warn or fail; pick one)
+
+- [x] **A. Defaults (user, 2026-10-28):** Lighthouse performance 90 (desktop)
+      and 80 (mobile), accessibility 100, best practices 90, SEO 90; axe serious
+      and critical 0; contrast failures 0; unnamed controls 0; keyboard
+      reachability 100% and visible focus 100%, no traps; jscpd duplication
+      under 3% and no clone over 30 lines; DS duplicates 0; tsc and MCP errors
+      0; first-load JS under 250 KB gzip per route.
+- [ ] **B. Your numbers:** ___
+
+Notes:
+
+### D13.4 When it runs (pick one)
+
+- [x] **A. After `frontend` and again after `repair` (default; user, 2026-10-28)**,
+      plus `weave bench <runId>` by hand. The second table shows deltas.
+- [ ] **B. Only by hand.**
+
+Notes:
+
+### D13.5 Routes and states measured (pick one)
+
+- [x] **A. Every page screen, signed in as the demo user, default state; the
+      empty state through a second user with no rows (default; user, 2026-10-28).**
+- [ ] **B. Entry pages only.**
 
 Notes:
