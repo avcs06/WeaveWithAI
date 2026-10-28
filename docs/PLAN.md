@@ -98,7 +98,7 @@ Steps 01 to 08.
   - Done when: tests cover a nested schema passing, a recursive one throwing, a
     depth-11 one throwing, and a discriminated union coming out as `anyOf`.
 
-- [ ] **F3** Model client (60 min). Depends: F2
+- [x] **F3** Model client (60 min) (done 2026-10-28). Depends: F2
   - `src/core/llm.ts`, as in ARCHITECTURE "Model layer":
     `generateStructured({ stage, round, schema, schemaName, messages, model })`
     returns `{ data, raw, usage, costUsd, replayed }`.
@@ -158,6 +158,14 @@ Steps 01 to 08.
     model per call; the Meta API run is unchanged and its tests still pass.
     If local cannot run a model at usable speed, say so in ARCHITECTURE.md and
     keep Modal.
+
+- [ ] **F9** Model client follow-ups (30 min). Depends: F3, F6
+  - Found while building F2 and F3; each is a small decision that doesn't
+    block Phase 1, so they're parked here instead of being done in those steps.
+  - Log a `warning` event when a model has no entry in `PRICES` (`costUsd`
+    returns 0 silently); cap an honoured `Retry-After` and read
+    `retry-after-ms` too; treat a corrupt replay file as a miss or fail
+    loudly; add an `enums` cap to `assertWithinLimits`.
 
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
