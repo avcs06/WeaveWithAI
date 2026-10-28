@@ -1,4 +1,4 @@
-import { type DependencyList, useRef } from 'react';
+import { type DependencyList, useState } from 'react';
 
 export const didDepsChange = (
   prevDeps: DependencyList,
@@ -12,12 +12,20 @@ export const didDepsChange = (
   );
 };
 
+/**
+ * Whether `dependencies` changed since the last render (`Object.is`). The
+ * first render counts; with `trailing`, only changes after mount do.
+ */
 export const useDepsChanged = (
   dependencies: DependencyList,
   trailing = false,
 ) => {
-  const dependenciesRef = useRef<DependencyList>(trailing ? dependencies : []);
-  const didChange = didDepsChange(dependenciesRef.current, dependencies);
-  dependenciesRef.current = dependencies;
+  // State, not a ref: a discarded render keeps the previous deps, so the
+  // retry sees the change again.
+  const [prevDeps, setPrevDeps] = useState<DependencyList | null>(
+    trailing ? dependencies : null,
+  );
+  const didChange = prevDeps === null || didDepsChange(prevDeps, dependencies);
+  if (didChange) setPrevDeps(dependencies);
   return didChange;
 };

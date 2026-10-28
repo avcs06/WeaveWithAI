@@ -3,8 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { loadWorkspaceConfig } from '../load-design-system-config.mjs';
 import { isDesignSystemFile } from './tailwind-layout-plugin.mjs';
 
-// Each state a control can be put in, and the prop that puts it there with a
-// reason the user sees.
+// Each control state, and the prop that sets it with a reason the user sees.
 const reasonProps = {
   disabled: 'disabledWithReason',
   readOnly: 'readOnlyWithReason',

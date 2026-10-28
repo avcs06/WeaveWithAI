@@ -1,19 +1,19 @@
 /**
  * useDebouncedCallback: runs a callback once calls pause for `delay` ms,
- * with the last call's arguments. `flush` runs a waiting call now, and
- * `cancel` drops it. A call, and `flush`, return what the last run
- * returned, or `undefined` before the first: `await saveLater.flush()`
- * waits for a save. A missing callback makes every call do nothing.
+ * with the last call's arguments. `flush` runs a waiting call now, `cancel`
+ * drops it. A call and `flush` return the last run's result, `undefined`
+ * before the first: `await saveLater.flush()` waits for a save. A missing
+ * callback makes every call do nothing.
  *
  * For calls that only go out, like autosaving a whole form or a layout.
- * Not for: one text field (Input's `delay`, which has no flush or cancel),
- * a value that also comes back from the parent (useBoundState with
- * `delay`), a search field (SearchInput), or a value read in this
- * component once it settles (useDebouncedValue).
+ * Not for: one text field (Input's `delay`, which has no flush or cancel), a
+ * value that also comes back from the parent (useBoundState with `delay`), a
+ * search field (SearchInput), or a value read in this component once it
+ * settles (useDebouncedValue).
  *
  * Pitfalls:
- * - A call still waiting when the component unmounts is dropped: flush
- *   before closing when it must land.
+ * - A call waiting at unmount is dropped: flush before closing when it must
+ *   land.
  * - Don't flush on blur when a button cancels: the blur runs first, and
  *   the call lands before the cancel.
  * - `delay` is read once, on mount.

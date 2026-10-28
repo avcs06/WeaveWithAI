@@ -1,5 +1,5 @@
-// Runs the design-system MCP's `validate` on files from disk, the way an agent
-// calls it per file: pnpm mcp:validate <file> [<file> …]
+// Runs the MCP's `validate` per file, as an agent does: pnpm mcp:validate
+// <file> [<file> …]
 import { readFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

@@ -5,28 +5,31 @@
  * declarative API, like `<Tour><TourStep … /></Tour>`, so the owner gets its
  * children's settings without reading React children. Pick the hook by what
  * the config is:
- * - `useConfigSync(key, config)`: settings the owner only reads. They go back
+ * - `useConfigSync(key, config)`: settings the owner only reads. They return
  *   to their initial values on unmount.
  * - `useValueSync(value, defaultValue, apply)`: a value the owner also
  *   changes, controlled or not.
- * - `useStoreSync(write, deps)`: any other write, like registering an item
- *   with an action. Undo it on unmount yourself.
+ * - `useStoreSync(write, deps?)`: any other write, like registering an item
+ *   with an action. Undo it on unmount yourself. Without `deps` it writes
+ *   after every render: for elements, which are new on every render anyway.
  *
- * Not for: a page using a component, where the config is props or data (a
- * `steps` array and a `step` prop); this is for the code of a component whose
- * users write children. Not for state the children also render (createContext).
+ * Not for: a page using a component, where config is props or data (a
+ * `steps` array and a `step` prop); this is for a component whose users write
+ * children. Not for state the children also render (createContext).
  *
  * Pitfalls:
- * - Items are listed in the order they mount, so one that mounts later, like
- *   a step shown by a condition, lands last: see configOrder.
+ * - Items list in mount order, so one that mounts later, like a conditional
+ *   step, lands last: see configOrder.
  * - The values of a `useConfigSync` config are its deps: pass callbacks
  *   through `usePersistentCallback`, and memoize objects and arrays.
+ * - `useStoreSync` without `deps` in a component that subscribes to what it
+ *   writes loops: each write re-renders it, which writes again.
  * - A controlled `value` that turns `undefined` applies nothing: the owner
  *   keeps the last value.
- * - `apply` and `write` get `initial`, true for the first write: use it to
- *   tell a starting value from a change made later.
- * - Make the owner's store with `serverSnapshot: 'current'`, so the server
- *   render and hydration read what the config components wrote.
+ * - `apply` and `write` get `initial`, true for the first write: it tells a
+ *   starting value from a later change.
+ * - Make the owner's store with `serverSnapshot: 'current'`, so server render
+ *   and hydration read what the config components wrote.
  * - Config components must sit inside the owner's `ConfigSyncProvider`;
  *   `useConfigSyncContext()` gives `{ store, mounted }` to write a hook of
  *   your own.
@@ -92,8 +95,8 @@ const [useTour, useTourContext, TourProvider] = createStoreContext(() =>
 );
 
 /**
- * `useStoreSync`: any write, here an action that registers a step, written
- * again when its title or content change.
+ * `useStoreSync`: any write, here an action registering a step. Its content
+ * is an element, new every render, so no deps: it writes after every render.
  */
 const TourStep = ({
   id,
@@ -106,10 +109,7 @@ const TourStep = ({
 }) => {
   const { store } = useTourContext();
 
-  useStoreSync(
-    () => store('setStep')({ id, title, content: children }),
-    [id, title, children],
-  );
+  useStoreSync(() => store('setStep')({ id, title, content: children }));
   useLayoutEffect(() => () => store('removeStep')(id), [store, id]);
 
   return null;
@@ -123,7 +123,7 @@ type TourPositionProps = {
 
 /**
  * `useValueSync`: the step shown, which the owner also changes. `value` is
- * applied whenever it changes; without it, `defaultValue` is applied once.
+ * applied on every change; without it, `defaultValue` is applied once.
  * `useConfigSync`: how the owner reports a change.
  */
 const TourPosition = ({ value, defaultValue, onChange }: TourPositionProps) => {
@@ -160,7 +160,12 @@ const TourView = ({ label }: { label: string }) => {
   if (!step) return null;
 
   return (
-    <section aria-label={label} className="flex-col-gap-2 items-start">
+    // A named landmark: the tour's step heading takes focus on each move.
+    <div
+      role="region"
+      aria-label={label}
+      className="flex-col-gap-2 items-start"
+    >
       <p role="status">
         Step {index + 1} of {steps.length}
       </p>
@@ -185,13 +190,13 @@ const TourView = ({ label }: { label: string }) => {
           Next
         </Button>
       </div>
-    </section>
+    </div>
   );
 };
 
 /**
  * Config components go before the content: while the owner mounts they write
- * during render, so the content's first render already reads their values.
+ * during render, so the content's first render reads their values.
  */
 const TourContent = ({
   label,

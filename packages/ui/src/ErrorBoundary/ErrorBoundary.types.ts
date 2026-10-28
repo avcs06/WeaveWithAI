@@ -1,13 +1,22 @@
 import type { ErrorInfo, ReactNode } from 'react';
 
+export type ErrorBoundaryFallbackProps = {
+  error: unknown;
+  /** Renders `children` again. */
+  reset: () => void;
+};
+
 export type ErrorBoundaryProps = {
   children: ReactNode;
   /**
-   * Rendered instead of `children` once something below throws; `null`
-   * renders nothing. Without it, the boundary shows "Something went wrong."
+   * Shown in place of `children` once something below throws, inside an
+   * alert; `null` renders nothing. Default: "Something went wrong." and a
+   * "Try again" button. A function gets `error` and `reset`.
    */
-  fallback?: ReactNode;
-  onError?: (error: Error, info: ErrorInfo) => void;
+  fallback?: ReactNode | ((props: ErrorBoundaryFallbackProps) => ReactNode);
+  /** While failed, a change in any of these renders `children` again. */
+  resetKeys?: readonly unknown[];
+  onError?: (error: unknown, info: ErrorInfo) => void;
 };
 
-export type ErrorBoundaryState = { failed: boolean };
+export type ErrorBoundaryState = { failed: boolean; error?: unknown };

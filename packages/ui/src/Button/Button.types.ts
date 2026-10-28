@@ -1,5 +1,10 @@
 import type { buttonRecipe } from './Button.recipes.css';
-import type { DisabledProps, IconAddonProps } from '../utils';
+import type {
+  AccessibleName,
+  DisabledProps,
+  IconAddonProps,
+  SetByComponent,
+} from '../utils';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
 import type {
   ComponentPropsWithRef,
@@ -18,11 +23,17 @@ type TargetProps<C extends ButtonTarget> =
     ? Props
     : ComponentPropsWithRef<'button'>;
 
-/** `as`, the target's own props and ref, and `OwnProps`, which win where the two overlap. */
-type PolymorphicProps<C extends ButtonTarget, OwnProps> = { as?: C } & Omit<
-  TargetProps<C>,
-  keyof OwnProps | 'as'
-> &
+/**
+ * `as`, the target's own props and ref, and `OwnProps`, which win where the two
+ * overlap.
+ */
+type PolymorphicProps<C extends ButtonTarget, OwnProps> = {
+  /**
+   * Forwards props, ref and className to the interactive root, whose look
+   * Button owns; inline styles and important rules override it.
+   */
+  as?: C;
+} & Omit<TargetProps<C>, keyof OwnProps | 'as'> &
   OwnProps;
 
 type ButtonRecipeVariants = NonNullable<RecipeVariants<typeof buttonRecipe>>;
@@ -32,7 +43,16 @@ type IconProps = Pick<
   'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn'
 >;
 
-type TooltipProp = { tooltip?: ReactNode };
+type TooltipProp = {
+  /**
+   * Shown on hover and focus, above any state reason. Read as the description
+   * unless it repeats the name.
+   */
+  tooltip?: ReactNode;
+};
+
+/** Set from `disabled`, `loading` and their reasons. */
+type ButtonStateAria = SetByComponent<'aria-disabled' | 'aria-busy'>;
 
 type LookProp = {
   /** Space-separated styles, in any order: `ghost`, `rounded`. */
@@ -45,24 +65,24 @@ export type ButtonProps<C extends ButtonTarget = 'button'> = PolymorphicProps<
     TooltipProp &
     IconProps &
     Pick<ButtonRecipeVariants, 'variant' | 'size'> &
-    LookProp
+    LookProp &
+    ButtonStateAria
 >;
-
-// An icon doesn't name the button, and a tooltip is no substitute for a name.
-type AccessibleName = { 'aria-label': string } | { 'aria-labelledby': string };
 
 export type IconButtonProps<C extends ButtonTarget = 'button'> =
   PolymorphicProps<
     C,
     DisabledProps &
-      TooltipProp &
       Pick<ButtonRecipeVariants, 'variant'> &
-      LookProp & {
+      LookProp &
+      ButtonStateAria & {
         size?: 'xs' | 'sm' | 'md';
         children: ReactElement;
       }
   > &
-    AccessibleName;
+    // The tooltip names it; `aria-label`/`aria-labelledby` when the name should
+    // differ.
+    ({ tooltip: string } | ({ tooltip: ReactNode } & AccessibleName));
 
 // The child can be any element, so its handlers get any element's events.
 export type ActivationHandlers = {
@@ -78,13 +98,14 @@ export type PlainButtonProps = Omit<
 > &
   DisabledProps &
   ActivationHandlers &
-  TooltipProp & {
+  TooltipProp &
+  SetByComponent<'aria-disabled'> & {
     children: ReactElement;
   };
 
 /**
- * Inside the components, props checked at the public types are only passed
- * through.
+ * Inside the components, props already checked by the public types are only
+ * passed through.
  */
 export type ButtonBaseProps = DisabledProps &
   TooltipProp &

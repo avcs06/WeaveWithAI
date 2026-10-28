@@ -1,4 +1,5 @@
 import {
+  type Announcements,
   closestCenter,
   DndContext,
   type ScreenReaderInstructions,
@@ -41,26 +42,48 @@ export type RowReorderProps = {
   rowKey: (row: unknown) => TableRowKey;
   /** Keys of the rendered rows, in order. */
   rowKeys: TableRowKey[];
+  /** Names a row in announcements, as in its controls' labels. */
+  rowLabel: (key: TableRowKey) => string;
   children: ReactNode;
 };
 
 /**
- * Drag and drop for the rendered rows; mounted only with `Table.Reorder`.
- * It wraps the row groups inside the body table, so turning reorder on or off
- * remounts the rows, not the scroll area. Its screen reader markup goes to
- * `document.body`: a `<table>` can't hold it.
+ * Drag and drop for the rendered rows; mounted only with `Table.Reorder`. Wraps
+ * the row groups inside the body table, so toggling reorder remounts the rows,
+ * not the scroll area. Its screen reader markup goes to `document.body`: a
+ * `<table>` can't hold it.
  */
 export const RowReorder = ({
   data,
   rowKey,
   rowKeys,
+  rowLabel,
   children,
 }: RowReorderProps) => {
-  // dnd-kit's own ids come from a module counter, which differs between the
-  // server and the client.
+  // dnd-kit's own ids use a module counter, which differs between server and
+  // client.
   const id = useId();
   const [draggingKey, setDraggingKey] = useState<UniqueIdentifier>();
   const { sensors, onDragEnd } = useRowReorder({ data, rowKey });
+
+  const position = (key: TableRowKey) =>
+    `position ${rowKeys.indexOf(key) + 1} of ${rowKeys.length}`;
+
+  // dnd-kit's defaults read out the raw row keys.
+  const announcements: Announcements = {
+    onDragStart: ({ active }) =>
+      `Picked up ${rowLabel(active.id)}, ${position(active.id)}.`,
+    onDragOver: ({ active, over }) =>
+      over
+        ? `${rowLabel(active.id)} moved to ${position(over.id)}.`
+        : `${rowLabel(active.id)} is no longer over a row.`,
+    onDragEnd: ({ active, over }) =>
+      over
+        ? `Dropped ${rowLabel(active.id)} at ${position(over.id)}.`
+        : `Dropped ${rowLabel(active.id)}.`,
+    onDragCancel: ({ active }) =>
+      `Cancelled. ${rowLabel(active.id)} is back at ${position(active.id)}.`,
+  };
 
   return (
     <DndContext
@@ -78,12 +101,13 @@ export const RowReorder = ({
         // Rendered only after mount, when `document` exists.
         container: typeof document === 'undefined' ? undefined : document.body,
         screenReaderInstructions: SCREEN_READER_INSTRUCTIONS,
+        announcements,
       }}
     >
       <SortableContext items={rowKeys} strategy={verticalListSortingStrategy}>
-        <DraggingRowKeyContext.Provider value={draggingKey}>
+        <DraggingRowKeyContext value={draggingKey}>
           {children}
-        </DraggingRowKeyContext.Provider>
+        </DraggingRowKeyContext>
       </SortableContext>
     </DndContext>
   );

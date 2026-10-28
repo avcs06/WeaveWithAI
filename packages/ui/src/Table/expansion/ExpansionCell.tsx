@@ -9,8 +9,10 @@ import type { TableRowKey } from '../Table.types';
 
 export type ExpansionCellProps = {
   rowKey: TableRowKey;
-  /** One-based position of the row, to tell buttons apart. */
-  position: number;
+  /** Names the row, to tell buttons apart. */
+  label: string;
+  /** The details row's id; it exists only while expanded. */
+  detailsId: string;
   expandable: boolean;
   expanded: boolean;
   disabled: boolean;
@@ -19,23 +21,27 @@ export type ExpansionCellProps = {
 export const ExpansionCell = memo(
   ({
     rowKey,
-    position,
+    label,
+    detailsId,
     expandable,
     expanded,
     disabled,
   }: ExpansionCellProps) => {
     const { store } = useGetTableStore();
     return (
-      <Primitives.Cell>
+      <Primitives.Cell data-slot="expansion-cell">
         {/* A block, so the cell centers it; inline, it sits on the baseline. */}
         {expandable && (
-          <div className="flex-row-gap-0 items-center">
+          <div className="flex-row-gap-0 items-center justify-center">
             <IconButton
               size="xs"
               variant="base"
               look="ghost"
-              aria-label={`${expanded ? 'Collapse' : 'Expand'} row ${position}`}
+              tooltip="Details"
+              // A constant name: `aria-expanded` says open or closed.
+              aria-label={`Details for ${label}`}
               aria-expanded={expanded}
+              aria-controls={expanded ? detailsId : undefined}
               disabled={disabled}
               onClick={() => store('toggleRowExpansion')(rowKey)}
             >

@@ -20,8 +20,10 @@ import {
 const colors = tokens.color;
 const spacing = tokens.spacing;
 
-// While the control has focus, and while the box is pressed.
-const focused = '&:not([data-disabled]):is(:focus-within, :active)';
+// While the control has focus, the box is pressed, or its menu is open
+// (focus moves into the menu).
+const focused =
+  '&:not([data-disabled]):is(:focus-within, :active, [data-state="open"])';
 // A disabled field with a reason keeps its tab stop: its focus shows, dimmed.
 const focusedDisabled = '&[data-disabled]:focus-within';
 
@@ -32,7 +34,7 @@ export const formControlRecipe = recipe({
       default: {
         vars: {
           [controlBorder]: colors.base.border,
-          [controlFocus]: colors.focus,
+          [controlFocus]: colors.primary.focus,
         },
       },
       base: {
@@ -42,8 +44,8 @@ export const formControlRecipe = recipe({
         },
       },
     },
-    // The line height is an IconButton's size, so one fits in the box without
-    // growing it: `xs` (24px) in sm, `sm` (32px) in md.
+    // Line height is an IconButton's size, so one fits without growing the box:
+    // `xs` (24px) in sm, `sm` (32px) in md.
     size: {
       // 32px tall: 4px padding + 24px line height + 4px padding.
       sm: {

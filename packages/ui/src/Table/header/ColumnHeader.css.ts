@@ -7,8 +7,8 @@ export const headerContent = style({
   marginInline: `calc(${tokens.spacing[1.5]} * -1)`,
 });
 
-// Scoped to the header content, so it outranks the button's own padding and
-// type styles whatever order the stylesheets load in.
+// Scoped to the header content to outrank the button's padding and type styles
+// regardless of stylesheet order.
 export const headerItem = style({
   selectors: {
     [`${headerContent} > &`]: {

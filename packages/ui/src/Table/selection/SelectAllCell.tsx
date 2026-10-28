@@ -16,7 +16,6 @@ export const SelectAllCell = memo(({ rows, rowKey }: SelectAllCellProps) => {
   const { store } = useGetTableStore();
   const selection = useTableStore('selectionConfig');
 
-  // Toggles every selectable, enabled row; disabled rows keep their state.
   const scopeKeys = useMemo(
     () =>
       rows
@@ -44,15 +43,18 @@ export const SelectAllCell = memo(({ rows, rowKey }: SelectAllCellProps) => {
         : false;
 
   return (
-    <Primitives.HeaderCell>
-      <Checkbox
-        aria-label="Select all rows"
-        checked={allChecked}
-        disabled={scopeKeys.length === 0}
-        onCheckedChange={() =>
-          store('setRowsSelected')(scopeKeys, allChecked !== true)
-        }
-      />
+    <Primitives.HeaderCell data-slot="header-cell">
+      {/* A block, so the cell centers it; inline, it sits on the baseline. */}
+      <div className="flex-row-gap-0 items-center justify-center">
+        <Checkbox
+          aria-label="Select all rows"
+          checked={allChecked}
+          disabled={scopeKeys.length === 0}
+          onCheckedChange={() =>
+            store('setRowsSelected')(scopeKeys, allChecked !== true)
+          }
+        />
+      </div>
     </Primitives.HeaderCell>
   );
 });

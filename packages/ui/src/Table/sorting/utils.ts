@@ -8,7 +8,9 @@ import type {
   TableSortValue,
 } from '../Table.types';
 
-const collator = new Intl.Collator(undefined, {
+// Fixed locale: the default can differ between server and browser, ordering
+// rows differently.
+const collator = new Intl.Collator('en-US', {
   numeric: true,
   sensitivity: 'base',
 });

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
 /**
- * Keeps the header's horizontal scroll in step with the body. The header is
- * overflow-hidden, so wheel input on it is forwarded to the body, and focus
- * scrolling inside it (tabbing to an offscreen header) is mirrored back.
- * Takes the elements, not refs, so it re-binds when either is replaced.
+ * Syncs the header's horizontal scroll with the body. The header is
+ * overflow-hidden, so wheel input on it goes to the body, and focus scrolling
+ * inside it (tabbing to an offscreen header) is mirrored back. Takes elements,
+ * not refs, to re-bind when either is replaced.
  */
 export const useLinkedScroll = (
   header: HTMLElement | null,

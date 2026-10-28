@@ -1,14 +1,10 @@
 import type { Expression } from '@babel/types';
 
 /**
- * Collects every string an agent could have written into a `className`
- * (a plain string, a template literal, or arguments to a `classNames(...)`
- * /`clsx(...)`-style helper) without needing to know which helper is used —
- * just walk the common expression shapes a className value takes.
- *
- * Knows nothing about any className convention — reading the classes off an
- * element is a plain JSX question, and every caller interprets the result
- * for its own purposes.
+ * Collects every string a `className` could hold (a plain string, a template
+ * literal, or arguments to a `classNames(...)`/`clsx(...)`-style helper)
+ * without knowing which helper is used. Knows nothing about any className
+ * convention; callers interpret the result.
  */
 export function collectClassNameStrings(node: Expression, out: string[]): void {
   if (node.type === 'StringLiteral') {
@@ -26,9 +22,8 @@ export function collectClassNameStrings(node: Expression, out: string[]): void {
       if (el && el.type !== 'SpreadElement') collectClassNameStrings(el, out);
     }
   } else if (node.type === 'ObjectExpression') {
-    // The `clsx({ flex: isRow })` idiom, where the *key* is the class and the
-    // value is the condition. The class is present under some condition, which
-    // is the most that can be known statically.
+    // `clsx({ flex: isRow })`: the key is the class, present under some
+    // condition.
     for (const prop of node.properties) {
       if (prop.type !== 'ObjectProperty' || prop.computed) continue;
       if (prop.key.type === 'Identifier') out.push(prop.key.name);

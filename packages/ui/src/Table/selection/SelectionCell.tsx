@@ -8,31 +8,28 @@ import type { TableRowKey } from '../Table.types';
 
 export type SelectionCellProps = {
   rowKey: TableRowKey;
-  /** One-based position of the row, to tell checkboxes apart. */
-  position: number;
+  /** Names the row, to tell checkboxes apart. */
+  label: string;
   selectable: boolean;
   selected: boolean;
   disabled: boolean;
 };
 
 export const SelectionCell = memo(
-  ({
-    rowKey,
-    position,
-    selectable,
-    selected,
-    disabled,
-  }: SelectionCellProps) => {
+  ({ rowKey, label, selectable, selected, disabled }: SelectionCellProps) => {
     const { store } = useGetTableStore();
     return (
-      <Primitives.Cell>
+      <Primitives.Cell data-slot="selection-cell">
+        {/* A block, so the cell centers it; inline, it sits on the baseline. */}
         {selectable && (
-          <Checkbox
-            aria-label={`Select row ${position}`}
-            disabled={disabled}
-            checked={selected}
-            onCheckedChange={() => store('toggleRowSelection')(rowKey)}
-          />
+          <div className="flex-row-gap-0 items-center justify-center">
+            <Checkbox
+              aria-label={`Select ${label}`}
+              disabled={disabled}
+              checked={selected}
+              onCheckedChange={() => store('toggleRowSelection')(rowKey)}
+            />
+          </div>
         )}
       </Primitives.Cell>
     );

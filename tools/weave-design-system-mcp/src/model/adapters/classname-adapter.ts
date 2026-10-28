@@ -10,12 +10,10 @@ import { restrictedSyntax } from './classnames/rules/restricted-syntax.js';
 import { unknownClass } from './classnames/rules/unknown-class.js';
 
 /**
- * This file is a pure dispatcher — it contains no utility-class-convention
- * code of its own. Reading classes off a value lives under `classnames/`,
- * and every check is a rule under `classnames/rules/`, listed below. Class
- * names are always Tailwind; supporting another convention (Bootstrap,
- * whatever) means another set of rules — never touching the TSX adapter,
- * which only ever calls `check` and `classNameTokens`.
+ * A pure dispatcher: reading classes off a value lives under `classnames/`,
+ * every check is a rule under `classnames/rules/`. Class names are always
+ * Tailwind; another convention means another set of rules, never touching the
+ * TSX adapter, which only calls `check` and `classNameTokens`.
  */
 
 /** What a className rule sees: one element's `className` value. */

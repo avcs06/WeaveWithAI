@@ -5,18 +5,25 @@ import { Slot } from '@radix-ui/react-slot';
 import React, { isValidElement } from 'react';
 
 import { Tooltip } from '../Tooltip';
+import { createLook } from '../utils';
 
 import { linkRecipe } from './Link.recipes.css';
 
 import type { ChildProps, LinkProps } from './Link.types';
 
+const linkLook = createLook(linkRecipe);
+
 /**
- * Disabled, it's an anchor without `href`, so it can't be followed. With
- * `asChild`, the child's content moves into that anchor: the child can't
- * drop its own `href`.
+ * Text that takes the user to another page: another site, an email
+ * (`mailto:`), a phone number (`tel:`) or a file to download. In the Next
+ * app, a route of the app is the app's NextLink, built on Link; an action is
+ * a Button.
+ *
+ * @invalidAlternative a[href], a[download], [role="link"]
  */
 export const Link = ({
   variant,
+  look,
   disabled = false,
   disabledWithReason,
   asChild = false,
@@ -25,8 +32,10 @@ export const Link = ({
   ...props
 }: LinkProps) => {
   const isDisabled = disabled || Boolean(disabledWithReason);
-  const linkClassName = linkRecipe({ variant });
+  const linkClassName = linkRecipe({ variant, ...linkLook(look) });
 
+  // Disabled, an anchor without `href`. With `asChild`, the child's content
+  // moves into that anchor, since the child can't drop its own `href`.
   if (isDisabled) {
     const child = asChild && isValidElement<ChildProps>(children) && children;
     const childClassName = child && child.props.className;
@@ -41,11 +50,13 @@ export const Link = ({
       <Tooltip tooltip={disabledWithReason}>
         <a
           {...anchorProps}
-          // Without `href`, assistive tech no longer reads an anchor as a link.
+          // Without `href`, an anchor isn't read as a link.
           role="link"
           aria-disabled
           data-disabled
-          tabIndex={-1}
+          // A reason must be keyboard-reachable; without one it leaves the tab
+          // order.
+          tabIndex={disabledWithReason ? 0 : -1}
           onClick={(event) => event.preventDefault()}
           className={classNames(linkClassName, childClassName, className)}
         >

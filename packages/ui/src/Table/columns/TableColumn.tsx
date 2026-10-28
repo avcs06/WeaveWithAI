@@ -1,9 +1,7 @@
-import { useStoreSync } from '@packages/utils/state';
+import { useConfigOrder, useStoreSync } from '@packages/utils/state';
 import { useLayoutEffect } from 'react';
 
 import { useGetTableStore } from '../store';
-
-import { useColumnOrder } from './useColumnOrder';
 
 import type {
   NoComputed,
@@ -12,7 +10,7 @@ import type {
   TableColumnRender,
 } from '../Table.types';
 
-// What every variant of `TableColumnProps` can carry, for reading the props.
+// What every `TableColumnProps` variant can carry.
 type AnyTableColumnProps = TableColumnData & { children?: TableColumnRender };
 
 /** Config component: registers its props and renderer; renders nothing. */
@@ -29,10 +27,11 @@ export function TableColumn<
     width,
     align,
     filter,
+    rowHeader,
     children,
   } = props as unknown as AnyTableColumnProps;
   const { store } = useGetTableStore();
-  useColumnOrder(id);
+  useConfigOrder(id);
 
   useStoreSync(() => {
     store('setColumn')({
@@ -44,13 +43,15 @@ export function TableColumn<
       width,
       align,
       filter,
+      rowHeader,
     });
-  }, [id, title, dataKey, computed, sortable, width, align, filter]);
+  }, [id, title, dataKey, computed, sortable, width, align, filter, rowHeader]);
 
-  // Separate, so a new renderer only re-renders this column's cells.
+  // Separate, so a new renderer re-renders only this column's cells. No deps:
+  // `children` changes every render, so it writes every render.
   useStoreSync(() => {
     store('setColumnRender')(id, children);
-  }, [id, children]);
+  });
 
   useLayoutEffect(() => () => store('removeColumn')(id), [store, id]);
 

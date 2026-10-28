@@ -3,7 +3,7 @@
  * - `composeHandlers(handler, own)`: runs the caller's `handler`, then the
  *   component's `own` unless the handler called `event.preventDefault()`.
  * - `preventDefault` and `stopPropagation`: call the event's method, so they
- *   work as a handler (`onMouseDown={preventDefault}`). They take React and DOM
+ *   work as a handler (`onMouseDown={preventDefault}`). Take React and DOM
  *   events.
  *
  * Use `composeHandlers` when an app block wraps a design-system component and
@@ -14,8 +14,8 @@
  *
  * Pitfalls:
  * - The opt-out is `event.preventDefault()` in the caller's handler. A
- *   default already prevented before the handler ran, by a child as the
- *   event bubbled up, isn't an opt-out: `own` still runs.
+ *   default prevented before it ran, by a child while the event bubbled up,
+ *   isn't an opt-out: `own` still runs.
  * - `composeHandlers` returns a new function on every render: pass it to a
  *   component, not to a hook's deps.
  * - `stopPropagation` hides the event from every ancestor's handler,

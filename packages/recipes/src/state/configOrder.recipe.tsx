@@ -1,19 +1,18 @@
 /**
- * configOrder: keeps config components in the order they render. Config
- * components (see configSync) register as they mount, so one that appears
- * later, like a step shown for one event type, would land last. Put
- * `ConfigOrderProvider` inside the owner's `ConfigSyncProvider`, with
- * `onOrder` writing the ids to the owner's store, and call
- * `useConfigOrder(id)` in each config component.
+ * configOrder: keeps config components in render order. Config components
+ * (see configSync) register as they mount, so one that appears later, like a
+ * step shown for one event type, would land last. Put `ConfigOrderProvider`
+ * inside the owner's `ConfigSyncProvider`, with `onOrder` writing the ids to
+ * the owner's store, and call `useConfigOrder(id)` in each config component.
  *
  * Not for: config that doesn't depend on order, or a list rendered from data
  * (sort the data).
  *
  * Pitfalls:
  * - `useConfigOrder` throws outside a `ConfigOrderProvider`.
- * - The content that reads the order renders after `ConfigOrderProvider`,
- *   not inside it: while the owner mounts, the order is written once every
- *   config component has rendered.
+ * - Content that reads the order renders after `ConfigOrderProvider`, not
+ *   inside it: while the owner mounts, the order is written once every config
+ *   component has rendered.
  * - `id` is the config component's own key, and must be unique among them.
  * - The ids set the order, not which items exist: the owner still lists the
  *   items its config components registered.

@@ -24,8 +24,8 @@ import type {
 declare module '@radix-ui/react-dropdown-menu' {
   interface DropdownMenuContentProps {
     /**
-     * Radix passes it on to the menu's focus scope, but leaves it out of
-     * these props. Preventing it keeps focus where the handler put it.
+     * Radix passes it to the menu's focus scope but leaves it out of these
+     * props. Preventing it keeps focus where the handler put it.
      */
     onOpenAutoFocus?: (event: Event) => void;
   }
@@ -71,7 +71,7 @@ export type DropdownProps = DropdownStateProps &
     /**
      * One trigger element that forwards refs, events and attributes:
      * `Dropdown.Button`, an `IconButton`… The Dropdown's reason reaches it as
-     * `disabledWithReason` or `loadingWithReason`, for its own tooltip.
+     * `disabledWithReason` or `loadingWithReason`, for its tooltip.
      */
     children: ReactElement<DisabledProps>;
     menu: ReactNode;
@@ -95,7 +95,7 @@ export type DropdownItemProps = Omit<
   SetByComponent<'aria-disabled'> & {
     /**
      * Marks the current one, like the view in use; announced as current. An
-     * on/off row is a CheckboxItem, one choice of several a RadioItem.
+     * on/off row is a CheckboxItem, one of several a RadioItem.
      */
     selected?: boolean;
     /** The text typeahead matches; needed when the children aren't text. */
@@ -138,7 +138,9 @@ export type DropdownRadioGroupProps = DropdownGroupProps & {
 export type DropdownSeparatorProps = MenuSeparatorProps;
 
 export type DropdownSubMenuProps = DropdownStateProps & {
-  /** The trigger: exactly one `Dropdown.Item`; the SubMenu's state shows on it. */
+  /**
+   * The trigger: exactly one `Dropdown.Item`; the SubMenu's state shows on it.
+   */
   children: ReactElement<DropdownItemProps, typeof DropdownItem>;
   menu: ReactNode;
   open?: boolean;

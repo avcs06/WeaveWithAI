@@ -1,13 +1,11 @@
 /**
- * The design-system model: config, adapters, and the lookup API. Nothing
- * under `model/` imports from `@modelcontextprotocol/*` — this layer is
- * meant to be reusable by something other than an MCP server later (a CLI,
- * a lint rule).
+ * The design-system model: config, adapters, lookup API. Imports no
+ * `@modelcontextprotocol/*`, so a CLI or lint rule can reuse it.
  */
 
 export type Severity = 'error' | 'warning';
 
-/** Where a `validate()` finding was seen. Not a fixed enum of the whole domain — just the surfaces this server walks. */
+/** Where a `validate()` finding was seen: the surfaces this server walks. */
 export type Surface = 'vanilla-extract' | 'jsx' | 'tailwind';
 
 /** The repository's Tailwind rules, supplied by the host workspace. Omitted fields leave only the built-in syntax checks. */
@@ -40,10 +38,8 @@ export interface DesignToken {
   /** Semantic dot path, e.g. "color.theme.background" or "spacing.x6". */
   name: string;
   /**
-   * Whatever the token source calls this group (color, spacing, iconSize,
-   * zIndex, ...). Deliberately not a fixed enum — a real design system's
-   * category set isn't knowable in advance, and assuming one (e.g. that
-   * "shadow" or "motion" always exist) breaks on systems that don't have it.
+   * Whatever the token source calls this group (color, spacing, iconSize, ...).
+   * Not a fixed enum: category sets differ per design system.
    */
   group: string;
   /** The exact code an agent should write to use this token in a style file, e.g. "tokens.spacing.x6" or "vars.color.theme.background". */
@@ -51,13 +47,10 @@ export interface DesignToken {
   /** The Tailwind class that applies this token, e.g. "text-base-muted", when one exists. */
   className?: string;
   /**
-   * Resolved literal value (hex, px, ...), when the source can actually see
-   * one statically. Not guaranteed: a vanilla-extract theme *contract* only
-   * declares shape (`createThemeContract`), and the values a `createTheme`
-   * call resolves to may come from a computed expression the adapter can't
-   * evaluate — those tokens still have a name/reference, just no `value`.
-   * `nearestToken()` (see `DesignSystem`) can only suggest among tokens that
-   * do have one.
+   * Resolved literal value (hex, px, ...), when statically readable. A theme
+   * *contract* (`createThemeContract`) declares only shape and a computed
+   * `createTheme` value can't be evaluated; those tokens have a reference but
+   * no `value`, and `nearestToken()` can't suggest them.
    */
   value?: string;
 }
@@ -98,10 +91,8 @@ export interface ComponentContract {
 }
 
 /**
- * Working examples of a component as the project uses it: a recipe file kept
- * beside the component, served as written, with one case per distinct use
- * and when to use it. An agent adapts the case that fits instead of
- * assembling the component from its props.
+ * Working examples of a component: a recipe file kept beside it, served as
+ * written, with one case per distinct use and when to use it.
  */
 export interface Recipe {
   /** The file's base name, e.g. "Table" for `Table.recipe.tsx`. */
@@ -139,6 +130,8 @@ export interface ComponentSummary {
   description: string;
   category: string;
   variantProps: string[];
+  /** What it supersedes, so an agent sees what not to reach for before writing it. */
+  invalidAlternatives: string[];
 }
 
 /** One ranked result from `searchTokens`/`searchComponents`. */
@@ -148,7 +141,11 @@ export interface SearchHit {
   description: string;
   /** A token's Tailwind class, when one applies it. */
   className?: string;
-  /** Relevance, higher is better — an exact name match outranks a substring match, which outranks a body-text match. */
+  /** A component's invalid alternatives, when it declares any. */
+  invalidAlternatives?: string[];
+  /**
+   * Relevance, higher is better: exact name, then substring, then body text.
+   */
   score: number;
 }
 
@@ -161,13 +158,15 @@ export interface DesignSystem {
   component(name: string): ComponentContract | undefined;
   /** Fuzzy component name matches. */
   closestComponents(name: string, limit?: number): string[];
-  /** The recipe named `name`, or the one covering the component named `name`. */
+  /** The recipe named `name`, the one covering the component named `name`, or else the one that imports `name`. */
   recipe(name: string): Recipe | undefined;
   /** Every recipe's name. */
   recipes(): string[];
   /** Ranked token search across name, group, reference and value — for "is there a token for X?" */
   searchTokens(query: string, limit?: number): SearchHit[];
-  /** Ranked component search across name, description, category and prop names — for "is there a component for X?" */
+  /** Ranked component search across name, description, category, prop names and invalid alternatives — for "is there a component for X?" */
   searchComponents(query: string, limit?: number): SearchHit[];
+  /** Problems found while loading, one line each — such as an `@invalidAlternative` declaration the check can't read. */
+  diagnostics(): string[];
   validate(code: string, filename?: string): ValidateResult;
 }

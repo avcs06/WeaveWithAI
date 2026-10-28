@@ -1,11 +1,11 @@
 /**
  * createStore: one shared store with its actions, outside the component
- * tree. A store hook subscribes by key (`useCart('items')`) or by selector
- * (`useCart(({ items }) => items.length)`), and is also the store's own API:
+ * tree. A store hook subscribes by key (`useCart('items')`) or selector
+ * (`useCart(({ items }) => items.length)`), and is also the store's API:
  * `getState`, `setState` and `subscribe` work anywhere, outside React too.
  * For state many unrelated components read or change, or that code outside
- * React must reach: a cart, the signed-in user, preferences. Keep the
- * actions in the store, and each component subscribes to what it renders.
+ * React must reach: a cart, the signed-in user, preferences. Keep actions in
+ * the store, and each component subscribes to what it renders.
  *
  * Not for: values a parent passes down a few levels (createContext), state
  * that belongs to one instance of a component, when a page can show several
@@ -14,17 +14,17 @@
  *
  * Pitfalls:
  * - A selector may return a primitive, an existing object of the state, or
- *   an array or object of fields: results compare shallowly. A selector that
- *   builds new objects, like `items.map((item) => ({ ...item }))`, returns a
- *   new value on every read and loops ("Maximum update depth exceeded"):
- *   select the ids, and let each child select its own item.
+ *   an array or object of fields: results compare shallowly. One that builds
+ *   new objects, like `items.map((item) => ({ ...item }))`, returns a new
+ *   value on every read and loops ("Maximum update depth exceeded"): select
+ *   the ids, and let each child select its own item.
  * - On the server a module-level store is shared by every request: never
  *   write to it while rendering, and leave `serverSnapshot` at `'initial'`.
  *   `'current'` is for stores made per instance (createStoreContext), see
  *   configSync.
  * - A persisted store renders its initial state on the server and during
- *   hydration, then switches to the saved one: the value flashes. Accept
- *   that for a small label, or render it only after mount.
+ *   hydration, then switches to the saved one: the value flashes. Accept that
+ *   for a small label, or render it only after mount.
  * - `persist` needs `keys` (or `partialize`) when the state holds actions or
  *   data that shouldn't be saved. Raise `version` and give `migrate` when
  *   the saved shape changes, or old data loads as the new shape.

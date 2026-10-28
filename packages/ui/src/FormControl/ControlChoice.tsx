@@ -5,13 +5,13 @@ import React, { useId, useRef } from 'react';
 
 import { hasContent, joinIds } from '../utils';
 
-import { ControlLabel } from './auxiliary';
 import { controlChoice } from './FormControl.css';
+import { ControlLabel } from './primitives';
 
 import type { ControlChoiceProps } from './FormControl.types';
 
 /**
- * A checkbox or radio with its label to its right: the label, its required
+ * A checkbox, radio or switch with its label to its right: the label, required
  * mark and hint are a ControlLabel. The box, a PlainButton, shows its own
  * tooltip and reason.
  *
@@ -24,6 +24,8 @@ export const ControlChoice = ({
   hint,
   required,
   isDisabled,
+  isReadOnly,
+  reason,
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
   className,
@@ -34,7 +36,7 @@ export const ControlChoice = ({
   const labelId = useId();
   const hintId = useId();
   const boxRef = useRef<HTMLElement | null>(null);
-  // The hint shows on hover of its icon; the box is described by it too.
+  // The hint shows on hover of its icon; it describes the box too.
   const hasHint = Boolean(label) && hasContent(hint);
 
   const boxId = id ?? generatedId;
@@ -43,6 +45,7 @@ export const ControlChoice = ({
     <div
       data-slot={slot}
       data-disabled={isDisabled || undefined}
+      data-readonly={isReadOnly || undefined}
       style={style}
       className={classNames(
         controlChoice,
@@ -65,10 +68,14 @@ export const ControlChoice = ({
         required={required}
         hint={hint}
         rightAddOn={null}
-        // The box isn't a native control, so the label presses it itself.
+        // Hover only: the box's own tooltip and description carry the reason to
+        // keyboard and screen readers.
+        tooltip={reason}
+        // Not a native control, so the label presses the box itself; a blocked
+        // box ignores it, as a native disabled one does.
         onClick={(event) => {
           event.preventDefault();
-          boxRef.current?.click();
+          if (!isDisabled) boxRef.current?.click();
         }}
       />
       {hasHint && (

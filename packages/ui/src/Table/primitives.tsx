@@ -1,158 +1,135 @@
 'use client';
 
 import { classNames } from '@packages/styles/classNames';
-import React, { type ComponentPropsWithoutRef, forwardRef } from 'react';
+import React, { type ComponentProps } from 'react';
 
 import * as styles from './Table.css';
-import { alignRecipe } from './Table.recipes.css';
+import { alignClasses } from './utils';
 
 import type { TableAlign, TableColumnWidth } from './Table.types';
 
-export type RootProps = ComponentPropsWithoutRef<'div'>;
+export type RootProps = ComponentProps<'div'>;
 /** Fills the container width and never grows past the container height. */
-export const Root = forwardRef<HTMLDivElement, RootProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      {...props}
-      className={classNames(
-        styles.root,
-        'flex-col-gap-0 w-full max-h-full min-h-0',
-        className,
-      )}
-    />
-  ),
+export const Root = ({ className, ...props }: RootProps) => (
+  <div
+    {...props}
+    // Own stacking context: the body's z-index (over the header's edge) stays
+    // below portalled popovers.
+    className={classNames(
+      styles.root,
+      'flex-col-gap-0 w-full max-h-full min-h-0',
+      'isolate',
+      className,
+    )}
+  />
 );
-Root.displayName = 'Root';
 
-export type FrameProps = ComponentPropsWithoutRef<'div'>;
+export type FrameProps = ComponentProps<'div'>;
 /** Presents the header and body tables as one table to assistive tech. */
-export const Frame = forwardRef<HTMLDivElement, FrameProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      role="table"
-      {...props}
-      className={classNames('flex-col-gap-0 min-h-0 flex-initial', className)}
-    />
-  ),
+export const Frame = ({ className, ...props }: FrameProps) => (
+  <div
+    role="table"
+    {...props}
+    className={classNames('flex-col-gap-0 min-h-0 flex-initial', className)}
+  />
 );
-Frame.displayName = 'Frame';
 
-export type HeaderViewportProps = ComponentPropsWithoutRef<'div'>;
+export type HeaderViewportProps = ComponentProps<'div'>;
 /** Clips the header table; its scrollLeft follows the body. */
-export const HeaderViewport = forwardRef<HTMLDivElement, HeaderViewportProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      {...props}
-      className={classNames(
-        styles.headerViewport,
-        'overflow-hidden shrink-0',
-        className,
-      )}
-    />
-  ),
+export const HeaderViewport = ({
+  className,
+  ...props
+}: HeaderViewportProps) => (
+  <div
+    {...props}
+    // Clips the header's visually hidden text, which would widen the page.
+    className={classNames(
+      styles.headerViewport,
+      'overflow-hidden shrink-0',
+      'relative',
+      className,
+    )}
+  />
 );
-HeaderViewport.displayName = 'HeaderViewport';
 
-export type TableProps = ComponentPropsWithoutRef<'table'>;
-export const Table = forwardRef<HTMLTableElement, TableProps>(
-  ({ className, ...props }, ref) => (
-    <table
-      ref={ref}
-      role="presentation"
-      {...props}
-      className={classNames(styles.table, className)}
-    />
-  ),
+export type TableProps = ComponentProps<'table'>;
+export const Table = ({ className, ...props }: TableProps) => (
+  <table
+    role="presentation"
+    {...props}
+    className={classNames(styles.table, 'w-full', className)}
+  />
 );
-Table.displayName = 'Table';
 
-export type ColumnGroupProps = ComponentPropsWithoutRef<'colgroup'>;
-export const ColumnGroup = forwardRef<HTMLTableColElement, ColumnGroupProps>(
-  (props, ref) => <colgroup ref={ref} {...props} />,
-);
-ColumnGroup.displayName = 'ColumnGroup';
+export type ColumnGroupProps = ComponentProps<'colgroup'>;
+export const ColumnGroup = (props: ColumnGroupProps) => <colgroup {...props} />;
 
-export type ColumnProps = Omit<ComponentPropsWithoutRef<'col'>, 'width'> & {
+export type ColumnProps = Omit<ComponentProps<'col'>, 'width'> & {
   width?: TableColumnWidth;
 };
-export const Column = forwardRef<HTMLTableColElement, ColumnProps>(
-  ({ width, style, ...props }, ref) => (
-    <col ref={ref} {...props} style={{ width, ...style }} />
-  ),
+export const Column = ({ width, style, ...props }: ColumnProps) => (
+  <col {...props} style={{ width, ...style }} />
 );
-Column.displayName = 'Column';
 
-// Explicit roles below are not redundant: `Table` is role="presentation",
-// which drops the implicit roles of its sections, rows and cells.
+// Explicit roles aren't redundant: `Table` is role="presentation", which drops
+// the implicit roles of its sections, rows and cells.
 
-export type HeaderProps = ComponentPropsWithoutRef<'thead'>;
-export const Header = forwardRef<HTMLTableSectionElement, HeaderProps>(
-  (props, ref) => (
-    // eslint-disable-next-line jsx-a11y/no-redundant-roles -- see above
-    <thead ref={ref} role="rowgroup" {...props} />
-  ),
+export type HeaderProps = ComponentProps<'thead'>;
+export const Header = (props: HeaderProps) => (
+  // eslint-disable-next-line jsx-a11y/no-redundant-roles -- see above
+  <thead role="rowgroup" {...props} />
 );
-Header.displayName = 'Header';
 
-export type BodyProps = ComponentPropsWithoutRef<'tbody'>;
-export const Body = forwardRef<HTMLTableSectionElement, BodyProps>(
-  ({ className, ...props }, ref) => (
-    // eslint-disable-next-line jsx-a11y/no-redundant-roles -- see above
-    <tbody
-      ref={ref}
-      role="rowgroup"
-      {...props}
-      className={classNames(styles.body, className)}
-    />
-  ),
+export type BodyProps = ComponentProps<'tbody'>;
+export const Body = ({ className, ...props }: BodyProps) => (
+  // eslint-disable-next-line jsx-a11y/no-redundant-roles -- see above
+  <tbody
+    role="rowgroup"
+    {...props}
+    className={classNames(styles.body, className)}
+  />
 );
-Body.displayName = 'Body';
 
-export type RowProps = ComponentPropsWithoutRef<'tr'>;
-export const Row = forwardRef<HTMLTableRowElement, RowProps>(
-  ({ className, ...props }, ref) => (
-    <tr
-      ref={ref}
-      role="row"
-      {...props}
-      className={classNames(styles.row, className)}
-    />
-  ),
+export type RowProps = ComponentProps<'tr'>;
+export const Row = ({ className, ...props }: RowProps) => (
+  <tr role="row" {...props} className={classNames(styles.row, className)} />
 );
-Row.displayName = 'Row';
 
-export type HeaderCellProps = ComponentPropsWithoutRef<'th'>;
+export type HeaderCellProps = ComponentProps<'th'>;
 /** Content alignment is the content's own: header items fill the cell. */
-export const HeaderCell = forwardRef<HTMLTableCellElement, HeaderCellProps>(
-  ({ className, ...props }, ref) => (
-    <th
-      ref={ref}
-      scope="col"
-      role="columnheader"
-      {...props}
-      className={classNames(styles.columnHeaderCell, className)}
-    />
-  ),
+export const HeaderCell = ({ className, ...props }: HeaderCellProps) => (
+  <th
+    scope="col"
+    role="columnheader"
+    {...props}
+    className={classNames(styles.columnHeaderCell, 'align-middle', className)}
+  />
 );
-HeaderCell.displayName = 'HeaderCell';
 
-export type CellProps = ComponentPropsWithoutRef<'td'> & {
+export type CellProps = ComponentProps<'td'> & {
   align?: TableAlign;
+  /** A cell of the column that names each row. */
+  rowHeader?: boolean;
 };
-export const Cell = forwardRef<HTMLTableCellElement, CellProps>(
-  ({ className, align, ...props }, ref) => {
-    const alignClassName = alignRecipe({ align });
-    return (
-      <td
-        ref={ref}
-        role="cell"
-        {...props}
-        className={classNames(styles.cell, alignClassName, className)}
-      />
-    );
-  },
-);
-Cell.displayName = 'Cell';
+export const Cell = ({
+  className,
+  align = 'left',
+  rowHeader = false,
+  ...props
+}: CellProps) => {
+  const Element = rowHeader ? 'th' : 'td';
+  const alignClassName = alignClasses[align];
+  return (
+    <Element
+      scope={rowHeader ? 'row' : undefined}
+      role={rowHeader ? 'rowheader' : 'cell'}
+      {...props}
+      className={classNames(
+        styles.cell,
+        alignClassName,
+        'align-middle',
+        className,
+      )}
+    />
+  );
+};

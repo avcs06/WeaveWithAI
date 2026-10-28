@@ -1,10 +1,12 @@
+import { Section } from '@packages/ui/Section';
+import React from 'react';
+
 export default function HomePage() {
   return (
-    <section className="flex-col-gap-3 p-6">
-      <h1>Application starter</h1>
+    <Section title="Application starter" headingAs="h1">
       <p>
         React, Tailwind, vanilla-extract, Zustand, and React Query are ready.
       </p>
-    </section>
+    </Section>
   );
 }

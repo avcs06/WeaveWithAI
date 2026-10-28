@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { mutedText } from '../StoryStyles.css';
 
@@ -28,7 +28,9 @@ const ErrorBoundaryStories = () => {
 
   return (
     <StoryPage>
-      <StorySwitch label="Child throws" checked={broken} onChange={setBroken} />
+      <Checkbox checked={broken} onCheckedChange={setBroken}>
+        Child throws
+      </Checkbox>
 
       {/* Keyed on the switch: turning it off remounts the boundary. */}
       <StorySection title="Default fallback">

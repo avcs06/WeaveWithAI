@@ -30,11 +30,9 @@ export function TableExpansion<T>({
     isRowDisabled,
   } as ExpansionConfig);
 
-  // Separate, so a new renderer only re-renders the expanded rows.
-  useStoreSync(
-    () => store('setExpansionRender')(children as ExpansionRender),
-    [children],
-  );
+  // Separate, so a new renderer re-renders only the expanded rows. No deps:
+  // `children` changes every render, so it writes every render.
+  useStoreSync(() => store('setExpansionRender')(children as ExpansionRender));
 
   useLayoutEffect(() => () => store('setExpansionRender')(undefined), [store]);
 

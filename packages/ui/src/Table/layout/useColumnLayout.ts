@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import type { TableColumnData, TableColumnWidth } from '../Table.types';
 
 /**
- * One `<col>`. Control columns are told apart by `kind`, not `id`, so a data
- * column may use any id, including "selection".
+ * One `<col>`. Control columns are told apart by `kind`, so a data column may
+ * use any id, even "selection".
  */
 export type TableColumnSlot = {
   kind: 'reorder' | 'selection' | 'expansion' | 'data';
@@ -17,11 +17,11 @@ export type TableColumnSlot = {
 
 export const slotKey = ({ kind, id }: TableColumnSlot) => `${kind}:${id}`;
 
-// A data column fits at least two letters of its title, its sort icon and its
-// filter button. These mirror the header's spacing (ColumnHeader.css, the sm
-// Button and the xs IconButton): the cell's 6px padding cancels the content's
-// -6px pull, so the title item's own 6px + 6px padding remains.
-// Two letters plus the ellipsis that truncation adds.
+// A data column fits at least two letters of its title, its sort icon and
+// filter button, mirroring the header's spacing (ColumnHeader.css, sm Button,
+// xs IconButton): the cell's 6px padding cancels the content's -6px pull,
+// leaving the title item's 6px + 6px. Two letters plus the ellipsis that
+// truncation adds.
 const TITLE_MIN = '2.5em';
 const TITLE_PADDING = tokens.spacing[3];
 // 8px gap + 16px icon.
@@ -37,7 +37,8 @@ const columnMinWidth = ({ sortable, filter }: TableColumnData) =>
     ...(filter ? [FILTER_MIN] : []),
   ].join(' + ')})`;
 
-// 6px cell padding on both sides of a 16px pulled-in icon button / 18px checkbox.
+// 6px cell padding on both sides of a 16px pulled-in icon button / 18px
+// checkbox.
 const CONTROL_COLUMN_WIDTH = tokens.spacing[7];
 const SELECTION_COLUMN_WIDTH = tokens.spacing[7.5];
 const EXPANSION_COLUMN_WIDTH = tokens.spacing[9.5];

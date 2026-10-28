@@ -3,6 +3,7 @@ import React, {
   memo,
   type MouseEvent,
   type ReactNode,
+  useId,
   useMemo,
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -12,19 +13,22 @@ import * as Primitives from '../primitives';
 import { DragHandleCell, type GroupRef, useSortableRow } from '../reorder';
 import { SelectionCell } from '../selection';
 import { useGetTableStore, useTableStore } from '../store';
+import { getRowLabel } from '../utils';
 
 import { DataCell } from './DataCell';
 
 import type { TableStoreState } from '../store.types';
-import type { TableRowKey } from '../Table.types';
+import type { TableColumnData, TableRowKey } from '../Table.types';
 
 export type TableRowGroupProps = {
   row: unknown;
   rowKey: TableRowKey;
   /** Index among the rendered rows; also the virtualizer's measurement index. */
   index: number;
-  /** One-based row number in the whole table: `aria-rowindex` and labels. */
+  /** One-based row number in the whole table: `aria-rowindex`. */
   position: number;
+  /** Its value names the row in the labels of the row's controls. */
+  labelColumn: TableColumnData | undefined;
   columnIds: string[];
   /** Data columns plus control columns, for the expanded row. */
   columnCount: number;
@@ -71,8 +75,8 @@ const selectRowState =
   });
 
 /**
- * One shallow-compared selector per row: membership tests, flags and
- * predicate references. User predicates run when the row or a predicate changes.
+ * One shallow-compared selector per row: membership tests, flags and predicate
+ * references. User predicates run when the row or a predicate changes.
  */
 const useRowState = (row: unknown, rowKey: TableRowKey) => {
   const {
@@ -106,8 +110,8 @@ const useRowState = (row: unknown, rowKey: TableRowKey) => {
     ],
   );
 
-  // A selected or expanded row keeps its control even when the predicate
-  // says no, so the state stays visible and can be undone.
+  // A selected or expanded row keeps its control despite the predicate, so the
+  // state stays visible and undoable.
   const shownSelected = enabled.selectionEnabled && selected;
   const shownExpanded = enabled.expansionEnabled && expanded;
   return {
@@ -122,7 +126,14 @@ const useRowState = (row: unknown, rowKey: TableRowKey) => {
 
 type RowState = ReturnType<typeof useRowState>;
 
-type RowGroupProps = Omit<TableRowGroupProps, 'measureRef' | 'onRowClick'> & {
+type RowGroupProps = Omit<
+  TableRowGroupProps,
+  'labelColumn' | 'measureRef' | 'onRowClick'
+> & {
+  /** Names the row in its controls' labels. */
+  label: string;
+  /** Links the expand button to the details row. */
+  detailsId: string;
   state: RowState;
   onClick?: (event: MouseEvent<HTMLTableRowElement>) => void;
   groupRef?: GroupRef;
@@ -137,6 +148,8 @@ const RowGroup = ({
   rowKey,
   index,
   position,
+  label,
+  detailsId,
   columnIds,
   columnCount,
   state,
@@ -154,6 +167,7 @@ const RowGroup = ({
   >
     {/* The header is row 1. */}
     <Primitives.Row
+      data-slot="row"
       aria-rowindex={position + 1}
       data-selected={state.selected || undefined}
       data-clickable={onClick !== undefined || undefined}
@@ -163,7 +177,7 @@ const RowGroup = ({
       {state.selectionEnabled && (
         <SelectionCell
           rowKey={rowKey}
-          position={position}
+          label={label}
           selectable={state.selectable}
           selected={state.selected}
           disabled={state.rowSelectionDisabled}
@@ -172,7 +186,8 @@ const RowGroup = ({
       {state.expansionEnabled && (
         <ExpansionCell
           rowKey={rowKey}
-          position={position}
+          label={label}
+          detailsId={detailsId}
           expandable={state.expandable}
           expanded={state.expanded}
           disabled={state.rowExpansionDisabled}
@@ -184,6 +199,7 @@ const RowGroup = ({
     </Primitives.Row>
     {state.expanded && (
       <ExpandedRow
+        id={detailsId}
         row={row}
         columnCount={columnCount}
         rowIndex={position + 1}
@@ -195,7 +211,9 @@ const RowGroup = ({
 const SortableRowGroup = ({
   measureRef,
   ...props
-}: Omit<TableRowGroupProps, 'onRowClick'> & {
+}: Omit<TableRowGroupProps, 'labelColumn' | 'onRowClick'> & {
+  label: string;
+  detailsId: string;
   state: RowState;
   onClick?: RowGroupProps['onClick'];
 }) => {
@@ -214,7 +232,7 @@ const SortableRowGroup = ({
       dragHandle={
         <DragHandleCell
           ref={handleRef}
-          position={props.position}
+          label={props.label}
           sortActive={props.state.sortActive}
           dragDisabled={props.state.dragDisabled}
           {...handleProps}
@@ -225,9 +243,11 @@ const SortableRowGroup = ({
 };
 
 export const TableRowGroup = memo(
-  ({ onRowClick, ...props }: TableRowGroupProps) => {
+  ({ labelColumn, onRowClick, ...props }: TableRowGroupProps) => {
     const { store } = useGetTableStore();
     const state = useRowState(props.row, props.rowKey);
+    const label = getRowLabel(labelColumn, props.row, props.position);
+    const detailsId = useId();
 
     // With expansion, a row click toggles it, like its expand button.
     const toggles = state.expandable && !state.rowExpansionDisabled;
@@ -242,10 +262,18 @@ export const TableRowGroup = memo(
       : undefined;
 
     return state.reorderEnabled ? (
-      <SortableRowGroup {...props} state={state} onClick={onClick} />
+      <SortableRowGroup
+        {...props}
+        label={label}
+        detailsId={detailsId}
+        state={state}
+        onClick={onClick}
+      />
     ) : (
       <RowGroup
         {...props}
+        label={label}
+        detailsId={detailsId}
         state={state}
         onClick={onClick}
         groupRef={props.measureRef}

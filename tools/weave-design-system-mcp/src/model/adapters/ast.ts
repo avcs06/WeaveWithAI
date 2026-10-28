@@ -1,8 +1,8 @@
 import _traverse from '@babel/traverse';
 import type { Node } from '@babel/types';
 
-// @babel/traverse's default export is CJS-interop-wrapped depending on how
-// Node resolves it; unwrap defensively rather than assume one shape.
+// @babel/traverse's default export may be CJS-interop-wrapped, depending on
+// Node's resolution.
 export const traverse = ((_traverse as unknown as { default?: typeof _traverse }).default ??
   _traverse) as typeof _traverse;
 

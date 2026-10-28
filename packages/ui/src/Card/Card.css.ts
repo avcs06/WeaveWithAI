@@ -26,18 +26,18 @@ export const card = style({
   color: cardText,
   boxShadow: cardShadow,
   outline: 'none',
-  fontFamily: tokens.fontFamily.ui,
   transition:
     'background 140ms ease, border-color 140ms ease, box-shadow 140ms ease',
   selectors: {
-    '&:hover': {
+    '&[data-clickable]:not([data-disabled])': {
+      cursor: 'pointer',
+    },
+    '&[data-clickable]:not([data-disabled]):hover': {
       background: cardBgHover,
     },
-    '&:active': {
+    '&[data-clickable]:not([data-disabled]):active': {
       background: cardBgActive,
-    },
-    '&[data-clickable="true"]': {
-      cursor: 'pointer',
+      ...focusRing(cardFocusColor, cardShadow),
     },
     '&:focus-visible': {
       ...focusRing(cardFocusColor, cardShadow),
@@ -48,19 +48,22 @@ export const card = style({
       borderColor: cardActiveBorder,
       boxShadow: `${cardActiveBoxShadow}, ${cardShadow}`,
     },
-    '&[data-state="checked"]:hover': {
+    '&[data-state="checked"]:not([data-disabled]):hover': {
       background: cardActiveBgHover,
     },
     '&[data-state="checked"]:focus-visible': {
       ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
     },
-    '&[data-disabled="true"]': {
+    '&[data-state="checked"]:not([data-disabled]):active': {
+      ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
+    },
+    '&[data-disabled]': {
       color: disabledColor(cardText),
       background: disabledColor(cardBg),
       borderColor: disabledColor(cardBorder),
       cursor: 'default',
     },
-    '&[data-disabled="true"][data-state="checked"]': {
+    '&[data-disabled][data-state="checked"]': {
       color: disabledColor(cardActiveText),
       background: disabledColor(cardActiveBg),
       borderColor: disabledColor(cardActiveBorder),

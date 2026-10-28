@@ -1,6 +1,7 @@
 import { Providers } from '@app/shared/providers';
 import { UIRoot } from '@packages/ui/Root';
 
+import { PageErrorBoundary } from '../components/PageErrorBoundary';
 import { PageLayout } from '../components/PageLayout';
 
 export default function RootLayout({
@@ -10,9 +11,11 @@ export default function RootLayout({
 }) {
   return (
     <UIRoot>
-      <Providers>
-        <PageLayout>{children}</PageLayout>
-      </Providers>
+      <PageErrorBoundary>
+        <Providers>
+          <PageLayout>{children}</PageLayout>
+        </Providers>
+      </PageErrorBoundary>
     </UIRoot>
   );
 }

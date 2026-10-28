@@ -8,9 +8,10 @@ import {
 } from '@vanilla-extract/css';
 
 const colors = tokens.color.base;
+const surface = tokens.color.surface;
 const transition = '120ms ease';
 
-/** The shell's drop shadow; a surface using Menu, like a popover, sets its own. */
+/** The shell's drop shadow; a surface using Menu sets its own. */
 export const menuShadow = createVar('menuShadow');
 
 /** The shell's top and bottom padding; a surface can move it into the list. */
@@ -33,13 +34,13 @@ export const menu = style({
   borderRadius: tokens.radius.surface,
   color: colors.fg,
   background: colors.bg,
-  boxShadow: `${borderShadow(colors.divider)}, ${fallbackVar(menuShadow, tokens.boxShadow.dropdown)}`,
+  boxShadow: `${borderShadow(surface.divider)}, ${fallbackVar(menuShadow, tokens.boxShadow.dropdown)}`,
   outline: 'none',
 });
 
 // Inside the scroll area, so a surface that moves the shell's padding here
-// keeps it around the content's edges (a field's focus ring at the top is
-// not clipped by the viewport).
+// keeps it around the content's edges (a field's focus ring at the top isn't
+// clipped).
 export const menuList = style({
   paddingBlock: fallbackVar(menuListPaddingBlock, '0px'),
 });
@@ -55,7 +56,6 @@ export const menuItem = style({
   lineHeight: tokens.lineHeight[3.5],
   userSelect: 'none',
   outline: 'none',
-  cursor: 'pointer',
   transition: `background-color ${transition}`,
   selectors: {
     // A side holding an icon or a check sits nearer the row's edge.
@@ -81,7 +81,7 @@ export const menuItem = style({
 });
 
 // Icons and the check are taller than the row's line; the negative margin
-// keeps them from making the row taller. Add-ons keep their own height.
+// keeps them from growing the row. Add-ons keep their own height.
 globalStyle(`${menuItem} > :is([data-slot='icon'], [data-slot='check'])`, {
   width: tokens.iconSize.body,
   height: tokens.iconSize.body,
@@ -124,5 +124,5 @@ export const menuLabel = style({
 export const menuSeparator = style({
   height: tokens.spacing[0.25],
   marginBlock: tokens.spacing[1],
-  background: colors.divider,
+  background: surface.divider,
 });

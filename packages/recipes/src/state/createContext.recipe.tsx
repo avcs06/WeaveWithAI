@@ -1,7 +1,7 @@
 /**
  * createContext: a context for a component tree, with its provider and hook
  * (`[Provider, useValue]`). For values a parent passes down to parts at any
- * depth: a form section's size and lock, a heading level, the organizer.
+ * depth: a form section's size and lock, a reply's depth, the organizer.
  * Outside any provider the hook returns the defaults.
  *
  * Not for: state many unrelated components change (createStore), state per
@@ -10,14 +10,14 @@
  *
  * Pitfalls:
  * - An object takes each key as a prop. List every key in the defaults,
- *   `undefined` included: only those update consumers. A key missing from
- *   the defaults is passed on, but changing it alone updates nothing.
+ *   `undefined` included: only those update consumers. A missing key is
+ *   passed on, but changing it alone updates nothing.
  * - Anything else takes `value`, compared as React does: a number, a
  *   function, an array, and an object type that can be `null`.
  * - A value that changes every render (an inline function, a new array)
  *   updates every consumer every render: pass a stable one, or use a store.
- * - Consumers outside a provider get the defaults silently: use a nullable
- *   default and check it, when a missing provider is a bug.
+ * - Consumers outside a provider silently get the defaults: when a missing
+ *   provider is a bug, use a nullable default and check it.
  */
 import { Button } from '@packages/ui/Button';
 import { Input } from '@packages/ui/Input';
@@ -88,39 +88,37 @@ const OrganizerNote = () => {
 
 /**
  * A single value: the provider takes `value`. A nested provider overrides its
- * parent for its subtree, so each section sits one heading level lower.
+ * parent for its subtree, so each reply is one level deeper.
  */
-const [HeadingLevelProvider, useHeadingLevel] = createContext(1);
+const [ThreadDepthProvider, useThreadDepth] = createContext(0);
 
-const Section = ({
-  title,
+const Reply = ({
+  author,
   children,
 }: {
-  title: string;
-  children: ReactNode;
+  author: string;
+  children?: ReactNode;
 }) => {
-  const level = Math.min(useHeadingLevel() + 1, 6);
-  const Heading = `h${level}` as 'h2';
+  const depth = useThreadDepth() + 1;
 
   return (
-    <HeadingLevelProvider value={level}>
-      <section>
-        <Heading>{title}</Heading>
-        {children}
-      </section>
-    </HeadingLevelProvider>
+    <ThreadDepthProvider value={depth}>
+      <div className="flex-col-gap-1">
+        <p>
+          {author}, reply level {depth}
+        </p>
+        {children && <div className="flex-col-gap-1 pl-4">{children}</div>}
+      </div>
+    </ThreadDepthProvider>
   );
 };
 
-const Agenda = () => (
-  <Section title="Conference agenda">
-    <Section title="Friday">
-      <p>Opening keynote at 09:00</p>
-    </Section>
-    <Section title="Saturday">
-      <p>Workshops from 10:00</p>
-    </Section>
-  </Section>
+const Thread = () => (
+  <Reply author="Ada Lovelace">
+    <Reply author="Grace Hopper">
+      <Reply author="Alan Turing" />
+    </Reply>
+  </Reply>
 );
 
 type Organizer = { name: string };
@@ -183,7 +181,7 @@ export default function CreateContextRecipe() {
     <div className="flex-col-gap-4">
       <VenueSection published />
       <OrganizerNote />
-      <Agenda />
+      <Thread />
       <OrganizerProvider value={organizer}>
         <HostedBy />
       </OrganizerProvider>

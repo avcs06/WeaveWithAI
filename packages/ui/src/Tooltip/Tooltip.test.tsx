@@ -11,13 +11,12 @@ import React, { type ReactNode } from 'react';
 import { Button } from '../Button';
 import { axe, renderUI } from '../test-utils';
 
-import { TooltipProvider } from './auxiliary';
 import { Tooltip } from './Tooltip';
+import { TooltipProvider } from './TooltipProvider';
 
 const trigger = (name = 'Save') => screen.getByRole('button', { name });
 
-// The shown tooltip is aria-hidden: the trigger's description already says
-// it to screen readers, so role queries include hidden elements to see it.
+// The shown tooltip is aria-hidden, so role queries include hidden elements.
 const findTooltip = () => screen.findByRole('tooltip', { hidden: true });
 const getTooltip = () => screen.getByRole('tooltip', { hidden: true });
 const queryTooltip = () => screen.queryByRole('tooltip', { hidden: true });
@@ -57,16 +56,13 @@ describe('Tooltip', () => {
     );
     await userEvent.hover(trigger());
     const tooltip = await findTooltip();
-    // Sighted users see the tooltip; assistive tech gets it once, as the
-    // trigger's description, never as a second stop in the tree.
+    // Assistive tech gets it once, as the trigger's description.
     expect(tooltip).toHaveAttribute('aria-hidden', 'true');
     expect(screen.queryByRole('tooltip')).toBeNull();
     expect(tooltip).toHaveAttribute('data-state', 'delayed-open');
-    // Portalled to the body, outside the trigger's own subtree.
     expect(document.body.contains(tooltip)).toBe(true);
     expect(container.contains(tooltip)).toBe(false);
     expect(container.contains(trigger())).toBe(true);
-    // aria-describedby points at the hidden span holding the text.
     const describedBy = trigger().getAttribute('aria-describedby');
     expect(describedBy).toBeTruthy();
     const description = document.getElementById(describedBy as string);
@@ -158,12 +154,10 @@ describe('Tooltip', () => {
     expect(trigger()).toHaveFocus();
     expect(await findTooltip()).toBeInTheDocument();
     expect(getTooltip()).toHaveAttribute('data-state', 'instant-open');
-    // The tooltip never takes focus itself.
     expect(trigger()).toHaveFocus();
     await userEvent.keyboard('{Escape}');
     expect(queryTooltip()).toBeNull();
     expect(escapeBelow).not.toHaveBeenCalled();
-    // Escape dismisses the hint only: focus stays where the user put it.
     expect(trigger()).toHaveFocus();
 
     await userEvent.keyboard('{Escape}');
@@ -341,7 +335,6 @@ describe('Tooltip', () => {
     await user.hover(trigger());
     const tooltip = await findTooltip();
 
-    // Crossing onto the tooltip within the leave grace keeps it open.
     fireEvent.pointerLeave(trigger());
     fireEvent.pointerEnter(tooltip);
     await wait(200);
@@ -350,7 +343,6 @@ describe('Tooltip', () => {
     fireEvent.pointerLeave(tooltip);
     await waitFor(() => expect(queryTooltip()).toBeNull());
 
-    // Leaving the trigger for elsewhere closes it too.
     fireEvent.pointerMove(trigger(), { pointerType: 'mouse' });
     await findTooltip();
     await user.hover(screen.getByText('Elsewhere'));

@@ -58,14 +58,14 @@ export const good = style({ color: vars.color.accent });
 
 ## Tools
 
-| Tool                | Purpose                                                                                                                                                                        |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `list_tokens`       | List tokens, optionally filtered to one group. Call with no group first — group names vary by project (`color`, `spacing`, `iconSize`, `zIndex`, whatever the source defines). |
-| `list_components`   | The component inventory: name, description, category, and which props are variant-like.                                                                                        |
-| `search_tokens`     | Ranked token search across names, groups, references and values — for when you know what you want but not what this system calls it.                                           |
-| `search_components` | Ranked component search across names, descriptions, categories and prop names — the first call to make before building any UI element from scratch.                            |
-| `get_recipe`        | Working examples of a component as the project uses it: one per distinct case, with when to use it. An unknown name returns the recipes.                                       |
-| `validate`          | Check a JSX/TSX snippet or a style file's content. Unparseable input comes back as a finding.                                                                                  |
+| Tool                | Purpose                                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_tokens`       | List tokens, optionally filtered to one group. Call with no group first — group names vary by project (`color`, `spacing`, `iconSize`, `zIndex`, whatever the source defines).                                                                        |
+| `list_components`   | The component inventory: name, description, category, which props are variant-like, and the invalid alternatives each component declares.                                                                                                             |
+| `search_tokens`     | Ranked token search across names, groups, references and values — for when you know what you want but not what this system calls it.                                                                                                                  |
+| `search_components` | Ranked component search across names, descriptions, categories, prop names and declared invalid alternatives (`DropdownMenu` finds the component that supersedes `dropdown-menu`).                                                                    |
+| `get_recipe`        | Working examples of a component as the project uses it: one per distinct case, with when to use it. A name with no recipe of its own (a hook, a provider) returns the recipe that imports it from the workspace. An unknown name returns the recipes. |
+| `validate`          | Check a JSX/TSX snippet or a style file's content. Unparseable input comes back as a finding.                                                                                                                                                         |
 
 ### What `validate` checks
 
@@ -109,20 +109,36 @@ can apply in one pass.
    Declarations use CSS selector syntax, so a component can name a tag _and the classes on it_ —
    which is how a layout primitive says "a plain div is fine, a div doing my job is not":
 
-   | Declaration                      | Matches                                      |
-   | -------------------------------- | -------------------------------------------- |
-   | `button`                         | any `<button>`                               |
-   | `MuiButton`                      | another library's component                  |
-   | `div.flex`                       | a `<div>` carrying the class `flex`          |
-   | `div.flex.gap-2`                 | a `<div>` carrying both classes              |
-   | `.flex`                          | any element carrying `flex`                  |
-   | `Input[type="password"]`         | the `Input` component with `type="password"` |
-   | `input[disabled]`                | an `<input>` with a `disabled` attribute     |
-   | `import('@radix-ui/react-tabs')` | anything imported from that package          |
+   | Declaration                            | Matches                                                       |
+   | -------------------------------------- | ------------------------------------------------------------- |
+   | `button`                               | any `<button>`                                                |
+   | `MuiButton`                            | another library's component                                   |
+   | `div.flex`                             | a `<div>` carrying the class `flex`                           |
+   | `div.flex.gap-2`                       | a `<div>` carrying both classes                               |
+   | `.flex`                                | any element carrying `flex`                                   |
+   | `Input[type="password"]`               | the `Input` component with `type="password"`                  |
+   | `input[disabled]`                      | an `<input>` with a `disabled` attribute                      |
+   | `input:not([type="hidden"])`           | an `<input>` unless it is `type="hidden"`                     |
+   | `Form.Item`                            | a dotted component, `<Form.Item>`                             |
+   | `import('@radix-ui/react-tabs')`       | anything imported from that package                           |
+   | `import('@mui/material'){Button, Tab}` | only those named imports, and `<Button>` or `<M.Button>`      |
+   | `import('some-lib'){default}`          | the default export                                            |
+   | `import('@radix-ui/react-*')`          | every package matching the glob                               |
+   | `import('*/components/ui/button')`     | a module at that path under any prefix, or none (`@/`, `../`) |
 
-   Tags are case-sensitive, as in JSX: `input` is the native element, `Input` a component. An
-   attribute value only matches a literal written on the element. Files inside the owning
-   component's folder are exempt, since they implement it.
+   Separate entries with commas or newlines; several `@invalidAlternative` lines are fine. Write a
+   scoped package name only inside `import('…')`, because a bare `@scope/pkg` is split off by
+   JSDoc as a new tag.
+
+   Tags are case-sensitive, as in JSX: `input` is the native element, `Input` a component. In a
+   dotted tag a capitalized segment is a member (`Form.Item`, `Input.Password`) and a lowercase
+   one is a class (`div.flex`). `:not()` takes classes and attributes only, no tag and no
+   nesting. In `import('pkg'){A, B}`, `*` stands for any characters, and a leading `*/` means
+   any prefix or none.
+
+   Files inside the owning component's folder are exempt, since they implement it; so is every
+   design-system file for element matches, because the system builds its controls from native
+   elements.
 
    All the classes named must be present; extras are ignored, so `div.flex` matches
    `className="flex items-center"`. The classes are plain literals you wrote — this is unrelated
@@ -138,8 +154,27 @@ can apply in one pass.
    <div className={`flex ${extra}`} />
    ```
 
-   Where two declarations both match, the more specific one wins, so `div.flex` is reported over
-   a bare `div`. An invalid alternative is always an error.
+   An attribute value is read from a string, number or boolean literal (a bare attribute is
+   `true`), a template without expressions, either branch of a ternary, and the keys and
+   literals of a spread object literal (`{...{ role: 'menu' }}`). `type`, `role`, `inputMode` and
+   `popover` compare case-insensitively. A value that can't be read (`role={r}`, an unreadable
+   `{...props}`) is unknown: it never satisfies a positive selector, and never satisfies
+   `:not()` either, so `<input {...props} />` is not flagged by `input:not([type="hidden"])`.
+
+   Imports are checked wherever a module is named: `import`, `export … from`, `export * from`,
+   `require()` and dynamic `import()`, including `.then((m) => m.A)`, `require('x').A` and a
+   destructured `require`. A whole-package declaration is reported once, at the module
+   reference. A named declaration reports the import and each place the name is rendered or
+   read, through an alias or a namespace too. Type-only imports are ignored.
+
+   Where two declarations both match, the more specific one wins, comparing positive classes and
+   attributes first, then `:not()` parts, then the tag; a tie goes to the first declared. Several
+   components may declare the same package for different names, and an exact module beats a
+   glob. An invalid alternative is always an error.
+
+   A declaration that can't work is reported by `diagnostics()` instead of being ignored: an
+   unreadable selector or import, empty `{}` names, a bare `@scope/pkg`, or a selector another
+   component already declared. `pnpm mcp:check` fails on them, listing each one.
 
 **Recipes are app code.** A recipe sits in its component's folder but shows how an app uses the
 component, so `validate` checks it with the general rules and without the folder's leave to use
@@ -190,18 +225,24 @@ src/
       ast.ts                   traverse + finding position, shared by every adapter
       components-adapter.ts    loadComponents(patterns), loadPackageComponents(pkg),
                                 componentRoots(patterns)
-      recipes-adapter.ts       loadRecipes(patterns): recipe files by name, read when served
+      recipes-adapter.ts       loadRecipes(patterns): recipe files by name, read when served;
+                                recipeImporting(recipes, name): the recipe that imports a name
       components/
-        react-tsx.ts            component contracts from project source files
+        react-tsx.ts            component contracts from project source files; type-only
+                                exports (props, aliases) and exports tagged `@internal`
+                                are left out of the inventory
         npm-package.ts          component contracts from an installed package's type declarations
         props.ts                docgen props -> ComponentProp, shared by both readers
       tsx-adapter.ts           validateJsx: runs the tsx rules; hands inline styles and className
                                 to the other two validators
       tsx/
+        modules.ts              every module reference in a file (import, re-export, require,
+                                import()) and the names it brings in, with each use of them
         forms.ts                hook calls and where Controller hands over `field`, shared by the
                                 form rules
         rules/
-          invalid-alternative.ts     elements/imports a component declares superseded
+          invalid-alternative.ts     elements/imports a component declares superseded;
+                                     builds the owners and their diagnostics
           unknown-variant.ts         variant prop outside its allowed set
           manual-form-state.ts       form values/errors in useState instead of react-hook-form
           field-outside-controller.ts  form field not rendered through Controller
@@ -279,7 +320,7 @@ Node `^22.18.0` or `>=24.11.0` (pinned in `.nvmrc`). From the repository root:
 
 ```bash
 pnpm mcp:setup   # npm install and build into dist/
-pnpm mcp:check   # confirms the config loads components and tokens
+pnpm mcp:check   # confirms the config loads components and tokens, and every declaration works
 ```
 
 Clients start the server through `tools/design-system-mcp.mjs`: `.mcp.json` registers it for
@@ -288,6 +329,9 @@ changing `src/` or `instructions.md`, restart the server.
 
 `tools/generate.mjs` copies this folder into a new project without `node_modules` or `dist`, then
 runs both commands there.
+
+`pnpm verify <route>` first runs `validate` on the route's files (its folder and what they import
+under `web/`), and `pnpm verify --recipes` on every recipe, then drives the browser.
 
 ## Config reference
 
@@ -299,6 +343,7 @@ runs both commands there.
 | `components` | Your workspace's own React component files. Everything under their folders is design-system code.                           |
 | `packages`   | _Optional._ Installed packages whose components join the inventory.                                                         |
 | `recipes`    | _Optional._ Globs for recipe files: each component's distinct cases, served by `get_recipe`.                                |
+| `importExceptions` | _Optional._ Globs for files that may import a package another component supersedes, like a shared primitive several components are built on. Only the import rule skips them; everywhere else, only the declaring component's folder may use what it supersedes. |
 
 **Tokens** (`tokens[]`) — file paths. Each file's format and exports are inferred:
 

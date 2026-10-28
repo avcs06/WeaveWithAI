@@ -5,8 +5,8 @@
  * While the two differ, the work is catching up.
  *
  * Not for: slow rendering work (useDeferredValue, which yields to typing
- * with no fixed lag), or sending the value to a parent or a server
- * (Input's `delay`, useBoundState with `delay`, or useDebouncedCallback).
+ * with no fixed lag), or sending the value to a parent or server (Input's
+ * `delay`, useBoundState with `delay`, useDebouncedCallback).
  *
  * Pitfalls:
  * - Changes compare with `Object.is`: an object or array built while

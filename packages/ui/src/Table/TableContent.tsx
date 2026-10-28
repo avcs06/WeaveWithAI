@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { usePersistentCallback } from '@packages/utils/hooks';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { TableBody, useClientRows } from './body';
 import { TableHeader } from './header';
@@ -6,6 +7,7 @@ import { InfiniteScrollTrigger } from './infiniteScroll';
 import { useColumnLayout, useLinkedScroll } from './layout';
 import { TablePaginationBar } from './pagination';
 import * as Primitives from './primitives';
+import { SortStatus } from './sorting';
 import { useTableStore } from './store';
 
 import type { TableColumnData, TableProps } from './Table.types';
@@ -13,9 +15,8 @@ import type { TableColumnData, TableProps } from './Table.types';
 export type TableContentProps = Omit<TableProps<unknown>, 'children'>;
 
 /**
- * Renders after the config components, so on mount the store already holds
- * their props. Holds only what the header, body and pagination share; each
- * computes the rest from its props and the store.
+ * Renders after the config components, so the store holds their props on mount.
+ * Holds only what header, body and pagination share; each computes the rest.
  */
 export const TableContent = ({
   data,
@@ -28,6 +29,10 @@ export const TableContent = ({
   onRowClick,
   className,
 }: TableContentProps) => {
+  // A row's key never changes, so a new inline `rowKey` re-renders nothing.
+  const getRowKey = usePersistentCallback(rowKey) as typeof rowKey;
+  const frameRef = useRef<HTMLDivElement>(null);
+
   const [headerViewport, setHeaderViewport] = useState<HTMLElement | null>(
     null,
   );
@@ -88,8 +93,7 @@ export const TableContent = ({
     expansion: expansionEnabled,
   });
 
-  // `rows` is `data` in server mode, which knows the full count only from the
-  // totals it is given.
+  // Server mode: `rows` is `data`; the full count comes from the given totals.
   const serverTotal = useTableStore((state) =>
     mode === 'server'
       ? (state.paginationConfig?.totalItems ??
@@ -102,9 +106,13 @@ export const TableContent = ({
     !loading && rows.length === 0 ? Math.max(dataRowCount, 1) : dataRowCount;
 
   return (
-    <Primitives.Root className={className}>
+    <Primitives.Root data-slot="table" className={className}>
       {/* The header row plus data rows; expanded rows share their row's index. */}
       <Primitives.Frame
+        ref={frameRef}
+        data-slot="frame"
+        // Not a tab stop: focus comes here when the load button goes.
+        tabIndex={-1}
         aria-label={caption}
         aria-rowcount={shownRowCount + 1}
         aria-busy={loading}
@@ -113,14 +121,14 @@ export const TableContent = ({
           viewportRef={setHeaderViewport}
           slots={slots}
           rows={rows}
-          rowKey={rowKey}
+          rowKey={getRowKey}
         />
 
         <TableBody
           data={data}
           mode={mode}
           rows={rows}
-          rowKey={rowKey}
+          rowKey={getRowKey}
           slots={slots}
           columnIds={columnOrder}
           virtualized={virtualized}
@@ -136,6 +144,7 @@ export const TableContent = ({
       <span role="status" className="sr-only">
         {loading ? 'Loading…' : ''}
       </span>
+      <SortStatus />
 
       <TablePaginationBar
         caption={caption}
@@ -143,6 +152,7 @@ export const TableContent = ({
         loading={loading}
         rowCount={rows.length}
         dataCount={data.length}
+        tableRef={frameRef}
       />
 
       {infiniteScrollEnabled && (

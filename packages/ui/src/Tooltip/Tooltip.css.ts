@@ -28,8 +28,8 @@ export const tooltip = style({
   lineHeight: tokens.lineHeight.caption,
   overflowWrap: 'anywhere',
   userSelect: 'none',
-  // A modal menu turns pointer events off on the body; resting on the
-  // tooltip must still keep it open.
+  // A modal menu disables body pointer events; the tooltip must still stay open
+  // under the pointer.
   pointerEvents: 'auto',
   color: colors.accentFg,
   background: colors.accentBg,
@@ -38,8 +38,7 @@ export const tooltip = style({
   '@media': {
     '(prefers-reduced-motion: no-preference)': {
       selectors: {
-        // `data-side` is where the tooltip sits, so it slides in from the
-        // trigger: up when above it, down when below.
+        // Slides in from the trigger, by `data-side`.
         '&[data-state$="open"][data-side="top"]': { animation: enterAbove },
         '&[data-state$="open"][data-side="bottom"]': { animation: enterBelow },
         '&[data-state$="open"][data-side="left"]': { animation: enterLeft },

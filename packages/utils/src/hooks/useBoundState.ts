@@ -1,32 +1,52 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { useDepsChanged } from './useDepsChanged';
-import { useOnChange } from './useOnChange';
+import { useDebouncedCallback } from './useDebouncedCallback';
+import { usePersistentCallback } from './usePersistentCallback';
+
+import type { Constant } from '../types';
 
 /**
- * State that resets to `value` in the same render whenever `value` changes.
- * `onChange` reports local changes (made with the setter) after commit;
- * resets from `value` aren't reported.
+ * Local state that follows `value` and reports edits to `onChange`, at once
+ * or after `delay` ms without edits. `flush` reports a waiting edit now.
+ * `delay` is a constant: it can't change once set.
+ *
+ * A `value` that is the same reference as the last reported edit is its echo
+ * and keeps newer edits; any other `value` replaces the state.
  */
-export const useBoundState = <T>(value: T, onChange?: (value: T) => void) => {
-  const [state, setState] = useState(() => value);
+export const useBoundState = <T, D extends number = never>(
+  value: T,
+  onChange?: (value: T) => void,
+  delay?: Constant<number, D>,
+) => {
+  const [state, setStateValue] = useState(value);
+  const [lastValue, setLastValue] = useState(value);
+  const [reported, setReported] = useState(value);
 
-  const didValueChangeRef = useRef(false);
-  const valueChanged = useDepsChanged([value], true);
-  // Equal to the state: nothing changes, so no report to skip.
-  if (valueChanged && !Object.is(value, state)) {
-    setState(() => value);
-    didValueChangeRef.current = true;
+  const report = (next: T) => {
+    setReported(next);
+    onChange?.(next);
+  };
+  const reportLater = useDebouncedCallback(report, delay ?? 0);
+
+  const isNewValue = !Object.is(value, lastValue);
+  if (isNewValue) setLastValue(value);
+
+  // The echo of a report can arrive after newer edits, and would undo them.
+  const isFromOutside = isNewValue && !Object.is(value, reported);
+  if (isFromOutside) {
+    setStateValue(value);
+    setReported(value);
+    // A waiting edit would undo the outside change. Cancelled while rendering:
+    // the timer can fire before an effect runs.
+    reportLater.cancel();
   }
 
-  useOnChange(() => {
-    if (didValueChangeRef.current) {
-      didValueChangeRef.current = false;
-      return;
-    }
+  const setState = usePersistentCallback((next: T) => {
+    if (Object.is(next, state)) return;
+    setStateValue(next);
+    if (delay === undefined) report(next);
+    else reportLater(next);
+  });
 
-    onChange?.(state);
-  }, [state]);
-
-  return [valueChanged ? value : state, setState] as const;
+  return [isFromOutside ? value : state, setState, reportLater.flush] as const;
 };

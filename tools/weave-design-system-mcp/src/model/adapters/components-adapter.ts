@@ -3,12 +3,10 @@ import * as npmPackageComponents from './components/npm-package.js';
 import * as reactTsxComponents from './components/react-tsx.js';
 
 /**
- * This file is a pure dispatcher — it contains no component-format code of
- * its own. Each concrete implementation lives in its own module under
- * `components/` and is only ever reached through the functions below. The
- * project's components are always React TSX, and installed packages are
- * always read from their type declarations — another format (Vue SFCs, a
- * published metadata JSON) is a new file under `components/` and a switch here.
+ * A pure dispatcher: each implementation lives in a module under `components/`.
+ * Project components are always React TSX and installed packages are read from
+ * their type declarations; another format (Vue SFCs, published metadata JSON)
+ * is a new file under `components/` and a switch here.
  */
 export function loadComponents(patterns: string[], configDir: string): ComponentContract[] {
   return reactTsxComponents.loadComponents(patterns, configDir);

@@ -130,30 +130,36 @@ such as `tokens.zIndex.modal` does not apply.
 
 ## Colors
 
-Every color set has the same ten roles (`ColorSet` in `colors.ts`): `bg`,
+Every color set has the same twelve roles (`ColorSet` in `colors.ts`): `bg`,
 `fg`, `fgMuted`, `border`, `hoverBg`, `accentBg`, `accentFg`, `accentBorder`,
-`accentHoverBg`, and `shadow`.
+`accentHoverBg`, `focus`, `accentFocus`, and `shadow`.
 
-Neutral and status colors stay the same in every project. Only theme colors
-change per project. A project that needs additional colors adds them under
-entity. If a usage case has no matching color, add it to neutral.
+`base`, status, and the surface's `divider`, `backdrop` and `skeleton` stay the
+same in every project. Only primary and the surface page colors (`pageBg`,
+`frameBg`, `pageFg`, `pageFgMuted`) change per project. A project that needs
+additional colors adds them under entity. If a usage case has no matching color,
+add it to surface.
 
-| Set                          | Use                                                         |
-| ---------------------------- | ----------------------------------------------------------- |
-| `tokens.color.theme`         | Brand. Change these values per project.                     |
-| `tokens.color.neutral`       | Pages, cards, text, borders; plus `divider` and `backdrop`. |
-| `tokens.color.status.<name>` | `success`, `warning`, `error`, `info`.                      |
-| `tokens.color.entity`        | Additional project-specific colors. Empty by default.       |
+Color sets are for controls and containers, not the page. `surface` holds the
+page colors and every color outside the set roles (`SurfaceColors`). Only
+sections use `pageFg` and `pageFgMuted`.
+
+| Set                     | Use                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| `tokens.color.primary`  | Brand. Change these values per project.                                                           |
+| `tokens.color.base`     | Neutral controls and containers: cards, text, borders.                                            |
+| `tokens.color.surface`  | `pageBg`, `frameBg`, `pageFg`, `pageFgMuted`, `divider`, `backdrop`, `skeleton`. Not a color set. |
+| `tokens.color.<status>` | `success`, `warning`, `error`, `info`.                                                            |
+| `tokens.color.<entity>` | Additional project-specific sets, added under `entity`. None by default.                          |
 
 - Pair foregrounds with their own set: default foregrounds on the two default
   backgrounds, `accentForeground` on the two accent backgrounds.
 - Selected uses the hover background; disabled uses muted foreground or opacity;
   accent doubles as the emphasized/inverse pair (for example, tooltips use
-  `neutral.accent*`). There are no `selected`, `disabled`, `surface`, or `card`
-  colors.
+  `base.accent*`). There are no `selected`, `disabled` or `card` colors.
 - Status values are fixed Radix-derived palettes checked for WCAG contrast; never
   re-tint them for a brand. Never communicate status by color alone.
-- `backdrop` is a base color; components apply their own opacity.
+- `backdrop` is opaque; components apply their own opacity.
 - Mode is chosen by the theme class, never in components. Tailwind color names
   mirror token paths (`bg-error-accent`) and follow the light/dark mode.
 - `colors.json` is type-checked against the contract when the styles build:

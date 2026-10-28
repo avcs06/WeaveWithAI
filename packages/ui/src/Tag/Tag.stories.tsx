@@ -1,7 +1,7 @@
 import { Info } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -133,51 +133,33 @@ const TagStories = () => {
 
       <StorySection title="Features">
         <div className="flex-row-gap-4 flex-wrap">
-          <StorySwitch
-            label="Bordered"
-            checked={bordered}
-            onChange={setBordered}
-          />
-          <StorySwitch
-            label="Left icon"
-            checked={leftIcon}
-            onChange={setLeftIcon}
-          />
-          <StorySwitch
-            label="Right icon"
-            checked={rightIcon}
-            onChange={setRightIcon}
-          />
-          <StorySwitch
-            label="Left add-on"
-            checked={leftAddOn}
-            onChange={setLeftAddOn}
-          />
-          <StorySwitch
-            label="Right add-on"
-            checked={rightAddOn}
-            onChange={setRightAddOn}
-          />
-          <StorySwitch
-            label="Closable"
-            checked={closable}
-            onChange={setClosable}
-          />
-          <StorySwitch
-            label="Tooltip"
-            checked={tooltip}
-            onChange={setTooltip}
-          />
-          <StorySwitch
-            label="Disabled"
-            checked={disabled}
-            onChange={setDisabled}
-          />
-          <StorySwitch
-            label="Disabled reason"
-            checked={reason}
-            onChange={setReason}
-          />
+          <Checkbox checked={bordered} onCheckedChange={setBordered}>
+            Bordered
+          </Checkbox>
+          <Checkbox checked={leftIcon} onCheckedChange={setLeftIcon}>
+            Left icon
+          </Checkbox>
+          <Checkbox checked={rightIcon} onCheckedChange={setRightIcon}>
+            Right icon
+          </Checkbox>
+          <Checkbox checked={leftAddOn} onCheckedChange={setLeftAddOn}>
+            Left add-on
+          </Checkbox>
+          <Checkbox checked={rightAddOn} onCheckedChange={setRightAddOn}>
+            Right add-on
+          </Checkbox>
+          <Checkbox checked={closable} onCheckedChange={setClosable}>
+            Closable
+          </Checkbox>
+          <Checkbox checked={tooltip} onCheckedChange={setTooltip}>
+            Tooltip
+          </Checkbox>
+          <Checkbox checked={disabled} onCheckedChange={setDisabled}>
+            Disabled
+          </Checkbox>
+          <Checkbox checked={reason} onCheckedChange={setReason}>
+            Disabled reason
+          </Checkbox>
         </div>
         {sizes.map((size) => (
           <div key={size} className="flex-row-gap-2 items-center flex-wrap">

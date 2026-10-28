@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -46,11 +46,9 @@ const AvatarStories = () => {
   return (
     <StoryPage>
       <StorySection title="Sizes">
-        <StorySwitch
-          label="Photo"
-          checked={withPhoto}
-          onChange={setWithPhoto}
-        />
+        <Checkbox checked={withPhoto} onCheckedChange={setWithPhoto}>
+          Photo
+        </Checkbox>
         <div className="flex-row-gap-6 items-end">
           {avatarSizes.map((size) => (
             <Labelled key={size} label={size}>

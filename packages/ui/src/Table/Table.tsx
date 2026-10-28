@@ -13,19 +13,20 @@ import { TableSort } from './sorting';
 import { TableProvider } from './store';
 import { TableContent, type TableContentProps } from './TableContent';
 
-import type { TableProps } from './Table.types';
+import type { TableProps, TypedTable } from './Table.types';
 
 /**
- * Config components (`Table.Column`, `Table.Sort`, …) render first and write
- * their props into a per-table store; the content renders after them.
- * `mode` applies to sort, filter and pagination together.
- * @invalidAlternative table
+ * Rows of records to scan, sort, filter, select and act on. Configure with
+ * `Table.*` children: a `Table.Column` per column, plus the features needed
+ * (`Table.Selection`, `Table.Pagination`, …).
+ * @invalidAlternative table, [role="table"], [role="cell"]
  */
 export function Table<T>({ children, ...props }: TableProps<T>) {
   return (
-    <TableProvider>
+    <TableProvider
+      content={<TableContent {...(props as unknown as TableContentProps)} />}
+    >
       {children}
-      <TableContent {...(props as unknown as TableContentProps)} />
     </TableProvider>
   );
 }
@@ -38,3 +39,13 @@ Table.Expansion = TableExpansion;
 Table.Reorder = TableReorder;
 Table.Pagination = TablePagination;
 Table.InfiniteScroll = TableInfiniteScroll;
+
+/**
+ * `Table` typed for row type `T`. A parent's generic never reaches its children
+ * in TSX, so `<Table<Row>>` leaves the parts untyped; this binds `T` to the
+ * table and every part (`dataKey`, `row` in renders and callbacks). Call once
+ * at module scope; it returns `Table` itself.
+ */
+export function createTable<T extends object>(): TypedTable<T> {
+  return Table;
+}

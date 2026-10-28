@@ -25,8 +25,16 @@ export const tagRecipe = recipe({
   base: tag,
   variants: {
     variant: {
-      default: colorSet(colors.fg, colors.bg, colors.border),
-      accent: colorSet(colors.accentFg, colors.accentBg, colors.accentBorder),
+      default: colorSet(
+        colors.primary.fg,
+        colors.primary.bg,
+        colors.primary.border,
+      ),
+      accent: colorSet(
+        colors.primary.accentFg,
+        colors.primary.accentBg,
+        colors.primary.accentBorder,
+      ),
       base: colorSet(colors.base.fg, colors.base.hoverBg, colors.base.border),
       success: statusColors('success'),
       warning: statusColors('warning'),
@@ -42,7 +50,7 @@ export const tagRecipe = recipe({
         fontSize: tokens.fontSize.label,
         lineHeight: tokens.lineHeight.label,
         vars: {
-          [tagClosePadding]: tokens.spacing[0.75],
+          [tagClosePadding]: tokens.spacing[0.5],
           [tagIconSize]: tokens.iconSize.label,
           [tagCloseGap]: tokens.spacing[0.5],
         },
@@ -55,7 +63,7 @@ export const tagRecipe = recipe({
         fontSize: tokens.fontSize.body,
         lineHeight: tokens.lineHeight.body,
         vars: {
-          [tagClosePadding]: '5px',
+          [tagClosePadding]: tokens.spacing[1],
           [tagIconSize]: tokens.iconSize.body,
           [tagCloseGap]: tokens.spacing[0.75],
         },

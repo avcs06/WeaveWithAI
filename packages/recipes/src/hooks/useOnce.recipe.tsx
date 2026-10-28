@@ -7,9 +7,9 @@
  * React Compiler memoizes), or one to remake later (useState, or a new
  * `key`).
  *
- * Pitfall: `init` runs while rendering: keep it pure. In development,
- * Strict Mode runs it twice and keeps one result, so no request or
- * subscription in it.
+ * Pitfall: `init` runs while rendering: keep it pure. Strict Mode runs it
+ * twice in development and keeps one result, so no request or subscription
+ * in it.
  */
 import { Button } from '@packages/ui/Button';
 import { Chip } from '@packages/ui/Chip';

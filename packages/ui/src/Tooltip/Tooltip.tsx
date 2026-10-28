@@ -45,7 +45,6 @@ export const Tooltip = (props: TooltipProps) => {
   // Only the shown trigger's entries matter, so only its effect reruns.
   const shownEntries = isShown && !isEmpty ? entries : null;
 
-  // Shown, the tooltip follows the trigger's entries as they change.
   useLayoutEffect(() => {
     if (shownEntries) controller.update(id, shownEntries);
   }, [controller, id, shownEntries]);
@@ -56,8 +55,8 @@ export const Tooltip = (props: TooltipProps) => {
     return () => controller.release(id);
   }, [controller, id, isEmpty]);
 
-  // Nothing to show: the trigger as it is, at no cost. It stays the same
-  // element, so it isn't recreated when content comes.
+  // Nothing to show: the bare trigger, so it isn't recreated when content
+  // comes.
   if (isEmpty) return children;
 
   const trigger = children.props;
@@ -89,20 +88,18 @@ export const Tooltip = (props: TooltipProps) => {
     ),
     onClick: (event: MouseEvent<HTMLElement>) => {
       trigger.onClick?.(event);
-      // A control disabled with a reason cancels its clicks, and its
-      // tooltip is where the user reads why nothing happened: it shows.
-      // Any other click did something, and the tooltip gets out of the way.
+      // A control disabled with a reason cancels clicks; its tooltip says why,
+      // so it stays. Any other click acted, so the tooltip closes.
       if (event.defaultPrevented) controller.showNow(target(event));
       else controller.close(id);
     },
-    // Not focus a script restores, as a closing menu or dialog does. The
-    // focused element can sit inside the trigger, like a field in its box,
-    // so it, not the trigger, is what must match.
+    // Not focus a script restores (closing menu or dialog). The focused element
+    // can be inside the trigger, like a field in its box, so it must match, not
+    // the trigger.
     onFocus: composeHandlers(trigger.onFocus, (event) => {
       const focused =
         event.target instanceof Element ? event.target : event.currentTarget;
-      if (focused.matches(':focus-visible'))
-        controller.showNow(target(event));
+      if (focused.matches(':focus-visible')) controller.showNow(target(event));
     }),
     onBlur: composeHandlers(trigger.onBlur, () => controller.close(id)),
   });

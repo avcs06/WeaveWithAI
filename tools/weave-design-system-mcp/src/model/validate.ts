@@ -13,6 +13,8 @@ interface ValidateContext {
   designSystemRoots: string[];
   /** Recipe files: inside those folders, but app code. */
   recipeFiles: ReadonlySet<string>;
+  /** Files the import rule skips, from the config's `importExceptions`. */
+  importExceptions: ReadonlySet<string>;
   /** Directory a relative `filename` resolves against. */
   configDir: string;
   /** Prebuilt tag lookup, owned by the design system so it isn't rebuilt per call. */
@@ -24,12 +26,10 @@ function isDesignSystemFile(filePath: string | undefined, context: ValidateConte
 }
 
 /**
- * Parses `code` (JSX/TSX or a `.css.ts` file — same parser either way) once,
- * then asks the two adapters that know how to check something to check it:
- * the styles adapter for style-defining calls, and the TSX adapter for JSX
- * elements (which itself hands `className` to the className adapter).
- *
- * Never throws: an unparseable snippet becomes a `parse-error` finding.
+ * Parses `code` (JSX/TSX or `.css.ts`) once, then runs the styles adapter on
+ * style-defining calls and the TSX adapter on JSX elements (which hands
+ * `className` to the className adapter). Never throws: unparseable code becomes
+ * a `parse-error` finding.
  */
 export function validate(
   system: DesignSystem,
@@ -38,8 +38,8 @@ export function validate(
   context: ValidateContext,
 ): ValidateResult {
   const filePath = filename ? resolve(context.configDir, filename) : undefined;
-  // Recipes are app code: app rules, and no leave to use what their
-  // component supersedes, though they sit in its folder.
+  // Recipes are app code: app rules, and no use of what their component
+  // supersedes.
   const recipe = filePath !== undefined && context.recipeFiles.has(filePath);
   // In a .ts file `<T>(x: T) => x` is a generic, not a JSX tag.
   const jsx = !filePath || !/\.[cm]?ts$/.test(filePath);
@@ -50,6 +50,7 @@ export function validate(
       ...validateStyles(ast, system, context.vanillaExtract),
       ...validateJsx(ast, system, context.tailwind, context.invalidAlternatives, {
         designSystem: !recipe && isDesignSystemFile(filePath, context),
+        importException: filePath !== undefined && context.importExceptions.has(filePath),
         filePath: recipe ? undefined : filePath,
       }),
     ];

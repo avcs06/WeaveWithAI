@@ -1,21 +1,118 @@
-// Opens pages in a browser at phone and desktop widths and fails on what
-// typecheck and lint can't see: runtime and hydration errors, and layout that
-// doesn't fit the screen.
+// Fails on what typecheck and lint can't see: runs the MCP's validate on the
+// route's files (or every recipe), then opens the pages at phone and desktop
+// widths for runtime and hydration errors and layout that doesn't fit.
 //
 //   pnpm verify /events [/other …]     app routes, on the dev server (:3001)
 //   pnpm verify --recipes              every recipe story, on Storybook (:6006)
-import { spawn } from 'node:child_process';
-import { globSync, mkdirSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { spawn, spawnSync } from 'node:child_process';
+import {
+  existsSync,
+  globSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+} from 'node:fs';
+import { basename, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { chromium } from 'playwright-core';
+import ts from 'typescript';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const appUrl = 'http://localhost:3001';
 const storybookUrl = 'http://localhost:6006';
 const widths = [320, 375, 1280];
 const screenshots = join(root, 'tmp/verify');
+
+const webDir = join(root, 'web');
+const pages = ['page.tsx', 'page.ts', 'page.jsx', 'page.js'];
+
+/** The folder holding a route's page, through route groups and dynamic segments, as Next.js matches it. */
+function routeFolder(dir, segments) {
+  if (!segments.length && pages.some((page) => existsSync(join(dir, page))))
+    return dir;
+  const [segment, ...rest] = segments;
+  const folders = readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  const candidates = [
+    ...folders.filter((name) => name === segment).map((name) => [name, rest]),
+    ...folders
+      .filter((name) => /^\(.+\)$/.test(name))
+      .map((name) => [name, segments]),
+    ...folders
+      .filter((name) => segment !== undefined && /^\[[^.[]/.test(name))
+      .map((name) => [name, rest]),
+    ...folders
+      .filter(
+        (name) =>
+          /^\[\[?\.\.\./.test(name) &&
+          (segment !== undefined || name.startsWith('[[')),
+      )
+      .map((name) => [name, []]),
+  ];
+  for (const [name, remaining] of candidates) {
+    const found = routeFolder(join(dir, name), remaining);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/** A route's own files and every web file they import, through the app's tsconfig paths. */
+function routeFiles(route) {
+  const segments = new URL(route, appUrl).pathname.split('/').filter(Boolean);
+  const folder = routeFolder(join(webDir, 'app'), segments);
+  if (!folder) throw new Error(`No page under web/app for ${route}.`);
+
+  const tsconfig = join(webDir, 'tsconfig.json');
+  const { config } = ts.readConfigFile(tsconfig, ts.sys.readFile);
+  const { options } = ts.parseJsonConfigFileContent(config, ts.sys, webDir);
+  const pending = readdirSync(folder, { withFileTypes: true })
+    .filter(
+      (entry) => entry.isFile() && /^[^.]+(\.css)?\.[jt]sx?$/.test(entry.name),
+    )
+    .map((entry) => join(folder, entry.name));
+  const files = new Set();
+  while (pending.length) {
+    const file = pending.pop();
+    if (files.has(file)) continue;
+    files.add(file);
+    const { importedFiles } = ts.preProcessFile(readFileSync(file, 'utf8'));
+    for (const { fileName } of importedFiles) {
+      const resolved = ts.resolveModuleName(fileName, file, options, ts.sys)
+        .resolvedModule?.resolvedFileName;
+      if (
+        resolved &&
+        !resolved.endsWith('.d.ts') &&
+        !resolved.includes('/node_modules/') &&
+        !relative(webDir, resolved).startsWith('..')
+      )
+        pending.push(resolved);
+    }
+  }
+  return [...files];
+}
+
+function recipeFiles() {
+  const { recipes = [] } = JSON.parse(
+    readFileSync(join(root, 'designsystem.config.json'), 'utf8'),
+  );
+  return recipes.flatMap((pattern) =>
+    globSync(pattern, { cwd: root }).map((file) => join(root, file)),
+  );
+}
+
+/** Runs validate on each file, as an agent does; false when it finds an error. */
+function validates(files) {
+  console.log(`validate: ${files.length} files`);
+  const { status } = spawnSync(
+    process.execPath,
+    [join(root, 'tools/validate-files.mjs'), ...files],
+    { cwd: root, stdio: 'inherit' },
+  );
+  console.log();
+  return status === 0;
+}
 
 const isUp = (url) =>
   fetch(url).then(
@@ -54,9 +151,12 @@ async function recipeTargets() {
     (entry) => entry.type === 'story' && entry.id.startsWith('recipes--'),
   );
   const storyIds = new Set(stories.map((story) => story.id));
+  // Storybook hyphenates the words of an id: ScrollArea's is `scroll-area`.
+  const storyId = (name) =>
+    `recipes--${name.replace(/(?<=[a-z0-9])(?=[A-Z])/g, '-').toLowerCase()}`;
   const missing = globSync('packages/ui/src/*/*.recipe.tsx', { cwd: root })
     .map((file) => basename(file, '.recipe.tsx'))
-    .filter((name) => !storyIds.has(`recipes--${name.toLowerCase()}`));
+    .filter((name) => !storyIds.has(storyId(name)));
   if (missing.length)
     throw new Error(
       `No story in Recipes.stories.tsx for: ${missing.join(', ')}.`,
@@ -64,17 +164,24 @@ async function recipeTargets() {
   return stories.map((story) => ({
     name: story.id,
     url: `${storybookUrl}/iframe.html?id=${story.id}&viewMode=story`,
-    // Breaks on purpose to show its fallbacks, and React logs each error a
-    // boundary catches.
-    allowConsoleErrors: story.id === 'recipes--errorboundary',
+    // Breaks on purpose, and React logs each error a boundary catches.
+    allowConsoleErrors: story.id === storyId('ErrorBoundary'),
   }));
 }
 
-// Runs in the page. Only a table scrolls sideways, inside its own scroller;
-// anything else that does is cut off or pushes content off screen.
+// Runs in the page. Only a table or a sideways ScrollArea (like a tab list)
+// may scroll sideways; anything else is cut off or pushes content off screen.
 const measureLayout = () => {
   const scrolls = (element) =>
     ['auto', 'scroll'].includes(getComputedStyle(element).overflowX);
+  // A ScrollArea that scrolls sideways shows its horizontal scrollbar.
+  const isSidewaysScrollArea = (element) =>
+    element.matches('[data-slot="viewport"]') &&
+    Boolean(
+      element.parentElement?.querySelector(
+        ':scope > [data-slot="scrollbar"][data-orientation="horizontal"]',
+      ),
+    );
   const scroller = (element) => {
     for (let parent = element.parentElement; parent; parent = parent.parentElement)
       if (scrolls(parent)) return parent;
@@ -95,7 +202,8 @@ const measureLayout = () => {
         (element) =>
           scrolls(element) &&
           element.scrollWidth > element.clientWidth + 1 &&
-          !tableScrollers.has(element),
+          !tableScrollers.has(element) &&
+          !isSidewaysScrollArea(element),
       )
       .map(
         (element) =>
@@ -130,10 +238,14 @@ if (!args.length) {
 let stop = () => undefined;
 let failures = 0;
 try {
-  const targets = args.includes('--recipes')
+  const recipes = args.includes('--recipes');
+  if (!validates(recipes ? recipeFiles() : args.flatMap(routeFiles)))
+    failures += 1;
+
+  const targets = recipes
     ? await recipeTargets()
     : args.map((route) => ({ name: route, url: new URL(route, appUrl).href }));
-  if (!args.includes('--recipes')) stop = await ensureAppServer();
+  if (!recipes) stop = await ensureAppServer();
 
   mkdirSync(screenshots, { recursive: true });
   const browser = await chromium.launch().catch((error) => {

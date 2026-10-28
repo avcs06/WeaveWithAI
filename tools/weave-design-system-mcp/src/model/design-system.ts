@@ -1,9 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { basename, dirname, relative, resolve } from 'node:path';
+import { globSync, readFileSync } from 'node:fs';
+import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
 
 import { loadTokens } from './adapters/styles-adapter.js';
 import { componentRoots, loadComponents, loadPackageComponents } from './adapters/components-adapter.js';
-import { loadRecipes, type RecipeFile } from './adapters/recipes-adapter.js';
+import { loadRecipes, recipeImporting, type RecipeFile } from './adapters/recipes-adapter.js';
 import { buildInvalidAlternativeOwners } from './adapters/tsx-adapter.js';
 import type { ResolvedConfig } from './config.js';
 import { buildReverseIndex } from './reverse-index.js';
@@ -39,9 +39,8 @@ function loadAllComponents(config: ResolvedConfig): ComponentContract[] {
 }
 
 /**
- * Ranks a match so an exact name beats a prefix, which beats a substring,
- * which beats a mention anywhere in the surrounding text. Zero means "not a
- * match at all" and is dropped by the callers below.
+ * Ranks a match: exact name, then prefix, substring, then a mention in the
+ * surrounding text. Zero means no match.
  */
 function scoreMatch(query: string, name: string, haystack: string): number {
   const n = name.toLowerCase();
@@ -52,6 +51,9 @@ function scoreMatch(query: string, name: string, haystack: string): number {
   return 0;
 }
 
+/** Text with only letters and digits, so `DropdownMenu` finds `dropdown-menu`. */
+const compact = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, '');
+
 function rank(hits: SearchHit[], limit: number): SearchHit[] {
   return hits
     .filter((hit) => hit.score > 0)
@@ -60,11 +62,9 @@ function rank(hits: SearchHit[], limit: number): SearchHit[] {
 }
 
 /**
- * Builds the `DesignSystem` lookup API from a resolved config: loads every
- * configured token source (concatenated — merging same-named tokens across
- * sources is left to whoever configures the paths, not solved here), the
- * configured component source, and the reverse index derived from whichever
- * tokens have a resolved value.
+ * Builds the `DesignSystem` lookup API from a resolved config. Token sources
+ * are concatenated; merging same-named tokens across them is up to whoever
+ * configures the paths.
  */
 export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   const tokenClass = config.tailwind?.tokenClass;
@@ -74,17 +74,22 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   });
   const components = loadAllComponents(config);
   const reverseIndex = buildReverseIndex(tokens);
-  // A component source can be an entire icon package, so `component()` gets
-  // a map rather than a linear scan — `validate` looks up a name per JSX tag.
+  // A map: a source can be a whole icon package and `validate` looks up a name
+  // per JSX tag.
   const byName = new Map(components.map((c) => [c.name.toLowerCase(), c]));
   const byExactName = new Map(components.map((c) => [c.name, c]));
   const invalidAlternatives = buildInvalidAlternativeOwners(components);
   const designSystemRoots = componentRoots(config.components, config.configDir);
   const recipeFiles = loadRecipes(config.recipes ?? [], config.configDir);
   const recipePaths = new Set(recipeFiles.map((recipe) => recipe.filePath));
+  const importExceptionPaths = new Set(
+    (config.importExceptions ?? []).flatMap((pattern) =>
+      globSync(isAbsolute(pattern) ? pattern : resolve(config.configDir, pattern)),
+    ),
+  );
 
-  // A recipe covers the components declared beside it in a file of its own
-  // name (`Button.tsx` for `Button.recipe.tsx`) or in the folder's barrel.
+  // A recipe covers components declared beside it in a file of its name
+  // (`Button.tsx`) or the folder's barrel.
   const covers = (recipe: RecipeFile, component: ComponentContract) =>
     component.filePath !== undefined &&
     dirname(component.filePath) === dirname(recipe.filePath) &&
@@ -118,6 +123,7 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
         description: c.description,
         category: c.category,
         variantProps: c.variantProps,
+        invalidAlternatives: c.invalidAlternatives,
       }));
     },
 
@@ -156,16 +162,23 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
       const needle = query.trim().toLowerCase();
       if (!needle) return [];
       return rank(
-        components.map((component) => ({
-          kind: 'component' as const,
-          name: component.name,
-          description: component.description,
-          score: scoreMatch(
-            needle,
-            component.name,
-            `${component.description} ${component.category} ${component.props.map((p) => p.name).join(' ')}`,
-          ),
-        })),
+        components.map((component) => {
+          // What a component supersedes is what an agent searches for: "combobox", "DropdownMenu", "spinner".
+          const alternatives = component.invalidAlternatives.join(' ');
+          return {
+            kind: 'component' as const,
+            name: component.name,
+            description: component.description,
+            ...(component.invalidAlternatives.length && {
+              invalidAlternatives: component.invalidAlternatives,
+            }),
+            score: scoreMatch(
+              needle,
+              component.name,
+              `${component.description} ${component.category} ${component.props.map((p) => p.name).join(' ')} ${alternatives} ${compact(alternatives)}`,
+            ),
+          };
+        }),
         limit,
       );
     },
@@ -175,12 +188,17 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
       const component = system.component(name);
       const file =
         recipeFiles.find((recipe) => recipe.name.toLowerCase() === needle) ??
-        (component && recipeFiles.find((recipe) => covers(recipe, component)));
+        (component && recipeFiles.find((recipe) => covers(recipe, component))) ??
+        recipeImporting(recipeFiles, name);
       return file && toRecipe(file);
     },
 
     recipes() {
       return recipeFiles.map((recipe) => recipe.name);
+    },
+
+    diagnostics() {
+      return invalidAlternatives.diagnostics;
     },
 
     validate(code, filename) {
@@ -189,6 +207,7 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
         tailwind: config.tailwind ?? {},
         designSystemRoots,
         recipeFiles: recipePaths,
+        importExceptions: importExceptionPaths,
         configDir: config.configDir,
         invalidAlternatives,
       });

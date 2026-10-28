@@ -4,18 +4,18 @@ import type { recipe, RuntimeFn } from '@vanilla-extract/recipes';
 type Recipe = RuntimeFn<NonNullable<Parameters<typeof recipe>[0]['variants']>>;
 
 /**
- * What `look` can set: every variant except the color scheme and the size.
- * Read from the recipe's options: `RecipeVariants` loses its keys here.
+ * What `look` can set: every variant except color scheme and size. Read from
+ * the recipe's options: `RecipeVariants` loses its keys here.
  */
-export type LookVariants<R extends Recipe> = Omit<
+type LookVariants<R extends Recipe> = Omit<
   NonNullable<Parameters<R>[0]>,
   'variant' | 'size'
 >;
 
 /**
  * Reads a `look` like 'outline !elevated', in any order, into the recipe's
- * variants: a true/false variant by its name, or `!` and its name for false;
- * any other variant by one of its values. Unknown tokens are ignored.
+ * variants: a true/false variant by its name (`!name` for false), any other
+ * variant by one of its values. Unknown tokens are ignored.
  */
 export const createLook = <R extends Recipe>(recipe: R) => {
   const tokens = new Map<string, [variant: string, value: string | boolean]>();

@@ -101,6 +101,8 @@ export type ControlLabelProps = {
   required: boolean;
   hint: ReactNode;
   rightAddOn: ReactNode;
+  /** Shown on hover of the label, above its full text when cut off. */
+  tooltip?: ReactNode;
   /** Left out, a press activates the labelled control natively. */
   onClick?: (event: MouseEvent<HTMLLabelElement>) => void;
 };
@@ -145,7 +147,7 @@ export type ChoiceBoxProps = {
 };
 
 export type ControlChoiceProps = {
-  /** `checkbox` or `radio`: the row's `data-slot`. */
+  /** `checkbox`, `radio` or `switch`: the row's `data-slot`. */
   slot: string;
   /** The box's id; generated when left out. */
   id: string | undefined;
@@ -154,6 +156,10 @@ export type ControlChoiceProps = {
   hint: ReactNode;
   required: boolean;
   isDisabled: boolean;
+  /** Blocks the box like disabled, but its label isn't dimmed. */
+  isReadOnly: boolean;
+  /** The box's disabled or read-only reason, shown on hover of the label too. */
+  reason: string;
   'aria-labelledby': string | undefined;
   'aria-describedby': string | undefined;
   /** For the row, around the box and its label. */

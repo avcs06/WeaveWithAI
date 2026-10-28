@@ -5,16 +5,15 @@ import React, { createRef } from 'react';
 
 import { axe, renderUI } from '../test-utils';
 
-import { ControlBox, controlAttributes } from './auxiliary';
 import { ControlChoice } from './ControlChoice';
 import { FormControl } from './FormControl';
 import { formControlRecipe } from './FormControl.recipes.css';
+import { ControlBox, controlAttributes } from './primitives';
 
 import type { FormControlOwnProps } from './FormControl.types';
 
 const { variants } = formControlRecipe.classNames;
 
-/** A FormControl around a native input, as Input renders it. */
 const Field = (props: FormControlOwnProps) => (
   <FormControl {...props}>
     {({ isDisabled, ...controlProps }) => (
@@ -146,7 +145,6 @@ describe('FormControl', () => {
       expect(message(container)).toHaveTextContent(/^Enter your email$/);
       expect(textbox()).toBeInvalid();
       expect(textbox()).toHaveAccessibleDescription('Enter your email');
-      // The description is the status message itself, by id.
       expect(textbox()).toHaveAttribute(
         'aria-describedby',
         message(container).id,
@@ -259,7 +257,7 @@ describe('FormControl', () => {
         "We never share it Verified emails can't change",
       );
       expect(textbox()).toHaveAttribute('aria-disabled', 'true');
-      // The reason must be reachable, so the control keeps its tab stop.
+      // The reason must be reachable: the control keeps its tab stop.
       await userEvent.tab();
       expect(textbox()).toHaveFocus();
       expect(await axe(container)).toHaveNoViolations();
@@ -439,6 +437,8 @@ describe('ControlChoice', () => {
       hint={hint}
       required={false}
       isDisabled={false}
+      isReadOnly={false}
+      reason=""
       aria-labelledby={undefined}
       aria-describedby={undefined}
       className={undefined}
@@ -466,9 +466,7 @@ describe('ControlChoice', () => {
   });
 
   it('the hint describes the box, from the info button after its label', async () => {
-    const { container } = renderUI(
-      <Choice hint="One email per order" />,
-    );
+    const { container } = renderUI(<Choice hint="One email per order" />);
     expect(
       screen.getByRole('button', { name: 'About Email me the receipts' }),
     ).toBeInTheDocument();

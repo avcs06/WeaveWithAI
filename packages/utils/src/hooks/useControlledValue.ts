@@ -4,7 +4,11 @@ import { usePersistentCallback } from './usePersistentCallback';
 
 type ChangeHandler<T, A extends unknown[]> = (value: T, ...args: A) => void;
 
-/** Value for a component that can be controlled or uncontrolled. */
+/**
+ * Value for a component that can be controlled or uncontrolled.
+ *
+ * @invalidAlternative import('ahooks'){useControllableValue}
+ */
 export function useControlledValue<T, A extends unknown[] = []>(
   value: T | undefined,
   defaultValue: T,

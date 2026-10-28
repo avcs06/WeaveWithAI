@@ -22,6 +22,12 @@ const ConfigSchema = z.object({
   packages: z.union([PackageSchema, z.array(PackageSchema).min(1)]).optional(),
   /** Globs for recipe files: working examples of each component's distinct cases, kept beside it. Recipes are app code. */
   recipes: z.array(z.string().min(1)).min(1).optional(),
+  /**
+   * Globs for files that may import a package another component supersedes,
+   * like a shared primitive several components build on. Only the import rule
+   * skips them.
+   */
+  importExceptions: z.array(z.string().min(1)).optional(),
 });
 
 export interface ResolvedConfig {
@@ -29,6 +35,7 @@ export interface ResolvedConfig {
   components: string[];
   packages?: PackageConfig[];
   recipes?: string[];
+  importExceptions?: string[];
   /** Styles are always vanilla-extract and classNames always Tailwind; the host workspace supplies its rules for both. */
   vanillaExtract?: VanillaExtractPolicy;
   tailwind?: TailwindPolicy;
@@ -48,9 +55,8 @@ function formatZodError(error: z.ZodError): string {
 }
 
 /**
- * Loads and validates `designsystem.config.json` from `cwd`, failing with a
- * message that names the offending field for a schema violation, or shows
- * how to create the file when it's missing.
+ * Loads and validates `designsystem.config.json` from `cwd`. Errors name the
+ * offending field, or show how to create the file when it's missing.
  */
 export function loadConfig(cwd: string = process.cwd()): ResolvedConfig {
   const configPath = join(cwd, CONFIG_FILENAME);
@@ -73,12 +79,13 @@ export function loadConfig(cwd: string = process.cwd()): ResolvedConfig {
     throw new Error(`${configPath} is invalid:\n${formatZodError(result.error)}`);
   }
 
-  const { tokens, components, packages = [], recipes } = result.data;
+  const { tokens, components, packages = [], recipes, importExceptions } = result.data;
   return {
     tokens,
     components,
     packages: Array.isArray(packages) ? packages : [packages],
     recipes,
+    importExceptions,
     configDir: resolve(dirname(configPath)),
   };
 }

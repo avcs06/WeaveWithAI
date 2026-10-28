@@ -1,5 +1,5 @@
 /**
- * The one shape every color set shares: theme, neutral, each status and each
+ * The one shape every color set shares: primary, base, each status and each
  * future entity. Default foregrounds work on the two default backgrounds;
  * `accentForeground` works on the two accent backgrounds. Nothing else is
  * guaranteed — check contrast before pairing colors across roles.
@@ -31,7 +31,16 @@ export type ColorSet = {
   shadow: string;
 };
 
-export type NeutralColorSet = ColorSet & {
+/** Colors outside the color set roles: the page itself and one-off uses. */
+export type SurfaceColors = {
+  /** Page background; color sets are for controls and containers. */
+  pageBg: string;
+  /** Header and footer background, framing the page content. */
+  frameBg: string;
+  /** Page text and icons, on both the page and the frame. */
+  pageFg: string;
+  /** Supporting page text and icons, on both the page and the frame. */
+  pageFgMuted: string;
   /** Separator lines; not a replacement for interactive boundaries. */
   divider: string;
   /** Overlay base color; components apply their own opacity. */
@@ -45,9 +54,9 @@ export const colors = {
     light: {
       bg: '#FFFFFF',
       fg: '#18181B',
-      fgMuted: '#52525B',
+      fgMuted: '#5C5C64',
       border: '#C4C4CC',
-      hoverBg: '#FAFAFA',
+      hoverBg: '#F4F4F5',
       accentBg: '#18181B',
       accentFg: '#FAFAFA',
       accentBorder: '#18181B',
@@ -55,14 +64,11 @@ export const colors = {
       focus: '#64748B',
       accentFocus: '#18181B',
       shadow: '#000000',
-      divider: '#ECEBE7',
-      backdrop: '#1A1A17',
-      skeleton: '#E4E4E7',
-    } satisfies NeutralColorSet,
+    } satisfies ColorSet,
     dark: {
       bg: '#18181B',
       fg: '#FAFAFA',
-      fgMuted: '#A1A1AA',
+      fgMuted: '#ABABB2',
       border: '#52525B',
       hoverBg: '#27272A',
       accentBg: '#FAFAFA',
@@ -72,12 +78,29 @@ export const colors = {
       focus: '#FAFAFA',
       accentFocus: '#FAFAFA',
       shadow: '#000000',
+    } satisfies ColorSet,
+  },
+  surface: {
+    light: {
+      pageBg: '#FFFFFF',
+      frameBg: '#FAFAFA',
+      pageFg: '#18181B',
+      pageFgMuted: '#5C5C64',
+      divider: '#ECEBE7',
+      backdrop: '#1A1A17',
+      skeleton: '#E4E4E7',
+    } satisfies SurfaceColors,
+    dark: {
+      pageBg: '#18181B',
+      frameBg: '#1F1F23',
+      pageFg: '#FAFAFA',
+      pageFgMuted: '#ABABB2',
       divider: '#2A2926',
       backdrop: '#000000',
       skeleton: '#3F3F46',
-    } satisfies NeutralColorSet,
+    } satisfies SurfaceColors,
   },
-  theme: {
+  primary: {
     light: {
       bg: '#F7EDFE',
       fg: '#402060',
@@ -247,7 +270,7 @@ const processColors = (
   theme?: 'light' | 'dark',
 ) => {
   for (const [key, entry] of Object.entries(set)) {
-    if (key === 'theme' || key === 'status' || key === 'entity') {
+    if (key === 'status' || key === 'entity') {
       processColors(entry, prefix, varObj, theme);
       continue;
     }
@@ -290,8 +313,10 @@ const processColors = (
   return varObj;
 };
 
-export const colorTokens = processColors(colors) as ColorSet & {
-  base: NeutralColorSet;
+export const colorTokens = processColors(colors) as {
+  primary: ColorSet;
+  base: ColorSet;
+  surface: SurfaceColors;
   success: ColorSet;
   warning: ColorSet;
   error: ColorSet;

@@ -11,9 +11,9 @@ export const linkRecipe = recipe({
     variant: {
       default: {
         vars: {
-          [linkFg]: colors.fg,
-          [linkBorder]: colors.border,
-          [linkFocusColor]: colors.focus,
+          [linkFg]: colors.primary.fg,
+          [linkBorder]: colors.primary.border,
+          [linkFocusColor]: colors.primary.focus,
         },
       },
       base: {
@@ -24,6 +24,13 @@ export const linkRecipe = recipe({
         },
       },
     },
+    plain: {
+      true: {
+        backgroundImage: 'none',
+        selectors: { '&[data-disabled]': { backgroundImage: 'none' } },
+      },
+      false: {},
+    },
   },
-  defaultVariants: { variant: 'default' },
+  defaultVariants: { variant: 'default', plain: false },
 });

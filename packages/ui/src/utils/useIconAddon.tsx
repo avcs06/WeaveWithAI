@@ -1,9 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
-import { ReactNode } from 'react';
+import React, { isValidElement, type ReactNode } from 'react';
 
 import { LoadingIcon } from '../Icons';
-
-import { fixedHeightIcon } from './icons';
 
 export type IconAddonProps = {
   leftIcon?: ReactNode;
@@ -12,8 +10,8 @@ export type IconAddonProps = {
   rightAddOn?: ReactNode;
   loading?: boolean;
   /**
-   * For when the icon and the content differ in height: wraps each icon in a
-   * box this tall and centers the icon in it.
+   * For icons and content of different heights: wraps each icon in a box this
+   * tall and centers it.
    */
   fixedHeight?: string;
 };
@@ -27,36 +25,51 @@ export const useIconAddon = ({
   fixedHeight,
 }: IconAddonProps) => {
   const iconSlot = (icon: ReactNode, key: string) => {
-    return fixedHeight ? (
-      fixedHeightIcon(icon, fixedHeight)
-    ) : (
-      <Slot key={key} className={'shrink-0'} data-slot="icon">
+    // Decoration: the control's text or `aria-label` names it.
+    const slot = (
+      <Slot key={key} className="shrink-0" data-slot="icon" aria-hidden>
         {icon}
       </Slot>
     );
+    if (!fixedHeight) return slot;
+
+    return (
+      <div
+        key={key}
+        data-slot="icon-box"
+        className="inline-flex justify-center items-center"
+        style={{ height: fixedHeight }}
+      >
+        {slot}
+      </div>
+    );
   };
+
+  // Slot takes one element; text, like "https://", gets a span.
+  const addOnSlot = (addOn: ReactNode, key: string) =>
+    isValidElement(addOn) ? (
+      <Slot key={key} data-slot="add-on">
+        {addOn}
+      </Slot>
+    ) : (
+      <span key={key} data-slot="add-on">
+        {addOn}
+      </span>
+    );
 
   const leftContent = [
     loading && (leftIcon || !rightIcon)
-      ? iconSlot(<LoadingIcon aria-hidden />, 'left-icon')
+      ? iconSlot(<LoadingIcon />, 'left-icon')
       : leftIcon
         ? iconSlot(leftIcon, 'left-icon')
         : null,
-    !leftIcon && leftAddOn ? (
-      <Slot key="left-add-on" data-slot="add-on">
-        {leftAddOn}
-      </Slot>
-    ) : null,
+    !leftIcon && leftAddOn ? addOnSlot(leftAddOn, 'left-add-on') : null,
   ].filter(Boolean);
 
   const rightContent = [
-    !rightIcon && rightAddOn ? (
-      <Slot key="right-add-on" data-slot="add-on">
-        {rightAddOn}
-      </Slot>
-    ) : null,
+    !rightIcon && rightAddOn ? addOnSlot(rightAddOn, 'right-add-on') : null,
     loading && rightIcon && !leftIcon
-      ? iconSlot(<LoadingIcon aria-hidden />, 'right-icon')
+      ? iconSlot(<LoadingIcon />, 'right-icon')
       : rightIcon
         ? iconSlot(rightIcon, 'right-icon')
         : null,

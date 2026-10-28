@@ -1,20 +1,19 @@
 /**
- * FormControl: a form control's label, box, help text and status message,
- * around a control you render yourself. Its children get `controlProps` to
- * spread, last, on the one focusable element.
+ * FormControl: a form control's label, box, help text and status message around
+ * a control you render yourself. Its children get `controlProps` to spread,
+ * last, on the one focusable element.
  *
  * When not to use:
  * - A text, number, password or search field: Input, NumberInput,
  *   PasswordInput, SearchInput.
  * - A choice from a list: Select or MultiSelect. A yes/no choice: Checkbox.
- * - Use FormControl only for a control the design system has no component
- *   for, like a native date input or the star rating below.
+ * - Only for a control the design system has no component for, like a native
+ *   date input or the star rating below.
  *
  * Pitfalls:
- * - Spread `controlProps` on one focusable element. Take `isDisabled` out of
- *   it first, as it isn't an attribute, and stop the control changing while
- *   it's true: FormControl sets `tabIndex` and `aria-disabled`, but not
- *   `disabled`.
+ * - Spread `controlProps` on one focusable element. Take `isDisabled` out first
+ *   (it isn't an attribute) and stop the control changing while it's true:
+ *   FormControl sets `tabIndex` and `aria-disabled`, not `disabled`.
  * - In a form, `{...field}` goes on FormControl and `value`, `onChange` and
  *   `onBlur` on the control.
  * - `withControlBox={false}` is for a control that draws its own box: render
@@ -94,8 +93,8 @@ type EventDateForm = { date: string };
 /**
  * A native control inside the box. Every shared prop works as on Input:
  * `label`, `hint`, `helpText`, `required`, `size`, `variant`, `look`, an icon,
- * `tooltip` and `labelRightSlot`. `isDisabled` covers the disabled, read-only
- * and loading states, so the input is read-only while it's true.
+ * `tooltip`, `labelRightSlot`. `isDisabled` covers the disabled, read-only and
+ * loading states, so the input is read-only while it's true.
  */
 const EventDate = () => {
   const { control, handleSubmit } = useForm<EventDateForm>({
@@ -142,10 +141,9 @@ const EventDate = () => {
 };
 
 /**
- * The states, each with its reason: `disabledWithReason`,
- * `readOnlyWithReason` and `loadingWithReason`, and the statuses `warning`
- * and `success`. `aria-labelledby` names a control with no `label` from a
- * heading.
+ * The states, each with its reason: `disabledWithReason`, `readOnlyWithReason`,
+ * `loadingWithReason`, and the statuses `warning` and `success`.
+ * `aria-labelledby` names a control with no `label` from a heading.
  */
 const DateStates = () => {
   const headingId = useId();
@@ -208,9 +206,9 @@ const DateStates = () => {
 type Review = { rating: number };
 
 /**
- * A custom control in the box: a slider of stars with 0 as "Not rated".
- * The arrows, Home and End move it, and a press picks a star. Its value
- * attributes are what assistive tech reads.
+ * A custom control in the box: a slider of stars, 0 meaning "Not rated".
+ * Arrows, Home and End move it, a press picks a star, and its value attributes
+ * are what assistive tech reads.
  */
 const EventRating = () => {
   const { control, handleSubmit } = useForm<Review>({
@@ -257,7 +255,7 @@ const EventRating = () => {
 /**
  * A control that is its own box: `withControlBox={false}` and `ControlBox`
  * around the stars. FormControl hands the box its look and state through
- * `controlProps`, so spread them all on `ControlBox`.
+ * `controlProps`: spread them all on `ControlBox`.
  */
 const BoxedRating = () => {
   const { control } = useForm<Review>({ defaultValues: { rating: 3 } });

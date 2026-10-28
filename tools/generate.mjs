@@ -141,8 +141,8 @@ export async function generate(
     },
   });
 
-  // Generic MCP clients cannot all expand workspaceFolder or set cwd. Update
-  // only our launcher path; preserve unrelated client registrations verbatim.
+  // Not every client expands workspaceFolder or sets cwd: change only our
+  // launcher path.
   const mcpPath = join(target, '.mcp.json');
   try {
     const config = JSON.parse(await readFile(mcpPath, 'utf8'));

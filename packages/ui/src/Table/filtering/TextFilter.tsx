@@ -1,6 +1,5 @@
 import React, { useId } from 'react';
 
-import { dropdownRow } from '../../Dropdown';
 import { SearchInput } from '../../Input';
 import { Popover } from '../../Popover';
 
@@ -24,7 +23,7 @@ export const TextFilter = ({ label, value, onChange }: TextFilterProps) => {
       align="end"
       menu={
         // Inset like the enum filter's search row.
-        <div className={dropdownRow}>
+        <div className="mx-1.5">
           <SearchInput
             name={name}
             placeholder={`Search ${label}`}

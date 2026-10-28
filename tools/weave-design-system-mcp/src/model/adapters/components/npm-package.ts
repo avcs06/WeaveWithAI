@@ -9,10 +9,8 @@ import type { ComponentContract, PackageConfig } from '../../types.js';
 import { toProps } from './props.js';
 
 /**
- * Resolves an installed package's TypeScript declaration entry point,
- * looking from the *target repo* rather than from this server's own
- * install — the package belongs to the design system being scanned, and
- * this server may well be installed somewhere else entirely.
+ * Resolves a package's TypeScript declaration entry from the *target repo*, not
+ * this server's install.
  */
 function resolveTypesEntry(packageName: string, configDir: string): string | undefined {
   const require = createRequire(join(configDir, 'noop.js'));
@@ -39,9 +37,8 @@ function resolveTypesEntry(packageName: string, configDir: string): string | und
 }
 
 /**
- * Which of `names` the module at `entryPath` actually exports, asked of the
- * TypeScript checker so re-exports (`export * from './icons'`, the norm for
- * an icon package's barrel) resolve properly.
+ * Which of `names` the module at `entryPath` exports, via the TypeScript
+ * checker so `export *` re-exports resolve.
  */
 function existingExports(entryPath: string, names: string[]): Set<string> {
   const program = ts.createProgram([entryPath], {
@@ -67,8 +64,8 @@ function existingExports(entryPath: string, names: string[]): Set<string> {
 function toContract(doc: ComponentDoc, packageName: string): ComponentContract {
   return {
     name: doc.displayName,
-    // The package name is the category: it's the honest answer to "where does
-    // this come from", and it keeps external components filterable as a group.
+    // The package name is the category, which keeps external components
+    // filterable as a group.
     category: packageName,
     description: doc.description,
     props: toProps(doc.props),
@@ -81,16 +78,13 @@ function toContract(doc: ComponentDoc, packageName: string): ComponentContract {
 
 /**
  * Scans an installed npm package (an icon library, a headless primitive set)
- * so its components become first-class members of the design system —
- * listed, searchable, and gettable, rather than merely tolerated by name.
+ * so its components are listed, searchable and gettable.
  *
  * `pkg.package` is the package name, e.g. `"lucide-react"`; `pkg.names` is
- * `"*"` or omitted for every component the package exports, or an array of
- * specific names.
+ * `"*"` or omitted for every exported component, or an array of names.
  *
- * A package whose types can't be resolved is reported on stderr and skipped
- * rather than failing the whole load — one unresolvable icon library should
- * not take the design system's own components down with it.
+ * A package whose types can't be resolved is reported on stderr and skipped,
+ * so one bad icon library doesn't take the design system's own components down.
  */
 export function loadComponents(pkg: PackageConfig, configDir: string): ComponentContract[] {
   const packageName = pkg.package;
@@ -129,10 +123,9 @@ export function loadComponents(pkg: PackageConfig, configDir: string): Component
     contracts.push(toContract(doc, packageName));
   }
 
-  // A name asked for by hand that docgen didn't recognize as a component —
-  // routine for the terse one-liners an icon package is made of — is still
-  // listed, but only after the checker confirms the package really exports
-  // it. A typo stays a typo instead of quietly becoming a valid component.
+  // A hand-asked name docgen missed (routine for terse icon one-liners) is
+  // listed only once the checker confirms the package exports it, so typos stay
+  // typos.
   if (wanted) {
     const found = new Set(docs.map((d) => d.displayName));
     const missing = [...wanted].filter((name) => !found.has(name));

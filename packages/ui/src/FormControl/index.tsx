@@ -5,7 +5,7 @@ export {
   ControlMessage,
   ControlLabel,
   controlAttributes,
-} from './auxiliary';
+} from './primitives';
 export type {
   ChoiceBoxProps,
   ControlBoxProps,

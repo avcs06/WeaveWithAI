@@ -1,53 +1,112 @@
 'use client';
 
-import { type ReactNode, useEffect, useState } from 'react';
+import { classNames } from '@packages/styles/classNames';
+import { useEffect, useRef, useState } from 'react';
 
-import { truncate } from './Truncate.css';
+// Sideways only: clipping both ways cuts descenders at tight line heights.
+// `clip`, unlike `hidden`, keeps the other axis from becoming a scroll
+// container.
+const truncate = classNames(
+  'min-w-0 whitespace-nowrap text-ellipsis',
+  'overflow-x-clip overflow-y-visible',
+);
+
+type Measure = (width: number) => void;
+
+// One observer of each kind and one font listener serve every instance (a
+// table has one per cell); created lazily, as servers have none.
+const measures = new WeakMap<Element, Measure>();
+const checks = new Map<Element, () => void>();
+let resizes: ResizeObserver | undefined;
+let mutations: MutationObserver | undefined;
+
+const runChecks = () => checks.forEach((check) => check());
+
+// A MutationObserver can't drop one element: a record finds its instance by
+// walking up, and one that's gone finds none.
+const checkMutated = (records: MutationRecord[]) => {
+  const mutated = new Set<() => void>();
+  for (const { target } of records) {
+    let node: Node | null = target;
+    while (node && !checks.has(node as Element)) node = node.parentNode;
+    const check = node && checks.get(node as Element);
+    if (check) mutated.add(check);
+  }
+  mutated.forEach((check) => check());
+};
+
+const subscribe = (element: Element, measure: Measure, check: () => void) => {
+  resizes ??= new ResizeObserver((entries) =>
+    entries.forEach((entry) =>
+      measures.get(entry.target)?.(entry.contentRect.width),
+    ),
+  );
+  mutations ??= new MutationObserver(checkMutated);
+  if (checks.size === 0)
+    document.fonts?.addEventListener('loadingdone', runChecks);
+
+  measures.set(element, measure);
+  checks.set(element, check);
+  resizes.observe(element);
+  // New text can overflow without the element changing size.
+  mutations.observe(element, {
+    characterData: true,
+    childList: true,
+    subtree: true,
+  });
+
+  return () => {
+    resizes?.unobserve(element);
+    measures.delete(element);
+    checks.delete(element);
+    if (checks.size > 0) return;
+    document.fonts?.removeEventListener('loadingdone', runChecks);
+    mutations?.disconnect();
+    mutations = undefined;
+  };
+};
 
 /**
- * Whether the text is wider than the box. `scrollWidth` can't tell: with
- * `overflow-x: clip` the box isn't a scroll container, so it reports no
- * overflow. A range measures the text itself.
+ * The text's width against the box's content width; `scrollWidth` reports no
+ * overflow under `overflow-x: clip`.
  */
-const isTruncated = (element: HTMLElement) => {
+const rangeWidth = (element: HTMLElement) => {
   const range = document.createRange();
   // jsdom has no layout, and no range measuring either.
-  if (typeof range.getBoundingClientRect !== 'function') return false;
+  if (typeof range.getBoundingClientRect !== 'function') return 0;
   range.selectNodeContents(element);
-  const style = getComputedStyle(element);
-  const padding =
-    (parseFloat(style.paddingLeft) || 0) +
-    (parseFloat(style.paddingRight) || 0);
-  const contentWidth = element.getBoundingClientRect().width - padding;
-  return range.getBoundingClientRect().width > contentWidth + 0.01;
+  return range.getBoundingClientRect().width;
 };
 
 /**
  * Cuts an element's text to one line and tells whether it's cut. Put `ref`
- * and `className` on the element that holds the text.
+ * and `className` on the element that holds the text. A cut text is only in
+ * the element, so show it in a tooltip: `tooltip={truncated && text}`.
  */
-export const useTruncation = <T extends HTMLElement>(content: ReactNode) => {
-  // State, not a ref: the element is recreated when a tooltip wrapper comes
-  // or goes, and the observer has to follow it.
-  const [element, setElement] = useState<T | null>(null);
+export const useTruncation = <T extends HTMLElement>() => {
+  const ref = useRef<T>(null);
   const [truncated, setTruncated] = useState(false);
 
   useEffect(() => {
+    const element = ref.current;
     if (!element) return;
-    const check = () => setTruncated(isTruncated(element));
-    const observer = new ResizeObserver(check);
-    observer.observe(element);
-    document.fonts?.addEventListener('loadingdone', check);
-    return () => {
-      observer.disconnect();
-      document.fonts?.removeEventListener('loadingdone', check);
+
+    // Unknown until the observer reports the first size.
+    let contentWidth: number | undefined;
+    const check = () => {
+      if (contentWidth !== undefined)
+        setTruncated(rangeWidth(element) > contentWidth + 0.01);
     };
-  }, [element]);
 
-  // New text can overflow without the element changing size.
-  useEffect(() => {
-    if (element) setTruncated(isTruncated(element));
-  }, [element, content]);
+    return subscribe(
+      element,
+      (width) => {
+        contentWidth = width;
+        check();
+      },
+      check,
+    );
+  }, []);
 
-  return { ref: setElement, className: truncate, truncated };
+  return { ref, className: truncate, truncated };
 };

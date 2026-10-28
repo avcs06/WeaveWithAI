@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StorySwitch } from '../StoryControls';
+import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, mutedText } from '../StoryStyles.css';
 
@@ -43,7 +43,7 @@ const TruncateStories = () => {
 
       {/* Only sideways: descenders (g, y) survive a tight line height. */}
       <StorySection title="Tight line height">
-        <div style={{ width: 160, lineHeight: 0, paddingBlock: 12 }}>
+        <div style={{ width: 160, lineHeight: 0 }} className="py-3">
           <Truncate>Gypsy dragonfly quarrying</Truncate>
         </div>
       </StorySection>
@@ -57,16 +57,15 @@ const TruncateStories = () => {
 
       <StorySection title="Features">
         <div className="flex-row-gap-4 flex-wrap">
-          <StorySwitch
-            label="Custom tooltip"
-            checked={customTooltip}
-            onChange={setCustomTooltip}
-          />
-          <StorySwitch
-            label="alwaysShowTooltip"
+          <Checkbox checked={customTooltip} onCheckedChange={setCustomTooltip}>
+            Custom tooltip
+          </Checkbox>
+          <Checkbox
             checked={alwaysShowTooltip}
-            onChange={setAlwaysShowTooltip}
-          />
+            onCheckedChange={setAlwaysShowTooltip}
+          >
+            alwaysShowTooltip
+          </Checkbox>
         </div>
         <div style={{ width: 240 }} className="flex-col-gap-2">
           <Truncate tooltip={tooltip} alwaysShowTooltip={alwaysShowTooltip}>

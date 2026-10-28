@@ -1,10 +1,9 @@
 import { classNames } from '@packages/styles/classNames';
 import { INPUT_CHANGE_DEBOUNCE_MS } from '@packages/utils/constants';
-import { useBoundState, useDebouncedCallback } from '@packages/utils/hooks';
+import { useBoundState } from '@packages/utils/hooks';
 import { isNil, omit } from 'lodash-es';
 import React, { useId } from 'react';
 
-import { dropdownRow } from '../../Dropdown';
 import { NumberInput } from '../../Input';
 import { Popover } from '../../Popover';
 
@@ -30,8 +29,11 @@ export type NumberFilterProps = {
 /** Operators combine with AND; inputs commit once typing pauses. */
 export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
   const name = useId();
-  const [draft, setDraft] = useBoundState(value ?? EMPTY_VALUE);
-  const commit = useDebouncedCallback(onChange, INPUT_CHANGE_DEBOUNCE_MS);
+  const [draft, setDraft] = useBoundState(
+    value ?? EMPTY_VALUE,
+    onChange,
+    INPUT_CHANGE_DEBOUNCE_MS,
+  );
 
   const update = (
     key: (typeof OPERATORS)[number]['key'],
@@ -44,7 +46,6 @@ export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
       ...(isNil(number) ? {} : { [key]: number }),
     };
     setDraft(next);
-    commit(next);
   };
 
   return (
@@ -53,17 +54,23 @@ export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
       align="end"
       menu={
         // Inset like the enum filter's search row.
-        <div className={classNames(dropdownRow, 'flex-col-gap-2')}>
+        <div className="flex-col-gap-2 mx-1.5">
           {OPERATORS.map(({ key, symbol, placeholder }) => (
             <NumberInput
               key={key}
+              variant="base"
               name={`${name}-${key}`}
               placeholder={`${label} ${placeholder.toLowerCase()}`}
               aria-label={`${label} ${placeholder.toLowerCase()}`}
               value={draft[key] ?? null}
               onChange={(number) => update(key, number)}
+              autoComplete="off"
               leftAddOn={
-                <span className={styles.filterOperator}>{symbol}</span>
+                <span
+                  className={classNames(styles.filterOperator, 'text-center')}
+                >
+                  {symbol}
+                </span>
               }
             />
           ))}

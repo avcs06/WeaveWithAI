@@ -1,14 +1,16 @@
 import { classNames } from '@packages/styles/classNames';
-import React, { memo } from 'react';
+import React, { memo, type RefObject, useLayoutEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { Button } from '../../Button';
+import {
+  DEFAULT_PAGE_SIZE_OPTIONS,
+  Pagination,
+  PaginationInfo,
+} from '../../Pagination';
 import { useGetTableStore, useTableStore } from '../store';
 
-import { PageControls } from './PageControls';
-import { PaginationInfo } from './PaginationInfo';
-import { DEFAULT_PAGE_SIZE_OPTIONS } from './paginationSlice';
 import * as styles from './TablePaginationBar.css';
-import { getPageCount, getPageIndex } from './utils';
 
 import type { TableStoreState } from '../store.types';
 import type { TableMode } from '../Table.types';
@@ -22,6 +24,48 @@ export type TablePaginationBarProps = {
   dataCount: number;
   mode: TableMode;
   loading: boolean;
+  /** The table's element, which takes focus when the load button goes. */
+  tableRef: RefObject<HTMLElement | null>;
+};
+
+type LoadMoreButtonProps = Pick<
+  TablePaginationBarProps,
+  'loading' | 'tableRef'
+> & {
+  onLoadMore: () => void;
+};
+
+/**
+ * Keyboard path to load more; goes once every row is loaded, handing focus to
+ * the table.
+ */
+const LoadMoreButton = ({
+  loading,
+  onLoadMore,
+  tableRef,
+}: LoadMoreButtonProps) => {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // Runs before the button leaves the page, while it can still hold focus.
+  useLayoutEffect(() => {
+    const button = ref.current;
+    const table = tableRef.current;
+    return () => {
+      if (button && button === document.activeElement) table?.focus();
+    };
+  }, [tableRef]);
+
+  return (
+    <Button
+      ref={ref}
+      variant="base"
+      size="sm"
+      loadingWithReason={loading ? 'Loading more rows' : undefined}
+      onClick={onLoadMore}
+    >
+      Load more rows
+    </Button>
+  );
 };
 
 const selectConfig = ({
@@ -34,11 +78,14 @@ const selectConfig = ({
   pageSizeOptions: config?.pageSizeOptions ?? DEFAULT_PAGE_SIZE_OPTIONS,
   totalItems: config?.totalItems ?? infiniteScrollConfig?.totalItems,
   unfilteredTotalItems: config?.unfilteredTotalItems,
+  onLoadMore: infiniteScrollConfig?.onLoadMore,
 });
 
+const rowName = ['row', 'rows'] as const;
+
 /**
- * Info on the left; with `Table.Pagination`, page controls on the right,
- * centered to each other.
+ * `Table.Pagination`: a Pagination of the rows. Otherwise the same info left,
+ * and right a load more button (`Table.InfiniteScroll`).
  */
 export const TablePaginationBar = memo(
   ({
@@ -47,6 +94,7 @@ export const TablePaginationBar = memo(
     dataCount,
     mode,
     loading,
+    tableRef,
   }: TablePaginationBarProps) => {
     const isClient = mode === 'client';
     const { store } = useGetTableStore();
@@ -58,6 +106,7 @@ export const TablePaginationBar = memo(
       pageSizeOptions,
       totalItems,
       unfilteredTotalItems,
+      onLoadMore,
     } = useTableStore(useShallow(selectConfig));
     const page = useTableStore('page');
     const filtered = useTableStore(
@@ -70,43 +119,52 @@ export const TablePaginationBar = memo(
     // Server mode counts from the totals it is given.
     const filteredCount = isClient ? rowCount : (totalItems ?? rowCount);
     const totalCount = isClient ? dataCount : unfilteredTotalItems;
-    const pageCount = getPageCount(filteredCount, page.pageSize);
-    const pageIndex = getPageIndex(page.pageIndex, pageCount);
+
+    if (paginated)
+      return (
+        <Pagination
+          label={`${caption} pagination`}
+          totalItems={filteredCount}
+          value={page}
+          // The store's own actions also scroll the rows back to the top.
+          onChange={(next) =>
+            next.pageSize === page.pageSize
+              ? store('setPageIndex')(next.pageIndex)
+              : store('setPageSize')(next.pageSize)
+          }
+          size={size}
+          content={content}
+          pageSizeOptions={pageSizeOptions}
+          disabled={loading}
+          itemName={rowName}
+          filtered={filtered}
+          unfilteredTotal={totalCount}
+          selectedCount={selectedCount}
+          className="px-1.5 py-2"
+        />
+      );
 
     return (
       <div
+        data-slot="pagination"
         className={classNames(
           styles.paginationBar,
           'flex-row-gap-3 items-center justify-between flex-wrap px-1.5 py-2',
         )}
       >
         <PaginationInfo
-          range={
-            paginated
-              ? {
-                  from: filteredCount ? pageIndex * page.pageSize + 1 : 0,
-                  to: Math.min(filteredCount, (pageIndex + 1) * page.pageSize),
-                }
-              : undefined
-          }
           shownCount={rowCount}
-          filteredCount={filteredCount}
-          totalCount={totalCount}
+          totalItems={filteredCount}
+          itemName={rowName}
           filtered={filtered}
+          unfilteredTotal={totalCount}
           selectedCount={selectedCount}
         />
-        {paginated && (
-          <PageControls
-            label={`${caption} pagination`}
-            size={size}
-            content={content}
-            pageIndex={pageIndex}
-            pageSize={page.pageSize}
-            pageCount={pageCount}
-            pageSizeOptions={pageSizeOptions}
-            disabled={loading}
-            onPageIndexChange={store('setPageIndex')}
-            onPageSizeChange={store('setPageSize')}
+        {!isClient && onLoadMore && rowCount < filteredCount && (
+          <LoadMoreButton
+            loading={loading}
+            onLoadMore={onLoadMore}
+            tableRef={tableRef}
           />
         )}
       </div>

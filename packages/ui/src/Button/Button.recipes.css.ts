@@ -2,7 +2,7 @@ import { tokens } from '@packages/styles/tokens.css';
 import { recipe } from '@vanilla-extract/recipes';
 
 import {
-  buttonBase,
+  buttonAppearance,
   buttonBg,
   buttonBorder,
   buttonFg,
@@ -12,6 +12,7 @@ import {
   buttonHoverFg,
   buttonIconSize,
 } from './Button.css';
+import { buttonStyle } from './buttonStyle';
 
 const colors = tokens.color;
 const spacing = tokens.spacing;
@@ -38,13 +39,13 @@ const colorSet = (
 
 export const buttonVariantStyles = {
   default: colorSet(
-    colors.accentFg,
-    colors.accentFg,
-    colors.accentBg,
-    colors.accentHoverBg,
-    colors.accentBorder,
-    colors.accentBorder,
-    colors.accentFocus,
+    colors.primary.accentFg,
+    colors.primary.accentFg,
+    colors.primary.accentBg,
+    colors.primary.accentHoverBg,
+    colors.primary.accentBorder,
+    colors.primary.accentBorder,
+    colors.primary.accentFocus,
   ),
   base: colorSet(
     colors.base.fg,
@@ -141,22 +142,28 @@ const ghostColors = (
   );
 
 export const buttonRecipe = recipe({
-  base: buttonBase,
+  base: buttonAppearance,
   variants: {
     variant: buttonVariantStyles,
-    size: buttonSizeStyles,
-    rounded: { true: buttonRoundedStyle, false: {} },
-    ghost: { true: buttonGhostStyle, false: {} },
+    size: {
+      sm: buttonStyle(buttonSizeStyles.sm),
+      md: buttonStyle(buttonSizeStyles.md),
+      'icon-xs': buttonStyle(buttonSizeStyles['icon-xs']),
+      'icon-sm': buttonStyle(buttonSizeStyles['icon-sm']),
+      'icon-md': buttonStyle(buttonSizeStyles['icon-md']),
+    },
+    rounded: { true: buttonStyle(buttonRoundedStyle), false: {} },
+    ghost: { true: buttonStyle(buttonGhostStyle), false: {} },
   },
   compoundVariants: [
     {
       variants: { variant: 'default', ghost: true },
       style: ghostColors(
-        colors.fg,
-        colors.accentFg,
-        colors.accentBg,
-        colors.accentBorder,
-        colors.accentFocus,
+        colors.primary.fg,
+        colors.primary.accentFg,
+        colors.primary.accentBg,
+        colors.primary.accentBorder,
+        colors.primary.accentFocus,
       ),
     },
     {
@@ -176,4 +183,23 @@ export const buttonRecipe = recipe({
     rounded: false,
     ghost: false,
   },
+});
+
+const sized = (size: string) => ({
+  // In a Button's icon slot, the slot sizes it from this var.
+  vars: { [buttonIconSize]: size },
+  width: size,
+  height: size,
+});
+
+/** The icon at the end of a Dropdown, Select or Popover trigger. */
+export const controlIcon = recipe({
+  base: { color: colors.base.fgMuted },
+  variants: {
+    size: {
+      sm: sized(spacing[4.5]),
+      md: sized(spacing[5]),
+    },
+  },
+  defaultVariants: { size: 'sm' },
 });

@@ -1,21 +1,21 @@
 /**
  * Dropdown: a menu of actions or choices behind a trigger button, with menu
- * roles, focus and keyboard built in (arrows, typeahead, Escape). Write each
- * row as a `Dropdown.Item`, an on/off row as a `Dropdown.CheckboxItem`, and
- * one choice of several as a `Dropdown.RadioItem` in a `Dropdown.RadioGroup`.
- * Group related rows with `Dropdown.Group`, and open a submenu from a
- * `Dropdown.Item` inside `Dropdown.SubMenu`. `showCheckbox` and
- * `showCheckmark` set how checked rows show. The trigger is one focusable
- * element that forwards its props: `Dropdown.Button`, or an `IconButton`
- * named for what the menu holds. Tab closes the menu, back to the trigger.
+ * roles, focus and keyboard built in (arrows, typeahead, Escape). Write a row
+ * as a `Dropdown.Item`, an on/off row as a `Dropdown.CheckboxItem`, one
+ * choice of several as a `Dropdown.RadioItem` in a `Dropdown.RadioGroup`.
+ * Group rows with `Dropdown.Group`, open a submenu from a `Dropdown.Item`
+ * inside `Dropdown.SubMenu`. `showCheckbox` and `showCheckmark` set how
+ * checked rows show. The trigger is one focusable element that forwards its
+ * props: `Dropdown.Button`, or an `IconButton` named for what the menu holds.
+ * Tab closes the menu, back to the trigger.
  *
- * Not for navigation (use `Link` (the app's NextLink for its routes)), one
- * on/off toggle (`Button` or `Chip`), a value in a form (`Select`) or
- * free-form content (`Popover`).
+ * Not for navigation (use `Link`, the app's NextLink for its routes), one
+ * on/off toggle (`Button` or `Chip`), a form value (`Select`) or free-form
+ * content (`Popover`).
  *
  * Pitfalls: an `onSelect` that calls `event.preventDefault()` keeps the menu
  * open; an item whose children aren't plain text needs `textValue`; a menu
- * holds only items, so don't put buttons or links inside it.
+ * holds only items, so no buttons or links inside it.
  */
 import { Avatar } from '@packages/ui/Avatar';
 import { IconButton } from '@packages/ui/Button';
@@ -92,9 +92,9 @@ const RowActions = ({ row }: { row: EventRow }) => {
 
 /**
  * Groups, a separator and a submenu. A `Dropdown.Group` without a `label`
- * only sets rows apart; the submenu's trigger is a `Dropdown.Item`, which
- * gets the chevron. `disabledWithReason` keeps an item or a submenu visible
- * and says why it can't be used.
+ * only sets rows apart; the submenu's trigger is a `Dropdown.Item`, which gets
+ * the chevron. `disabledWithReason` keeps an item or submenu visible and says
+ * why it can't be used.
  */
 const EventMenu = () => {
   const [status, setStatus] = useState('');
@@ -159,13 +159,12 @@ const EventMenu = () => {
 };
 
 /**
- * One choice of several: `Dropdown.RadioGroup` with the chosen `value`
- * around `Dropdown.RadioItem`s, the chosen one announced as checked.
- * `textValue` is what typeahead matches when a row's children (here an
- * `Avatar`) aren't text. `Dropdown.Search`
- * filters a long list: you filter the rows, it announces the count and shows
- * the empty state. Enter picks the first match, and never submits a form.
- * `onOpenChange` clears the search when the menu closes.
+ * One choice of several: `Dropdown.RadioGroup` with the chosen `value` around
+ * `Dropdown.RadioItem`s, the chosen one announced as checked. `textValue` is
+ * what typeahead matches when a row's children (here an `Avatar`) aren't
+ * text. `Dropdown.Search` filters a long list: you filter the rows, it
+ * announces the count and shows the empty state. Enter picks the first match
+ * and never submits a form. `onOpenChange` clears the search on close.
  */
 const AssignSpeaker = () => {
   const [search, setSearch] = useState('');
@@ -210,10 +209,10 @@ const AssignSpeaker = () => {
 
 /**
  * On/off options: `Dropdown.CheckboxItem` with `checked` and
- * `onCheckedChange`. Preventing the default in `onSelect` keeps the menu
- * open, so several can be toggled in a row. `showCheckbox` draws a checkbox
- * before each one, and `showCheckmark={false}` drops the check mark after
- * it; with both on, both show.
+ * `onCheckedChange`. Preventing the default in `onSelect` keeps the menu open,
+ * so several can be toggled in a row. `showCheckbox` draws a checkbox before
+ * each, `showCheckmark={false}` drops the check mark after it; with both on,
+ * both show.
  */
 const ViewOptions = () => {
   const [showSpeakers, setShowSpeakers] = useState(true);
@@ -278,9 +277,9 @@ const SortSessions = () => {
 };
 
 /**
- * An item that waits on work: `loadingWithReason` shows a spinner and says
- * what it's doing on hover. Preventing the default keeps the menu open, and
- * the controlled `open` closes it once the work is done.
+ * An item that waits on work: `loadingWithReason` shows a spinner and says on
+ * hover what it's doing. Preventing the default keeps the menu open, and the
+ * controlled `open` closes it once the work is done.
  */
 const PublishItem = () => {
   const [open, setOpen] = useState(false);
@@ -313,9 +312,9 @@ const PublishItem = () => {
 
 /**
  * The whole menu unavailable: `disabledWithReason` on the Dropdown disables
- * the trigger and says why in its tooltip. `loadingWithReason` shows a
- * spinner on the trigger and says why; `disableWhileLoading={false}` keeps
- * the menu usable meanwhile.
+ * the trigger and says why in its tooltip. `loadingWithReason` shows a spinner
+ * on the trigger and says why; `disableWhileLoading={false}` keeps the menu
+ * usable meanwhile.
  */
 const MenuStates = () => (
   <div className="flex-row-gap-2 flex-wrap">

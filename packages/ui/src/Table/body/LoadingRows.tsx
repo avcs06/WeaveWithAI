@@ -8,8 +8,7 @@ import { useTableStore } from '../store';
 import * as styles from './TableBody.css';
 
 /**
- * Width in [40, 90]% from the cell's position: varied, but the same on every
- * render, so bars don't jump.
+ * Width in [40, 90]% from the cell's position: varied, stable across renders.
  */
 const skeletonWidth = (row: number, column: number) => {
   let hash = Math.imul(row + 1, 0x9e3779b1) ^ Math.imul(column + 1, 0x85ebca6b);
@@ -24,8 +23,8 @@ export type LoadingRowsProps = {
 };
 
 /**
- * Stand-ins while rows load: a bar per data column. Hidden from assistive
- * tech; the table is `aria-busy` and a status announces the loading.
+ * Stand-ins while rows load, a bar per data column. Hidden from assistive tech:
+ * the table is `aria-busy` and a status announces loading.
  */
 export const LoadingRows = memo(({ count, slots }: LoadingRowsProps) => {
   const columns = useTableStore('columns');
