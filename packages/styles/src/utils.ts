@@ -42,8 +42,8 @@ export const focusRing = (color: string, ...shadows: string[]) => {
 };
 
 /**
- * Disabled color: mixed halfway into the base background, like `opacity: 0.5`
+ * Disabled color: mixed halfway into the page background, like `opacity: 0.5`
  * without stacking transparent layers.
  */
 export const disabledColor = (color: string) =>
-  `color-mix(in srgb, ${color} ${disabledMix}, ${colorTokens.base.bg})`;
+  `color-mix(in srgb, ${color} ${disabledMix}, ${colorTokens.surface.pageBg})`;

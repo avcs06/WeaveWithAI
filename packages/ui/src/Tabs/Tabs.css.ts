@@ -16,7 +16,7 @@ export const focus = createVar('tabsFocus');
 const active = '[data-state="active"]';
 
 export const tabsList = style({
-  boxShadow: bottomBorderShadow(colors.divider),
+  boxShadow: bottomBorderShadow(tokens.color.surface.divider),
 });
 
 export const tabTrigger = style({

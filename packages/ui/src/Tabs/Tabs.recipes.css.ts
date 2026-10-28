@@ -12,8 +12,8 @@ export const tabsRecipe = recipe({
     variant: {
       default: {
         vars: {
-          [underline]: colors.accentBg,
-          [focus]: colors.accentFocus,
+          [underline]: colors.primary.accentBg,
+          [focus]: colors.primary.accentFocus,
         },
       },
       base: {

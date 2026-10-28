@@ -34,7 +34,7 @@ export const formControlRecipe = recipe({
       default: {
         vars: {
           [controlBorder]: colors.base.border,
-          [controlFocus]: colors.focus,
+          [controlFocus]: colors.primary.focus,
         },
       },
       base: {

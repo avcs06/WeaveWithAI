@@ -106,7 +106,7 @@ export const hintButton = style({
   background: 'transparent',
   outline: 'none',
   selectors: {
-    '&:is(:focus-visible, :active)': focusRing(colors.focus),
+    '&:is(:focus-visible, :active)': focusRing(colors.primary.focus),
   },
 });
 

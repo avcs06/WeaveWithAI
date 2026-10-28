@@ -36,7 +36,7 @@ export const toastStatusRecipe = recipe({
       loading: {
         vars: {
           [statusBg]: colors.base.hoverBg,
-          [statusFg]: colors.accentBg,
+          [statusFg]: colors.primary.accentBg,
         },
       },
     },

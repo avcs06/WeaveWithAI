@@ -13,8 +13,8 @@ globalStyle('html', {
   fontFamily: tokens.fontFamily.ui,
   fontSize: tokens.fontSize.body,
   lineHeight: 1.4,
-  color: tokens.color.base.fg,
-  backgroundColor: tokens.color.base.bg,
+  color: tokens.color.surface.pageFg,
+  backgroundColor: tokens.color.surface.pageBg,
 });
 
 globalStyle('body', {

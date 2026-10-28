@@ -4,6 +4,6 @@ import { style } from '@vanilla-extract/css';
 const colors = tokens.color;
 
 export const header = style({
-  background: colors.base.bg,
-  borderBottom: `1px solid ${colors.base.divider}`,
+  background: colors.surface.frameBg,
+  borderBottom: `1px solid ${colors.surface.divider}`,
 });

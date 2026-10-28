@@ -26,12 +26,12 @@ const cardSelections = {
   outline: {
     default: {
       vars: {
-        [cardActiveText]: colors.fg,
-        [cardActiveBg]: colors.bg,
-        [cardActiveBgHover]: colors.hoverBg,
-        [cardActiveBorder]: colors.accentBorder,
-        [cardActiveBoxShadow]: activeBorder(colors.accentBorder),
-        [cardActiveFocusColor]: colors.focus,
+        [cardActiveText]: colors.primary.fg,
+        [cardActiveBg]: colors.primary.bg,
+        [cardActiveBgHover]: colors.primary.hoverBg,
+        [cardActiveBorder]: colors.primary.accentBorder,
+        [cardActiveBoxShadow]: activeBorder(colors.primary.accentBorder),
+        [cardActiveFocusColor]: colors.primary.focus,
       },
     },
     base: {
@@ -48,12 +48,12 @@ const cardSelections = {
   filled: {
     default: {
       vars: {
-        [cardActiveText]: colors.accentFg,
-        [cardActiveBg]: colors.accentBg,
-        [cardActiveBgHover]: colors.accentHoverBg,
-        [cardActiveBorder]: colors.accentBorder,
-        [cardActiveBoxShadow]: activeBorder(colors.accentBorder),
-        [cardActiveFocusColor]: colors.accentFocus,
+        [cardActiveText]: colors.primary.accentFg,
+        [cardActiveBg]: colors.primary.accentBg,
+        [cardActiveBgHover]: colors.primary.accentHoverBg,
+        [cardActiveBorder]: colors.primary.accentBorder,
+        [cardActiveBoxShadow]: activeBorder(colors.primary.accentBorder),
+        [cardActiveFocusColor]: colors.primary.accentFocus,
       },
     },
     base: {
@@ -79,8 +79,8 @@ export const cardRecipe = recipe({
           [cardBg]: colors.base.bg,
           [cardBgHover]: colors.base.hoverBg,
           [cardBgActive]: colors.base.hoverBg,
-          [cardBorder]: colors.base.divider,
-          [cardFocusColor]: colors.focus,
+          [cardBorder]: colors.surface.divider,
+          [cardFocusColor]: colors.primary.focus,
         },
       },
       base: {
@@ -89,7 +89,7 @@ export const cardRecipe = recipe({
           [cardBg]: colors.base.bg,
           [cardBgHover]: colors.base.hoverBg,
           [cardBgActive]: colors.base.hoverBg,
-          [cardBorder]: colors.base.divider,
+          [cardBorder]: colors.surface.divider,
           [cardFocusColor]: colors.base.focus,
         },
       },

@@ -22,12 +22,12 @@ export const radioRecipe = recipe({
     variant: {
       default: {
         vars: {
-          [checkedBg]: colors.accentBg,
-          [checkedHoverBg]: colors.accentHoverBg,
-          [checkedBorder]: colors.accentBorder,
-          [checkedFg]: colors.accentFg,
-          [uncheckedFocus]: colors.focus,
-          [checkedFocus]: colors.accentFocus,
+          [checkedBg]: colors.primary.accentBg,
+          [checkedHoverBg]: colors.primary.accentHoverBg,
+          [checkedBorder]: colors.primary.accentBorder,
+          [checkedFg]: colors.primary.accentFg,
+          [uncheckedFocus]: colors.primary.focus,
+          [checkedFocus]: colors.primary.accentFocus,
         },
       },
       base: {

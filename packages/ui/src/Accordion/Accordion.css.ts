@@ -8,7 +8,9 @@ const spacing = tokens.spacing;
 // A divider between sections only: a lone Collapsible draws none.
 export const accordionItem = style({
   selectors: {
-    '&:not(:first-child)': { borderTop: `1px solid ${colors.divider}` },
+    '&:not(:first-child)': {
+      borderTop: `1px solid ${tokens.color.surface.divider}`,
+    },
   },
 });
 
@@ -51,7 +53,7 @@ globalStyle(`${accordionTrigger}::before`, {
 
 globalStyle(
   `${accordionTrigger}:focus-visible::before`,
-  focusRing(tokens.color.focus),
+  focusRing(tokens.color.primary.focus),
 );
 
 // As tall as the title's line, so the chevron centers on it.

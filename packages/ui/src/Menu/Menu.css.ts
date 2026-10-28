@@ -8,6 +8,7 @@ import {
 } from '@vanilla-extract/css';
 
 const colors = tokens.color.base;
+const surface = tokens.color.surface;
 const transition = '120ms ease';
 
 /** The shell's drop shadow; a surface using Menu sets its own. */
@@ -33,7 +34,7 @@ export const menu = style({
   borderRadius: tokens.radius.surface,
   color: colors.fg,
   background: colors.bg,
-  boxShadow: `${borderShadow(colors.divider)}, ${fallbackVar(menuShadow, tokens.boxShadow.dropdown)}`,
+  boxShadow: `${borderShadow(surface.divider)}, ${fallbackVar(menuShadow, tokens.boxShadow.dropdown)}`,
   outline: 'none',
 });
 
@@ -123,5 +124,5 @@ export const menuLabel = style({
 export const menuSeparator = style({
   height: tokens.spacing[0.25],
   marginBlock: tokens.spacing[1],
-  background: colors.divider,
+  background: surface.divider,
 });

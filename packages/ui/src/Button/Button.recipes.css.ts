@@ -39,13 +39,13 @@ const colorSet = (
 
 export const buttonVariantStyles = {
   default: colorSet(
-    colors.accentFg,
-    colors.accentFg,
-    colors.accentBg,
-    colors.accentHoverBg,
-    colors.accentBorder,
-    colors.accentBorder,
-    colors.accentFocus,
+    colors.primary.accentFg,
+    colors.primary.accentFg,
+    colors.primary.accentBg,
+    colors.primary.accentHoverBg,
+    colors.primary.accentBorder,
+    colors.primary.accentBorder,
+    colors.primary.accentFocus,
   ),
   base: colorSet(
     colors.base.fg,
@@ -159,11 +159,11 @@ export const buttonRecipe = recipe({
     {
       variants: { variant: 'default', ghost: true },
       style: ghostColors(
-        colors.fg,
-        colors.accentFg,
-        colors.accentBg,
-        colors.accentBorder,
-        colors.accentFocus,
+        colors.primary.fg,
+        colors.primary.accentFg,
+        colors.primary.accentBg,
+        colors.primary.accentBorder,
+        colors.primary.accentFocus,
       ),
     },
     {

@@ -3,6 +3,7 @@ import { borderShadow, bottomBorderShadow } from '@packages/styles/utils';
 import { createVar, globalStyle, style } from '@vanilla-extract/css';
 
 const colors = tokens.color.base;
+const surface = tokens.color.surface;
 const spacing = tokens.spacing;
 const phone = '(max-width: 639px)';
 
@@ -12,7 +13,7 @@ export const glyphFg = createVar('dialogGlyphFg');
 
 export const dialogOverlay = style({
   zIndex: tokens.zIndex.modal,
-  background: colors.backdrop,
+  background: surface.backdrop,
   opacity: 0.5,
 });
 
@@ -25,7 +26,7 @@ export const dialogSurface = style({
   borderRadius: tokens.radius.surface,
   color: colors.fg,
   background: colors.bg,
-  boxShadow: `${borderShadow(colors.divider)}, ${tokens.boxShadow.modal}`,
+  boxShadow: `${borderShadow(surface.divider)}, ${tokens.boxShadow.modal}`,
   outline: 'none',
   '@media': {
     [phone]: {
@@ -99,7 +100,7 @@ const scrolling = `${dialogSurface}:has(> [data-slot="body"] > [data-slot="scrol
 
 globalStyle(`${scrolling} > [data-slot="header"]`, {
   paddingBottom: spacing[4],
-  boxShadow: bottomBorderShadow(colors.divider),
+  boxShadow: bottomBorderShadow(surface.divider),
 });
 
 globalStyle(`${scrolling} [data-slot="body-content"]`, {
@@ -108,7 +109,7 @@ globalStyle(`${scrolling} [data-slot="body-content"]`, {
 
 globalStyle(`${scrolling} > [data-slot="footer"]`, {
   paddingTop: spacing[4],
-  boxShadow: `0 ${spacing[0.25]} 0 0 ${colors.divider} inset`,
+  boxShadow: `0 ${spacing[0.25]} 0 0 ${surface.divider} inset`,
 });
 
 export const confirmationSurface = style({

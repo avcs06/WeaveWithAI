@@ -57,7 +57,7 @@ export const toastSurface = style({
   paddingRight: spacing[2],
   borderRadius: tokens.radius.surface,
   background: colors.bg,
-  boxShadow: `${borderShadow(colors.divider)}, ${tokens.boxShadow.toast}`,
+  boxShadow: `${borderShadow(tokens.color.surface.divider)}, ${tokens.boxShadow.toast}`,
   selectors: {
     '&[data-swipe="move"]': {
       transform: 'translateX(var(--radix-toast-swipe-move-x))',

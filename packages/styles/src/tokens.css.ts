@@ -38,7 +38,7 @@ export const tokens = {
     modal: dropShadow('12px', '32px', 12),
   },
   controlShadow: {
-    ...controlShadow(colorTokens),
+    primary: controlShadow(colorTokens.primary),
     base: controlShadow(colorTokens.base),
     success: controlShadow(colorTokens.success),
     warning: controlShadow(colorTokens.warning),

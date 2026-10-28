@@ -22,11 +22,11 @@ export const switchRecipe = recipe({
     variant: {
       default: {
         vars: {
-          [onBg]: colors.accentBg,
-          [onHoverBg]: colors.accentHoverBg,
-          [onThumb]: colors.accentFg,
-          [offFocus]: colors.focus,
-          [onFocus]: colors.accentFocus,
+          [onBg]: colors.primary.accentBg,
+          [onHoverBg]: colors.primary.accentHoverBg,
+          [onThumb]: colors.primary.accentFg,
+          [offFocus]: colors.primary.focus,
+          [onFocus]: colors.primary.accentFocus,
         },
       },
       base: {

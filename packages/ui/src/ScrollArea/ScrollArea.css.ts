@@ -9,7 +9,7 @@ export const viewport = style({
   borderRadius: 'inherit',
   outline: 'none',
   selectors: {
-    '&:focus-visible': focusRing(tokens.color.focus),
+    '&:focus-visible': focusRing(tokens.color.primary.focus),
   },
 });
 

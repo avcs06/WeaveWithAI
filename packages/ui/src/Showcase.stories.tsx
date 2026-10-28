@@ -502,7 +502,7 @@ export default { title: 'Showcase' };
 //       radius: chipRadii,
 //     }}
 //     flags={{ defaultActive: false, leftIcon: false, disabled: false }}
-//     hint="variant picks the colors: default the theme set, base the base set. Click to toggle: selection outline adds a 2px border, filled fills with the accent. In a ChipGroup the mode decides the selection: single outlines, multiple fills."
+//     hint="variant picks the colors: default the primary set, base the base set. Click to toggle: selection outline adds a 2px border, filled fills with the accent. In a ChipGroup the mode decides the selection: single outlines, multiple fills."
 //     render={(c, f) => (
 //       <Chip
 //         key={String(f.defaultActive)}

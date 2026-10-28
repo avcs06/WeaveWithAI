@@ -44,7 +44,7 @@ const chipVariantStyles = {
   default: {
     vars: {
       ...buttonVariantStyles.base.vars,
-      [buttonFocusColor]: colors.focus,
+      [buttonFocusColor]: colors.primary.focus,
     },
   },
   base: buttonVariantStyles.base,
@@ -53,11 +53,11 @@ const chipVariantStyles = {
 const activeStyles = {
   outline: {
     default: activeColorSet(
-      colors.fg,
+      colors.primary.fg,
       colors.base.bg,
       colors.base.hoverBg,
-      colors.accentBorder,
-      colors.focus,
+      colors.primary.accentBorder,
+      colors.primary.focus,
     ),
     base: activeColorSet(
       colors.base.fg,
@@ -69,11 +69,11 @@ const activeStyles = {
   },
   filled: {
     default: activeColorSet(
-      colors.accentFg,
-      colors.accentBg,
-      colors.accentHoverBg,
-      colors.accentBorder,
-      colors.accentFocus,
+      colors.primary.accentFg,
+      colors.primary.accentBg,
+      colors.primary.accentHoverBg,
+      colors.primary.accentBorder,
+      colors.primary.accentFocus,
     ),
     base: activeColorSet(
       colors.base.accentFg,

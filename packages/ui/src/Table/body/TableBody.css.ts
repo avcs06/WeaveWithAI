@@ -16,7 +16,7 @@ const pulse = keyframes({
 export const skeleton = style({
   height: tokens.spacing[3],
   borderRadius: tokens.radius[1],
-  background: tokens.color.base.skeleton,
+  background: tokens.color.surface.skeleton,
   animation: `${pulse} 1.6s ease-in-out infinite`,
   '@media': {
     '(prefers-reduced-motion: reduce)': { animation: 'none' },

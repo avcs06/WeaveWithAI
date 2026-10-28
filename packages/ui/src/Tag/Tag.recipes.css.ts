@@ -25,8 +25,16 @@ export const tagRecipe = recipe({
   base: tag,
   variants: {
     variant: {
-      default: colorSet(colors.fg, colors.bg, colors.border),
-      accent: colorSet(colors.accentFg, colors.accentBg, colors.accentBorder),
+      default: colorSet(
+        colors.primary.fg,
+        colors.primary.bg,
+        colors.primary.border,
+      ),
+      accent: colorSet(
+        colors.primary.accentFg,
+        colors.primary.accentBg,
+        colors.primary.accentBorder,
+      ),
       base: colorSet(colors.base.fg, colors.base.hoverBg, colors.base.border),
       success: statusColors('success'),
       warning: statusColors('warning'),

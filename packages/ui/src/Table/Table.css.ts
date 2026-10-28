@@ -2,7 +2,7 @@ import { tokens } from '@packages/styles/tokens.css';
 import { globalStyle, style } from '@vanilla-extract/css';
 
 const colors = tokens.color;
-const divider = `1px solid ${colors.base.divider}`;
+const divider = `1px solid ${colors.surface.divider}`;
 // Outline around header and body; rows keep `divider`.
 const outline = `1px solid ${colors.base.border}`;
 // Panel radius, as on Card and Dialog.

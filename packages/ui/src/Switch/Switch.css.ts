@@ -3,6 +3,7 @@ import { disabledColor, focusRing } from '@packages/styles/utils';
 import { createVar, globalStyle, style } from '@vanilla-extract/css';
 
 const colors = tokens.color.base;
+const surface = tokens.color.surface;
 const transition = '150ms ease';
 
 export const onBg = createVar('switchOnBg');
@@ -23,7 +24,7 @@ export const switchTrack = style({
   width: trackWidth,
   padding: trackPadding,
   borderRadius: tokens.radius.full,
-  background: colors.skeleton,
+  background: surface.skeleton,
   outline: 'none',
   transition: `background-color ${transition}, box-shadow ${transition}`,
   selectors: {
@@ -33,7 +34,7 @@ export const switchTrack = style({
     [`&${on}${enabled}:hover`]: { background: onHoverBg },
     [`&${on}${enabled}${focused}`]: focusRing(onFocus),
     '&[data-disabled]': {
-      background: disabledColor(colors.skeleton),
+      background: disabledColor(surface.skeleton),
       cursor: 'default',
     },
     [`&${on}[data-disabled]`]: { background: disabledColor(onBg) },
