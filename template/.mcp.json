@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "weave-design-system": {
+      "command": "node",
+      "args": ["tools/design-system-mcp.mjs"]
+    }
+  }
+}

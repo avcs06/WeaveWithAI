@@ -128,6 +128,8 @@ export async function generate(
   await cp(source, target, {
     recursive: true,
     force: false,
+    // tools/weave-design-system-mcp is a link to ../../mcp; copy its files.
+    dereference: true,
     errorOnExist: true,
     filter(path) {
       const local = relative(source, path);

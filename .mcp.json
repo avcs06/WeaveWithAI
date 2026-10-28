@@ -2,7 +2,7 @@
   "mcpServers": {
     "weave-design-system": {
       "command": "node",
-      "args": ["tools/design-system-mcp.mjs"]
+      "args": ["template/tools/design-system-mcp.mjs"]
     }
   }
 }

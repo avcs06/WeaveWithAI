@@ -1,62 +1,23 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
-# compiled output
-dist
-tmp
-out-tsc
-*.tsbuildinfo
-
-# dependencies
+# dependencies and build output, anywhere (mcp/ relies on this)
 node_modules
+dist
+*.tsbuildinfo
 .pnpm-store
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# generator runs and caches
+/runs/
+/.weave-cache/
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
+# local environment
+.env
+.env.*
+!.env.example
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
+# editors and OS
 .DS_Store
 Thumbs.db
-
-.nx/cache
-.nx/workspace-data
-.claude/worktrees
+/.idea
+.vscode/*
+!.vscode/mcp.json
 .claude/settings.local.json
-.agents
-.codex
-.github
-.opencode
-
-# Next.js
-.next
-out
-
-# Local environment variables
-.env*
-!.env.example
-.nx/polygraph
-# Local working notes (not published for now)
-/docs/
+.claude/worktrees
