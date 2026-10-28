@@ -3,21 +3,20 @@
  * notifications or a public profile; its children are its label.
  *
  * When not to use:
- * - A choice that applies only when a form is submitted, or consent like
- *   "I agree": Checkbox.
- * - One choice out of a few options: ChipGroup `mode="single"`; out of a
- *   longer list, Select.
+ * - A choice applied only on form submit, or consent like "I agree": Checkbox.
+ * - One choice from a few options: ChipGroup `mode="single"`; from a longer
+ *   list, Select.
  * - Toggling filters above a list or table: ChipGroup `mode="multiple"`.
  * - Running an action, like "Send now": Button. A switch states a setting.
  *
  * Pitfalls:
  * - A switch is controlled: `checked` and `onCheckedChange`, both required.
  *   Save in `onCheckedChange`, and set `checked` back if the save fails.
- * - Every switch needs a name: its children are the label, or `aria-label` or
+ * - Every switch needs a name: its children, or `aria-label` or
  *   `aria-labelledby` when the row around it says what it is.
- * - Say why it can't be flipped: `disabledWithReason` or
- *   `readOnlyWithReason`, not a bare `disabled`. A read-only switch keeps
- *   its tab stop, so its state can still be read.
+ * - Say why it can't be flipped: `disabledWithReason` or `readOnlyWithReason`,
+ *   not a bare `disabled`. A read-only switch keeps its tab stop, so its state
+ *   can be read.
  * - The label says what's on, not the action: "Email reminders", not "Turn
  *   on email reminders".
  */
@@ -38,9 +37,8 @@ const saveSetting = (on: boolean) =>
 
 // Usage: the patterns to copy.
 /**
- * A setting saved as it changes: the switch flips at once, and flips back if
- * the save fails. `hint` explains it, `tooltip` adds detail on hover and
- * focus.
+ * A setting saved as it changes: the switch flips at once, and back if the save
+ * fails. `hint` explains it, `tooltip` adds detail on hover and focus.
  */
 const EmailReminders = () => {
   const [on, setOn] = useState(true);
@@ -63,8 +61,8 @@ const EmailReminders = () => {
 };
 
 /**
- * A switch per row, named by the row: `aria-labelledby` points at the
- * title, so the switch has no label of its own.
+ * A switch per row, named by the row: `aria-labelledby` points at the title, so
+ * the switch has no label of its own.
  */
 const LiveSessions = () => {
   const [live, setLive] = useState(

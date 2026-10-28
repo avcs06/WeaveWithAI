@@ -4,7 +4,7 @@ import { classNames } from '@packages/styles/classNames';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import React, { useEffect, useState } from 'react';
 
-import { mergeRefs } from '../utils';
+import { mergeRefs, tabbable } from '../utils';
 
 import {
   scrollbar,
@@ -13,21 +13,6 @@ import {
 } from './ScrollArea.css';
 
 import type { ScrollAreaProps } from './ScrollArea.types';
-
-// What Tab reaches. Content that has any scrolls into view as it's focused.
-const tabbable = [
-  'a[href]',
-  'button',
-  'input:not([type="hidden"])',
-  'select',
-  'textarea',
-  'summary',
-  'iframe',
-  '[contenteditable="true"]',
-  '[tabindex]',
-]
-  .map((selector) => `${selector}:not([tabindex="-1"])`)
-  .join(', ');
 
 const Scrollbar = ({
   orientation,
@@ -57,7 +42,7 @@ const Scrollbar = ({
 
 /**
  * A box that scrolls its own content, for a box with its own height (`h-*`
- * or `max-h-*` on it). Scrollbars show while the content overflows.
+ * or `max-h-*`). Scrollbars show while the content overflows.
  *
  * @invalidAlternative import('@radix-ui/react-scroll-area')
  * @invalidAlternative .overflow-auto, .overflow-scroll, .overflow-y-auto, .overflow-y-scroll, .overflow-x-auto, .overflow-x-scroll
@@ -74,8 +59,7 @@ export const ScrollArea = ({
   const [viewport, setViewport] = useState<HTMLDivElement | null>(null);
   const [isTabStop, setIsTabStop] = useState(false);
 
-  // A region that scrolls with nothing to Tab to takes focus itself, so the
-  // keyboard can scroll it.
+  // A region that scrolls with nothing to Tab to takes focus itself.
   useEffect(() => {
     if (!viewport) return;
 
@@ -107,8 +91,8 @@ export const ScrollArea = ({
 
   return (
     <ScrollAreaPrimitive.Root
-      // Scrollbars mount only while the content overflows, so a parent can
-      // make room for them with `:has(> [data-orientation])`.
+      // Scrollbars mount only while content overflows: a parent can make room
+      // with `:has(> [data-orientation])`.
       type="auto"
       {...props}
       className={classNames('flex-col-gap-0', className)}
@@ -121,12 +105,14 @@ export const ScrollArea = ({
         aria-labelledby={ariaLabelledBy}
         tabIndex={isTabStop ? 0 : undefined}
         disableImplicitContentElement
-        className={classNames(viewportClassName, 'flex-fill-y')}
+        // Clips absolutely placed content too, like visually hidden text that
+        // would widen the page.
+        className={classNames(viewportClassName, 'flex-fill-y', 'relative')}
       >
         <ScrollAreaPrimitive.Content
           data-slot="content"
-          // Radix sizes the content to its widest child; scrolling only up
-          // and down, it takes the viewport's width.
+          // Radix sizes content to its widest child; vertical-only takes the
+          // viewport's width.
           style={orientation === 'vertical' ? { display: 'block' } : undefined}
         >
           {children}
@@ -141,7 +127,7 @@ export const ScrollArea = ({
 
 /**
  * A ScrollArea for a flex column, like a panel or dialog body: it takes its
- * content's height until the column has no room left, then scrolls.
+ * content's height until the column is full, then scrolls.
  *
  * @invalidAlternative .min-h-0.overflow-auto, .min-h-0.overflow-y-auto, .flex-fill-y.overflow-auto, .flex-fill-y.overflow-y-auto
  */

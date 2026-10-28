@@ -59,7 +59,7 @@ export function SelectControl(props: SelectControlProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpenState] = useState(false);
-  // A change no option shows, said by the status region.
+  // A change no option shows, announced by the status region.
   const [notice, setNotice] = useState('');
 
   const { isDisabled, isLoading } = useIsDisabled({
@@ -131,8 +131,7 @@ export function SelectControl(props: SelectControlProps) {
     }
   };
 
-  // Keeps the data a later render can need: listed options and selected
-  // values.
+  // Keeps the data of listed and selected values.
   useEffect(() => {
     store('forget')(selectionControl.values);
   }, [store, options, selectionControl.values]);
@@ -151,8 +150,7 @@ export function SelectControl(props: SelectControlProps) {
       />
     );
 
-  // Single: the search field takes the value's place. Multiple: it follows
-  // the tags.
+  // Single: the search field replaces the value; multiple: it follows tags.
   const showsValue =
     !hasSearchField ||
     (selectionControl.multiple && selectedOptions.length > 0);
@@ -206,7 +204,7 @@ export function SelectControl(props: SelectControlProps) {
     >
       <FormControl
         {...props}
-        // The trigger is the box, given its props through DropdownTrigger.
+        // The trigger is the box, via DropdownTrigger.
         withControlBox={false}
         placeholder={placeholderText}
         disableWhileLoading={disableWhileLoading}
@@ -224,8 +222,7 @@ export function SelectControl(props: SelectControlProps) {
               : undefined,
           };
 
-          // Undefined values override the menu-button attributes Radix
-          // gives its trigger.
+          // Undefined overrides Radix's menu-button attributes.
           const boxRole = hasSearchField
             ? {
                 role: 'group',

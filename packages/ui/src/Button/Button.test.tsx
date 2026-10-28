@@ -20,8 +20,7 @@ const { variants } = buttonRecipe.classNames;
 const button = (name: string | RegExp) => screen.getByRole('button', { name });
 const link = (name: string | RegExp) => screen.getByRole('link', { name });
 
-// The shown tooltip is aria-hidden: the trigger's description says the same
-// thing to screen readers, so role queries need `hidden`.
+// The shown tooltip is aria-hidden, so role queries need `hidden`.
 const tooltipEntries = async () => {
   await screen.findByRole('tooltip', { hidden: true });
   return Array.from(
@@ -233,7 +232,6 @@ describe('Button', () => {
     await userEvent.keyboard('{Enter}[Space]a');
     expect(handlers.onClick).not.toHaveBeenCalled();
     expect(handlers.onPointerDown).not.toHaveBeenCalled();
-    // Only the unrelated key reaches the handler.
     expect(handlers.onKeyDown).toHaveBeenCalledTimes(1);
     expect(onKeyUp).toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
@@ -400,7 +398,6 @@ describe('Button', () => {
     expect(await screen.findByRole('menu')).toBeInTheDocument();
     expect(trigger).toHaveAttribute('data-state', 'open');
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    // Focus moved into the menu; Escape closes it and returns focus.
     expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus();
     await userEvent.keyboard('{Escape}');
     expect(screen.queryByRole('menu')).toBeNull();
@@ -416,6 +413,17 @@ describe('Button', () => {
 });
 
 describe('Button as a Next.js Link', () => {
+  it('keeps its own `target` and stays a link', () => {
+    renderUI(
+      <Button as={Link} href="/docs" target="_blank" rel="noreferrer">
+        Docs
+      </Button>,
+    );
+    const element = link('Docs');
+    expect(element.tagName).toBe('A');
+    expect(element).toHaveAttribute('target', '_blank');
+  });
+
   it('is a link to its href, without a button type, with the anchor as its ref', async () => {
     const ref = createRef<HTMLAnchorElement>();
     const onClick = jest.fn((event: React.MouseEvent) =>
@@ -836,7 +844,6 @@ describe('PlainButton', () => {
     await userEvent.keyboard('{Enter}');
     await userEvent.keyboard('[Space]');
     await userEvent.click(element);
-    // The native button activates itself: each handler runs once per press.
     expect(onClick).toHaveBeenCalledTimes(3);
     expect(childClick).toHaveBeenCalledTimes(3);
     expect(await axe(container)).toHaveNoViolations();

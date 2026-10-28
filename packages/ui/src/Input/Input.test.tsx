@@ -19,7 +19,6 @@ const searchbox = (name = 'Search events') =>
 const spinbutton = (name = 'Guests') =>
   screen.getByRole('spinbutton', { name });
 
-/** An Input that keeps its value. */
 const Email = ({
   onChange,
   ...props
@@ -40,7 +39,6 @@ const Email = ({
   );
 };
 
-/** A NumberInput that keeps its value. */
 const Guests = ({
   onChange,
   initial = null,
@@ -139,7 +137,6 @@ describe('Input', () => {
     );
     await userEvent.tab();
     expect(textbox()).toHaveFocus();
-    // Focusing it with the keyboard shows the reason, as on Button.
     expect(
       await screen.findByRole('tooltip', { hidden: true }),
     ).toHaveTextContent("Verified emails can't change");
@@ -321,7 +318,6 @@ describe('Input', () => {
       expect(onSubmit).not.toHaveBeenCalled();
       expect(textbox()).toHaveFocus();
       expect(textbox()).toBeInvalid();
-      // The message reads first; the help text stays after it.
       expect(textbox()).toHaveAccessibleDescription(
         'Enter your email For receipts',
       );
@@ -369,7 +365,6 @@ describe('PasswordInput', () => {
     await userEvent.click(toggle());
     expect(input).toHaveAttribute('type', 'text');
     expect(toggle()).toHaveAttribute('aria-pressed', 'true');
-    // Now readable text, the field is a textbox named by its label.
     expect(screen.getByRole('textbox', { name: 'Password' })).toBe(input);
     await userEvent.click(toggle());
     expect(input).toHaveAttribute('type', 'password');
@@ -504,7 +499,6 @@ describe('NumberInput', () => {
     renderUI(<Guests initial={5} min={0} max={20} onChange={onChange} />);
     await userEvent.clear(spinbutton());
     await userEvent.type(spinbutton(), '99');
-    // Typed as-is until it settles.
     expect(spinbutton()).toHaveValue('99');
     await userEvent.keyboard('{Enter}');
     expect(spinbutton()).toHaveValue('20');
@@ -673,7 +667,6 @@ describe('SearchInput', () => {
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith('');
       expect(search()).toHaveFocus();
-      // Empty already: Escape does nothing more.
       await user().keyboard('{Escape}');
       expect(onChange).toHaveBeenCalledTimes(1);
     });
@@ -684,7 +677,6 @@ describe('SearchInput', () => {
       expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
       await user().type(search(), 'jazz');
       const clear = screen.getByRole('button', { name: 'Clear search' });
-      // Field, then clear, in the tab order.
       await user().tab();
       expect(clear).toHaveFocus();
       await user().keyboard('{Enter}');

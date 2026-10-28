@@ -10,9 +10,9 @@ import { tagRecipe } from './Tag.recipes.css';
 
 const { variants } = tagRecipe.classNames;
 
-// jsdom has no layout: the truncation check reads the label box width from
-// its ResizeObserver and the text width from a Range. Report both here;
-// installed before any tag renders, since the observer is shared.
+// jsdom has no layout: report the label box width (ResizeObserver) and text
+// width (Range). Installed before any tag renders, since the observer is
+// shared.
 let boxWidth = 1000;
 globalThis.ResizeObserver = class {
   constructor(private callback: ResizeObserverCallback) {}
@@ -315,8 +315,8 @@ describe('Tag', () => {
       </Tag>,
     );
     await measured();
-    // The full label stays in the page text; only the tooltip carries it
-    // visually, so the description keeps only the tag's own tooltip.
+    // The full label is page text; the description keeps only the tag's own
+    // tooltip.
     expect(container.firstElementChild).toHaveAccessibleDescription(
       'Everyone who builds the product',
     );

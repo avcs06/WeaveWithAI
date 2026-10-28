@@ -1,9 +1,8 @@
 import { usePersistentCallback } from '@packages/utils/hooks';
 import { useConfigSync, useValueSync } from '@packages/utils/state';
 
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Pagination';
 import { useGetTableStore } from '../store';
-
-import { DEFAULT_PAGE_SIZE_OPTIONS } from './paginationSlice';
 
 import type { TablePaginationProps } from '../Table.types';
 

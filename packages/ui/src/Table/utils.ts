@@ -1,4 +1,10 @@
-import type { TableColumnData } from './Table.types';
+import type { TableAlign, TableColumnData } from './Table.types';
+
+export const alignClasses: Record<TableAlign, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
 
 /**
  * The `dataKey` value, passed through `computed(value, row)` when there is

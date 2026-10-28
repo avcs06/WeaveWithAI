@@ -1,8 +1,8 @@
 import { useInsertionEffect, useRef } from 'react';
 
 /**
- * A ref holding the value of the last committed render. It's assigned before
- * any layout effect runs, so effects, handlers and timers read the new value.
+ * A ref holding the last committed render's value, assigned before any layout
+ * effect runs, so effects, handlers and timers read the new value.
  *
  * @invalidAlternative import('ahooks'){useLatest}
  */

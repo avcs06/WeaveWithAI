@@ -1,7 +1,7 @@
 /**
- * Attributes a component sets itself, from its own props: typed `never`, so a
- * caller can't set them a second time. Leaving them out isn't enough: JSX
- * accepts any undeclared attribute with a dash in its name.
+ * Attributes a component sets itself from its own props: typed `never` so a
+ * caller can't set them again. Omitting them isn't enough: JSX accepts any
+ * undeclared attribute with a dash in its name.
  */
 export type SetByComponent<Key extends string> = { [Name in Key]?: never };
 

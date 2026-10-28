@@ -7,9 +7,8 @@ import { Tooltip } from '../Tooltip';
 
 import { UIProviders } from './UIProviders';
 
-// `renderUI` would wrap in these same providers, hiding their absence, so
-// these render bare. `UIRoot` itself loads next/font, which jest can't, and
-// renders the document's <html>; only its providers are testable here.
+// Rendered bare: `renderUI` would add these providers and hide their absence.
+// `UIRoot` loads next/font, which jest can't: only its providers are tested.
 
 const tooltipTree = (
   <Tooltip tooltip="Saves a draft">
@@ -17,8 +16,8 @@ const tooltipTree = (
   </Tooltip>
 );
 
-// The shown tooltip is aria-hidden: the trigger's description already says
-// it to screen readers, so role queries include hidden elements to see it.
+// The shown tooltip is aria-hidden (the trigger's description says it), so
+// role queries include hidden elements.
 const findTooltip = () => screen.findByRole('tooltip', { hidden: true });
 const queryTooltip = () => screen.queryByRole('tooltip', { hidden: true });
 
@@ -44,8 +43,8 @@ describe('UIProviders', () => {
   it('gives its children the tooltip provider UIRoot gives the app', async () => {
     render(<UIProviders tooltipDelay={0}>{tooltipTree}</UIProviders>);
 
-    // No provider, and the Tooltip cannot even render; here the trigger is
-    // described before anything shows.
+    // Without the provider the Tooltip can't render; the trigger is described
+    // before anything shows.
     expect(saveButton()).toHaveAccessibleDescription('Saves a draft');
     expect(queryTooltip()).toBeNull();
 
@@ -63,7 +62,6 @@ describe('UIProviders', () => {
 
     await userEvent.keyboard('{Escape}');
     expect(queryTooltip()).toBeNull();
-    // Escape only closes the tooltip; focus stays on its trigger.
     expect(saveButton()).toHaveFocus();
     expect(await axe(document.body)).toHaveNoViolations();
   });

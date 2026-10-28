@@ -22,8 +22,8 @@ import { tabsRecipe } from './Tabs.recipes.css';
 import type { TabItem, TabProps, TabsProps } from './Tabs.types';
 
 /**
- * One tab of a Tabs: `title` and its icons in the tab list, and its children
- * the panel shown while it's active. It renders nothing itself.
+ * One tab of a Tabs: `title` and icons in the tab list, children as the
+ * panel shown while it's active. It renders nothing itself.
  *
  * @invalidAlternative [role="tab"], [role="tabpanel"]
  */
@@ -44,24 +44,10 @@ export const Tab = ({
   useConfigOrder(id);
 
   useStoreSync(() => {
-    store('setTab')(id, {
-      value,
-      title,
-      leftIcon,
-      rightIcon,
-      leftAddOn,
-      rightAddOn,
-      keepMounted,
-      state,
-      isDisabled,
-    });
+    store('setTab')(id, { value, title, keepMounted, state, isDisabled });
   }, [
     value,
     title,
-    leftIcon,
-    rightIcon,
-    leftAddOn,
-    rightAddOn,
     keepMounted,
     state.disabled,
     state.disabledWithReason,
@@ -69,10 +55,17 @@ export const Tab = ({
     state.loadingWithReason,
   ]);
 
-  // Apart from the tab, so a panel's change re-renders that panel alone.
+  // Elements are new every render: kept apart so only this tab's trigger and
+  // panel re-render. No deps: they'd always differ.
   useStoreSync(() => {
-    store('setTabContent')(id, children);
-  }, [id, children]);
+    store('setTabRenderables')(id, {
+      leftIcon,
+      rightIcon,
+      leftAddOn,
+      rightAddOn,
+      content: children,
+    });
+  });
 
   useLayoutEffect(() => () => store('removeTab')(id), [store, id]);
 
@@ -92,30 +85,43 @@ const TabsConfigProvider = ({ children }: { children: ReactNode }) => {
 
 /** Selects only its own panel's content, so other panels don't re-render. */
 const TabContent = ({ id }: { id: string }) =>
-  useTabsStore((state) => state.contentOf(id));
+  useTabsStore((state) => state.renderablesOf(id)?.content);
+
+// Radix builds ids from the value, which can hold spaces an id reference
+// can't: these come from the tab's own id.
+const triggerId = (tab: TabItem) => `${tab.id}-trigger`;
+const panelId = (tab: TabItem) => `${tab.id}-panel`;
 
 const TabTrigger = ({ tab }: { tab: TabItem }) => {
   const { value, title, state } = tab;
+  const renderables = useTabsStore((store) => store.renderablesOf(tab.id));
   const { isLoading, isFocusable } = useIsDisabled(state);
 
   const { leftSlot, rightSlot } = useIconAddon({
-    leftIcon: tab.leftIcon,
-    rightIcon: tab.rightIcon,
-    leftAddOn: tab.leftAddOn,
-    rightAddOn: tab.rightAddOn,
+    leftIcon: renderables?.leftIcon,
+    rightIcon: renderables?.rightIcon,
+    leftAddOn: renderables?.leftAddOn,
+    rightAddOn: renderables?.rightAddOn,
     loading: isLoading,
   });
 
   return (
-    // Radix's `disabled` takes a tab out of the arrow keys' reach: only one
-    // with no reason to show leaves it.
-    <TabsPrimitive.Trigger value={value} disabled={!isFocusable} asChild>
+    // Radix's `disabled` removes a tab from arrow-key reach: only a tab with
+    // no reason does that.
+    <TabsPrimitive.Trigger
+      value={value}
+      disabled={!isFocusable}
+      id={triggerId(tab)}
+      aria-controls={panelId(tab)}
+      asChild
+    >
       <PlainButton {...state} aria-busy={isLoading || undefined}>
         <span
           data-slot="trigger"
           className={classNames(
             tabTrigger,
             'inline-flex-row-gap-2.5 items-center',
+            'relative whitespace-nowrap cursor-pointer',
           )}
         >
           {leftSlot}
@@ -130,18 +136,20 @@ const TabTrigger = ({ tab }: { tab: TabItem }) => {
 const TabPanel = ({ tab, isActive }: { tab: TabItem; isActive: boolean }) => (
   <TabsPrimitive.Content
     value={tab.value}
+    id={panelId(tab)}
+    aria-labelledby={triggerId(tab)}
     forceMount={tab.keepMounted || undefined}
-    // Radix shows a kept panel; the class hides it too, since a display class
+    // Radix shows a kept panel; the class hides it too, as a display class
     // beats the attribute.
     hidden={!isActive}
-    // Not a tab stop: Tab goes from the tabs to what the panel holds. A panel
-    // with nothing to Tab to that scrolls takes a stop itself, its scroll
-    // area's.
+    // Not a tab stop: Tab goes from the tabs to the panel's content. A
+    // scrolling panel with nothing to Tab to gets its scroll area's stop.
     tabIndex={undefined}
     data-slot="panel"
     className={isActive ? 'flex-col-gap-0 flex-fill-y' : 'hidden'}
   >
-    <FlexScrollArea orientation="vertical">
+    {/* Named for when it takes focus to scroll. */}
+    <FlexScrollArea orientation="vertical" aria-labelledby={triggerId(tab)}>
       <div className="p-2">
         <TabContent id={tab.id} />
       </div>
@@ -154,6 +162,8 @@ const TabsView = <V extends string>({
   onTabChange,
   variant,
   className,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
 }: Omit<TabsProps<V>, 'children'>) => {
   const tabs = useTabsStore('tabs');
   const [selected, select] = useControlledValue(
@@ -175,21 +185,21 @@ const TabsView = <V extends string>({
       // `''` is no tab: `undefined` would let Radix keep a value of its own.
       value={active?.value ?? ''}
       onValueChange={(value) => {
-        // Radix activates on press and on focus, and a disabled tab with a
-        // reason stays focusable.
+        // Radix activates on press and focus; a disabled tab with a reason
+        // stays focusable.
         const tab = tabs.find((entry) => entry.value === value);
         // Tab children can't be typed by their Tabs, so values are taken as V.
         if (tab && !tab.isDisabled) select(value as V);
       }}
       className={classNames(rootClassName, 'flex-col-gap-5', className)}
     >
-      {/* Tabs that don't fit the width scroll sideways. */}
       <ScrollArea orientation="horizontal">
         <TabsPrimitive.List
           data-slot="list"
-          // Radix focuses a pressed tab by script, which a browser can show
-          // as keyboard focus: the ring shows only while the keyboard is in
-          // use.
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          // Radix focuses a pressed tab by script, which a browser may show as
+          // keyboard focus: show the ring only while the keyboard is in use.
           onPointerDown={(event) => {
             event.currentTarget.dataset.pointer = '';
           }}
@@ -218,7 +228,7 @@ const TabsView = <V extends string>({
 /**
  * Views of one subject that share a place on the page, one shown at a time:
  * a session's details, speakers and feedback. Its `Tab` children are the
- * tabs, each with its panel. Going to another page is a Link, not a tab.
+ * tabs, each with its panel. Another page is a Link, not a tab.
  *
  * @invalidAlternative [role="tablist"]
  * @invalidAlternative import('@radix-ui/react-tabs')

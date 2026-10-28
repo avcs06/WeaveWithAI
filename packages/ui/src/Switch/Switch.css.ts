@@ -25,7 +25,6 @@ export const switchTrack = style({
   borderRadius: tokens.radius.full,
   background: colors.skeleton,
   outline: 'none',
-  cursor: 'pointer',
   transition: `background-color ${transition}, box-shadow ${transition}`,
   selectors: {
     [`&${enabled}:hover`]: { background: colors.border },

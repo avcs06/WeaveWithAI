@@ -5,15 +5,10 @@ import { createDesignSystem } from '../model/design-system.js';
 import { createServer } from './server.js';
 
 /**
- * Serves a resolved config over stdio. The design system is loaded once,
- * here, before `serveStdio` starts — not inside the server factory, since
- * `serveStdio` may construct more than one `McpServer` instance over a
- * connection's lifetime (it pins one per protocol era) and re-parsing every
- * source file per instance would be wasted work; every instance shares this
- * one already-loaded `DesignSystem`.
- *
- * Nothing may be written to stdout except protocol traffic, so all logging
- * goes to stderr.
+ * Serves a resolved config over stdio. The design system loads once here, not
+ * in the server factory: `serveStdio` may build several `McpServer` instances
+ * per connection (one per protocol era) sharing it. Only protocol traffic may
+ * go to stdout; log to stderr.
  */
 export function serveWorkspace(config: ResolvedConfig): void {
   const system = createDesignSystem(config);

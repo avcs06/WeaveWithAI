@@ -4,10 +4,10 @@ import { useLayoutEffect } from 'react';
 import type { Constant } from '@packages/utils/types';
 
 /**
- * A text field's shown text and its change handler. Without `delay`, the
- * field shows `value`, so a change the parent ignores isn't shown. With one,
- * the text shows at once and `onChange` waits for a pause in typing; `flush`
- * sends a waiting edit, and unmounting does too.
+ * A text field's shown text and change handler. Without `delay`, the field
+ * shows `value`, so a change the parent ignores isn't shown. With one, the
+ * text shows at once and `onChange` waits for a pause in typing; `flush`
+ * and unmounting send a waiting edit.
  */
 export const useFieldText = <D extends number = never>(
   value: string,

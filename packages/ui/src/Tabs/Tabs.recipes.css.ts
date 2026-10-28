@@ -5,7 +5,7 @@ import { focus, underline } from './Tabs.css';
 
 const colors = tokens.color;
 
-// Neutral text: only the active tab's underline and the focus ring show the
+// Neutral text: only the active underline and the focus ring show the
 // variant.
 export const tabsRecipe = recipe({
   variants: {

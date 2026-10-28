@@ -4,11 +4,12 @@ import { classNames } from '@packages/styles/classNames';
 import { useControlledValue } from '@packages/utils/hooks';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import React from 'react';
+import React, { useId, useRef } from 'react';
 
 import { IconButton } from '../Button';
 import { FlexScrollArea } from '../ScrollArea';
-import { hasContent } from '../utils';
+import { Truncate } from '../Truncate';
+import { hasContent, tabbable, useIconAddon } from '../utils';
 
 import {
   dialogBody,
@@ -33,7 +34,12 @@ import type { DialogProps } from './Dialog.types';
  */
 export const Dialog = ({
   title,
+  leftIcon,
+  rightIcon,
+  leftAddOn,
+  rightAddOn,
   description,
+  headerAction,
   children,
   footer,
   trigger,
@@ -45,11 +51,19 @@ export const Dialog = ({
   className,
 }: DialogProps) => {
   const [isOpen, setOpen] = useControlledValue(open, defaultOpen, onOpenChange);
+  const titleId = useId();
+  const openerRef = useRef<HTMLElement | null>(null);
   const close = () => setOpen(false);
-  // Escape and a press outside close a closable dialog only.
   const blockUnlessClosable = (event: Event) => {
     if (!closable) event.preventDefault();
   };
+
+  const { leftSlot, rightSlot } = useIconAddon({
+    leftIcon,
+    rightIcon,
+    leftAddOn,
+    rightAddOn,
+  });
 
   const hasDescription = hasContent(description);
   const footerContent = typeof footer === 'function' ? footer(close) : footer;
@@ -63,22 +77,54 @@ export const Dialog = ({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           data-slot="overlay"
-          className={dialogOverlay}
+          className={classNames(dialogOverlay, 'fixed inset-0')}
         />
         <DialogPrimitive.Content
-          // Without a description, nothing describes it.
+          // Radix points to a description even when there's none.
           {...(hasDescription ? {} : { 'aria-describedby': undefined })}
           onEscapeKeyDown={blockUnlessClosable}
           onInteractOutside={blockUnlessClosable}
-          className={classNames(surfaceClassName, 'flex-col-gap-0', className)}
+          // Radix refocuses only its own trigger: back to whatever opened it.
+          onOpenAutoFocus={(event) => {
+            openerRef.current =
+              document.activeElement instanceof HTMLElement
+                ? document.activeElement
+                : null;
+            // The body's first control, not the header's close button; with
+            // none, the dialog itself, which reads its name.
+            event.preventDefault();
+            const dialog = event.currentTarget as HTMLElement;
+            const body = dialog.querySelector('[data-slot="body-content"]');
+            (body?.querySelector<HTMLElement>(tabbable) ?? dialog).focus();
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            openerRef.current?.focus();
+          }}
+          className={classNames(
+            surfaceClassName,
+            'flex-col-gap-0',
+            'fixed inset-0 h-fit',
+            className,
+          )}
         >
           <div
             data-slot="header"
             className={classNames(dialogHeader, 'flex-row-gap-4 items-start')}
           >
             <div className="flex-col-gap-1 flex-fill-x">
-              <DialogPrimitive.Title className={dialogTitle}>
-                {title}
+              <DialogPrimitive.Title
+                className={classNames(
+                  dialogTitle,
+                  'flex-row-gap-2 items-center',
+                )}
+              >
+                {leftSlot}
+                {/* Its id names the body; Radix keeps the title's own. */}
+                <Truncate id={titleId} className="min-w-0">
+                  {title}
+                </Truncate>
+                {rightSlot}
               </DialogPrimitive.Title>
               {hasDescription && (
                 <DialogPrimitive.Description className={dialogDescription}>
@@ -86,21 +132,34 @@ export const Dialog = ({
                 </DialogPrimitive.Description>
               )}
             </div>
-            {closable && (
-              <DialogPrimitive.Close asChild>
-                <IconButton
-                  tooltip="Close"
-                  size="xs"
-                  variant="base"
-                  look="ghost rounded"
-                >
-                  <X />
-                </IconButton>
-              </DialogPrimitive.Close>
+            {(hasContent(headerAction) || closable) && (
+              <div
+                data-slot="header-actions"
+                className="flex-row-gap-2 items-center shrink-0"
+              >
+                {headerAction}
+                {closable && (
+                  <DialogPrimitive.Close asChild>
+                    <IconButton
+                      tooltip="Close"
+                      size="xs"
+                      variant="base"
+                      look="ghost rounded"
+                    >
+                      <X />
+                    </IconButton>
+                  </DialogPrimitive.Close>
+                )}
+              </div>
             )}
           </div>
           {hasContent(children) && (
-            <FlexScrollArea orientation="vertical" data-slot="body">
+            <FlexScrollArea
+              orientation="vertical"
+              // Named for when it takes focus to scroll.
+              aria-labelledby={titleId}
+              data-slot="body"
+            >
               <div data-slot="body-content" className={dialogBody}>
                 {children}
               </div>

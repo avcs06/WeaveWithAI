@@ -159,13 +159,10 @@ function tagName(name: JSXOpeningElement['name']): string | undefined {
 }
 
 /**
- * Runs `fileRules` on the whole file, then walks it once: every runtime import, re-export, `require()` and
- * `import()` through `importRules`, every
- * JSX opening tag (self-closing or not — Babel represents both as
- * `JSXOpeningElement`) through `elementRules`. An inline `style` prop goes
- * to the styles adapter (`style={{}}` is a React feature, not tied to any
- * styling system) and `className` to the className adapter — never to a
- * sibling adapter's internals.
+ * Runs `fileRules` on the whole file, then walks it once: runtime imports,
+ * re-exports, `require()` and `import()` through `importRules`, JSX opening
+ * tags through `elementRules`. Inline `style` goes to the styles adapter and
+ * `className` to the className adapter, never to their internals.
  */
 export function validateJsx(
   ast: File,

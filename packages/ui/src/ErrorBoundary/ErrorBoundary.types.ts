@@ -10,9 +10,8 @@ export type ErrorBoundaryProps = {
   children: ReactNode;
   /**
    * Shown in place of `children` once something below throws, inside an
-   * alert; `null` renders nothing. Without it, the boundary shows
-   * "Something went wrong." and a "Try again" button. A function gets the
-   * `error` and a `reset`.
+   * alert; `null` renders nothing. Default: "Something went wrong." and a
+   * "Try again" button. A function gets `error` and `reset`.
    */
   fallback?: ReactNode | ((props: ErrorBoundaryFallbackProps) => ReactNode);
   /** While failed, a change in any of these renders `children` again. */

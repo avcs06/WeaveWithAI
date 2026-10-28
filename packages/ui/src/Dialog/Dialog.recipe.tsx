@@ -1,16 +1,15 @@
 /**
  * Dialog: a task over the page that waits until it's done or dismissed, like
- * editing a session. `title` names it, its children are the body, and
- * `footer` holds the actions: nodes, or a function given `close`.
+ * editing a session. `title` names it, children are the body, `footer` holds
+ * the actions: nodes, or a function given `close`.
  * openConfirmationDialog: a yes-or-no question, like confirming a delete,
- * awaited from any code. It resolves with the result the pressed button
- * sends.
+ * awaited from any code; resolves with the result the pressed button sends.
  *
  * When not to use:
  * - A quick edit or details tied to one control, with the page still usable:
  *   Popover.
- * - A question that only needs yes or no: openConfirmationDialog, not a
- *   Dialog with two buttons.
+ * - A yes-or-no question: openConfirmationDialog, not a Dialog with two
+ *   buttons.
  * - A long flow, or anything worth linking to: a page of its own.
  *
  * Pitfalls:
@@ -20,8 +19,8 @@
  *   the footer must offer a way out.
  * - A form in the body: the footer sits outside it, so its submit button
  *   takes `form` with the form's `id`.
- * - openConfirmationDialog resolves `undefined` when it can't ask: on the
- *   server, or when the dialog fails to render. Treat it as not confirmed.
+ * - openConfirmationDialog resolves `undefined` when it can't ask (on the
+ *   server, or the dialog fails to render): treat it as not confirmed.
  * - Only the footer closes a confirmation, and only the first `closeDialog`
  *   counts: every button must call it.
  * - A confirmation renders in its own React root: your app's context doesn't
@@ -35,6 +34,8 @@ import {
 } from '@packages/ui/Dialog';
 import { Controller } from '@packages/ui/Form';
 import { Input } from '@packages/ui/Input';
+import { Tag } from '@packages/ui/Tag';
+import { Pencil } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -54,7 +55,7 @@ const saveSession = (title: string) =>
 // Usage: the patterns to copy.
 /**
  * Uncontrolled: `trigger` opens it. `footer` as a function gets `close`, for
- * Cancel and for after the save.
+ * Cancel and after the save. `leftIcon` sits before the title.
  */
 const EditSession = () => {
   const [title, setTitle] = useState('Opening keynote');
@@ -62,6 +63,7 @@ const EditSession = () => {
   return (
     <Dialog
       title="Edit session"
+      leftIcon={<Pencil />}
       description="Attendees see the change at once."
       trigger={<Button variant="base">Edit session</Button>}
       footer={(close) => (
@@ -85,9 +87,9 @@ const EditSession = () => {
 
 /**
  * Controlled: something other than a trigger opens it, like a row's action.
- * The footer's nodes close it through `onOpenChange`'s state. The form's
- * submit button sits in the footer, outside the form: `form` connects them,
- * and a valid submit closes the dialog.
+ * The footer's nodes close it through `onOpenChange`'s state. The submit
+ * button sits outside the form, in the footer: `form` connects them, and a
+ * valid submit closes the dialog.
  */
 const InviteSpeaker = () => {
   const [open, setOpen] = useState(false);
@@ -159,12 +161,19 @@ const CodeOfConduct = () => (
 );
 
 /**
- * A long body scrolls between the header and the footer, which stay put;
- * `size="lg"` gives a wide one room.
+ * A long body scrolls between the fixed header and footer; `size="lg"` gives
+ * a wide one room. `rightAddOn` follows the title, here a session count.
+ * `headerAction` is the dialog's own action, before the close button.
  */
 const FullAgenda = () => (
   <Dialog
     title="Day one agenda"
+    rightAddOn={<Tag size="xs">{agenda.length}</Tag>}
+    headerAction={
+      <Button size="sm" variant="base">
+        Add session
+      </Button>
+    }
     size="lg"
     trigger={<Button variant="base">See the agenda</Button>}
     footer={(close) => <Button onClick={close}>Done</Button>}

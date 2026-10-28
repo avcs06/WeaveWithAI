@@ -45,9 +45,8 @@ type CheckboxOwnProps = CheckboxRecipeVariants &
 type CheckboxStateProps =
   | {
       /**
-       * Whether the box is checked: yours to hold in state, with
-       * `onCheckedChange`. `'indeterminate'` for a parent whose children are
-       * partly checked.
+       * Checked state, yours to hold with `onCheckedChange`; `'indeterminate'`
+       * for a parent with partly checked children.
        */
       checked: CheckedState;
       /** A click on an indeterminate box checks it. */

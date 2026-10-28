@@ -464,8 +464,8 @@ describe('CheckboxGroup', () => {
     expect(group()).toHaveAccessibleDescription(
       'Pick at least one channel Schedule changes and your check-in code',
     );
-    // A plain group carries no aria-required or aria-invalid of its own:
-    // its mark is on the label, and its message is its description.
+    // A plain group has no aria-required or aria-invalid: its mark is on the
+    // label, its message is its description.
     expect(group()).not.toHaveAttribute('aria-required');
     expect(group()).not.toHaveAttribute('aria-invalid');
     expect(await axe(container)).toHaveNoViolations();
@@ -736,8 +736,8 @@ describe('CheckboxGroup', () => {
     expect(group()).toHaveAccessibleDescription(
       'Pick at least one channel Schedule changes and your check-in code',
     );
-    // The failed submit lands focus on the group, which reads its name
-    // and message; Tab then goes to the boxes.
+    // The failed submit focuses the group, which reads its name and message;
+    // Tab then goes to the boxes.
     expect(group()).toHaveFocus();
     expect(await axe(container)).toHaveNoViolations();
 

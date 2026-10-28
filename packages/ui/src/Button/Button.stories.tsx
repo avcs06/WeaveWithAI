@@ -30,8 +30,8 @@ export default meta;
 // The page renders its own buttons, so the story takes no args.
 type Story = StoryObj;
 
-// Stands in for a link component like Next.js's `Link`, which doesn't load in
-// Storybook. Link handles `disabled` by dropping its `href`.
+// Stands in for Next.js's `Link`, which doesn't load in Storybook; drops `href`
+// when `disabled`.
 const StoryLink = (props: Extract<LinkProps, { href: string }>) => (
   <Link {...props} />
 );

@@ -8,11 +8,10 @@ import { axe, renderUI } from '../test-utils';
 import { Menu, MenuGroup, MenuItem, MenuLabel, MenuSeparator } from './Menu';
 
 // jsdom has no layout: give the label's text and box widths so the row can
-// tell whether its label is cut. `useTruncation` reads the box width only
-// from the ResizeObserver entry's `contentRect` (the content box, so padding
-// is already out of it), and the shared observer is created once for the
-// whole module: the mock must be in place before the first render and read
-// the current sizes on every observation.
+// tell whether its label is cut. `useTruncation` reads the box width only from
+// the ResizeObserver entry's `contentRect` (padding already out), and the
+// shared observer is created once per module: the mock must be in place before
+// the first render and read the current sizes on every observation.
 const sizes = { text: 0, box: 0 };
 
 const contentWidthFor = (element: Element) => {
@@ -60,8 +59,8 @@ const layout = (textWidth: number, boxWidth: number) => {
 // The ResizeObserver stub reports the first size in a microtask.
 const measured = () => act(async () => undefined);
 
-// The shown tooltip is `aria-hidden` (the trigger's description says it for
-// screen readers), so role queries must include hidden elements.
+// The shown tooltip is `aria-hidden` (the trigger's description says it), so
+// role queries must include hidden elements.
 const findTooltip = () => screen.findByRole('tooltip', { hidden: true });
 const queryTooltip = () => screen.queryByRole('tooltip', { hidden: true });
 
@@ -161,7 +160,7 @@ describe('Menu', () => {
     expect(shell).not.toHaveAttribute('role');
     expect(shell).not.toHaveAttribute('id', 'countries');
     expect(shell).not.toHaveAttribute('aria-busy');
-    // A menu can't hold a field: the search sits above, the list holds only rows.
+    // A menu can't hold a field: the search sits above, the list holds rows.
     const listbox = screen.getByRole('listbox', { name: 'Countries' });
     expect(listbox).toHaveAttribute('id', 'countries');
     expect(listbox).toHaveAttribute('aria-busy', 'true');
@@ -374,7 +373,6 @@ describe('Menu', () => {
       expect(unticked.querySelector('svg')).toBeNull();
       // No checked state to show: no box at all.
       expect(slot(bolivia, 'checkbox')).toBeNull();
-      // The state reaches assistive tech through the row, not the box.
       expect(chile).toHaveAttribute('aria-selected', 'true');
       expect(await axe(container)).toHaveNoViolations();
     });
@@ -445,7 +443,9 @@ describe('Menu', () => {
           </MenuItem>
         </>,
       );
-      expect(container.querySelectorAll('[data-slot="add-on"]')).toHaveLength(0);
+      expect(container.querySelectorAll('[data-slot="add-on"]')).toHaveLength(
+        0,
+      );
       expect(container.querySelectorAll('[data-slot="icon"]')).toHaveLength(2);
     });
 
@@ -493,7 +493,6 @@ describe('Menu', () => {
         expect(row).not.toHaveAttribute('tabindex');
       await userEvent.tab();
       expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus();
-      // No roving tabindex or arrow handling here: a Dropdown brings those.
       await userEvent.keyboard('{ArrowDown}');
       expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus();
       await userEvent.tab();
@@ -553,8 +552,7 @@ describe('Menu', () => {
       );
       await measured();
       const row = item(container);
-      // Screen readers hear the reason, not the cut label repeated: the
-      // row's own text already says it.
+      // Screen readers hear the reason, not the cut label repeated.
       expect(row).toHaveAccessibleDescription('Only owners can rename');
       await userEvent.hover(screen.getByText(/Rename the quarterly/));
       expect(await tooltipEntries()).toEqual([
@@ -594,10 +592,8 @@ describe('Menu', () => {
       await userEvent.keyboard('{Escape}');
       expect(queryTooltip()).toBeNull();
       await userEvent.hover(screen.getByText('Duplicate'));
-      // Radix opens after a timer: wait past it before asserting nothing opened.
-      await act(
-        () => new Promise((resolve) => setTimeout(resolve, 50)),
-      );
+      // Radix opens after a timer: wait past it to assert nothing opened.
+      await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
       expect(queryTooltip()).toBeNull();
     });
 
@@ -666,5 +662,3 @@ describe('Menu', () => {
     });
   });
 });
-
-

@@ -29,7 +29,7 @@ export const controlIconSize = createVar('controlIconSize');
 export const controlBox = style({
   paddingBlock: controlPaddingY,
   paddingInline: controlPaddingX,
-  // One text size at every size: `size` changes the box, not the font.
+  // `size` changes the box, not the font.
   fontSize: tokens.fontSize.body,
   lineHeight: controlLineHeight,
   color: colors.base.fg,
@@ -57,7 +57,7 @@ globalStyle(`${controlBox} > [data-slot='icon-box'] > [data-slot='icon']`, {
   height: controlIconSize,
 });
 
-// The control fills the box's padding area, so a press anywhere lands in it;
+// The control fills the box's padding area so a press anywhere lands in it;
 // beside an icon or add-on, the box's gap is the only space.
 globalStyle(`${controlBox} > [data-slot='control']`, {
   marginBlock: `calc(-1 * ${controlPaddingY})`,
@@ -100,7 +100,6 @@ export const requiredMark = style({
 });
 
 export const hintButton = style({
-  padding: 0,
   border: 'none',
   borderRadius: tokens.radius.full,
   color: colors.base.fgMuted,
@@ -117,8 +116,8 @@ globalStyle(`${hintButton} > [data-slot='icon']`, {
 });
 
 /**
- * A checkbox or radio with its label to the right: the label reads as body
- * text, 6px from the box, and pressing it toggles the box.
+ * A checkbox or radio with its label to the right: body text, 6px from the box;
+ * pressing it toggles the box.
  */
 export const controlChoice = style({});
 
@@ -155,8 +154,8 @@ export const controlMessage = style({
   color: colors.base.fgMuted,
   selectors: {
     ...byStatus((status) => ({ color: colors[status].fgMuted })),
-    // The message's live region stays on the page while empty, so a message
-    // that appears is announced; out of the flow, it adds no gap.
+    // The message's live region stays on the page while empty so a new message
+    // is announced; out of the flow, it adds no gap.
     '&:empty': { position: 'absolute' },
   },
 });

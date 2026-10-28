@@ -86,6 +86,81 @@ describe('Dialog', () => {
     expect(button('Edit')).toHaveFocus();
   });
 
+  it('returns focus to what opened it when that isn’t its trigger', async () => {
+    const Opener = () => {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button onClick={() => setOpen(true)}>Invite</button>
+          <Dialog
+            title="Invite a speaker"
+            open={open}
+            onOpenChange={setOpen}
+            footer={(close) => <Button onClick={close}>Cancel</Button>}
+          />
+        </>
+      );
+    };
+    renderUI(<Opener />);
+    await userEvent.click(button('Invite'));
+    await userEvent.click(button('Cancel'));
+    await waitFor(() => expect(button('Invite')).toHaveFocus());
+  });
+
+  it('names its body by the title, for when it scrolls and takes focus', async () => {
+    renderUI(<EditSession />);
+    await userEvent.click(button('Edit'));
+    expect(
+      screen.getByRole('region', { name: 'Edit session' }),
+    ).toHaveTextContent('Opening keynote, Hall A.');
+  });
+
+  it('draws title icons as decoration; an add-on joins the dialog’s name, not the body’s', async () => {
+    renderUI(
+      <EditSession
+        leftIcon={<svg data-testid="pencil" />}
+        rightAddOn={<span>Draft</span>}
+      />,
+    );
+    await userEvent.click(button('Edit'));
+    expect(
+      screen.getByTestId('pencil').closest('[data-slot="icon"]'),
+    ).toHaveAttribute('aria-hidden', 'true');
+    expect(dialog('Edit session Draft')).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Edit session' }),
+    ).toBeInTheDocument();
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
+
+  it('a header action sits in the header, outside the dialog’s name', async () => {
+    const onInvite = jest.fn();
+    renderUI(
+      <EditSession headerAction={<Button onClick={onInvite}>Invite</Button>} />,
+    );
+    await userEvent.click(button('Edit'));
+    const header = dialog('Edit session').querySelector('[data-slot="header"]');
+    expect(header).toContainElement(button('Invite'));
+    await userEvent.click(button('Invite'));
+    expect(onInvite).toHaveBeenCalledTimes(1);
+    expect(dialog('Edit session')).toBeInTheDocument();
+  });
+
+  it('opens with focus on the body’s first control, else on the dialog', async () => {
+    renderUI(
+      <Dialog title="Move session" trigger={<Button>Move</Button>}>
+        <button>Change hall</button>
+      </Dialog>,
+    );
+    await userEvent.click(button('Move'));
+    expect(button('Change hall')).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+
+    renderUI(<EditSession />);
+    await userEvent.click(button('Edit'));
+    expect(dialog('Edit session')).toHaveFocus();
+  });
+
   it('keeps focus inside while open', async () => {
     renderUI(
       <>
@@ -245,6 +320,32 @@ describe('openConfirmationDialog', () => {
     await waitFor(() => expect(document.body).toBeEmptyDOMElement());
   });
 
+  it('shares the page’s tooltip, so only one shows', async () => {
+    renderUI(<Button tooltip="Sends it to everyone">Publish</Button>);
+    await userEvent.hover(button('Publish'));
+    await screen.findByRole('tooltip', { hidden: true });
+
+    const result = ask({
+      footer: (closeDialog) => (
+        <Button
+          tooltip="Removes it for good"
+          onClick={() => closeDialog(DialogResult.confirm)}
+        >
+          Delete
+        </Button>
+      ),
+    });
+    await userEvent.hover(
+      await screen.findByRole('button', { name: 'Delete' }),
+    );
+    const tooltips = screen.getAllByRole('tooltip', { hidden: true });
+    expect(tooltips).toHaveLength(1);
+    expect(tooltips[0]).toHaveTextContent('Removes it for good');
+
+    await userEvent.click(button('Delete'));
+    await result;
+  });
+
   it('resolves cancel from the other button', async () => {
     const result = ask();
     await userEvent.click(await screen.findByRole('button', { name: 'Keep' }));
@@ -315,7 +416,6 @@ describe('openConfirmationDialog', () => {
     for (const portalled of [true, false]) {
       const result = ask({ portalled });
       const alert = await screen.findByRole('alertdialog');
-      // Portalled, it's placed in the body; otherwise in its own element.
       if (portalled) expect(alert.parentElement).toBe(document.body);
       else expect(alert.parentElement?.parentElement).toBe(document.body);
       await userEvent.click(button('Keep'));

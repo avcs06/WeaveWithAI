@@ -1,26 +1,27 @@
 /**
- * Textarea: a multi-line text field, like an event's description or a note
- * to attendees. `onChange` gets the text, not an event. With `delay`, the
- * text shows at once and `onChange` waits for a pause in typing. It shows 3
- * lines by default (`rows`), and the user can drag it taller. In a `useForm`
- * form, it renders through `Controller`, and `{...field}` gives it its name,
- * value, `onChange`, `required` mark, `error` and focus on a failed submit.
+ * Textarea: a multi-line text field, like an event's description or a note to
+ * attendees. `onChange` gets the text, not an event. With `delay`, the text
+ * shows at once and `onChange` waits for a pause in typing. It shows 3 lines by
+ * default (`rows`); the user can drag it taller. In a `useForm` form, it
+ * renders through `Controller`, and `{...field}` gives it its name, value,
+ * `onChange`, `required` mark, `error` and focus on a failed submit.
  *
  * When not to use:
  * - One line of text, like a title or an email: Input.
  *
  * Pitfalls:
- * - Every field needs a name: `label`, or `aria-label` / `aria-labelledby`.
- *   A placeholder is not a name.
+ * - Every field needs a name: `label`, `aria-label` or `aria-labelledby`. A
+ *   placeholder is not a name.
  * - Enter adds a line; it doesn't submit the form.
  * - In a form, set `required` and a length limit through the `rules` of
  *   `Controller`, so the field shows the message.
- * - Don't put a live counter in `helpText`: it announces on every key. Put
- *   it in `labelRightSlot`.
+ * - Don't put a live counter in `helpText`: it announces on every key. Use
+ *   `labelRightSlot`.
  * - It takes no icons or add-ons.
  */
 import { Button } from '@packages/ui/Button';
 import { Controller } from '@packages/ui/Form';
+import { Section } from '@packages/ui/Section';
 import { Textarea } from '@packages/ui/Textarea';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -40,8 +41,8 @@ const MAX_PRINTED = 280;
 type EventDetails = { description: string };
 
 /**
- * In a form: required, with a length limit from `rules`. The counter sits
- * in `labelRightSlot`, and `helpText` says what's asked.
+ * In a form: required, with a length limit from `rules`. The counter sits in
+ * `labelRightSlot`; `helpText` says what's asked.
  */
 const DescriptionForm = () => {
   const [status, setStatus] = useState('');
@@ -89,8 +90,8 @@ const DescriptionForm = () => {
 
 /**
  * Saved as the user types: `delay` holds `onChange` until typing pauses for
- * 800ms, while the text shows at once. Leaving the field sends a waiting
- * edit at once.
+ * 800ms; the text shows at once. Leaving the field sends a waiting edit at
+ * once.
  */
 const OrganizerNotes = () => {
   const [notes, setNotes] = useState('');
@@ -116,8 +117,8 @@ const OrganizerNotes = () => {
 };
 
 /**
- * A longer message: `rows={6}` shows more of it at once, `hint` explains the
- * field in a tooltip and `placeholder` shows an example.
+ * A longer message: `rows={6}` shows more at once, `hint` explains the field in
+ * a tooltip, `placeholder` shows an example.
  */
 const AttendeeMessage = () => {
   const [message, setMessage] = useState('');
@@ -136,15 +137,14 @@ const AttendeeMessage = () => {
 };
 
 /**
- * No visible label, beside a heading that asks the question: `aria-label`
- * names it. `size="md"` and `variant="base"` suit a calmer, larger field.
+ * No visible label, beside a heading that asks the question: `aria-label` names
+ * it. `size="md"` and `variant="base"` suit a calmer, larger field.
  */
 const ReplyBox = () => {
   const [reply, setReply] = useState('');
 
   return (
-    <section className="flex-col-gap-2 w-full">
-      <h3>Reply to Grace Hopper</h3>
+    <Section title="Reply to Grace Hopper" className="w-full">
       <Textarea
         aria-label="Your reply"
         size="md"
@@ -152,14 +152,14 @@ const ReplyBox = () => {
         value={reply}
         onChange={setReply}
       />
-    </section>
+    </Section>
   );
 };
 
 /**
  * States: `readOnlyWithReason` keeps the text readable and copyable and says
- * why it can't change; `disabledWithReason` says why it's off; `warning`
- * flags text that is allowed but worth a second look.
+ * why it can't change; `disabledWithReason` says why it's off; `warning` flags
+ * allowed text worth a second look.
  */
 const TextareaStates = () => {
   const [summary, setSummary] = useState('');

@@ -11,8 +11,6 @@ export const glyphBg = createVar('dialogGlyphBg');
 export const glyphFg = createVar('dialogGlyphFg');
 
 export const dialogOverlay = style({
-  position: 'fixed',
-  inset: 0,
   zIndex: tokens.zIndex.modal,
   background: colors.backdrop,
   opacity: 0.5,
@@ -20,13 +18,9 @@ export const dialogOverlay = style({
 
 /** The surface: centered, and docked to the bottom on phones. */
 export const dialogSurface = style({
-  position: 'fixed',
   zIndex: tokens.zIndex.modal,
-  // Centered by its auto margins, at its own width and height.
-  inset: 0,
   margin: 'auto',
   width: `min(${dialogWidth}, calc(100vw - ${spacing[8]}))`,
-  height: 'fit-content',
   maxHeight: `calc(100dvh - ${spacing[8]})`,
   borderRadius: tokens.radius.surface,
   color: colors.fg,
@@ -58,6 +52,11 @@ export const dialogTitle = style({
   color: colors.fg,
 });
 
+globalStyle(`${dialogTitle} > [data-slot='icon']`, {
+  width: tokens.iconSize.subheading,
+  height: tokens.iconSize.subheading,
+});
+
 export const dialogDescription = style({
   fontSize: tokens.fontSize.body,
   lineHeight: tokens.lineHeight.body,
@@ -82,8 +81,8 @@ export const dialogFooter = style({
   '@media': {
     [phone]: {
       selectors: {
-        // Two classes, above the row its layout class sets. Reversed, so the
-        // main action, last in the row, is on top.
+        // Two classes outrank the row's layout class. Reversed so the main
+        // action, last in the row, is on top.
         '&&': { flexDirection: 'column-reverse', alignItems: 'stretch' },
       },
     },
@@ -94,8 +93,8 @@ globalStyle(`${dialogFooter}${dialogFooter} > * > *`, {
   '@media': { [phone]: { textAlign: 'center' } },
 });
 
-// The body's scrollbar mounts only while it overflows: then lines set the
-// header and footer apart from the scrolling text.
+// The body's scrollbar mounts only while it overflows: lines then set off the
+// header and footer.
 const scrolling = `${dialogSurface}:has(> [data-slot="body"] > [data-slot="scrollbar"][data-orientation="vertical"])`;
 
 globalStyle(`${scrolling} > [data-slot="header"]`, {

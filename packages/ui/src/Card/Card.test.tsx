@@ -12,8 +12,8 @@ import { cardRecipe } from './Card.recipes.css';
 
 const { variants } = cardRecipe.classNames;
 
-// The shown tooltip is aria-hidden: the trigger's description says the same
-// thing to screen readers, so role queries need `hidden`.
+// The shown tooltip is aria-hidden; the trigger's description says the same, so
+// role queries need `hidden`.
 const tooltipEntries = async () => {
   await screen.findByRole('tooltip', { hidden: true });
   return Array.from(
@@ -22,9 +22,9 @@ const tooltipEntries = async () => {
   );
 };
 
-// Radix moves radio focus on a timer and selects the item it lands on only
-// while the arrow key is still down, as it is for a person pressing it, so
-// hold the key until focus arrives, then release it.
+// Radix moves radio focus on a timer and selects the landing item only while
+// the arrow key is down, as for a person: hold the key until focus arrives,
+// then release it.
 const arrowTo = async (
   user: ReturnType<typeof userEvent.setup>,
   key: string,
@@ -517,8 +517,8 @@ describe('CardGroup', () => {
     );
     expect(sponsored).toHaveAccessibleDescription('Sponsors are invited');
 
-    // The group is still one tab stop, and the arrows still move through it
-    // so each reason can be read; nothing can be picked.
+    // Still one tab stop, and arrows move through it so each reason can be
+    // read; nothing can be picked.
     await user.tab();
     expect(full).toHaveFocus();
     await arrowTo(user, 'ArrowRight', installments);

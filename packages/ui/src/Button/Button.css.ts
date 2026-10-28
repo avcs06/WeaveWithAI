@@ -70,7 +70,3 @@ globalStyle(
     height: buttonIconSize,
   },
 );
-
-export const buttonLabel = style({
-  textAlign: 'left',
-});

@@ -8,9 +8,9 @@ import { useFieldText } from '../utils';
 import type { BareInputProps, InputBaseProps, InputProps } from './Input.types';
 
 /**
- * Input's text field alone, with no label, box or message, for a control
- * that draws its own field around it, like Select's search. With `delay`,
- * the text shows at once and `onChange` waits for a pause in typing.
+ * Input's bare text field, with no label, box or message, for a control that
+ * draws its own field around it, like Select's search. With `delay`, the text
+ * shows at once and `onChange` waits for a pause in typing.
  *
  * @internal
  */
@@ -29,8 +29,8 @@ export const BareInput = <D extends number = never>({
       {...props}
       value={text}
       onChange={(event) => setText(event.target.value)}
-      // A waiting edit is sent first, so the caller's handler, a click that
-      // moved focus, or Enter's submit reads it.
+      // Flush first so the caller's handler, a focus-moving click or Enter's
+      // submit sees it.
       onBlur={(event) => {
         flush();
         onBlur?.(event);
@@ -62,8 +62,7 @@ export const InputBase = <D extends number = never>({
           value={value}
           onChange={onChange}
           delay={delay}
-          // Native `disabled` would block the box's tooltip, so a disabled
-          // field is read-only instead.
+          // Native `disabled` would block the box's tooltip; read-only instead.
           readOnly={isDisabled}
           className="flex-fill-x"
         />
@@ -73,8 +72,8 @@ export const InputBase = <D extends number = never>({
 };
 
 /**
- * A single-line text field: names, emails, phone numbers, links, titles. In
- * a form, wire it through `Controller`; `delay` saves as the user types.
+ * A single-line text field: names, emails, phones, links, titles. In a form,
+ * wire it through `Controller`; `delay` saves as the user types.
  *
  * @invalidAlternative input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="url"]
  * @invalidAlternative [role="textbox"]:not([aria-multiline])

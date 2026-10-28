@@ -16,7 +16,6 @@ export const SelectAllCell = memo(({ rows, rowKey }: SelectAllCellProps) => {
   const { store } = useGetTableStore();
   const selection = useTableStore('selectionConfig');
 
-  // Toggles every selectable, enabled row; disabled rows keep their state.
   const scopeKeys = useMemo(
     () =>
       rows

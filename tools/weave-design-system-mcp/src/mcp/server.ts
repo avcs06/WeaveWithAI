@@ -22,13 +22,10 @@ function text(value: string) {
 }
 
 /**
- * Builds an MCP server wired to an already-loaded `DesignSystem`. The
- * server itself is thin on purpose: every handler below is one line of
- * calling the model and formatting the result as tool content — anything
- * more than that belongs in `model/`, not here. `system` is loaded once at
- * startup (see `stdio.ts`) and shared by every call; `serveStdio` may
- * invoke this factory more than once per connection (it pins one instance
- * per protocol era), so the factory itself must stay cheap — no I/O here.
+ * Builds an MCP server over an already-loaded `DesignSystem`. Handlers stay
+ * thin: call the model, format the result; anything more belongs in `model/`.
+ * `serveStdio` may call this factory more than once per connection (one
+ * instance per protocol era), so it must stay cheap: no I/O here.
  */
 export function createServer(system: DesignSystem): McpServer {
   const server = new McpServer(

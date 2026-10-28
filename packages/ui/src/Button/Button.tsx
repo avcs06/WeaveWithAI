@@ -11,7 +11,6 @@ import React, {
 import { Tooltip } from '../Tooltip';
 import { createLook, hasContent, useIconAddon, useIsDisabled } from '../utils';
 
-import { buttonLabel } from './Button.css';
 import { buttonRecipe } from './Button.recipes.css';
 
 import type {
@@ -24,8 +23,8 @@ import type {
 const activationKeys = ['Enter', ' '];
 
 /**
- * While disabled, swallows activation before any handler runs: the caller's,
- * or a Radix trigger's passed in through `asChild`. Other events pass through.
+ * While disabled, drops activation before any handler, including a Radix
+ * trigger's via `asChild`.
  */
 export const guardActivation = (
   isDisabled: boolean,
@@ -45,8 +44,8 @@ export const guardActivation = (
   }) satisfies KeyboardEventHandler<HTMLElement>,
 });
 
-// What a disabled link drops: its `href`, and the props of Next.js's Link,
-// which an anchor doesn't take.
+// What a disabled link drops: `href` and Next.js Link's props, which an anchor
+// rejects.
 const linkOnlyProps = [
   'href',
   'prefetch',
@@ -59,29 +58,30 @@ const linkOnlyProps = [
   'onNavigate',
 ];
 
-
-const handleLinkButton = ({isDisabled, target, ...props}: Partial<ButtonBaseProps> & { isDisabled: boolean } ) => {
-  
-  // A disabled link can't be followed: an anchor without `href`, as Link
-  // renders. A router link would still navigate, or demand its `href`.
+// The element apart from the props: a link's own `target` prop is one of them.
+const handleLinkButton = (
+  element: ElementType,
+  isDisabled: boolean,
+  props: Partial<ButtonBaseProps>,
+) => {
+  // An anchor without `href`, like Link; a router link would still navigate.
   const isDisabledLink = isDisabled && props.href !== undefined;
-  // Props were checked against the target at `Button`'s signature.
-  const Element = (isDisabledLink ? 'a' : target) as ElementType;
+  const Element = isDisabledLink ? 'a' : element;
   const elementProps = isDisabledLink
     ? Object.fromEntries(
         Object.entries(props).filter(([key]) => !linkOnlyProps.includes(key)),
       )
     : props;
 
-  // Without `href`, assistive tech no longer reads an anchor as a link.
+  // Without `href`, an anchor isn't read as a link.
   const role = isDisabledLink ? 'link' : elementProps.role;
 
   return { Element, elementProps, role, isDisabledLink };
-}
+};
 
 /** A button's behavior and content without its look: the caller styles it. */
 export const ButtonBase = ({
-  as: target = 'button',
+  as: element = 'button',
   leftIcon,
   rightIcon,
   leftAddOn,
@@ -121,11 +121,13 @@ export const ButtonBase = ({
     loading: isLoading,
   });
 
-  const { Element, elementProps, role, isDisabledLink } = handleLinkButton({
+  const { Element, elementProps, role, isDisabledLink } = handleLinkButton(
+    element as ElementType,
     isDisabled,
-    target,
-    ...props,
-  });
+    props,
+  );
+  // Only a button that can load needs the region.
+  const canLoad = loading !== undefined || loadingWithReason !== undefined;
 
   const repeatsName = [props['aria-label'], children].includes(tooltip);
 
@@ -136,7 +138,7 @@ export const ButtonBase = ({
         description={[!repeatsName && tooltip, stateTooltip]}
       >
         <Element
-          type={target === 'button' ? (type ?? 'button') : type}
+          type={element === 'button' ? (type ?? 'button') : type}
           {...elementProps}
           role={role}
           aria-disabled={isDisabled || undefined}
@@ -145,7 +147,11 @@ export const ButtonBase = ({
           tabIndex={
             isFocusable ? (tabIndex ?? (isDisabledLink ? 0 : undefined)) : -1
           }
-          {...guardActivation(isDisabled, { onClick, onPointerDown, onKeyDown })}
+          {...guardActivation(isDisabled, {
+            onClick,
+            onPointerDown,
+            onKeyDown,
+          })}
           className={classNames(
             'inline-flex-row-gap-0 items-center justify-center',
             className,
@@ -153,18 +159,17 @@ export const ButtonBase = ({
         >
           {leftSlot}
           {hasContent(children) && (
-            <span className={classNames(buttonLabel, 'flex-fill-x')}>
-              {children}
-            </span>
+            <span className="flex-fill-x text-left">{children}</span>
           )}
           {rightSlot}
         </Element>
       </Tooltip>
-      {/* `aria-busy` isn't announced. Kept on the page while empty, so a
-          load that starts is. */}
-      <span role="status" className="sr-only">
-        {isLoading ? loadingWithReason || 'Loading…' : ''}
-      </span>
+      {/* `aria-busy` isn't announced; staying mounted while empty lets a new load be. */}
+      {canLoad && (
+        <span role="status" className="sr-only">
+          {isLoading ? loadingWithReason || 'Loading…' : ''}
+        </span>
+      )}
     </>
   );
 };

@@ -33,15 +33,13 @@ export function isThemeFile(filePath: string): boolean {
 
 /**
  * Reads a vanilla-extract theme file and flattens `createThemeContract` /
- * `createGlobalTheme` calls into a token list. Purely static — parses with
- * Babel and reads literal AST nodes, never executes the file. A theme
- * *contract* (`createThemeContract`) only declares shape, so its tokens
- * carry a `reference` but no `value`; `createGlobalTheme` usually inlines
- * real values, so those tokens get both.
+ * `createGlobalTheme` calls into a token list. Static: parses with Babel and
+ * never executes the file. A theme *contract* declares only shape, so its
+ * tokens have a `reference` but no `value`; `createGlobalTheme` usually
+ * inlines values, so its tokens get both.
  *
  * Tokens are referenced by the theme's local binding name, e.g. `vars` in
- * `vars.color.theme.background` — only correct if nothing re-exports or
- * renames it downstream.
+ * `vars.color.theme.background`; wrong if something re-exports or renames it.
  */
 export function loadTokens(filePath: string): DesignToken[] {
   const ast = parseTokenFile(filePath);
@@ -53,10 +51,8 @@ export function loadTokens(filePath: string): DesignToken[] {
     ImportDeclaration(nodePath) {
       if (nodePath.node.source.value !== THEME_DEFINITION_PACKAGE) return;
       for (const specifier of nodePath.node.specifiers) {
-        // Track by the *local* binding — what a call expression actually
-        // uses — not the imported name, so `import { createGlobalTheme as
-        // t }` still resolves; filter on the imported name to decide
-        // whether this specifier is one of ours at all.
+        // Track the *local* binding, so `import { createGlobalTheme as t }`
+        // resolves; the imported name decides whether the specifier is ours.
         if (
           specifier.type === 'ImportSpecifier' &&
           specifier.imported.type === 'Identifier' &&
@@ -70,8 +66,8 @@ export function loadTokens(filePath: string): DesignToken[] {
       const callee = nodePath.node.callee;
       if (callee.type !== 'Identifier' || !importedNames.has(callee.name)) return;
 
-      // Both createThemeContract(shape) and createGlobalTheme(selector?, shape)
-      // take the shape/value object as their last argument.
+      // The shape/value object is the last argument of both createThemeContract
+      // and createGlobalTheme.
       const lastArg = nodePath.node.arguments[nodePath.node.arguments.length - 1];
       if (!lastArg || lastArg.type !== 'ObjectExpression') return;
 
@@ -95,11 +91,9 @@ const STYLE_DEFINITION_CALLS = new Set(['style', 'styleVariants', 'recipe']);
 /**
  * The style object of every `style()`/`styleVariants()` call (from
  * `@vanilla-extract/css`) and `recipe()` call (from the separate
- * `@vanilla-extract/recipes` package — tracked explicitly, since it's easy
- * to assume it lives in `css` too) actually imported from a vanilla-extract
- * package. This is the primary surface for a system that styles this way:
- * in a system that splits styling between vanilla-extract and Tailwind, this
- * is where real token violations live.
+ * `@vanilla-extract/recipes` package, tracked explicitly) imported from a
+ * vanilla-extract package. This is where token violations live in a system
+ * that splits styling between vanilla-extract and Tailwind.
  */
 export function styleObjects(ast: File): ObjectExpression[] {
   const importedNames = new Set<string>();
@@ -109,8 +103,7 @@ export function styleObjects(ast: File): ObjectExpression[] {
     ImportDeclaration(nodePath) {
       if (!STYLE_DEFINITION_PACKAGES.has(nodePath.node.source.value)) return;
       for (const specifier of nodePath.node.specifiers) {
-        // Track by the *local* binding, not the imported name — see the
-        // matching comment in `loadTokens` above.
+        // Track the *local* binding, as in `loadTokens` above.
         if (
           specifier.type === 'ImportSpecifier' &&
           specifier.imported.type === 'Identifier' &&

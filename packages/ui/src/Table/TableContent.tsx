@@ -15,9 +15,8 @@ import type { TableColumnData, TableProps } from './Table.types';
 export type TableContentProps = Omit<TableProps<unknown>, 'children'>;
 
 /**
- * Renders after the config components, so on mount the store already holds
- * their props. Holds only what the header, body and pagination share; each
- * computes the rest from its props and the store.
+ * Renders after the config components, so the store holds their props on mount.
+ * Holds only what header, body and pagination share; each computes the rest.
  */
 export const TableContent = ({
   data,
@@ -94,8 +93,7 @@ export const TableContent = ({
     expansion: expansionEnabled,
   });
 
-  // `rows` is `data` in server mode, which knows the full count only from the
-  // totals it is given.
+  // Server mode: `rows` is `data`; the full count comes from the given totals.
   const serverTotal = useTableStore((state) =>
     mode === 'server'
       ? (state.paginationConfig?.totalItems ??

@@ -53,9 +53,9 @@ const CardSurface = ({
 };
 
 /**
- * A bordered container with its own padding and gap, for one item's content
- * or, in a CardGroup, a large selectable option. `onClick` makes the whole
- * card one button; a card with links or buttons of its own stays static.
+ * A bordered container with padding and gap, for one item's content or a large
+ * option in a CardGroup. `onClick` makes the whole card one button; a card with
+ * its own links or buttons stays static.
  *
  * @invalidAlternative article[onClick]
  */
@@ -104,8 +104,8 @@ export const Card = ({
       <Selectable
         value={value}
         {...toggle}
-        // Radix's `disabled` takes a card out of the arrow keys and the tab
-        // order: only one with no reason to show leaves them.
+        // Radix `disabled` leaves the tab order and arrow keys: only with no
+        // reason to show.
         disabled={!isFocusable}
       >
         <CardSurface
@@ -135,8 +135,8 @@ export const Card = ({
   return (
     <CardSurface
       {...surfaceProps}
-      // Not a control, so no disabled state of its own: it only looks
-      // disabled, and the reason still shows on hover.
+      // Not a control: it only looks disabled, and the reason still shows on
+      // hover.
       reason={stateTooltip || undefined}
       {...(isDisabled && { 'data-disabled': true })}
     />
@@ -144,11 +144,10 @@ export const Card = ({
 };
 
 /**
- * A set of Cards for a few large, always-visible choices: one
- * (`mode="single"`, the default, like radio buttons) or any number
- * (`mode="multiple"`, like checkboxes). It's a form field, with its label,
- * help text and message; in a form, `{...field}` from Controller is all it
- * needs.
+ * Cards for a few large visible choices: one (`mode="single"`, default, like
+ * radios) or any number (`mode="multiple"`, like checkboxes). A form field with
+ * label, help text and message; in a form, `{...field}` from Controller is all
+ * it needs.
  */
 export const CardGroup = (props: CardGroupProps) => (
   <SelectableGroup {...props} />

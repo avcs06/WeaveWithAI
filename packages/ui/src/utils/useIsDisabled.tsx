@@ -1,5 +1,4 @@
-// Each state is set either silently or with a reason shown to the user, never
-// both.
+// Each state is set silently or with a reason shown to the user, never both.
 export type DisabledState =
   | { disabled?: boolean; disabledWithReason?: never }
   | { disabled?: never; disabledWithReason?: string };
@@ -53,8 +52,8 @@ export const useIsDisabled = ({
     // Only read-only: a field's value can still be focused, read and copied.
     isReadOnly:
       isReadOnly && !isDisabled && !(isLoading && disableWhileLoading),
-    // A reason must be reachable by keyboard, so a control with one keeps its
-    // tab stop; without one it leaves the tab order, as a native one would.
+    // A reason must be keyboard-reachable, so such a control keeps its tab
+    // stop; without one it leaves the tab order, as a native one does.
     isFocusable: !shouldDisable || Boolean(stateTooltip),
     stateTooltip,
   };

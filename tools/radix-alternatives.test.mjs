@@ -33,12 +33,9 @@ const alternatives = {
   toast: 'toast',
 };
 
-const notBuilt = new Set(['toast']);
-
 for (const [name, owner] of Object.entries(alternatives)) {
   const source = `@radix-ui/react-${name}`;
-  const options = notBuilt.has(name) ? { todo: 'not built yet' } : {};
-  test(`${source} directs consumers to ${owner}`, options, () => {
+  test(`${source} directs consumers to ${owner}`, () => {
     assert.ok(
       system
         .component(owner)

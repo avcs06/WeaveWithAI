@@ -32,10 +32,9 @@ const {
   normalizeTailwindClass,
 } = require('../tailwind-policy.cjs');
 
-// Read here rather than from ESLint `files` globs: project configs re-export
-// the root config, so globs would resolve against each project directory.
-// Everything under a component path's folder is design-system code, except
-// recipes: app code kept beside their component, so they follow app rules.
+// Read here, not from ESLint `files` globs: project configs re-export the root
+// config, so globs would resolve per project directory. A component path's
+// folder is design-system code, except recipes (app code beside it).
 const repoRoot = fileURLToPath(new URL('../../', import.meta.url));
 const { components, recipes = [] } = JSON.parse(
   readFileSync(new URL('../../designsystem.config.json', import.meta.url), 'utf8'),
@@ -83,7 +82,6 @@ const tokenClassSources = {
   zIndex: [['zIndex', 'z', 'z-index']],
 };
 
-/** The one declaration a class generates, or `undefined`. */
 const singleDeclaration = (className) => {
   const rules = [...generateRules(new Set([className]), tailwindContext)].map(([, rule]) => rule);
   if (rules.length !== 1 || rules[0].type !== 'rule') return undefined;
@@ -93,9 +91,8 @@ const singleDeclaration = (className) => {
   return declarations.length === 1 ? declarations[0] : undefined;
 };
 
-// `group\0value` -> the classes applying that value, in theme order. Matched on
-// the CSS a class generates, not its name: `font-display` sets the display
-// font family, not weight 600.
+// `group\0value` -> classes applying it, in theme order. Matched on the CSS a
+// class generates, not its name: `font-display` is a family, not weight 600.
 const tokenClassIndex = new Map();
 for (const [group, sources] of Object.entries(tokenClassSources))
   for (const [section, prefix, property] of sources)
@@ -125,12 +122,11 @@ export const tailwindPolicy = {
   tokenClass,
 };
 
+// Scrolling overflow is ScrollArea's: its classes are invalid alternatives, so
+// none is suggested.
 export const tailwindEquivalents = createTailwindEquivalents(
   [...layoutTailwindClasses].filter(
-    (className) =>
-      /^(block|inline-block|inline-flex|grid|inline-grid|hidden|flex-row-reverse|flex-col-reverse|flex-wrap|flex-wrap-reverse|flex-nowrap|items-|justify-|content-|self-|place-items-|flex-(1|auto|initial|none)$|grow|grow-0|shrink|shrink-0)/.test(
-        className,
-      ),
+    (className) => !/^overflow(-[xy])?-(auto|scroll)$/.test(className),
   ),
 );
 const equivalentIndex = indexEquivalents(tailwindEquivalents);

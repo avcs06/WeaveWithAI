@@ -206,9 +206,9 @@ describe('Table', () => {
     expect(
       screen.getByRole('button', { name: 'Filter Name (active)' }),
     ).toBeInTheDocument();
-    // Escape closes it and puts focus back on the trigger. (It also clears
-    // the search box, as Escape does in a search field, so the trigger is
-    // no longer "(active)" by then: assert on the element, not its name.)
+    // Escape closes it and refocuses the trigger. It also clears the search
+    // box, so the trigger is no longer "(active)": assert on the element, not
+    // its name.
     await userEvent.keyboard('{Escape}');
     expect(
       screen.queryByRole('dialog', { name: 'Filter Name' }),
@@ -372,8 +372,8 @@ describe('Table expansion and row clicks', () => {
     ).toHaveAttribute('aria-expanded', 'true');
     expect(onRowClick).not.toHaveBeenCalled();
 
-    // A disabled row's button is out of the tab order, and its row click
-    // does not expand it either.
+    // A disabled row's button is out of the tab order, and a row click doesn't
+    // expand it.
     const disabled = screen.getByRole('button', {
       name: 'Details for Edsger',
     });
@@ -513,8 +513,8 @@ describe('Table pagination', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Page 2' }));
     expect(onChange).toHaveBeenCalledWith({ pageIndex: 1, pageSize: 10 });
 
-    // Rows already shown stay mounted (dimmed) while the next page loads,
-    // so focus inside them survives; the table is busy and paging is off.
+    // Shown rows stay mounted (dimmed) while the next page loads, so focus
+    // survives; the table is busy and paging is off.
     rerender(
       <Table<Person>
         caption="People"
@@ -600,8 +600,8 @@ describe('Table infinite scroll', () => {
       <Table.InfiniteScroll totalItems={4} onLoadMore={() => undefined} />,
     );
     const loadMore = screen.getByRole('button', { name: 'Load more rows' });
-    // Loading with a reason: disabled, but it keeps its tab stop so the
-    // reason stays reachable, and the reason is its description.
+    // Loading with a reason: disabled but tabbable so the reason is reachable;
+    // it is the description.
     expect(loadMore).toHaveAttribute('aria-disabled', 'true');
     expect(loadMore).not.toHaveAttribute('tabindex', '-1');
     expect(loadMore).toHaveAccessibleDescription(/Loading more rows/);
@@ -653,8 +653,8 @@ describe('Table reorder', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Name' }));
     const sorted = screen.getByRole('button', { name: 'Reorder Ada' });
-    // Disabled with a reason while sorted: it keeps its tab stop so the
-    // reason is reachable, and the reason is in its description.
+    // Disabled with a reason while sorted: tabbable so the reason is reachable;
+    // it is the description.
     expect(sorted).toHaveAttribute('aria-disabled', 'true');
     expect(sorted).not.toHaveAttribute('tabindex', '-1');
     expect(sorted).toHaveAccessibleDescription(/Clear sorting to reorder rows/);
@@ -724,6 +724,10 @@ describe('Table virtualized', () => {
     const viewportHeight = jest
       .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
       .mockReturnValue(400);
+    // The virtualizer reads the scroll element's client size.
+    const viewportClientHeight = jest
+      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
+      .mockReturnValue(400);
     const rect = jest
       .spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({
@@ -748,6 +752,7 @@ describe('Table virtualized', () => {
       expect(spacer.closest('tbody')).toHaveAttribute('aria-hidden', 'true');
     expect(await axe(container)).toHaveNoViolations();
     viewportHeight.mockRestore();
+    viewportClientHeight.mockRestore();
     rect.mockRestore();
   });
 });

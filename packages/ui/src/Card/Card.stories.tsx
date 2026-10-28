@@ -74,8 +74,8 @@ const Groups = ({
 }) => {
   const [plan, setPlan] = useState('pro');
   const [extras, setExtras] = useState(['backups']);
-  // A reason replaces the plain state on the group, and reaches every card
-  // in it; a card's own reason wins, like `team` and `support` below.
+  // A group's reason replaces its plain state and reaches every card; a card's
+  // own reason wins, like `team` and `support` below.
   const groupState = {
     ...(reason
       ? { disabledWithReason: 'Set by your organizer' }
@@ -209,8 +209,6 @@ const CardStories = () => {
         </ul>
       </StorySection>
 
-      {/* Passing `active` and `onActiveChange` makes a card toggle; the look
-          `outline` or `filled` sets how it looks when active. */}
       <StorySection title="Selection">
         {cardSelections.map((selection) => (
           <div key={selection}>

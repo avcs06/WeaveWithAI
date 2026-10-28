@@ -16,8 +16,8 @@ const textbox = (name = 'Organizer notes') =>
 const box = (container: HTMLElement) =>
   container.querySelector<HTMLElement>('[data-slot="box"]')!;
 
-// The shown tooltip is `aria-hidden` (the control's description says it for
-// screen readers), so role queries must include hidden elements.
+// The shown tooltip is `aria-hidden` (the description says it for screen
+// readers), so role queries include hidden elements.
 const tooltipEntries = async () => {
   await screen.findByRole('tooltip', { hidden: true });
   return Array.from(
@@ -288,7 +288,6 @@ describe('Textarea', () => {
       );
       await userEvent.tab();
       expect(field).toHaveFocus();
-      // Focusing it with the keyboard shows the reason, as on Button.
       expect(await tooltipEntries()).toEqual(['Speakers write their own bios']);
       await userEvent.type(field, 'x');
       expect(field).toHaveValue('Ada Lovelace, first programmer.');
@@ -499,8 +498,8 @@ describe('Textarea', () => {
       await session.type(textbox(), 'y');
       expect(textbox()).toHaveValue('Rocky');
       await session.click(screen.getByRole('button', { name: 'Reset' }));
-      // Leaving the field for the button flushed the waiting edit first;
-      // the outside value then wins, and nothing is left waiting to undo it.
+      // Leaving for the button flushed the waiting edit; the outside value wins
+      // and nothing waits to undo it.
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith('Rocky');
       expect(textbox()).toHaveValue('');

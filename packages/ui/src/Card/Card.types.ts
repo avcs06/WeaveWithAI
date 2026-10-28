@@ -24,8 +24,8 @@ export type CardSurfaceProps = Omit<ComponentPropsWithRef<'div'>, 'ref'> & {
 
 type CardOwnProps = Pick<CardRecipeVariants, 'variant'> & {
   /**
-   * Space-separated styles, in any order: `outline` or `filled` (in a group,
-   * its mode picks one), `elevated`, `ghost`.
+   * Space-separated styles, any order: `outline` or `filled` (a group's mode
+   * picks one), `elevated`, `ghost`.
    */
   look?: string;
 } & DisabledState &
@@ -45,8 +45,8 @@ export type CardProps = Omit<
         asChild?: false;
         ref?: Ref<HTMLDivElement>;
         /**
-         * Makes the whole card a button. Not with `asChild`: the child
-         * would become a button too.
+         * Makes the whole card a button; not with `asChild`, which would make
+         * the child one too.
          */
         onClick?: MouseEventHandler<HTMLElement>;
       }

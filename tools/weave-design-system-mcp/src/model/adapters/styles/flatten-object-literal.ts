@@ -21,10 +21,10 @@ export function unwrapExpression(node: Expression): Expression {
 /**
  * Walks a (possibly nested) object literal, emitting one `DesignToken` per
  * leaf: a string/number literal becomes a token with a resolved `value`; a
- * bare `null` becomes a token with no value (a theme *contract* leaf —
- * shape only). Anything else (a computed expression) can't be statically
- * resolved and is skipped rather than guessed at. Shared by the styles
- * adapter's two token-reading modes (vanilla-extract and plain object).
+ * bare `null` becomes a token with no value (a theme *contract* leaf). Anything
+ * else (a computed expression) can't be resolved statically and is skipped.
+ * Shared by the styles adapter's two token-reading modes (vanilla-extract and
+ * plain object).
  */
 export function flattenObjectLiteral(
   obj: ObjectExpression,

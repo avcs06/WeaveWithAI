@@ -6,8 +6,8 @@ import React, { type ReactElement, type ReactNode } from 'react';
 import { UIProviders } from './Root/UIProviders';
 
 /**
- * Page-level rules (landmarks) don't apply to a component rendered alone.
- * jsdom has no layout, so axe can't check colour contrast here either.
+ * Page-level rules (landmarks) don't apply to a component rendered alone, and
+ * jsdom has no layout, so axe can't check color contrast.
  */
 export const axe = configureAxe({ rules: { region: { enabled: false } } });
 

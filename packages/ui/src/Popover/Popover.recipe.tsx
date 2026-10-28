@@ -1,8 +1,8 @@
 /**
  * Popover: a panel of your own content opened from a button, like a filter
- * form, a details card or a quick edit. It's a dialog: focus moves into it
- * when it opens and back to the button when it closes; Escape, a click
- * outside or tabbing out closes it. `Popover.Button` is its trigger.
+ * form, a details card or a quick edit. It's a dialog: focus moves in when it
+ * opens and back to the button when it closes; Escape, a click outside or
+ * tabbing out closes it. `Popover.Button` is its trigger.
  *
  * When not to use:
  * - A list of actions or choices alone: Dropdown, which brings menu keyboard
@@ -14,12 +14,12 @@
  * - Name the content: `aria-labelledby` pointing at its heading, or
  *   `aria-label`.
  * - The trigger is one element that forwards its props and ref: Popover.Button,
- *   or a Button or IconButton. A wrapper component that drops them never
- *   opens the popover.
- * - Put the disabled and loading state on the Popover, not on its trigger:
+ *   or a Button or IconButton. A wrapper that drops them never opens the
+ *   popover.
+ * - Put the disabled and loading state on the Popover, not its trigger:
  *   Popover.Button shows it, with the reason, in its own tooltip.
- * - The content brings its own padding and layout; the panel adds only
- *   space above and below.
+ * - The content brings its own padding and layout; the panel adds only space
+ *   above and below.
  */
 import { Button, IconButton, PlainButton } from '@packages/ui/Button';
 import { Checkbox, CheckboxGroup } from '@packages/ui/Checkbox';
@@ -43,8 +43,8 @@ const venue = {
 type AttendeeFilter = { tickets: string[]; checkedInOnly: boolean };
 
 /**
- * A filter form that applies on a button: controlled `open`, so Apply
- * closes it. The heading names the popover through `aria-labelledby`.
+ * A filter form that applies on a button: controlled `open`, so Apply closes
+ * it. The heading names the popover through `aria-labelledby`.
  */
 const AttendeeFilters = () => {
   const headingId = useId();
@@ -100,8 +100,8 @@ const AttendeeFilters = () => {
 
 /**
  * A details card from an icon button: `align="start"` lines it up with the
- * button's start edge, and `menuClassName` sizes the panel, which renders
- * outside the button's parent.
+ * button's start edge, `menuClassName` sizes the panel, which renders outside
+ * the button's parent.
  */
 const VenueDetails = () => {
   const headingId = useId();
@@ -133,9 +133,8 @@ const VenueDetails = () => {
 };
 
 /**
- * A quick edit that shouldn't be left by accident: `modal` keeps focus in
- * the panel and blocks the page until it closes. `size="md"` sits beside
- * md inputs.
+ * A quick edit not to be left by accident: `modal` keeps focus in the panel
+ * and blocks the page until it closes. `size="md"` sits beside md inputs.
  */
 const EditCapacity = () => {
   const [open, setOpen] = useState(false);
@@ -182,9 +181,9 @@ const EditCapacity = () => {
 };
 
 /**
- * Details with a few actions under them: the actions are MenuItem rows in a
- * MenuGroup, each pressed through a PlainButton, and Tab moves between them.
- * A panel of actions alone is a Dropdown, which brings the arrow keys.
+ * Details with a few actions under them: MenuItem rows in a MenuGroup, each
+ * pressed through a PlainButton, with Tab moving between them. A panel of
+ * actions alone is a Dropdown, which brings the arrow keys.
  */
 const AccountPanel = () => {
   const headingId = useId();
@@ -220,9 +219,9 @@ const AccountPanel = () => {
 
 /**
  * States, set on the Popover: it never opens while disabled or loading, and
- * Popover.Button says why on hover and on a press. With
- * `disableWhileLoading={false}` it opens while loading, for content that is
- * useful before the refresh ends. `look="ghost"` makes the button quiet.
+ * Popover.Button says why on hover and press. With
+ * `disableWhileLoading={false}` it opens while loading, for content useful
+ * before the refresh ends. `look="ghost"` makes the button quiet.
  */
 const PopoverStates = ({ refreshing }: { refreshing: boolean }) => (
   <div className="flex-row-gap-2 flex-wrap">

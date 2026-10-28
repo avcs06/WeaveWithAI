@@ -7,12 +7,9 @@ import { axe, renderUI } from '../test-utils';
 import { Truncate } from './Truncate';
 import { useTruncation } from './useTruncation';
 
-// jsdom has no layout: give the text and its box widths so Truncate can tell
-// whether the text is cut. `useTruncation` now reads the size only from the
-// ResizeObserver entry's `contentRect` (the content box, so padding is
-// already out of it), and the shared observer is created once for the whole
-// module: the mock must be in place before the first render and read the
-// current sizes on every observation.
+// jsdom has no layout: give the text and its box widths. The shared observer
+// is created once per module, so the mock must be in place before the first
+// render and read the current sizes on every observation.
 const sizes = { text: 0, box: 0 };
 
 const contentWidthFor = (element: Element) => {
@@ -67,8 +64,8 @@ const hoverText = async (text: string) => {
 const settle = () =>
   act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
-// The shown tooltip is `aria-hidden` (the trigger's description says it for
-// screen readers), so role queries must include hidden elements.
+// The shown tooltip is `aria-hidden`, so role queries must include hidden
+// elements.
 const tooltipOptions = { hidden: true } as const;
 
 const findTooltip = () => screen.findByRole('tooltip', tooltipOptions);
@@ -99,8 +96,7 @@ describe('Truncate', () => {
     const text = screen.getByText('Quarterly planning review');
     await hoverText('Quarterly planning review');
     expect(await tooltipText()).toBe('Quarterly planning review');
-    // No screen-reader description: the full text is already the element's
-    // own text, so describing it with itself would say it twice.
+    // No description: the full text is already the element's own text.
     expect(container.querySelector('[aria-describedby]')).toBeNull();
     expect(text).not.toHaveAttribute('aria-describedby');
     expect(await axe(document.body)).toHaveNoViolations();
@@ -127,8 +123,7 @@ describe('Truncate', () => {
       'Starts at 10:00',
       'Quarterly planning review',
     ]);
-    // Screen readers get the custom tooltip as the description; the full
-    // text is the element's own text and isn't repeated.
+    // The custom tooltip is the description; the full text isn't repeated.
     expect(text).toHaveAccessibleDescription('Starts at 10:00');
     expect(await axe(document.body)).toHaveNoViolations();
   });

@@ -27,10 +27,10 @@ const ConfigSyncContext = createContext<ConfigSyncContextValue | null>(null);
 
 /**
  * Config components render nothing: they write their props into the store of
- * the component they configure (the owner), which renders from that store.
+ * the component they configure (the owner), which renders from it.
  *
- * Gives config components the owner's store, and marks the owner mounted once
- * its first commit is done: a parent's layout effect runs after every child's.
+ * Gives config components the owner's store, and marks the owner mounted after
+ * its first commit: a parent's layout effect runs after every child's.
  */
 export const ConfigSyncProvider = ({
   useStore,
@@ -52,11 +52,7 @@ export const ConfigSyncProvider = ({
     [useStore, mounted],
   );
 
-  return (
-    <ConfigSyncContext.Provider value={value}>
-      {children}
-    </ConfigSyncContext.Provider>
-  );
+  return <ConfigSyncContext value={value}>{children}</ConfigSyncContext>;
 };
 
 export const useConfigSyncContext = () => {
@@ -69,19 +65,21 @@ export const useConfigSyncContext = () => {
 type SyncState = 'pending' | 'initialized' | 'synced';
 
 /**
- * Runs `write` when `deps` change.
+ * Runs `write` when `deps` change, or after every render without them, as an
+ * effect does: for values new on every render anyway, like elements. Keep
+ * `deps` in a component that subscribes to what it writes, or each write
+ * re-renders it and it writes again.
  *
- * - While the owner mounts: during render. Nothing subscribes yet, so the
- *   content rendered after the config components reads the values directly.
+ * - While the owner mounts: during render. Nothing subscribes yet, so content
+ *   after the config components reads the values directly.
  * - After that: in a layout effect. Only subscribers of the changed values
- *   re-render, before the browser paints, and no component is updated while
- *   another one renders.
+ *   re-render, before paint, and no component updates during another's render.
  *
  * `write` receives `true` for this component's first write.
  */
 export const useStoreSync = (
   write: (initial: boolean) => void,
-  deps: DependencyList,
+  deps?: DependencyList,
 ) => {
   const { mounted } = useConfigSyncContext();
   const state = useRef<SyncState>('pending');
@@ -99,12 +97,12 @@ export const useStoreSync = (
 };
 
 /**
- * Keeps `store[key]` equal to `config`, written again when one of its values
- * changes. On unmount, `store[key]` goes back to its initial value.
+ * Keeps `store[key]` equal to `config`, rewritten when a value changes. On
+ * unmount, `store[key]` returns to its initial value.
  *
- * The config's values are the deps, so each must be stable across renders:
- * pass callbacks through `usePersistentCallback` and memoize objects and
- * arrays, or the config is written again on every render.
+ * The config's values are the deps, so each must be stable: wrap callbacks in
+ * `usePersistentCallback` and memoize objects and arrays, or the config is
+ * rewritten every render.
  */
 export const useConfigSync = (key: string, config: UnknownRecord) => {
   const { store } = useConfigSyncContext();
@@ -121,9 +119,9 @@ export const useConfigSync = (key: string, config: UnknownRecord) => {
 export type ApplyValue<V> = (value: V, initial: boolean) => void;
 
 /**
- * Controlled/uncontrolled value: `value` is applied whenever it changes;
- * without it, `defaultValue` is applied once. `apply` learns whether this is
- * the first write, so later changes from outside can react to it.
+ * Controlled/uncontrolled value: `value` is applied on every change; without
+ * it, `defaultValue` is applied once. `apply` learns whether this is the first
+ * write, so later outside changes can react to it.
  *
  * A controlled `value` that turns `undefined` applies nothing: the store keeps
  * the last value.

@@ -48,10 +48,10 @@ export type RowReorderProps = {
 };
 
 /**
- * Drag and drop for the rendered rows; mounted only with `Table.Reorder`.
- * It wraps the row groups inside the body table, so turning reorder on or off
- * remounts the rows, not the scroll area. Its screen reader markup goes to
- * `document.body`: a `<table>` can't hold it.
+ * Drag and drop for the rendered rows; mounted only with `Table.Reorder`. Wraps
+ * the row groups inside the body table, so toggling reorder remounts the rows,
+ * not the scroll area. Its screen reader markup goes to `document.body`: a
+ * `<table>` can't hold it.
  */
 export const RowReorder = ({
   data,
@@ -60,8 +60,8 @@ export const RowReorder = ({
   rowLabel,
   children,
 }: RowReorderProps) => {
-  // dnd-kit's own ids come from a module counter, which differs between the
-  // server and the client.
+  // dnd-kit's own ids use a module counter, which differs between server and
+  // client.
   const id = useId();
   const [draggingKey, setDraggingKey] = useState<UniqueIdentifier>();
   const { sensors, onDragEnd } = useRowReorder({ data, rowKey });
@@ -105,9 +105,9 @@ export const RowReorder = ({
       }}
     >
       <SortableContext items={rowKeys} strategy={verticalListSortingStrategy}>
-        <DraggingRowKeyContext.Provider value={draggingKey}>
+        <DraggingRowKeyContext value={draggingKey}>
           {children}
-        </DraggingRowKeyContext.Provider>
+        </DraggingRowKeyContext>
       </SortableContext>
     </DndContext>
   );

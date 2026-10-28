@@ -28,7 +28,7 @@ type SelectStore = {
 };
 
 const createSelectStore = () => {
-  // Written in place: each option's write costs the same however many there
+  // Written in place: an option's write costs the same however many there
   // are. Renders read them through a view, never these maps.
   const entries = new Map<string, SelectOptionEntry>();
   const contents = new Map<string, ReactNode>();

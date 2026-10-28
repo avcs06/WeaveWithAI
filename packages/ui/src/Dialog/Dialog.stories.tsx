@@ -1,9 +1,11 @@
+import { Pencil } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
 import { Radio, RadioGroup } from '../Radio';
 import { StoryPage, StorySection } from '../StoryLayout';
+import { Tag } from '../Tag';
 
 import { dialogRecipe, glyphRecipe } from './Dialog.recipes.css';
 
@@ -142,6 +144,27 @@ const DialogStories = () => {
             footer={actions}
           >
             Opening keynote, Hall A, 9:00.
+          </Dialog>
+          <Dialog
+            title="Edit session"
+            leftIcon={<Pencil />}
+            rightAddOn={<Tag size="xs">Draft</Tag>}
+            trigger={<Button variant="base">Title icon and add-on</Button>}
+            footer={actions}
+          >
+            Opening keynote, Hall A, 9:00.
+          </Dialog>
+          <Dialog
+            title="Speakers"
+            headerAction={
+              <Button size="sm" variant="base">
+                Invite
+              </Button>
+            }
+            trigger={<Button variant="base">Header action</Button>}
+            footer={actions}
+          >
+            Ada Lovelace, Grace Hopper.
           </Dialog>
           <Dialog
             title="No body"

@@ -17,8 +17,8 @@ const dropShadow = (
 ) => `0 ${y} ${blur} 0 color-mix(in srgb, ${color} ${opacity}%, transparent)`;
 
 /**
- * Control borders from a color set, drawn with box-shadow so they never change
- * the element's size. Focus rings are in focusRing.css.ts.
+ * Control borders from a color set, drawn with box-shadow so they never
+ * change the element's size. Focus rings: focusRing.css.ts.
  */
 const controlShadow = (set: ColorSet) => ({
   border: borderShadow(set.border),

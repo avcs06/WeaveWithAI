@@ -3,11 +3,9 @@ import { position } from '../../ast.js';
 import type { JsxElement } from '../../tsx-adapter.js';
 
 /**
- * For a recognized component (unrecognized tags aren't checked — there's no
- * separate "component not present" rule in this build), checks every
- * variant-like prop's literal value against its allowed set. The message
- * names the actual constraint and the legal alternatives, not just "invalid
- * variant" — that's the whole point of a finding an agent can act on.
+ * For a recognized component (unrecognized tags aren't checked), checks every
+ * variant-like prop's literal value against its allowed set. The message names
+ * the constraint and the legal alternatives so an agent can act on it.
  */
 export const unknownVariant: Rule<JsxElement> = ({ component, attributes }) => {
   if (!component) return [];

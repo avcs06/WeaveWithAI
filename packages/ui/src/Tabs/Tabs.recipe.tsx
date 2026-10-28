@@ -1,22 +1,21 @@
 /**
  * Tabs: views of one subject that share a place on the page, one shown at a
  * time, like a session's details, speakers and feedback. Each `Tab` child is
- * a tab: `title` and its icons in the tab list, its children the panel.
+ * a tab: `title` and icons in the tab list, children as the panel.
  *
  * When not to use:
  * - Going to another page or route: Link or NextLink, even in a row that
  *   looks like tabs.
  * - Choosing a value in a form: ChipGroup `mode="single"` or RadioGroup.
- * - Steps the user goes through in order: one view per step, with Back and
- *   Next buttons.
+ * - Steps in order: one view per step, with Back and Next buttons.
  * - Two or three short views the user compares: show them side by side.
  *
  * Pitfalls:
  * - A tab is named by `value`, not `key`: React keeps `key` to itself.
- * - Only the active panel renders: what a panel keeps itself, like its scroll
- *   position or a component's own state, is lost on switching unless its Tab
- *   has `keepMounted`. State held above Tabs needs no `keepMounted`. A kept
- *   panel renders from the start, so keep it to panels whose state matters.
+ * - Only the active panel renders: what a panel keeps itself, like scroll
+ *   position or a component's state, is lost on switching unless its Tab has
+ *   `keepMounted`. State held above Tabs needs no `keepMounted`. A kept
+ *   panel renders from the start: use it only where the state matters.
  * - Controlled, `activeTab` changes only through `onTabChange`: pass both.
  *   Without `activeTab`, Tabs starts at the first tab that isn't disabled; an
  *   `activeTab` no tab has shows that tab too. With every tab disabled, only
@@ -24,10 +23,10 @@
  * - Say why a tab can't be chosen: `disabledWithReason` or
  *   `loadingWithReason`. Without a reason it also leaves the arrow keys'
  *   reach.
- * - `Tabs<'details' | 'speakers'>` types `activeTab` and `onTabChange`;
- *   the `Tab` values aren't checked against it.
- * - The panel fills the height left under the tab list and scrolls: give
- *   Tabs a height (`className`) where the page doesn't bound it.
+ * - `Tabs<'details' | 'speakers'>` types `activeTab` and `onTabChange`; the
+ *   `Tab` values aren't checked against it.
+ * - The panel fills the height under the tab list and scrolls: give Tabs a
+ *   height (`className`) where the page doesn't bound it.
  */
 import { Button } from '@packages/ui/Button';
 import { Tab, Tabs } from '@packages/ui/Tabs';
@@ -101,9 +100,9 @@ const ReviewTabs = () => {
 /**
  * Tabs that can't be chosen show why in their tooltip: `disabledWithReason`
  * for a view that doesn't apply yet, `loadingWithReason` for one still
- * loading. A tab shown by a condition keeps its place in the list, and
- * `leftAddOn` marks who sees it. `variant="base"` keeps the active tab
- * neutral, beside other colored controls.
+ * loading. A conditional tab keeps its place in the list; `leftAddOn` marks
+ * who sees it. `variant="base"` keeps the active tab neutral, beside other
+ * colored controls.
  */
 const PendingTabs = ({ isOrganizer = true }: { isOrganizer?: boolean }) => (
   <Tabs variant="base">
@@ -138,9 +137,9 @@ const PendingTabs = ({ isOrganizer = true }: { isOrganizer?: boolean }) => (
 
 /**
  * A bounded height: the active panel fills what the tab list leaves and
- * scrolls; the tab list stays in place. `keepMounted` keeps the long list on
- * the page, hidden, while Answered shows, so the user comes back to where
- * they had scrolled. Answered renders only while active.
+ * scrolls; the tab list stays put. `keepMounted` keeps the long list on the
+ * page, hidden, while Answered shows, so the user returns to their scroll
+ * position. Answered renders only while active.
  */
 const QuestionTabs = () => (
   <Tabs className={panelHeight}>

@@ -77,7 +77,11 @@ const EmptyRow = ({
 }) => (
   <Primitives.Body>
     <Primitives.Row data-slot="message" aria-rowindex={2}>
-      <Primitives.Cell colSpan={columnCount} className={styles.messageCell}>
+      <Primitives.Cell
+        colSpan={columnCount}
+        align="center"
+        className={styles.messageCell}
+      >
         {children}
       </Primitives.Cell>
     </Primitives.Row>
@@ -112,8 +116,8 @@ const PlainRowGroups = ({
 
 /**
  * Spacer rows stand in for unrendered rows above, between and below. React
- * Compiler skips this component (`useVirtualizer`), so the virtualizer's
- * options are stabilized by hand: a new `getItemKey` rebuilds its measurements.
+ * Compiler skips this component (`useVirtualizer`), so the options are
+ * stabilized by hand: a new `getItemKey` rebuilds the measurements.
  */
 const VirtualRowGroups = ({
   rows,
@@ -140,8 +144,8 @@ const VirtualRowGroups = ({
     return () => scrollElement.removeEventListener('focusin', onFocusIn);
   }, [scrollElement, rows, rowKey]);
 
-  // The dragged row, and the row that last held focus: unmounted once they
-  // scroll out of range, they would drop the drag or the focus.
+  // Keeps the dragged row and the last focused row mounted: unmounting them out
+  // of range drops the drag or focus.
   const pinnedIndexes = useMemo(
     () =>
       [...new Set([draggingKey, focusedKey])].flatMap((key) => {
@@ -271,8 +275,8 @@ export const TableBody = memo(
       [reorderEnabled, visibleRows, rowKey],
     );
 
-    // The row header names each row in its controls' labels; without one,
-    // the first column with a value does.
+    // Names each row in its controls' labels: the row header, else the first
+    // column with a value.
     const labelColumn = useTableStore((state) => {
       const columns = columnIds.map((id) => state.columns[id]);
       return (
@@ -294,9 +298,9 @@ export const TableBody = memo(
     const columnCount = slots.length;
     const hasRows = visibleRows.length > 0;
 
-    // Server rows are out of date while loading (page, sort or filter
-    // changed). They stay mounted, dimmed, so focus inside them survives the
-    // reload; infinite scroll adds loading rows below its rows instead.
+    // Server rows are stale while loading (page, sort or filter changed): kept
+    // mounted, dimmed, so focus survives; infinite scroll adds loading rows
+    // below instead.
     const loadingInPlace = loading && !hasRows;
     const stale = loading && hasRows && !isClient && !infiniteScrollEnabled;
     const loadingBelow = loading && hasRows && infiniteScrollEnabled;

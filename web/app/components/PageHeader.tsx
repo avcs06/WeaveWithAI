@@ -12,7 +12,11 @@ export const PageHeader = () => {
 
   return (
     <header
-      className={classNames(styles.header, 'flex-row-gap-4 items-center px-6')}
+      className={classNames(
+        styles.header,
+        'flex-row-gap-4 items-center px-6',
+        'h-15',
+      )}
     >
       <NextLink href="/" look="plain">
         Application starter

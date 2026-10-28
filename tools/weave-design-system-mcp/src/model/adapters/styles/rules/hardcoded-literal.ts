@@ -4,17 +4,14 @@ import type { Finding, Rule } from '../../../types.js';
 import type { StyleObject } from '../../styles-adapter.js';
 
 /**
- * Maps a style-object property (every styling system this server supports
- * — and a plain React inline `style` prop — expresses styles as a JS object
- * with camelCase keys, so this is written once and shared, not duplicated
- * per implementation under `adapters/styles/`).
+ * Maps a style-object property to the token group that governs it. Every
+ * supported styling system (and a React inline `style` prop) uses camelCase
+ * keys, so this is written once and shared.
  *
- * Deliberately exhaustive across the common CSS surface, but the group
- * *names* are just a convention (whatever a real token source calls that
- * group) — a check only fires when the design system's token set actually
- * has a group by that exact name. `width`/`height` are deliberately
- * excluded: too overloaded (an icon's size and a card's layout width use
- * the same property) to map to one group without a high false-positive rate.
+ * Group *names* are a convention: a check fires only when the design system's
+ * token set has a group by that exact name. `width`/`height` are excluded: too
+ * overloaded (icon size vs. card layout width) to map to one group without
+ * many false positives.
  */
 const PROPERTY_TO_GROUP: Record<string, string> = {
   color: 'color',
@@ -54,9 +51,7 @@ const PROPERTY_TO_GROUP: Record<string, string> = {
   right: 'spacing',
   bottom: 'spacing',
 
-  // typography — kept as separate groups, not folded into one "typography",
-  // since real token sets (including the one this was built against) keep
-  // fontFamily/fontSize/fontWeight/lineHeight as distinct top-level groups
+  // typography: separate groups, as real token sets keep these distinct
   fontFamily: 'fontFamily',
   fontSize: 'fontSize',
   fontWeight: 'fontWeight',
@@ -69,7 +64,7 @@ const PROPERTY_TO_GROUP: Record<string, string> = {
   borderBottomLeftRadius: 'radius',
   borderBottomRightRadius: 'radius',
 
-  // border width (distinct from border color, above)
+  // border width
   borderWidth: 'borderWidth',
   borderTopWidth: 'borderWidth',
   borderRightWidth: 'borderWidth',
@@ -106,27 +101,22 @@ const GENERIC_VALUES = new Set([
 function isLiteralValue(node: Expression): string | undefined {
   if (node.type === 'StringLiteral') return node.value;
   if (node.type === 'NumericLiteral') return String(node.value);
-  // TemplateLiteral (e.g. `0 0 0 3px color-mix(in srgb, ${theme.shadow} 16%, transparent)`)
-  // often mixes a real token reference with literal structure — resolving
-  // that fully isn't worth the complexity, so it's treated as a reference
-  // (not flagged) rather than risk a false positive.
+  // A TemplateLiteral (e.g. `0 0 0 3px color-mix(in srgb, ${theme.shadow} 16%,
+  // transparent)`) often mixes a token reference with literal structure; it
+  // counts as a reference, not flagged.
   return undefined;
 }
 
 /**
- * Recursively walks an object literal — a style-authoring call's argument
- * (whichever styling system found it; this function has no opinion), a
- * variant/sub-variant object nested inside one, or a JSX `style={{}}` prop
- * (the TSX adapter calls this directly) — looking for a *governed* property
- * set to a literal value rather than a token/theme reference. No
- * special-casing of which nested key means what (selectors, media queries,
- * variants, ...): every nested object is just walked the same way, and
- * quoted keys (`'&:hover'` — `&` isn't a valid bare identifier) are read
- * the same as bare ones.
+ * Recursively walks an object literal (a style-authoring call's argument, a
+ * nested variant object, or a JSX `style={{}}` prop) looking for a *governed*
+ * property set to a literal instead of a token/theme reference. Nested keys
+ * get no special treatment (selectors, media queries, variants): every nested
+ * object is walked the same way, and quoted keys (`'&:hover'`) read like bare
+ * ones.
  *
- * Shared by every concrete implementation under `adapters/styles/` and by
- * the TSX adapter's inline `style` prop check, so "which properties map to
- * which token group" is written and fixed in exactly one place.
+ * Shared by every styles implementation and the TSX adapter's inline `style`
+ * check, so "which properties map to which token group" lives in one place.
  */
 export const hardcodedLiteral: Rule<StyleObject> = ({ object, system, surface }) => {
   const findings: Finding[] = [];
@@ -161,8 +151,8 @@ export const hardcodedLiteral: Rule<StyleObject> = ({ object, system, surface })
 
       // Unitless line heights are font-relative, not fixed-pixel scale values.
       if (key === 'lineHeight' && value.type === 'NumericLiteral') continue;
-      // Local stacking contexts may use literal levels; only suggest an exact
-      // named layer, never round a local z-index to the nearest global overlay.
+      // Local stacking contexts may use literal levels; suggest only an exact
+      // named layer.
       if (key === 'zIndex' && !system.tokens(group).some((token) => token.value === literal)) continue;
 
       const nearest = system.nearestToken(literal, group);

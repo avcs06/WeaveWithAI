@@ -1,27 +1,28 @@
 /**
- * Radio and RadioGroup: one choice from a few options that stay visible, like
- * a ticket type or a pickup option. RadioGroup is the form field, with its
- * label, help text and error; each Radio's children are its label. The arrow
- * keys move between the radios and choose, and the group is one tab stop.
+ * Radio and RadioGroup: one choice from a few visible options, like a ticket
+ * type. RadioGroup is the form field, with label, help text and error; each
+ * Radio's children are its label. Arrow keys move between radios and choose;
+ * the group is one tab stop.
  *
  * When not to use:
  * - Any number of choices: CheckboxGroup. One yes/no: Checkbox.
  * - Short choices in a toolbar or filter bar: ChipGroup. Choices with a
- *   description or a picture: CardGroup.
+ *   description or picture: CardGroup.
  * - More than about 7 options: Select.
  *
  * Pitfalls:
  * - A Radio renders only inside a RadioGroup, and each needs a `value`.
  * - The group needs a name: `label`, `aria-labelledby` or `aria-label`.
- * - It's controlled: `value` and `onChange`, or `{...field}` from
- *   Controller. Set `required` through the Controller's `rules`.
+ * - It's controlled: `value` and `onChange`, or `{...field}` from Controller.
+ *   Set `required` through the Controller's `rules`.
  * - RadioGroup adds no layout: lay the radios out with its `className`.
  * - Say why a radio can't be chosen with `disabledWithReason`: it stays
- *   reachable by the arrow keys, so the reason is read.
+ *   reachable by arrow keys, so the reason is read.
  */
 import { Button } from '@packages/ui/Button';
 import { Controller } from '@packages/ui/Form';
 import { Radio, RadioGroup } from '@packages/ui/Radio';
+import { Section } from '@packages/ui/Section';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -34,10 +35,9 @@ const register = (registration: Registration) =>
 type Registration = { ticket: string };
 
 /**
- * In a form: the RadioGroup renders through Controller with `{...field}`.
- * `rules` makes it required, so its label shows the mark and a failed submit
- * shows the error and focuses the group. A radio that can't be chosen says
- * why.
+ * In a form: RadioGroup renders through Controller with `{...field}`. `rules`
+ * makes it required, so the label shows the mark and a failed submit shows the
+ * error and focuses the group. A radio that can't be chosen says why.
  */
 const TicketForm = () => {
   const [status, setStatus] = useState('');
@@ -85,8 +85,8 @@ const TicketForm = () => {
 };
 
 /**
- * Outside a form: a controlled value, radios in a row through `className`,
- * and `size="md"` with `variant="base"` for a calmer, larger look.
+ * Outside a form: a controlled value, radios in a row via `className`, and
+ * `size="md"` with `variant="base"` for a calmer, larger look.
  */
 const BadgePickup = () => {
   const [pickup, setPickup] = useState('desk');
@@ -139,16 +139,14 @@ const LockedChoices = () => (
 );
 
 /**
- * No visible group label: a heading names the group through
- * `aria-labelledby`, and a `tooltip` on a radio explains it on hover and
- * focus.
+ * No visible group label: a heading names the group via `aria-labelledby`, and
+ * a radio's `tooltip` explains it on hover and focus.
  */
 const SessionLength = () => {
   const [length, setLength] = useState('30');
 
   return (
-    <section className="flex-col-gap-2">
-      <h3 id="session-length">Session length</h3>
+    <Section title="Session length" titleId="session-length">
       <RadioGroup
         aria-labelledby="session-length"
         value={length}
@@ -160,7 +158,7 @@ const SessionLength = () => {
           60 minutes
         </Radio>
       </RadioGroup>
-    </section>
+    </Section>
   );
 };
 

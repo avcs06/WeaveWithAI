@@ -21,9 +21,8 @@ interface Compound {
 /** One parsed element selector, e.g. `button`, `div.flex`, `Input[type="password"]` or `a:not([href])`. */
 interface AlternativeMatcher extends Compound {
   /**
-   * Tag name as written (`input` is the element, `Input` a component,
-   * `Form.Item` a member of one), or `undefined` for a selector with no tag
-   * (`.flex`).
+   * Tag name as written (`input` element, `Input` component, `Form.Item`
+   * member), or `undefined` for a selector with no tag (`.flex`).
    */
   tag?: string;
   /** `:not(…)` parts: the element matches only when the code shows none of them holds. */
@@ -120,10 +119,8 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  * Tags are case-sensitive, as in JSX: `input` is the native element and
  * `Input` a component. An attribute value matches a literal written on the
  * element: a string, number or boolean, an expression-free template, either
- * branch of a conditional, or a key of a spread object literal. The classes
- * are plain literals the author wrote; nothing here knows or cares about a
- * utility-class convention, and matching works whether or not `classNames`
- * is configured.
+ * branch of a conditional, or a key of a spread object literal. Classes are
+ * plain literals; matching works whether or not `classNames` is configured.
  */
 function parseAlternative(source: string, owner: string): AlternativeMatcher | undefined {
   const text = source.trim().replace(/[<>]/g, '');
@@ -188,14 +185,10 @@ function unreadable(source: string): string {
 }
 
 /**
- * Flattens every component's invalid alternatives into one index, so
- * checking a JSX tag costs a hash lookup plus a scan of only the matchers
- * that name that tag, however many components declare however many
- * alternatives.
- *
- * Built once per design system rather than per `validate` call. A
- * declaration it can't read, or one a second owner repeats, becomes a
- * diagnostic instead of being dropped.
+ * Flattens every component's invalid alternatives into one index, so a JSX tag
+ * costs a hash lookup plus a scan of only its matchers. Built once per design
+ * system. An unreadable declaration, or one a second owner repeats, becomes a
+ * diagnostic.
  */
 export function buildInvalidAlternativeOwners(components: ComponentContract[]): InvalidAlternativeOwners {
   const owners: InvalidAlternativeOwners = {
@@ -327,8 +320,8 @@ function bestMatch(element: JsxElement): AlternativeMatcher | undefined {
 
   let best: AlternativeMatcher | undefined;
   for (const matcher of candidates) {
-    // A component naming itself would be a config mistake, but reporting it
-    // would be worse — it would tell the reader to replace `X` with `X`.
+    // A component naming itself is a config mistake; reporting it would say
+    // replace `X` with `X`.
     if (matcher.owner === tag) continue;
     if (isOwnerFile(owners, matcher.owner, filePath)) continue;
     if (compoundHolds(element, matcher) !== true) continue;
@@ -353,17 +346,13 @@ function finding(node: Node, owner: string, used: string, declared?: string): Fi
 }
 
 /**
- * Reaching for a raw `<button>`, a `<div className="flex">`, or some other
- * library's Button, when the design system has a component for exactly that
- * is the "wrong implementation" case — the component exists precisely so
- * this doesn't happen. Always an error: the component declares this an
- * invalid alternative to itself.
+ * A raw `<button>`, `<div className="flex">` or another library's Button where
+ * the design system has a component for it. Always an error: the component
+ * declares it an invalid alternative.
  *
- * Runs for every tag, not just lowercase ones: what a component supersedes
- * can be a native element or another component, and both are equally wrong
- * to reach for. Only the owner's own folder may use what it supersedes;
- * every other file, other design-system components included, is pointed at
- * the owner.
+ * Runs for every tag: what a component supersedes can be an element or another
+ * component. Only the owner's folder may use it; every other file,
+ * design-system components included, is pointed at the owner.
  */
 export const invalidAlternativeElement: Rule<JsxElement> = (element) => {
   const match = bestMatch(element);
@@ -374,8 +363,8 @@ export const invalidAlternativeElement: Rule<JsxElement> = (element) => {
 /**
  * Bringing in a package a component declares superseded, e.g.
  * `import('@radix-ui/react-tabs')`, or one of its exports named by
- * `import('@mui/material'){Button}` — in the import and wherever the file
- * renders or reads that export.
+ * `import('@mui/material'){Button}`: flagged in the import and wherever the
+ * file renders or reads that export.
  */
 export const invalidAlternativeImport: Rule<JsxImport> = ({
   node,
@@ -385,8 +374,8 @@ export const invalidAlternativeImport: Rule<JsxImport> = ({
   importException,
   filePath,
 }) => {
-  // Only the owner's own folder may import what it supersedes, and the files
-  // the config names as exceptions.
+  // Only the owner's folder and the config's exception files may import what it
+  // supersedes.
   if (importException) return [];
   const candidates = owners.imports
     .filter((matcher) => matcher.matches(source) && !isOwnerFile(owners, matcher.owner, filePath))

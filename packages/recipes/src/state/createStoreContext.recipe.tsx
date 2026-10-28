@@ -12,13 +12,12 @@
  *
  * Pitfalls:
  * - The hooks throw outside their provider.
- * - The store is made once per provider mount, from the props the provider
- *   gets on its first render: a later change of those props doesn't reach
- *   it. A new `key` on the provider starts a new store, which is how to reset
- *   it or start it from new props.
- * - Subscribe to the fields a part renders. For a handler that needs the
- *   state when it runs, read it with `store`, so the part doesn't re-render
- *   with every change.
+ * - The store is made once per provider mount, from the props of its first
+ *   render: later prop changes don't reach it. A new `key` on the provider
+ *   starts a new store: how to reset it or start it from new props.
+ * - Subscribe to the fields a part renders. A handler that needs the state
+ *   when it runs reads it with `store`, so the part doesn't re-render on
+ *   every change.
  */
 import { Button } from '@packages/ui/Button';
 import { createStore, createStoreContext } from '@packages/utils/state';

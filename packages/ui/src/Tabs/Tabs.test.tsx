@@ -62,6 +62,21 @@ describe('Tabs', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('names each panel by its tab, whatever characters the value holds', async () => {
+    const { container } = renderUI(
+      <Tabs aria-label="Tracks">
+        <Tab value="Lightning talks" title="Lightning talks">
+          Five minutes each.
+        </Tab>
+      </Tabs>,
+    );
+    const panel = screen.getByRole('tabpanel', { name: 'Lightning talks' });
+    expect(tab('Lightning talks')).toHaveAttribute('aria-controls', panel.id);
+    expect(panel.id).not.toMatch(/\s/);
+    expect(screen.getByRole('tablist', { name: 'Tracks' })).toBeInTheDocument();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   it('a press shows the tab’s panel and unmounts the one before', async () => {
     renderUI(<Session />);
     await userEvent.click(tab('Feedback'));
@@ -306,7 +321,6 @@ describe('Tabs', () => {
       expect(tab('Feedback')).toHaveAccessibleDescription(
         'Opens after the session',
       );
-      // Notes and Files have no reason to show: the arrow keys skip them.
       await userEvent.keyboard('{ArrowRight}');
       expect(tab('Recording')).toHaveFocus();
       await userEvent.keyboard('{ArrowRight}');

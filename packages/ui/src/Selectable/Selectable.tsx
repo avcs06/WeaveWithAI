@@ -25,9 +25,8 @@ export const useSelectableVariant = (
   return mode ? modeVariants[mode] : variant;
 };
 
-// Radix toggles on click, which only a native button fires for Space: on
-// key up, as a button does. A PlainButton child sees the key up handled and
-// doesn't click again.
+// Radix toggles on click, which only a native button fires for Space, on key
+// up. A PlainButton child sees it handled and doesn't click again.
 const isSpaceOnNonButton = (event: React.KeyboardEvent<HTMLElement>) =>
   event.key === ' ' && !(event.currentTarget instanceof HTMLButtonElement);
 
@@ -121,8 +120,7 @@ const GroupRoot = ({ group, element, state }: GroupRootProps) => {
   if (group.mode === 'multiple') {
     const { mode, value, onChange, ...props } = group;
     // A plain group takes no `aria-required`, `aria-invalid` or
-    // `aria-readonly`: its message is in its description, and its items say
-    // they're read-only.
+    // `aria-readonly`: its message is its description, its items say read-only.
     const {
       'aria-required': _required,
       'aria-invalid': _invalid,
@@ -166,8 +164,8 @@ const GroupRoot = ({ group, element, state }: GroupRootProps) => {
         // react-hook-form's value is `undefined` until the form has a default.
         value={value ?? ''}
         onValueChange={onChange}
-        // With a reason its items stay reachable by the arrow keys, and
-        // each blocks its own activation.
+        // With a reason, items stay arrow-key reachable and each blocks its own
+        // activation.
         disabled={Boolean(state.disabled)}
       />
     </SelectableGroupProvider>
@@ -175,8 +173,8 @@ const GroupRoot = ({ group, element, state }: GroupRootProps) => {
 };
 
 /**
- * The items' group, as a form field: FormControl gives it its label, help
- * text and message, and `{...field}` from Controller is all it needs.
+ * The items' group as a form field: FormControl supplies label, help text and
+ * message; `{...field}` from Controller is all it needs.
  */
 export const SelectableGroup = ({
   id,
@@ -237,9 +235,8 @@ export const SelectableGroup = ({
 };
 
 /**
- * An item's state for `useIsDisabled`: its own, and under it its group's. A
- * disabled or read-only group gives its items its state and reason; an
- * item's own reason wins.
+ * An item's state for `useIsDisabled`: its own over its group's. A disabled or
+ * read-only group passes its state and reason down; an item's own reason wins.
  */
 export const useSelectableItemState = ({
   disabled,

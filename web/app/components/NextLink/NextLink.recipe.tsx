@@ -32,8 +32,8 @@ const InText = () => (
 );
 
 /**
- * It takes `replace`, `scroll`, `prefetch` and `onNavigate`, as Next.js's
- * `Link` does; `scroll={false}` keeps the scroll position.
+ * Takes `replace`, `scroll`, `prefetch` and `onNavigate`, as Next.js's `Link`
+ * does; `scroll={false}` keeps the scroll position.
  */
 const KeepScroll = () => (
   <NextLink href="/events/42" scroll={false}>
@@ -128,7 +128,7 @@ const GuardedNavigation = () => {
 
 /**
  * A route styled as a button: `Button as={NextLink}` with `href`. A disabled
- * one renders an anchor without `href`, so it can't be followed; give it a
+ * one renders an anchor without `href`, so it can't be followed; give a
  * reason.
  */
 const RouteAsButton = () => (

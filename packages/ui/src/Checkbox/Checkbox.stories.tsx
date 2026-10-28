@@ -177,7 +177,7 @@ const CheckboxStories = () => {
           </ToggleCheckbox>
           <ToggleCheckbox aria-label="Select row 3" />
         </div>
-        {/* The label stays on one line and truncates, with a tooltip. */}
+        {/* One line, truncated, with a tooltip. */}
         <div style={{ maxWidth: 220 }}>
           <ToggleCheckbox checked>
             I agree to the code of conduct and the photo policy

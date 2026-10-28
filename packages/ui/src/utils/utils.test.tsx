@@ -8,8 +8,8 @@ import { useIsDisabled } from './useIsDisabled';
 
 describe('useIsDisabled', () => {
   // The full return: `isDisabled` (inactive at all), `isReadOnly` (only
-  // read-only, so the value can still be focused and copied), `isLoading`,
-  // `isFocusable` (keeps its tab stop) and the reason to show.
+  // read-only: value still focusable and copyable), `isLoading`,
+  // `isFocusable` (keeps its tab stop) and the reason.
   const cases: [
     Parameters<typeof useIsDisabled>[0],
     ReturnType<typeof useIsDisabled>,
@@ -139,8 +139,8 @@ describe('useIsDisabled', () => {
         stateTooltip: '',
       },
     ],
-    // Read-only stops being "only read-only" once loading also disables,
-    // or the control is disabled outright.
+    // Read-only stops being "only read-only" once loading also disables or
+    // the control is disabled outright.
     [
       { readOnly: true, loading: true },
       {
@@ -171,8 +171,8 @@ describe('useIsDisabled', () => {
         stateTooltip: '',
       },
     ],
-    // A reason from any state keeps the tab stop, even when another
-    // state did the disabling silently.
+    // A reason from any state keeps the tab stop, even when another state
+    // disabled silently.
     [
       { disabled: true, readOnlyWithReason: 'Locked' },
       {
@@ -259,9 +259,7 @@ describe('useIsDisabled', () => {
     expect(focusable({ disabledWithReason: 'No access' })).toBe(true);
     expect(focusable({ readOnlyWithReason: 'Locked' })).toBe(true);
     expect(focusable({ loadingWithReason: 'Saving' })).toBe(true);
-    expect(focusable({ loading: true, disableWhileLoading: false })).toBe(
-      true,
-    );
+    expect(focusable({ loading: true, disableWhileLoading: false })).toBe(true);
   });
 
   it('reports read-only only when read-only is the sole disabling state', () => {

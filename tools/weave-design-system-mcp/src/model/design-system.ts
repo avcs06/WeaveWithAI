@@ -39,9 +39,8 @@ function loadAllComponents(config: ResolvedConfig): ComponentContract[] {
 }
 
 /**
- * Ranks a match so an exact name beats a prefix, which beats a substring,
- * which beats a mention anywhere in the surrounding text. Zero means "not a
- * match at all" and is dropped by the callers below.
+ * Ranks a match: exact name, then prefix, substring, then a mention in the
+ * surrounding text. Zero means no match.
  */
 function scoreMatch(query: string, name: string, haystack: string): number {
   const n = name.toLowerCase();
@@ -63,11 +62,9 @@ function rank(hits: SearchHit[], limit: number): SearchHit[] {
 }
 
 /**
- * Builds the `DesignSystem` lookup API from a resolved config: loads every
- * configured token source (concatenated — merging same-named tokens across
- * sources is left to whoever configures the paths, not solved here), the
- * configured component source, and the reverse index derived from whichever
- * tokens have a resolved value.
+ * Builds the `DesignSystem` lookup API from a resolved config. Token sources
+ * are concatenated; merging same-named tokens across them is up to whoever
+ * configures the paths.
  */
 export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   const tokenClass = config.tailwind?.tokenClass;
@@ -77,8 +74,8 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   });
   const components = loadAllComponents(config);
   const reverseIndex = buildReverseIndex(tokens);
-  // A component source can be an entire icon package, so `component()` gets
-  // a map rather than a linear scan — `validate` looks up a name per JSX tag.
+  // A map: a source can be a whole icon package and `validate` looks up a name
+  // per JSX tag.
   const byName = new Map(components.map((c) => [c.name.toLowerCase(), c]));
   const byExactName = new Map(components.map((c) => [c.name, c]));
   const invalidAlternatives = buildInvalidAlternativeOwners(components);
@@ -91,8 +88,8 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
     ),
   );
 
-  // A recipe covers the components declared beside it in a file of its own
-  // name (`Button.tsx` for `Button.recipe.tsx`) or in the folder's barrel.
+  // A recipe covers components declared beside it in a file of its name
+  // (`Button.tsx`) or the folder's barrel.
   const covers = (recipe: RecipeFile, component: ComponentContract) =>
     component.filePath !== undefined &&
     dirname(component.filePath) === dirname(recipe.filePath) &&

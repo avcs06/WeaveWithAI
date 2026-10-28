@@ -25,7 +25,9 @@ import type {
   SearchInputProps,
 } from './Input.types';
 
-/** A button in the field's box, as tall as its line so the box keeps its height. */
+/**
+ * A button in the field's box, as tall as its line so the box keeps its height.
+ */
 const FieldButton = ({ label, size, ...props }: FieldButtonProps) => (
   <IconButton
     {...props}
@@ -38,9 +40,9 @@ const FieldButton = ({ label, size, ...props }: FieldButtonProps) => (
 );
 
 /**
- * A search field: filters a list or searches a source as the user types. It
- * shows what's typed at once and sends `onChange` after a pause; Enter sends
- * it at once, Escape and the clear button empty it.
+ * A search field: filters a list or searches a source as the user types. Shows
+ * what's typed at once and sends `onChange` after a pause; Enter sends it at
+ * once, Escape and the clear button empty it.
  *
  * @invalidAlternative input[type="search"], Input[type="search"], [role="searchbox"]
  * @invalidAlternative Input[placeholder*="search" i], Input[aria-label*="search" i], input[placeholder*="search" i], input[aria-label*="search" i]
@@ -116,9 +118,9 @@ export const SearchInput = ({
 };
 
 /**
- * A password field, with a button at its end that shows or hides the text.
- * `autoComplete` says which password: `current-password` to sign in,
- * `new-password` to sign up or change it.
+ * A password field with a button at its end that shows or hides the text.
+ * `autoComplete` says which: `current-password` to sign in, `new-password` to
+ * sign up or change it.
  *
  * @invalidAlternative input[type="password"], Input[type="password"], input[autoComplete*="password"], Input[autoComplete*="password"]
  */
@@ -131,8 +133,8 @@ export const PasswordInput = (props: PasswordInputProps) => {
       {...props}
       type={visible ? 'text' : 'password'}
       rightAddOn={
-        // One name, with the state in `aria-pressed`: a name that changes
-        // on the focused button often isn't announced.
+        // One name, state in `aria-pressed`: a name that changes on the focused
+        // button often isn't announced.
         <FieldButton
           label="Show password"
           size={props.size}
@@ -167,8 +169,8 @@ const stepKeys: Record<string, number> = {
 };
 
 /**
- * A number field: a price, a count, a capacity. `onChange` gets the number
- * as it's typed, or after `delay`; `null` while empty. The arrow keys and
+ * A number field: a price, a count, a capacity. `onChange` gets the number as
+ * it's typed, or after `delay`; `null` while empty. Arrow keys and
  * PageUp/PageDown step it, Home and End go to `min` and `max`, and blur or
  * Enter moves it into them.
  *
@@ -199,8 +201,7 @@ export const NumberInput = <D extends number = never>({
   // A waiting edit is sent as the field goes, not dropped.
   useLayoutEffect(() => flush, [flush]);
 
-  // A new value replaces the text, unless the text already means it: "1."
-  // stays while it's 1.
+  // A new value replaces the text unless it already means it: "1." stays for 1.
   if (fieldValue !== lastFieldValue) {
     setLastFieldValue(fieldValue);
     if (fieldValue !== toNumber(text)) setText(toText(fieldValue));
@@ -225,8 +226,8 @@ export const NumberInput = <D extends number = never>({
     if (number !== fieldValue) report(number);
   };
 
-  // Moved into `min` and `max` and sent at once, so a click that moved focus,
-  // like Save, or Enter's submit reads it.
+  // Moved into `min`/`max` and sent at once, so a focus-moving click (Save) or
+  // Enter's submit sees it.
   const settle = () => {
     if (isDisabled) return;
     const number = toNumber(text);
@@ -238,8 +239,8 @@ export const NumberInput = <D extends number = never>({
     if (isDisabled || event.nativeEvent.isComposing) return;
     const steps = stepKeys[event.key];
     const current = toNumber(text) ?? 0;
-    // Rounded to the places of the step and the number: in floating point,
-    // 0.1 + 0.1 + 0.1 is 0.30000000000000004.
+    // Rounded to the step's and number's places: 0.1 + 0.1 + 0.1 is
+    // 0.30000000000000004.
     const places = Math.max(decimalsOf(step), decimalsOf(current));
     const next = steps
       ? clamp(Number((current + steps * step).toFixed(places)))

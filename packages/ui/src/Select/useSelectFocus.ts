@@ -41,34 +41,34 @@ const pageSize = 10;
 
 /**
  * Focus moves between the trigger, its search field and the options as one
- * control: one tab stop while closed, and `onBlur` only once focus leaves
- * all three. The keys are the APG select-only combobox's.
+ * control: one tab stop while closed, and `onBlur` only once focus leaves all
+ * three. Keys follow the APG select-only combobox.
  *
  * - Closed, on the trigger: ArrowDown, Enter and Space open the menu on the
- *   selected option, else the first. ArrowUp and Home open it on the first
- *   option, End on the last. A character key opens it with the character
- *   typed into the search field; without one, on the next option that
- *   starts with it, and Dropdown's typeahead goes on from there.
- * - On the trigger, or in an empty search field: Backspace removes the last
+ *   selected option, else the first. ArrowUp and Home open on the first, End
+ *   on the last. A character key opens with it typed into the search field;
+ *   without one, on the next option starting with it, and Dropdown's
+ *   typeahead continues from there.
+ * - On the trigger or in an empty search field: Backspace removes the last
  *   value and Delete the first; a single value is cleared by either.
  *   ArrowLeft moves to the last tag.
- * - On a tag: ArrowLeft and ArrowRight move between tags, and past the last
- *   back to the search field or the trigger. Backspace removes the tag and
- *   moves to the one before it, Delete to the one after.
+ * - On a tag: ArrowLeft and ArrowRight move between tags, past the last back
+ *   to the search field or trigger. Backspace removes the tag and moves to the
+ *   one before, Delete to the one after.
  * - Opening focuses the search field (Dropdown does), else the selected or
  *   first option; an empty menu keeps focus itself.
  * - Open, on the trigger: a character key moves focus to the search field
- *   before the key's default action, so the character lands there.
- *   ArrowDown moves to the options, and so does Tab without a search field;
- *   with one, Tab reaches it on its own.
+ *   before the key's default action, so the character lands there. ArrowDown
+ *   moves to the options, as does Tab without a search field; with one, Tab
+ *   reaches it on its own.
  * - On the options: with a search field, Dropdown's flow applies (typing,
  *   Shift+Tab, or ArrowUp on the first option go back to the field). Without
  *   one, Shift+Tab or ArrowUp on the first option go back to the trigger.
  *   PageUp and PageDown move 10 options. Alt+ArrowUp chooses the option and
- *   closes the menu; in a MultiSelect it only closes it.
- * - Tab on an option moves on past the Select, choosing the option first
- *   unless it's a MultiSelect: focus goes to the trigger, the Tab carries on
- *   from there, and the menu closes without pulling focus back.
+ *   closes the menu; in a MultiSelect it only closes.
+ * - Tab on an option moves past the Select, choosing the option first unless
+ *   it's a MultiSelect: focus goes to the trigger, the Tab carries on from
+ *   there, and the menu closes without pulling focus back.
  * - Escape moves focus to the trigger before the focused option goes away.
  * - Pressing the trigger or its search field keeps the menu open. Pressing a
  *   tag's close button or the clear button keeps focus where it is and
@@ -127,7 +127,9 @@ export const useSelectFocus = ({
     removeValue(value);
   };
 
-  /** Backspace, Delete and ArrowLeft on the trigger or an empty search field. */
+  /**
+   * Backspace, Delete and ArrowLeft on the trigger or an empty search field.
+   */
   const editValues = (key: string) => {
     if (key === 'ArrowLeft') {
       const last = tags().at(-1);
@@ -234,8 +236,8 @@ export const useSelectFocus = ({
 
       if (hasSearchField || !focusMenu()) return;
       event.preventDefault();
-      // The key that opened the menu starts Dropdown's typeahead, so the
-      // keys typed after it extend the same search.
+      // The opening key starts Dropdown's typeahead, so later keys extend
+      // the same search.
       if (openFocus) {
         document.activeElement?.dispatchEvent(
           new KeyboardEvent('keydown', { key: openFocus.key, bubbles: true }),

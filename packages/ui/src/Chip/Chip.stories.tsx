@@ -67,24 +67,28 @@ const ToggleChip = ({ active: initial = false, ...props }: ToggleChipProps) => {
 };
 
 const options = ['Engineering', 'Design', 'Sales', 'Support'];
+const ranges = ['7 days', '30 days', '90 days'];
 
 const Groups = ({
   look,
+  groupLook,
   disabled,
   reason,
   readOnly,
   readOnlyReason,
 }: {
   look: string;
+  groupLook: string | undefined;
   disabled: boolean;
   reason: boolean;
   readOnly: boolean;
   readOnlyReason: boolean;
 }) => {
   const [single, setSingle] = useState('Design');
+  const [range, setRange] = useState('30 days');
   const [multiple, setMultiple] = useState(['Engineering']);
-  // A reason replaces the plain state on the group, and reaches every chip
-  // in it; a chip's own reason wins.
+  // A group's reason replaces its plain state and reaches every chip; a chip's
+  // own reason wins.
   const groupState = {
     ...(reason
       ? { disabledWithReason: 'Locked while the plan is pending' }
@@ -104,7 +108,9 @@ const Groups = ({
           value={single}
           onChange={setSingle}
           {...groupState}
-          className="flex-row-gap-2 flex-wrap"
+          look={groupLook}
+          // Collapsed, the group lays itself out as one bar.
+          className={groupLook ? undefined : 'flex-row-gap-2 flex-wrap'}
         >
           {options.map((option) => (
             <Chip
@@ -128,7 +134,8 @@ const Groups = ({
           value={multiple}
           onChange={setMultiple}
           {...groupState}
-          className="flex-row-gap-2 flex-wrap"
+          look={groupLook}
+          className={groupLook ? undefined : 'flex-row-gap-2 flex-wrap'}
         >
           {options.map((option) => (
             <Chip key={option} value={option} look={`${look} rounded`}>
@@ -155,6 +162,36 @@ const Groups = ({
         </ChipGroup>
       </div>
       <div>
+        <p style={caption}>look: collapsed · single, then multiple</p>
+        <div className="flex-col-gap-3">
+          <ChipGroup
+            aria-label="Range"
+            look="collapsed"
+            value={range}
+            onChange={setRange}
+          >
+            {ranges.map((option) => (
+              <Chip key={option} value={option}>
+                {option}
+              </Chip>
+            ))}
+          </ChipGroup>
+          <ChipGroup
+            mode="multiple"
+            aria-label="Teams"
+            look="collapsed"
+            value={multiple}
+            onChange={setMultiple}
+          >
+            {options.map((option) => (
+              <Chip key={option} value={option}>
+                {option}
+              </Chip>
+            ))}
+          </ChipGroup>
+        </div>
+      </div>
+      <div>
         <p style={caption}>mode: single · disabled, with a reason</p>
         <ChipGroup
           label="Team"
@@ -177,6 +214,7 @@ const Groups = ({
 const ChipStories = () => {
   const [ghost, setGhost] = useState(false);
   const [rounded, setRounded] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [icon, setIcon] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [reason, setReason] = useState(false);
@@ -198,8 +236,6 @@ const ChipStories = () => {
 
   return (
     <StoryPage>
-      {/* Standalone chips toggle on click; the look `outline` or `filled`
-          sets the active look. */}
       <StorySection title="Variants">
         {chipVariants.flatMap((variant) =>
           chipSelections.map((selection) => (
@@ -303,6 +339,9 @@ const ChipStories = () => {
           <Checkbox checked={rounded} onCheckedChange={setRounded}>
             Rounded
           </Checkbox>
+          <Checkbox checked={collapsed} onCheckedChange={setCollapsed}>
+            Collapsed groups
+          </Checkbox>
           <Checkbox checked={icon} onCheckedChange={setIcon}>
             Left icon
           </Checkbox>
@@ -403,6 +442,7 @@ const ChipStories = () => {
       <StorySection title="Groups">
         <Groups
           look={look}
+          groupLook={collapsed ? 'collapsed' : undefined}
           disabled={disabled}
           reason={reason}
           readOnly={readOnly}

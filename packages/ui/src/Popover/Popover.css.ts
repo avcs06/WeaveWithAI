@@ -8,9 +8,8 @@ import {
   menuShellPaddingBlock,
 } from '../Menu/Menu.css';
 
-// A popover's content is a panel, not rows: its top and bottom padding sits
-// inside the scroll area, so a field's focus ring at either edge is not
-// clipped by the viewport.
+// A popover's content is a panel, not rows: its vertical padding sits inside
+// the scroll area, so a field's focus ring at either edge isn't clipped.
 export const popover = style({
   vars: {
     [menuShadow]: tokens.boxShadow.popover,

@@ -16,9 +16,9 @@ import { TableContent, type TableContentProps } from './TableContent';
 import type { TableProps, TypedTable } from './Table.types';
 
 /**
- * Rows of records to scan, sort, filter, select and act on. Configure it with
- * `Table.*` parts as children: a `Table.Column` per column, plus the features
- * the table needs (`Table.Selection`, `Table.Pagination`, …).
+ * Rows of records to scan, sort, filter, select and act on. Configure with
+ * `Table.*` children: a `Table.Column` per column, plus the features needed
+ * (`Table.Selection`, `Table.Pagination`, …).
  * @invalidAlternative table, [role="table"], [role="cell"]
  */
 export function Table<T>({ children, ...props }: TableProps<T>) {
@@ -41,10 +41,10 @@ Table.Pagination = TablePagination;
 Table.InfiniteScroll = TableInfiniteScroll;
 
 /**
- * `Table` typed for one row type `T`. In TSX a parent's generic never reaches
- * its children, so `<Table<Row>>` leaves the parts untyped; this binds `T` to
- * the table and every part at once: `dataKey`, `row` in renders and the row
- * callbacks. Call it once at module scope; it returns `Table` itself.
+ * `Table` typed for row type `T`. A parent's generic never reaches its children
+ * in TSX, so `<Table<Row>>` leaves the parts untyped; this binds `T` to the
+ * table and every part (`dataKey`, `row` in renders and callbacks). Call once
+ * at module scope; it returns `Table` itself.
  */
 export function createTable<T extends object>(): TypedTable<T> {
   return Table;

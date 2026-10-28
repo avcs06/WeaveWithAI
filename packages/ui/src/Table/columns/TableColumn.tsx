@@ -10,7 +10,7 @@ import type {
   TableColumnRender,
 } from '../Table.types';
 
-// What every variant of `TableColumnProps` can carry, for reading the props.
+// What every `TableColumnProps` variant can carry.
 type AnyTableColumnProps = TableColumnData & { children?: TableColumnRender };
 
 /** Config component: registers its props and renderer; renders nothing. */
@@ -47,10 +47,11 @@ export function TableColumn<
     });
   }, [id, title, dataKey, computed, sortable, width, align, filter, rowHeader]);
 
-  // Separate, so a new renderer only re-renders this column's cells.
+  // Separate, so a new renderer re-renders only this column's cells. No deps:
+  // `children` changes every render, so it writes every render.
   useStoreSync(() => {
     store('setColumnRender')(id, children);
-  }, [id, children]);
+  });
 
   useLayoutEffect(() => () => store('removeColumn')(id), [store, id]);
 

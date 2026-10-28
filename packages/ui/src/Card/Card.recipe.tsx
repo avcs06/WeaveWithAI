@@ -1,7 +1,7 @@
 /**
- * Card: a bordered container with its own padding and gap, for one item's
- * content (an event in a gallery), as a whole-card button, or, in a CardGroup,
- * as a large selectable option with room for a description.
+ * Card: a bordered container with padding and gap, for one item's content (an
+ * event in a gallery), as a whole-card button, or, in a CardGroup, as a large
+ * selectable option with room for a description.
  *
  * When not to use:
  * - A short toggle or filter: Chip. A yes/no setting: Checkbox.
@@ -12,19 +12,19 @@
  * Pitfalls:
  * - A card is exactly one of: static (no `onClick`), a button (`onClick`), or
  *   selectable (in a CardGroup, or with `active` and `onActiveChange`). Never
- *   put links or buttons inside a button or selectable card: their children
- *   are presentational, so assistive tech can't reach them, and a click on
- *   them also hits the card.
+ *   put links or buttons inside a button or selectable card: their children are
+ *   presentational, so assistive tech can't reach them, and a click on them
+ *   also hits the card.
  * - In a form, a CardGroup is the field: spread Controller's `{...field}` on
  *   it. It brings its own label, help text and error; don't wrap it in a
  *   FormControl.
  * - `onClick` and `asChild` don't mix: a list item can't be a button.
  * - Name a button or selectable card with `aria-labelledby` on its title and
  *   `aria-describedby` on its details; its whole text is its name otherwise.
- * - A grid of cards is a list: `<ul role="list">` of `<Card asChild><li>`,
- *   with `<h3>` titles. Columns go in a colocated .css.ts:
- *   `gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))'`,
- *   with Tailwind `grid gap-4` beside it.
+ * - A grid of cards is a list: `<ul role="list">` of `<Card asChild><li>`, with
+ *   `<h3>` titles. Columns go in a colocated .css.ts: `gridTemplateColumns:
+ *   'repeat(auto-fill, minmax(min(100%, 280px), 1fr))'`, with Tailwind `grid
+ *   gap-4` beside it.
  * - A card in a group takes the group's `disabled` or `disabledWithReason`; a
  *   card's own reason wins.
  */
@@ -46,7 +46,7 @@ const register = (registration: Registration) =>
 // Usage: the patterns to copy.
 /**
  * Content cards: a gallery of items. A list of cards is a list, so each is an
- * `li` through `asChild`, with a heading for screen-reader navigation.
+ * `li` via `asChild`, with a heading for screen-reader navigation.
  * `look="elevated"` adds a shadow; `!elevated`, the default, has none.
  */
 const ContentCards = () => (
@@ -68,8 +68,8 @@ const ContentCards = () => (
 );
 
 /**
- * Link card: the title is the link and the card stays static, so the link is
- * a normal tab stop that is read by its text.
+ * Link card: the title is the link and the card stays static, so the link is a
+ * normal tab stop read by its text.
  */
 const LinkCard = () => (
   <Card>
@@ -81,8 +81,8 @@ const LinkCard = () => (
 );
 
 /**
- * A card with its own actions: keep it static and put Buttons in it. Do not
- * add `onClick` to it, or the buttons become unreachable.
+ * A card with its own actions: keep it static and put Buttons in it. Adding
+ * `onClick` makes the buttons unreachable.
  */
 const CardWithActions = () => (
   <Card>
@@ -98,9 +98,8 @@ const CardWithActions = () => (
 );
 
 /**
- * Clickable card: the whole card does one thing (apply a template). It is
- * a button: focusable, pressed by Enter and Space. It has no children that
- * are interactive.
+ * Clickable card: the whole card does one thing (apply a template). It is a
+ * button: focusable, pressed by Enter and Space, with no interactive children.
  */
 const ClickableCard = () => {
   const titleId = useId();
@@ -150,9 +149,9 @@ const ClickableCardStates = () => {
 };
 
 /**
- * One of several options: a CardGroup with `mode="single"` (a ticket type)
- * is a radio group with room for a description. Name the group with
- * `aria-label`, and each card with `aria-labelledby` on its title.
+ * One of several options: a CardGroup with `mode="single"` (a ticket type) is a
+ * radio group with room for a description. Name the group with `aria-label`,
+ * and each card with `aria-labelledby` on its title.
  */
 const SingleOption = () => {
   const [ticket, setTicket] = useState('general');
@@ -210,9 +209,9 @@ type Registration = { ticket: string };
 
 /**
  * A required choice in a form: the CardGroup is a form field, so it renders
- * through Controller with `{...field}`, and `label` names it. The required
- * mark and the error come from `rules`; a failed submit focuses the chosen
- * card, else the first.
+ * through Controller with `{...field}`, and `label` names it. The required mark
+ * and error come from `rules`; a failed submit focuses the chosen card, else
+ * the first.
  */
 const TicketForm = () => {
   const [status, setStatus] = useState('');
@@ -261,9 +260,9 @@ const TicketForm = () => {
 };
 
 /**
- * Options that can't be picked: on a card,
- * `disabledWithReason` says why (sold out); on the group it locks all of them
- * and says why; `readOnlyWithReason` shows a choice that is fixed.
+ * Options that can't be picked: on a card, `disabledWithReason` says why (sold
+ * out); on the group it locks all of them and says why; `readOnlyWithReason`
+ * shows a choice that is fixed.
  */
 const UnavailableOptions = () => {
   const [seating, setSeating] = useState('standard');

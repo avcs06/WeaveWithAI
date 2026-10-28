@@ -2,31 +2,31 @@
  * ScrollArea and FlexScrollArea: a box that scrolls its own content, with
  * scrollbars that show while the content overflows and sit over its edge.
  * ScrollArea is for a box with its own height (`h-*` or `max-h-*` on it).
- * FlexScrollArea is for a flex column, like a side panel or a dialog's
- * body: it takes its content's height until the column has no room left,
- * then scrolls, while the header and footer stay put.
+ * FlexScrollArea is for a flex column, like a side panel or a dialog body:
+ * it takes its content's height until the column is full, then scrolls,
+ * while the header and footer stay put.
  *
  * When not to use:
  * - The page itself: let the document scroll.
  * - A Table, a Select's or Dropdown's menu, or a Popover: they scroll their
  *   own content.
- * - A single line that doesn't fit: Truncate it instead.
+ * - A single line that doesn't fit: Truncate it.
  *
  * Pitfalls:
  * - Name it (`aria-label` or `aria-labelledby`) when its content has nothing
  *   to Tab to, like plain text: it then takes focus, so keyboard users can
  *   scroll it.
- * - FlexScrollArea needs a flex column parent whose height is bounded, by a
- *   fixed height or by filling its own parent; otherwise it grows with its
- *   content and never scrolls.
+ * - FlexScrollArea needs a flex column parent with a bounded height (fixed,
+ *   or filling its own parent); otherwise it grows with its content and
+ *   never scrolls.
  * - `className` and `style` go on the outer box; `ref` reaches the element
  *   that scrolls, for its scroll position or a scroll listener.
  * - Don't add `overflow-*` classes to it or its parent: it scrolls itself.
  */
-import { classNames } from '@packages/styles/classNames';
 import { Button } from '@packages/ui/Button';
 import { Checkbox } from '@packages/ui/Checkbox';
 import { FlexScrollArea, ScrollArea } from '@packages/ui/ScrollArea';
+import { Section } from '@packages/ui/Section';
 import { Tag } from '@packages/ui/Tag';
 import React, { useId, useRef, useState } from 'react';
 
@@ -60,7 +60,7 @@ const tags = [
 // Usage: the patterns to copy.
 /**
  * A list in a box of fixed height. The checkboxes take focus, so the list
- * scrolls as Tab moves through them and needs no name of its own.
+ * scrolls as Tab moves through them and needs no name.
  */
 const AttendeeList = () => {
   const [checkedIn, setCheckedIn] = useState<string[]>([]);
@@ -97,8 +97,7 @@ const CodeOfConduct = () => {
   const headingId = useId();
 
   return (
-    <section className="flex-col-gap-2">
-      <h3 id={headingId}>Code of conduct</h3>
+    <Section title="Code of conduct" titleId={headingId}>
       <ScrollArea
         orientation="vertical"
         aria-labelledby={headingId}
@@ -111,22 +110,21 @@ const CodeOfConduct = () => {
           <p>Organizers may remove anyone who breaks these rules.</p>
         </div>
       </ScrollArea>
-    </section>
+    </Section>
   );
 };
 
 /**
- * A panel whose header and footer stay put: FlexScrollArea takes the room
- * left in the column, and scrolls only once the agenda needs more. Only up
- * and down (`orientation="vertical"`): the wide tag row inside scrolls
- * sideways on its own, in a ScrollArea with `orientation="horizontal"`.
+ * A panel with a fixed header and footer: FlexScrollArea takes the room left
+ * in the column and scrolls only once the agenda needs more. Vertical only
+ * (`orientation="vertical"`): the wide tag row inside scrolls sideways in its
+ * own ScrollArea with `orientation="horizontal"`.
  */
 const AgendaPanel = () => {
   const listRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className={classNames(panelHeight, 'flex-col-gap-3')}>
-      <h3>Day one</h3>
+    <Section title="Day one" className={panelHeight}>
       <ScrollArea orientation="horizontal" aria-label="Topics">
         <div className="flex-row-gap-2 pb-3">
           {tags.map((tag) => (
@@ -152,7 +150,7 @@ const AgendaPanel = () => {
       >
         Back to the first session
       </Button>
-    </section>
+    </Section>
   );
 };
 

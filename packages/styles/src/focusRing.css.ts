@@ -4,9 +4,8 @@ import { createVar, globalStyle, style } from '@vanilla-extract/css';
 import { tokens as tokenValues } from '../../../tokens';
 
 /**
- * The focus ring's shape, shared by every control. Colors still come from the
- * control's color set; these only shape the ring. The project picks one with
- * `focusRing` in tokens.ts.
+ * The focus ring's shape, shared by every control; colors come from the
+ * control's color set. The project picks one with `focusRing` in tokens.ts.
  */
 export const ringGap = createVar('ringGap');
 export const ringWidth = createVar('ringWidth');

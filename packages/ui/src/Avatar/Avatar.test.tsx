@@ -18,7 +18,6 @@ describe('Avatar', () => {
     const { container } = renderUI(<Avatar name="ada byron lovelace" />);
     expect(screen.queryByRole('img')).toBeNull();
     expect(container.firstElementChild).toHaveAttribute('aria-hidden', 'true');
-    // The first letters of the first and last words.
     expect(container).toHaveTextContent('AL');
     expect(container.firstElementChild).not.toHaveAttribute('tabindex');
     await userEvent.tab();
@@ -41,7 +40,6 @@ describe('Avatar', () => {
     expect(avatar).toHaveAttribute('tabindex', '0');
     await userEvent.tab();
     expect(avatar).toHaveFocus();
-    // Keyboard focus shows the name, as hover does.
     expect(
       await screen.findByRole('tooltip', { hidden: true }),
     ).toHaveTextContent('Ada Lovelace');
@@ -64,9 +62,7 @@ describe('Avatar', () => {
       </>,
     );
     for (const name of ['Ada Lovelace', 'Grace Hopper']) {
-      expect(screen.getByRole('img', { name })).not.toHaveAttribute(
-        'tabindex',
-      );
+      expect(screen.getByRole('img', { name })).not.toHaveAttribute('tabindex');
     }
     await userEvent.tab();
     expect(screen.getByRole('link')).toHaveFocus();
@@ -77,10 +73,7 @@ describe('Avatar', () => {
 
   it('one word gives its first letter', () => {
     renderUI(<Avatar name="madonna" aria-hidden={false} />);
-    // The accessible name is the name as passed, not the initials.
-    expect(screen.getByRole('img', { name: 'madonna' })).toHaveTextContent(
-      'M',
-    );
+    expect(screen.getByRole('img', { name: 'madonna' })).toHaveTextContent('M');
   });
 
   it('keeps a first letter outside the BMP whole', () => {

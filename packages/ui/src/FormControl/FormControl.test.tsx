@@ -14,7 +14,6 @@ import type { FormControlOwnProps } from './FormControl.types';
 
 const { variants } = formControlRecipe.classNames;
 
-/** A FormControl around a native input, as Input renders it. */
 const Field = (props: FormControlOwnProps) => (
   <FormControl {...props}>
     {({ isDisabled, ...controlProps }) => (
@@ -146,7 +145,6 @@ describe('FormControl', () => {
       expect(message(container)).toHaveTextContent(/^Enter your email$/);
       expect(textbox()).toBeInvalid();
       expect(textbox()).toHaveAccessibleDescription('Enter your email');
-      // The description is the status message itself, by id.
       expect(textbox()).toHaveAttribute(
         'aria-describedby',
         message(container).id,
@@ -259,7 +257,7 @@ describe('FormControl', () => {
         "We never share it Verified emails can't change",
       );
       expect(textbox()).toHaveAttribute('aria-disabled', 'true');
-      // The reason must be reachable, so the control keeps its tab stop.
+      // The reason must be reachable: the control keeps its tab stop.
       await userEvent.tab();
       expect(textbox()).toHaveFocus();
       expect(await axe(container)).toHaveNoViolations();

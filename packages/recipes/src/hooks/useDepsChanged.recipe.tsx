@@ -1,13 +1,13 @@
 /**
  * useDepsChanged: whether values changed since the last render, read while
- * rendering, to adjust state in the same render: an effect would show the
- * stale state for a frame, then render again. By default the first render
- * counts as a change, so one adjustment covers mount and every change
- * after; `trailing` counts only changes after mount.
+ * rendering to adjust state in the same render: an effect would show stale
+ * state for a frame, then render again. The first render counts as a change,
+ * so one adjustment covers mount and every change after; `trailing` counts
+ * only changes after mount.
  *
- * Not for: a value that can be worked out from props and state (compute it
- * while rendering), resetting all of a component's state (give it a `key`:
- * it remounts, losing focus and scroll too), or state that follows one prop
+ * Not for: a value computable from props and state (compute it while
+ * rendering), resetting all of a component's state (give it a `key`: it
+ * remounts, losing focus and scroll too), or state that follows one prop
  * (useBoundState).
  *
  * Pitfalls:

@@ -7,7 +7,7 @@ import React, { Fragment } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ErrorBoundary } from '../ErrorBoundary';
-// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- Root's barrel loads next/font for UIRoot; its providers are all a dialog in its own root needs.
+// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- Root's barrel loads next/font; a dialog's own root needs only the providers.
 import { UIProviders } from '../Root/UIProviders';
 import { hasContent } from '../utils';
 
@@ -54,7 +54,7 @@ const ConfirmationDialog = ({
       <Wrapper>
         <DialogPrimitive.Overlay
           data-slot="overlay"
-          className={dialogOverlay}
+          className={classNames(dialogOverlay, 'fixed inset-0')}
         />
         <DialogPrimitive.Content
           role="alertdialog"
@@ -70,6 +70,7 @@ const ConfirmationDialog = ({
             surfaceClassName,
             confirmationSurface,
             'flex-col-gap-0',
+            'fixed inset-0 h-fit',
             className,
           )}
         >
@@ -114,9 +115,8 @@ const ConfirmationDialog = ({
 
 /**
  * Asks a yes-or-no question over the page, like confirming a delete, and
- * waits for the answer: it resolves with the result the pressed footer
- * button sends. Callable from anywhere, React or not; on the server it
- * resolves `undefined` at once.
+ * resolves with the result the pressed footer button sends. Callable from
+ * anywhere, React or not; on the server it resolves `undefined` at once.
  */
 export const openConfirmationDialog = (options: ConfirmationDialogOptions) =>
   new Promise<DialogResult | undefined>((resolve) => {

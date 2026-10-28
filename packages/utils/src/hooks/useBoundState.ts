@@ -6,12 +6,12 @@ import { usePersistentCallback } from './usePersistentCallback';
 import type { Constant } from '../types';
 
 /**
- * Local state that follows `value` and reports edits to `onChange`: at once,
- * or with `delay`, after that many ms without edits. `flush` reports a
- * waiting edit now. `delay` is a constant: it can't change once set.
+ * Local state that follows `value` and reports edits to `onChange`, at once
+ * or after `delay` ms without edits. `flush` reports a waiting edit now.
+ * `delay` is a constant: it can't change once set.
  *
- * A `value` that is the same reference as the last edit reported is its
- * echo, and keeps newer edits; any other `value` replaces the state.
+ * A `value` that is the same reference as the last reported edit is its echo
+ * and keeps newer edits; any other `value` replaces the state.
  */
 export const useBoundState = <T, D extends number = never>(
   value: T,
@@ -36,8 +36,8 @@ export const useBoundState = <T, D extends number = never>(
   if (isFromOutside) {
     setStateValue(value);
     setReported(value);
-    // An edit still waiting would undo the change from outside. Cancelled
-    // while rendering, since the timer can fire before an effect would run.
+    // A waiting edit would undo the outside change. Cancelled while rendering:
+    // the timer can fire before an effect runs.
     reportLater.cancel();
   }
 

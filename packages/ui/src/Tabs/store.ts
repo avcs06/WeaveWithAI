@@ -1,22 +1,21 @@
 import { createStore, createStoreContext } from '@packages/utils/state';
 import { isEqual } from 'lodash-es';
 
-import type { TabEntry, TabItem } from './Tabs.types';
-import type { ReactNode } from 'react';
+import type { TabEntry, TabItem, TabRenderables } from './Tabs.types';
 
 type TabsStore = {
   /** A new array after each change to the tabs or their order. */
   tabs: TabItem[];
-  contentOf: (id: string) => ReactNode;
+  renderablesOf: (id: string) => TabRenderables | undefined;
   setTab: (id: string, entry: TabEntry) => void;
-  setTabContent: (id: string, content: ReactNode) => void;
+  setTabRenderables: (id: string, renderables: TabRenderables) => void;
   removeTab: (id: string) => void;
   setOrder: (ids: string[]) => void;
 };
 
 const createTabsStore = () => {
   const entries = new Map<string, TabEntry>();
-  const contents = new Map<string, ReactNode>();
+  const renderables = new Map<string, TabRenderables>();
   let order: string[] = [];
 
   const listTabs = () =>
@@ -28,19 +27,20 @@ const createTabsStore = () => {
   return createStore<TabsStore>(
     (set) => ({
       tabs: [],
-      contentOf: (id) => contents.get(id),
+      renderablesOf: (id) => renderables.get(id),
       setTab: (id, entry) => {
         entries.set(id, entry);
         set({ tabs: listTabs() });
       },
-      setTabContent: (id, content) => {
-        contents.set(id, content);
-        // Each panel selects its own content: only the changed one re-renders.
+      setTabRenderables: (id, next) => {
+        renderables.set(id, next);
+        // Each trigger and panel selects its own: only changed ones re-render,
+        // not the tab list.
         set({});
       },
       removeTab: (id) => {
         entries.delete(id);
-        contents.delete(id);
+        renderables.delete(id);
         set({ tabs: listTabs() });
       },
       setOrder: (ids) => {

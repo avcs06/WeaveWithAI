@@ -9,8 +9,7 @@ import type {
   ReactElement,
 } from 'react';
 
-// The field is controlled, so `defaultValue` would be ignored, and an input
-// has no children.
+// Controlled, so `defaultValue` would be ignored; an input has no children.
 type NativeInputProps<Excluded extends string = never> = Omit<
   ComponentPropsWithoutRef<'input'>,
   | keyof FormControlOwnProps
@@ -36,14 +35,14 @@ type FieldName =
 
 type DelayProps<D extends number> = {
   /**
-   * What the field holds, so autofill fills it and assistive tech knows its
-   * purpose: `email`, `name`, `new-password`… `off` for a field that isn't
-   * about the user, like an event's title.
+   * What the field holds, for autofill and assistive tech: `email`, `name`,
+   * `new-password`… `off` for a field not about the user, like an event's
+   * title.
    */
   autoComplete: string;
   /**
-   * `onChange` waits for this many ms without typing; the text shows at once.
-   * Blur, Enter and unmounting send a waiting edit at once.
+   * `onChange` waits this many ms without typing; the text shows at once. Blur,
+   * Enter and unmounting send a waiting edit at once.
    */
   delay?: Constant<number, D>;
 };
@@ -56,8 +55,8 @@ export type BareInputProps<D extends number = never> = Omit<
   value: string;
   onChange: (value: string) => void;
   /**
-   * `onChange` waits for this many ms without typing; the text shows at once.
-   * Blur, Enter and unmounting send a waiting edit at once.
+   * `onChange` waits this many ms without typing; the text shows at once. Blur,
+   * Enter and unmounting send a waiting edit at once.
    */
   delay?: Constant<number, D>;
 };
@@ -70,8 +69,8 @@ export type InputProps<D extends number = never> = TextFieldProps<'type'> &
   FieldName &
   DelayProps<D> & {
     /**
-     * `email`, `tel` and `url` bring their keyboards on phones. A number
-     * takes NumberInput, a password PasswordInput, a search SearchInput.
+     * `email`, `tel` and `url` bring phone keyboards. Numbers take NumberInput,
+     * passwords PasswordInput, searches SearchInput.
      */
     type?: 'text' | 'email' | 'tel' | 'url';
   };
@@ -94,8 +93,8 @@ export type NumberInputProps<D extends number = never> = FormControlOwnProps &
     onChange: (value: number | null) => void;
     autoComplete: string;
     /**
-     * `onChange` waits for this many ms without edits; the number shows at
-     * once. Blur, Enter and unmounting send a waiting edit at once.
+     * `onChange` waits this many ms without edits; the number shows at once.
+     * Blur, Enter and unmounting send a waiting edit at once.
      */
     delay?: Constant<number, D>;
     min?: number;

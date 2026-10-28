@@ -55,16 +55,15 @@ export const PlainButton = ({
   const child = Children.only(children) as ReactElement<ActivationHandlers>;
   const isNativeButton = child.type === 'button';
 
-  // A native button activates itself; any other element is given Enter on
-  // key down and Space on key up, as a button has.
+  // A native button activates itself; others get Enter on key down, Space on
+  // key up.
   const activate = (event: KeyboardEvent<HTMLElement>, key: string) => {
     if (isNativeButton || isDisabled || event.defaultPrevented) return;
     if (event.key === ' ') event.preventDefault();
     if (event.key === key) event.currentTarget.click();
   };
 
-  // The child's own handlers are guarded too: they run after the guard, then
-  // PlainButton's, each once.
+  // The child's handlers are guarded too; each runs once, then PlainButton's.
   const guarded = guardActivation(isDisabled, {
     onClick: (event) => {
       child.props.onClick?.(event);
@@ -93,13 +92,13 @@ export const PlainButton = ({
   return (
     <Tooltip tooltip={[tooltip, stateTooltip]}>
       <Slot
-        // Only on a native button: a wrapper's `type`, like Radix's, would
-        // land on a non-button child.
+        // Native button only: a wrapper's `type` (Radix's) would land on a
+        // non-button child.
         {...(isNativeButton && { type: type ?? 'button' })}
         role={isNativeButton ? undefined : 'button'}
         {...props}
-        // Read-only isn't disabled; a child with a role that has a read-only
-        // state, like a checkbox, says so itself.
+        // Read-only isn't disabled; a child role with read-only state
+        // (checkbox) sets it itself.
         aria-disabled={(isDisabled && !isReadOnly) || undefined}
         data-disabled={isDisabled || undefined}
         tabIndex={

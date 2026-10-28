@@ -1,32 +1,32 @@
 /**
- * Input: a single-line text field. `onChange` gets the text, not an event.
- * With `delay`, the text shows at once and `onChange` waits for a pause in
- * typing. PasswordInput, SearchInput and NumberInput are the fields for
- * those values. In a `useForm` form, every field renders through
- * `Controller`, and `{...field}` gives it its name, value, `onChange`,
- * `required` mark, `error` and focus on a failed submit.
+ * Input: a single-line text field. `onChange` gets the text, not an event. With
+ * `delay`, the text shows at once and `onChange` waits for a pause in typing.
+ * PasswordInput, SearchInput and NumberInput are the fields for those values.
+ * In a `useForm` form, every field renders through `Controller`, and
+ * `{...field}` gives it its name, value, `onChange`, `required` mark, `error`
+ * and focus on a failed submit.
  *
  * When not to use:
  * - A password: PasswordInput. A search: SearchInput. A number: NumberInput.
- * - A choice from a list: Select. A date or time: FormControl around the
- *   native input.
+ * - A choice from a list: Select. A date or time: FormControl around the native
+ *   input.
  *
  * Pitfalls:
- * - Every field needs a name: `label`, or `aria-label` / `aria-labelledby`.
- *   A placeholder is not a name.
+ * - Every field needs a name: `label`, `aria-label` or `aria-labelledby`. A
+ *   placeholder is not a name.
  * - Set `required` through the `rules` of `Controller`, which also marks the
- *   field. `{...field}` overwrites a `required` or `error` given before it,
- *   so spread it first when you override either.
+ *   field. `{...field}` overwrites a `required` or `error` given before it, so
+ *   spread it first when you override either.
  * - Report a server's error with `setError`, so it shows on the field.
- * - An error shows below the help text, which stays: the message says what
- *   went wrong ("Too short"), the help text what's asked.
- * - `error={true}` only styles the field. Pass a message unless the same
- *   text shows elsewhere.
- * - Don't put a live counter in `helpText`: it announces on every key. Put
- *   it in `labelRightSlot`.
+ * - An error shows below the help text, which stays: the message says what went
+ *   wrong ("Too short"), the help text what's asked.
+ * - `error={true}` only styles the field. Pass a message unless the same text
+ *   shows elsewhere.
+ * - Don't put a live counter in `helpText`: it announces on every key. Use
+ *   `labelRightSlot`.
  * - SearchInput's `loading` locks typing unless `disableWhileLoading={false}`.
- * - NumberInput shows a text keyboard on phones unless `min` is 0 or more,
- *   or `allowNegative={false}`, because number keypads have no minus key.
+ * - NumberInput shows a text keyboard on phones unless `min` is 0 or more or
+ *   `allowNegative={false}`: number keypads have no minus key.
  */
 import { Button, IconButton } from '@packages/ui/Button';
 import { Controller } from '@packages/ui/Form';
@@ -71,9 +71,8 @@ const SHARE_LINK = 'https://events.example.com/launch-party';
 type Contact = { name: string; email: string; phone: string };
 
 /**
- * A contact form: `rules` validate, `type` brings the right keyboard on
- * phones, and the submit button shows it is saving through
- * `loadingWithReason`.
+ * A contact form: `rules` validate, `type` brings the right phone keyboard, and
+ * the submit button shows it is saving through `loadingWithReason`.
  */
 const ContactForm = () => {
   const {
@@ -140,8 +139,8 @@ const ContactForm = () => {
 
 /**
  * Saved as the user types: `delay` holds `onChange` until typing pauses for
- * 500ms. A new `value` from the parent, like the suggested title, replaces
- * the text and drops a save not yet sent.
+ * 500ms. A new `value` from the parent, like the suggested title, replaces the
+ * text and drops an unsent save.
  */
 const AutosavedTitle = () => {
   const [title, setTitle] = useState('Launch party');
@@ -187,8 +186,8 @@ const PromoCode = () => {
 };
 
 /**
- * A length limit: `maxLength` stops typing at the limit, and the counter sits
- * in `labelRightSlot`, so it doesn't announce on every key.
+ * A length limit: `maxLength` stops typing at it; the counter sits in
+ * `labelRightSlot`, so it doesn't announce on every key.
  */
 const Tagline = () => {
   const [tagline, setTagline] = useState('');
@@ -208,8 +207,8 @@ const Tagline = () => {
 
 /**
  * A field in a toolbar or table row with no visible label: `aria-label` names
- * it, `tooltip` shows the name on hover, and `variant="base"` suits a
- * surface that is not the page.
+ * it, `tooltip` shows the name on hover, `variant="base"` suits a non-page
+ * surface.
  */
 const AttendeeNote = () => {
   const [note, setNote] = useState('');
@@ -261,8 +260,8 @@ const StreamLink = () => {
 };
 
 /**
- * A value to copy, not edit: `readOnlyWithReason` says why, and a copy
- * button sits in `rightAddOn`.
+ * A value to copy, not edit: `readOnlyWithReason` says why; a copy button sits
+ * in `rightAddOn`.
  */
 const ShareLink = () => {
   const copy = () => navigator.clipboard.writeText(SHARE_LINK);
@@ -289,7 +288,9 @@ const ShareLink = () => {
   );
 };
 
-/** A field that can't be used yet: `disabledWithReason` says what unlocks it. */
+/**
+ * A field that can't be used yet: `disabledWithReason` says what unlocks it.
+ */
 const RegistrationCode = () => (
   <Input
     label="Registration code"
@@ -300,7 +301,9 @@ const RegistrationCode = () => (
   />
 );
 
-/** Content on its way: `loadingWithReason` shows a spinner and says what loads. */
+/**
+ * Content on its way: `loadingWithReason` shows a spinner and says what loads.
+ */
 const DraftTitle = () => (
   <Input
     label="Title"
@@ -314,9 +317,9 @@ const DraftTitle = () => (
 type Address = { address: string };
 
 /**
- * Checking a value on the server: an async `validate` rule that runs on each
- * change (`mode: 'onChange'`), and `delay` so a change is a pause in typing.
- * `loading` follows `isValidating`, and `success` confirms the address.
+ * Checking a value on the server: an async `validate` rule runs on each change
+ * (`mode: 'onChange'`), and `delay` makes a change a pause in typing. `loading`
+ * follows `isValidating`; `success` confirms the address.
  */
 const EventAddressField = () => {
   const {
@@ -368,8 +371,8 @@ const EventAddressField = () => {
 };
 
 /**
- * Adding items from the keyboard: `ref` reaches the input, so focus returns
- * to it after each add, and Enter adds.
+ * Adding items from the keyboard: Enter adds, and `ref` reaches the input to
+ * return focus after each add.
  */
 const SpeakerList = () => {
   const [speakers, setSpeakers] = useState<string[]>([]);
@@ -410,9 +413,9 @@ const SpeakerList = () => {
 };
 
 /**
- * Two numbers that must be in order. `error={true}` styles From alone, and
- * the message on To is the one that is announced. `allowNegative={false}`
- * keeps the number keypad on phones.
+ * Two numbers that must be in order. `error={true}` styles From alone; the
+ * message on To is the one announced. `allowNegative={false}` keeps the number
+ * keypad on phones.
  */
 const PriceFilter = () => {
   const [from, setFrom] = useState<number | null>(20);
@@ -444,9 +447,9 @@ const PriceFilter = () => {
 };
 
 /**
- * Whole numbers within a range: `allowDecimal={false}`, `min` and `max`
- * (blur moves the number into them), and `delay` to wait for a pause. A
- * `warning` flags a value that is allowed but worth a look.
+ * Whole numbers within a range: `allowDecimal={false}`, `min` and `max` (blur
+ * moves the number into them), `delay` to wait for a pause. `warning` flags an
+ * allowed value worth a look.
  */
 const VenueCapacity = () => {
   const [capacity, setCapacity] = useState<number | null>(120);
@@ -471,7 +474,9 @@ const VenueCapacity = () => {
   );
 };
 
-/** Negative values allowed: a shift of the agenda in minutes, earlier or later. */
+/**
+ * Negative values allowed: a shift of the agenda in minutes, earlier or later.
+ */
 const AgendaShift = () => {
   const [minutes, setMinutes] = useState<number | null>(-15);
 
@@ -490,7 +495,9 @@ const AgendaShift = () => {
 
 type Guests = { guests: number | null };
 
-/** In a form, the empty number is `null`, so `required` and `min` rules apply. */
+/**
+ * In a form, the empty number is `null`, so `required` and `min` rules apply.
+ */
 const GuestCount = () => {
   const {
     control,
@@ -535,9 +542,9 @@ const GuestCount = () => {
 type SignIn = { password: string };
 
 /**
- * Signing in: `autoComplete="current-password"` lets password managers fill
- * it, `labelRightSlot` holds the recovery link, and a failed sign-in is
- * reported with `setError`.
+ * Signing in: `autoComplete="current-password"` lets password managers fill it,
+ * `labelRightSlot` holds the recovery link, and a failed sign-in goes through
+ * `setError`.
  */
 const SignInForm = () => {
   const {
@@ -588,10 +595,9 @@ const SignInForm = () => {
 type SignUp = { password: string; confirm: string };
 
 /**
- * Creating a password: `new-password` offers a generated one, `helpText`
- * states the requirement and stays above any error. The confirmation
- * compares with `getValues`, and `deps`
- * re-checks it when the first field changes.
+ * Creating a password: `new-password` offers a generated one, `helpText` states
+ * the requirement and stays above any error. The confirmation compares with
+ * `getValues`, and `deps` re-checks it when the first field changes.
  */
 const SignUpPassword = () => {
   const {
@@ -653,9 +659,9 @@ const SignUpPassword = () => {
 };
 
 /**
- * Filtering a list: SearchInput shows what's typed at once and sends it after
- * a pause. Escape and the clear button empty it. Give the field a visible
- * label, wrap it in `role="search"`, and announce the count.
+ * Filtering a list: SearchInput shows what's typed at once and sends it after a
+ * pause. Escape and the clear button empty it. Give it a visible label, wrap it
+ * in `role="search"`, and announce the count.
  */
 const EventSearch = () => {
   const [search, setSearch] = useState('');
@@ -687,9 +693,9 @@ const EventSearch = () => {
 
 /**
  * Searching on the server: `loading` shows while results load, and
- * `disableWhileLoading={false}` keeps typing open meanwhile. Each answer
- * keeps the text it answers: one for older text is dropped, and loading
- * lasts until the answer matches what was typed last.
+ * `disableWhileLoading={false}` keeps typing open. Each answer keeps the text
+ * it answers: one for older text is dropped, and loading lasts until the answer
+ * matches the last text typed.
  */
 const VenueSearch = () => {
   const [search, setSearch] = useState('');

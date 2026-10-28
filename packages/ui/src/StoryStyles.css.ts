@@ -1,7 +1,7 @@
 import { tokens } from '@packages/styles/tokens.css';
 import { style } from '@vanilla-extract/css';
 export const mono = style({ fontFamily: tokens.fontFamily.mono });
-export const tinyText = style({ fontSize: '11px' });
+export const tinyText = style({ fontSize: tokens.fontSize.micro });
 export const uppercase = style({ textTransform: 'uppercase' });
 export const trackedText = style({ letterSpacing: '0.08em' });
 export const mutedText = style({ color: tokens.color.base.fgMuted });
@@ -49,8 +49,7 @@ export const threeColumns = style({
 });
 export const topMargin = style({ marginTop: tokens.spacing[0.25] });
 export const bottomMargin = style({ marginBottom: tokens.spacing[0.5] });
-export const sectionTitle = style({
-  margin: 0,
-  fontSize: tokens.fontSize.body,
-  fontWeight: tokens.fontWeight.semibold,
+// Shows a box's edges, like a Section's padding.
+export const outlinedBox = style({
+  outline: `1px dashed ${tokens.color.base.border}`,
 });

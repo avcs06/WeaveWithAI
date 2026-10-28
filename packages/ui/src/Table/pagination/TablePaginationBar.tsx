@@ -3,13 +3,14 @@ import React, { memo, type RefObject, useLayoutEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Button } from '../../Button';
+import {
+  DEFAULT_PAGE_SIZE_OPTIONS,
+  Pagination,
+  PaginationInfo,
+} from '../../Pagination';
 import { useGetTableStore, useTableStore } from '../store';
 
-import { PageControls } from './PageControls';
-import { PaginationInfo } from './PaginationInfo';
-import { DEFAULT_PAGE_SIZE_OPTIONS } from './paginationSlice';
 import * as styles from './TablePaginationBar.css';
-import { getPageCount, getPageIndex } from './utils';
 
 import type { TableStoreState } from '../store.types';
 import type { TableMode } from '../Table.types';
@@ -35,8 +36,8 @@ type LoadMoreButtonProps = Pick<
 };
 
 /**
- * Scrolling loads more rows by itself; this is the keyboard's way. It goes
- * once every row is loaded, and hands its focus to the table.
+ * Keyboard path to load more; goes once every row is loaded, handing focus to
+ * the table.
  */
 const LoadMoreButton = ({
   loading,
@@ -80,9 +81,11 @@ const selectConfig = ({
   onLoadMore: infiniteScrollConfig?.onLoadMore,
 });
 
+const rowName = ['row', 'rows'] as const;
+
 /**
- * Info on the left; on the right, page controls with `Table.Pagination`, or
- * a load more button with `Table.InfiniteScroll`. Centered to each other.
+ * `Table.Pagination`: a Pagination of the rows. Otherwise the same info left,
+ * and right a load more button (`Table.InfiniteScroll`).
  */
 export const TablePaginationBar = memo(
   ({
@@ -116,8 +119,30 @@ export const TablePaginationBar = memo(
     // Server mode counts from the totals it is given.
     const filteredCount = isClient ? rowCount : (totalItems ?? rowCount);
     const totalCount = isClient ? dataCount : unfilteredTotalItems;
-    const pageCount = getPageCount(filteredCount, page.pageSize);
-    const pageIndex = getPageIndex(page.pageIndex, pageCount);
+
+    if (paginated)
+      return (
+        <Pagination
+          label={`${caption} pagination`}
+          totalItems={filteredCount}
+          value={page}
+          // The store's own actions also scroll the rows back to the top.
+          onChange={(next) =>
+            next.pageSize === page.pageSize
+              ? store('setPageIndex')(next.pageIndex)
+              : store('setPageSize')(next.pageSize)
+          }
+          size={size}
+          content={content}
+          pageSizeOptions={pageSizeOptions}
+          disabled={loading}
+          itemName={rowName}
+          filtered={filtered}
+          unfilteredTotal={totalCount}
+          selectedCount={selectedCount}
+          className="px-1.5 py-2"
+        />
+      );
 
     return (
       <div
@@ -128,34 +153,13 @@ export const TablePaginationBar = memo(
         )}
       >
         <PaginationInfo
-          range={
-            paginated
-              ? {
-                  from: filteredCount ? pageIndex * page.pageSize + 1 : 0,
-                  to: Math.min(filteredCount, (pageIndex + 1) * page.pageSize),
-                }
-              : undefined
-          }
           shownCount={rowCount}
-          filteredCount={filteredCount}
-          totalCount={totalCount}
+          totalItems={filteredCount}
+          itemName={rowName}
           filtered={filtered}
+          unfilteredTotal={totalCount}
           selectedCount={selectedCount}
         />
-        {paginated && (
-          <PageControls
-            label={`${caption} pagination`}
-            size={size}
-            content={content}
-            pageIndex={pageIndex}
-            pageSize={page.pageSize}
-            pageCount={pageCount}
-            pageSizeOptions={pageSizeOptions}
-            disabled={loading}
-            onPageIndexChange={store('setPageIndex')}
-            onPageSizeChange={store('setPageSize')}
-          />
-        )}
         {!isClient && onLoadMore && rowCount < filteredCount && (
           <LoadMoreButton
             loading={loading}

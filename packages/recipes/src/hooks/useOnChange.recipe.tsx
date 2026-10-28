@@ -1,12 +1,12 @@
 /**
  * useOnChange: an effect that runs when its deps change, but not on mount.
  * Its cleanup runs before the next change and on unmount, as useEffect's
- * does. For a change that comes from outside the component, like a prop or
- * a URL param, where no handler of its own sees it happen.
+ * does. For a change from outside the component, like a prop or URL param,
+ * that no handler of its own sees.
  *
  * Not for: a change the component makes itself (do the work in that
  * handler), telling the parent about a change (call its handler in the
- * event), a value worked out from the deps (compute it while rendering), or
+ * event), a value computable from the deps (compute it while rendering), or
  * adjusting state in the same render (useDepsChanged).
  *
  * Pitfall: deps compare with `Object.is`, so an object or array built while
@@ -57,9 +57,9 @@ const SessionResults = ({ page }: { page: number }) => {
 type Sort = 'date' | 'name';
 
 /**
- * A note for 2 seconds after each change of `sort`, which a toolbar or the
- * URL sets; none on mount. The cleanup clears the timer of a note a newer
- * change replaced.
+ * A note for 2 seconds after each change of `sort`, set by a toolbar or the
+ * URL; none on mount. The cleanup clears the timer of a note a newer change
+ * replaced.
  */
 const SortNote = ({ sort }: { sort: Sort }) => {
   const [note, setNote] = useState('');

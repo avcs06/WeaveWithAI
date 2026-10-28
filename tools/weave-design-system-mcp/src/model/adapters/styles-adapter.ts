@@ -8,14 +8,11 @@ import { preferTailwind } from './styles/rules/prefer-tailwind.js';
 import * as vanillaExtractStyles from './styles/vanilla-extract.js';
 
 /**
- * This file is a pure dispatcher — it contains no styling-system-specific
- * code of its own. Token readers and style-object discovery live under
- * `styles/`, and every check is a rule under `styles/rules/`, listed below.
- * A token file's format is inferred from the file; style-defining code is
- * always vanilla-extract. Supporting another styling system (Sass modules,
- * styled-components, whatever) means writing a new file next to
- * `styles/vanilla-extract.ts` and switching `validateStyles` to it — never
- * touching `validate.ts` or the TSX adapter, which only ever call this file.
+ * A pure dispatcher: token readers and style-object discovery live under
+ * `styles/`, every check is a rule under `styles/rules/`. Token file format is
+ * inferred; style-defining code is always vanilla-extract. Another styling
+ * system means a new file beside `styles/vanilla-extract.ts` and switching
+ * `validateStyles` to it, never touching `validate.ts` or the TSX adapter.
  */
 
 /** What a style rule sees: one style object literal. */
@@ -38,8 +35,7 @@ export function checkStyleObject(object: ObjectExpression, system: DesignSystem,
 
 /**
  * Reads one token file, inferring its format: a vanilla-extract theme when it
- * imports a theme-defining call, otherwise a plain object (JSON, or a
- * module's exported objects, evaluated).
+ * imports a theme-defining call, else a plain object (JSON or module exports).
  */
 export function loadTokens(filePath: string): DesignToken[] {
   if (vanillaExtractStyles.isThemeFile(filePath)) return vanillaExtractStyles.loadTokens(filePath);
@@ -47,9 +43,8 @@ export function loadTokens(filePath: string): DesignToken[] {
 }
 
 /**
- * `validate`'s entry point for style-defining code — styling-system
- * *agnostic* in name and signature, so callers don't change if the styling
- * system does. Styles are always vanilla-extract.
+ * `validate`'s entry point for style-defining code (always vanilla-extract),
+ * named styling-system-agnostic so callers don't change if that does.
  */
 export function validateStyles(ast: File, system: DesignSystem, policy: VanillaExtractPolicy): Finding[] {
   return vanillaExtractStyles

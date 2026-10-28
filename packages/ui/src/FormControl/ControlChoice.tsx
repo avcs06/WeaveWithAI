@@ -11,9 +11,9 @@ import { ControlLabel } from './primitives';
 import type { ControlChoiceProps } from './FormControl.types';
 
 /**
- * A checkbox, radio or switch with its label to its right: the label, its
- * required mark and hint are a ControlLabel. The box, a PlainButton, shows its
- * own tooltip and reason.
+ * A checkbox, radio or switch with its label to its right: the label, required
+ * mark and hint are a ControlLabel. The box, a PlainButton, shows its own
+ * tooltip and reason.
  *
  * @internal
  */
@@ -36,7 +36,7 @@ export const ControlChoice = ({
   const labelId = useId();
   const hintId = useId();
   const boxRef = useRef<HTMLElement | null>(null);
-  // The hint shows on hover of its icon; the box is described by it too.
+  // The hint shows on hover of its icon; it describes the box too.
   const hasHint = Boolean(label) && hasContent(hint);
 
   const boxId = id ?? generatedId;
@@ -68,11 +68,11 @@ export const ControlChoice = ({
         required={required}
         hint={hint}
         rightAddOn={null}
-        // Hover only: the box's own tooltip and description carry the reason
-        // to the keyboard and screen readers.
+        // Hover only: the box's own tooltip and description carry the reason to
+        // keyboard and screen readers.
         tooltip={reason}
-        // The box isn't a native control, so the label presses it itself. A
-        // blocked box ignores its label, as a native disabled one does.
+        // Not a native control, so the label presses the box itself; a blocked
+        // box ignores it, as a native disabled one does.
         onClick={(event) => {
           event.preventDefault();
           if (!isDisabled) boxRef.current?.click();

@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { Tooltip } from '../Tooltip';
 
-import { avatarImage } from './Avatar.css';
 import { avatarRecipe } from './Avatar.recipes.css';
 
 import type { AvatarProps } from './Avatar.types';
@@ -23,9 +22,8 @@ const getInitials = (name: string) => {
 };
 
 /**
- * Whether `src` failed to load. An image can fail before hydration, when
- * React doesn't see its error event, so a settled image is checked too:
- * `decode()` rejects for a broken one.
+ * Whether `src` failed to load. It can fail before hydration, missing React's
+ * error event, so a settled image is checked: `decode()` rejects when broken.
  */
 const useImageFailed = (src: string | undefined) => {
   const ref = useRef<HTMLImageElement>(null);
@@ -68,8 +66,8 @@ export const Avatar = ({
   const [focusable, setFocusable] = useState(false);
   const isHidden = ariaHidden || !name.trim();
 
-  // Inside a link or button, that control is the tab stop; a second one
-  // inside it would nest controls.
+  // Inside a link or button, that control is the tab stop; a second would nest
+  // controls.
   useEffect(() => {
     setFocusable(
       !isHidden &&
@@ -95,6 +93,7 @@ export const Avatar = ({
         className={classNames(
           avatarClassName,
           'inline-flex-row-gap-0 items-center justify-center shrink-0',
+          'overflow-hidden',
           className,
         )}
       >
@@ -105,7 +104,7 @@ export const Avatar = ({
             alt=""
             data-slot="image"
             onError={image.onError}
-            className={avatarImage}
+            className="w-full h-full object-cover"
           />
         ) : (
           <span aria-hidden data-slot="initials">

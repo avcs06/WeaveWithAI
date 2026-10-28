@@ -2,8 +2,8 @@
  * useOnRouteChange: runs after each navigation, not on the first render,
  * with the new route and the one before it: `pathname`, `searchParams` and
  * `url` (the path, plus `?` and the search when there is one). Compare the
- * two to react only to the part that matters: the path, one search param,
- * or where the user came from. Next.js app router only.
+ * two to react only to what matters: the path, one search param, or where
+ * the user came from. Next.js app router only.
  *
  * It runs before the new page paints, so a menu closed on navigation never
  * shows open on it.

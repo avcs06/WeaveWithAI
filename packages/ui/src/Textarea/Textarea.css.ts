@@ -8,8 +8,8 @@ import {
   controlPaddingY,
 } from '../FormControl/FormControl.css';
 
-// The box's line height is a one-line control's; lines of text keep `sm`'s
-// at every size.
+// The box's line height is a one-line control's; lines of text keep `sm`'s at
+// every size.
 const textLineHeight = tokens.lineHeight[6];
 
 export const textarea = style({
@@ -21,8 +21,8 @@ export const textarea = style({
     // As specific as the box's rule for its control, and after it.
     [`${controlBox} > &`]: {
       lineHeight: textLineHeight,
-      // The first line stays centered where the box's line would be, level
-      // with the icons.
+      // The first line stays centered where the box's line would be, level with
+      // the icons.
       paddingBlock: `calc(${controlPaddingY} + (${controlLineHeight} - ${textLineHeight}) / 2)`,
     },
   },

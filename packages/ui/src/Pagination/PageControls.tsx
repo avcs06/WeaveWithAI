@@ -6,10 +6,11 @@ import {
 } from 'lucide-react';
 import React, { useId } from 'react';
 
-import { Button, IconButton } from '../../Button';
-import { Select, SelectOption } from '../../Select';
+import { Button, IconButton } from '../Button';
+import { Select, SelectOption } from '../Select';
+import { type DisabledState } from '../utils';
 
-import * as styles from './TablePaginationBar.css';
+import { pageSizeSelect } from './Pagination.css';
 import { getPageWindow } from './utils';
 
 const PAGE_ACTIONS = {
@@ -22,29 +23,24 @@ const PAGE_ACTIONS = {
 type PageButtonProps = {
   action: keyof typeof PAGE_ACTIONS;
   content: 'text' | 'icons';
-  disabled: boolean;
+  state: DisabledState;
   onClick: () => void;
 };
 
-const PageButton = ({
-  action,
-  content,
-  disabled,
-  onClick,
-}: PageButtonProps) => {
+const PageButton = ({ action, content, state, onClick }: PageButtonProps) => {
   const { text, label, icon } = PAGE_ACTIONS[action];
   return content === 'icons' ? (
     <IconButton
       size="sm"
       variant="base"
       tooltip={label}
-      disabled={disabled}
+      {...state}
       onClick={onClick}
     >
       {icon}
     </IconButton>
   ) : (
-    <Button variant="base" size="sm" disabled={disabled} onClick={onClick}>
+    <Button variant="base" size="sm" {...state} onClick={onClick}>
       {text}
     </Button>
   );
@@ -53,14 +49,14 @@ const PageButton = ({
 type PageNumberProps = {
   pageIndex: number;
   current: boolean;
-  disabled: boolean;
+  state: DisabledState;
   onClick: () => void;
 };
 
 const PageNumber = ({
   pageIndex,
   current,
-  disabled,
+  state,
   onClick,
 }: PageNumberProps) => (
   <Button
@@ -69,16 +65,18 @@ const PageNumber = ({
     size="sm"
     aria-label={`Page ${pageIndex + 1}`}
     aria-current={current ? 'page' : undefined}
-    disabled={disabled}
+    {...state}
     onClick={current ? undefined : onClick}
   >
     <div className="text-center min-w-4">{pageIndex + 1}</div>
   </Button>
 );
 
-export type PageControlsProps = {
-  /** Names the navigation landmark; unique per table. */
+type PageControlsProps = {
+  /** Names the navigation landmark; unique on the page. */
   label: string;
+  /** Names the page-size select: "Rows per page". */
+  pageSizeLabel: string;
   size: 'full' | 'minimal';
   content: 'text' | 'icons';
   /** Clamped to the last page. */
@@ -86,7 +84,7 @@ export type PageControlsProps = {
   pageSize: number;
   pageCount: number;
   pageSizeOptions: readonly number[];
-  disabled: boolean;
+  state: DisabledState;
   onPageIndexChange: (pageIndex: number) => void;
   onPageSizeChange: (pageSize: number) => void;
 };
@@ -97,20 +95,29 @@ export type PageControlsProps = {
  */
 export const PageControls = ({
   label,
+  pageSizeLabel,
   size,
   content,
   pageIndex,
   pageSize,
   pageCount,
   pageSizeOptions,
-  disabled,
+  state,
   onPageIndexChange,
   onPageSizeChange,
 }: PageControlsProps) => {
   const pageSizeName = useId();
   const isFull = size === 'full';
-  const isFirst = disabled || pageIndex <= 0;
-  const isLast = disabled || pageIndex >= pageCount - 1;
+
+  // With a reason, every control is disabled and says why; otherwise the
+  // first and last pages disable only their own buttons.
+  const blockedAt = (atBound: boolean): DisabledState =>
+    state.disabledWithReason
+      ? state
+      : { disabled: Boolean(state.disabled) || atBound };
+  const always = blockedAt(false);
+  const atFirst = blockedAt(pageIndex <= 0);
+  const atLast = blockedAt(pageIndex >= pageCount - 1);
   const pageIndexes = isFull
     ? getPageWindow(pageIndex, pageCount)
     : [pageIndex];
@@ -124,9 +131,9 @@ export const PageControls = ({
     >
       <Select
         name={pageSizeName}
-        aria-label="Rows per page"
-        className={styles.pageSizeSelect}
-        disabled={disabled}
+        aria-label={pageSizeLabel}
+        className={pageSizeSelect}
+        {...always}
         allowSearch={false}
         allowClear={false}
         value={String(pageSize)}
@@ -145,14 +152,14 @@ export const PageControls = ({
           <PageButton
             action="first"
             content={content}
-            disabled={isFirst}
+            state={atFirst}
             onClick={() => onPageIndexChange(0)}
           />
         )}
         <PageButton
           action="previous"
           content={content}
-          disabled={isFirst}
+          state={atFirst}
           onClick={() => onPageIndexChange(pageIndex - 1)}
         />
         {pageIndexes.map((index) => (
@@ -160,21 +167,21 @@ export const PageControls = ({
             key={index}
             pageIndex={index}
             current={index === pageIndex}
-            disabled={disabled}
+            state={always}
             onClick={() => onPageIndexChange(index)}
           />
         ))}
         <PageButton
           action="next"
           content={content}
-          disabled={isLast}
+          state={atLast}
           onClick={() => onPageIndexChange(pageIndex + 1)}
         />
         {isFull && (
           <PageButton
             action="last"
             content={content}
-            disabled={isLast}
+            state={atLast}
             onClick={() => onPageIndexChange(pageCount - 1)}
           />
         )}

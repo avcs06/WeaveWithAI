@@ -3,15 +3,20 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 const colors = tokens.color.base;
 
-export const selectTrigger = style({ cursor: 'pointer' });
+// Over the box's text cursor; disabled, the box's default stays.
+export const selectTrigger = style({
+  selectors: {
+    '&:not([data-disabled])': {
+      cursor: 'pointer',
+    },
+  },
+});
 
 export const selectPlaceholder = style({ color: colors.fgMuted });
 
-// Room for a few characters after the tags; wraps to its own line before
-// it gets any narrower.
+// Room for a few characters after the tags; wraps below that.
 export const selectSearch = style({
   width: '6ch',
-  padding: 0,
   border: 'none',
   font: 'inherit',
   color: 'inherit',
@@ -28,11 +33,15 @@ export const selectLineBox = style({
   height: '1lh',
 });
 
-// As wide as the trigger, whatever the menu's own bounds.
 export const selectMenu = style({
   width: 'var(--radix-dropdown-menu-trigger-width)',
-  minWidth: 0,
-  maxWidth: 'none',
+  // Over Menu's own bounds: the trigger's width decides.
+  selectors: {
+    '&&': {
+      minWidth: 0,
+      maxWidth: 'none',
+    },
+  },
 });
 
 export const selectMenuMessage = style({

@@ -34,9 +34,8 @@ export const Link = ({
   const isDisabled = disabled || Boolean(disabledWithReason);
   const linkClassName = linkRecipe({ variant, ...linkLook(look) });
 
-  // Disabled, it's an anchor without `href`, so it can't be followed. With
-  // `asChild`, the child's content moves into that anchor: the child can't
-  // drop its own `href`.
+  // Disabled, an anchor without `href`. With `asChild`, the child's content
+  // moves into that anchor, since the child can't drop its own `href`.
   if (isDisabled) {
     const child = asChild && isValidElement<ChildProps>(children) && children;
     const childClassName = child && child.props.className;
@@ -51,12 +50,12 @@ export const Link = ({
       <Tooltip tooltip={disabledWithReason}>
         <a
           {...anchorProps}
-          // Without `href`, assistive tech no longer reads an anchor as a link.
+          // Without `href`, an anchor isn't read as a link.
           role="link"
           aria-disabled
           data-disabled
-          // A reason must be reachable by keyboard; without one it leaves the
-          // tab order, as a link with no `href` would.
+          // A reason must be keyboard-reachable; without one it leaves the tab
+          // order.
           tabIndex={disabledWithReason ? 0 : -1}
           onClick={(event) => event.preventDefault()}
           className={classNames(linkClassName, childClassName, className)}

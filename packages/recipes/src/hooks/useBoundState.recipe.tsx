@@ -1,25 +1,25 @@
 /**
  * useBoundState: an editable copy of `value`. Edits show at once and reach
- * `onChange` at once, or with `delay`, once edits pause; `flush` sends a
+ * `onChange` at once, or with `delay` once edits pause; `flush` sends a
  * waiting edit now. A new `value` from the parent replaces the copy and
  * drops a waiting edit; the echo of the last edit sent doesn't, so typing
  * during a slow save is kept.
  *
  * Not for: a parent that stores every edit as `value` right away (a plain
- * controlled field), one text field (Input's `delay`), or a search field
+ * controlled field), one text field (Input's `delay`), a search field
  * (SearchInput).
  *
  * Pitfalls:
- * - The echo is matched by reference. A parent that stores a copy, like a
- *   server response or `{ ...range }`, sends a change from outside, which
- *   replaces what was typed meanwhile: pass back the value `onChange` got.
- * - The copy follows a change of `value`, not of the item it belongs to:
- *   give the component a `key` per item, and a new `key` to start over.
+ * - The echo is matched by reference. A parent that stores a copy (a server
+ *   response, `{ ...range }`) sends an outside change, which replaces what
+ *   was typed meanwhile: pass back the value `onChange` got.
+ * - The copy follows `value`, not the item it belongs to: give the component
+ *   a `key` per item, and a new `key` to start over.
  * - `delay` takes a literal or a `const`, fixed for the component's life.
  *   With a slow store, keep it longer than a save takes: only the last edit
  *   sent is recognized when it comes back.
- * - An edit still waiting when the component unmounts is dropped: flush
- *   before closing when it must land.
+ * - An edit waiting at unmount is dropped: flush before closing when it must
+ *   land.
  */
 import { Button } from '@packages/ui/Button';
 import { Input, NumberInput } from '@packages/ui/Input';
@@ -85,7 +85,7 @@ const NotesDraft = ({
 
 /**
  * One draft per item: keyed by the session, so another session starts a new
- * draft even when both have the same notes, as empty ones do.
+ * draft even with the same notes, as empty ones have.
  */
 const SessionNotes = () => {
   const [notes, setNotes] = useState(

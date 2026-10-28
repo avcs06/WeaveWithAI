@@ -1,15 +1,10 @@
 import { useShallow } from 'zustand/react/shallow';
 
+import { getPageCount, getPageIndex } from '../../Pagination';
 import { useTableStore } from '../store';
 
 import type { TableStoreState } from '../store.types';
 import type { PaginationSlice } from './paginationSlice';
-
-export const getPageCount = (rowCount: number, pageSize: number) =>
-  Math.max(1, Math.ceil(rowCount / pageSize));
-
-export const getPageIndex = (pageIndex: number, pageCount: number) =>
-  Math.min(pageIndex, pageCount - 1);
 
 /**
  * `[start, end)` of the current page in the filtered rows. Every row without
@@ -44,19 +39,3 @@ export const useServerPageOffset = (isClient: boolean) =>
       ? state.page.pageIndex * state.page.pageSize
       : 0,
   );
-
-/** Up to `size` page indexes around the current one, shifted to stay in range. */
-export const getPageWindow = (
-  pageIndex: number,
-  pageCount: number,
-  size = 5,
-) => {
-  const start = Math.max(
-    0,
-    Math.min(pageIndex - Math.floor(size / 2), pageCount - size),
-  );
-  return Array.from(
-    { length: Math.min(size, pageCount) },
-    (_, offset) => start + offset,
-  );
-};

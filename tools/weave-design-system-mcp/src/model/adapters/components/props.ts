@@ -15,13 +15,10 @@ function stringUnionValues(type: string): string[] | undefined {
 
 /**
  * A prop inherited from an intersected native type (`ButtonHTMLAttributes`,
- * `AriaAttributes`, ...) reports a `parent` pointing into `node_modules`
- * (React's own `.d.ts`) — vs. `undefined` or a project file for a prop the
- * component actually declares itself. Without this filter, `variantProps`
- * fills up with every inherited attribute that happens to also be a
- * literal union (`type`, `translate`, `popover`, assorted `aria-*`), not
- * just the ones the design system defines — confirmed against a real
- * component whose `ButtonProps` intersects `ButtonHTMLAttributes`.
+ * `AriaAttributes`, ...) has a `parent` in `node_modules`; a prop the
+ * component declares has `undefined` or a project file. Without this filter,
+ * `variantProps` fills up with inherited literal-union attributes (`type`,
+ * `translate`, `popover`, `aria-*`).
  */
 function isOwnProp(prop: ComponentDoc['props'][string]): boolean {
   return !prop.parent?.fileName.includes('/node_modules/');
@@ -31,8 +28,8 @@ export function toProps(props: ComponentDoc['props']): ComponentProp[] {
   return Object.values(props)
     .filter(isOwnProp)
     .map((prop) => {
-      // `raw` carries the original type text (e.g. a resolved `keyof typeof X` union);
-      // `name` alone collapses those to the unhelpful literal `"enum"`.
+      // `raw` keeps the type text (e.g. a resolved `keyof typeof X` union);
+      // `name` collapses it to `"enum"`.
       const type = prop.type.raw ?? prop.type.name;
       return {
         name: prop.name,

@@ -1,27 +1,25 @@
 /**
- * Checkbox: one yes/no choice, like consent or a setting; its children are its
- * label.
- * CheckboxGroup: several checkboxes answering one question, with the
- * question's label, help text and error, wired like any form field. The
- * group's `className` lays out the checkboxes: a column or a row.
+ * Checkbox: one yes/no choice, like consent or a setting; children are its
+ * label. CheckboxGroup: several checkboxes answering one question, with its
+ * label, help text and error, wired like any form field. Its `className` lays
+ * out the checkboxes: a column or a row.
  *
  * When not to use:
- * - One choice out of a few short options: ChipGroup `mode="single"`; out of
- *   a longer list, Select.
+ * - One choice from a few short options: ChipGroup `mode="single"`; from a
+ *   longer list, Select.
  * - Many choices out of a long list: MultiSelect.
  * - Toggling filters above a list or table: ChipGroup `mode="multiple"`.
  * - Running an action: Button. A checkbox only states a choice.
  *
  * Pitfalls:
- * - A checkbox on its own is controlled: `checked` and `onCheckedChange`,
- *   both required.
- * - Every checkbox needs a name: its children are the label, or `aria-label`
- *   when the row or column around it says what it is, like a table's "Select
- *   row 3".
- * - In a group, give each Checkbox a `value` and leave out `checked`: the
- *   group's `value` decides it.
- * - `onCheckedChange` gets a boolean. `'indeterminate'` is only shown; a
- *   click on it checks the box.
+ * - A lone checkbox is controlled: `checked` and `onCheckedChange`, both
+ *   required.
+ * - Every checkbox needs a name: its children, or `aria-label` when the row or
+ *   column around it says what it is, like a table's "Select row 3".
+ * - In a group, give each Checkbox a `value` and no `checked`: the group's
+ *   `value` decides it.
+ * - `onCheckedChange` gets a boolean. `'indeterminate'` is only shown; a click
+ *   checks the box.
  * - Say why a box can't be changed: `disabledWithReason` or
  *   `readOnlyWithReason`, not a bare `disabled`.
  */
@@ -48,8 +46,8 @@ const savePreferences = (preferences: Preferences) =>
 
 // Usage: the patterns to copy.
 /**
- * Consent before registering: `required` marks the label, `hint` explains
- * it, and the submit button says why it waits.
+ * Consent before registering: `required` marks the label, `hint` explains it,
+ * and the submit button says why it waits.
  */
 const CodeOfConduct = () => {
   const [agreed, setAgreed] = useState(false);
@@ -76,8 +74,8 @@ const CodeOfConduct = () => {
 };
 
 /**
- * A setting saved as it changes: `onCheckedChange` saves. `tooltip` adds
- * detail on hover and focus.
+ * A setting saved as it changes: `onCheckedChange` saves; `tooltip` adds detail
+ * on hover and focus.
  */
 const ReminderSetting = () => {
   const [reminder, setReminder] = useState(true);
@@ -136,9 +134,9 @@ const SelectAllSessions = () => {
 };
 
 /**
- * Boxes that can't be changed say why on hover, on a press, and to screen
- * readers: `disabledWithReason` for a choice that's unavailable,
- * `readOnlyWithReason` for one that's set elsewhere.
+ * Boxes that can't be changed say why on hover, on press and to screen readers:
+ * `disabledWithReason` for an unavailable choice, `readOnlyWithReason` for one
+ * set elsewhere.
  */
 const TicketExtras = () => {
   const [lunch, setLunch] = useState(true);
@@ -176,9 +174,9 @@ const TicketExtras = () => {
 type Preferences = { channels: string[] };
 
 /**
- * A group in a form, through `Controller`: `{...field}` gives it its name,
- * value, required mark, error and focus on submit. A column layout, with
- * help text, and a warning while a costly choice is checked.
+ * A group in a form, through `Controller`: `{...field}` gives it name, value,
+ * required mark, error and focus on submit. Column layout, help text, and a
+ * warning while a costly choice is checked.
  */
 const NotificationChannels = () => {
   const { control, handleSubmit } = useForm<Preferences>({
@@ -220,9 +218,8 @@ const NotificationChannels = () => {
 };
 
 /**
- * A row layout that wraps, saved as it changes: `success` confirms the
- * save, `labelRightSlot` holds a quick action, and `hint` explains the
- * question.
+ * A wrapping row, saved as it changes: `success` confirms the save,
+ * `labelRightSlot` holds a quick action, `hint` explains the question.
  */
 const SessionTracks = () => {
   const [picked, setPicked] = useState<string[]>(['Design']);
@@ -257,9 +254,9 @@ const SessionTracks = () => {
 };
 
 /**
- * A whole group that can't change: each checkbox shows the group's reason,
- * and a checkbox's own reason comes first. `readOnlyWithReason` works the
- * same for a group set elsewhere.
+ * A whole group that can't change: each checkbox shows the group's reason, and
+ * its own reason comes first. `readOnlyWithReason` works the same for a group
+ * set elsewhere.
  */
 const ClosedWorkshops = () => {
   const [workshops, setWorkshops] = useState<string[]>(['figma']);

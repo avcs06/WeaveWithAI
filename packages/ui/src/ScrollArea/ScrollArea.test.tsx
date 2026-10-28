@@ -6,9 +6,9 @@ import { axe, renderUI } from '../test-utils';
 
 import { FlexScrollArea, ScrollArea } from './ScrollArea';
 
-// jsdom has no layout: every element measures 0, so nothing ever overflows.
-// The component decides its own tab stop from the viewport's scroll and
-// client sizes, so a test that needs overflow gives those sizes answers.
+// jsdom has no layout: everything measures 0 and nothing overflows. The tab
+// stop comes from the viewport's scroll and client sizes, so a test that
+// needs overflow stubs them.
 type Sizes = {
   scrollHeight: number;
   clientHeight: number;
@@ -57,9 +57,8 @@ const fits: Sizes = {
   clientWidth: 100,
 };
 
-// The observer updates land outside React's render, and Radix debounces
-// its scrollbar bookkeeping a few ms further; let both settle inside act
-// before asserting on the tab stop.
+// Observer updates land outside React's render and Radix debounces its
+// scrollbar bookkeeping: let both settle inside act.
 const settleObservers = () =>
   act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 25));
@@ -93,7 +92,7 @@ describe('ScrollArea', () => {
 
   it('puts className and other box props on the outer box, not the viewport', async () => {
     const { container } = renderUI(
-      <ScrollArea id="conduct" className="custom-height" data-kind="text">
+      <ScrollArea id="conduct" className="h-full" data-kind="text">
         <p>Rules</p>
       </ScrollArea>,
     );
@@ -102,8 +101,8 @@ describe('ScrollArea', () => {
     const root = viewport.parentElement as HTMLElement;
     expect(root).toHaveAttribute('id', 'conduct');
     expect(root).toHaveAttribute('data-kind', 'text');
-    expect(root).toHaveClass('custom-height');
-    expect(viewport).not.toHaveClass('custom-height');
+    expect(root).toHaveClass('h-full');
+    expect(viewport).not.toHaveClass('h-full');
     expect(viewport).not.toHaveAttribute('id');
     await settleObservers();
     expect(await axe(container)).toHaveNoViolations();
@@ -255,7 +254,6 @@ describe('ScrollArea', () => {
     expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus();
     await userEvent.tab();
     expect(region).toHaveFocus();
-    // The arrow keys scroll a focused region natively; focus stays put.
     await userEvent.keyboard('{ArrowDown}');
     expect(region).toHaveFocus();
     await userEvent.tab();
@@ -298,7 +296,6 @@ describe('ScrollArea', () => {
 
     const region = screen.getByRole('region', { name: 'Attendees' });
     expect(region).not.toHaveAttribute('tabindex');
-    // Tab goes straight to the content; focusing it scrolls it into view.
     await userEvent.tab();
     expect(screen.getByRole('button', { name: 'Attendee 1' })).toHaveFocus();
     await userEvent.tab();
@@ -404,14 +401,14 @@ describe('FlexScrollArea', () => {
 
   it('keeps the caller className alongside its own', async () => {
     const { container } = renderUI(
-      <FlexScrollArea className="panel-body">
+      <FlexScrollArea className="w-full">
         <p>Sessions</p>
       </FlexScrollArea>,
     );
 
     const root = viewportOf(container).parentElement as HTMLElement;
     expect(root).toHaveClass('min-h-0');
-    expect(root).toHaveClass('panel-body');
+    expect(root).toHaveClass('w-full');
     await settleObservers();
     expect(await axe(container)).toHaveNoViolations();
   });

@@ -60,8 +60,8 @@ const barrelOnlySiblingImports = {
     return {
       ImportDeclaration(node) {
         const importPath = node.source.value;
-        // ../SiblingFolder/anything or ../../CousinFolder/anything — climbing any
-        // number of levels is fine; going past the folder name is deep.
+        // `../Sibling/x` or `../../Cousin/x`: any climb is fine; going past the
+        // folder name is deep.
         const match = importPath.match(/^((?:\.\.\/)+)(?!\.\.)([^/]+)\/.+/);
         if (!match) return;
 

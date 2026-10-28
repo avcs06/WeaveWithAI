@@ -8,11 +8,9 @@ import type { ComponentContract } from '../../types.js';
 import { toProps } from './props.js';
 
 /**
- * Stories, tests and recipes sit next to the components they cover, so the
- * natural `components/**\/*.tsx` glob sweeps them up too — and docgen will
- * happily report a CSF story object or a recipe's example as a component,
- * yielding a phantom entry and a duplicate of the real one. None of them
- * ever defines a component.
+ * Stories, tests and recipes sit beside components, so a `components/**\/*.tsx`
+ * glob sweeps them up, and docgen would report a CSF story or recipe example
+ * as a phantom duplicate component. None of them defines a component.
  */
 const NOT_A_COMPONENT_FILE = /\.(stories|story|test|spec|recipe)\.[jt]sx?$/;
 
@@ -41,22 +39,19 @@ function splitDeclarations(raw: string): string[] {
 /**
  * What a component declares as an invalid stand-in for itself, via an
  * `@invalidAlternative` JSDoc tag (`@invalidAlternative button` or a
- * comma-separated list). Usually a native element the component replaces,
- * but equally another component — a third-party or legacy one the design
- * system's version supersedes.
+ * comma-separated list): a native element or another component it supersedes.
  *
- * Case is preserved, since `MuiButton` is a component and `button` is an
- * element. Each declaration is kept whole — a selector such as
- * `Input[type="password"]` or a package as `import('@radix-ui/react-tabs')`
- * — and parsed by the JSX check. Commas inside `[...]`, `(...)` or `{...}`
- * don't split.
+ * Case is preserved: `MuiButton` is a component, `button` an element. Each
+ * declaration is kept whole (a selector such as `Input[type="password"]` or a
+ * package as `import('@radix-ui/react-tabs')`) and parsed by the JSX check.
+ * Commas inside `[...]`, `(...)` or `{...}` don't split.
  */
 function declaredInvalidAlternatives(doc: ComponentDoc): string[] {
   const tags = doc.tags ?? {};
   if (!('invalidAlternative' in tags)) return [];
-  // TypeScript reads a scoped package written outside `import('…')`, such as
-  // `@radix-ui/react-tabs`, as a tag `radix-ui` with the text `/react-tabs, …`.
-  // Rejoining it keeps the rest of that line and lets the check report it.
+  // TypeScript reads a scoped package outside `import('…')`
+  // (`@radix-ui/react-tabs`) as tag `radix-ui` with text `/react-tabs, …`;
+  // rejoining lets the check report it.
   const splitOff = Object.entries(tags)
     .filter(([name, text]) => name !== 'invalidAlternative' && text.startsWith('/'))
     .map(([name, text]) => `@${name}${text}`);
@@ -108,10 +103,8 @@ function isTypeOnly(doc: ComponentDoc, checker: ts.TypeChecker): boolean {
 const isInternal = (doc: ComponentDoc) => 'internal' in (doc.tags ?? {});
 
 /**
- * `filePath` is passed in rather than read off `doc.filePath`:
- * react-docgen-typescript trims the path it reports for display, which
- * breaks colocated-sibling lookups like finding a recipe next to the
- * component. The path we globbed is the real one.
+ * `filePath` is passed in: react-docgen-typescript trims `doc.filePath`,
+ * breaking sibling lookups like a component's recipe.
  */
 function toContract(doc: ComponentDoc, filePath: string): ComponentContract {
   const props = toProps(doc.props);
@@ -129,16 +122,14 @@ function toContract(doc: ComponentDoc, filePath: string): ComponentContract {
 
 /**
  * Reads React component contracts via the TypeScript type checker
- * (`react-docgen-typescript` — the same tool Storybook's own autodocs use):
- * props, required flags, and — critically — resolves a variant prop's
- * *actual* allowed values even when it's typed as `keyof typeof someObject`
- * rather than a literal union written directly (confirmed against a real
- * component using exactly that pattern).
+ * (`react-docgen-typescript`, as Storybook's autodocs does): props, required
+ * flags, and a variant prop's actual allowed values even when typed as
+ * `keyof typeof someObject`.
  *
- * `patterns` are globs (`node:fs`'s built-in `globSync`, no extra
- * dependency); a `!`-prefixed one excludes. Each glob is read with the
- * `tsconfig.json` nearest its folder, for path aliases like a monorepo's
- * `@app/*` — without one, only plain relative/`node_modules` imports resolve.
+ * `patterns` are `node:fs` `globSync` globs; a `!`-prefixed one excludes. Each
+ * glob is read with the `tsconfig.json` nearest its folder, for path aliases
+ * like a monorepo's `@app/*`; without one, only relative/`node_modules`
+ * imports resolve.
  */
 export function loadComponents(patterns: string[], configDir: string): ComponentContract[] {
   const excluded = new Set(

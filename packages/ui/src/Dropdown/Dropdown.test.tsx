@@ -41,12 +41,12 @@ const openWithKeyboard = async () => {
 };
 
 // Radix opens and moves focus after a timer: wait past it before asserting
-// that nothing happened.
+// nothing happened.
 const settle = () =>
   act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
-// The shown tooltip is aria-hidden: the trigger's description says the same
-// thing to screen readers, so role queries need `hidden`.
+// The shown tooltip is aria-hidden (the trigger's description says the same),
+// so role queries need `hidden`.
 const tooltipText = async () =>
   (await screen.findByRole('tooltip', { hidden: true })).textContent;
 
@@ -133,8 +133,8 @@ describe('Dropdown', () => {
     expect(screen.queryByRole('menu')).toBeNull();
     await waitFor(() => expect(button('Actions')).toHaveFocus());
 
-    // The modal menu locks pointer events on the page, so the outside press
-    // is the pointerdown Radix dismisses on.
+    // The modal menu locks pointer events on the page: the outside press is
+    // the pointerdown Radix dismisses on.
     await userEvent.click(button('Actions'));
     await screen.findByRole('menu');
     fireEvent.pointerDown(screen.getByText('Outside'));
@@ -306,7 +306,6 @@ describe('Dropdown', () => {
       expect(item('Invite people')).toHaveFocus();
       await userEvent.keyboard('{ArrowDown}');
       await waitFor(() => expect(item('Archive')).toHaveFocus());
-      // Typeahead reaches it too.
       await userEvent.keyboard('i');
       await waitFor(() => expect(item('Invite people')).toHaveFocus());
 
@@ -520,10 +519,10 @@ describe('Dropdown', () => {
       await userEvent.click(button('View'));
       await screen.findByRole('menu');
       let speakers = checkboxRow('Speakers');
-      // Both indicators on: both show.
-      expect(
-        speakers.querySelector('[data-slot="checkbox"]'),
-      ).toHaveAttribute('data-state', 'checked');
+      expect(speakers.querySelector('[data-slot="checkbox"]')).toHaveAttribute(
+        'data-state',
+        'checked',
+      );
       expect(
         checkboxRow('Venue').querySelector('[data-slot="checkbox"]'),
       ).toHaveAttribute('data-state', 'unchecked');
@@ -534,9 +533,10 @@ describe('Dropdown', () => {
       await userEvent.click(button('View'));
       await screen.findByRole('menu');
       speakers = checkboxRow('Speakers');
-      expect(
-        speakers.querySelector('[data-slot="checkbox"]'),
-      ).toHaveAttribute('data-state', 'checked');
+      expect(speakers.querySelector('[data-slot="checkbox"]')).toHaveAttribute(
+        'data-state',
+        'checked',
+      );
       expect(speakers.querySelector('[data-slot="check"]')).toBeNull();
       expect(await axe(document.body)).toHaveNoViolations();
     });
@@ -588,7 +588,6 @@ describe('Dropdown', () => {
       await waitFor(() => expect(start).toHaveFocus());
       await userEvent.keyboard('{ArrowDown}');
       await waitFor(() => expect(name).toHaveFocus());
-      // Moving through a menu never chooses.
       expect(onValueChange).not.toHaveBeenCalled();
       expect(name).toHaveAttribute('aria-checked', 'false');
 
@@ -1025,8 +1024,8 @@ describe('Dropdown', () => {
       );
     };
 
-    // A SearchInput is a searchbox above the rows: a menu can't hold a
-    // field, so the field sits in the popup, outside the menu itself.
+    // A menu can't hold a field, so the SearchInput sits in the popup, outside
+    // the menu.
     const search = () =>
       screen.getByRole('searchbox', { name: 'Search actions' });
 
@@ -1068,8 +1067,7 @@ describe('Dropdown', () => {
 
       await userEvent.tab();
       await waitFor(() => expect(item('Rename')).toHaveFocus());
-      // Among the rows the disabled one keeps its place, as it does without
-      // a field.
+      // The disabled row keeps its place, as without a field.
       await userEvent.keyboard('{ArrowDown}');
       await waitFor(() => expect(item('Delete')).toHaveFocus());
       await userEvent.keyboard('{ArrowDown}');
@@ -1163,8 +1161,8 @@ describe('Dropdown', () => {
 
       const radio = (name: string) =>
         screen.getByRole('menuitemradio', { name });
-      // The count is announced from inside the modal menu, which hides
-      // live regions outside it.
+      // Announced from inside the modal menu, which hides outside live
+      // regions.
       const announcement = () =>
         Array.from(
           document.querySelectorAll('[data-slot="search"] [role="status"]'),
@@ -1191,8 +1189,8 @@ describe('Dropdown', () => {
       const trigger = button('Speaker: Grace Hopper');
       await waitFor(() => expect(trigger).toHaveFocus());
 
-      // Reopening starts empty, the choice is checked, and ArrowDown from
-      // the field lands on it.
+      // Reopening starts empty, the choice checked; ArrowDown from the field
+      // lands on it.
       await userEvent.click(trigger);
       const reopened = await screen.findByRole('searchbox', {
         name: 'Search speakers',

@@ -13,16 +13,15 @@ export const didDepsChange = (
 };
 
 /**
- * Whether `dependencies` changed since the last render, compared with
- * `Object.is`. The first render counts as a change; with `trailing`, only
- * changes after mount do.
+ * Whether `dependencies` changed since the last render (`Object.is`). The
+ * first render counts; with `trailing`, only changes after mount do.
  */
 export const useDepsChanged = (
   dependencies: DependencyList,
   trailing = false,
 ) => {
-  // State, not a ref: a render React throws away keeps the previous deps, so
-  // the retried render sees the change again.
+  // State, not a ref: a discarded render keeps the previous deps, so the
+  // retry sees the change again.
   const [prevDeps, setPrevDeps] = useState<DependencyList | null>(
     trailing ? dependencies : null,
   );

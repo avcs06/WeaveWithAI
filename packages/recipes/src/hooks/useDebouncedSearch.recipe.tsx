@@ -1,13 +1,13 @@
 /**
  * useDebouncedSearch: the text of a search field built into a component, as
- * Select's is. Typing shows at once, `onSearch` gets the text after a pause,
- * and a cleared search reaches it at once; `flush` sends waiting text now,
- * as on Enter. With `search` given, the parent can change the text;
- * `undefined` leaves it to the field. With no `onSearch`, nothing hears it.
+ * Select's is. Typing shows at once, `onSearch` gets the text after a pause
+ * and a cleared search at once; `flush` sends waiting text now, as on Enter.
+ * With `search` given, the parent can change the text; `undefined` leaves it
+ * to the field. With no `onSearch`, nothing hears it.
  *
- * For a component whose own parts need the typed text before `onSearch`
- * gets it. Not for: a search field on its own, or one whose text only the
- * parent reads (SearchInput, built on this).
+ * For a component whose own parts need the typed text before `onSearch` gets
+ * it. Not for: a standalone search field, or one whose text only the parent
+ * reads (SearchInput, built on this).
  *
  * Pitfall: a parent setting the text it already has changes nothing, even
  * while newer typing waits: "Show all" with `search` already `''` keeps the

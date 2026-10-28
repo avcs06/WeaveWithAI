@@ -1,12 +1,12 @@
 import type { ApplyValue } from '@packages/utils/state';
 
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Pagination';
+
 import type { TableSlice } from '../store.types';
 import type {
   TablePaginationProps,
   TablePaginationValue,
 } from '../Table.types';
-
-export const DEFAULT_PAGE_SIZE_OPTIONS: readonly number[] = [10, 25, 50, 100];
 
 export type PaginationConfig = Omit<
   TablePaginationProps,
@@ -24,9 +24,9 @@ export type PaginationSlice = {
   /** Sorting or filtering in the table: first page, scrolled to the top. */
   restartPage: () => void;
   /**
-   * `restartPage` for a sort or filter `value` from the parent: a controlled
-   * page is the parent's to set. This also covers the table's own change
-   * coming back as `value`, which already restarted.
+   * `restartPage` for a parent's sort or filter `value`; a controlled page is
+   * the parent's to set. Also covers the table's own change coming back as
+   * `value`, which already restarted.
    */
   restartUncontrolledPage: () => void;
 };

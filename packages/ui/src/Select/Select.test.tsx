@@ -19,8 +19,7 @@ const listbox = () => screen.getByRole('listbox');
 const option = (name: string | RegExp) => screen.getByRole('option', { name });
 const optionNames = () =>
   screen.getAllByRole('option').map((node) => node.textContent);
-// Open with a search field, the field is the (editable) combobox and the
-// box only groups it with the chosen values.
+// Open with a search field, it's the editable combobox; the box only groups it.
 const searchField = (name = 'Search Country') =>
   screen.getByRole('combobox', { name });
 const triggerBox = (name: string | RegExp = 'Country') =>
@@ -52,7 +51,6 @@ type HarnessProps = SelectSearchProps & {
   children?: ReactNode;
 };
 
-/** A single Select that keeps its value. */
 function Single({
   initial = '',
   onChange,
@@ -75,7 +73,6 @@ function Single({
   );
 }
 
-/** A MultiSelect that keeps its values. */
 function Multiple({
   initial = [],
   onChange,
@@ -113,12 +110,12 @@ const openWithKeyboard = async () => {
 };
 
 // Radix opens and moves focus after a timer: wait past it before asserting
-// that nothing happened.
+// nothing happened.
 const settle = () =>
   act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
-// The shown tooltip is aria-hidden: the trigger's description says the same
-// thing to screen readers, so role queries need `hidden`.
+// The shown tooltip is aria-hidden (the trigger's description says the same),
+// so role queries need `hidden`.
 const tooltipText = async () =>
   (await screen.findByRole('tooltip', { hidden: true })).textContent;
 
@@ -184,7 +181,7 @@ describe('Select', () => {
       expect(combobox().querySelector('[data-slot="chevron"]')).not.toBeNull();
       await openWithKeyboard();
       // Open, the search field is the combobox; the box groups it with the
-      // rendered trigger, and the chevron stays.
+      // trigger and chevron.
       expect(triggerBox()).toHaveTextContent('2 chosen, open');
       expect(
         triggerBox().querySelector('[data-slot="chevron"]'),
@@ -338,12 +335,10 @@ describe('Select', () => {
         </Single>,
       );
       await openWithKeyboard();
-      // Opening focuses the search field; ArrowDown enters the options.
       await waitFor(() => expect(searchField()).toHaveFocus());
       await userEvent.keyboard('{ArrowDown}');
       await waitFor(() => expect(option('Peru')).toHaveFocus());
-      // A disabled option keeps its place in the arrow keys, so a keyboard
-      // user can reach it and hear why it can't be chosen.
+      // A disabled option stays in the arrow keys so keyboard users hear why.
       await userEvent.keyboard('{ArrowDown}');
       const chile = option('Chile');
       await waitFor(() => expect(chile).toHaveFocus());
@@ -501,8 +496,8 @@ describe('Select', () => {
       expect(after()).toHaveFocus();
       await settle();
       expect(after()).toHaveFocus();
-      // Tabbing past accepts the focused option (the APG select-only
-      // combobox's Tab), as Escape above did not.
+      // Tabbing past accepts the focused option (APG select-only combobox),
+      // unlike Escape.
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith('cl', {
         value: 'cl',
@@ -612,8 +607,8 @@ describe('Select', () => {
         option(name).querySelector('[data-slot="checkbox"]');
       expect(checkboxOf('Chile')).toHaveAttribute('data-state', 'checked');
       expect(checkboxOf('Peru')).toHaveAttribute('data-state', 'unchecked');
-      // The checkbox is decoration: selection is said by the option itself,
-      // and dropping the check mark leaves no check slot behind.
+      // The checkbox is decoration: the option says its selection, and no check
+      // mark leaves no slot.
       expect(checkboxOf('Chile')).toHaveAttribute('aria-hidden', 'true');
       expect(option('Chile')).toHaveAttribute('aria-selected', 'true');
       expect(option('Chile').querySelector('[data-slot="check"]')).toBeNull();
@@ -802,12 +797,11 @@ describe('Select', () => {
       await userEvent.tab({ shift: true });
       await waitFor(() => expect(searchField()).toHaveFocus());
       expect(listbox()).toBeVisible();
-      // The box is only a group while the field shows, so there is no
-      // trigger tab stop to go back to: Shift+Tab leaves, closing the menu.
+      // The box is only a group while the field shows: Shift+Tab leaves,
+      // closing the menu.
       await userEvent.tab({ shift: true });
       expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus();
       expect(screen.queryByRole('listbox')).toBeNull();
-      // Tabbing back in lands on the closed trigger.
       await userEvent.tab();
       expect(combobox()).toHaveFocus();
       expect(combobox()).toHaveAttribute('aria-expanded', 'false');

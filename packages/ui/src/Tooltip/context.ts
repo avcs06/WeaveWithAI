@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 import type { TooltipController } from './controller';
 
-type TooltipContextValue = { controller: TooltipController };
+export type TooltipContextValue = { controller: TooltipController };
 
 export const TooltipContext = createContext<TooltipContextValue | null>(null);
 

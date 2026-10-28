@@ -6,8 +6,8 @@ import { getColumnLabel } from '../utils';
 import { toAriaSort } from './SortButton';
 
 /**
- * Announces sort changes, which a header's `aria-sort` alone doesn't do
- * reliably. Its text on mount, a default sort, isn't read out.
+ * Announces sort changes, which `aria-sort` alone doesn't do reliably. Its text
+ * on mount (a default sort) isn't read out.
  */
 export const SortStatus = () => {
   const sorted = useTableStore((state) => {

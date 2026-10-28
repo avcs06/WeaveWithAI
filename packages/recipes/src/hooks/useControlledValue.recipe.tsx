@@ -1,21 +1,19 @@
 /**
  * useControlledValue: a component's value that its parent controls with
  * `value` and `onChange`, or leaves to the component, starting from
- * `defaultValue`. For a reusable component that offers both, as native
- * inputs do. `onChange` runs either way, with any extra arguments the
- * component passes. The setter keeps its identity across renders, like
- * `useState`'s.
+ * `defaultValue`. For a reusable component offering both, as native inputs
+ * do. `onChange` runs either way, with any extra arguments the component
+ * passes. The setter keeps its identity across renders, like `useState`'s.
  *
  * Not for: a component that is always controlled (take `value` and
  * `onChange` as they are) or never (useState).
  *
  * Pitfalls:
- * - Any `value` but `undefined` controls it: an empty value is `null`.
- *   A parent that passes `undefined` hands the value back to the component,
- *   which shows its own.
+ * - Any `value` but `undefined` controls it: an empty value is `null`. A
+ *   parent passing `undefined` hands the value back to the component.
  * - `defaultValue` is read once; a new `key` starts the component over.
- * - Without a `defaultValue`, the value can be `undefined`: give the
- *   fallback where it's read.
+ * - Without `defaultValue` the value can be `undefined`: give the fallback
+ *   where it's read.
  */
 import { Button } from '@packages/ui/Button';
 import { NumberInput } from '@packages/ui/Input';

@@ -67,14 +67,13 @@ export const Radio = ({
       style={style}
     >
       {(boxProps) => (
-        // PlainButton makes the radio pressable, with its state, tooltip and
-        // reason; Radix, through Selectable, makes it a radio of the group:
-        // the arrow keys move between the radios, and the group keeps one
-        // tab stop. A read-only group says so itself.
+        // PlainButton gives state, tooltip and reason; Radix, via Selectable,
+        // the radio role with arrow keys and one tab stop. A read-only group
+        // says so itself.
         <Selectable
           value={value}
-          // Radix's `disabled` takes a radio out of the arrow keys: only
-          // one with no reason to show leaves them.
+          // Radix `disabled` leaves the tab order and arrow keys: only with no
+          // reason to show.
           disabled={!isFocusable}
         >
           <PlainButton
@@ -87,7 +86,7 @@ export const Radio = ({
               data-slot="box"
               className={classNames(
                 boxClassName,
-                'grid place-items-center shrink-0',
+                'grid place-items-center shrink-0 cursor-pointer',
               )}
             >
               <span data-slot="dot" />
@@ -100,9 +99,8 @@ export const Radio = ({
 };
 
 /**
- * Radios for one choice from a few that stay visible: a ticket type, a
- * pickup option. It's a form field, with its label, help text and error. It
- * adds no layout: lay the radios out with its `className`.
+ * Radios for one choice from a few visible ones, like a ticket type. A form
+ * field with label, help text and error; no layout: lay out with `className`.
  *
  * @invalidAlternative [role="radiogroup"]
  * @invalidAlternative import('@radix-ui/react-radio-group')

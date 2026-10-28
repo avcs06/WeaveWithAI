@@ -13,9 +13,9 @@ import { switchRecipe } from './Switch.recipes.css';
 import type { SwitchProps } from './Switch.types';
 
 /**
- * A switch with its label, its children, to its right: a setting that takes
- * effect as soon as it's flipped, like notifications or a public profile. A
- * choice confirmed later, with a form's submit, is a Checkbox.
+ * A switch labeled by its children, to its right: a setting that takes effect
+ * when flipped, like notifications. A choice confirmed by a form's submit is a
+ * Checkbox.
  *
  * @invalidAlternative [role="switch"], input[type="checkbox"][role="switch"]
  * @invalidAlternative import('@radix-ui/react-switch')
@@ -52,8 +52,7 @@ export const Switch = ({
       style={style}
     >
       {(trackProps) => (
-        // PlainButton makes the track pressable, with its state, tooltip and
-        // reason; Radix makes it a switch.
+        // PlainButton gives state, tooltip and reason; Radix the switch role.
         <SwitchPrimitive.Root
           asChild
           checked={checked}
@@ -67,7 +66,10 @@ export const Switch = ({
           >
             <span
               data-slot="track"
-              className={classNames(trackClassName, 'block shrink-0')}
+              className={classNames(
+                trackClassName,
+                'block shrink-0 cursor-pointer',
+              )}
             >
               <span data-slot="thumb" className="block" />
             </span>

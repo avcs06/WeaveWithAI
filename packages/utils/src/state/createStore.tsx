@@ -12,9 +12,9 @@ import { useShallow } from 'zustand/react/shallow';
 export type StoreSelector<T, U> = (state: T) => U;
 
 /**
- * Subscribes to one field by key, or to what a selector returns. The result
- * compares shallowly: a selector can return an array or object of fields,
- * but not objects it builds, which are new on every call.
+ * Subscribes to one field by key, or to a selector's result, compared
+ * shallowly: it can return an array or object of fields, but not objects it
+ * builds, which are new on every call.
  */
 export type StoreHook<T> = {
   <const K extends keyof T>(key: K): T[K];
@@ -33,10 +33,10 @@ type CreateStoreOptions<T> = {
   /**
    * What the server render and hydration read:
    * - `'initial'`: the initial state (zustand's own hook).
-   * - `'current'`: whatever the store holds now. Only for a store made per
-   *   component instance (createStoreContext) and written while rendering:
-   *   on the server a module-level store is shared by every request, and a
-   *   persisted one differs from the server's render.
+   * - `'current'`: what the store holds now. Only for a per-instance store
+   *   (createStoreContext) written while rendering: on the server a
+   *   module-level store is shared by every request, and a persisted one
+   *   differs from the server's render.
    */
   serverSnapshot?: 'initial' | 'current';
 };
@@ -64,8 +64,8 @@ export const createStore = <T extends object>(
       )
     : createVanillaStore<T>()(initializer);
 
-  // Shallow, so a selector returning a new array or object of the same
-  // values gives the same snapshot, which `useSyncExternalStore` requires.
+  // Shallow, so a new array or object of the same values gives the same
+  // snapshot, as `useSyncExternalStore` requires.
   const useInitialSnapshot = <U,>(
     keyOrSelector: keyof T | StoreSelector<T, U>,
   ) => useStore(store, useShallow(toSelector(keyOrSelector)));
@@ -98,7 +98,7 @@ export type StoreGetter<T> = {
 
 /**
  * Reads the store outside React: `get()` for the state, `get('key')` for one
- * field. It doesn't subscribe, so nothing re-renders when the state changes.
+ * field. Doesn't subscribe, so nothing re-renders on change.
  */
 export const utilifyStore = <T,>(store: Pick<StoreApi<T>, 'getState'>) =>
   ((key?: keyof T) =>

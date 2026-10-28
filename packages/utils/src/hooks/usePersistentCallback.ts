@@ -4,14 +4,13 @@ import { useOnce } from './useOnce';
 import type { Callable } from '../types';
 
 /**
- * A function with a fixed identity that always calls the latest `callback`.
- * For a callback run on an event, like `onChange`, that an effect or a store
- * holds: a new reference from the caller doesn't rerun the effect. Not for a
- * function called while rendering: React Compiler keeps that stable until its
- * inputs change, and a fixed identity would hide those changes.
+ * A fixed-identity function that always calls the latest `callback`. For an
+ * event callback like `onChange` that an effect or store holds: a new
+ * reference from the caller doesn't rerun the effect. Not for a function
+ * called while rendering: React Compiler keeps it stable until its inputs
+ * change, and a fixed identity would hide that.
  *
- * An optional `callback` gives a function that returns `undefined` while
- * it's missing.
+ * An optional `callback` gives a function returning `undefined` while missing.
  *
  * @invalidAlternative import('ahooks'){useMemoizedFn}
  */

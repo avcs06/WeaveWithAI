@@ -6,8 +6,7 @@ import { ColumnFilter } from '../filtering';
 import * as Primitives from '../primitives';
 import { SortButton, toAriaSort } from '../sorting';
 import { useGetTableStore, useTableStore } from '../store';
-import { alignRecipe } from '../Table.recipes.css';
-import { getColumnLabel } from '../utils';
+import { alignClasses, getColumnLabel } from '../utils';
 
 import * as styles from './ColumnHeader.css';
 
@@ -25,7 +24,7 @@ export const ColumnHeader = memo(({ columnId }: { columnId: string }) => {
 
   if (!column) return null;
 
-  const alignClassName = alignRecipe({ align: column.align });
+  const alignClassName = alignClasses[column.align ?? 'left'];
   const label = getColumnLabel(column);
   const title = <Truncate className={alignClassName}>{column.title}</Truncate>;
 

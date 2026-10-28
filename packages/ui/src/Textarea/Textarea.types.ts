@@ -12,8 +12,8 @@ type NoIconProps = {
   rightAddOn?: never;
 };
 
-// The field is controlled, so `defaultValue` would be ignored; its text is
-// `value`, not children.
+// Controlled, so `defaultValue` would be ignored; text is `value`, not
+// children.
 type NativeTextareaProps = Omit<
   ComponentPropsWithoutRef<'textarea'>,
   keyof FormControlOwnProps | 'value' | 'onChange' | 'defaultValue' | 'children'
@@ -32,10 +32,12 @@ export type TextareaProps<D extends number = never> = FormControlOwnProps &
     value: string;
     onChange: (value: string) => void;
     /**
-     * `onChange` waits for this many ms without typing; the text shows at
-     * once. Blur and unmounting send a waiting edit at once.
+     * `onChange` waits this many ms without typing; the text shows at once.
+     * Blur and unmounting send a waiting edit at once.
      */
     delay?: Constant<number, D>;
-    /** Lines shown before it scrolls; 3 by default. The user can drag it taller. */
+    /**
+     * Lines shown before it scrolls; 3 by default. The user can drag it taller.
+     */
     rows?: number;
   };

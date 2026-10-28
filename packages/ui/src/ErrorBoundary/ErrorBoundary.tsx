@@ -27,8 +27,8 @@ const keysChanged = (
 /**
  * Shows a fallback in place of `children` once they throw while rendering,
  * so one broken part doesn't take down the page. It doesn't catch errors in
- * event handlers, effects, promises or iframes. The fallback can offer to
- * render `children` again (`reset`), and `resetKeys` does it on its own.
+ * event handlers, effects, promises or iframes. The fallback can offer
+ * `reset`, and `resetKeys` renders `children` again on its own.
  */
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
@@ -65,8 +65,7 @@ export class ErrorBoundary extends Component<
       return;
     }
 
-    // The fallback replaced the focused element: keyboard users keep their
-    // place at the fallback's first control.
+    // The fallback replaced the focused element: focus its first control.
     if (focused && !focused.isConnected) {
       const fallback = this.fallbackRef.current;
       const target = fallback?.querySelector<HTMLElement>(

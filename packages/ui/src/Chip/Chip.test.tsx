@@ -9,14 +9,14 @@ import { Controller } from '../Form';
 import { axe, renderUI } from '../test-utils';
 
 import { Chip, ChipGroup } from './Chip';
-import { chipRecipe } from './Chip.recipes.css';
+import { chipGroupRecipe, chipRecipe } from './Chip.recipes.css';
 
 import type { DisabledProps } from '../utils';
 
 const { variants } = chipRecipe.classNames;
 
-// The shown tooltip is aria-hidden: the trigger's description says the same
-// thing to screen readers, so role queries need `hidden`.
+// The shown tooltip is aria-hidden; the trigger's description says the same, so
+// role queries need `hidden`.
 const tooltipEntries = async () => {
   await screen.findByRole('tooltip', { hidden: true });
   return Array.from(
@@ -25,9 +25,9 @@ const tooltipEntries = async () => {
   );
 };
 
-// Radix moves radio focus on a timer and selects the item it lands on only
-// while the arrow key is still down, as it is for a person pressing it, so
-// hold the key until focus arrives, then release it.
+// Radix moves radio focus on a timer and selects the landing item only while
+// the arrow key is down, as for a person: hold the key until focus arrives,
+// then release it.
 const arrowTo = async (
   user: ReturnType<typeof userEvent.setup>,
   key: string,
@@ -615,6 +615,42 @@ describe('ChipGroup', () => {
     await userEvent.tab();
     expect(screen.getByRole('button', { name: 'Next field' })).toHaveFocus();
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('look="collapsed" joins the chips into one bar and keeps the group\'s behavior', async () => {
+    const onChange = jest.fn();
+    const { container } = renderUI(
+      <ChipGroup
+        aria-label="Range"
+        look="collapsed"
+        value="7d"
+        onChange={onChange}
+      >
+        <Chip value="7d">7 days</Chip>
+        <Chip value="30d">30 days</Chip>
+      </ChipGroup>,
+    );
+    const group = screen.getByRole('radiogroup', { name: 'Range' });
+    expect(group).toHaveClass(
+      chipGroupRecipe.classNames.variants.collapsed.true,
+      'inline-flex-row-gap-0',
+    );
+    await userEvent.click(screen.getByRole('radio', { name: '30 days' }));
+    expect(onChange).toHaveBeenLastCalledWith('30d');
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('without a look, the group has no layout of its own', () => {
+    renderUI(
+      <ChipGroup aria-label="Range" value="7d" onChange={() => undefined}>
+        <Chip value="7d">7 days</Chip>
+      </ChipGroup>,
+    );
+    const group = screen.getByRole('radiogroup', { name: 'Range' });
+    expect(group).toHaveClass(
+      chipGroupRecipe.classNames.variants.collapsed.false,
+    );
+    expect(group).not.toHaveClass('inline-flex-row-gap-0');
   });
 
   it('in a form: named and helped by its label, and a failed submit focuses the group itself', async () => {

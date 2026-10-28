@@ -5,14 +5,18 @@ import { fontClasses } from '@packages/styles/fonts';
 import { getThemeClass } from '@packages/styles/theme';
 import React from 'react';
 
+// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the barrel exports the toast API, not the queue component.
+import { ToastQueue } from '../Toast/ToastQueue';
+
 import { UIProviders } from './UIProviders';
 
 import type { UIRootProps } from './UIRoot.types';
 
 /**
- * The app's `<html>` and `<body>`, rendered once, in the root layout: the
- * global styles, the light or dark theme before first paint and the tooltip
- * provider. The app puts its own error boundary inside it, around its pages.
+ * The app's `<html>` and `<body>`, rendered once in the root layout: global
+ * styles, the light or dark theme before first paint, the tooltip provider
+ * and the toast queue. The app puts its own error boundary inside it, around
+ * its pages.
  *
  * @invalidAlternative html, body, TooltipProvider
  */
@@ -45,7 +49,10 @@ export const UIRoot = ({ lang = 'en', children }: UIRootProps) => {
         <script dangerouslySetInnerHTML={{ __html: systemThemeScript }} />
       </head>
       <body>
-        <UIProviders>{children}</UIProviders>
+        <UIProviders>
+          {children}
+          <ToastQueue />
+        </UIProviders>
       </body>
     </html>
   );

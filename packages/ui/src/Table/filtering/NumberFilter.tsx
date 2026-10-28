@@ -1,3 +1,4 @@
+import { classNames } from '@packages/styles/classNames';
 import { INPUT_CHANGE_DEBOUNCE_MS } from '@packages/utils/constants';
 import { useBoundState } from '@packages/utils/hooks';
 import { isNil, omit } from 'lodash-es';
@@ -65,7 +66,11 @@ export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
               onChange={(number) => update(key, number)}
               autoComplete="off"
               leftAddOn={
-                <span className={styles.filterOperator}>{symbol}</span>
+                <span
+                  className={classNames(styles.filterOperator, 'text-center')}
+                >
+                  {symbol}
+                </span>
               }
             />
           ))}

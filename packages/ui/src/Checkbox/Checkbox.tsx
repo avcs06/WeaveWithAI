@@ -19,8 +19,8 @@ import { checkboxRecipe } from './Checkbox.recipes.css';
 import type { CheckboxProps } from './Checkbox.types';
 
 /**
- * A checkbox with its label, its children, to its right: one yes/no choice,
- * like consent or a setting, or one of several in a CheckboxGroup.
+ * A checkbox labeled by its children, to its right: a yes/no choice like
+ * consent or a setting, or one of a CheckboxGroup.
  *
  * @invalidAlternative input[type="checkbox"], [role="checkbox"]
  * @invalidAlternative import('@radix-ui/react-checkbox')
@@ -79,8 +79,7 @@ export const Checkbox = ({
       style={style}
     >
       {(boxProps) => {
-        // PlainButton makes the box pressable, with its state, tooltip and
-        // reason; Radix makes it a checkbox: in a group, through Selectable.
+        // PlainButton gives state, tooltip and reason; Radix the checkbox role.
         const box = (
           <PlainButton
             {...props}
@@ -93,7 +92,7 @@ export const Checkbox = ({
               data-slot="box"
               className={classNames(
                 boxClassName,
-                'grid place-items-center shrink-0',
+                'grid place-items-center shrink-0 cursor-pointer',
               )}
             >
               {isChecked && <Mark aria-hidden data-slot="icon" />}
@@ -104,8 +103,8 @@ export const Checkbox = ({
         return isInGroup ? (
           <Selectable
             value={value}
-            // Radix's `disabled` takes a box out of the tab order: only
-            // one with no reason to show leaves it.
+            // Radix `disabled` leaves the tab order and arrow keys: only with
+            // no reason to show.
             disabled={!isFocusable}
           >
             {box}

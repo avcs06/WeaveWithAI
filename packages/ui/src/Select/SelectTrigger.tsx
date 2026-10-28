@@ -78,7 +78,6 @@ export const SelectValue = ({
       size="xs"
       closable
       closeTabIndex={-1}
-      // The Select's own disabled state, already explained on its box.
       disabled={disabled}
       onClose={(event) => onRemove(value, event.currentTarget)}
       onKeyDown={(event) => onTagKeyDown(event, value)}
@@ -88,7 +87,7 @@ export const SelectValue = ({
   ));
 };
 
-/** The field's state, which the search field carries while it shows. */
+/** State the search field carries while it shows. */
 export type SelectFieldAria = Pick<
   AriaAttributes,
   'aria-describedby' | 'aria-invalid' | 'aria-required' | 'aria-keyshortcuts'
@@ -107,8 +106,8 @@ type SelectSearchFieldProps = SelectFieldAria & {
 };
 
 /**
- * The combobox while the menu is open: an editable one, per ARIA 1.2, in
- * place of the box, which only groups it with the values then.
+ * The editable combobox (ARIA 1.2) while the menu is open; the box only
+ * groups it with the values.
  */
 export const SelectSearchField = ({
   ref,
@@ -125,14 +124,13 @@ export const SelectSearchField = ({
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-      // A form around the Select would submit. Prevented, the key skips the
-      // search's own handler, so it's stopped here.
+      // Prevents a form submit; stopped too, as a prevented key skips the
+      // search's own handler.
       event.preventDefault();
       event.stopPropagation();
       onEnter();
     } else if (text === '') {
-      // Not prevented: the search's own handler still stops the key before
-      // it reaches the trigger.
+      // Not prevented: the search's own handler stops the key first.
       onKeyDownWhenEmpty(event.key);
     }
   };
@@ -153,7 +151,7 @@ export const SelectSearchField = ({
       onKeyDown={composeHandlers(keyDown, search.onKeyDown)}
       // A press in the field places the caret; it doesn't toggle the menu.
       onPointerDown={stopPropagation}
-      className={classNames(selectSearch, 'grow')}
+      className={classNames(selectSearch, 'grow p-0')}
     />
   );
 };

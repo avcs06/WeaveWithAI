@@ -1,6 +1,3 @@
-/**
- * Shared React hook utilities
- */
 export { useBoundState } from './useBoundState';
 export { useControlledValue } from './useControlledValue';
 export { useDebouncedCallback } from './useDebouncedCallback';

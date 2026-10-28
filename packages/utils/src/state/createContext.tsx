@@ -24,11 +24,10 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
  * provider.
  *
  * For an object, the provider takes each key as a prop and makes a new value
- * only when one of the keys in `defaults` changes, so consumers don't
- * re-render with every render of its parent. A key missing from `defaults` is
- * passed on, but changing it alone updates nothing. Anything else, including
- * an object that can be `null` or `undefined`, is passed as `value` and
- * compared as React does.
+ * only when a key in `defaults` changes, so consumers don't re-render with
+ * their parent. A key missing from `defaults` is passed on, but changing it
+ * alone updates nothing. Anything else, including an object that can be
+ * `null` or `undefined`, is passed as `value` and compared as React does.
  */
 export const createContext = <T,>(defaults: T) => {
   const Context = createReactContext(defaults);
@@ -44,7 +43,7 @@ export const createContext = <T,>(defaults: T) => {
       byKey ? keys.map((key) => values[key]) : [values['value']],
     );
 
-    return <Context.Provider value={value}>{children}</Context.Provider>;
+    return <Context value={value}>{children}</Context>;
   };
 
   const useValue = () => useContext(Context);

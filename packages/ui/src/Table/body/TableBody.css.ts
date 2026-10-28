@@ -5,7 +5,6 @@ import { root } from '../Table.css';
 
 export const messageCell = style({
   color: tokens.color.base.fgMuted,
-  textAlign: 'center',
 });
 
 const pulse = keyframes({
@@ -24,17 +23,17 @@ export const skeleton = style({
   },
 });
 
-// Rows out of date while new ones load. Not `inert`: that would take focus
-// from a control inside them, which is what keeping them mounted saves.
+// Stale rows while new ones load. Not `inert`: it would take focus from a
+// control inside, which keeping them mounted saves.
 export const staleRows = style({
   opacity: 0.5,
   pointerEvents: 'none',
 });
 
-// Radix scrollbars sit over the scroll area's edges on a transparent track.
-// Padding the scroll area itself (not the viewport) for each scrollbar that
-// shows ends the viewport at the scrollbar, so rows never scroll beneath it.
-// The header matches the vertical one.
+// Radix scrollbars overlay the scroll area's edges on a transparent track.
+// Padding the scroll area itself (not the viewport) per visible scrollbar ends
+// the viewport at it, so rows never scroll beneath. The header matches the
+// vertical one.
 const bodyScrollArea = `${root} [data-slot="table-body"]`;
 globalStyle(`${bodyScrollArea}:has(> [data-orientation="vertical"])`, {
   paddingRight: tokens.spacing[3.5],
@@ -43,8 +42,8 @@ globalStyle(`${bodyScrollArea}:has(> [data-orientation="horizontal"])`, {
   paddingBottom: tokens.spacing[3.5],
 });
 
-// Scroll anchoring stays off: it would undo scrolling whenever virtualized
-// rows above the view change.
+// No scroll anchoring: it would undo scrolling when virtualized rows above the
+// view change.
 globalStyle(`${bodyScrollArea} > [data-slot="viewport"]`, {
   overflowAnchor: 'none',
 });

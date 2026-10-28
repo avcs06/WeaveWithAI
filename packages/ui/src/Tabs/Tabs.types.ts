@@ -8,7 +8,7 @@ type TabsRecipeVariants = NonNullable<RecipeVariants<typeof tabsRecipe>>;
 export type TabsProps<V extends string = string> = TabsRecipeVariants & {
   /**
    * The active tab's `value`. Without it, Tabs keeps its own, starting at the
-   * first tab that isn't disabled; with every tab disabled, none is active.
+   * first enabled tab; with every tab disabled, none is active.
    */
   activeTab?: V;
   onTabChange?: (value: V) => void;
@@ -16,6 +16,9 @@ export type TabsProps<V extends string = string> = TabsRecipeVariants & {
   children: ReactNode;
   /** For the root, around the tab list and the panel. */
   className?: string;
+  /** Names the tab list, for a page with more than one. */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 };
 
 type TabIcons = Pick<
@@ -36,13 +39,12 @@ export type TabProps = TabIcons &
     children: ReactNode;
     /**
      * Renders the panel from the start and hides it while another tab is
-     * active, so what it keeps itself, like its scroll position, survives
-     * switching.
+     * active, so what it keeps itself, like scroll position, survives.
      */
     keepMounted?: boolean;
   };
 
-export type TabEntry = TabIcons & {
+export type TabEntry = {
   value: string;
   title: string;
   keepMounted: boolean;
@@ -51,3 +53,8 @@ export type TabEntry = TabIcons & {
 };
 
 export type TabItem = TabEntry & { id: string };
+
+/** What a tab draws: new elements on every render, kept apart from its entry. */
+export type TabRenderables = TabIcons & {
+  content: ReactNode;
+};

@@ -6,9 +6,9 @@ import type { DisabledState } from '../utils';
 import type { ReactNode } from 'react';
 
 /**
- * An option as `onChange` and `renderTrigger` get it: its `value`, `label`
- * and the other props of its `SelectOption`, typed by `D`. They're optional:
- * a value no option has described comes as `{ value, label: value }`.
+ * An option as `onChange` and `renderTrigger` get it: its `value`, `label` and
+ * the other props of its `SelectOption`, typed by `D`. All optional: a value
+ * no option describes comes as `{ value, label: value }`.
  */
 export type SelectOptionData<
   V extends string = string,

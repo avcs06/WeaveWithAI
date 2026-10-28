@@ -9,8 +9,8 @@ import {
   ringWidth,
 } from './focusRing.css';
 
-// Plain module (not .css.ts) so these functions can be exported and called
-// from .css.ts and .recipes.ts files at build time.
+// Plain module, not .css.ts, so .css.ts and .recipes.ts files can call these
+// at build time.
 
 const borderWidth = '1px';
 const disabledMix = '50%';
@@ -24,8 +24,8 @@ export const bottomBorderShadow = (color: string, width = borderWidth) =>
   `0 -${width} 0 0 ${color} inset`;
 
 /**
- * The focus ring in `color`, a control's own variable, to spread into its
- * focus rule. `shadows` are the control's own, drawn above the ring.
+ * The focus ring in `color` (a control's variable), to spread into its focus
+ * rule. `shadows` are the control's own, drawn above the ring.
  */
 export const focusRing = (color: string, ...shadows: string[]) => {
   const ring = `color-mix(in srgb, ${color} ${ringOpacity}, transparent)`;
@@ -42,8 +42,8 @@ export const focusRing = (color: string, ...shadows: string[]) => {
 };
 
 /**
- * Disabled version of a color: mixed halfway into the base background, so it
- * looks like `opacity: 0.5` on the page without stacking transparent layers.
+ * Disabled color: mixed halfway into the base background, like `opacity: 0.5`
+ * without stacking transparent layers.
  */
 export const disabledColor = (color: string) =>
   `color-mix(in srgb, ${color} ${disabledMix}, ${colorTokens.base.bg})`;

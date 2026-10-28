@@ -7,10 +7,10 @@ import { renderToString } from 'react-dom/server';
 
 import { Providers } from './test-utils';
 
-// Every recipe renders on the server and hydrates in the browser, as a page
-// in the app does, without a mismatch or a logged error. The scan takes any
-// `.recipe.tsx` at any depth, so a recipe added in a new folder shape is
-// tested too instead of silently skipped.
+// Every recipe renders on the server and hydrates in the browser, as an app
+// page does, without a mismatch or a logged error. The scan takes any
+// `.recipe.tsx` at any depth, so a recipe in a new folder shape isn't
+// silently skipped.
 const recipeFiles = readdirSync(__dirname, {
   recursive: true,
   encoding: 'utf8',
@@ -19,7 +19,7 @@ const recipeFiles = readdirSync(__dirname, {
   .sort();
 
 // The ErrorBoundary recipe breaks once hydrated, on purpose, to show its
-// fallbacks; every other recipe must not break at all.
+// fallbacks; no other recipe may break.
 const breaksOnPurpose = (file: string) => file.startsWith('ErrorBoundary/');
 
 describe.each(recipeFiles)('%s', (file) => {

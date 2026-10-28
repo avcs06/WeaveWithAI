@@ -8,8 +8,8 @@ type LinkRecipeVariants = Pick<
   'variant'
 > & {
   /**
-   * Space-separated styles: `plain` drops the dotted line, for a link its
-   * place already marks, like a site's name in its header.
+   * Space-separated styles: `plain` drops the dotted line, for a link its place
+   * already marks, like a site name in a header.
    */
   look?: string;
 };

@@ -27,10 +27,10 @@ const winningStatus = (levels: Pick<FormControlOwnProps, ControlStatus>) => {
 };
 
 /**
- * A form field's label, control box, and help text or status message, around
- * a control the design system has no component for. Input, NumberInput,
- * PasswordInput, SearchInput and Select are built on it: use those when they
- * fit. With `Controller`, `{...field}` is all it needs.
+ * A form field's label, control box, and help text or status message, around a
+ * control the design system has no component for. Input, NumberInput,
+ * PasswordInput, SearchInput and Select are built on it: prefer those. With
+ * `Controller`, `{...field}` is all it needs.
  *
  * @invalidAlternative label, [aria-invalid], [aria-required], [aria-errormessage]
  */
@@ -90,7 +90,7 @@ export const FormControl = ({
   const { status, message } = winningStatus({ error, warning, success });
   const controlId = id ?? generatedId;
 
-  // Hover-only text, also kept hidden in the page for screen readers.
+  // Also kept hidden in the page for screen readers.
   const hiddenDescriptions = [
     { id: hintId, text: label && hint },
     { id: tooltipId, text: tooltip },
@@ -103,7 +103,7 @@ export const FormControl = ({
     ref: mergeRefs(ref, controlRef),
     tabIndex: isFocusable || isReadOnly ? 0 : -1,
     'aria-labelledby': joinIds(label && labelId, ariaLabelledBy),
-    // The message first: it says what's wrong, the help text what's asked.
+    // The message first: it says what's wrong, help text what's asked.
     'aria-describedby': joinIds(
       hasContent(message) && messageId,
       hasContent(helpText) && helpId,
@@ -119,8 +119,7 @@ export const FormControl = ({
     isDisabled,
   };
 
-  // Every control, native or not, takes focus from its label, unless it left
-  // the tab order.
+  // Every control takes focus from its label, unless it left the tab order.
   const focusFromLabel = (event: MouseEvent<HTMLLabelElement>) => {
     event.preventDefault();
     if (isFocusable || isReadOnly) controlRef.current?.focus();

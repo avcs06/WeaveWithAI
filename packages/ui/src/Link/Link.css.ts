@@ -30,8 +30,7 @@ export const link = style({
       color: disabledColor(linkFg),
       backgroundImage: dottedLine(disabledColor(linkBorder)),
     },
-    // A disabled link with a reason keeps its tab stop: its focus shows,
-    // dimmed.
+    // A disabled link with a reason keeps its tab stop, focus shown dimmed.
     '&[data-disabled]:focus-visible': {
       borderRadius: tokens.radius[1],
       ...focusRing(disabledColor(linkFocusColor)),

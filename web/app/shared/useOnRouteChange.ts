@@ -18,11 +18,11 @@ type RouteChangeCallback = (
 
 /**
  * Runs `callback` after each navigation, not on mount, with the new route and
- * the one before it. It runs in a layout effect, so state it sets, like a menu
- * closing, applies before the new page paints. Only in a component that stays mounted across
- * navigations, like a layout or a header. Hash changes don't count. It reads
- * `useSearchParams`, so a statically rendered route needs a `<Suspense>`
- * around the component.
+ * the previous one. Runs in a layout effect, so state it sets, like a menu
+ * closing, applies before the new page paints. Only in a component that stays
+ * mounted across navigations, like a layout or header. Hash changes don't
+ * count. Reads `useSearchParams`, so a statically rendered route needs a
+ * `<Suspense>` around the component.
  */
 export const useOnRouteChange = (callback: RouteChangeCallback) => {
   const pathname = usePathname();

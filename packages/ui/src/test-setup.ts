@@ -7,8 +7,8 @@ expect.extend(toHaveNoViolations);
 // The stubs below do nothing on purpose.
 const noop = () => undefined;
 
-// Browser APIs jsdom lacks; Radix, the virtualizer and Truncate use them.
-// Calls back once per `observe`, as browsers do on the first observation.
+// Browser APIs jsdom lacks, used by Radix, the virtualizer and Truncate. Calls
+// back once per `observe`, as browsers do on the first observation.
 class ResizeObserverStub {
   constructor(private callback: ResizeObserverCallback) {}
   observe() {

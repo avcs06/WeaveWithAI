@@ -28,9 +28,8 @@ function staticClassLists(node: Expression): string[] {
 }
 
 /**
- * Outside design-system files, a static class list may be only so long and an
- * element may carry only so many of them; past that the styles belong in
- * vanilla-extract.
+ * Outside design-system files a static class list may be only so long, and an
+ * element may carry only so many; past that, styles belong in vanilla-extract.
  */
 export const classListLimit: Rule<ClassNameValue> = ({ value, policy, designSystem }) => {
   if (designSystem) return [];

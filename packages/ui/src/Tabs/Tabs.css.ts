@@ -20,7 +20,6 @@ export const tabsList = style({
 });
 
 export const tabTrigger = style({
-  position: 'relative',
   height: spacing[10.5],
   paddingBlock: spacing[3.5],
   paddingInline: spacing[3],
@@ -28,11 +27,9 @@ export const tabTrigger = style({
   fontWeight: tokens.fontWeight.medium,
   lineHeight: tokens.lineHeight[3.5],
   letterSpacing: '0.01em',
-  whiteSpace: 'nowrap',
   userSelect: 'none',
   color: colors.fgMuted,
   outline: 'none',
-  cursor: 'pointer',
   selectors: {
     '&[data-state="inactive"]:not([data-disabled]):hover': {
       color: colors.fg,

@@ -12,8 +12,8 @@ type DebouncedCallback<T extends Callable> = {
 
 /**
  * Runs `callback` once calls pause for `delay` ms, with the last call's
- * arguments. A call, and `flush`, return what the last run returned, or
- * `undefined` before the first. `delay` is read once, on mount.
+ * arguments. A call and `flush` return the last run's result, `undefined`
+ * before the first. `delay` is read once, on mount.
  *
  * @invalidAlternative import('ahooks'){useDebounceFn}
  */

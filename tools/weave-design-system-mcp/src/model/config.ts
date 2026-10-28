@@ -24,8 +24,8 @@ const ConfigSchema = z.object({
   recipes: z.array(z.string().min(1)).min(1).optional(),
   /**
    * Globs for files that may import a package another component supersedes,
-   * like a shared primitive that several components are built on. Only the
-   * import rule skips them.
+   * like a shared primitive several components build on. Only the import rule
+   * skips them.
    */
   importExceptions: z.array(z.string().min(1)).optional(),
 });
@@ -55,9 +55,8 @@ function formatZodError(error: z.ZodError): string {
 }
 
 /**
- * Loads and validates `designsystem.config.json` from `cwd`, failing with a
- * message that names the offending field for a schema violation, or shows
- * how to create the file when it's missing.
+ * Loads and validates `designsystem.config.json` from `cwd`. Errors name the
+ * offending field, or show how to create the file when it's missing.
  */
 export function loadConfig(cwd: string = process.cwd()): ResolvedConfig {
   const configPath = join(cwd, CONFIG_FILENAME);

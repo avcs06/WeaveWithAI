@@ -13,6 +13,7 @@ import {
 
 import {
   chip,
+  chipGroupCollapsed,
   chipActiveBg,
   chipActiveBorder,
   chipActiveFg,
@@ -118,4 +119,11 @@ export const chipRecipe = recipe({
     rounded: false,
     ghost: false,
   },
+});
+
+export const chipGroupRecipe = recipe({
+  variants: {
+    collapsed: { true: chipGroupCollapsed, false: {} },
+  },
+  defaultVariants: { collapsed: false },
 });

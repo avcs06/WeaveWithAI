@@ -22,7 +22,7 @@ export type MenuItemProps = ComponentPropsWithRef<'div'> &
   > & {
     /** Left out on a row with no checked state, like an action. */
     selected?: boolean;
-    /** A checkbox before the row that has a checked state, ticked when selected. */
+    /** A checkbox before a row with a checked state, ticked when selected. */
     checkbox?: boolean;
     /** The check mark at the end of a selected row; on by default. */
     checkmark?: boolean;

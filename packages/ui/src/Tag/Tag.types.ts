@@ -27,17 +27,16 @@ export type TagProps = Omit<
     closable?: boolean;
     onClose?: MouseEventHandler<HTMLButtonElement>;
     /**
-     * The close button. Removing the tag removes the focused button with it,
-     * so the caller moves focus on: to the next tag's close button.
+     * The close button. Removing the tag removes the focused button, so move
+     * focus to the next tag's close button.
      */
     closeRef?: Ref<HTMLButtonElement>;
     /** `-1` inside a widget that moves focus between its tags itself. */
     closeTabIndex?: number;
     /**
-     * On a closable tag, its close button shows it on hover and focus, with
-     * the disabled reason, and screen readers read both. A tag that can't
-     * close can't take focus: only hovering shows them, so never put
-     * anything the user must know there.
+     * On a closable tag, the close button shows it with the disabled reason on
+     * hover and focus, and screen readers read both. A tag that can't close
+     * takes no focus, so only hover shows them: nothing essential here.
      */
     tooltip?: ReactNode;
   };

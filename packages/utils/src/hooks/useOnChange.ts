@@ -17,8 +17,8 @@ export const useOnChange = (effect: EffectCallback, deps: DependencyList) => {
   const depsChangedRef = useRef(false);
 
   useEffect(() => {
-    // Compared by value, not with a "first run" flag: Strict Mode runs the
-    // mount effect twice, and only a real change in deps should count.
+    // Compared by value, not a "first run" flag: Strict Mode runs the mount
+    // effect twice, and only a real change in deps counts.
     depsChangedRef.current ||= didDepsChange(depsDuringMountRef.current, deps);
     if (!depsChangedRef.current) return;
     return effect();

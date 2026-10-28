@@ -50,8 +50,8 @@ export const Menu = ({
   children,
   ...props
 }: MenuProps) => {
-  // With a header, the menu's role, id and name move to the list, which
-  // holds only the rows: a menu can't hold a field.
+  // With a header, the menu's role, id and name move to the list, which holds
+  // only the rows: a menu can't hold a field.
   const {
     role,
     id,
@@ -80,10 +80,11 @@ export const Menu = ({
           assignInlineVars({ [menuAvailableHeight]: availableHeight })),
         ...style,
       }}
-      // Hovering a row focuses it too, which would show the keyboard's ring:
-      // the ring shows only while the keyboard is in use.
+      // Hovering focuses a row too, which would show the keyboard's ring: it
+      // shows only while the keyboard is in use.
       onPointerMove={(event) => {
-        event.currentTarget.dataset.pointer = '';
+        const { dataset } = event.currentTarget;
+        if (!('pointer' in dataset)) dataset.pointer = '';
         props.onPointerMove?.(event);
       }}
       onKeyDownCapture={(event) => {
@@ -93,9 +94,17 @@ export const Menu = ({
       className={classNames(menu, 'flex-col-gap-1.5', className)}
     >
       {header}
-      {/* Takes the rows' height until the shell's max height, then scrolls;
-          with nothing focusable in it, it takes a tab stop to scroll. */}
-      <FlexScrollArea orientation="vertical">
+      {/* Takes the rows' height up to the shell's max, then scrolls; with
+          nothing focusable in it, it takes a tab stop to scroll. A menu's
+          rows always hold its stop; a popover's text may not, so the stop
+          takes the popover's name. */}
+      <FlexScrollArea
+        orientation="vertical"
+        {...(role === 'dialog' && {
+          'aria-label': ariaLabel,
+          'aria-labelledby': ariaLabelledBy,
+        })}
+      >
         <div
           {...(header && listSemantics)}
           data-slot="list"
@@ -109,9 +118,9 @@ export const Menu = ({
 };
 
 /**
- * A row's look: icon, label, add-ons and the check of a selected row, for
- * rows inside a Popover's content. It has no behavior of its own: wrap it in
- * a PlainButton to press it. A menu of actions or choices is a Dropdown,
+ * A row's look: icon, label, add-ons and a selected row's check, for rows
+ * inside a Popover's content. No behavior of its own: wrap it in a
+ * PlainButton to press it. For a menu of actions or choices use a Dropdown,
  * whose rows bring menu roles and arrow keys.
  */
 export const MenuItem = ({
@@ -134,7 +143,7 @@ export const MenuItem = ({
     ref: labelRef,
     className: labelClassName,
     truncated,
-  } = useTruncation<HTMLSpanElement>(children);
+  } = useTruncation<HTMLSpanElement>();
 
   const chevronClassName = controlIcon();
   const checkboxClassName = checkboxRecipe({ size: 'sm' });
@@ -171,7 +180,7 @@ export const MenuItem = ({
         aria-busy={loading || undefined}
         className={classNames(
           menuItem,
-          'flex-row-gap-2.5 items-center',
+          'flex-row-gap-2.5 items-center cursor-pointer',
           className,
         )}
       >
@@ -216,7 +225,7 @@ export const MenuItem = ({
   );
 };
 
-/** Rows of a Popover's content kept together, set apart from the next group. */
+/** Rows of a Popover's content kept together, apart from the next group. */
 export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (
   <div
     {...props}

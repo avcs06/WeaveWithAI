@@ -14,8 +14,8 @@ type UseScrollEndOptions = {
 };
 
 /**
- * Calls `onEnd` when the viewport scrolls near its end, or isn't filled yet:
- * checked on scroll, on content changes, and when the viewport resizes.
+ * Calls `onEnd` when the viewport nears its end or isn't filled: checked on
+ * scroll, content change and resize.
  */
 export const useScrollEnd = (
   viewport: HTMLElement | null,

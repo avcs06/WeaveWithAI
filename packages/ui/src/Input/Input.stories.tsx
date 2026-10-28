@@ -13,9 +13,7 @@ export default { title: 'UI/Input' } satisfies Meta;
 // The page renders its own inputs, so the story takes no args.
 type Story = StoryObj;
 
-// The props are a Partial of a union too large for TS to match against Input's,
-// so they are cast back to InputProps.
-/** An Input that keeps its value. */
+// Partial of a union too large for TS to match against Input's: cast back.
 const Field = (props: Partial<InputProps> & { autoComplete: string }) => {
   const [value, setValue] = useState('');
   return (
@@ -28,7 +26,10 @@ const Field = (props: Partial<InputProps> & { autoComplete: string }) => {
   );
 };
 
-/** A Field that can wait 500ms: `delay` takes a literal, so it can't be a prop of Field. */
+/**
+ * A Field that can wait 500ms: `delay` takes a literal, so it can't be a prop
+ * of Field.
+ */
 const DelayableField = ({
   delayed,
   ...props
@@ -49,7 +50,6 @@ const Row = ({ label, children }: { label: string; children: ReactNode }) => (
   </div>
 );
 
-/** A PasswordInput that keeps its value. */
 const Password = () => {
   const [value, setValue] = useState('');
   return (

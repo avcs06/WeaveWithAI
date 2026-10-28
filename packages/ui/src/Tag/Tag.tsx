@@ -49,7 +49,7 @@ export const Tag = ({
     ref: labelRef,
     className: labelClassName,
     truncated,
-  } = useTruncation<HTMLSpanElement>(children);
+  } = useTruncation<HTMLSpanElement>();
 
   const { leftSlot, rightSlot } = useIconAddon({
     leftIcon,
@@ -64,9 +64,9 @@ export const Tag = ({
   const reason = isDisabled && disabledWithReason;
   const hoverTooltip = [tooltip, truncated && children, reason];
 
-  // Closable, the close button is the part that takes focus, so it carries
-  // the tooltip and reason, and the label shows them on hover: a trigger
-  // nested in another would fight it over the one tooltip.
+  // Closable: the close button takes focus, so it carries the tooltip and
+  // reason; the label shows them on hover. Nested triggers would fight over the
+  // one tooltip.
   return (
     <Tooltip
       tooltip={closable ? null : hoverTooltip}
@@ -78,6 +78,7 @@ export const Tag = ({
         data-disabled={isDisabled || undefined}
         className={classNames(
           'inline-flex-row-gap-0 items-center',
+          'max-w-full',
           tagClassName,
           className,
         )}

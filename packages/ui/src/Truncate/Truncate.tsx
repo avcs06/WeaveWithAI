@@ -28,8 +28,8 @@ type TruncateTextProps = Omit<
   onBlur?: HostFocusHandler;
 };
 
-// The text can't take focus, so the control around it shows its tooltip.
-// Handlers are only given when the tooltip has something to show.
+// The text can't take focus, so the surrounding control shows its tooltip.
+// Handlers only when there is something to show.
 const TruncateText = ({
   ref,
   onFocus,

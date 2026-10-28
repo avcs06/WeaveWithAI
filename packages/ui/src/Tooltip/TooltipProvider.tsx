@@ -2,10 +2,14 @@
 
 import { classNames } from '@packages/styles/classNames';
 import * as Popper from '@radix-ui/react-popper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { TooltipContext, useTooltipContext } from './context';
+import {
+  TooltipContext,
+  type TooltipContextValue,
+  useTooltipContext,
+} from './context';
 import { createTooltipController } from './controller';
 import { tooltip as tooltipClassName } from './Tooltip.css';
 
@@ -73,9 +77,13 @@ const TooltipLayer = () => {
   );
 };
 
+// The mounted provider that owns the page's tooltip.
+let pageContext: TooltipContextValue | undefined;
+
 /**
  * The app's one tooltip, which every Tooltip shows through. `UIRoot` renders
- * it; never render another: two would show two tooltips at once.
+ * it. A provider in a root of its own, like a confirmation dialog's, shares
+ * the mounted one's tooltip, so two never show at once.
  *
  * @internal
  */
@@ -85,19 +93,40 @@ export const TooltipProvider = ({
   children,
 }: TooltipProviderProps) => {
   // One value for good, so the Tooltips inside don't rerender with it.
-  const [context] = useState(() => ({
-    controller: createTooltipController({ delayDuration, skipDelayDuration }),
-  }));
+  const [{ context, isOwner }] = useState(() =>
+    pageContext
+      ? {
+          context: pageContext,
+          isOwner: false,
+        }
+      : {
+          context: {
+            controller: createTooltipController({
+              delayDuration,
+              skipDelayDuration,
+            }),
+          },
+          isOwner: true,
+        },
+  );
   const { controller } = context;
 
+  useLayoutEffect(() => {
+    if (!isOwner) return;
+    pageContext = context;
+    return () => {
+      if (pageContext === context) pageContext = undefined;
+    };
+  }, [context, isOwner]);
+
   useEffect(() => {
-    controller.setTimings({ delayDuration, skipDelayDuration });
-  }, [controller, delayDuration, skipDelayDuration]);
+    if (isOwner) controller.setTimings({ delayDuration, skipDelayDuration });
+  }, [controller, isOwner, delayDuration, skipDelayDuration]);
 
   return (
     <TooltipContext value={context}>
       {children}
-      <TooltipLayer />
+      {isOwner && <TooltipLayer />}
     </TooltipContext>
   );
 };

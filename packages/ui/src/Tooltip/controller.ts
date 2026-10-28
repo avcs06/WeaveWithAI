@@ -27,8 +27,8 @@ type TooltipTimings = { delayDuration: number; skipDelayDuration: number };
 const leaveGrace = 100;
 
 /**
- * The one tooltip of a `TooltipProvider`: which trigger it's for, when it
- * opens and when it closes, with the timings Radix Tooltip has.
+ * The provider's one tooltip: its trigger, and when it opens and closes, timed
+ * like Radix Tooltip.
  */
 export const createTooltipController = (initialTimings: TooltipTimings) => {
   const store = createStore<TooltipState>(() => ({
@@ -51,8 +51,8 @@ export const createTooltipController = (initialTimings: TooltipTimings) => {
     document.removeEventListener('pointerup', endPress);
     document.removeEventListener('pointercancel', endPress);
   };
-  // Pointer moves count once per visit, so a pressed trigger stays closed
-  // until the pointer leaves and comes back.
+  // Moves count once per visit: a pressed trigger stays closed until the
+  // pointer leaves and returns.
   let enteredId: string | undefined;
 
   const isTarget = (id: string) => store.getState().target?.id === id;
@@ -131,9 +131,8 @@ export const createTooltipController = (initialTimings: TooltipTimings) => {
       if (isTarget(id)) hide();
     },
     /**
-     * The trigger has nothing to show, or is gone: it closes, and the
-     * pointer's visit is forgotten, so content that comes back opens on the
-     * next move.
+     * Nothing to show, or gone: closes and forgets the visit, so returning
+     * content opens on the next move.
      */
     release: (id: string) => {
       if (enteredId === id) enteredId = undefined;

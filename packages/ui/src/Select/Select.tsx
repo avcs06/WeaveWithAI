@@ -21,8 +21,8 @@ function SelectRoot<V extends string, D extends object>({
   return (
     <SelectStoreProvider>
       <SelectOptionsProvider>{children}</SelectOptionsProvider>
-      {/* SelectOption children can't be typed by their Select: TypeScript
-          can't check that their values are V, so they're taken as V. */}
+      {/* SelectOption children can't be typed by their Select, so TypeScript
+          can't check their values are V: taken as V. */}
       <SelectControl {...(props as unknown as SelectControlProps)} />
     </SelectStoreProvider>
   );

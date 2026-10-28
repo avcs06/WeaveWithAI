@@ -10,7 +10,6 @@ export const tagCloseGap = createVar('tagCloseGap');
 export const tagClosePadding = createVar('tagClosePadding');
 
 export const tag = style({
-  maxWidth: '100%',
   borderRadius: tokens.radius.control,
   fontWeight: tokens.fontWeight.medium,
   color: tagFg,
@@ -31,12 +30,12 @@ globalStyle(`${tag} > [data-slot='icon']`, {
   height: tagIconSize,
 });
 
-// Square around its icon. Its own padding is pulled back in: toward the
-// label, and off the tag's height, so the tag stays padding + line height.
+// Square around its icon; its padding is pulled in so the tag stays padding +
+// line height.
 export const tagClose = style({
   selectors: {
-    // Button's rules carry its class three times, so an `as` target's
-    // classes can't restyle it; four outrank them.
+    // Button's rules repeat its class three times; four outrank an `as`
+    // target's classes.
     '&&&&': {
       paddingBlock: tagClosePadding,
       paddingInline: tagClosePadding,

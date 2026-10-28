@@ -26,8 +26,8 @@ const [SelectGroupProvider, useSelectGroup] = createContext<
 
 /**
  * One option of a Select or MultiSelect. It renders nothing itself: `value`
- * and `label` are the option, its children draw the option's row in the
- * menu, and any other prop is data that reaches `onChange`.
+ * and `label` are the option, its children draw its menu row, and other props
+ * are data passed to `onChange`.
  *
  * @invalidAlternative [role="option"]
  */
@@ -63,9 +63,10 @@ export const SelectOption = <V extends string = string>(
     ...extraKeys.map((key) => extra[key]),
   ]);
 
+  // No deps: `children` is new on every render, so it writes after each one.
   useStoreSync(() => {
     store('setOptionContent')(id, children);
-  }, [id, children]);
+  });
 
   useLayoutEffect(() => () => store('removeOption')(id), [store, id]);
 
@@ -74,7 +75,7 @@ export const SelectOption = <V extends string = string>(
 
 /**
  * A labelled group of options in a Select's menu: sessions by day, venues by
- * city. Its children are the group's `SelectOption` elements.
+ * city. Its children are `SelectOption` elements.
  *
  * @invalidAlternative optgroup
  */

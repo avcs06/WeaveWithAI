@@ -9,7 +9,7 @@ import {
 
 import { useConfigSyncContext } from './configSync';
 
-/** One render of the owner: config components add their ids as they render. */
+/** One owner render: config components add their ids as they render. */
 type OrderPass = {
   ids: string[];
   has: (id: string) => boolean;
@@ -47,8 +47,8 @@ const ConfigOrderContext = createContext<OrderPass | null>(null);
 
 /**
  * Renders after every config component, so the pass holds all their ids.
- * While the owner mounts, the content after the provider reads the order as
- * it renders, before any effect runs: the order is written here, once.
+ * While the owner mounts, content after the provider reads the order during
+ * render, before any effect: so the order is written here, once.
  */
 const PassEnd = ({ onEnd }: { onEnd: () => void }) => {
   'use no memo'; // Runs on every render, by design.
@@ -57,11 +57,10 @@ const PassEnd = ({ onEnd }: { onEnd: () => void }) => {
 };
 
 /**
- * Collects the order of config components, which is render order: every
- * render hands them a new pass, so each one re-renders with the owner,
- * wherever it sits (wrapper components included), and adds its id in tree
- * order. Goes inside `ConfigSyncProvider`, with the content that reads the
- * order after it, not inside it.
+ * Collects config components in render order: each render hands them a new
+ * pass, so each one, wrappers included, re-renders and adds its id in tree
+ * order. Goes inside `ConfigSyncProvider`, before the content that reads the
+ * order.
  */
 export const ConfigOrderProvider = ({
   onOrder,
@@ -97,12 +96,12 @@ export const ConfigOrderProvider = ({
   });
 
   return (
-    <ConfigOrderContext.Provider value={pass}>
+    <ConfigOrderContext value={pass}>
       {children}
       {/* A config component that renders after it collects again, as after
           mount. */}
       {!mounted && <PassEnd onEnd={write} />}
-    </ConfigOrderContext.Provider>
+    </ConfigOrderContext>
   );
 };
 
@@ -115,8 +114,8 @@ export const useConfigOrder = (id: string) => {
   useLayoutEffect(() => {
     // Rendered with the owner: the provider commits the order next.
     if (pass.isOpen()) return;
-    // Mounted or given a new id in a render the owner wasn't part of, e.g.
-    // inside a wrapper that re-rendered alone: collect the order again.
+    // Mounted or re-id'd in a render the owner wasn't part of, e.g. in a
+    // wrapper that re-rendered alone: collect the order again.
     if (!pass.has(id)) pass.refresh();
   }, [pass, id]);
 };

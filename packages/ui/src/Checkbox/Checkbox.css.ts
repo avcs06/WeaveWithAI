@@ -26,7 +26,6 @@ export const checkboxBox = style({
   background: colors.bg,
   boxShadow: `${borderShadow(colors.border)}, ${dropShadow}`,
   outline: 'none',
-  cursor: 'pointer',
   transition: `background-color ${transition}, box-shadow ${transition}`,
   selectors: {
     [`&${enabled}:hover`]: { background: colors.hoverBg },

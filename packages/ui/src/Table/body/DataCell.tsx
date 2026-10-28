@@ -17,8 +17,8 @@ export const DataCell = memo(({ columnId, row }: DataCellProps) => {
   const render = useTableStore((state) => state.columnRenders[columnId]);
   const value = column ? getCellValue(column, row) : undefined;
 
-  // A Date's own text depends on the time zone, which can differ between the
-  // server and the browser; its ISO text doesn't.
+  // A Date's text depends on the time zone, which can differ between server and
+  // browser; ISO text doesn't.
   let text = isNil(value) ? '' : String(value);
   if (value instanceof Date && !Number.isNaN(value.getTime()))
     text = value.toISOString();

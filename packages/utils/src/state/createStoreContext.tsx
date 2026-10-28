@@ -24,15 +24,11 @@ export const createStoreContext = <T, P extends object = object>(
 
   /** Makes its store once, from the props of its first render. */
   const StoreProvider = (props: P & { children: ReactNode }) => {
-    // Bound, not an inline arrow: the React Compiler moves an inline
-    // initializer out of this closure, where `createStore` isn't defined.
+    // Bound, not an inline arrow: React Compiler moves an inline initializer
+    // out of this closure, where `createStore` isn't defined.
     const [instance] = useState(createInstance.bind(null, props));
 
-    return (
-      <StoreContext.Provider value={instance}>
-        {props.children}
-      </StoreContext.Provider>
-    );
+    return <StoreContext value={instance}>{props.children}</StoreContext>;
   };
 
   const useStoreContext = () => {
@@ -43,7 +39,7 @@ export const createStoreContext = <T, P extends object = object>(
   };
 
   // `Parameters` of an overloaded type keeps only the last overload, so the
-  // key form is restored by typing the hook as `StoreHook`.
+  // hook is typed `StoreHook` to restore the key form.
   const useStore = ((...props: Parameters<StoreStateHook<T>>) => {
     return useStoreContext().useStore(...props);
   }) as StoreHook<T>;

@@ -16,8 +16,8 @@ const button = (name: string) => screen.getByRole('button', { name });
 
 const dialog = (name: string) => screen.queryByRole('dialog', { name });
 
-// The shown tooltip is `aria-hidden` (the trigger's description says it for
-// screen readers), so role queries must include hidden elements.
+// The shown tooltip is `aria-hidden` (the trigger's description says it), so
+// role queries must include hidden elements.
 const findTooltip = () => screen.findByRole('tooltip', { hidden: true });
 const queryTooltip = () => screen.queryByRole('tooltip', { hidden: true });
 
@@ -121,7 +121,6 @@ describe('Popover', () => {
     expect(onOpenChange.mock.calls).toEqual([[true]]);
     expect(await axe(document.body)).toHaveNoViolations();
 
-    // A second press of the trigger closes it again.
     await userEvent.click(trigger);
     expect(dialog('Attendee filters')).toBeNull();
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -178,7 +177,9 @@ describe('Popover', () => {
     const trigger = button('Filters');
     trigger.focus();
     await userEvent.keyboard('{Enter}');
-    expect(screen.getByRole('dialog', { name: 'Attendee filters' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Attendee filters' }),
+    ).toBeInTheDocument();
     expect(button('Checked in only')).toHaveFocus();
     await userEvent.tab();
     expect(button('Apply')).toHaveFocus();
@@ -191,7 +192,9 @@ describe('Popover', () => {
     expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
 
     await userEvent.keyboard('[Space]');
-    expect(screen.getByRole('dialog', { name: 'Attendee filters' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Attendee filters' }),
+    ).toBeInTheDocument();
     expect(button('Checked in only')).toHaveFocus();
     await userEvent.keyboard('{Escape}');
     expect(dialog('Attendee filters')).toBeNull();
@@ -240,20 +243,19 @@ describe('Popover', () => {
     renderUI(<Panel modal onOpenChange={onOpenChange} />);
     const trigger = button('Filters');
     await userEvent.click(trigger);
-    expect(screen.getByRole('dialog', { name: 'Attendee filters' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Attendee filters' }),
+    ).toBeInTheDocument();
     expect(button('Checked in only')).toHaveFocus();
-    // The page behind the modal panel is not reachable by role queries.
     expect(screen.queryByRole('button', { name: 'After' })).toBeNull();
     expect(
       screen.getByRole('button', { name: 'After', hidden: true }),
     ).toBeInTheDocument();
     await userEvent.tab();
     expect(button('Apply')).toHaveFocus();
-    // At the last stop, Tab wraps to the first instead of leaving.
     await userEvent.tab();
     expect(button('Checked in only')).toHaveFocus();
     expect(dialog('Attendee filters')).not.toBeNull();
-    // At the first stop, Shift+Tab wraps to the last.
     await userEvent.tab({ shift: true });
     expect(button('Apply')).toHaveFocus();
     expect(dialog('Attendee filters')).not.toBeNull();
@@ -261,14 +263,15 @@ describe('Popover', () => {
     await userEvent.keyboard('{Escape}');
     expect(dialog('Attendee filters')).toBeNull();
     expect(trigger).toHaveFocus();
-    // The page is reachable again once it closes.
     expect(button('After')).toBeInTheDocument();
     expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
   });
 
   it('defaultOpen renders open, focused inside', async () => {
     renderUI(<Panel defaultOpen />);
-    expect(screen.getByRole('dialog', { name: 'Attendee filters' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Attendee filters' }),
+    ).toBeInTheDocument();
     expect(button('Filters')).toHaveAttribute('aria-expanded', 'true');
     expect(button('Checked in only')).toHaveFocus();
     expect(await axe(document.body)).toHaveNoViolations();
@@ -342,19 +345,21 @@ describe('Popover', () => {
     };
     renderUI(<Account />);
     await userEvent.click(button('Account'));
-    expect(screen.getByRole('dialog', { name: 'Ada Lovelace' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Ada Lovelace' }),
+    ).toBeInTheDocument();
     const profile = button('Profile settings');
     const signOut = button('Sign out');
     expect(profile).toHaveFocus();
-    // Rows bring no menu keyboard support in a Popover: that is Dropdown.
     await userEvent.keyboard('{ArrowDown}');
     expect(profile).toHaveFocus();
     await userEvent.tab();
     expect(signOut).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     expect(screen.getByText('Signed out')).toBeInTheDocument();
-    // The caller's panel does not close itself on a row press.
-    expect(screen.getByRole('dialog', { name: 'Ada Lovelace' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Ada Lovelace' }),
+    ).toBeInTheDocument();
     expect(await axe(document.body)).toHaveNoViolations();
     await userEvent.keyboard('{Escape}');
     expect(button('Account')).toHaveFocus();
@@ -376,7 +381,9 @@ describe('Popover', () => {
     const venue = button('Venue');
     expect(venue).toHaveAttribute('aria-haspopup', 'dialog');
     await userEvent.click(venue);
-    expect(screen.getByRole('dialog', { name: 'Venue details' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Venue details' }),
+    ).toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
     expect(venue).toHaveFocus();
     const map = button('Show map');
@@ -441,7 +448,6 @@ describe('Popover', () => {
       expect(button('After')).toHaveFocus();
       await userEvent.tab({ shift: true });
       expect(trigger).toHaveFocus();
-      // A press shows why nothing happened.
       await userEvent.click(trigger);
       expect(dialog('Attendee filters')).toBeNull();
       expect(await tooltipEntries()).toEqual([
@@ -489,9 +495,7 @@ describe('Popover', () => {
       expect(trigger).toHaveAttribute('aria-disabled', 'true');
       expect(trigger).not.toHaveAttribute('tabindex', '-1');
       expect(trigger.querySelector('.animate-spin')).not.toBeNull();
-      expect(trigger).toHaveAccessibleDescription(
-        'Loading the seating plan',
-      );
+      expect(trigger).toHaveAccessibleDescription('Loading the seating plan');
       await userEvent.tab();
       expect(button('Before')).toHaveFocus();
       await userEvent.tab();
@@ -543,9 +547,7 @@ describe('Popover', () => {
       const trigger = button('Filters');
       expect(trigger).toHaveAttribute('aria-busy', 'true');
       expect(trigger).not.toHaveAttribute('aria-disabled');
-      expect(trigger).toHaveAccessibleDescription(
-        'Loading the seating plan',
-      );
+      expect(trigger).toHaveAccessibleDescription('Loading the seating plan');
       await userEvent.click(trigger);
       expect(
         screen.getByRole('dialog', { name: 'Attendee filters' }),
@@ -560,9 +562,7 @@ describe('Popover', () => {
           aria-label="Attendee filters"
           open
           disabled={disabled}
-          menu={
-            <button type="button">Apply</button>
-          }
+          menu={<button type="button">Apply</button>}
         >
           <Popover.Button>Filters</Popover.Button>
         </Popover>
@@ -575,7 +575,6 @@ describe('Popover', () => {
         await screen.findByRole('dialog', { name: 'Attendee filters' }),
       ).toBeInTheDocument();
       expect(button('Filters')).toHaveAttribute('aria-expanded', 'true');
-      // Disabled while open: it closes again.
       rerender(<>{popover(true)}</>);
       await waitFor(() => expect(dialog('Attendee filters')).toBeNull());
     });
@@ -587,5 +586,3 @@ describe('Popover', () => {
     });
   });
 });
-
-

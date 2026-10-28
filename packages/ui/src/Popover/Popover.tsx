@@ -17,8 +17,7 @@ import type { PopoverProps } from './Popover.types';
 // Between the trigger and the content, and kept from the viewport's edges.
 const sideOffset = 4;
 const collisionPadding = 8;
-// Radix sets it on the content it places: the content never outgrows the
-// space left.
+// Radix sets it on the content it places: it never outgrows the space left.
 const availableHeight = 'var(--radix-popover-content-available-height)';
 
 /**
@@ -79,9 +78,9 @@ const PopoverInner = ({
 
 /**
  * A panel of the caller's own content opened from a button: a filter form, a
- * details card, a quick edit. A non-modal dialog by default: focus moves in
- * on open and back to the trigger on close; Escape, a click outside or
- * tabbing out closes it.
+ * details card, a quick edit. A non-modal dialog by default: focus moves in on
+ * open and back to the trigger on close; Escape, a click outside or tabbing
+ * out closes it.
  *
  * @invalidAlternative import('@radix-ui/react-popover')
  * @invalidAlternative [popover], [popovertarget], [popoverTarget], [popovertargetaction], [popoverTargetAction]

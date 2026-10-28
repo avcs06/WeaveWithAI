@@ -5,10 +5,9 @@ import { loadConfig } from '../model/config.js';
 import { serveWorkspace } from './workspace.js';
 
 /**
- * Which folder holds `designsystem.config.json`. An MCP client always
- * controls a server's arguments and environment, but not every client can
- * set its working directory, so the workspace is nameable by argument or
- * environment variable, with the working directory as the fallback.
+ * Which folder holds `designsystem.config.json`: named by argument or
+ * environment variable, since not every MCP client can set the working
+ * directory; the working directory is the fallback.
  */
 function workspacePath(): string {
   const fromArgs = process.argv[2];

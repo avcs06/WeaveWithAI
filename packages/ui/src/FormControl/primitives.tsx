@@ -29,9 +29,9 @@ import type {
 const boxLook = createLook(formControlRecipe);
 
 /**
- * The control's box: its look, icons, add-ons, spinner and tooltip. FormControl
+ * The control's box: look, icons, add-ons, spinner and tooltip. FormControl
  * draws it around the control; a control that is its own box renders it, and
- * FormControl passes it the state.
+ * FormControl passes the state.
  */
 export const ControlBox = ({
   size,
@@ -63,7 +63,7 @@ export const ControlBox = ({
   });
 
   // A press on the box outside the control, like on an icon, focuses the
-  // control instead of moving focus to the page.
+  // control.
   const focusControl = (event: MouseEvent<HTMLDivElement>) => {
     const control = controlRef?.current;
     const onControl =
@@ -73,8 +73,7 @@ export const ControlBox = ({
     control.focus();
   };
 
-  // A cancelled click is what keeps the tooltip open with the reason, on
-  // touch too, instead of closing it.
+  // A cancelled click keeps the tooltip open with the reason, on touch too.
   const blockWhenDisabled = (event: MouseEvent<HTMLDivElement>) => {
     if (isDisabled) event.preventDefault();
   };
@@ -106,7 +105,9 @@ export const ControlBox = ({
   );
 };
 
-/** The label's row: the label, its required mark and hint, then `rightAddOn`. */
+/**
+ * The label's row: the label, its required mark and hint, then `rightAddOn`.
+ */
 export const ControlLabel = ({
   id,
   htmlFor,
@@ -140,7 +141,11 @@ export const ControlLabel = ({
         {hasContent(hint) && (
           <PlainButton tooltip={hint} aria-label={`About ${label}`}>
             <span
-              className={classNames(hintButton, 'inline-flex items-center')}
+              className={classNames(
+                hintButton,
+                'inline-flex items-center',
+                'p-0',
+              )}
             >
               <Info aria-hidden data-slot="icon" />
             </span>
@@ -154,8 +159,7 @@ export const ControlLabel = ({
 
 /**
  * A field's status message: a live region kept on the page while empty, so a
- * message that appears is announced. Without a status it's styled as help
- * text.
+ * new message is announced. Without a status it's styled as help text.
  */
 export const ControlMessage = ({
   id,

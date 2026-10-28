@@ -54,10 +54,8 @@ interface ReverseIndex {
 }
 
 /**
- * Builds a value -> nearest-token lookup, once, at load time. This is what
- * turns a bare "unknown color" finding into an actionable one: instead of
- * "use a color token," `suggestion` names the exact token whose value is
- * closest to what was actually written.
+ * Builds a value -> nearest-token lookup once at load time, so an "unknown
+ * color" finding's `suggestion` names the token closest to what was written.
  */
 export function buildReverseIndex(tokens: DesignToken[]): ReverseIndex {
   return {

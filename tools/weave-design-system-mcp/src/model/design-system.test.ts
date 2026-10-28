@@ -6,10 +6,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { createDesignSystem } from './design-system.js';
 import type { DesignSystem } from './types.js';
 
-// The test suite runs against the same synthetic design system the README's
-// worked example and `examples/synthetic-design-system/` demonstrate —
-// one fixture, not a second near-duplicate one, so a change to the example
-// is a change the tests actually exercise.
+// Runs against the synthetic design system the README's worked example and
+// `examples/synthetic-design-system/` share, so example changes get exercised.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXAMPLE = join(__dirname, '..', '..', 'examples', 'synthetic-design-system');
 
@@ -261,8 +259,8 @@ describe('validate — invalid alternatives (wrong implementation)', () => {
   });
 
   it('flags a superseded component, not just a native element', () => {
-    // Button declares `button, MuiButton` — a declaration names whatever is
-    // wrong to reach for, another library's component as much as a bare tag.
+    // Button declares `button, MuiButton`: a declaration may name another
+    // library's component, not just a tag.
     expect(system.component('Button')?.invalidAlternatives).toEqual(['button', 'MuiButton']);
     expect(system.validate('<MuiButton />').findings[0]).toMatchObject({
       rule: 'invalid-alternative',

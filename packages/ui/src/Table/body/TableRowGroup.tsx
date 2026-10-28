@@ -75,8 +75,8 @@ const selectRowState =
   });
 
 /**
- * One shallow-compared selector per row: membership tests, flags and
- * predicate references. User predicates run when the row or a predicate changes.
+ * One shallow-compared selector per row: membership tests, flags and predicate
+ * references. User predicates run when the row or a predicate changes.
  */
 const useRowState = (row: unknown, rowKey: TableRowKey) => {
   const {
@@ -110,8 +110,8 @@ const useRowState = (row: unknown, rowKey: TableRowKey) => {
     ],
   );
 
-  // A selected or expanded row keeps its control even when the predicate
-  // says no, so the state stays visible and can be undone.
+  // A selected or expanded row keeps its control despite the predicate, so the
+  // state stays visible and undoable.
   const shownSelected = enabled.selectionEnabled && selected;
   const shownExpanded = enabled.expansionEnabled && expanded;
   return {

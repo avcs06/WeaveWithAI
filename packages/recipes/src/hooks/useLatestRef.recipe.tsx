@@ -1,12 +1,12 @@
 /**
- * useLatestRef: the latest committed value of a prop or state, for code that
- * runs after the render it was made in: past an `await`, or in a listener
- * or timer set up once. It's set before layout effects run, so effects and
+ * useLatestRef: the latest committed value of a prop or state, for code
+ * running after the render it was made in: past an `await`, or in a listener
+ * or timer set up once. Set before layout effects run, so effects and
  * handlers see the new value.
  *
- * Not for: reading while rendering, where it holds the last committed
- * value, not this render's (use the value itself), or calling the latest
- * callback (usePersistentCallback).
+ * Not for: reading while rendering, where it holds the last committed value,
+ * not this render's (use the value itself), or calling the latest callback
+ * (usePersistentCallback).
  *
  * Pitfall: it ignores stale replies, but every request still goes out.
  * Send requests from a debounced field (SearchInput), and pass an

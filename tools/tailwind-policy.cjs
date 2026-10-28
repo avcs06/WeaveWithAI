@@ -98,6 +98,7 @@ const layoutTailwindClasses = new Set([
   'whitespace-nowrap',
   'text-left',
   'text-center',
+  'text-right',
   'align-middle',
   'sr-only',
   'cursor-pointer',

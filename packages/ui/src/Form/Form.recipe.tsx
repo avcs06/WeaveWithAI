@@ -1,8 +1,8 @@
 /**
- * Form: Controller, useController and useCanSubmitForm put the design
- * system's fields under react-hook-form. Call `useForm`, render every field
- * through `Controller`, and spread `{...field}` on the control: it carries the
- * name, value, `onChange`, `onBlur`, a ref that focuses the first invalid field on
+ * Form: Controller, useController and useCanSubmitForm put the design system's
+ * fields under react-hook-form. Call `useForm`, render every field through
+ * `Controller`, and spread `{...field}` on the control: it carries the name,
+ * value, `onChange`, `onBlur`, a ref that focuses the first invalid field on
  * submit, the `required` mark from `rules`, and the `error` message.
  *
  * When not to use:
@@ -11,16 +11,15 @@
  * - Never keep field values in `useState` next to a `<form>`.
  *
  * Pitfalls:
- * - Validation goes in `rules`, which also sets `required`. Use `noValidate`
- *   on the `<form>` so the browser's bubbles don't replace the messages.
+ * - Validation goes in `rules`, which also sets `required`. Use `noValidate` on
+ *   the `<form>` so the browser's bubbles don't replace the messages.
  * - `{...field}` overwrites `required` and `error` given before it.
  * - A rule without a message sets `error` to `true`, which only styles the
  *   field: give every rule a message.
- * - Report a server's error with `setError`, on the field or on `root`.
- *   A `root` error stays until `clearErrors('root')`.
- * - Validation runs on submit by default: errors show after the first
- *   submit, then update as the user edits. Use `mode: 'onBlur'` to validate
- *   earlier.
+ * - Report a server's error with `setError`, on the field or on `root`. A
+ *   `root` error stays until `clearErrors('root')`.
+ * - Validation runs on submit by default: errors show after the first submit,
+ *   then update as the user edits. `mode: 'onBlur'` validates earlier.
  * - A gated submit button does nothing on Enter either, so gate it only when
  *   the errors are visible next to the fields.
  */
@@ -77,10 +76,10 @@ const emptyEvent: NewEvent = {
 
 /**
  * Every field kind through `Controller`. The submit button shows it is saving
- * with `loadingWithReason`, and `reset(values)` makes the saved values the
- * new baseline, so the form is no longer dirty. The pin field is locked with
- * `disabledWithReason` beside `{...field}`: the reason works even though
- * the form passes its own props.
+ * with `loadingWithReason`, and `reset(values)` makes the saved values the new
+ * baseline, so the form is no longer dirty. The pin field is locked with
+ * `disabledWithReason` beside `{...field}`: the reason works even though the
+ * form passes its own props.
  */
 const NewEventForm = () => {
   const {
@@ -182,9 +181,9 @@ const NewEventForm = () => {
 type Publish = { title: string };
 
 /**
- * A server's rejection: `setError` on a field shows under it, and on
- * `root.server` it shows in a `role="alert"` paragraph. The root error
- * outlives edits, so clear it when the user changes a field.
+ * A server's rejection: `setError` on a field shows under it, on `root.server`
+ * in a `role="alert"` paragraph. The root error outlives edits, so clear it
+ * when the user changes a field.
  */
 const ServerErrors = () => {
   const {
@@ -240,8 +239,8 @@ type Registration = { name: string; email: string };
 /**
  * A submit button that waits while any error shows: `useCanSubmitForm` with
  * `disabledWithReason` tells the user why. An untouched form can still submit,
- * which is what shows the errors first. Enter does nothing while the button
- * waits, so the errors must be visible beside the fields.
+ * which shows the errors first. Enter does nothing while the button waits, so
+ * the errors must be visible beside the fields.
  */
 const GatedSubmit = () => {
   const { control, handleSubmit } = useForm<Registration>({
@@ -295,7 +294,7 @@ type EmailFieldProps<T extends FieldValues> = Pick<
 
 /**
  * A field component of your own: it takes `control` and `name`, and
- * `useController` wires it, so the form can reuse it for any email field.
+ * `useController` wires it, so any email field can reuse it.
  */
 const EmailField = <T extends FieldValues>({
   control,
@@ -340,8 +339,8 @@ const InviteForm = () => {
 type Tickets = { capacity: number | null; perOrder: number | null };
 
 /**
- * A rule that depends on another field: `validate` reads it with `getValues`,
- * and `deps` re-runs the other field's check when this one changes.
+ * A rule that depends on another field: `validate` reads it with `getValues`;
+ * `deps` re-runs the other field's check when this one changes.
  */
 const TicketLimits = () => {
   const { control, handleSubmit, getValues } = useForm<Tickets>({
@@ -390,9 +389,9 @@ const TicketLimits = () => {
 };
 
 /**
- * Validating early: `mode: 'onBlur'` checks a field when focus leaves it,
- * and `reValidateMode` decides how it updates after that. The default,
- * `onSubmit`, is the calmest for short forms.
+ * Validating early: `mode: 'onBlur'` checks a field when focus leaves it, and
+ * `reValidateMode` sets how it updates after. The default, `onSubmit`, is the
+ * calmest for short forms.
  */
 const BlurValidatedForm = () => {
   const { control, handleSubmit } = useForm<Registration>({

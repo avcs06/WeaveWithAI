@@ -37,11 +37,10 @@ interface FileScope {
 
 /**
  * Runs a token module and returns its exports, so imports, spreads and
- * computed values resolve to exactly what the code reads. tsx compiles the
- * TypeScript; when the project uses vanilla-extract, the module runs inside
- * a file scope (as its build plugin would) so `.css.ts` imports that call
- * `createVar`/`style` load. The scope is taken from the project's own
- * vanilla-extract install — the one the module graph imports.
+ * computed values resolve to what the code reads. tsx compiles the TypeScript;
+ * in a vanilla-extract project the module runs inside a file scope (as its
+ * build plugin would) so `.css.ts` imports calling `createVar`/`style` load,
+ * taken from the project's own vanilla-extract install.
  */
 function evaluateModule(filePath: string): Record<string, unknown> {
   const load = createRequire(filePath);
@@ -63,10 +62,10 @@ function evaluateModule(filePath: string): Record<string, unknown> {
 }
 
 /**
- * Reads a plain token object — a JSON file, or a TS/JS module's exported
- * (possibly nested) objects — and flattens it into a token list. A module is
- * executed, not parsed, so a token object assembled from imports (`...base`,
- * `color: colorTokens`, helper calls) yields every leaf it has at runtime.
+ * Reads a plain token object (a JSON file, or a TS/JS module's exported,
+ * possibly nested, objects) and flattens it into a token list. A module is
+ * executed, not parsed, so objects assembled from imports (`...base`,
+ * `color: colorTokens`, helper calls) yield every leaf they have at runtime.
  *
  * A JSON file's tokens are referenced by its basename; a module's by each
  * exported object's own name.

@@ -1,7 +1,7 @@
 /**
- * Chip: a compact toggle that shows whether it's on, for filters and quick
- * choices that stay visible. A ChipGroup holds 2 to about 8 of them: one
- * choice (`mode="single"`, the default, read as radio buttons) or any number
+ * Chip: a compact toggle showing whether it's on, for filters and quick choices
+ * that stay visible. A ChipGroup holds 2 to about 8: one choice
+ * (`mode="single"`, the default, read as radio buttons) or any number
  * (`mode="multiple"`, read as checkboxes). One chip on its own is an
  * independent on/off filter.
  *
@@ -12,8 +12,8 @@
  * - A yes/no answer in a form, with a label: Checkbox.
  *
  * Pitfalls:
- * - A ChipGroup needs a name: `label`, `aria-labelledby` pointing at a
- *   visible heading, or `aria-label` when nothing visible asks the question.
+ * - A ChipGroup needs a name: `label`, `aria-labelledby` pointing at a visible
+ *   heading, or `aria-label` when nothing visible asks the question.
  * - In a form, a ChipGroup is the field: spread Controller's `{...field}` on
  *   it. It brings its own label, help text and error; don't wrap it in a
  *   FormControl.
@@ -21,8 +21,11 @@
  * - Every chip in a group needs a `value`.
  * - In a group, the mode picks the look (outline for single, filled for
  *   multiple); `look` on its chips can't override it.
- * - A bare count in a chip means nothing read aloud: give it a unit in
- *   visually hidden text ("12 tickets").
+ * - A bare count in a chip means nothing read aloud: give it a unit in visually
+ *   hidden text ("12 tickets").
+ * - `look="collapsed"` on a ChipGroup lays its chips out as one bar that
+ *   doesn't wrap: keep it to a few short labels, and give it no layout
+ *   `className`.
  * - Say why a chip can't be changed: `disabledWithReason`,
  *   `readOnlyWithReason`, not a bare `disabled`. A ChipGroup takes
  *   `disabledWithReason` too.
@@ -51,9 +54,10 @@ const saveInterests = (interests: Interests) =>
 
 // Usage: the patterns to copy.
 /**
- * Single choice: exactly one option is on, like a radio group (a date range,
- * a view mode). Picking one turns the other off. A visible heading names the
- * group through `aria-labelledby`.
+ * Single choice: exactly one option is on, like a radio group (a date range, a
+ * view mode). Picking one turns the other off. A visible heading names the
+ * group via `aria-labelledby`. `look="collapsed"` joins the chips into one
+ * bar.
  */
 const SingleChoice = () => {
   const [range, setRange] = useState('30d');
@@ -67,7 +71,7 @@ const SingleChoice = () => {
         aria-labelledby={headingId}
         value={range}
         onChange={setRange}
-        className="flex-row-gap-2 flex-wrap"
+        look="collapsed"
       >
         {ranges.map(({ value, label }) => (
           <Chip key={value} value={value}>
@@ -104,9 +108,9 @@ const MultipleChoice = () => {
 };
 
 /**
- * Independent toggle: one chip on its own, on or off (a "Starred only"
- * filter), controlled with `active` and `onActiveChange`. `leftIcon` is
- * decoration: the text names it.
+ * Independent toggle: one chip on its own, on or off (a "Starred only" filter),
+ * controlled with `active` and `onActiveChange`. `leftIcon` is decoration: the
+ * text names it.
  */
 const IndependentToggle = () => {
   const [starredOnly, setStarredOnly] = useState(false);
@@ -142,8 +146,8 @@ const StartsOn = () => {
 };
 
 /**
- * Count after the label: `rightAddOn` takes an element. Screen readers get
- * the count with its unit from hidden text, and skip the visual number.
+ * Count after the label: `rightAddOn` takes an element. Screen readers get the
+ * count with its unit from hidden text, and skip the visual number.
  */
 const WithCount = () => {
   const [paid, setPaid] = useState(true);
@@ -162,8 +166,8 @@ const WithCount = () => {
 
 /**
  * States: `disabledWithReason`, `readOnlyWithReason` and `loadingWithReason`
- * say why on hover and to screen readers. Loading chips stay put and can't
- * be pressed until done.
+ * say why on hover and to screen readers. Loading chips stay put and can't be
+ * pressed until done.
  */
 const States = () => {
   const [on, setOn] = useState(true);
@@ -191,8 +195,8 @@ const States = () => {
 
 /**
  * A disabled group: `disabledWithReason` on the ChipGroup disables every chip
- * in it and gives each the reason; a chip's own reason wins. `disabled`
- * disables the group silently.
+ * and gives each the reason; a chip's own reason wins. `disabled` disables the
+ * group silently.
  */
 const DisabledGroup = () => {
   const [ticket, setTicket] = useState('general');

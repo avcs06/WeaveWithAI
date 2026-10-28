@@ -1,21 +1,21 @@
 /**
  * ErrorBoundary: shows a fallback in place of its children when they throw
  * while rendering, so one broken part doesn't take down the page. The app
- * root already has one around every page; wrap a part that can fail on its
- * own, like a chart or a feed, so the rest keeps working. The default
- * fallback says something went wrong and offers "Try again".
+ * root already wraps every page; wrap a part that can fail on its own, like
+ * a chart or a feed. The default fallback says something went wrong and
+ * offers "Try again".
  *
  * When not to use:
  * - A whole route: Next's `error.tsx` handles it, with its own reset.
  *
  * Pitfalls:
  * - It only catches errors thrown while rendering. Not caught: event
- *   handlers, effects, promises and fetches (catch them and show the
- *   error in state), iframe load failures, and server rendering.
+ *   handlers, effects, promises and fetches (catch them and show the error
+ *   in state), iframe load failures, and server rendering.
  * - It stays on the fallback until `reset` runs or `resetKeys` changes.
  * - Every fallback is announced as an alert: say what failed, and which
  *   part, when several boundaries can fail together.
- * - Redirects and not-found thrown by Next pass through, they are not errors.
+ * - Redirects and not-found thrown by Next pass through: they aren't errors.
  */
 import { Button } from '@packages/ui/Button';
 import { Chip, ChipGroup } from '@packages/ui/Chip';
@@ -30,7 +30,7 @@ const reportError = (error: unknown, componentStack?: string | null) =>
   void [error, componentStack];
 
 // Mock data: a chart that renders on the server and throws once hydrated,
-// unless it is `fixed`.
+// unless `fixed`.
 const AttendanceChart = ({
   fixed = false,
   children,
@@ -51,9 +51,8 @@ const sessions = ['Keynote', 'Workshop'];
 
 // Usage: the patterns to copy.
 /**
- * Default fallback: "Something went wrong." with a "Try again" button that
- * renders the children again. Focus moves to the button if the failed part
- * held it.
+ * Default fallback: "Something went wrong." and a "Try again" button that
+ * renders the children again. Focus moves to it if the failed part held it.
  */
 const DefaultFallback = () => (
   <ErrorBoundary>
@@ -64,8 +63,8 @@ const DefaultFallback = () => (
 );
 
 /**
- * A function fallback gets the `error` and a `reset`: say what failed, and
- * fix the cause (refetch) before calling `reset`.
+ * A function fallback gets `error` and `reset`: say what failed, and fix the
+ * cause (refetch) before calling `reset`.
  */
 const RefetchFallback = () => {
   const [fixed, setFixed] = useState(false);
@@ -95,7 +94,7 @@ const RefetchFallback = () => {
 
 /**
  * `resetKeys`: while failed, a change in any key renders the children again.
- * Use it when the failure belongs to the input, like the session shown.
+ * For a failure that belongs to the input, like the session shown.
  */
 const ResetOnSessionChange = () => {
   const [session, setSession] = useState(sessions[0]);
@@ -120,7 +119,7 @@ const ResetOnSessionChange = () => {
 
 /**
  * `onError` gets the thrown value (not always an Error) and where it came
- * from, to send to an error tracker.
+ * from, for an error tracker.
  */
 const LogErrors = () => (
   <ErrorBoundary

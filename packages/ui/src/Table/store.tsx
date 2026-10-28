@@ -59,8 +59,8 @@ export const TableProvider = ({ children, content }: TableProviderProps) => (
   </TableStoreProvider>
 );
 
-// Inside the store's provider, so it can read the table's store. The
-// column order is render order, collected again on every table render.
+// Inside the store's provider to read it. Column order is render order,
+// collected on every render.
 const TableConfigSync = ({ children, content }: TableProviderProps) => {
   const { useStore, store } = useGetTableStore();
   return (

@@ -62,7 +62,6 @@ type FieldProps = Pick<
     initial?: string;
   } & ({ label: string } | { 'aria-label': string });
 
-/** A Textarea that keeps its own text. */
 const Field = ({ initial = '', ...props }: FieldProps) => {
   const [value, setValue] = useState(initial);
   return (

@@ -10,7 +10,7 @@ export const fieldButton = style({
 
 export const searchField = style({});
 
-// The field's own clear button replaces the browser's.
+// Replaces the browser's clear button.
 globalStyle(`${searchField} input::-webkit-search-cancel-button`, {
   appearance: 'none',
 });

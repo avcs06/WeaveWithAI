@@ -24,8 +24,7 @@ export type PopoverProps = PopoverStateProps & {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   /**
-   * Keeps focus in the content and blocks the page while open; `false` by
-   * default.
+   * Keeps focus in the content and blocks the page while open; default `false`.
    */
   modal?: boolean;
   /** For the content, which renders outside the trigger's parent. */

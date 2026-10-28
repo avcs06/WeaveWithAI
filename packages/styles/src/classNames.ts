@@ -32,8 +32,8 @@ type CompoundClassGroup =
 export const classNames = extendTailwindMerge<CompoundClassGroup>({
   override: {
     classGroups: {
-      // Only the preset's font sizes; tailwind-merge's default also treats
-      // `text-base` as a size, but here it is the base set's text color.
+      // Only the preset's font sizes: tailwind-merge's default also treats
+      // `text-base` as a size, but here it's the base set's text color.
       'font-size': [{ text: fontSizeClassParts }],
     },
   },

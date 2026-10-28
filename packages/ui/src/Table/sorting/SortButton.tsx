@@ -27,7 +27,6 @@ export type SortButtonProps = Pick<
   direction?: TableSortDirection;
 };
 
-/** Ghost button with the current sort direction as its right icon. */
 export const SortButton = ({ direction, ...props }: SortButtonProps) => (
   <Button
     data-slot="sort"

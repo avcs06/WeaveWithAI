@@ -3,9 +3,8 @@ import { SEARCH_DEBOUNCE_MS } from '../constants';
 import { useBoundState } from './useBoundState';
 
 /**
- * A search field's text: shows what's typed at once, and reaches `onSearch`
- * after a pause in typing, or at once when cleared. `flush` sends waiting
- * text now, as on Enter.
+ * A search field's text: shown at once, reaches `onSearch` after a typing
+ * pause, or at once when cleared. `flush` sends waiting text now, as on Enter.
  */
 export const useDebouncedSearch = (
   search: string | undefined,

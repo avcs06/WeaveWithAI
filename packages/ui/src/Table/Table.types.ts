@@ -1,3 +1,4 @@
+import type { PaginationLayout, PaginationValue } from '../Pagination';
 import type { MouseEvent, ReactNode } from 'react';
 
 /** `client` sorts, filters and pages in the table; `server` only emits changes. */
@@ -11,8 +12,8 @@ export type TableAlign = 'left' | 'center' | 'right';
 export type TableColumnWidth = number | `${number}px` | `${number}%`;
 
 /**
- * Every config part is controlled when `value` is passed, uncontrolled
- * otherwise. `E` is what `onChange` emits, when looser than the input.
+ * Every config part is controlled with `value`, else uncontrolled. `E` is what
+ * `onChange` emits, if looser than the input.
  */
 export type TableControlledProps<V, E = V> = {
   value?: V;
@@ -88,20 +89,14 @@ export type TableExpansionProps<T> = TableRowKeysProps & {
 };
 
 /** Zero-based page index. */
-export type TablePaginationValue = {
-  pageIndex: number;
-  pageSize: number;
-};
+export type TablePaginationValue = PaginationValue;
 
 /**
- * Use either `Table.Pagination` or `Table.InfiniteScroll`, not both. Server
- * mode needs `totalItems`, or there is only one page.
+ * Not with `Table.InfiniteScroll`. Server mode needs `totalItems`, or there is
+ * one page.
  */
-export type TablePaginationProps =
-  TableControlledProps<TablePaginationValue> & {
-    size?: 'full' | 'minimal';
-    content?: 'text' | 'icons';
-    pageSizeOptions?: readonly number[];
+export type TablePaginationProps = TableControlledProps<TablePaginationValue> &
+  PaginationLayout & {
     /** Server mode: rows matching the current filters. */
     totalItems?: number;
     /** Server mode: rows before filtering, shown in the filtered stat. */
@@ -109,9 +104,9 @@ export type TablePaginationProps =
   };
 
 /**
- * Server mode only; ignored with a warning in client mode, where `virtualized`
- * handles large data. Use either `Table.Pagination` or this, not both. Keep
- * `data` the same array until rows are added: it loads once per array.
+ * Server mode only (warns and is ignored in client mode; use `virtualized`).
+ * Not with `Table.Pagination`. Keep `data` the same array until rows are added:
+ * it loads once per array.
  */
 export type TableInfiniteScrollProps = {
   /** Rows matching the current filters; loading stops once `data` has them all. */
@@ -127,10 +122,10 @@ type TableColumnBaseProps = {
   width?: TableColumnWidth;
   align?: TableAlign;
   /**
-   * The column that names each row, like an attendee's name: its cells are
-   * row headers, which screen readers read with every cell of the row, and
-   * its value names the row's controls ("Select Ada Lovelace"). One per
-   * table; without one, the first column with a value names the controls.
+   * Names each row, like an attendee's name: its cells are row headers, read
+   * with every cell of the row, and its value names the row's controls ("Select
+   * Ada Lovelace"). One per table; without one, the first column with a value
+   * does.
    */
   rowHeader?: boolean;
 };
@@ -141,8 +136,8 @@ declare const noComputed: unique symbol;
 export type NoComputed = typeof noComputed;
 
 /**
- * Text and enum filters read any value as text; a number filter needs a
- * number. An untyped column's `unknown` value takes any.
+ * Text and enum filters read any value as text; number needs a number. An
+ * untyped column's `unknown` takes any.
  */
 type TableColumnFilterFor<V> = [V] extends [number | null | undefined]
   ? TableColumnFilter
@@ -153,11 +148,10 @@ type TableColumnFilterFor<V> = [V] extends [number | null | undefined]
 /**
  * `computed(value, row)` gets the `dataKey` value (`undefined` without one) and
  * the row, like `children`; its result replaces the value for client sort,
- * client filter and render. Pass its result type as `C` to use it.
+ * filter and render. Pass its result type as `C`.
  *
- * It is compared by reference: an inline function is new on every render, so
- * without the React Compiler the table re-sorts and re-filters every time.
- * Define it outside the component or memoize it.
+ * Compared by reference: without the React Compiler an inline function re-sorts
+ * and re-filters every render. Define it outside the component or memoize it.
  */
 type TableColumnValueProps<T, V, C> = [C] extends [NoComputed]
   ? {
@@ -178,8 +172,8 @@ type TableDataKeyColumn<T, C> = {
 }[keyof T & string];
 
 /**
- * Without `dataKey` or `computed` there is no value: `children` is required,
- * and there is nothing to sort or filter by.
+ * No `dataKey` or `computed` means no value: `children` is required, and
+ * nothing sorts or filters.
  */
 type TableStaticColumnProps<T> = {
   computed?: undefined;
@@ -236,11 +230,10 @@ export type TableProps<T> = {
   loading?: boolean;
   emptyMessage?: ReactNode;
   /**
-   * A click on a row, outside its controls: a pointer shortcut for the row's
-   * main action. Keyboard and screen-reader users can't click a row, so that
-   * action must also be a link or button in the row, such as a `Link` in its
-   * name cell. Ignored with `Table.Expansion`: a row click expands or
-   * collapses the row instead.
+   * A click on a row outside its controls: a pointer shortcut for its main
+   * action. Keyboard and screen-reader users can't click a row, so the action
+   * must also be a link or button in the row, like a `Link` in its name cell.
+   * Ignored with `Table.Expansion`, where a row click toggles the row.
    */
   onRowClick?: (row: T, event: MouseEvent<HTMLTableRowElement>) => void;
   className?: string;

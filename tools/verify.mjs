@@ -1,7 +1,6 @@
-// Fails on what typecheck and lint can't see. It runs the design-system
-// MCP's validate on the route's files (or every recipe), then opens the pages
-// in a browser at phone and desktop widths for runtime and hydration errors,
-// and layout that doesn't fit the screen.
+// Fails on what typecheck and lint can't see: runs the MCP's validate on the
+// route's files (or every recipe), then opens the pages at phone and desktop
+// widths for runtime and hydration errors and layout that doesn't fit.
 //
 //   pnpm verify /events [/other …]     app routes, on the dev server (:3001)
 //   pnpm verify --recipes              every recipe story, on Storybook (:6006)
@@ -94,7 +93,6 @@ function routeFiles(route) {
   return [...files];
 }
 
-/** Every recipe the design-system config lists. */
 function recipeFiles() {
   const { recipes = [] } = JSON.parse(
     readFileSync(join(root, 'designsystem.config.json'), 'utf8'),
@@ -166,15 +164,13 @@ async function recipeTargets() {
   return stories.map((story) => ({
     name: story.id,
     url: `${storybookUrl}/iframe.html?id=${story.id}&viewMode=story`,
-    // Breaks on purpose to show its fallbacks, and React logs each error a
-    // boundary catches.
+    // Breaks on purpose, and React logs each error a boundary catches.
     allowConsoleErrors: story.id === storyId('ErrorBoundary'),
   }));
 }
 
-// Runs in the page. Only a table, or a ScrollArea made to scroll sideways
-// (like a tab list), scrolls sideways; anything else that does is cut off or
-// pushes content off screen.
+// Runs in the page. Only a table or a sideways ScrollArea (like a tab list)
+// may scroll sideways; anything else is cut off or pushes content off screen.
 const measureLayout = () => {
   const scrolls = (element) =>
     ['auto', 'scroll'].includes(getComputedStyle(element).overflowX);

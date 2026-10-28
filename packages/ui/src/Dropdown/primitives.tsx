@@ -57,9 +57,9 @@ const collisionPadding = 8;
 const availableHeight = 'var(--radix-dropdown-menu-content-available-height)';
 
 /**
- * Open state and the disabled rule: a disabled dropdown, or a loading one,
- * shows no menu, even controlled open, and keeps the caller's value for when
- * it's enabled again.
+ * Open state and the disabled rule: a disabled or loading dropdown shows no
+ * menu, even controlled open, and keeps the caller's value for when it's
+ * enabled again.
  */
 export const DropdownRoot = ({
   open,
@@ -104,10 +104,10 @@ export const DropdownRoot = ({
 };
 
 /**
- * The reason reaches the trigger as its own prop, so the trigger shows it
- * in its one tooltip, under its own text; a tap on a disabled button opens
- * that tooltip, and no second one competes with it. Other props reach the
- * trigger through Radix, like the box state FormControl gives a Select's.
+ * The reason reaches the trigger as its own prop, so its one tooltip shows
+ * it under its own text (a tap on a disabled button opens that tooltip, with
+ * no second one competing). Other props reach the trigger through Radix, like
+ * the box state FormControl gives a Select's.
  */
 export const DropdownTrigger = ({
   children,
@@ -143,20 +143,19 @@ const isSearch = (node: ReactNode) =>
  * The menu, in Menu's look.
  *
  * Focus with a search field (Dropdown.Search, or a Select's):
- * - Opening the menu focuses the search field, not the first row.
+ * - Opening focuses the search field, not the first row.
  * - In the field, keys edit the text and reach nothing else. ArrowDown and
  *   Tab move to the rows: the first selected one, else the first
  *   (`useMenuSearch`).
- * - On a row, a character key moves focus to the field in the capture
- *   phase, before the key's default action: the character is typed into
- *   the field instead of jumping to a row by typeahead. Space still chooses
- *   the row.
+ * - On a row, a character key moves focus to the field in the capture phase,
+ *   before the key's default action, so the character is typed there instead
+ *   of jumping to a row by typeahead. Space still chooses the row.
  * - Shift+Tab on any row, or ArrowUp on the first, goes back to the field.
  *
  * Without a search field, focus is Radix's: the first row on open, then
- * arrows, Home, End and typeahead. With `closeOnTab` on the root, Tab on a
- * row closes the menu and focus goes back to the trigger; otherwise Tab
- * stays in the menu, as a Select's does.
+ * arrows, Home, End and typeahead. With `closeOnTab` on the root, Tab on a row
+ * closes the menu and focus goes back to the trigger; otherwise Tab stays in
+ * the menu, as a Select's does.
  */
 export const DropdownContent = ({
   ref,
@@ -234,8 +233,8 @@ export const DropdownContent = ({
 type ItemRowProps = Omit<DropdownItemRowProps, 'textValue' | 'onSelect'>;
 
 /**
- * A MenuItem with an item's states: disabled or loading, with the reason,
- * and how the menu shows a checked row.
+ * A MenuItem with an item's states: disabled or loading with a reason, and
+ * how the menu shows a checked row.
  */
 const ItemRow = ({
   disabled,
@@ -280,7 +279,7 @@ const ItemRow = ({
 
 /**
  * A MenuItem with menu behavior. `Dropdown.SubMenu` sets `nested` on its
- * trigger: the same row then opens the submenu instead.
+ * trigger, so the same row opens the submenu.
  */
 export const DropdownItem = ({
   textValue,
@@ -392,8 +391,8 @@ const assertSubMenuTrigger = (trigger: unknown) => {
 
 /**
  * A nested menu, opened by its trigger `Dropdown.Item`. Disabled or loading,
- * as a Dropdown is, it never opens and keeps the caller's open value for when
- * it's enabled again.
+ * it never opens and keeps the caller's open value for when it's enabled
+ * again.
  */
 export const DropdownSubMenu = ({
   children,

@@ -115,8 +115,8 @@ const TabsStories = () => {
         </Tabs>
       </StorySection>
 
-      {/* A disabled tab with a reason stays reachable by the arrow keys and
-          shows why; without a reason the arrow keys skip it. */}
+      {/* A disabled tab with a reason stays reachable by arrow keys and shows
+          why; without one the arrow keys skip it. */}
       <StorySection title="States">
         <Tabs>
           <Tab value="details" title="Details">
@@ -181,7 +181,6 @@ const TabsStories = () => {
         </Tabs>
       </StorySection>
 
-      {/* Tabs that don't fit the width scroll sideways. */}
       <StorySection title="Many tabs">
         <div style={{ maxWidth: 320 }}>
           <Tabs>
@@ -194,8 +193,6 @@ const TabsStories = () => {
         </div>
       </StorySection>
 
-      {/* With a bounded height, the panel fills what the tab list leaves and
-          scrolls. */}
       <StorySection title="Bounded height">
         <div style={{ height: 240, display: 'flex', flexDirection: 'column' }}>
           <Tabs className="flex-fill-y">

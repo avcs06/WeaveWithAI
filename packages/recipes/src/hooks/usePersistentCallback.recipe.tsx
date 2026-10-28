@@ -1,14 +1,14 @@
 /**
- * usePersistentCallback: for a callback run on an event, like `onChange`,
- * that an effect or a store holds: a new reference from the parent doesn't
- * rerun the effect, and the latest one still runs. It returns what the
- * callback returns. An optional callback can be passed as is: the result
- * may then be `undefined`.
+ * usePersistentCallback: for an event callback like `onChange` that an
+ * effect or store holds: a new reference from the parent doesn't rerun the
+ * effect, and the latest one still runs. Returns what the callback returns.
+ * An optional callback can be passed as is: the result may then be
+ * `undefined`.
  *
- * Not for: a function whose new reference means new inputs, like a loader
- * in an effect's deps, or a function called while rendering, where it
- * would run the last committed callback. Keep those plain functions: React
- * Compiler gives them a new reference only when their inputs change.
+ * Not for: a function whose new reference means new inputs, like a loader in
+ * an effect's deps, or a function called while rendering, where it would run
+ * the last committed callback. Keep those plain: React Compiler gives them a
+ * new reference only when their inputs change.
  */
 import { Button } from '@packages/ui/Button';
 import { usePersistentCallback } from '@packages/utils/hooks';

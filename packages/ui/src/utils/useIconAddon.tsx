@@ -10,8 +10,8 @@ export type IconAddonProps = {
   rightAddOn?: ReactNode;
   loading?: boolean;
   /**
-   * For when the icon and the content differ in height: wraps each icon in a
-   * box this tall and centers the icon in it.
+   * For icons and content of different heights: wraps each icon in a box this
+   * tall and centers it.
    */
   fixedHeight?: string;
 };

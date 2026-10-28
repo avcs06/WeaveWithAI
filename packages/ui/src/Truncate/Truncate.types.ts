@@ -2,13 +2,12 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
 export type TruncateProps = Omit<
   ComponentPropsWithoutRef<'span'>,
-  // The text never takes focus; its tooltip follows the focus of the control
-  // around it.
+  // The text takes no focus; its tooltip follows the surrounding control's.
   'onFocus' | 'onBlur'
 > & {
   /**
-   * Shown above the full text when truncated, on its own otherwise. Hover
-   * only: anything here must also be available elsewhere.
+   * Shown above the full text when truncated, alone otherwise. Hover only: also
+   * provide it elsewhere.
    */
   tooltip?: ReactNode;
   alwaysShowTooltip?: boolean;

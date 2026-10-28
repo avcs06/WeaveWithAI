@@ -1,16 +1,15 @@
 /**
- * Select and MultiSelect: a single choice and several choices from a
- * list. Controlled only, and their options are `SelectOption` children: map a
- * list to them, in `SelectGroup`s to group them. A search field filters the
- * options, and the clear button empties the choice; both are on by default.
- * `allowSearch={false}` removes the search field and `allowClear={false}` the
- * clear button. With `onSearch` the search asks the server instead.
- * An option's children draw its row, and `renderTrigger` draws the trigger. In
- * a form, wire it through `Controller`: `{...field}` is all it needs.
+ * Select and MultiSelect: one choice or several from a list. Controlled
+ * only; options are `SelectOption` children (map a list, use `SelectGroup` to
+ * group). A search field and a clear button are on by default:
+ * `allowSearch={false}` removes the field, `allowClear={false}` the button,
+ * and `onSearch` searches on the server instead. An option's children draw its
+ * row, `renderTrigger` the trigger. In a form, wire it through `Controller`:
+ * `{...field}` is all it needs.
  *
- * Use it for a list of about 6 to 200 choices. For 2 to 5 visible choices use
- * ChipGroup or CardGroup, for a menu of actions use Dropdown, and for free
- * text use Input: a Select can't create an option.
+ * Use it for about 6 to 200 choices. For 2 to 5 visible choices use
+ * ChipGroup or CardGroup, for actions use Dropdown, for free text use Input:
+ * a Select can't create an option.
  *
  * Pitfalls:
  * - Native form submission (`FormData`, `<form action>`) isn't supported:
@@ -128,9 +127,9 @@ type Session = { id: string; title: string; day: string };
 type Registration = { ticketType: string; sessions: string[] };
 
 /**
- * Single and multiple in a form, each through `Controller`: its `rules`
- * validate, `validate` checks a list, and a failed rule's message shows
- * below the help text.
+ * Single and multiple in a form, each through `Controller`: `rules` validate,
+ * `validate` checks a list, and a failed rule's message shows below the help
+ * text.
  */
 const RegistrationForm = () => {
   const {
@@ -199,10 +198,10 @@ const RegistrationForm = () => {
 };
 
 /**
- * Options that carry data and states. An extra prop on `SelectOption`, like
+ * Options with data and states. An extra prop on `SelectOption`, like
  * `price`, reaches `onChange` with the option: type it with
- * `SelectOptionData`. A sold-out option takes `disabledWithReason`, whose
- * reason shows on hover.
+ * `SelectOptionData`. A sold-out option takes `disabledWithReason`, shown on
+ * hover.
  */
 const TicketTypeSelect = () => {
   const [value, setValue] = useState('');
@@ -245,11 +244,10 @@ const sortLabels: Record<SortKey, string> = {
 };
 
 /**
- * A toolbar control that always has a value: no visible label, so `aria-label`
- * names it. `allowSearch={false}` leaves out the search field (typing a letter
- * opens the menu or jumps to a match, as in a native select),
- * `allowClear={false}` keeps a value chosen, `variant="base"` and
- * `look="open"` suit a toolbar.
+ * A toolbar control that always has a value: `aria-label` names it.
+ * `allowSearch={false}` drops the search field (a letter opens the menu or
+ * jumps to a match, as in a native select), `allowClear={false}` keeps a value
+ * chosen, `variant="base"` and `look="open"` suit a toolbar.
  */
 const SortSelect = () => {
   const [sort, setSort] = useState<SortKey>('date');
@@ -272,10 +270,10 @@ const SortSelect = () => {
 };
 
 /**
- * MultiSelect, filtering on the client: each value is a tag, Backspace
- * in the empty search removes the last one, and the clear button clears
- * them all. `showCheckbox` draws a checkbox before each option, beside the
- * check mark after it; `showCheckmark={false}` drops the mark.
+ * MultiSelect filtering on the client: each value is a tag, Backspace in the
+ * empty search removes the last, the clear button clears all. `showCheckbox`
+ * adds a checkbox before each option, beside the check mark;
+ * `showCheckmark={false}` drops the mark.
  */
 const TeamFilter = () => {
   const [values, setValues] = useState<string[]>([]);
@@ -291,12 +289,11 @@ const TeamFilter = () => {
 type Venue = { id: string; name: string; city: string };
 
 /**
- * Searching on the server: `onSearch` runs after a pause in typing, the
- * parent renders the matches, and `loading` shows while they load. Each
- * answer keeps the text it answers: an answer to older text is dropped, and
- * loading lasts until the answer matches what was typed last. The saved venue
- * stays an option when the results leave it out, so its label shows instead
- * of its id.
+ * Server search: `onSearch` runs after a pause in typing, the parent renders
+ * the matches, and `loading` shows meanwhile. Each answer keeps the text it
+ * answers: one to older text is dropped, and loading lasts until an answer
+ * matches the last text typed. The saved venue stays an option when the
+ * results omit it, so its label shows, not its id.
  */
 const VenueSearch = () => {
   const [value, setValue] = useState(savedVenue.id);
@@ -340,10 +337,9 @@ const VenueSearch = () => {
 type Speaker = { id: string; name: string };
 
 /**
- * MultiSelect searching on the server, with `search` controlled so the
- * parent owns the typed text. Loading and stale answers work as in
- * VenueSearch. Chosen speakers the results leave out stay options, so their
- * tags keep their names.
+ * MultiSelect searching on the server, with `search` controlled so the parent
+ * owns the typed text. Loading and stale answers work as in VenueSearch.
+ * Chosen speakers the results omit stay options, so their tags keep names.
  */
 const SpeakerSearch = () => {
   const [values, setValues] = useState<string[]>([]);
@@ -393,7 +389,7 @@ const SpeakerSearch = () => {
 type Person = { id: string; name: string; role: string };
 
 /**
- * Custom rows and trigger: each option's children draw its row, and
+ * Custom rows and trigger: an option's children draw its row, and
  * `renderTrigger` draws the trigger once something is selected. `label` stays
  * the text search matches and typeahead uses. `md`: its 32px line fits the
  * 28px avatar without growing the box.
@@ -431,7 +427,7 @@ const AssigneeSelect = () => {
 
 /**
  * MultiSelect with `renderTrigger` replacing the tags with a summary, for a
- * filter that sits in a crowded row. It shows once something is selected.
+ * filter in a crowded row. It shows once something is selected.
  */
 const TrackFilter = () => {
   const [values, setValues] = useState<string[]>([]);
@@ -451,8 +447,8 @@ const TrackFilter = () => {
 };
 
 /**
- * Grouped options: a `SelectGroup` labels the options inside it, here the
- * sessions of each day. Search keeps the groups that still have a match.
+ * Grouped options: a `SelectGroup` labels its options, here each day's
+ * sessions. Search keeps the groups that still match.
  */
 const SessionSelect = () => {
   const [value, setValue] = useState('');
@@ -478,12 +474,12 @@ const SessionSelect = () => {
 };
 
 /**
- * The disabled, read-only and loading states, each with the reason a hover
- * shows: `readOnlyWithReason` for a value that can't change here,
- * `disabledWithReason` for a control that isn't available yet, and
- * `loadingWithReason` for choices on the way. A Select stays usable while
- * loading unless `disableWhileLoading` is set. Without a reason, `disabled`,
- * `readOnly` and `loading` take `true`.
+ * Disabled, read-only and loading states, each with a hover reason:
+ * `readOnlyWithReason` for a value that can't change here,
+ * `disabledWithReason` for a control not available yet, `loadingWithReason`
+ * for choices on the way. A Select stays usable while loading unless
+ * `disableWhileLoading` is set. Without a reason, `disabled`, `readOnly` and
+ * `loading` take `true`.
  */
 const EventSettings = () => {
   const [timezone, setTimezone] = useState('Europe/Lisbon');
@@ -552,9 +548,9 @@ const VisibilitySelect = () => {
 };
 
 /**
- * A unit after the value with `rightAddOn` (`leftAddOn` goes before it), and
- * a status from the choice: `success` when it fits the slot, `error` when it
- * doesn't. Each status takes a message, or `true` for the style alone.
+ * A unit after the value with `rightAddOn` (`leftAddOn` goes before), and a
+ * status from the choice: `success` when it fits the slot, `error` when not.
+ * Each status takes a message, or `true` for the style alone.
  */
 const SessionLength = () => {
   const [value, setValue] = useState('45');

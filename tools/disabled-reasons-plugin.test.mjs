@@ -31,7 +31,6 @@ const reported = (code, { filename = appFile, rules = plugin.rules } = {}) =>
     )
     .filter((message) => message.ruleId === ruleId).length;
 
-// Components as the design system would describe them.
 const props = {
   Button: ['disabled', 'disabledWithReason', 'loading', 'loadingWithReason'],
   Input: ['readOnly', 'readOnlyWithReason'],

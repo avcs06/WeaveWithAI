@@ -21,10 +21,10 @@ export type ControllerProps<
 };
 
 /**
- * Puts one form field under react-hook-form: its validation goes in `rules`,
- * and `{...field}` gives the control its name, value, `onChange`, focus on a
- * failed submit, `required` mark and `error`. Every field in a `useForm` form
- * renders through it.
+ * Puts one form field under react-hook-form: validation goes in `rules`, and
+ * `{...field}` gives the control its name, value, `onChange`, focus on a failed
+ * submit, `required` mark and `error`. Every field in a `useForm` form renders
+ * through it.
  *
  * @invalidAlternative import('react-hook-form'){Controller}
  */

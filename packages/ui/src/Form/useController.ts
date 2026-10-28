@@ -18,8 +18,8 @@ export type UseControllerProps<
 > = FieldControllerProps<TFieldValues, TName, TTransformedValues>;
 
 /**
- * react-hook-form's field, named as the design system's controls name their
- * props. `disabled` is left out of the type, so `{...field}` sits beside a
+ * react-hook-form's field, named as the design system's controls name props.
+ * `disabled` is left out of the type so `{...field}` sits beside a
  * `disabledWithReason`; a disabled form still sets it.
  */
 export type ControllerField<
@@ -42,16 +42,16 @@ export type UseControllerReturn<
 
 type RequiredRule = NonNullable<UseControllerProps['rules']>['required'];
 
-// The rule that validates also marks the field required, the way
-// react-hook-form reads it: an empty message enforces nothing.
+// The rule that validates also marks the field required, as react-hook-form
+// reads it: an empty message enforces nothing.
 const isRequired = (rule: RequiredRule) =>
   typeof rule === 'object' ? Boolean(rule.value) : Boolean(rule);
 
 /**
- * Connects a field component of your own to react-hook-form, for a field
- * that takes `control` and `name` as props instead of sitting in a
- * `Controller`. Its `field` carries the value, `onChange`, `required` and
- * `error`: spread it on Input, Select or FormControl.
+ * Connects your own field component to react-hook-form, for a field that takes
+ * `control` and `name` as props instead of sitting in a `Controller`. `field`
+ * carries the value, `onChange`, `required` and `error`: spread it on Input,
+ * Select or FormControl.
  *
  * @invalidAlternative import('react-hook-form'){useController}
  */

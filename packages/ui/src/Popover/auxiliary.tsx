@@ -13,7 +13,7 @@ import type { PopoverButtonProps } from './Popover.types';
 
 /**
  * A Popover's trigger: a base Button with an up-down chevron that shows the
- * Popover's disabled or loading state, and its reason, in its own tooltip.
+ * Popover's disabled or loading state and reason in its own tooltip.
  */
 export const PopoverButton = <C extends ButtonTarget = 'button'>(
   props: PopoverButtonProps<C>,

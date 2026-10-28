@@ -17,11 +17,10 @@ export type ColumnsSlice = {
 };
 
 /**
- * Compares a column's props by value. Without React Compiler, inline props
- * (`filter={{…}}`, a JSX `title`) are new on every render; an equal column
- * keeps its stored object, so rows aren't filtered and sorted again.
- * Functions, like `computed`, compare by reference: a new one may compute
- * something else.
+ * Compares a column's props by value: without React Compiler inline props
+ * (`filter={{…}}`, a JSX `title`) are new every render, and an equal column
+ * keeps its stored object, so rows aren't re-filtered and re-sorted. Functions,
+ * like `computed`, compare by reference: a new one may compute something else.
  */
 const isSameConfig = (a: unknown, b: unknown): boolean =>
   isEqualWith(a, b, (left, right) =>
@@ -54,7 +53,8 @@ export const createColumnsSlice: TableSlice<ColumnsSlice> = (set) => ({
         ? state.columnOrder.filter((other) => other !== id)
         : state.columnOrder,
     })),
-  // Keeps the previous array when nothing moved, so subscribers don't re-render.
+  // Keeps the previous array when nothing moved, so subscribers don't
+  // re-render.
   setColumnOrder: (ids) =>
     set((state) =>
       isEqual(ids, state.columnOrder) ? state : { columnOrder: ids },

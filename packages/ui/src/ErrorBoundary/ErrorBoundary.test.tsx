@@ -232,7 +232,6 @@ describe('ErrorBoundary', () => {
       const { container } = renderUI(<Recoverable />);
       expect(screen.getByRole('alert')).toBeInTheDocument();
 
-      // Fixing the cause alone is not enough: it waits for the retry.
       await user.click(screen.getByRole('button', { name: 'Fix the data' }));
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(container).not.toHaveTextContent('Revenue by month');
@@ -285,7 +284,6 @@ describe('ErrorBoundary', () => {
         <Chart />
       </ErrorBoundary>,
     );
-    // Fixed input, still failed, and the retry keeps its focus.
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(tryAgain).toHaveFocus();
 
@@ -336,7 +334,6 @@ describe('ErrorBoundary', () => {
       expect(seen.every((error) => error === renderError)).toBe(true);
       expect(await axe(container)).toHaveNoViolations();
 
-      // Fix the cause, then reset: the children render again.
       await user.click(screen.getByRole('button', { name: 'Reload data' }));
       expect(screen.queryByRole('alert')).toBeNull();
       expect(container).toHaveTextContent('Revenue by month');
@@ -373,7 +370,6 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>,
       ),
     );
-    // The same keys, in a new array, with the cause fixed: still failed.
     rerender(
       <ErrorBoundary resetKeys={['Keynote']}>
         <Chart />
@@ -381,7 +377,6 @@ describe('ErrorBoundary', () => {
     );
     expect(screen.getByRole('alert')).toBeInTheDocument();
 
-    // A changed key retries; still broken there, so it fails again.
     silencingReact(() =>
       rerender(
         <ErrorBoundary resetKeys={['Panel']}>

@@ -23,11 +23,14 @@ type TargetProps<C extends ButtonTarget> =
     ? Props
     : ComponentPropsWithRef<'button'>;
 
-/** `as`, the target's own props and ref, and `OwnProps`, which win where the two overlap. */
+/**
+ * `as`, the target's own props and ref, and `OwnProps`, which win where the two
+ * overlap.
+ */
 type PolymorphicProps<C extends ButtonTarget, OwnProps> = {
   /**
-   * Forwards props, ref and className to its interactive root. Button owns
-   * that root's look; inline styles and important rules can override it.
+   * Forwards props, ref and className to the interactive root, whose look
+   * Button owns; inline styles and important rules override it.
    */
   as?: C;
 } & Omit<TargetProps<C>, keyof OwnProps | 'as'> &
@@ -42,8 +45,8 @@ type IconProps = Pick<
 
 type TooltipProp = {
   /**
-   * Shown on hover and focus, above any disabled, read-only or loading reason.
-   * Screen readers get it as the description, unless it repeats the name.
+   * Shown on hover and focus, above any state reason. Read as the description
+   * unless it repeats the name.
    */
   tooltip?: ReactNode;
 };
@@ -66,8 +69,6 @@ export type ButtonProps<C extends ButtonTarget = 'button'> = PolymorphicProps<
     ButtonStateAria
 >;
 
-// An icon doesn't name the button: `aria-label`, `aria-labelledby` or a
-// string `tooltip` must.
 export type IconButtonProps<C extends ButtonTarget = 'button'> =
   PolymorphicProps<
     C,
@@ -79,8 +80,8 @@ export type IconButtonProps<C extends ButtonTarget = 'button'> =
         children: ReactElement;
       }
   > &
-    // An icon doesn't name the button: its tooltip does, or `aria-label` or
-    // `aria-labelledby` where the name should differ from what it shows.
+    // The tooltip names it; `aria-label`/`aria-labelledby` when the name should
+    // differ.
     ({ tooltip: string } | ({ tooltip: ReactNode } & AccessibleName));
 
 // The child can be any element, so its handlers get any element's events.
@@ -103,8 +104,8 @@ export type PlainButtonProps = Omit<
   };
 
 /**
- * Inside the components, props checked at the public types are only passed
- * through.
+ * Inside the components, props already checked by the public types are only
+ * passed through.
  */
 export type ButtonBaseProps = DisabledProps &
   TooltipProp &

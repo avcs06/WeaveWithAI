@@ -14,8 +14,8 @@ const setRef = <T,>(ref: Ref<T> | undefined, node: T | null) => {
 };
 
 /**
- * One callback ref that sets each of `refs`. A callback ref that returns a
- * cleanup gets its cleanup on detach, the others `null`, as React does.
+ * One callback ref that sets each of `refs`. As React does, a callback ref
+ * that returns a cleanup gets it on detach; the others get `null`.
  */
 export const mergeRefs =
   <T,>(...refs: (Ref<T> | undefined)[]): RefCallback<T> =>
@@ -26,3 +26,18 @@ export const mergeRefs =
         cleanup ? cleanup() : setRef(refs[index], null),
       );
   };
+
+// What Tab reaches. Content that has any scrolls into view as it's focused.
+export const tabbable = [
+  'a[href]',
+  'button',
+  'input:not([type="hidden"])',
+  'select',
+  'textarea',
+  'summary',
+  'iframe',
+  '[contenteditable="true"]',
+  '[tabindex]',
+]
+  .map((selector) => `${selector}:not([tabindex="-1"])`)
+  .join(', ');
