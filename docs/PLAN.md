@@ -80,7 +80,7 @@ Done on 2026-10-28 on branch `hackathonv2`. Decisions: D0.1 to D0.4.
 Spec: [ARCHITECTURE.md](ARCHITECTURE.md). Decisions: D1.1 to D1.9, D1.11.
 Steps 01 to 08.
 
-- [ ] **F1** Root package and tooling (20 min). Depends: M3
+- [x] **F1** Root package and tooling (20 min) (done 2026-10-28). Depends: M3
   - `pnpm add openai zod execa p-limit` and
     `pnpm add -D typescript@~5.9 tsx vitest @types/node@^22`. TypeScript 5.9
     matches the template and the MCP; `@types/node` 22 matches the lowest

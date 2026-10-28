@@ -16,5 +16,17 @@
     "test:watch": "vitest",
     "template:setup": "pnpm --dir template install --frozen-lockfile && pnpm --dir template mcp:setup && pnpm --dir template mcp:check",
     "ds:export": "node template/tools/export-design-system.mjs"
+  },
+  "dependencies": {
+    "execa": "^10.2.1",
+    "openai": "^7.45.1",
+    "p-limit": "^7.3.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
   }
 }
