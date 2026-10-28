@@ -91,7 +91,7 @@ Steps 01 to 08.
     exists, validates the variables in `.env.example` with zod, exports a typed config.
   - Done when: `pnpm typecheck` passes and `pnpm test` runs `src/core/env.test.ts`.
 
-- [ ] **F2** Schema bridge (30 min). Depends: F1
+- [x] **F2** Schema bridge (30 min) (done 2026-10-28). Depends: F1
   - `src/core/schema.ts`: `toJsonSchema(schema, name)` wraps `z.toJSONSchema`,
     drops `$schema`, rewrites `oneOf` to `anyOf`, throws on recursive `$ref`s or
     nesting deeper than 10, and returns property and enum counts.
