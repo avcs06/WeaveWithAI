@@ -33,31 +33,25 @@ and move to the next independent task.
 
 ## Phase 0: Restructure the repository (Oct 28, 15:30 to 16:30)
 
-Spec: [MIGRATION.md](MIGRATION.md). Decisions: D0.1 to D0.4.
+Done on 2026-10-28 on branch `hackathonv2`. Decisions: D0.1 to D0.4.
 
-- [ ] **M1** Commit the finished design-system components (5 min)
-  - You: commit and push the new components on the `hackathon` branch, the
-    branch all work happens on. The migration script refuses a dirty tree.
-  - Done when: `git status` is clean and `hackathon` has your latest work.
+- [x] **M1** Commit the finished design-system components (done 2026-10-28)
+  - `hackathon` holds the finished design system and stays as it is.
 
-- [ ] **M2** Run the migration script (15 min). Depends: M1
-  - `bash <kit>/scripts/migrate-repo.sh <repo> --clean`. It checks out
-    `hackathon` itself (`--base <branch>` to start elsewhere) and cuts
-    `restructure/agent-root` from it.
-  - Done when: branch `restructure/agent-root` has two commits (move, kit); the
-    root lists `AGENTS.md`, `docs/`, `src/`, `fixtures/`, `mcps/`, `template/`;
-    `ls -l template/tools/weave-design-system-mcp` shows a link to `../../mcps/design-system`.
+- [x] **M2** Restructure the repository (done 2026-10-28). Depends: M1
+  - Everything moved into `template/`, the MCP into `mcps/design-system/`
+    with `template/tools/weave-design-system-mcp` linking back to it, and the
+    agent kit landed at the root. Agent and MCP client configs that only served
+    the template were removed.
 
-- [ ] **M3** Verify the template from its new folder (30 min). Depends: M2
-  - Run the verification block in MIGRATION.md.
-  - Done when: everything that passed on `hackathon` before the move still
-    passes from `template/` (typecheck, lint, tests, generator tests);
-    `pnpm mcp:check` prints component and token counts; `node
-    tools/export-design-system.mjs` prints JSON with your new components in it.
+- [x] **M3** Verify the template from its new folder (done 2026-10-28). Depends: M2
+  - From `template/`: install, typecheck, lint, `nx test ui`, the generator
+    tests, `pnpm mcp:check`, `export-design-system.mjs` and a generate run
+    all pass.
 
-- [ ] **M4** Merge into `hackathon` (5 min). Depends: M3
-  - `git checkout hackathon && git merge --ff-only restructure/agent-root && git push`
-  - Done when: `hackathon` has the new layout.
+- [x] **M4** Merge into `hackathon` (dropped 2026-10-28). Depends: M3
+  - Branches stay separate: `hackathon` (design system), `hackathonv2`
+    (restructure), `hackathonv3` (agent work; everything from here on).
 
 - [ ] **M5** Read the official rules and submission form (15 min)
   - You: the dates and judging weights in `docs/README.md` come from a press

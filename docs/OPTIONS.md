@@ -40,7 +40,7 @@ the option marked **(default)** applies. A ticked option overrides the default.
       coding agent needs is in one checkout; the template stays a standalone
       pnpm/Nx workspace that `cp -r` can copy; `mcps/design-system/` is shared by the agent and
       the template. Cost: two toolchains in one repo, kept apart on purpose.
-      `scripts/migrate-repo.sh` does this and was tested on a copy of the repo.
+      In place since 2026-10-28.
 - [ ] **B. New agent repo, design system as a git submodule at `template/`.** The DS
       repo stays clean and publishable. Submodules add friction to every commit,
       and coding agents handle them poorly.
@@ -70,7 +70,7 @@ Notes:
       is a symlink to `../../mcps/design-system`; `generate.mjs` copies through it, so each app
       gets a real, self-contained MCP. No template script changes. Tested.
 - [ ] **B. Package dependency.** Template scripts import `weave-design-system-mcp`
-      by name; this repo uses `link:../mcp`, generated apps a published package
+      by name; this repo uses `link:../mcps/design-system`, generated apps a published package
       or `file:` path. Cleaner long term; more edits now, and a publish step.
 - [ ] **C. Not shipped.** The orchestrator validates centrally; generated apps
       lose the AI-friendly MCP for future edits.

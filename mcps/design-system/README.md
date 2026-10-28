@@ -316,16 +316,18 @@ to list; there's no cross-file name-matching to get wrong.
 
 ## Setup
 
-Node `^22.18.0` or `>=24.11.0` (pinned in `.nvmrc`). From the repository root:
+Node `^22.18.0` or `>=24.11.0` (pinned in `.nvmrc`). From the workspace that holds the design
+system (`template/` in this repository):
 
 ```bash
 pnpm mcp:setup   # npm install and build into dist/
 pnpm mcp:check   # confirms the config loads components and tokens, and every declaration works
 ```
 
-Clients start the server through `tools/design-system-mcp.mjs`: `.mcp.json` registers it for
-Claude Code and `.vscode/mcp.json` for VS Code. After changing `src/`, run `pnpm mcp:build`; after
-changing `src/` or `instructions.md`, restart the server.
+Clients start the server through the workspace's `tools/design-system-mcp.mjs`; this repository
+registers it at the root in `.mcp.json` (Claude Code) and `.vscode/mcp.json` (VS Code). After
+changing `src/`, run `pnpm mcp:build`; after changing `src/` or `instructions.md`, restart the
+server.
 
 `tools/generate.mjs` copies this folder into a new project without `node_modules` or `dist`, then
 runs both commands there.

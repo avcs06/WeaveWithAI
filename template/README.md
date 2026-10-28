@@ -45,10 +45,9 @@ dependencies may still be required transitively by shared tooling.
 Root lockfiles are omitted in this variant so they can be regenerated for the changed
 dependencies. The server-inclusive variant preserves the manifest and lockfile.
 
-The MCP source, nested lockfile, client registration, design-system configuration,
-and validation tools are copied in both variants. MCP build output and dependencies
-are excluded and recreated during setup. The client launcher path is updated
-for the target folder.
+The MCP source, nested lockfile, design-system configuration, and validation
+tools are copied in both variants. MCP build output and dependencies are
+excluded and recreated during setup.
 
 After generating, copy `web/.env.example` to `web/.env.local`, then run `pnpm dev`. With the server
 included, run `pnpm nx serve server` in a separate terminal.

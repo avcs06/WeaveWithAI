@@ -14,9 +14,6 @@ Read in this order when you start a session:
 4. [OPTIONS.md](OPTIONS.md): every implementation choice, with the one in use.
    The user ticks; you read. Unticked means the **(default)** applies.
 
-[MIGRATION.md](MIGRATION.md) records how the repository was restructured into
-`template/`, `mcps/design-system/` and the root agent. It runs once.
-
 ## Sources
 
 The plan merges three proposals and the user's original spec. OPTIONS.md tags

@@ -15,8 +15,9 @@ Hackathon (submissions close 2026-11-05 07:30 IST).
 
 ## How to work
 
-All work happens on the `hackathon` branch, or on short-lived branches merged
-back into it.
+All work happens on the `hackathonv3` branch, or on short-lived branches merged
+back into it. `hackathon` (the design system) and `hackathonv2` (the
+restructure) stay as they are.
 
 1. New session: read `docs/README.md`, then open `docs/PLAN.md` and take the
    first unticked task whose dependencies are ticked.
