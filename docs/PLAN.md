@@ -139,8 +139,12 @@ Steps 01 to 08.
     creates a run folder (with a stub stage until FL5) and `pnpm weave show
     <id>` prints its stage table and token totals.
 
-- [ ] **F8** Open-weight model backends (2 h). Depends: F4, F7. Decision D1.11.
-  > Blocked: both smoke tests pass (modal: Glimmer on a Dedicated Endpoint; baseten: Spark Open) and `weave run --backend modal` completes, but the events grep in the Done-when cannot pass until FL5 replaces the stub scope stage, which makes no model call and writes no events. Tick after FL5, or decide the unit tests cover it.
+- [x] **F8** Open-weight model backends (2 h) (done 2026-10-29). Depends: F4, F7. Decision D1.11.
+  - Closed after FL5: both smoke tests passed earlier. Run
+    `20261029-2125-freelancer-workspace` (`--to scope --backend modal`)
+    finished in 3 rounds with 0 known issues, and all 5 `llm:call` events
+    carry `"backend":"modal"`. The endpoint was cold: it answered 503 for
+    112 s, so it was warmed with `GET /models` before the run (F9).
   - Added 2026-10-28: the user wants runs on Modal as well as on the Model
     API, so Weave qualifies for the open-weights prize. Changed 2026-10-29: the
     local backend (D1.11 C) is removed; "local" meant the generator on this
