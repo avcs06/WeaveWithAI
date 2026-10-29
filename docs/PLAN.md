@@ -121,7 +121,7 @@ Steps 01 to 08.
   - Done when: tests cover hash independence from key order, version
     increments, staleness after an input changes, and the mandatory/warning split.
 
-- [ ] **F6** Stage runner and prompt loader (30 min). Depends: F3, F5
+- [x] **F6** Stage runner and prompt loader (30 min) (done 2026-10-29). Depends: F3, F5
   - `src/core/runSpecStage.ts` as in ARCHITECTURE "Stage runner" (D1.5 A, D1.6
     A, D1.8 B); `src/core/prompt.ts` loads a `.md` file and fills
     `{{placeholders}}`, throwing on any it can't fill. It strips HTML comments
