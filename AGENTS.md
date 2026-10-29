@@ -31,8 +31,11 @@ restructure) stay as they are.
    `PLAN.md`, with one line saying why. Don't do it now.
 5. Run every check in the step's **Done when**. All must pass.
 6. Tick the task in `PLAN.md` (`- [x]`, ` (done YYYY-MM-DD)` on its title line).
-   Never stage or commit: leave every change unstaged. The user reviews, stages
-   and commits as `<task id>: <what changed>`.
+   Never stage or commit: leave every change unstaged. After each step, keep a
+   snapshot of every file that differs from HEAD, outside the repo, so that
+   once the user has reviewed, each step becomes its own commit even when
+   later steps touched the same files. The user says "commit"; the message is
+   `<task id>: <what changed>`, one line.
 7. Blocked: leave it unticked, add an indented `> Blocked: <what and why>` line
    under it, and stop for the user.
 

@@ -250,7 +250,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - Done when: `pnpm test` (prompt, schema and validator tests updated);
     `pnpm typecheck`.
 
-- [ ] **FL4** Renderer (30 min). Depends: FL1
+- [x] **FL4** Renderer (30 min) (done 2026-10-29). Depends: FL1
   - `src/stages/flows/render.ts`: `01-scope.md` (short) and `01-flows.md` in the spec's format.
   - Done when: a snapshot test renders the valid fixture.
 
