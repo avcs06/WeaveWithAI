@@ -76,7 +76,14 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
   }),
   'FLOW-011': edit((f) => flow(f, 'F03').alternatives.splice(0, 1)),
   'FLOW-012': edit((f) => flow(f, 'F04').alternatives.splice(0, 1)),
-  'FLOW-013': edit((f) => (f.subflows[0]!.alternatives = [])),
+  // The deleting step backs out through the subflow it runs or its own paths; both go.
+  'FLOW-013': edit((f) => {
+    f.subflows[0]!.alternatives = [];
+    const remove = flow(f, 'F05');
+    remove.alternatives = remove.alternatives.filter(
+      (alternative) => alternative.from !== 'F05.S02',
+    );
+  }),
   'FLOW-014': edit(
     (f) => (f.flows = f.flows.filter((candidate) => candidate.id !== 'F06')),
   ),

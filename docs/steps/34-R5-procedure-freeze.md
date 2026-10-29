@@ -67,7 +67,7 @@ After this step a run ends Phase 5 with a frozen, consistent spec.
 
 ### Tests
 
-`procedure.test.ts` with a fake llm and the golden project tracker: with no
+`procedure.test.ts` with a fake llm and the golden freelancer workspace: with no
 mismatches the procedure writes the matrix and freeze writes the lock; with
 one planted RECON-002 the fake receives one `patch:design` call and the
 lock's `screens.version` is 2.
@@ -75,5 +75,5 @@ lock's `screens.version` is 2.
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --run <id> --to freeze   # spec.lock.json written
+pnpm weave run fixtures/ideas/freelancer-workspace.md --run <id> --to freeze   # spec.lock.json written
 ```

@@ -1,0 +1,65 @@
+# Studio Hub: scope
+
+For a solo freelance UX designer juggling clients, notes, tasks and bookings across inbox, notes and spreadsheets. It brings clients with follow-ups, projects with tasks, and self-serve booking for discovery calls, design reviews and workshops into one calm workspace. The core loop is add a client, track notes and tasks to done, open availability and let visitors book themselves, then start each day from today's sessions, follow-ups and overdue tasks.
+
+Audience: Solo freelance UX designer
+
+## Roles
+- Freelancer (freelancer, signs in): Freelance UX designer who manages clients, projects, tasks, availability and sessions
+- Booker (booker, no sign-in): Visitor who books a discovery call, design review or workshop without an account
+
+## Vocabulary
+- Client (owned by Freelancer): Name, email, company optional, profile, status Lead Active Past, next follow-up date
+- Note (owned by Freelancer): Dated text under a client with optional follow-up date
+- Project (owned by Freelancer): Name, description, optional due date belonging to a client
+- Task (owned by Freelancer): Title, status To do In progress Done, priority Low Medium High, optional due date belonging to a project
+- Availability (owned by Freelancer): Weekly days with start and end time defining when sessions can be booked
+- SessionType (owned by Freelancer): Name, duration, displayed price and maximum seats, e.g. discovery 30min free 1, review 60min 4000 1, workshop 2hr 2500 8
+- Session (owned by Freelancer): Bookable time slot of a session type with date, start and end time
+- Booking (owned by Freelancer): Name and email reservation for a session with on-screen cancellation link, linked to a client by email
+
+## Capabilities
+- accounts: Single freelancer signs up, signs in and out to access private workspace
+- userOwnedData: Freelancer sees only their own clients, projects, tasks, sessions and bookings
+- crud: Create, view, edit, delete clients, notes, projects, tasks, availability, session types, sessions and bookings
+- search: Search tasks by title
+- filterSort: Filter tasks by status and priority; clients sorted overdue follow-up first
+- roles: Signed-in freelancer plus public booker without account
+- publicPages: Public landing page and public booking page plus cancellation link page
+- statusWorkflow: Client Lead, Active, Past; Task To do, In progress, Done
+- datesDeadlines: Note dates, follow-up dates, task and project due dates, availability windows, session slots
+- simpleCounts: Open task counts per project, seats booked vs maximum, today and week lists
+
+## In scope
+- Public landing page explaining the workspace and how to sign in or book a session
+- Private home screen with today's sessions, follow-ups due this week, and overdue tasks
+- Clients list with status Lead, Active, Past showing who is due for follow-up, overdue first
+- Create and edit clients with name, email, company optional, profile, status; delete client deletes its projects, tasks, notes and bookings
+- Dated notes under each client with optional follow-up date; mark follow-up done or push it a week with one click
+- Projects belonging to a client with name, description and optional due date; projects list shows how many tasks are still open
+- Tasks in a project with title, status To do, In progress, Done, priority Low, Medium, High and optional due date; search by title, filter by status and priority, tick done quickly, overdue tasks stand out
+- Edit and delete projects and tasks; deleting a project deletes its tasks
+- Weekly availability setting with days and start to end time
+- Session types: 30 minute discovery call free 1 person, 60 minute design review ₹4,000 shown for information 1 person, 2 hour Figma workshop ₹2,500 a seat up to 8 people; prices displayed only
+- Upcoming sessions list with bookings; cancel a slot cancels everyone booked on it
+- Public booking page: pick session type, see open slots for the next two weeks, book with name and email; a slot is full at the session type maximum
+- Booking by email match lands under that client, otherwise creates a new Lead client; confirmation shows a cancellation link on screen with no emails sent
+- Cancel a booking via its cancellation link without signing in
+
+## Out of scope
+- Online payments and checkout: Idea says prices are only displayed, nobody pays in the app Instead: Prices shown as text only; no checkout or charge
+- Email notifications and reminders: Idea says no emails are sent Instead: Confirmation and cancellation link shown on screen only
+
+## Assumptions
+- A01 (scope): Only one freelancer uses the private workspace; no teams, collaborators or client logins.
+- A02 (data): Each client has one next follow-up date set from a note; marking done clears it, pushing it adds 7 days.
+- A03 (behavior): Overdue means follow-up date or task due date is before today and not done; overdue follow-ups sort first and overdue tasks are highlighted.
+- A04 (behavior): Open slots are generated by splitting each weekly availability window into back-to-back slots matching the session type duration for the next 14 days, excluding past times.
+- A05 (behavior): Cancelling a session removes it and all its bookings; cancelling a single booking frees one seat and keeps the session for others.
+- A06 (data): Booking email match to an existing client is case-insensitive exact match; no match creates a new Lead client with the booking name and email.
+- A07 (behavior): Deleting a client deletes its projects, tasks, notes and bookings; deleting a project deletes its tasks; sessions without bookings remain until cancelled.
+- A08 (scope): Session types start as the three named types and the freelancer can create, edit and delete them; prices are shown as text only.
+
+## Questions
+- Q01 (blocking): How should slot start times be calculated inside an availability window? Why: Changes when visitors can book and whether slots match expected calendar times Default: Split each availability window into back-to-back slots matching the session duration starting at the window start
+- Q02: Does the freelancer need to block specific dates like holidays within the next two weeks? Why: Adds exception dates to availability scope Default: No, use weekly availability only and cancel individual slots to block time

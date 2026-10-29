@@ -51,4 +51,4 @@ Snapshot of `renderContract` on the fixture; the OpenAPI object has a
 pnpm test -- src/stages/contracts/render.test.ts
 ```
 
-and `03-contract.md` of the golden project tracker reads as an API spec.
+and `03-contract.md` of the golden freelancer workspace reads as an API spec.

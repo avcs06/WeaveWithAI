@@ -62,7 +62,7 @@ function fakeLlm() {
         FlowCatalog: () => catalogFixture,
         FlowBatch: () => {
           const ids =
-            /expand these flows[\s\S]*?Write the full flows ([^,]+(?:, [^,\s]+)*)/
+            /Write the full flows ((?:F\d{2,}(?:, )?)+)/
               .exec(user)?.[1]
               ?.split(', ') ?? [];
           return {

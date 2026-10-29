@@ -91,7 +91,7 @@ pnpm weave bench <runId>
 cat runs/<id>/05-benchmark.md
 ```
 
-Gate **G7** part one: the project tracker's table exists with a verdict
+Gate **G7** part one: the freelancer workspace's table exists with a verdict
 on every threshold.
 
 ## Watch out

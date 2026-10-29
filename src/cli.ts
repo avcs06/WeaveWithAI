@@ -219,7 +219,7 @@ export function goldenCommand(
   const copied: string[] = [];
   const lines: string[] = [];
   const state = readState(run);
-  const calls = readEvents(run).filter((event) => event.type === 'llm:call');
+  const events = readEvents(run);
   for (const name of names) {
     if (!(name in FILE_OF)) {
       throw new UsageError(
@@ -236,11 +236,18 @@ export function goldenCommand(
       copyFileSync(runPath(run, file), path.join(dest, file));
       copied.push(file);
     }
-    // The generator's calls plus its reviewers' (`<stage>-review<n>`).
-    const own = calls.filter(
+    // The last run of the stage: its calls, its reviewers' and its children's, up to the next stage that is not one of its own.
+    const starts = events.flatMap((event, i) =>
+      event.type === 'stage:start' && event.stage === name ? [i] : [],
+    );
+    const from = starts.at(-1) ?? events.length;
+    const segment = events.slice(from + 1);
+    const end = segment.findIndex(
       (event) =>
-        event.stage === name ||
-        String(event.stage).startsWith(`${name}-review`),
+        event.type === 'stage:start' && !String(event.stage).startsWith(name),
+    );
+    const own = (end === -1 ? segment : segment.slice(0, end)).filter(
+      (event) => event.type === 'llm:call',
     );
     const sum = (key: string) =>
       own.reduce((total, event) => total + Number(event[key] ?? 0), 0);

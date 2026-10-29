@@ -29,7 +29,7 @@ pnpm template:setup        # install the template, build and check the MCP
 pnpm install               # the generator's own dependencies
 cp .env.example .env       # then set MODEL_API_KEY
 pnpm smoke                 # one structured call to the Meta Model API
-pnpm weave run fixtures/ideas/project-tracker.md --to flows
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows
 ```
 
 Runs land in `runs/<runId>/`. Start with `docs/README.md` for how the pieces fit.

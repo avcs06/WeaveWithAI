@@ -10,8 +10,8 @@ benchmarked.
 
 ## What this step does
 
-1. **Two fresh end-to-end runs**: the project tracker and the unseen client
-   notes, with no manual edits (any that happen are logged and counted).
+1. **Two fresh end-to-end runs**: the freelancer workspace and the ecommerce
+   store, with no manual edits (any that happen are logged and counted).
 2. **One run on Muse Spark Open through Modal**, as far as time and credits
    allow, so the open-weights prize has a verifiable run.
 3. **Both apps benchmarked**; dashboards rendered; every number into the
@@ -22,13 +22,13 @@ After this step gate G8 is met and the submission has its numbers.
 ## Implementation details
 
 1. Fresh runs, no `--run` reuse:
-   `pnpm weave run fixtures/ideas/project-tracker.md` and
-   `pnpm weave run fixtures/ideas/client-notes.md` (the unseen idea, end to
+   `pnpm weave run fixtures/ideas/freelancer-workspace.md` and
+   `pnpm weave run fixtures/ideas/ecommerce-store.md` (the unseen idea, end to
    end). Default `--to` is `repair`, which ends with the second benchmark.
 2. No manual edits to generated apps. If one is unavoidable, write it in
    `runs/<id>/MANUAL-EDITS.md` with the file, the change and why; it
    counts against D12.2 A.
-3. Modal: `pnpm weave run fixtures/ideas/project-tracker.md --backend modal`
+3. Modal: `pnpm weave run fixtures/ideas/freelancer-workspace.md --backend modal`
    as far as credits and time allow (at least through `freeze`; the whole
    run if it fits). Keep its run id: the submission names it.
 4. `pnpm weave show <id> --html` for each; read the dashboards.

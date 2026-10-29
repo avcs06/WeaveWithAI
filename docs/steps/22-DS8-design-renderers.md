@@ -60,5 +60,5 @@ contains one `<section id="S02">` per screen and no `<script`.
 pnpm test -- src/stages/design/render.test.ts
 ```
 
-and you can review any screen of the project tracker from `02-design.md`
+and you can review any screen of the freelancer workspace from `02-design.md`
 alone.

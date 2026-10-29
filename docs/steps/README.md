@@ -65,14 +65,14 @@ spec's table.
 | 37  | S2   | Contract codegen: types, client, hooks          | 6     | 90 min  | [37-S2-entities-codegen.md](37-S2-entities-codegen.md) |
 | 38  | S3   | Mock API: route handlers and JSON store         | 6     | 2.5 h   | [38-S3-mock-api.md](38-S3-mock-api.md) |
 | 39  | S4   | Contract tests against the mock                 | 6     | 60 min  | [39-S4-api-tests.md](39-S4-api-tests.md) |
-| 40  | S5   | Golden project tracker to app                   | 6     | 45 min  | [40-S5-golden-app.md](40-S5-golden-app.md) |
+| 40  | S5   | Golden freelancer workspace to app                   | 6     | 45 min  | [40-S5-golden-app.md](40-S5-golden-app.md) |
 | 41  | FE1  | Coding engine: action loop                      | 7     | 2 h     | [41-FE1-action-loop.md](41-FE1-action-loop.md) |
 | 42  | FE2  | Routes, navigation and page shells              | 7     | 90 min  | [42-FE2-page-shells.md](42-FE2-page-shells.md) |
 | 43  | FE3  | New components                                  | 7     | 60 min  | [43-FE3-new-components.md](43-FE3-new-components.md) |
 | 44  | FE4  | Pages: sections wired to hooks                  | 7     | 2.5 h   | [44-FE4-pages.md](44-FE4-pages.md) |
 | 45  | FE5  | Rendered checks                                 | 7     | 90 min  | [45-FE5-rendered-checks.md](45-FE5-rendered-checks.md) |
 | 46  | FE6  | Visual rubric (optional)                        | 7     | 45 min  | [46-FE6-visual-rubric.md](46-FE6-visual-rubric.md) |
-| 47  | FE7  | Golden project tracker end to end               | 7     | 60 min  | [47-FE7-golden-frontend.md](47-FE7-golden-frontend.md) |
+| 47  | FE7  | Golden freelancer workspace end to end               | 7     | 60 min  | [47-FE7-golden-frontend.md](47-FE7-golden-frontend.md) |
 | 48  | B1   | Production build and server                     | 8     | 45 min  | [48-B1-bench-server.md](48-B1-bench-server.md) |
 | 49  | B2   | Lighthouse                                      | 8     | 60 min  | [49-B2-lighthouse.md](49-B2-lighthouse.md) |
 | 50  | B3   | Accessibility: axe, contrast, targets           | 8     | 45 min  | [50-B3-accessibility.md](50-B3-accessibility.md) |
@@ -83,7 +83,7 @@ spec's table.
 | 55  | T1   | Playwright tests from the frozen flows          | 9     | 2 h     | [55-T1-e2e-generation.md](55-T1-e2e-generation.md) |
 | 56  | T2   | Run, evidence, repair requests                  | 9     | 60 min  | [56-T2-evidence-repair-requests.md](56-T2-evidence-repair-requests.md) |
 | 57  | T3   | Bounded repair                                  | 9     | 90 min  | [57-T3-bounded-repair.md](57-T3-bounded-repair.md) |
-| 58  | T4   | Golden project tracker e2e green                | 9     | 45 min  | [58-T4-golden-e2e.md](58-T4-golden-e2e.md) |
+| 58  | T4   | Golden freelancer workspace e2e green                | 9     | 45 min  | [58-T4-golden-e2e.md](58-T4-golden-e2e.md) |
 | 59  | P1   | Run dashboard                                   | 10    | 90 min  | [59-P1-dashboard.md](59-P1-dashboard.md) |
 | 60  | P2   | Two full runs, a Modal run, benchmarks          | 10    | 3 h     | [60-P2-full-runs.md](60-P2-full-runs.md) |
 | 61  | P3   | README and submission answers                   | 10    | 90 min  | [61-P3-readme-submission.md](61-P3-readme-submission.md) |

@@ -1,0 +1,786 @@
+{
+  "meta": {
+    "artifact": "flows-catalog",
+    "version": 3,
+    "hash": "ab7bbb0d0bb5b76c79b05f9a9b2ba8d335d4ba3a2fce8d8268125597b2f550fa",
+    "inputs": {
+      "scope": {
+        "version": 1,
+        "hash": "ca2f704082bc89b98df78bf8a04e9c93632b20f6e1dc0f8bb3ac580ddc025ee9"
+      }
+    },
+    "stage": "flows-catalog",
+    "model": "muse-wonder-1.0",
+    "rounds": 3,
+    "createdAt": "2026-10-29T13:06:54.640Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "Visit landing page",
+        "role": "freelancer",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what Studio Hub does and choose how to start.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Nothing is stored; the visitor knows how to sign in, sign up or reach the booking page.",
+        "description": "A visitor not signed in arrives at the public landing page, reads what Studio Hub is for the solo designer, sees how to sign in or create an account and where visitors can book a session, then chooses to start sign-in, sign-up or open the public booking page."
+      },
+      {
+        "id": "F02",
+        "name": "Sign up",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create the private workspace account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Account is created and the freelancer is signed in; a refresh still shows the private home.",
+        "description": "A visitor without an account chooses to sign up, provides account email and password, submits, and on success is signed in and taken to the private home screen with starter session types ready."
+      },
+      {
+        "id": "F03",
+        "name": "Sign in",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Access the private workspace.",
+        "preconditions": [
+          "Has an account.",
+          "Not signed in."
+        ],
+        "outcome": "Freelancer is signed in and sees the home screen; a refresh stays signed in.",
+        "description": "A freelancer with an account chooses to sign in, enters account email and password, submits, and on success lands on the private home screen with today's sessions, follow-ups and overdue tasks."
+      },
+      {
+        "id": "F04",
+        "name": "Sign out",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "Leave the workspace securely.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Freelancer is signed out; a refresh shows the landing page and private data stays hidden until sign-in.",
+        "description": "The signed-in freelancer chooses to sign out, confirms leaving, and the website ends the session and returns to the public landing page with private data hidden."
+      },
+      {
+        "id": "F05",
+        "name": "See home for today",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Start the day from today's sessions, this week's follow-ups and overdue tasks.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Nothing is changed; a refresh still shows the same three lists for today.",
+        "description": "The signed-in freelancer opens home to start the day, sees today's sessions with times and bookings, follow-ups due this week with overdue first, and overdue tasks highlighted, and can jump to a session, client or task from each list."
+      },
+      {
+        "id": "F06",
+        "name": "Browse clients",
+        "role": "freelancer",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "See all clients with follow-up urgency, overdue first.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Nothing is changed; a refresh shows the same ordered client list.",
+        "description": "The freelancer opens the clients list, sees every client with status and next follow-up date ordered with overdue follow-ups first, opens a client to see its notes, projects and bookings, and can start adding a client when the list is empty."
+      },
+      {
+        "id": "F07",
+        "name": "Add a client",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Add a new client to track.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "New client is saved with its status and empty notes and projects; a refresh still lists it.",
+        "description": "The freelancer chooses to add a client, fills the client form with name, email, company, profile and status, saves it, and the website adds the client as Lead by default choice and shows it in the clients list ready for notes and projects."
+      },
+      {
+        "id": "F08",
+        "name": "Edit and delete a client",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep client details correct and remove clients no longer needed.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "Edits are saved or the client with its projects, tasks, notes and bookings is removed; a refresh shows the updated list.",
+        "description": "The freelancer opens a client, edits its details in the same client form and saves, or chooses to delete the client, confirms that its projects, tasks, notes and bookings will also be removed via the delete confirmation, and the website updates the clients list accordingly."
+      },
+      {
+        "id": "F09",
+        "name": "Add notes and handle follow-ups",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Record dated notes and stay on top of follow-ups.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "Notes are saved, edited or deleted and the client's next follow-up date is updated or cleared; a refresh shows the same notes and follow-up state.",
+        "description": "The freelancer opens a client, adds a dated note with optional follow-up date which sets the client's next follow-up, reads past notes in date order, edits a note's text, note date or follow-up date and saves so the client's next follow-up updates accordingly, deletes a note via the delete confirmation so the note is removed, and from the client or home handles a due follow-up with one click to mark it done which clears the date or push it a week which adds 7 days."
+      },
+      {
+        "id": "F10",
+        "name": "Add a project",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Start a project for a client.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "Project is saved under its client; a refresh still shows it with its open task count.",
+        "description": "The freelancer opens a client, sees its projects with how many tasks are still open, chooses to add a project, fills name, description and optional due date, saves, and the website shows the new project with zero open tasks ready for tasks."
+      },
+      {
+        "id": "F11",
+        "name": "Edit and delete a project",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep projects correct and remove finished ones.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "outcome": "Edits are saved or the project with its tasks is deleted; a refresh shows the updated project list.",
+        "description": "The freelancer opens a project, edits its name, description or due date and saves, or chooses to delete the project, confirms that its tasks will also be removed via the delete confirmation, and the website updates the projects list and open counts."
+      },
+      {
+        "id": "F12",
+        "name": "Work with tasks",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Track and complete project tasks quickly.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "outcome": "Tasks are added or marked Done and the list reflects current search and filters; a refresh shows the same tasks and counts.",
+        "description": "The freelancer opens a project, sees its tasks with overdue tasks standing out, searches by title and filters by status and priority, adds a new task with title, status, priority and optional due date, and ticks a task done quickly which updates the open count and home overdue list."
+      },
+      {
+        "id": "F13",
+        "name": "Edit and delete a task",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Correct task details and remove unneeded tasks.",
+        "preconditions": [
+          "Signed in.",
+          "At least one task exists."
+        ],
+        "outcome": "Edits are saved or the task is removed; a refresh shows the updated task list and open counts.",
+        "description": "The freelancer opens a task, edits its title, status, priority or due date and saves, or chooses to delete the task via the delete confirmation, and the website updates the task list and the project's open count."
+      },
+      {
+        "id": "F14",
+        "name": "Set weekly availability",
+        "role": "freelancer",
+        "category": "settings",
+        "authKind": "none",
+        "goal": "Define when visitors can book.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Weekly availability is saved; a refresh shows the same days and times and booking slots reflect them.",
+        "description": "The freelancer opens availability settings, selects which weekdays are bookable and from what time to what time, saves, and the website stores the weekly window and regenerates open slots for the next two weeks for all session types."
+      },
+      {
+        "id": "F15",
+        "name": "Manage session types",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Define bookable session types with durations, displayed prices and seat limits.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Session types are saved; a refresh shows the same types and the booking page offers them with prices displayed only.",
+        "description": "The freelancer views the session types starting as discovery, design review and workshop with durations, displayed prices and seat limits, creates new types, edits name, duration, displayed price or maximum seats, or deletes a type via the delete confirmation, with prices shown as text only and no payment taken."
+      },
+      {
+        "id": "F16",
+        "name": "Manage upcoming sessions",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "See upcoming sessions with bookings and free cancelled time.",
+        "preconditions": [
+          "Signed in.",
+          "Availability and at least one session type exist."
+        ],
+        "outcome": "Cancelled slots with their bookings are removed; remaining sessions are still listed after a refresh.",
+        "description": "The freelancer opens upcoming sessions, sees each slot with its type, date, times and bookings with seats booked versus maximum, opens a session to see who booked, and can cancel a whole slot via the delete confirmation which removes the slot and everyone booked on it."
+      },
+      {
+        "id": "F17",
+        "name": "Book a session as visitor",
+        "role": "booker",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Book an open slot without an account.",
+        "preconditions": [
+          "Not signed in.",
+          "Availability and at least one session type exist."
+        ],
+        "outcome": "Booking is saved under the matched or new Lead client and seat counts update with full slots closed; the confirmation with cancellation link is still available via the link.",
+        "description": "A visitor without an account opens the public booking page, picks a session type with its duration, displayed price and seats, sees open slots for the next two weeks with full slots marked full, chooses a slot and books with name and email, and the website matches the email to an existing client or creates a new Lead client, updates seats, and shows a confirmation with a cancellation link on screen with no emails sent."
+      },
+      {
+        "id": "F18",
+        "name": "Cancel booking via link",
+        "role": "booker",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Cancel a booking without signing in.",
+        "preconditions": [
+          "Not signed in.",
+          "Has a booking cancellation link."
+        ],
+        "outcome": "Booking is removed and its seat is freed while the session stays for others; a refresh shows the booking as cancelled.",
+        "description": "A visitor opens their per-booking cancellation link without signing in, sees the booking and session details, chooses to cancel, confirms, and the website removes the booking, frees one seat and shows the booking as cancelled."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Account email",
+        "meaning": "Email the freelancer uses to sign up and sign in",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "freelancer@example.com"
+      },
+      {
+        "id": "FD02",
+        "label": "Account password",
+        "meaning": "Secret that protects the private workspace",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": 128,
+        "options": [],
+        "example": "CalmStudio2026!"
+      },
+      {
+        "id": "FD03",
+        "label": "Client name",
+        "meaning": "Who the client is",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 100,
+        "options": [],
+        "example": "Aarav Mehta"
+      },
+      {
+        "id": "FD04",
+        "label": "Client email",
+        "meaning": "Contact email used for matching bookings to this client",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "aarav@brightkart.in"
+      },
+      {
+        "id": "FD05",
+        "label": "Client company",
+        "meaning": "Company the client works for, if any",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "example": "Brightkart"
+      },
+      {
+        "id": "FD06",
+        "label": "Client profile",
+        "meaning": "What they do, how we met and what they pay",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "example": "Runs Brightkart D2C store; met at design meetup; pays 60k per project."
+      },
+      {
+        "id": "FD07",
+        "label": "Client status",
+        "meaning": "Where the client is in the pipeline",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Lead",
+          "Active",
+          "Past"
+        ],
+        "example": "Lead"
+      },
+      {
+        "id": "FD08",
+        "label": "Note text",
+        "meaning": "What was discussed or observed with the client",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 2000,
+        "options": [],
+        "example": "Discovery call: wants checkout redesign, worried about drop-off."
+      },
+      {
+        "id": "FD09",
+        "label": "Note date",
+        "meaning": "Day the note refers to, defaults to today",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-10-20"
+      },
+      {
+        "id": "FD10",
+        "label": "Follow-up date",
+        "meaning": "Day to follow up with the client; sets the client's next follow-up",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-11-05"
+      },
+      {
+        "id": "FD11",
+        "label": "Project name",
+        "meaning": "What the project is called",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Checkout redesign"
+      },
+      {
+        "id": "FD12",
+        "label": "Project description",
+        "meaning": "Short summary of the project scope",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "example": "Redesign Brightkart checkout to lift conversion."
+      },
+      {
+        "id": "FD13",
+        "label": "Project due date",
+        "meaning": "Day the project should be finished, if any",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-12-15"
+      },
+      {
+        "id": "FD14",
+        "label": "Task title",
+        "meaning": "What needs to be done",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 200,
+        "options": [],
+        "example": "Draft checkout wireframes"
+      },
+      {
+        "id": "FD15",
+        "label": "Task status",
+        "meaning": "Where the task is in its workflow",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "example": "To do"
+      },
+      {
+        "id": "FD16",
+        "label": "Task priority",
+        "meaning": "How urgent the task is",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "example": "High"
+      },
+      {
+        "id": "FD17",
+        "label": "Task due date",
+        "meaning": "Day the task should be done, if any; past dates show as overdue",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-11-10"
+      },
+      {
+        "id": "FD18",
+        "label": "Task search query",
+        "meaning": "Words to find tasks by title",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 200,
+        "options": [],
+        "example": "wireframes"
+      },
+      {
+        "id": "FD19",
+        "label": "Task status filter",
+        "meaning": "Show only tasks with this status, or all tasks",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "example": "In progress"
+      },
+      {
+        "id": "FD20",
+        "label": "Task priority filter",
+        "meaning": "Show only tasks with this priority, or all priorities",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "example": "High"
+      },
+      {
+        "id": "FD21",
+        "label": "Availability days",
+        "meaning": "Weekdays the freelancer can be booked",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "example": "Monday, Tuesday"
+      },
+      {
+        "id": "FD22",
+        "label": "Availability start time",
+        "meaning": "Time from which bookings can start on selected days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "10:00"
+      },
+      {
+        "id": "FD23",
+        "label": "Availability end time",
+        "meaning": "Time after which no new slot starts on selected days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "16:00"
+      },
+      {
+        "id": "FD24",
+        "label": "Session type name",
+        "meaning": "Name visitors see when picking what to book",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Discovery call"
+      },
+      {
+        "id": "FD25",
+        "label": "Session type duration in minutes",
+        "meaning": "How long one slot of this type lasts",
+        "type": "integer",
+        "required": true,
+        "min": 15,
+        "max": 480,
+        "options": [],
+        "example": "30"
+      },
+      {
+        "id": "FD26",
+        "label": "Session type price display",
+        "meaning": "Price shown for information only in INR, 0 means free; nothing is charged",
+        "type": "money",
+        "required": true,
+        "min": 0,
+        "max": null,
+        "options": [],
+        "example": "4000"
+      },
+      {
+        "id": "FD27",
+        "label": "Session type maximum seats",
+        "meaning": "How many bookings a slot holds before it is full",
+        "type": "integer",
+        "required": true,
+        "min": 1,
+        "max": 20,
+        "options": [],
+        "example": "1"
+      },
+      {
+        "id": "FD28",
+        "label": "Booker name",
+        "meaning": "Name of the visitor booking a session",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Priya Nair"
+      },
+      {
+        "id": "FD29",
+        "label": "Booker email",
+        "meaning": "Email of the visitor booking; used to match to an existing client",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "priya@craftloom.com"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Client form",
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Project form",
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13"
+        ]
+      },
+      {
+        "id": "FM03",
+        "name": "Task form",
+        "fields": [
+          "FD14",
+          "FD15",
+          "FD16",
+          "FD17"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "SF01",
+        "name": "Confirm deletion",
+        "steps": [
+          {
+            "id": "SF01.S01",
+            "kind": "user",
+            "userAction": "The user chooses to delete the record.",
+            "websiteResponse": "The website asks to confirm and explains what else will be removed with it.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "SF01.S02",
+            "kind": "user",
+            "userAction": "The user confirms the deletion.",
+            "websiteResponse": "The website deletes the record with everything it says will go with it and shows the updated list.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "SF01.A01",
+            "from": "SF01.S01",
+            "kind": "cancel",
+            "condition": "The user cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the list as it was.",
+            "resumesAt": ""
+          },
+          {
+            "id": "SF01.A02",
+            "from": "SF01.S02",
+            "kind": "failure",
+            "condition": "Deleting fails.",
+            "websiteResponse": "The website keeps the record and offers to retry.",
+            "resumesAt": "SF01.S02"
+          },
+          {
+            "id": "SF01.A03",
+            "from": "SF01.S02",
+            "kind": "notFound",
+            "condition": "The record is already gone.",
+            "websiteResponse": "The website says it is already deleted and shows the updated list.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A09",
+        "text": "Client emails are unique per freelancer case-insensitively; the client form rejects a duplicate email so booking auto-match stays reliable.",
+        "kind": "data",
+        "affects": [
+          "F07",
+          "F08",
+          "F17"
+        ]
+      },
+      {
+        "id": "A10",
+        "text": "Follow-ups due this week means follow-up date is today or within the next 7 calendar days, plus all overdue follow-ups not yet marked done.",
+        "kind": "behavior",
+        "affects": [
+          "F05",
+          "F09"
+        ]
+      },
+      {
+        "id": "A11",
+        "text": "A project's open task count counts tasks whose status is not Done (To do plus In progress).",
+        "kind": "behavior",
+        "affects": [
+          "F10",
+          "F11",
+          "F12",
+          "F13"
+        ]
+      },
+      {
+        "id": "A12",
+        "text": "Weekly availability is a single start-to-end time window applied to each selected weekday; open slots regenerate for the next 14 days after every availability or session-type change, excluding past times.",
+        "kind": "behavior",
+        "affects": [
+          "F14",
+          "F15",
+          "F16",
+          "F17"
+        ]
+      },
+      {
+        "id": "A13",
+        "text": "A new freelancer workspace starts with the three named session types already present: 30min discovery free 1 seat, 60min design review 4000 1 seat, 120min Figma workshop 2500 8 seats, all editable and deletable with prices shown as text only.",
+        "kind": "scope",
+        "affects": [
+          "F15"
+        ]
+      },
+      {
+        "id": "A14",
+        "text": "A booking that creates a new Lead client fills name and email from the booking, leaves company empty and stores a profile noting it was auto-created from booking.",
+        "kind": "data",
+        "affects": [
+          "F17"
+        ]
+      },
+      {
+        "id": "A15",
+        "text": "Each booking gets a unique per-booking cancellation link that shows booking details without sign-in; opening it after cancellation shows a cancelled state.",
+        "kind": "behavior",
+        "affects": [
+          "F17",
+          "F18"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q03",
+        "question": "Should a freelancer be prevented from creating two clients with the same email?",
+        "whyItMatters": "Changes booking auto-match reliability and whether bookings can land under the wrong client",
+        "defaultAnswer": "Yes, emails must be unique per freelancer case-insensitively and the form rejects duplicates",
+        "blocking": true
+      },
+      {
+        "id": "Q04",
+        "question": "In which time zone should availability windows and session times be shown to bookers?",
+        "whyItMatters": "Changes what slot times mean and whether bookings happen at the expected hour",
+        "defaultAnswer": "Show all times in the freelancer's local browser time zone for both freelancer and bookers",
+        "blocking": false
+      }
+    ]
+  }
+}

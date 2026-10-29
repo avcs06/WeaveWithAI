@@ -90,7 +90,7 @@ stage name and `done`.
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --to scope   # prints the run id, stage lines
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to scope   # prints the run id, stage lines
 pnpm weave show <id>                                           # table with scope done, totals 0
 pnpm test -- src/cli.test.ts
 ```

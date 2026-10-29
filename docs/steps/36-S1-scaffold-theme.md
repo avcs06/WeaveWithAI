@@ -142,7 +142,7 @@ transpiles with `ts.transpileModule` without syntax errors.
 
 ```sh
 pnpm test -- src/app
-pnpm weave run fixtures/ideas/project-tracker.md --run <id> --to scaffold
+pnpm weave run fixtures/ideas/freelancer-workspace.md --run <id> --to scaffold
 cd runs/<id>/app && pnpm typecheck && pnpm mcp:check && pnpm verify /
 grep -n "accentBg" colors.ts     # the theme's hex values under primary
 ```

@@ -17,13 +17,13 @@ the round limits, then a frozen spec for every golden idea. Gate G4.
    untuned; save the frozen artifacts.
 
 After this step gate G4 is met: the planning half of the generator is
-proven on four ideas.
+proven on three ideas.
 
 ## Implementation details
 
 ### 1. Seeded defect tests (`src/stages/reconcile/seeded.test.ts`)
 
-Each test copies the golden project-tracker artifacts, plants one defect,
+Each test copies the golden freelancer-workspace artifacts, plants one defect,
 runs the procedure with a fake llm whose responses were recorded once from
 a real run (save them as `__fixtures__/replays/<defect>-<call>.json`, the
 response JSON only), and asserts:
@@ -33,7 +33,7 @@ response JSON only), and asserts:
 2. A node showing `Project.budget`: RECON-003; the contract gains `budget`
    or the node loses it; 1 patch call to contract or design.
 3. An operation with `needsRule: "what makes a slot available"` (on the
-   appointment-booking golden set): RECON-007 sends a question to flows, the
+   freelancer-workspace golden set): RECON-007 sends a question to flows, the
    answer appears in the contract patch's input, and the final contract has
    `needsRule: ""`.
 
@@ -43,7 +43,7 @@ Record the responses by running each scenario once for real with
 ### 2. Freeze every golden idea
 
 `pnpm weave run … --run <id> --to freeze` for each; read `04-reconcile.md`;
-tune patch prompts only; client notes untuned. `pnpm weave golden <runId>
+tune patch prompts only; ecommerce store untuned first. `pnpm weave golden <runId>
 <idea> --stages matrix,lock` (extend `golden` to copy `spec.lock.json`).
 
 ## Done when

@@ -144,7 +144,7 @@ paths; reject `..` segments and absolute paths outright.
 pnpm test -- src/engine
 ```
 
-and a manual session on the scaffolded project tracker
+and a manual session on the scaffolded freelancer workspace
 (`tsx src/engine/try.ts <runId> "Add a short welcome paragraph to the home page"`,
 a tiny script you may keep) ends with `done` and `pnpm verify /` green.
 

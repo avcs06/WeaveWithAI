@@ -129,7 +129,7 @@ runs `generateEntities`, then step 38's `generateMockApi`, then in the app
 
 ### 4. Tests
 
-`entities.test.ts`: generate from the golden project-tracker contract into
+`entities.test.ts`: generate from the golden freelancer-workspace contract into
 a temp run; snapshot the file list and `entities/task/hooks.ts`; every
 file transpiles; `api.ts` contains the paths `pathFor` produces.
 

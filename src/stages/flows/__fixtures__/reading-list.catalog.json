@@ -155,32 +155,35 @@
   ],
   "subflows": [
     {
-      "id": "SF01",
-      "name": "Confirm a deletion",
+      "id": "STD01",
+      "name": "Confirm deletion",
       "steps": [
         {
-          "id": "SF01.S01",
-          "kind": "user",
-          "userAction": "The reader chooses to delete the book and confirms.",
-          "websiteResponse": "The website removes the book and shows the reading list without it.",
+          "id": "STD01.S01",
+          "kind": "system",
+          "userAction": "",
+          "websiteResponse": "The website asks to confirm the deletion and says what else will be removed with it.",
           "fields": [],
           "form": "",
           "subflow": "",
-          "effects": [
-            {
-              "noun": "Book",
-              "change": "delete"
-            }
-          ]
+          "effects": []
         }
       ],
       "alternatives": [
         {
-          "id": "SF01.A01",
-          "from": "SF01.S01",
+          "id": "STD01.A01",
+          "from": "STD01.S01",
+          "kind": "confirm",
+          "condition": "The user confirms.",
+          "websiteResponse": "The website deletes the record and what belongs to it.",
+          "resumesAt": ""
+        },
+        {
+          "id": "STD01.A02",
+          "from": "STD01.S01",
           "kind": "cancel",
-          "condition": "The reader decides to keep the book.",
-          "websiteResponse": "Nothing is removed; the website shows the book again.",
+          "condition": "The user cancels.",
+          "websiteResponse": "Nothing is deleted; the record stays as it was.",
           "resumesAt": ""
         }
       ]

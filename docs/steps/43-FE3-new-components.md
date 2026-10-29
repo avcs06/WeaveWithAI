@@ -68,7 +68,7 @@ pnpm weave run fixtures/ideas/dashboard-editor.md --run <id> --to frontend   # s
 cd runs/<id>/app && pnpm nx test web -- --testPathPattern components       # the new component's test passes
 ```
 
-For the project tracker (no new components) the step is a no-op.
+For an idea with no new components the step is a no-op.
 
 ## Watch out
 

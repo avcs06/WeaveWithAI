@@ -1,8 +1,8 @@
 /**
  * FLOW-004 · mandatory
- * Every step has a websiteResponse; a user step has a userAction; a system step has userAction "". A step that runs a subflow has neither text, no fields and no effects: the subflow carries them.
- * Pass: { kind: 'user', userAction: 'Clicks Add', websiteResponse: 'Shows the form.' } · { subflow: 'SF01', userAction: '', websiteResponse: '', fields: [], effects: [] }
- * Fail: { kind: 'user', userAction: '' } · { websiteResponse: '' } · { subflow: 'SF01', websiteResponse: 'Shows...' }
+ * A user step has a userAction, a system step has userAction "". Every step has a websiteResponse, except one that runs a subflow: its userAction is what triggers the subflow, the subflow's steps answer, and it carries no fields; its effects are what the subflow changes in this flow.
+ * Pass: { kind: 'user', userAction: 'Clicks Add', websiteResponse: 'Shows the form.' } · { kind: 'user', userAction: 'Chooses Delete on the book.', subflow: 'STD01', websiteResponse: '', fields: [], effects: [{ noun: 'Book', change: 'delete' }] }
+ * Fail: { kind: 'user', userAction: '' } · { websiteResponse: '' } · { subflow: 'SF01', websiteResponse: 'Shows...' } · { kind: 'user', userAction: '', subflow: 'STD01' }
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
@@ -16,22 +16,18 @@ export const rule = defineRule<FlowInput>(
     for (const { step } of eachStep(flows)) {
       if (step.subflow !== '') {
         const carried = [
-          step.userAction !== '' && 'a userAction',
           step.websiteResponse !== '' && 'a websiteResponse',
           (step.fields.length > 0 || step.form !== '') && 'fields',
-          step.effects.length > 0 && 'effects',
         ].filter((item): item is string => typeof item === 'string');
         if (carried.length > 0) {
           issues.push(
             fail(
-              `${step.id} runs subflow ${step.subflow} but also has ${carried.join(', ')}; a subflow step carries nothing of its own.`,
+              `${step.id} runs subflow ${step.subflow} but also has ${carried.join(', ')}; a subflow step carries only what triggers it and its effects.`,
               step.id,
             ),
           );
         }
-        continue;
-      }
-      if (step.websiteResponse.trim() === '') {
+      } else if (step.websiteResponse.trim() === '') {
         issues.push(
           fail(
             `${step.id} has no websiteResponse; say what the user sees or what changes.`,
@@ -42,7 +38,7 @@ export const rule = defineRule<FlowInput>(
       if (step.kind === 'user' && step.userAction.trim() === '') {
         issues.push(
           fail(
-            `${step.id} is a user step with no userAction; say what the user does, or make it a system step.`,
+            `${step.id} is a user step with no userAction; say what the user does (what triggers the subflow, when it runs one), or make it a system step.`,
             step.id,
           ),
         );

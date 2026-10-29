@@ -62,4 +62,4 @@ small benchmark): the HTML contains each section's heading and no `<script`.
 pnpm weave show <id> --html --open
 ```
 
-opens a page with every section filled for the project tracker run.
+opens a page with every section filled for the freelancer workspace run.

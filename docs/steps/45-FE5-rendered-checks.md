@@ -103,7 +103,7 @@ collector reports the planted defect and nothing on the clean page.
 
 ```sh
 pnpm test -- src/checks
-pnpm weave run … --run <id> --to frontend     # rendered checks pass on every project-tracker route
+pnpm weave run … --run <id> --to frontend     # rendered checks pass on every freelancer-workspace route
 ```
 
 ## Watch out

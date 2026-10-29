@@ -1,16 +1,19 @@
 /**
  * FLOW-001 · mandatory
- * Flow ids are F01, F02, ... and subflow ids SF01, SF02, ...; step ids F01.S01 and alternative ids F01.A01 start with their container's id; no id is used twice.
- * Pass: { id: 'F03', steps: [{ id: 'F03.S01' }], alternatives: [{ id: 'F03.A01' }] } · a subflow { id: 'SF01', steps: [{ id: 'SF01.S01' }] }
- * Fail: { id: 'F3' } · step 'F01-S01' · step 'F02.S01' inside flow F03 · 'F03.S01' used twice
+ * Flow ids are F01, F02, ... and subflow ids SF01, SF02, ... (standard subflows keep their registry ids, STD01, ...); step ids F01.S01 and alternative ids F01.A01 start with their container's id; no id is used twice.
+ * Pass: { id: 'F03', steps: [{ id: 'F03.S01' }], alternatives: [{ id: 'F03.A01' }] } · a subflow { id: 'SF01', steps: [{ id: 'SF01.S01' }] } · the standard { id: 'STD01' }
+ * Fail: { id: 'F3' } · a subflow { id: 'STD09' } that is not in the registry · step 'F01-S01' · step 'F02.S01' inside flow F03 · 'F03.S01' used twice
  */
 import type { Issue } from '../../../core/issues';
+import { isStandardSubflowId } from '../../../config/subflows';
 import { defineRule, duplicates } from '../../../core/rules';
 import { containers, type FlowInput } from './helpers';
 
 export const FLOW_ID = /^F\d{2,}$/;
+/** A model-written subflow id; the standard subflows keep their registry ids. */
 export const SUBFLOW_ID = /^SF\d{2,}$/;
-const CHILD_ID = /^S?F\d{2,}\.[SA]\d{2,}$/;
+export const isSubflowId = (id: string): boolean =>
+  SUBFLOW_ID.test(id) || isStandardSubflowId(id);
 
 export const rule = defineRule<FlowInput>(
   'FLOW-001',
@@ -40,10 +43,10 @@ export const rule = defineRule<FlowInput>(
         );
     }
     for (const subflow of flows.subflows) {
-      if (!SUBFLOW_ID.test(subflow.id))
+      if (!isSubflowId(subflow.id))
         issues.push(
           fail(
-            `Subflow id "${subflow.id}" is malformed; use SF01, SF02, ...`,
+            `Subflow id "${subflow.id}" is malformed; use SF01, SF02, ... (the standard subflows keep their own ids).`,
             subflow.id,
           ),
         );
@@ -54,11 +57,9 @@ export const rule = defineRule<FlowInput>(
         { items: container.alternatives, letter: 'A' },
       ];
       for (const { items, letter } of groups) {
+        const childId = new RegExp(`^${container.id}\\.${letter}\\d{2,}$`);
         for (const item of items) {
-          if (
-            !CHILD_ID.test(item.id) ||
-            !item.id.startsWith(`${container.id}.${letter}`)
-          ) {
+          if (!childId.test(item.id)) {
             issues.push(
               fail(
                 `Id "${item.id}" in ${container.id} is malformed; use ${container.id}.${letter}01, ${container.id}.${letter}02, ...`,

@@ -134,7 +134,11 @@ export const Effect = z.object({
 export const Step = z.object({
   id: z.string().describe('F01.S01, or SF01.S01 inside a subflow'),
   kind: z.enum(['user', 'system']),
-  userAction: z.string().describe('"" for system steps and subflow steps'),
+  userAction: z
+    .string()
+    .describe(
+      '"" for system steps; for a subflow step, what triggers the subflow',
+    ),
   websiteResponse: z
     .string()
     .describe('What the user can see, or what changes; "" for subflow steps'),
@@ -146,7 +150,9 @@ export const Step = z.object({
     .describe('A form id whose fields the user fills in here, or ""'),
   subflow: z
     .string()
-    .describe('A subflow id this step runs instead of its own text, or ""'),
+    .describe(
+      'A subflow id this step runs instead of its own websiteResponse, or ""',
+    ),
   effects: z.array(Effect).describe('[] when nothing is stored or loaded'),
 });
 

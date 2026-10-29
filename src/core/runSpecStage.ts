@@ -1,5 +1,11 @@
 import type { z } from 'zod';
-import { formatIssues, type Issue, splitIssues, writeReport } from './issues';
+import {
+  clearReport,
+  formatIssues,
+  type Issue,
+  splitIssues,
+  writeReport,
+} from './issues';
 import {
   type ChatMessage,
   type GenerateInput,
@@ -107,6 +113,7 @@ export async function runSpecStage<T>(
 ): Promise<SpecStageResult<T>> {
   appendEvent(o.run, { type: 'stage:start', stage: o.stage });
   updateStage(o.run, o.stage, { status: 'running' });
+  clearReport(o.run, o.stage);
 
   const compose = o.compose ?? conversation(o);
   const answers: Answers = {};

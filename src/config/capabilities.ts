@@ -31,7 +31,7 @@ export const CAPABILITIES: readonly Capability[] = [
     description: 'filters and sorting on lists',
   },
   { id: 'pagination', mode: 'build', description: 'pages of results' },
-  { id: 'roles', mode: 'build', description: 'up to 2 roles' },
+  { id: 'roles', mode: 'build', description: 'up to 3 roles' },
   {
     id: 'publicPages',
     mode: 'build',

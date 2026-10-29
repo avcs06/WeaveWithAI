@@ -1,4 +1,5 @@
-<!-- The product standard shared by prompt-scope.md, prompt-flows.md, review-scope.md and review-flows.md through {{productManager}}. MVP decisions only: nothing about keeping users, growth or operations. HTML comments are stripped before sending. -->
+<!-- The product standard shared by prompt-scope.md, prompt-flows.md and the review-*.md guides through {{productManager}}. MVP decisions only: nothing about keeping users, growth or operations. HTML comments are stripped before sending. -->
+
 ## What a product manager decides for an MVP
 
 Each numbered line is a decision the scope and the flows make and a reviewer checks. Keeping users, growth and operations are not decided here.

@@ -1,0 +1,408 @@
+{
+  "meta": {
+    "artifact": "flows-catalog",
+    "version": 1,
+    "hash": "0f9001beaaf3f9e91d969aac0c663a1379c134ec262aa10b08587da939228011",
+    "inputs": {
+      "scope": {
+        "version": 1,
+        "hash": "a5a34345814fbcb64cf24acc42c8f8cf8544ed44c2142fe9892d12bfda71217c"
+      }
+    },
+    "stage": "flows-catalog",
+    "model": "muse-wonder-1.0",
+    "rounds": 3,
+    "createdAt": "2026-10-29T12:56:03.242Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "Discover TidyDash on the landing page",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what TidyDash is for and start toward an account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Nothing is saved; the visitor knows how to start and is directed to sign up or sign in.",
+        "description": "A visitor arrives at the public landing page that explains personal dashboards for notes, counts, tasks and links, sees how creating a dashboard and adding widgets works, and chooses to sign up or sign in to start, with nothing saved."
+      },
+      {
+        "id": "F02",
+        "name": "Sign up as a member",
+        "role": "member",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create an account to own private dashboards.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Account created and member signed in; refresh still shows them signed in with an empty dashboard list.",
+        "description": "A visitor on the landing page chooses to sign up, provides email and password, submits, and the website creates the account, signs them in as a member and shows their empty dashboard space ready to create."
+      },
+      {
+        "id": "F03",
+        "name": "Sign in as a member",
+        "role": "member",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Sign back in to access my dashboards.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Member signed in; refresh still shows them signed in with their own dashboards.",
+        "description": "A returning member arrives signed out, enters email and password, submits, and the website verifies them and restores their own dashboard list ordered by last-edited time."
+      },
+      {
+        "id": "F04",
+        "name": "Sign out",
+        "role": "member",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "End the session on this device.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Member signed out and private data hidden; refresh still shows signed-out state.",
+        "description": "A signed-in member chooses to sign out and the website ends the session and hides private dashboards, showing the public landing or sign-in starting point."
+      },
+      {
+        "id": "F05",
+        "name": "Create a new dashboard",
+        "role": "member",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Start a new empty dashboard in the editor.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "New empty dashboard saved with default name and current last-edited time; it appears first in the list and is still there after a refresh, open in the editor.",
+        "description": "From the dashboard list a signed-in member chooses Create, and the website immediately creates an empty dashboard with a default name, opens it in the editor, saves it automatically and updates its last-edited time."
+      },
+      {
+        "id": "F06",
+        "name": "View my dashboard list",
+        "role": "member",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "See all my dashboards and pick one to open.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Nothing changes; refresh still shows the same private list ordered most-recently-edited first.",
+        "description": "A signed-in member opens their dashboard space and the website lists only their own dashboards showing each name and when it was last edited, ordered most-recently-edited first, with a way to create or open one."
+      },
+      {
+        "id": "F07",
+        "name": "Rename a dashboard",
+        "role": "member",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Change a dashboard name.",
+        "preconditions": [
+          "Signed in.",
+          "At least one dashboard exists."
+        ],
+        "outcome": "Dashboard name updated and saved with new last-edited time; still renamed after a refresh.",
+        "description": "From the list or editor a member edits a dashboard name, and the website saves the new name automatically, updates the last-edited time and shows the renamed dashboard in place."
+      },
+      {
+        "id": "F08",
+        "name": "Duplicate a dashboard",
+        "role": "member",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Make a full copy of a dashboard including its widgets.",
+        "preconditions": [
+          "Signed in.",
+          "At least one dashboard exists."
+        ],
+        "outcome": "Copy saved with all widgets and content; both original and copy are still there after a refresh.",
+        "description": "A member chooses to duplicate a dashboard, and the website creates a full copy including all widgets and their content named like Copy of the original, saves it and shows it in the list."
+      },
+      {
+        "id": "F09",
+        "name": "Delete a dashboard",
+        "role": "member",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Permanently remove a dashboard and its widgets.",
+        "preconditions": [
+          "Signed in.",
+          "At least one dashboard exists."
+        ],
+        "outcome": "Dashboard and its widgets removed; still gone after a refresh and list no longer shows it.",
+        "description": "A member chooses to delete a dashboard, confirms permanent deletion through the shared confirmation, and the website permanently removes the dashboard and its widgets and shows the updated list."
+      },
+      {
+        "id": "F10",
+        "name": "Add a widget to a dashboard",
+        "role": "member",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Add a new widget of a chosen type to the dashboard.",
+        "preconditions": [
+          "Signed in.",
+          "A dashboard is open in the editor."
+        ],
+        "outcome": "New widget saved with defaults and appended in order; still there after a refresh with updated last-edited time.",
+        "description": "Inside an open dashboard the member chooses a widget type among note, counter, checklist and link list, and the website appends a new widget with default title and medium size, saves it automatically and shows it in order."
+      },
+      {
+        "id": "F11",
+        "name": "Configure and use widget content",
+        "role": "member",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Fill in and use the content of my widgets.",
+        "preconditions": [
+          "Signed in.",
+          "A dashboard with at least one widget is open in the editor."
+        ],
+        "outcome": "Widget content saved automatically; still there after a refresh and dashboard shows updated last-edited time.",
+        "description": "In the editor the member works with widget content by type: typing note text, editing the counter label and using increase and decrease, adding, editing, ticking, unticking and removing checklist items, and adding, editing and removing link titles and addresses and opening links, with every change saved automatically and the last-edited time updated."
+      },
+      {
+        "id": "F12",
+        "name": "Manage widgets",
+        "role": "member",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Arrange, resize, rename and remove widgets.",
+        "preconditions": [
+          "Signed in.",
+          "A dashboard with at least one widget is open in the editor."
+        ],
+        "outcome": "Renames, order, sizes saved and removals gone; refresh still shows the same arrangement with updated last-edited time.",
+        "description": "In the editor the member renames a widget, moves it relative to other widgets, changes its size between small, medium and large, or removes it after confirmation, and the website saves each change automatically and updates the last-edited time."
+      },
+      {
+        "id": "F13",
+        "name": "Open a dashboard in the editor",
+        "role": "member",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Open one of my existing dashboards to view and edit its widgets.",
+        "preconditions": [
+          "Signed in.",
+          "At least one dashboard exists."
+        ],
+        "outcome": "The chosen dashboard is open in the editor showing its widgets; it is still open in the editor after a refresh.",
+        "description": "A signed-in member with at least one dashboard chooses a dashboard from their dashboard list, and the website opens that dashboard in the editor showing its name and widgets in their saved order, ready to add, configure and manage widgets."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Email",
+        "meaning": "The member's sign-in address for their private dashboards",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "sam@example.com"
+      },
+      {
+        "id": "FD02",
+        "label": "Password",
+        "meaning": "Secret that proves ownership of the account",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": 128,
+        "options": [],
+        "example": "tidy-morning-42"
+      },
+      {
+        "id": "FD03",
+        "label": "Dashboard name",
+        "meaning": "How the member refers to the dashboard in the list and editor",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "example": "Morning focus"
+      },
+      {
+        "id": "FD04",
+        "label": "Widget title",
+        "meaning": "Heading shown on the widget to say what it is for",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "example": "Water intake"
+      },
+      {
+        "id": "FD05",
+        "label": "Widget type",
+        "meaning": "What kind of content the widget holds",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "note",
+          "counter",
+          "checklist",
+          "link list"
+        ],
+        "example": "counter"
+      },
+      {
+        "id": "FD06",
+        "label": "Widget size",
+        "meaning": "How large the widget appears relative to other widgets",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "small",
+          "medium",
+          "large"
+        ],
+        "example": "medium"
+      },
+      {
+        "id": "FD07",
+        "label": "Note text",
+        "meaning": "Plain text kept in a note widget",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 5000,
+        "options": [],
+        "example": "Call the dentist on Tuesday about the checkup."
+      },
+      {
+        "id": "FD08",
+        "label": "Counter label",
+        "meaning": "What the counter number is counting",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "example": "Glasses of water"
+      },
+      {
+        "id": "FD09",
+        "label": "Checklist item text",
+        "meaning": "One task line inside a checklist widget",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 200,
+        "options": [],
+        "example": "Buy oat milk"
+      },
+      {
+        "id": "FD10",
+        "label": "Link title",
+        "meaning": "Readable name shown for a saved web address",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 150,
+        "options": [],
+        "example": "Favorite recipes"
+      },
+      {
+        "id": "FD11",
+        "label": "Link address",
+        "meaning": "Web address opened when the link is selected",
+        "type": "url",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "https://example.com/recipes"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Account credentials",
+        "fields": [
+          "FD01",
+          "FD02"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "SF01",
+        "name": "Confirm permanent deletion",
+        "steps": [
+          {
+            "id": "SF01.S01",
+            "kind": "user",
+            "userAction": "The member chooses to delete the item.",
+            "websiteResponse": "The website asks the member to confirm that deletion is permanent or to cancel.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "SF01.S02",
+            "kind": "user",
+            "userAction": "The member confirms permanent deletion.",
+            "websiteResponse": "The website records the confirmation to proceed with permanent deletion.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "SF01.A01",
+            "from": "SF01.S01",
+            "kind": "cancel",
+            "condition": "The member cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the content as it was.",
+            "resumesAt": ""
+          },
+          {
+            "id": "SF01.A02",
+            "from": "SF01.S02",
+            "kind": "failure",
+            "condition": "Deleting fails.",
+            "websiteResponse": "The website keeps the item and offers to retry.",
+            "resumesAt": "SF01.S02"
+          },
+          {
+            "id": "SF01.A03",
+            "from": "SF01.S02",
+            "kind": "notFound",
+            "condition": "The item is already gone.",
+            "websiteResponse": "The website shows that the item is already gone and shows the updated list.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A13",
+        "text": "Removing a widget asks for confirmation first and then deletes immediately with no trash or undo, reading A09's immediately as no restore after confirm.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A14",
+        "text": "Renaming, duplicating, resizing, repositioning and editing any widget content all count as dashboard changes that trigger autosave and update the dashboard last-edited time.",
+        "kind": "behavior",
+        "affects": []
+      }
+    ],
+    "questions": []
+  }
+}

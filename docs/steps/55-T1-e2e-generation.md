@@ -114,7 +114,7 @@ stage registered here runs generation only; step 56 runs the specs).
 
 ### 3. Tests
 
-`generate.test.ts` with a fake model and the golden project tracker: one
+`generate.test.ts` with a fake model and the golden freelancer workspace: one
 spec per flow; each transpiles; the invalid-alternative test exists for
 every flow with a form; `test.skip` appears only for `denied` without a
 second role.

@@ -69,7 +69,7 @@ export const flowsStage: StageDef = { name: 'flows', produces: ['flows'], run: r
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --to flows
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows
 ```
 
 ends with zero mandatory issues within 3 rounds, or prints a readable

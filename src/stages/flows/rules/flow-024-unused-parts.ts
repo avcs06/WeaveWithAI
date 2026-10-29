@@ -1,7 +1,7 @@
 /**
  * FLOW-024 · warning
  * Every catalog field, form and subflow is used by some step (a field through a form counts).
- * Pass: field FD03 in form FM01, FM01 used by F03.S02; subflow SF01 run by F05.S02
+ * Pass: field FD03 in form FM01, FM01 used by F03.S02; subflow STD01 run by F05.S02
  * Fail: a field FD06 no form or step asks for · a form no step uses · a subflow no step runs
  */
 import type { Issue } from '../../../core/issues';

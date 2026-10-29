@@ -396,6 +396,37 @@ Notes:
 
 ---
 
+### D2.8 Standard subflows (pick one)
+
+- [ ] **A. The model writes every subflow.** Each catalog invents its own
+      confirmation; the first drafts kept getting it wrong (FL6).
+- [x] **B. A registry of standard subflows every app has (user, 2026-10-29).**
+      `src/config/subflows.ts` holds subflows written once and injected into
+      every catalog before validation, so the model refers to them by id and
+      never rewrites them. They keep their own ids, STD01, STD02, ..., so
+      the model's SF01, SF02, ... never collide with them (user,
+      2026-10-29). The registry is tagged by source so design-system
+      subflows can join it under the prefix DS. The first entry, STD01
+      Confirm deletion, is one asking step with two alternatives: confirm
+      deletes the record, cancel leaves it. The deleting step of a flow runs
+      STD01 and carries the delete effect; there is no separate deleting
+      step after it (user, 2026-10-29).
+
+Notes: B on the user's instruction, 2026-10-29. Conventions: the step that
+runs a subflow says in its userAction what triggers it and carries the
+effects the subflow applies to this flow's records; the subflow's steps give
+the website's response; an alternative inside the subflow with `resumesAt: ""` hands back
+to the calling flow, whose own confirm or cancel alternatives from that step
+say what the website shows next, only when it needs to. Without them the
+flow continues after confirm and ends after cancel, denied or notFound.
+FLOW-013 checks the deleting step: a confirm or cancel path of its own, or
+a subflow that has one, and names STD01 when it fails; FLOW-004 lets a
+subflow step carry its trigger and effects. The prompt text describes no standard subflow:
+each registry entry carries a `use` line that goes to the model with its id
+and name, and the validators enforce usage (user, 2026-10-29).
+
+---
+
 ## 3. Design agent
 
 ### D3.1 Component policy (pick one)

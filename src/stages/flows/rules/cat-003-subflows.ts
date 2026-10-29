@@ -1,12 +1,12 @@
 /**
  * CAT-003 · mandatory
- * Subflows are SF01, SF02, ..., unique, named, with at least one step; a subflow is shared, so it never belongs to one role's wording.
+ * Subflows are SF01, SF02, ... (or a standard subflow's registry id), unique, named, with at least one step; a subflow is shared, so it never belongs to one role's wording.
  * Pass: { id: 'SF01', name: 'Confirm a deletion', steps: [{ id: 'SF01.S01', ... }] }
- * Fail: { id: 'S1' } · { id: 'SF01', steps: [] } · two subflows with id 'SF01'
+ * Fail: { id: 'S1' } · { id: 'STD09' } not in the registry · { id: 'SF01', steps: [] } · two subflows with id 'SF01'
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule, duplicates } from '../../../core/rules';
-import { SUBFLOW_ID } from './flow-001-ids';
+import { isSubflowId } from './flow-001-ids';
 import type { CatalogInput } from './helpers';
 
 export const rule = defineRule<CatalogInput>(
@@ -16,10 +16,10 @@ export const rule = defineRule<CatalogInput>(
     const issues: Issue[] = [];
     catalog.subflows.forEach((subflow, i) => {
       const at = `subflows[${i}]`;
-      if (!SUBFLOW_ID.test(subflow.id))
+      if (!isSubflowId(subflow.id))
         issues.push(
           fail(
-            `Subflow id "${subflow.id}" is malformed; use SF01, SF02, ...`,
+            `Subflow id "${subflow.id}" is malformed; use SF01, SF02, ... (the standard subflows keep their own ids).`,
             at,
           ),
         );

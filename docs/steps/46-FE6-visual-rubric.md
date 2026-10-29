@@ -36,7 +36,7 @@ measure. Optional; first on the cut list.
 
 ## Done when
 
-`reports/rubric.json` exists for the project tracker with a score per
+`reports/rubric.json` exists for the freelancer workspace with a score per
 concern per route; `pnpm weave show <id>` prints the overall average.
 
 ## Watch out

@@ -1,0 +1,2510 @@
+{
+  "meta": {
+    "artifact": "flows",
+    "version": 3,
+    "hash": "a04a5f556dd67948d2e35bcafd16d940991f45b2786140da5ee76a6996c96c5e",
+    "inputs": {
+      "scope": {
+        "version": 1,
+        "hash": "ca2f704082bc89b98df78bf8a04e9c93632b20f6e1dc0f8bb3ac580ddc025ee9"
+      },
+      "flows-catalog": {
+        "version": 3,
+        "hash": "ab7bbb0d0bb5b76c79b05f9a9b2ba8d335d4ba3a2fce8d8268125597b2f550fa"
+      },
+      "flows-draft": {
+        "version": 3,
+        "hash": "a04a5f556dd67948d2e35bcafd16d940991f45b2786140da5ee76a6996c96c5e"
+      }
+    },
+    "stage": "flows",
+    "model": "muse-spark-1.3",
+    "rounds": 1,
+    "createdAt": "2026-10-29T13:08:26.144Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "Visit landing page",
+        "role": "freelancer",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what Studio Hub does and choose how to start.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F01.S01",
+            "kind": "user",
+            "userAction": "The visitor arrives at the landing page.",
+            "websiteResponse": "The website shows what Studio Hub is for the solo designer, how clients, projects, tasks and bookings work together, and how to sign in, create an account or open the public booking page.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F01.S02",
+            "kind": "user",
+            "userAction": "The visitor chooses to start sign-in, sign-up or open the public booking page.",
+            "websiteResponse": "The website starts the chosen entry and shows the sign-in screen, the sign-up screen or the public booking page.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [],
+        "outcome": "Nothing is stored; the visitor knows how to sign in, sign up or reach the booking page."
+      },
+      {
+        "id": "F02",
+        "name": "Sign up",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create the private workspace account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F02.S01",
+            "kind": "user",
+            "userAction": "The visitor chooses to sign up.",
+            "websiteResponse": "The website shows an empty sign-up screen asking for account email and account password.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F02.S02",
+            "kind": "user",
+            "userAction": "The visitor fills in the account email and password and submits.",
+            "websiteResponse": "The website creates the account, signs the freelancer in and shows the private home screen with the three starter session types ready.",
+            "fields": [
+              "FD01",
+              "FD02"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "create"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F02.A01",
+            "from": "F02.S02",
+            "kind": "invalid",
+            "condition": "The account email is missing or not an email, or the account password is shorter than 8 characters.",
+            "websiteResponse": "The website marks the fields, keeps what was typed and explains how to fix them.",
+            "resumesAt": "F02.S02"
+          },
+          {
+            "id": "F02.A02",
+            "from": "F02.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F02.S02"
+          },
+          {
+            "id": "F02.A03",
+            "from": "F02.S02",
+            "kind": "conflict",
+            "condition": "The account email is already registered.",
+            "websiteResponse": "The website says an account with that email already exists and offers to sign in instead.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F02.A04",
+            "from": "F02.S01",
+            "kind": "cancel",
+            "condition": "The visitor cancels.",
+            "websiteResponse": "Nothing is saved; the website shows the landing page as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Account is created and the freelancer is signed in; a refresh still shows the private home."
+      },
+      {
+        "id": "F03",
+        "name": "Sign in",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Access the private workspace.",
+        "preconditions": [
+          "Has an account.",
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F03.S01",
+            "kind": "user",
+            "userAction": "The freelancer chooses to sign in.",
+            "websiteResponse": "The website shows an empty sign-in screen asking for account email and account password.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F03.S02",
+            "kind": "user",
+            "userAction": "The freelancer enters the account email and password and submits.",
+            "websiteResponse": "The website signs the freelancer in and shows the private home screen with today's sessions, follow-ups and overdue tasks.",
+            "fields": [
+              "FD01",
+              "FD02"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F03.A01",
+            "from": "F03.S02",
+            "kind": "invalid",
+            "condition": "The account email is missing or not an email, or the account password is missing.",
+            "websiteResponse": "The website marks the fields, keeps what was typed and explains how to fix them.",
+            "resumesAt": "F03.S02"
+          },
+          {
+            "id": "F03.A02",
+            "from": "F03.S02",
+            "kind": "failure",
+            "condition": "Signing in fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F03.S02"
+          },
+          {
+            "id": "F03.A03",
+            "from": "F03.S02",
+            "kind": "denied",
+            "condition": "The email and password do not match an account.",
+            "websiteResponse": "The website says the details were not recognised, keeps the email and offers to retry or sign up.",
+            "resumesAt": "F03.S02"
+          },
+          {
+            "id": "F03.A04",
+            "from": "F03.S01",
+            "kind": "cancel",
+            "condition": "The visitor cancels.",
+            "websiteResponse": "Nothing changes; the website shows the landing page as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Freelancer is signed in and sees the home screen; a refresh stays signed in."
+      },
+      {
+        "id": "F04",
+        "name": "Sign out",
+        "role": "freelancer",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "Leave the workspace securely.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F04.S01",
+            "kind": "user",
+            "userAction": "The freelancer chooses to sign out.",
+            "websiteResponse": "The website asks to confirm leaving the workspace.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F04.S02",
+            "kind": "user",
+            "userAction": "The freelancer confirms leaving.",
+            "websiteResponse": "The website ends the session and shows the public landing page with private data hidden.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F04.A01",
+            "from": "F04.S01",
+            "kind": "cancel",
+            "condition": "The freelancer cancels.",
+            "websiteResponse": "Nothing changes; the website shows the home screen as it was and the freelancer stays signed in.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F04.A02",
+            "from": "F04.S02",
+            "kind": "failure",
+            "condition": "Signing out fails.",
+            "websiteResponse": "The website keeps the freelancer signed in and offers to retry.",
+            "resumesAt": "F04.S02"
+          }
+        ],
+        "outcome": "Freelancer is signed out; a refresh shows the landing page and private data stays hidden until sign-in."
+      },
+      {
+        "id": "F05",
+        "name": "See home for today",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Start the day from today's sessions, this week's follow-ups and overdue tasks.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F05.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens home.",
+            "websiteResponse": "The website shows today's sessions with times and bookings, follow-ups due this week with overdue first, and overdue tasks highlighted.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "list"
+              },
+              {
+                "noun": "Booking",
+                "change": "list"
+              },
+              {
+                "noun": "Client",
+                "change": "list"
+              },
+              {
+                "noun": "Task",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F05.S02",
+            "kind": "user",
+            "userAction": "The freelancer chooses a session, client or task to open.",
+            "websiteResponse": "The website opens the chosen session, client or task with its details.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "read"
+              },
+              {
+                "noun": "Client",
+                "change": "read"
+              },
+              {
+                "noun": "Task",
+                "change": "read"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F05.A01",
+            "from": "F05.S01",
+            "kind": "empty",
+            "condition": "There are no sessions today, no follow-ups due this week and no overdue tasks.",
+            "websiteResponse": "The website shows each list as empty with guidance to add clients, projects and tasks and to set availability so sessions can be booked.",
+            "resumesAt": "F05.S01"
+          },
+          {
+            "id": "F05.A02",
+            "from": "F05.S02",
+            "kind": "notFound",
+            "condition": "The chosen session, client or task is no longer there.",
+            "websiteResponse": "The website says it is no longer available and shows the home lists as they are now.",
+            "resumesAt": "F05.S01"
+          }
+        ],
+        "outcome": "Nothing is changed; a refresh still shows the same three lists for today."
+      },
+      {
+        "id": "F06",
+        "name": "Browse clients",
+        "role": "freelancer",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "See all clients with follow-up urgency, overdue first.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F06.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens the clients list.",
+            "websiteResponse": "The website shows every client with status and next follow-up date ordered with overdue follow-ups first.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F06.S02",
+            "kind": "user",
+            "userAction": "The freelancer opens a client.",
+            "websiteResponse": "The website shows the client details with its notes in date order, its projects with open task counts, and its bookings.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "read"
+              },
+              {
+                "noun": "Note",
+                "change": "list"
+              },
+              {
+                "noun": "Project",
+                "change": "list"
+              },
+              {
+                "noun": "Booking",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F06.A01",
+            "from": "F06.S01",
+            "kind": "empty",
+            "condition": "There are no clients yet.",
+            "websiteResponse": "The website says no clients have been added yet and offers to add the first client.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F06.A02",
+            "from": "F06.S02",
+            "kind": "empty",
+            "condition": "The client has no notes, projects or bookings yet.",
+            "websiteResponse": "The website shows the client details with empty notes, projects and bookings and offers to add a note or a project.",
+            "resumesAt": "F06.S02"
+          },
+          {
+            "id": "F06.A03",
+            "from": "F06.S02",
+            "kind": "notFound",
+            "condition": "The client is no longer there.",
+            "websiteResponse": "The website says the client is no longer there and shows the updated clients list.",
+            "resumesAt": "F06.S01"
+          }
+        ],
+        "outcome": "Nothing is changed; a refresh shows the same ordered client list."
+      },
+      {
+        "id": "F07",
+        "name": "Add a client",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Add a new client to track.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F07.S01",
+            "kind": "user",
+            "userAction": "The freelancer chooses to add a client.",
+            "websiteResponse": "The website shows an empty client form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F07.S02",
+            "kind": "user",
+            "userAction": "The freelancer fills in the client and saves it.",
+            "websiteResponse": "The website saves the client and shows it in the clients list ready for notes and projects.",
+            "fields": [],
+            "form": "FM01",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "create"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F07.A01",
+            "from": "F07.S02",
+            "kind": "invalid",
+            "condition": "A required value is missing, the email is not an email, or the profile is too long.",
+            "websiteResponse": "The website marks the fields, keeps what was typed and explains how to fix them.",
+            "resumesAt": "F07.S02"
+          },
+          {
+            "id": "F07.A02",
+            "from": "F07.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F07.S02"
+          },
+          {
+            "id": "F07.A03",
+            "from": "F07.S02",
+            "kind": "conflict",
+            "condition": "Another client already uses that email.",
+            "websiteResponse": "The website marks the client email, keeps what was typed and explains it must be unique.",
+            "resumesAt": "F07.S02"
+          },
+          {
+            "id": "F07.A04",
+            "from": "F07.S01",
+            "kind": "cancel",
+            "condition": "The freelancer cancels.",
+            "websiteResponse": "Nothing is saved; the website shows the clients list as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "New client is saved with its status and empty notes and projects; a refresh still lists it."
+      },
+      {
+        "id": "F08",
+        "name": "Edit and delete a client",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep client details correct and remove clients no longer needed.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "steps": [
+          {
+            "id": "F08.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a client.",
+            "websiteResponse": "The website shows the client details with current values in the client form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F08.S02",
+            "kind": "user",
+            "userAction": "The freelancer edits the client details and saves them.",
+            "websiteResponse": "The website saves the changes and shows the updated client and clients list.",
+            "fields": [],
+            "form": "FM01",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F08.S03",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F08.S04",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website has deleted the client with its projects, tasks, notes and bookings and shows the updated clients list.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "delete"
+              },
+              {
+                "noun": "Project",
+                "change": "delete"
+              },
+              {
+                "noun": "Task",
+                "change": "delete"
+              },
+              {
+                "noun": "Note",
+                "change": "delete"
+              },
+              {
+                "noun": "Booking",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F08.A01",
+            "from": "F08.S02",
+            "kind": "invalid",
+            "condition": "A required value is missing, the email is not an email, or the profile is too long.",
+            "websiteResponse": "The website marks the fields, keeps what was typed and explains how to fix them.",
+            "resumesAt": "F08.S02"
+          },
+          {
+            "id": "F08.A02",
+            "from": "F08.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F08.S02"
+          },
+          {
+            "id": "F08.A03",
+            "from": "F08.S02",
+            "kind": "conflict",
+            "condition": "Another client already uses that email.",
+            "websiteResponse": "The website marks the client email, keeps what was typed and explains it must be unique.",
+            "resumesAt": "F08.S02"
+          },
+          {
+            "id": "F08.A04",
+            "from": "F08.S01",
+            "kind": "notFound",
+            "condition": "The client is already gone.",
+            "websiteResponse": "The website says the client is already deleted and shows the updated clients list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F08.A05",
+            "from": "F08.S02",
+            "kind": "notFound",
+            "condition": "The client is already gone when saving.",
+            "websiteResponse": "The website says the client is already deleted and shows the updated clients list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F08.A06",
+            "from": "F08.S03",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the client as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Edits are saved or the client with its projects, tasks, notes and bookings is removed; a refresh shows the updated list."
+      },
+      {
+        "id": "F09",
+        "name": "Add notes and handle follow-ups",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Record dated notes and stay on top of follow-ups.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "steps": [
+          {
+            "id": "F09.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a client to see its notes and follow-up state.",
+            "websiteResponse": "The website shows the client details with its notes in date order, each with its follow-up date, and the client's next follow-up date with options to mark done or push a week.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "read"
+              },
+              {
+                "noun": "Note",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F09.S02",
+            "kind": "user",
+            "userAction": "The freelancer chooses to add a note.",
+            "websiteResponse": "The website shows an empty note form with today's date filled in.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F09.S03",
+            "kind": "user",
+            "userAction": "The freelancer fills in the note text, note date and optional follow-up date and saves it.",
+            "websiteResponse": "The website saves the note, updates the client's next follow-up date from the follow-up date and shows the updated notes and follow-up state.",
+            "fields": [
+              "FD08",
+              "FD09",
+              "FD10"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Note",
+                "change": "create"
+              },
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F09.S04",
+            "kind": "user",
+            "userAction": "The freelancer edits a note's text, note date or follow-up date and saves it.",
+            "websiteResponse": "The website saves the changes, updates the client's next follow-up date and shows the updated notes.",
+            "fields": [
+              "FD08",
+              "FD09",
+              "FD10"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Note",
+                "change": "update"
+              },
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F09.S05",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F09.S06",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website shows the notes without the deleted note and the updated next follow-up date.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Note",
+                "change": "delete"
+              },
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F09.S07",
+            "kind": "user",
+            "userAction": "The freelancer marks a due follow-up done with one click.",
+            "websiteResponse": "The website clears the client's next follow-up date and shows the follow-up as done.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F09.S08",
+            "kind": "user",
+            "userAction": "The freelancer pushes a due follow-up a week with one click.",
+            "websiteResponse": "The website adds 7 days to the client's next follow-up date and shows the new date.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F09.A01",
+            "from": "F09.S01",
+            "kind": "empty",
+            "condition": "No notes exist yet for the client.",
+            "websiteResponse": "The website shows that there are no notes yet and offers to add the first note.",
+            "resumesAt": "F09.S02"
+          },
+          {
+            "id": "F09.A02",
+            "from": "F09.S02",
+            "kind": "cancel",
+            "condition": "The freelancer cancels adding the note.",
+            "websiteResponse": "Nothing is saved; the website shows the notes as they were.",
+            "resumesAt": "F09.S01"
+          },
+          {
+            "id": "F09.A03",
+            "from": "F09.S03",
+            "kind": "invalid",
+            "condition": "Note text is empty or dates are not valid.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F09.S03"
+          },
+          {
+            "id": "F09.A04",
+            "from": "F09.S03",
+            "kind": "failure",
+            "condition": "Saving the note fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F09.S03"
+          },
+          {
+            "id": "F09.A05",
+            "from": "F09.S04",
+            "kind": "invalid",
+            "condition": "Edited text is empty or dates are not valid.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F09.S04"
+          },
+          {
+            "id": "F09.A06",
+            "from": "F09.S04",
+            "kind": "failure",
+            "condition": "Saving the edited note fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F09.S04"
+          },
+          {
+            "id": "F09.A07",
+            "from": "F09.S04",
+            "kind": "notFound",
+            "condition": "The note is already gone.",
+            "websiteResponse": "The website says the note is already deleted and shows the updated notes.",
+            "resumesAt": "F09.S01"
+          },
+          {
+            "id": "F09.A08",
+            "from": "F09.S07",
+            "kind": "failure",
+            "condition": "Marking the follow-up done fails.",
+            "websiteResponse": "The website keeps the follow-up date and offers to retry.",
+            "resumesAt": "F09.S07"
+          },
+          {
+            "id": "F09.A09",
+            "from": "F09.S08",
+            "kind": "failure",
+            "condition": "Pushing the follow-up a week fails.",
+            "websiteResponse": "The website keeps the follow-up date and offers to retry.",
+            "resumesAt": "F09.S08"
+          },
+          {
+            "id": "F09.A10",
+            "from": "F09.S05",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the notes as they were.",
+            "resumesAt": "F09.S01"
+          }
+        ],
+        "outcome": "Notes are saved, edited or deleted and the client's next follow-up date is updated or cleared; a refresh shows the same notes and follow-up state."
+      },
+      {
+        "id": "F10",
+        "name": "Add a project",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Start a project for a client.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "steps": [
+          {
+            "id": "F10.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a client to see its projects with open task counts.",
+            "websiteResponse": "The website shows the client with its projects, each with how many tasks are still open.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Client",
+                "change": "read"
+              },
+              {
+                "noun": "Project",
+                "change": "list"
+              },
+              {
+                "noun": "Task",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F10.S02",
+            "kind": "user",
+            "userAction": "The freelancer chooses to add a project.",
+            "websiteResponse": "The website shows an empty project form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F10.S03",
+            "kind": "user",
+            "userAction": "The freelancer fills in the project name, description and optional due date and saves it.",
+            "websiteResponse": "The website saves the project under the client and shows it with zero open tasks.",
+            "fields": [],
+            "form": "FM02",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Project",
+                "change": "create"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F10.A01",
+            "from": "F10.S01",
+            "kind": "empty",
+            "condition": "The client has no projects yet.",
+            "websiteResponse": "The website shows that there are no projects yet and offers to add the first project.",
+            "resumesAt": "F10.S02"
+          },
+          {
+            "id": "F10.A02",
+            "from": "F10.S02",
+            "kind": "cancel",
+            "condition": "The freelancer cancels adding the project.",
+            "websiteResponse": "Nothing is saved; the website shows the projects as they were.",
+            "resumesAt": "F10.S01"
+          },
+          {
+            "id": "F10.A03",
+            "from": "F10.S03",
+            "kind": "invalid",
+            "condition": "Required project fields are empty or too long.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F10.S03"
+          },
+          {
+            "id": "F10.A04",
+            "from": "F10.S03",
+            "kind": "failure",
+            "condition": "Saving the project fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F10.S03"
+          }
+        ],
+        "outcome": "Project is saved under its client; a refresh still shows it with its open task count."
+      },
+      {
+        "id": "F11",
+        "name": "Edit and delete a project",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep projects correct and remove finished ones.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "steps": [
+          {
+            "id": "F11.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a project to see its details and tasks.",
+            "websiteResponse": "The website shows the project name, description, due date and its tasks with the open task count.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Project",
+                "change": "read"
+              },
+              {
+                "noun": "Task",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F11.S02",
+            "kind": "user",
+            "userAction": "The freelancer edits the project name, description or due date and saves it.",
+            "websiteResponse": "The website saves the changes and shows the updated project.",
+            "fields": [],
+            "form": "FM02",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Project",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F11.S03",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F11.S04",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website shows the projects list without the deleted project and its tasks.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Project",
+                "change": "delete"
+              },
+              {
+                "noun": "Task",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F11.A01",
+            "from": "F11.S01",
+            "kind": "empty",
+            "condition": "The project has no tasks yet.",
+            "websiteResponse": "The website shows that there are no tasks yet and offers to add tasks or edit the project.",
+            "resumesAt": "F11.S02"
+          },
+          {
+            "id": "F11.A02",
+            "from": "F11.S02",
+            "kind": "invalid",
+            "condition": "Edited fields are empty or too long.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F11.S02"
+          },
+          {
+            "id": "F11.A03",
+            "from": "F11.S02",
+            "kind": "failure",
+            "condition": "Saving the project edits fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F11.S02"
+          },
+          {
+            "id": "F11.A04",
+            "from": "F11.S01",
+            "kind": "notFound",
+            "condition": "The project is already gone.",
+            "websiteResponse": "The website says the project no longer exists and shows the projects list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A05",
+            "from": "F11.S02",
+            "kind": "notFound",
+            "condition": "The project is already gone when saving edits.",
+            "websiteResponse": "The website says the project no longer exists and shows the projects list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A06",
+            "from": "F11.S03",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the project as it was.",
+            "resumesAt": "F11.S01"
+          }
+        ],
+        "outcome": "Edits are saved or the project with its tasks is deleted; a refresh shows the updated project list."
+      },
+      {
+        "id": "F12",
+        "name": "Work with tasks",
+        "role": "freelancer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Track and complete project tasks quickly.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "steps": [
+          {
+            "id": "F12.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a project to see its tasks.",
+            "websiteResponse": "The website shows the project with its tasks, open task count, and overdue tasks standing out with status, priority and due date.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Project",
+                "change": "read"
+              },
+              {
+                "noun": "Task",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F12.S02",
+            "kind": "user",
+            "userAction": "The freelancer searches by title and filters by status and priority.",
+            "websiteResponse": "The website shows only the tasks matching the search and filters, with overdue tasks standing out.",
+            "fields": [
+              "FD18",
+              "FD19",
+              "FD20"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F12.S03",
+            "kind": "user",
+            "userAction": "The freelancer chooses to add a task.",
+            "websiteResponse": "The website shows an empty task form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F12.S04",
+            "kind": "user",
+            "userAction": "The freelancer fills in the task title, status, priority and optional due date and saves it.",
+            "websiteResponse": "The website saves the task and shows it in the task list with the updated open count.",
+            "fields": [],
+            "form": "FM03",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "create"
+              }
+            ]
+          },
+          {
+            "id": "F12.S05",
+            "kind": "user",
+            "userAction": "The freelancer ticks a task done quickly.",
+            "websiteResponse": "The website marks the task Done, updates the open count and removes it from overdue.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F12.A01",
+            "from": "F12.S01",
+            "kind": "empty",
+            "condition": "The project has no tasks yet.",
+            "websiteResponse": "The website shows that there are no tasks yet and offers to add the first task.",
+            "resumesAt": "F12.S03"
+          },
+          {
+            "id": "F12.A02",
+            "from": "F12.S02",
+            "kind": "empty",
+            "condition": "No tasks match the search or filters.",
+            "websiteResponse": "The website shows that nothing matches and offers to clear the search or filters or add a task.",
+            "resumesAt": "F12.S02"
+          },
+          {
+            "id": "F12.A03",
+            "from": "F12.S03",
+            "kind": "cancel",
+            "condition": "The freelancer cancels adding the task.",
+            "websiteResponse": "Nothing is saved; the website shows the tasks as they were.",
+            "resumesAt": "F12.S01"
+          },
+          {
+            "id": "F12.A04",
+            "from": "F12.S04",
+            "kind": "invalid",
+            "condition": "Task title is empty or fields are not valid.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F12.S04"
+          },
+          {
+            "id": "F12.A05",
+            "from": "F12.S04",
+            "kind": "failure",
+            "condition": "Saving the task fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F12.S04"
+          },
+          {
+            "id": "F12.A06",
+            "from": "F12.S05",
+            "kind": "failure",
+            "condition": "Marking the task done fails.",
+            "websiteResponse": "The website keeps the task status and offers to retry.",
+            "resumesAt": "F12.S05"
+          },
+          {
+            "id": "F12.A07",
+            "from": "F12.S05",
+            "kind": "notFound",
+            "condition": "The task is already gone when ticking done.",
+            "websiteResponse": "The website says the task no longer exists and shows the updated task list.",
+            "resumesAt": "F12.S01"
+          }
+        ],
+        "outcome": "Tasks are added or marked Done and the list reflects current search and filters; a refresh shows the same tasks and counts."
+      },
+      {
+        "id": "F13",
+        "name": "Edit and delete a task",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Correct task details and remove unneeded tasks.",
+        "preconditions": [
+          "Signed in.",
+          "At least one task exists."
+        ],
+        "steps": [
+          {
+            "id": "F13.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens a task to see its details.",
+            "websiteResponse": "The website shows the task title, status, priority and due date.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F13.S02",
+            "kind": "user",
+            "userAction": "The freelancer edits the task title, status, priority or due date and saves it.",
+            "websiteResponse": "The website saves the changes and shows the updated task with the updated open count.",
+            "fields": [],
+            "form": "FM03",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F13.S03",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F13.S04",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website shows the task list without the deleted task and the updated open count.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Task",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F13.A01",
+            "from": "F13.S02",
+            "kind": "invalid",
+            "condition": "Edited fields are empty or not valid.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F13.S02"
+          },
+          {
+            "id": "F13.A02",
+            "from": "F13.S02",
+            "kind": "failure",
+            "condition": "Saving the task edits fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F13.S02"
+          },
+          {
+            "id": "F13.A03",
+            "from": "F13.S01",
+            "kind": "notFound",
+            "condition": "The task is already gone.",
+            "websiteResponse": "The website says the task no longer exists and shows the task list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F13.A04",
+            "from": "F13.S02",
+            "kind": "notFound",
+            "condition": "The task is already gone when saving edits.",
+            "websiteResponse": "The website says the task no longer exists and shows the task list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F13.A05",
+            "from": "F13.S04",
+            "kind": "empty",
+            "condition": "No tasks remain after deletion.",
+            "websiteResponse": "The website shows that there are no tasks left and offers to add a task.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F13.A06",
+            "from": "F13.S03",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the task as it was.",
+            "resumesAt": "F13.S01"
+          }
+        ],
+        "outcome": "Edits are saved or the task is removed; a refresh shows the updated task list and open counts."
+      },
+      {
+        "id": "F14",
+        "name": "Set weekly availability",
+        "role": "freelancer",
+        "category": "settings",
+        "authKind": "none",
+        "goal": "Define when visitors can book.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F14.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens availability settings.",
+            "websiteResponse": "The website shows the current weekly days with start to end time and how open slots for the next two weeks are derived from them.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Availability",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F14.S02",
+            "kind": "user",
+            "userAction": "The freelancer selects weekdays and start to end time and saves them.",
+            "websiteResponse": "The website saves the weekly window and regenerates open slots for the next two weeks for all session types, excluding past times.",
+            "fields": [
+              "FD21",
+              "FD22",
+              "FD23"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Availability",
+                "change": "update"
+              },
+              {
+                "noun": "Session",
+                "change": "create"
+              },
+              {
+                "noun": "Session",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F14.A01",
+            "from": "F14.S01",
+            "kind": "empty",
+            "condition": "No availability is set yet.",
+            "websiteResponse": "The website shows that no weekly availability is set yet and offers to set days and times.",
+            "resumesAt": "F14.S02"
+          },
+          {
+            "id": "F14.A02",
+            "from": "F14.S02",
+            "kind": "invalid",
+            "condition": "No days are selected or end time is not after start time.",
+            "websiteResponse": "The website marks the fields and keeps what was chosen.",
+            "resumesAt": "F14.S02"
+          },
+          {
+            "id": "F14.A03",
+            "from": "F14.S02",
+            "kind": "failure",
+            "condition": "Saving availability fails.",
+            "websiteResponse": "The website keeps the chosen days and times and offers to retry.",
+            "resumesAt": "F14.S02"
+          },
+          {
+            "id": "F14.A04",
+            "from": "F14.S02",
+            "kind": "cancel",
+            "condition": "The freelancer cancels without saving.",
+            "websiteResponse": "Nothing is saved; the website shows the availability as it was.",
+            "resumesAt": "F14.S01"
+          }
+        ],
+        "outcome": "Weekly availability is saved; a refresh shows the same days and times and booking slots reflect them."
+      },
+      {
+        "id": "F15",
+        "name": "Manage session types",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Define bookable session types with durations, displayed prices and seat limits.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F15.S01",
+            "kind": "user",
+            "userAction": "The freelancer views the session types.",
+            "websiteResponse": "The website shows the session types with name, duration, price shown as text only and maximum seats, starting with discovery, design review and workshop.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F15.S02",
+            "kind": "user",
+            "userAction": "The freelancer chooses to create a session type.",
+            "websiteResponse": "The website shows an empty session type form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F15.S03",
+            "kind": "user",
+            "userAction": "The freelancer fills in name, duration, displayed price and maximum seats and saves it.",
+            "websiteResponse": "The website saves the session type with its price shown as text only and shows it in the types list with no payment taken.",
+            "fields": [
+              "FD24",
+              "FD25",
+              "FD26",
+              "FD27"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "create"
+              }
+            ]
+          },
+          {
+            "id": "F15.S04",
+            "kind": "user",
+            "userAction": "The freelancer edits a session type name, duration, displayed price or maximum seats and saves it.",
+            "websiteResponse": "The website saves the changes and shows the updated session types with prices shown as text only.",
+            "fields": [
+              "FD24",
+              "FD25",
+              "FD26",
+              "FD27"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F15.S05",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F15.S06",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website shows the session types without the deleted type.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F15.A01",
+            "from": "F15.S01",
+            "kind": "empty",
+            "condition": "No session types exist.",
+            "websiteResponse": "The website shows that there are no session types yet and offers to create one.",
+            "resumesAt": "F15.S02"
+          },
+          {
+            "id": "F15.A02",
+            "from": "F15.S02",
+            "kind": "cancel",
+            "condition": "The freelancer cancels creating the session type.",
+            "websiteResponse": "Nothing is saved; the website shows the session types as they were.",
+            "resumesAt": "F15.S01"
+          },
+          {
+            "id": "F15.A03",
+            "from": "F15.S03",
+            "kind": "invalid",
+            "condition": "Required session type fields are empty or out of range.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F15.S03"
+          },
+          {
+            "id": "F15.A04",
+            "from": "F15.S03",
+            "kind": "failure",
+            "condition": "Saving the new session type fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F15.S03"
+          },
+          {
+            "id": "F15.A05",
+            "from": "F15.S04",
+            "kind": "invalid",
+            "condition": "Edited session type fields are empty or out of range.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F15.S04"
+          },
+          {
+            "id": "F15.A06",
+            "from": "F15.S04",
+            "kind": "failure",
+            "condition": "Saving the edited session type fails.",
+            "websiteResponse": "The website keeps the values and offers to retry.",
+            "resumesAt": "F15.S04"
+          },
+          {
+            "id": "F15.A07",
+            "from": "F15.S04",
+            "kind": "notFound",
+            "condition": "The session type is already gone when saving edits.",
+            "websiteResponse": "The website says the session type no longer exists and shows the updated types.",
+            "resumesAt": "F15.S01"
+          },
+          {
+            "id": "F15.A08",
+            "from": "F15.S05",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the session types as they were.",
+            "resumesAt": "F15.S01"
+          }
+        ],
+        "outcome": "Session types are saved; a refresh shows the same types and the booking page offers them with prices displayed only."
+      },
+      {
+        "id": "F16",
+        "name": "Manage upcoming sessions",
+        "role": "freelancer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "See upcoming sessions with bookings and free cancelled time.",
+        "preconditions": [
+          "Signed in.",
+          "Availability and at least one session type exist."
+        ],
+        "steps": [
+          {
+            "id": "F16.S01",
+            "kind": "user",
+            "userAction": "The freelancer opens upcoming sessions.",
+            "websiteResponse": "The website shows each upcoming slot with its session type, date, start and end time and bookings with seats booked versus maximum.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "list"
+              },
+              {
+                "noun": "Booking",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F16.S02",
+            "kind": "user",
+            "userAction": "The freelancer opens a session to see who booked.",
+            "websiteResponse": "The website shows the session details with the list of bookings by name and email and seats booked versus maximum.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "read"
+              },
+              {
+                "noun": "Booking",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F16.S03",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F16.S04",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website shows the upcoming sessions without the cancelled slot and its bookings.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "delete"
+              },
+              {
+                "noun": "Booking",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F16.A01",
+            "from": "F16.S01",
+            "kind": "empty",
+            "condition": "No upcoming sessions exist.",
+            "websiteResponse": "The website shows that there are no upcoming sessions and explains that slots appear from availability and session types.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F16.A02",
+            "from": "F16.S02",
+            "kind": "empty",
+            "condition": "The session has no bookings yet.",
+            "websiteResponse": "The website shows the session details with no bookings yet and seats available.",
+            "resumesAt": "F16.S02"
+          },
+          {
+            "id": "F16.A03",
+            "from": "F16.S02",
+            "kind": "notFound",
+            "condition": "The session is already gone when opening it.",
+            "websiteResponse": "The website says the session no longer exists and shows the upcoming sessions.",
+            "resumesAt": "F16.S01"
+          },
+          {
+            "id": "F16.A04",
+            "from": "F16.S04",
+            "kind": "empty",
+            "condition": "No sessions remain after cancellation.",
+            "websiteResponse": "The website shows that there are no upcoming sessions left.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F16.A05",
+            "from": "F16.S03",
+            "kind": "cancel",
+            "condition": "The freelancer cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the session as it was.",
+            "resumesAt": "F16.S02"
+          }
+        ],
+        "outcome": "Cancelled slots with their bookings are removed; remaining sessions are still listed after a refresh."
+      },
+      {
+        "id": "F17",
+        "name": "Book a session as visitor",
+        "role": "booker",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Book an open slot without an account.",
+        "preconditions": [
+          "Not signed in.",
+          "Availability and at least one session type exist."
+        ],
+        "steps": [
+          {
+            "id": "F17.S01",
+            "kind": "user",
+            "userAction": "The booker opens the public booking page.",
+            "websiteResponse": "The website shows the session types with duration, displayed price and maximum seats.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "SessionType",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F17.S02",
+            "kind": "user",
+            "userAction": "The booker picks a session type.",
+            "websiteResponse": "The website shows open slots for the next two weeks for that type with dates and times, marking full slots as full.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "list"
+              },
+              {
+                "noun": "SessionType",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F17.S03",
+            "kind": "user",
+            "userAction": "The booker chooses an open slot.",
+            "websiteResponse": "The website shows the chosen slot summary and an empty booking form asking for name and email.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Session",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F17.S04",
+            "kind": "user",
+            "userAction": "The booker fills in name and email and confirms the booking.",
+            "websiteResponse": "The website saves the booking under the matched client or a new Lead client, updates seats to close full slots, and shows a confirmation with the booking details and a cancellation link on screen; no email is sent.",
+            "fields": [
+              "FD28",
+              "FD29"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Booking",
+                "change": "create"
+              },
+              {
+                "noun": "Client",
+                "change": "read"
+              },
+              {
+                "noun": "Client",
+                "change": "create"
+              },
+              {
+                "noun": "Session",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F17.A01",
+            "from": "F17.S01",
+            "kind": "empty",
+            "condition": "No session types are available.",
+            "websiteResponse": "The website says no sessions are offered right now and suggests checking back later.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F17.A02",
+            "from": "F17.S02",
+            "kind": "empty",
+            "condition": "There are no open slots for the chosen type in the next two weeks.",
+            "websiteResponse": "The website says no open slots are available for that type and suggests picking another session type.",
+            "resumesAt": "F17.S01"
+          },
+          {
+            "id": "F17.A03",
+            "from": "F17.S04",
+            "kind": "invalid",
+            "condition": "The name is empty or the email is missing or not an email.",
+            "websiteResponse": "The website marks the fields and keeps what was typed.",
+            "resumesAt": "F17.S04"
+          },
+          {
+            "id": "F17.A04",
+            "from": "F17.S04",
+            "kind": "failure",
+            "condition": "Saving the booking fails.",
+            "websiteResponse": "The website keeps the entered values and offers to retry.",
+            "resumesAt": "F17.S04"
+          },
+          {
+            "id": "F17.A05",
+            "from": "F17.S04",
+            "kind": "conflict",
+            "condition": "The slot became full before booking completed.",
+            "websiteResponse": "The website says the slot just became full and shows the other open slots.",
+            "resumesAt": "F17.S02"
+          },
+          {
+            "id": "F17.A06",
+            "from": "F17.S04",
+            "kind": "notFound",
+            "condition": "The chosen slot was cancelled and no longer exists.",
+            "websiteResponse": "The website says the slot is no longer available and shows the remaining open slots.",
+            "resumesAt": "F17.S02"
+          }
+        ],
+        "outcome": "Booking is saved under the matched or new Lead client and seat counts update with full slots closed; the confirmation with cancellation link is still available via the link."
+      },
+      {
+        "id": "F18",
+        "name": "Cancel booking via link",
+        "role": "booker",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Cancel a booking without signing in.",
+        "preconditions": [
+          "Not signed in.",
+          "Has a booking cancellation link."
+        ],
+        "steps": [
+          {
+            "id": "F18.S01",
+            "kind": "user",
+            "userAction": "The booker opens the cancellation link.",
+            "websiteResponse": "The website shows the booking with its session type, date and times without requiring sign-in.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Booking",
+                "change": "read"
+              },
+              {
+                "noun": "Session",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F18.S02",
+            "kind": "user",
+            "userAction": "",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "SF01",
+            "effects": []
+          },
+          {
+            "id": "F18.S03",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website removes the booking, frees one seat while keeping the session for others, and shows the booking as cancelled.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Booking",
+                "change": "delete"
+              },
+              {
+                "noun": "Session",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F18.A01",
+            "from": "F18.S01",
+            "kind": "notFound",
+            "condition": "The link is invalid or the booking is already gone.",
+            "websiteResponse": "The website says the booking cannot be found and suggests contacting the freelancer.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F18.A02",
+            "from": "F18.S01",
+            "kind": "other",
+            "condition": "The booking is already cancelled.",
+            "websiteResponse": "The website shows the booking as already cancelled with its session details; no further action is needed.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F18.A03",
+            "from": "F18.S03",
+            "kind": "failure",
+            "condition": "Cancelling the booking fails.",
+            "websiteResponse": "The website keeps the booking and offers to retry.",
+            "resumesAt": "F18.S03"
+          },
+          {
+            "id": "F18.A04",
+            "from": "F18.S02",
+            "kind": "cancel",
+            "condition": "The booker backs out before confirming.",
+            "websiteResponse": "Nothing is cancelled; the website shows the booking as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Booking is removed and its seat is freed while the session stays for others; a refresh shows the booking as cancelled."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Account email",
+        "meaning": "Email the freelancer uses to sign up and sign in",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "freelancer@example.com"
+      },
+      {
+        "id": "FD02",
+        "label": "Account password",
+        "meaning": "Secret that protects the private workspace",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": 128,
+        "options": [],
+        "example": "CalmStudio2026!"
+      },
+      {
+        "id": "FD03",
+        "label": "Client name",
+        "meaning": "Who the client is",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 100,
+        "options": [],
+        "example": "Aarav Mehta"
+      },
+      {
+        "id": "FD04",
+        "label": "Client email",
+        "meaning": "Contact email used for matching bookings to this client",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "aarav@brightkart.in"
+      },
+      {
+        "id": "FD05",
+        "label": "Client company",
+        "meaning": "Company the client works for, if any",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "example": "Brightkart"
+      },
+      {
+        "id": "FD06",
+        "label": "Client profile",
+        "meaning": "What they do, how we met and what they pay",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "example": "Runs Brightkart D2C store; met at design meetup; pays 60k per project."
+      },
+      {
+        "id": "FD07",
+        "label": "Client status",
+        "meaning": "Where the client is in the pipeline",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Lead",
+          "Active",
+          "Past"
+        ],
+        "example": "Lead"
+      },
+      {
+        "id": "FD08",
+        "label": "Note text",
+        "meaning": "What was discussed or observed with the client",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 2000,
+        "options": [],
+        "example": "Discovery call: wants checkout redesign, worried about drop-off."
+      },
+      {
+        "id": "FD09",
+        "label": "Note date",
+        "meaning": "Day the note refers to, defaults to today",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-10-20"
+      },
+      {
+        "id": "FD10",
+        "label": "Follow-up date",
+        "meaning": "Day to follow up with the client; sets the client's next follow-up",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-11-05"
+      },
+      {
+        "id": "FD11",
+        "label": "Project name",
+        "meaning": "What the project is called",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Checkout redesign"
+      },
+      {
+        "id": "FD12",
+        "label": "Project description",
+        "meaning": "Short summary of the project scope",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "example": "Redesign Brightkart checkout to lift conversion."
+      },
+      {
+        "id": "FD13",
+        "label": "Project due date",
+        "meaning": "Day the project should be finished, if any",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-12-15"
+      },
+      {
+        "id": "FD14",
+        "label": "Task title",
+        "meaning": "What needs to be done",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 200,
+        "options": [],
+        "example": "Draft checkout wireframes"
+      },
+      {
+        "id": "FD15",
+        "label": "Task status",
+        "meaning": "Where the task is in its workflow",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "example": "To do"
+      },
+      {
+        "id": "FD16",
+        "label": "Task priority",
+        "meaning": "How urgent the task is",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "example": "High"
+      },
+      {
+        "id": "FD17",
+        "label": "Task due date",
+        "meaning": "Day the task should be done, if any; past dates show as overdue",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "2026-11-10"
+      },
+      {
+        "id": "FD18",
+        "label": "Task search query",
+        "meaning": "Words to find tasks by title",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 200,
+        "options": [],
+        "example": "wireframes"
+      },
+      {
+        "id": "FD19",
+        "label": "Task status filter",
+        "meaning": "Show only tasks with this status, or all tasks",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "example": "In progress"
+      },
+      {
+        "id": "FD20",
+        "label": "Task priority filter",
+        "meaning": "Show only tasks with this priority, or all priorities",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "example": "High"
+      },
+      {
+        "id": "FD21",
+        "label": "Availability days",
+        "meaning": "Weekdays the freelancer can be booked",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "example": "Monday, Tuesday"
+      },
+      {
+        "id": "FD22",
+        "label": "Availability start time",
+        "meaning": "Time from which bookings can start on selected days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "10:00"
+      },
+      {
+        "id": "FD23",
+        "label": "Availability end time",
+        "meaning": "Time after which no new slot starts on selected days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "example": "16:00"
+      },
+      {
+        "id": "FD24",
+        "label": "Session type name",
+        "meaning": "Name visitors see when picking what to book",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Discovery call"
+      },
+      {
+        "id": "FD25",
+        "label": "Session type duration in minutes",
+        "meaning": "How long one slot of this type lasts",
+        "type": "integer",
+        "required": true,
+        "min": 15,
+        "max": 480,
+        "options": [],
+        "example": "30"
+      },
+      {
+        "id": "FD26",
+        "label": "Session type price display",
+        "meaning": "Price shown for information only in INR, 0 means free; nothing is charged",
+        "type": "money",
+        "required": true,
+        "min": 0,
+        "max": null,
+        "options": [],
+        "example": "4000"
+      },
+      {
+        "id": "FD27",
+        "label": "Session type maximum seats",
+        "meaning": "How many bookings a slot holds before it is full",
+        "type": "integer",
+        "required": true,
+        "min": 1,
+        "max": 20,
+        "options": [],
+        "example": "1"
+      },
+      {
+        "id": "FD28",
+        "label": "Booker name",
+        "meaning": "Name of the visitor booking a session",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 120,
+        "options": [],
+        "example": "Priya Nair"
+      },
+      {
+        "id": "FD29",
+        "label": "Booker email",
+        "meaning": "Email of the visitor booking; used to match to an existing client",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "example": "priya@craftloom.com"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Client form",
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Project form",
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13"
+        ]
+      },
+      {
+        "id": "FM03",
+        "name": "Task form",
+        "fields": [
+          "FD14",
+          "FD15",
+          "FD16",
+          "FD17"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "SF01",
+        "name": "Confirm deletion",
+        "steps": [
+          {
+            "id": "SF01.S01",
+            "kind": "user",
+            "userAction": "The user chooses to delete the record.",
+            "websiteResponse": "The website asks to confirm and explains what else will be removed with it.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "SF01.S02",
+            "kind": "user",
+            "userAction": "The user confirms the deletion.",
+            "websiteResponse": "The website deletes the record with everything it says will go with it and shows the updated list.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "SF01.A01",
+            "from": "SF01.S01",
+            "kind": "cancel",
+            "condition": "The user cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the list as it was.",
+            "resumesAt": ""
+          },
+          {
+            "id": "SF01.A02",
+            "from": "SF01.S02",
+            "kind": "failure",
+            "condition": "Deleting fails.",
+            "websiteResponse": "The website keeps the record and offers to retry.",
+            "resumesAt": "SF01.S02"
+          },
+          {
+            "id": "SF01.A03",
+            "from": "SF01.S02",
+            "kind": "notFound",
+            "condition": "The record is already gone.",
+            "websiteResponse": "The website says it is already deleted and shows the updated list.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A09",
+        "text": "Client emails are unique per freelancer case-insensitively; the client form rejects a duplicate email so booking auto-match stays reliable.",
+        "kind": "data",
+        "affects": [
+          "F07",
+          "F08",
+          "F17"
+        ]
+      },
+      {
+        "id": "A10",
+        "text": "Follow-ups due this week means follow-up date is today or within the next 7 calendar days, plus all overdue follow-ups not yet marked done.",
+        "kind": "behavior",
+        "affects": [
+          "F05",
+          "F09"
+        ]
+      },
+      {
+        "id": "A11",
+        "text": "A project's open task count counts tasks whose status is not Done (To do plus In progress).",
+        "kind": "behavior",
+        "affects": [
+          "F10",
+          "F11",
+          "F12",
+          "F13"
+        ]
+      },
+      {
+        "id": "A12",
+        "text": "Weekly availability is a single start-to-end time window applied to each selected weekday; open slots regenerate for the next 14 days after every availability or session-type change, excluding past times.",
+        "kind": "behavior",
+        "affects": [
+          "F14",
+          "F15",
+          "F16",
+          "F17"
+        ]
+      },
+      {
+        "id": "A13",
+        "text": "A new freelancer workspace starts with the three named session types already present: 30min discovery free 1 seat, 60min design review 4000 1 seat, 120min Figma workshop 2500 8 seats, all editable and deletable with prices shown as text only.",
+        "kind": "scope",
+        "affects": [
+          "F15"
+        ]
+      },
+      {
+        "id": "A14",
+        "text": "A booking that creates a new Lead client fills name and email from the booking, leaves company empty and stores a profile noting it was auto-created from booking.",
+        "kind": "data",
+        "affects": [
+          "F17"
+        ]
+      },
+      {
+        "id": "A15",
+        "text": "Each booking gets a unique per-booking cancellation link that shows booking details without sign-in; opening it after cancellation shows a cancelled state.",
+        "kind": "behavior",
+        "affects": [
+          "F17",
+          "F18"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q03",
+        "question": "Should a freelancer be prevented from creating two clients with the same email?",
+        "whyItMatters": "Changes booking auto-match reliability and whether bookings can land under the wrong client",
+        "defaultAnswer": "Yes, emails must be unique per freelancer case-insensitively and the form rejects duplicates",
+        "blocking": true
+      },
+      {
+        "id": "Q04",
+        "question": "In which time zone should availability windows and session times be shown to bookers?",
+        "whyItMatters": "Changes what slot times mean and whether bookings happen at the expected hour",
+        "defaultAnswer": "Show all times in the freelancer's local browser time zone for both freelancer and bookers",
+        "blocking": false
+      }
+    ]
+  }
+}

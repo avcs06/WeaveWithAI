@@ -51,14 +51,23 @@ export const scopeRules: readonly Rule<Scope>[] = [
   scope006,
 ];
 
-/** Rules that need no steps, run on the catalog as a flows document without them. */
+/** The catalog has headers and subflow steps: the header rules, and the within-flow rules for the subflows. */
 export const catalogFlowRules: readonly Rule<FlowInput>[] = [
   flow001,
+  flow002,
   flow003,
+  flow004,
   flow005,
   flow006,
+  flow007,
+  flow011,
+  flow012,
+  flow013,
   flow014,
   flow015,
+  flow016,
+  flow017,
+  flow018,
   flow019,
   flow020,
   flow021,
@@ -71,7 +80,7 @@ export const catalogRules: readonly Rule<CatalogInput>[] = [
   cat004,
 ];
 
-/** Rules that hold within a flow, for one expansion batch; the cross-flow rules wait for reconciliation. */
+/** Rules that hold within a flow, for one expansion batch; the cross-flow rules and the flow count wait for reconciliation. */
 export const batchRules: readonly Rule<FlowInput>[] = [
   flow001,
   flow002,
@@ -88,7 +97,6 @@ export const batchRules: readonly Rule<FlowInput>[] = [
   flow017,
   flow018,
   flow019,
-  flow020,
   flow021,
   flow022,
 ];
@@ -128,7 +136,7 @@ export const validateCatalog = (catalog: Catalog, scope: Scope): Issue[] => [
   ...runRules(catalogRules, { catalog, scope }),
 ];
 
-/** One batch seen with the whole catalog: its flows, the catalog's parts plus the ones it added. */
+/** One batch with the whole catalog behind it, so references resolve: its flows, the catalog's parts plus the ones it added. */
 export const batchAsFlows = (batch: FlowBatch, catalog: Catalog): Flows => ({
   flows: batch.flows,
   fields: [...catalog.fields, ...batch.newFields],
@@ -138,12 +146,26 @@ export const batchAsFlows = (batch: FlowBatch, catalog: Catalog): Flows => ({
   questions: catalog.questions,
 });
 
+/**
+ * A batch is checked with the whole catalog behind it, so references to its fields, forms and subflows resolve. The
+ * catalog's subflows were validated when the catalog was written, so issues inside them were the catalog's to fix
+ * and are left out here; a batch answers for its own flows and the parts it added.
+ */
 export const validateBatch = (
   batch: FlowBatch,
   catalog: Catalog,
   scope: Scope,
-): Issue[] =>
-  runRules(batchRules, { flows: batchAsFlows(batch, catalog), scope });
+): Issue[] => {
+  const catalogSubflows = new Set(
+    catalog.subflows.map((subflow) => subflow.id),
+  );
+  const inCatalogSubflow = (issue: Issue) =>
+    catalogSubflows.has(issue.at?.split('.')[0] ?? '');
+  return runRules(batchRules, {
+    flows: batchAsFlows(batch, catalog),
+    scope,
+  }).filter((issue) => !inCatalogSubflow(issue));
+};
 
 export const validateFlows = (flows: Flows, scope: Scope): Issue[] =>
   runRules(flowRules, { flows, scope });

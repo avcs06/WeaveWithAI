@@ -31,7 +31,7 @@ and report problems.
 
 ## Before you start
 
-- `runs/` is gitignored. Run IDs look like `20261028-2010-project-tracker`.
+- `runs/` is gitignored. Run IDs look like `20261028-2010-freelancer-workspace`.
 - Everything here is plain `node:fs` and `node:crypto`; no model, no network.
 
 ## Implementation details

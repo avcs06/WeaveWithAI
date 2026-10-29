@@ -61,7 +61,7 @@ scope in, `runSpecStage` with `Brief`, `writeArtifact(run, 'brief', …,
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --to design   # a brief with zero mandatory issues
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to design   # a brief with zero mandatory issues
 pnpm test -- src/stages/design
 ```
 

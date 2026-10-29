@@ -14,6 +14,7 @@ import {
   type SpecStageResult,
 } from '../../core/runSpecStage';
 import { writeJsonAtomic } from '../../core/utils';
+import { withStandardSubflows } from '../../config/subflows';
 import type { StageContext, StageDef } from '../index';
 import {
   assemble,
@@ -113,25 +114,25 @@ async function produce<T>(
     artifact: ArtifactName;
     inputs: ArtifactName[];
     render: (output: T) => string;
+    /** Applied to the output before it is written; the catalog adds the standard subflows this way. */
+    finish?: (output: T) => T;
   },
 ): Promise<SpecStageResult<T>> {
   const { run } = ctx;
   const answers = readAnswers(run);
   const result = await runSpecStage({ ...options, run, llm: ctx.llm });
+  const output = keep.finish ? keep.finish(result.output) : result.output;
   writeJsonAtomic(runPath(run, 'input', 'answers.json'), {
     ...answers,
     ...result.answers,
   });
-  writeArtifact(run, keep.artifact, result.output, {
+  writeArtifact(run, keep.artifact, output, {
     stage: options.stage,
     model: result.model,
     rounds: result.rounds,
     inputs: keep.inputs,
   });
-  writeFileSync(
-    runPath(run, `01-${keep.artifact}.md`),
-    keep.render(result.output),
-  );
+  writeFileSync(runPath(run, `01-${keep.artifact}.md`), keep.render(output));
   return result;
 }
 
@@ -166,7 +167,9 @@ async function runCatalog(ctx: StageContext): Promise<void> {
       schemaName: 'FlowCatalog',
       system: flowsSystemPrompt(answers),
       user: catalogUserMessage(idea, scope),
-      validate: (catalog) => validateCatalog(catalog, scope),
+      // The standard subflows are part of every catalog, so references to them resolve and they need no rewriting.
+      validate: (catalog) =>
+        validateCatalog(withStandardSubflows(catalog), scope),
       review: catalogReviewGuide(),
       ask: ctx.interactive ? terminalAsk(answers) : undefined,
       maxTokens: CATALOG_MAX_TOKENS,
@@ -176,6 +179,7 @@ async function runCatalog(ctx: StageContext): Promise<void> {
       artifact: 'flows-catalog',
       inputs: ['scope'],
       render: (catalog) => renderCatalog(catalog, scope),
+      finish: withStandardSubflows,
     },
   );
 }

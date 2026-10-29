@@ -4,12 +4,13 @@ Phase 4 · 40 min · Depends: C5 · Spec: specs/contracts.md "Done when"
 
 ## Goal
 
-A contract for every golden flow set, tuned on all but client notes. Gate G3.
+A contract for every golden flow set, tuned on all but the ecommerce store's
+first run. Gate G3.
 
 ## What this step does
 
 1. **Run the contract stage for every golden idea**, tuning the prompt only.
-2. **Appointment booking is the business-rule test**: it must raise a
+2. **The freelancer workspace is the business-rule test**: it must raise a
    question about slot availability rather than invent the rule.
 3. **The unseen idea runs once, untuned.** Save, fill the README table.
 
@@ -21,9 +22,10 @@ After this step gate G3 is met.
 2. Read every `03-contract.md`: entity per noun, fields that match the
    flows' fields, operations per step, sensible seeds. Tune `prompt.md`
    only.
-3. Appointment booking is the business-rule stress test: expect at least one
-   `needsRule` with a question (slot availability); don't tune it away.
-4. Client notes once, untuned, recorded.
+3. The freelancer workspace is the business-rule stress test: expect at
+   least one `needsRule` with a question (slot availability); don't tune it
+   away.
+4. Ecommerce store once, untuned, recorded; then tuned until it passes.
 5. `pnpm weave golden <runId> <idea> --stages contract`; README table.
 
 ## Done when

@@ -59,6 +59,6 @@ one member.
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --to contract   # zero mandatory issues
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to contract   # zero mandatory issues
 pnpm weave show <id>                                              # design and contract both done, same flows version in their envelopes
 ```

@@ -294,7 +294,37 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - Done when: `pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows`
     ends with zero mandatory issues or a readable `StageFailed` report.
 
+- [x] **FL10** Standard subflows (60 min) (done 2026-10-29). Depends: FL9. Decision D2.8 B
+  - Added 2026-10-29 by the user: the confirmation subflow does not change
+    per website, so it is written once and always available; the registry
+    takes design-system subflows later.
+  - `src/config/subflows.ts` (registry, `withStandardSubflows`, the prompt
+    list and the first free id); the catalog stage injects them before
+    validation and into the artifact; the catalog and expand messages and the
+    catalog reviewer name them; the renderer marks them; fixtures use SF01.
+  - Done when: `pnpm test`; `pnpm typecheck`.
+
 - [ ] **FL6** Reference ideas (60 min). Depends: FL5, FL9
+  - Tuning notes from the freelancer run (2026-10-29), to apply to the prompts
+    before the next runs: writers' first drafts skipped the "empty" path on
+    list steps and the "confirm or cancel" path on deletes (FLOW-012 and
+    FLOW-013 fired 10 times in round 1) and put the delete on the step itself
+    although the catalog had a "Confirm deletion" subflow; "top" and "right"
+    slipped into step text (FLOW-018). Validators stay as they are.
+  - Applied 2026-10-29: the expand message ends with a checklist (empty paths,
+    deletes through the confirmation subflow, invalid and failure paths, no
+    layout words); the catalog message asks for a confirmation subflow.
+  - Rule change on the user's decision, 2026-10-29: FLOW-013 accepts the
+    back-out on the deleting step or the step right before it, including
+    through a confirmation subflow. Reason: the ask-then-confirm pattern puts
+    the cancel on the asking step, and the old rule made every batch fight
+    the catalog's subflow (freelancer rerun: 4 rounds per batch, $2.43). Also
+    fixed: the catalog stage validates its subflows' steps; a batch is
+    checked on its own flows and new parts only; the MVP flow count does not
+    run per batch.
+  - Superseded the same day (user): the deletion happens inside STD01, the
+    step that runs it carries the delete effect, and FLOW-013 checks that
+    step alone: its own confirm or cancel path, or a subflow that has one.
   - Tune on the freelancer workspace and the dashboard editor: change
     prompts, never validators, until each passes within 3 rounds. Read every
     `01-flows.md` and fix the prompt for anything you'd reject.

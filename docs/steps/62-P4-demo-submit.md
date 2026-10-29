@@ -21,7 +21,7 @@ After this step gate G9 is met.
 
 ### 1. Script (3:00, timed)
 
-- 0:00 The idea file for the project tracker, one sentence on Weave.
+- 0:00 The idea file for the freelancer workspace, one sentence on Weave.
 - 0:20 `pnpm weave run …`: the stage lines scrolling; cut to `01-flows.md`.
 - 0:45 `02-design.md` (or the wireframes) and the theme swatches.
 - 1:05 `03-contract.md`, then the coverage matrix with a mismatch fixed.

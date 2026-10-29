@@ -21,13 +21,13 @@ exports[`render > catalog lists every flow with its description and the reusable
 ## Forms
 - FM01 Book form: FD03, FD04, FD05
 
-## SF01 Confirm a deletion (subflow)
+## STD01 Confirm deletion (standard subflow)
 
-1. The reader chooses to delete the book and confirms. The website removes the book and shows the reading list without it.
-   Changes: deletes Book.
+1. (system) The website asks to confirm the deletion and says what else will be removed with it.
 
 Other paths
-- SF01.A01 (from 1, cancel) The reader decides to keep the book: Nothing is removed; the website shows the book again. Flow ends.
+- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
 
 ## New assumptions
 - A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.
@@ -110,15 +110,18 @@ Before: Signed in.; At least one book on the list.
 
 1. The reader opens a book from the list. The website shows the book's title, author and shelf.
    Changes: reads Book.
-2. Confirm a deletion (subflow SF01):
-   1. The reader chooses to delete the book and confirms. The website removes the book and shows the reading list without it.
-      Changes: deletes Book.
+2. The reader chooses Delete on the book. Confirm deletion (subflow STD01):
+   1. (system) The website asks to confirm the deletion and says what else will be removed with it.
 
    Other paths
-   - SF01.A01 (from 1, cancel) The reader decides to keep the book: Nothing is removed; the website shows the book again. Flow ends.
+   - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+   - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
+   Changes: deletes Book.
 
 Other paths
-- F05.A02 (from 1, notFound) The book was deleted in the meantime: The website says the book is gone and shows the reading list. Flow ends.
+- F05.A01 (from 1, notFound) The book was deleted in the meantime: The website says the book is gone and shows the reading list. Flow ends.
+- F05.A02 (from 2, confirm) The reader confirmed the deletion: The website shows the reading list without the book. Flow ends.
+- F05.A03 (from 2, cancel) The reader cancelled: The website shows the book again, unchanged. Flow ends.
 
 Outcome: The book is gone and stays gone after a refresh.
 
@@ -140,13 +143,13 @@ Outcome: The reader is signed out; a refresh still shows the public start page.
 ## Forms
 - FM01 Book form: FD03, FD04, FD05
 
-## SF01 Confirm a deletion (subflow)
+## STD01 Confirm deletion (standard subflow)
 
-1. The reader chooses to delete the book and confirms. The website removes the book and shows the reading list without it.
-   Changes: deletes Book.
+1. (system) The website asks to confirm the deletion and says what else will be removed with it.
 
 Other paths
-- SF01.A01 (from 1, cancel) The reader decides to keep the book: Nothing is removed; the website shows the book again. Flow ends.
+- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
 
 ## New assumptions
 - A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.

@@ -72,13 +72,13 @@ rerun that screen with `--from frontend --screen S04`, a flag to add).
 
 ### Tests
 
-`pageTask` on the golden project tracker's S02: contains the hooks file
+`pageTask` on the golden freelancer workspace's S02: contains the hooks file
 text, the `Table` recipe, the steps' field labels, and the rule lines.
 
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --run <id> --to frontend
+pnpm weave run fixtures/ideas/freelancer-workspace.md --run <id> --to frontend
 cd runs/<id>/app && pnpm typecheck && pnpm nx lint web && pnpm verify / /projects /projects/<id> …
 ```
 

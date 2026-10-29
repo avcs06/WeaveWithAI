@@ -1,4 +1,5 @@
 import { capability } from '../../config/capabilities';
+import { isStandardSubflowId } from '../../config/subflows';
 import type {
   Alternative,
   Assumption,
@@ -103,11 +104,14 @@ function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   return lines;
 }
 
+const HANDS_BACK = 'Back to the calling flow.';
+
 /** Numbered steps, then the other paths; a subflow step shows the subflow's steps indented under it. */
 function stepsLines(
   container: StepContainer,
   doc: Flows,
   indent: string,
+  ends = 'Flow ends.',
 ): string[] {
   const lines: string[] = [];
   container.steps.forEach((step, i) => {
@@ -115,16 +119,14 @@ function stepsLines(
     const subflow = doc.subflows.find(
       (candidate) => candidate.id === step.subflow,
     );
-    if (subflow) {
-      lines.push(
-        `${number} ${subflow.name} (subflow ${subflow.id}):`,
-        ...stepsLines(subflow, doc, `${indent}   `),
-      );
-      return;
-    }
     const fields = stepFields(step, doc);
     const form = doc.forms.find((candidate) => candidate.id === step.form);
-    if (step.kind === 'system')
+    if (subflow)
+      lines.push(
+        `${number} ${step.userAction === '' ? '' : `${step.userAction} `}${subflow.name} (subflow ${subflow.id}):`,
+        ...stepsLines(subflow, doc, `${indent}   `, HANDS_BACK),
+      );
+    else if (step.kind === 'system')
       lines.push(`${number} (system) ${step.websiteResponse}`);
     else if (fields.length === 0)
       lines.push(`${number} ${step.userAction} ${step.websiteResponse}`);
@@ -147,7 +149,7 @@ function stepsLines(
       `${indent}Other paths`,
       ...container.alternatives.map(
         (alternative) =>
-          `${indent}- ${alternativeLine(container, alternative)}`,
+          `${indent}- ${alternativeLine(container, alternative, ends)}`,
       ),
     );
   }
@@ -178,13 +180,14 @@ export function fieldLine(field: Field): string {
 function alternativeLine(
   container: StepContainer,
   alternative: Alternative,
+  ends: string,
 ): string {
   const position = (id: string) =>
     container.steps.findIndex((step) => step.id === id) + 1;
   const condition = alternative.condition.replace(/\.$/, '');
   const back =
     alternative.resumesAt === ''
-      ? 'Flow ends.'
+      ? ends
       : `Back to ${position(alternative.resumesAt)}.`;
   return `${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
 }
@@ -213,12 +216,13 @@ function partLines(
   for (const subflow of doc.subflows) {
     lines.push(
       '',
-      `## ${subflow.id} ${subflow.name} (subflow)`,
+      `## ${subflow.id} ${subflow.name} (${isStandardSubflowId(subflow.id) ? 'standard subflow' : 'subflow'})`,
       '',
       ...stepsLines(
         subflow,
         { ...emptyDoc, ...doc, subflows: [] } as Flows,
         '',
+        HANDS_BACK,
       ),
     );
   }

@@ -7,7 +7,7 @@ Challenge, and report as a blocker only when you would not sign it off:
 
 - A decision of the standard these flows get wrong; count the measures within them.
 - Fidelity: a flow that does not do what its catalog description says, or changes its header.
-- Side effects: a step creates, updates or deletes the wrong thing, or misses an effect its own words imply (deleting a project deletes its tasks); a step for a simulated capability claims the real effect instead of its placeholder.
+- Side effects: a step creates, updates or deletes the wrong thing, or misses an effect its own words imply (deleting a record deletes what belongs to it); a step for a simulated capability claims the real effect instead of its placeholder.
 - Experience: a website response that does not answer the user's action, an outcome the steps do not produce, a dead end the user cannot recover from.
 - Reuse: a field, form or subflow in the catalog that the step should have used but redefined or ignored; a new part that duplicates one in the catalog.
 

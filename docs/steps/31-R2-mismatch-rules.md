@@ -54,7 +54,7 @@ Notes:
 
 ### Tests
 
-`rules.test.ts`: the golden project tracker set yields no mandatory
+`rules.test.ts`: the golden freelancer workspace set yields no mandatory
 mismatches (print warnings); mutations on copies of the golden artifacts
 trigger each rule: drop an input node (002), add `Project.budget` to a
 node's data (003), remove an op (004), add `needsRule` (007), change a flow

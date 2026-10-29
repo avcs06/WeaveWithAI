@@ -51,7 +51,7 @@ export const rule = defineRule<FlowInput>(
               step.id,
             ),
           );
-        } else if (container.id.startsWith('SF')) {
+        } else if (subflowIds.has(container.id)) {
           issues.push(
             fail(
               `${step.id} runs subflow ${step.subflow} from inside subflow ${container.id}; subflows do not nest.`,

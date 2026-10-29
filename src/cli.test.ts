@@ -124,7 +124,7 @@ describe('weave run', () => {
       expect(existsSync(path.join(dest, '01-scope.json'))).toBe(true);
       expect(existsSync(path.join(dest, '01-scope.md'))).toBe(true);
       expect(printed).toEqual([
-        'scope: 2 rounds, 0 known issues, 6 calls, 60 tokens in, 30 out, $0.0060',
+        'scope: 2 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
       ]);
       expect(lines[0]).toContain(
         `golden ${ideaName}: 01-scope.json, 01-scope.md ->`,

@@ -19,7 +19,7 @@ reference a screen shows.
 2. **Data resolution** matches `Noun.attribute` to an entity by noun and a
    field by name or flow field, ignoring case and underscores.
 3. **A table per flow** is rendered for the reconciliation report.
-4. **Tests** on the golden project tracker.
+4. **Tests** on the golden freelancer workspace.
 
 After this step the three artifacts can be compared by id instead of by
 reading.
@@ -55,7 +55,7 @@ export function renderMatrix(matrix: Matrix, flows: Flows): string;   // the tab
 
 ### Tests
 
-`matrix.test.ts` on the golden project tracker (`fixtures/golden/project-tracker/`):
+`matrix.test.ts` on the golden freelancer workspace (`fixtures/golden/freelancer-workspace/`):
 every row has screens and operations or is local; `unresolved` is empty
 (print it if not: that's a real finding for step 31); `resolveDataRef('Task.due_date', …)`
 resolves to `dueDate`.

@@ -148,7 +148,7 @@ fields.
 
 ## Done when
 
-With the generated project tracker running (`pnpm dev` in the app):
+With the generated freelancer workspace running (`pnpm dev` in the app):
 
 ```sh
 curl -c jar -s -X POST localhost:3001/api/auth/sign-in -H 'content-type: application/json' -d '{"email":"demo@example.com","password":"demo1234"}'

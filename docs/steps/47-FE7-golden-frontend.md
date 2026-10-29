@@ -1,15 +1,15 @@
-# 47 · FE7 Golden project tracker end to end
+# 47 · FE7 Golden freelancer workspace end to end
 
 Phase 7 · 60 min · Depends: FE4, FE5 · Gate G6
 
 ## Goal
 
-The project tracker generated from idea to working frontend on the mock
+The freelancer workspace generated from idea to working frontend on the mock
 API, walked by hand, with the model sessions' cost recorded.
 
 ## What this step does
 
-1. **Generate the project tracker's frontend end to end** from a clean app
+1. **Generate the freelancer workspace's frontend end to end** from a clean app
    folder.
 2. **Walk every flow by hand** in the browser, including the alternatives.
 3. **Fix what breaks at the source**: session prompts, shell codegen or
@@ -20,7 +20,7 @@ After this step gate G6 is met.
 
 ## Implementation details
 
-1. `rm -rf runs/<id>/app`; `pnpm weave run fixtures/ideas/project-tracker.md
+1. `rm -rf runs/<id>/app`; `pnpm weave run fixtures/ideas/freelancer-workspace.md
    --run <id> --to frontend`.
 2. Walk every flow in the browser (`pnpm dev` in the app): sign up, sign in,
    create, list, filter, search, mark done, overdue styling, edit, delete

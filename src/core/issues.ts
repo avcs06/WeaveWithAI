@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { type Run, runPath } from './run';
 import { writeJsonAtomic } from './utils';
 
@@ -27,6 +27,11 @@ export function readReport(run: Run, stage: string): Report | undefined {
   const file = runPath(run, 'reports', `${stage}.json`);
   if (!existsSync(file)) return undefined;
   return JSON.parse(readFileSync(file, 'utf8')) as Report;
+}
+
+/** A rerun of a stage starts a fresh report; rounds of an earlier run would otherwise linger beside the new ones. */
+export function clearReport(run: Run, stage: string): void {
+  rmSync(runPath(run, 'reports', `${stage}.json`), { force: true });
 }
 
 export function writeReport(

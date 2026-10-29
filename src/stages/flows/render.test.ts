@@ -35,7 +35,9 @@ describe('render', () => {
     expect(text).toContain(
       '2. The reader fills in the book and saves it. (Book form)',
     );
-    expect(text).toContain('2. Confirm a deletion (subflow SF01):');
+    expect(text).toContain(
+      '2. The reader chooses Delete on the book. Confirm deletion (subflow STD01):',
+    );
     expect(text).toContain('## Fields');
     expect(text).toMatchSnapshot();
   });
@@ -46,7 +48,7 @@ describe('render', () => {
       '- F03 Add a book to the reading list (Reader, core): The reader adds a book',
     );
     expect(text).toContain('- FM01 Book form: FD03, FD04, FD05');
-    expect(text).toContain('## SF01 Confirm a deletion (subflow)');
+    expect(text).toContain('## STD01 Confirm deletion (standard subflow)');
     expect(text).toMatchSnapshot();
   });
 });

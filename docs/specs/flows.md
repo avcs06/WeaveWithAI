@@ -243,9 +243,10 @@ Outcome: the book is saved and is still there after a refresh.
 
 ## Done when
 
-- Project tracker, dashboard editor and appointment booking produce scope and
-  flows with zero mandatory issues within 3 rounds each. Client notes is the
-  unseen test: run once without tuning on it, result recorded either way.
+- The freelancer workspace and the dashboard editor produce scope and flows
+  with zero mandatory issues within 3 rounds each. The ecommerce store is the
+  unseen test: run once without tuning on it, result recorded either way, then
+  tuned on until it passes too.
 - You read each `01-flows.md` and would accept it as a spec.
 - The prompt's format example comes from the reading-list fixture, never from
   a reference idea.

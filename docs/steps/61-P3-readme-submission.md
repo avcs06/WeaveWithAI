@@ -41,8 +41,8 @@ Sections, in this order:
    in two sentences. No apology, just the line.
 4. **Pipeline**: the ARCHITECTURE diagram, and one paragraph per phase
    with links to the artifacts of a real run (`runs/` is gitignored, so
-   copy the project tracker's rendered markdowns and `05-benchmark.md`
-   into `docs/examples/project-tracker/`).
+   copy the freelancer workspace's rendered markdowns and `05-benchmark.md`
+   into `docs/examples/freelancer-workspace/`).
 5. **Numbers**: the P2 table; the benchmark summary for both apps; lines
    by origin.
 6. **Meta tooling**: models per stage, structured output, the Modal run

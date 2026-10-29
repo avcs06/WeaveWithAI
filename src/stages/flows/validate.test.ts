@@ -12,6 +12,7 @@ import {
   catalogRules,
   flowRules,
   scopeRules,
+  validateBatch,
   validateCatalog,
   validateFlows,
   validateScope,
@@ -137,6 +138,31 @@ describe('simulated capabilities (FL7)', () => {
       placeholder: 'The website shows the bookshop address as text.',
     });
     expect(ruleIds(validateScope(skipped))).not.toContain('SCOPE-004');
+  });
+});
+
+describe('one expansion batch (FL9)', () => {
+  const batch = (flowIds: string[]) => ({
+    flows: flows.flows.filter((flow) => flowIds.includes(flow.id)),
+    newFields: [],
+    newForms: [],
+    newSubflows: [],
+  });
+
+  it('resolves the standard subflow its delete step runs, and leaves the catalog subflows to the catalog', () => {
+    expect(validateBatch(batch(['F05']), catalog, scope)).toEqual([]);
+
+    const brokenCatalog = structuredClone(catalog);
+    brokenCatalog.subflows[0]!.steps[0]!.websiteResponse +=
+      ' The endpoint confirms.';
+    expect(
+      ruleIds(validateBatch(batch(['F01']), brokenCatalog, scope)),
+    ).not.toContain('FLOW-017');
+    expect(
+      ruleIds(
+        validateFlows({ ...flows, subflows: brokenCatalog.subflows }, scope),
+      ),
+    ).toContain('FLOW-017');
   });
 });
 

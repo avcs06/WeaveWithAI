@@ -40,7 +40,7 @@ describe('system prompts', () => {
     expect(prompt).toContain('None yet.');
   });
 
-  it('flows: every placeholder filled, answers listed with their question, the example flow is the fixture book flow', () => {
+  it('flows: every placeholder filled, answers listed with their question, the examples are the fixture add and delete flows', () => {
     const prompt = flowsSystemPrompt({
       Q01: { question: 'Ratings?', answer: 'yes' },
     });
@@ -49,6 +49,9 @@ describe('system prompts', () => {
     expect(prompt).toContain('- Q01 "Ratings?": yes');
     expect(prompt).toContain('"id": "F03"');
     expect(prompt).toContain('"name": "Add a book to the reading list"');
+    // The delete flow shows a step that runs the standard subflow.
+    expect(prompt).toContain('"id": "F05"');
+    expect(prompt).toContain('"subflow": "STD01"');
     // The example carries the parts the flow uses, defined once.
     expect(prompt).toContain('"id": "FM01"');
     expect(prompt).toContain('"id": "FD05"');

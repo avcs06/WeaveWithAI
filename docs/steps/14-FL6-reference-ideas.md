@@ -5,18 +5,19 @@ Phase 2 · 60 min · Depends: FL5 · Decisions: D12.1 · Spec: specs/flows.md
 
 ## Goal
 
-Prompts tuned on three ideas, one unseen idea run untouched, and golden
+Prompts tuned on two ideas, one unseen idea run untouched first, and golden
 artifacts saved for every later stage to develop offline. Gate G1.
 
 ## What this step does
 
 1. **A `weave golden` command** copies a run's accepted artifacts into
    `fixtures/golden/<idea>/` and prints the rounds, tokens and cost.
-2. **Tune on three ideas** (project tracker, dashboard editor, appointment
-   booking): read each flows markdown as a spec reviewer, fix the prompt for
-   anything you'd reject, rerun. Validators are never touched.
-3. **Run the unseen idea once** (client notes) without tuning on it, and
-   record the result either way: it is the honest test.
+2. **Tune on two ideas** (freelancer workspace, dashboard editor): read each
+   flows markdown as a spec reviewer, fix the prompt for anything you'd
+   reject, rerun. Validators are never touched.
+3. **Run the unseen idea once** (ecommerce store) without tuning on it, and
+   record the result either way: it is the honest test. Then tune on it too
+   until it passes; it is the second end-to-end idea.
 4. **Save the accepted artifacts** and fill the README table.
 
 After this step later stages can be developed offline on real, accepted
@@ -31,7 +32,7 @@ copies the named artifacts from the run to `fixtures/golden/<ideaName>/`
 (same file names) and prints the rounds, tokens and cost per stage from the
 run's events so the README table can be filled.
 
-### 2. Tuning loop (project tracker, dashboard editor, appointment booking)
+### 2. Tuning loop (freelancer workspace, dashboard editor)
 
 For each idea: `pnpm weave run fixtures/ideas/<idea>.md --to flows`. Read
 `01-flows.md` fully. Fix the prompt for anything you would reject in a spec
@@ -43,23 +44,22 @@ task in PLAN.md and stop for the user.
 
 ### 3. The unseen test
 
-Run `fixtures/ideas/client-notes.md` once with the tuned prompts. Record the
-result in `fixtures/golden/README.md` under a "Client notes, untuned" line
-whatever happens. Fix prompts for a failure only if the same failure shows
-on at least one tuning idea.
+Run `fixtures/ideas/ecommerce-store.md` once with the tuned prompts. Record
+the result in `fixtures/golden/README.md` under an "Ecommerce store, untuned"
+line whatever happens. Only then tune on it like the others until it passes.
 
 ### 4. Save
 
-`pnpm weave golden <runId> project-tracker` and the same for the others
-(including client notes if it passed). Fill the README table: idea, stage,
-rounds, tokens in and out, cost.
+`pnpm weave golden <runId> freelancer-workspace` and the same for the others.
+Fill the README table: idea, stage, rounds, tokens in and out, cost.
 
 ## Done when
 
-Gate **G1**: the three tuning ideas produce scope and flows with zero
-mandatory issues within 3 rounds; client notes ran once and is recorded;
+Gate **G1**: the freelancer workspace and the dashboard editor produce scope
+and flows with zero mandatory issues within 3 rounds; the ecommerce store ran
+once untuned and is recorded, then passes too;
 `fixtures/golden/<idea>/01-scope.json` and `01-flows.json` exist for every
-idea that passed.
+idea.
 
 ## Watch out
 

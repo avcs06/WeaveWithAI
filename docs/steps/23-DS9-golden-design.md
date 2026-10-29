@@ -4,8 +4,8 @@ Phase 3 · 60 min · Depends: DS8 · Spec: specs/design.md "Done when"
 
 ## Goal
 
-Design artifacts for every golden flow set, prompts tuned on all but
-client notes, golden `02-*` saved. Gate G2.
+Design artifacts for every golden flow set, prompts tuned on all but the
+ecommerce store's first run, golden `02-*` saved. Gate G2.
 
 ## What this step does
 
@@ -34,7 +34,7 @@ can be developed offline.
    reasons (a widget canvas or widget frame is the expected one). If it
    doesn't, adjust the IA prompt's wording about when to declare one, not
    the budget.
-4. Client notes: run once untuned, record.
+4. Ecommerce store: run once untuned, record; then tune on it too.
 5. `pnpm weave golden <runId> <idea> --stages brief,theme,screens` for each;
    fill the README table.
 

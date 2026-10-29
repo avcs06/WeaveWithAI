@@ -4,6 +4,7 @@ import {
   simulatedList,
   skippedList,
 } from '../../config/capabilities';
+import { standardSubflowList } from '../../config/subflows';
 import { fillPrompt, loadPrompt, stripComments } from '../../core/prompt';
 import { type Answers, formatAnswers } from '../../core/runSpecStage';
 import { pathBeside } from '../../core/utils';
@@ -39,7 +40,7 @@ export function flowsSystemPrompt(answers: Answers): string {
     productManager: productManager(),
     ...capabilityLists(),
     answers: answersBlock(answers),
-    exampleFlow: exampleFlow(),
+    exampleFlows: exampleFlows(),
   });
 }
 
@@ -56,8 +57,8 @@ export const expandReviewGuide = (): string =>
     productManager: productManager(),
   });
 
-/** The "add a book" flow from the reading-list fixture with the parts it uses; never a reference idea's flow. */
-function exampleFlow(): string {
+/** The "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one fills a form, one runs the standard delete subflow. Never a reference idea's flow. */
+function exampleFlows(): string {
   const fixture = Flows.parse(
     JSON.parse(
       readFileSync(
@@ -66,17 +67,21 @@ function exampleFlow(): string {
       ),
     ),
   );
-  const flow = fixture.flows.find((candidate) => candidate.id === 'F03');
-  if (!flow) throw new Error('The reading-list fixture has no flow F03');
+  const flows = ['F03', 'F05'].map((id) => {
+    const flow = fixture.flows.find((candidate) => candidate.id === id);
+    if (!flow) throw new Error(`The reading-list fixture has no flow ${id}`);
+    return flow;
+  });
+  const steps = flows.flatMap((flow) => flow.steps);
   const forms = fixture.forms.filter((form) =>
-    flow.steps.some((step) => step.form === form.id),
+    steps.some((step) => step.form === form.id),
   );
   const ids = new Set([
     ...forms.flatMap((form) => form.fields),
-    ...flow.steps.flatMap((step) => step.fields),
+    ...steps.flatMap((step) => step.fields),
   ]);
   const example = {
-    flow,
+    flows,
     fields: fixture.fields.filter((field) => ids.has(field.id)),
     forms,
   };
@@ -96,6 +101,7 @@ export function catalogUserMessage(idea: string, scope: Scope): string {
   return fillPrompt(load('./prompt-flows-catalog.md'), {
     idea: stripComments(idea),
     scope: fenced('Scope (01-scope.json)', scope),
+    standardSubflows: standardSubflowList(),
   });
 }
 
@@ -111,6 +117,7 @@ export function expandUserMessage(
     scope: fenced('Scope (01-scope.json)', scope),
     catalog: fenced('Catalog (01-flows-catalog.json)', catalog),
     flowIds: flowIds.join(', '),
+    standardSubflows: standardSubflowList(),
   });
 }
 

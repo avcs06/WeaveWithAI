@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { type Issue, readReport } from './issues';
+import { type Issue, readReport, writeReport } from './issues';
 import type { GenerateInput, Llm } from './llm';
 import type { Review } from './review';
 import { createRun, readEvents, readState } from './run';
@@ -358,6 +358,29 @@ describe('runSpecStage with questions (interactive)', () => {
       rounds: 1,
     });
     expect(inputs).toHaveLength(1);
+  });
+});
+
+describe('runSpecStage reports', () => {
+  it('starts a fresh report on a rerun of the same stage', async () => {
+    const { llm } = fakeLlm([{ title: 'Cats' }, { title: 'Cats' }]);
+    const run = createRun({ idea, runsDir: root, id: 'rerun' });
+    const options = {
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: () => [longTitle],
+      llm,
+    };
+    await runSpecStage(options);
+    writeReport(run, 'doc', 7, [missingTitle]); // a stale round from an earlier, longer run
+    await runSpecStage(options);
+    expect(readReport(run, 'doc')?.rounds.map((entry) => entry.round)).toEqual([
+      1,
+    ]);
   });
 });
 

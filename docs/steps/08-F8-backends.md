@@ -100,7 +100,7 @@ latency of the smoke call.
 ```sh
 pnpm smoke --backend modal    # parsed object, "modal/<model>", $0 (GPU time)
 pnpm smoke --backend baseten  # same, with the priced cost
-pnpm weave run fixtures/ideas/project-tracker.md --to scope --backend modal
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to scope --backend modal
 grep '"backend":"modal"' runs/<id>/events.jsonl
 pnpm test                     # the Meta path is unchanged
 ```

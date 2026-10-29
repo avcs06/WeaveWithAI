@@ -59,7 +59,7 @@ failure into one request with the right screen and `allowWrite`;
 
 ## Done when
 
-With a planted defect in the generated project tracker (remove the submit
+With a planted defect in the generated freelancer workspace (remove the submit
 button's `type="submit"` in a page): `pnpm weave run … --run <id> --to e2e`
 produces `06-e2e.md` with the failing flow and a request naming the page
 folder.

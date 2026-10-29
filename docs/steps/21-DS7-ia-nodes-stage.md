@@ -81,7 +81,7 @@ a scripted whole-artifact failure on S02 causes exactly one rerun of
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/project-tracker.md --to design
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to design
 ```
 
 produces `02-brief.json`, `02-theme.json`, `02-screens.json`, `02-ds-gaps.json`

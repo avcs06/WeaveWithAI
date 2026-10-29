@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "artifact": "scope",
+    "version": 1,
+    "hash": "ca2f704082bc89b98df78bf8a04e9c93632b20f6e1dc0f8bb3ac580ddc025ee9",
+    "inputs": {},
+    "stage": "scope",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-29T11:11:23.935Z"
+  },
+  "data": {
+    "app": {
+      "name": "Studio Hub",
+      "summary": "For a solo freelance UX designer juggling clients, notes, tasks and bookings across inbox, notes and spreadsheets. It brings clients with follow-ups, projects with tasks, and self-serve booking for discovery calls, design reviews and workshops into one calm workspace. The core loop is add a client, track notes and tasks to done, open availability and let visitors book themselves, then start each day from today's sessions, follow-ups and overdue tasks.",
+      "audience": "Solo freelance UX designer"
+    },
+    "roles": [
+      {
+        "id": "freelancer",
+        "name": "Freelancer",
+        "description": "Freelance UX designer who manages clients, projects, tasks, availability and sessions",
+        "signedIn": true
+      },
+      {
+        "id": "booker",
+        "name": "Booker",
+        "description": "Visitor who books a discovery call, design review or workshop without an account",
+        "signedIn": false
+      }
+    ],
+    "vocabulary": [
+      {
+        "noun": "Client",
+        "description": "Name, email, company optional, profile, status Lead Active Past, next follow-up date",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Note",
+        "description": "Dated text under a client with optional follow-up date",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Project",
+        "description": "Name, description, optional due date belonging to a client",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Task",
+        "description": "Title, status To do In progress Done, priority Low Medium High, optional due date belonging to a project",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Availability",
+        "description": "Weekly days with start and end time defining when sessions can be booked",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "SessionType",
+        "description": "Name, duration, displayed price and maximum seats, e.g. discovery 30min free 1, review 60min 4000 1, workshop 2hr 2500 8",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Session",
+        "description": "Bookable time slot of a session type with date, start and end time",
+        "belongsTo": "freelancer"
+      },
+      {
+        "noun": "Booking",
+        "description": "Name and email reservation for a session with on-screen cancellation link, linked to a client by email",
+        "belongsTo": "freelancer"
+      }
+    ],
+    "capabilities": [
+      {
+        "id": "accounts",
+        "needed": true,
+        "note": "Single freelancer signs up, signs in and out to access private workspace"
+      },
+      {
+        "id": "userOwnedData",
+        "needed": true,
+        "note": "Freelancer sees only their own clients, projects, tasks, sessions and bookings"
+      },
+      {
+        "id": "crud",
+        "needed": true,
+        "note": "Create, view, edit, delete clients, notes, projects, tasks, availability, session types, sessions and bookings"
+      },
+      {
+        "id": "search",
+        "needed": true,
+        "note": "Search tasks by title"
+      },
+      {
+        "id": "filterSort",
+        "needed": true,
+        "note": "Filter tasks by status and priority; clients sorted overdue follow-up first"
+      },
+      {
+        "id": "roles",
+        "needed": true,
+        "note": "Signed-in freelancer plus public booker without account"
+      },
+      {
+        "id": "publicPages",
+        "needed": true,
+        "note": "Public landing page and public booking page plus cancellation link page"
+      },
+      {
+        "id": "statusWorkflow",
+        "needed": true,
+        "note": "Client Lead, Active, Past; Task To do, In progress, Done"
+      },
+      {
+        "id": "datesDeadlines",
+        "needed": true,
+        "note": "Note dates, follow-up dates, task and project due dates, availability windows, session slots"
+      },
+      {
+        "id": "simpleCounts",
+        "needed": true,
+        "note": "Open task counts per project, seats booked vs maximum, today and week lists"
+      },
+      {
+        "id": "payments",
+        "needed": false,
+        "note": "Prices displayed for information only; nobody pays in the app"
+      },
+      {
+        "id": "emailSending",
+        "needed": false,
+        "note": "No emails sent; confirmation and cancellation link shown on screen"
+      }
+    ],
+    "inScope": [
+      "Public landing page explaining the workspace and how to sign in or book a session",
+      "Private home screen with today's sessions, follow-ups due this week, and overdue tasks",
+      "Clients list with status Lead, Active, Past showing who is due for follow-up, overdue first",
+      "Create and edit clients with name, email, company optional, profile, status; delete client deletes its projects, tasks, notes and bookings",
+      "Dated notes under each client with optional follow-up date; mark follow-up done or push it a week with one click",
+      "Projects belonging to a client with name, description and optional due date; projects list shows how many tasks are still open",
+      "Tasks in a project with title, status To do, In progress, Done, priority Low, Medium, High and optional due date; search by title, filter by status and priority, tick done quickly, overdue tasks stand out",
+      "Edit and delete projects and tasks; deleting a project deletes its tasks",
+      "Weekly availability setting with days and start to end time",
+      "Session types: 30 minute discovery call free 1 person, 60 minute design review ₹4,000 shown for information 1 person, 2 hour Figma workshop ₹2,500 a seat up to 8 people; prices displayed only",
+      "Upcoming sessions list with bookings; cancel a slot cancels everyone booked on it",
+      "Public booking page: pick session type, see open slots for the next two weeks, book with name and email; a slot is full at the session type maximum",
+      "Booking by email match lands under that client, otherwise creates a new Lead client; confirmation shows a cancellation link on screen with no emails sent",
+      "Cancel a booking via its cancellation link without signing in"
+    ],
+    "outOfScope": [
+      {
+        "item": "Online payments and checkout",
+        "reason": "Idea says prices are only displayed, nobody pays in the app",
+        "placeholder": "Prices shown as text only; no checkout or charge"
+      },
+      {
+        "item": "Email notifications and reminders",
+        "reason": "Idea says no emails are sent",
+        "placeholder": "Confirmation and cancellation link shown on screen only"
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A01",
+        "text": "Only one freelancer uses the private workspace; no teams, collaborators or client logins.",
+        "kind": "scope",
+        "affects": []
+      },
+      {
+        "id": "A02",
+        "text": "Each client has one next follow-up date set from a note; marking done clears it, pushing it adds 7 days.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A03",
+        "text": "Overdue means follow-up date or task due date is before today and not done; overdue follow-ups sort first and overdue tasks are highlighted.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A04",
+        "text": "Open slots are generated by splitting each weekly availability window into back-to-back slots matching the session type duration for the next 14 days, excluding past times.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A05",
+        "text": "Cancelling a session removes it and all its bookings; cancelling a single booking frees one seat and keeps the session for others.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A06",
+        "text": "Booking email match to an existing client is case-insensitive exact match; no match creates a new Lead client with the booking name and email.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A07",
+        "text": "Deleting a client deletes its projects, tasks, notes and bookings; deleting a project deletes its tasks; sessions without bookings remain until cancelled.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A08",
+        "text": "Session types start as the three named types and the freelancer can create, edit and delete them; prices are shown as text only.",
+        "kind": "scope",
+        "affects": []
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "How should slot start times be calculated inside an availability window?",
+        "whyItMatters": "Changes when visitors can book and whether slots match expected calendar times",
+        "defaultAnswer": "Split each availability window into back-to-back slots matching the session duration starting at the window start",
+        "blocking": true
+      },
+      {
+        "id": "Q02",
+        "question": "Does the freelancer need to block specific dates like holidays within the next two weeks?",
+        "whyItMatters": "Adds exception dates to availability scope",
+        "defaultAnswer": "No, use weekly availability only and cancel individual slots to block time",
+        "blocking": false
+      }
+    ]
+  }
+}
