@@ -239,6 +239,17 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     (from the valid fixture).
   - Done when: a test fills both prompts with no missing placeholders.
 
+- [x] **FL7** Capability modes: build, simulate, skip (60 min) (done 2026-10-29). Depends: FL3. Decision D2.5 C
+  - Added 2026-10-29 by the user: no whitelist; simulated capabilities get
+    their UI with a placeholder effect; skipped ones stay out of scope.
+  - `capabilities.ts` carries `mode` and the placeholder text; the scope and
+    flows prompts list build, simulated and skipped; SCOPE-004 requires an
+    out-of-scope entry only for needed skipped capabilities; FLOW-022 allows
+    simulated mentions once the scope needs the capability and flags skipped
+    ones. multiTenant, realtime and maps stay skipped to save credits.
+  - Done when: `pnpm test` (prompt, schema and validator tests updated);
+    `pnpm typecheck`.
+
 - [ ] **FL4** Renderer (30 min). Depends: FL1
   - `src/stages/flows/render.ts`: `01-scope.md` (short) and `01-flows.md` in the spec's format.
   - Done when: a snapshot test renders the valid fixture.

@@ -316,7 +316,18 @@ Notes:
       (payments, uploads, email, realtime, maps, external APIs) go to
       out-of-scope with a placeholder behavior.
 - [ ] **B. No boundary.** The flows describe whatever the idea implies.
-Notes:
+- [x] **C. Three modes, no whitelist (user, 2026-10-29).** The app builds
+      whatever the idea needs. The list in `src/config/capabilities.ts` only
+      names the exceptions: simulated capabilities get their full UI with a
+      placeholder effect written in the list itself (payments: the checkout
+      validates and shows success, nothing is charged; fileUploads: the file
+      is validated and previewed, nothing is stored; emailSending: the
+      website shows the email as sent), and skipped capabilities (realtime,
+      maps, externalIntegrations, multiTenant, i18n) go to out-of-scope with
+      a placeholder as in A. The ids stay an enum in the scope schema.
+
+Notes: C on the user's instruction, 2026-10-29. multiTenant could run on
+mock data but stays skipped to save credits; realtime and maps likewise.
 
 ### D2.6 Data effects on steps (pick one)
 

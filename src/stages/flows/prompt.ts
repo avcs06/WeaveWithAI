@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { supportedList, unsupportedList } from '../../config/capabilities';
+import { buildList, simulatedList, skippedList } from '../../config/capabilities';
 import { fillPrompt, loadPrompt, stripComments } from '../../core/prompt';
 import { Flows, type Scope } from './schema';
 
@@ -17,15 +17,18 @@ export function answersBlock(answers: Answers): string {
 
 export function scopeSystemPrompt(answers: Answers): string {
   return fillPrompt(loadPrompt(here('./prompt-scope.md')), {
-    capabilitiesSupported: supportedList(),
-    capabilitiesUnsupported: unsupportedList(),
+    capabilitiesBuild: buildList(),
+    capabilitiesSimulated: simulatedList(),
+    capabilitiesSkipped: skippedList(),
     answers: answersBlock(answers),
   });
 }
 
 export function flowsSystemPrompt(answers: Answers): string {
   return fillPrompt(loadPrompt(here('./prompt-flows.md')), {
-    capabilitiesSupported: supportedList(),
+    capabilitiesBuild: buildList(),
+    capabilitiesSimulated: simulatedList(),
+    capabilitiesSkipped: skippedList(),
     answers: answersBlock(answers),
     exampleFlow: exampleFlow(),
   });

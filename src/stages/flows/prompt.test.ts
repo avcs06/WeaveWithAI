@@ -6,12 +6,13 @@ import { Scope } from './schema';
 const scope = Scope.parse(JSON.parse(readFileSync(new URL('./__fixtures__/reading-list.scope.json', import.meta.url), 'utf8')));
 
 describe('system prompts', () => {
-  it('scope: every placeholder filled, both capability lists present', () => {
+  it('scope: every placeholder filled, all three capability lists present', () => {
     const prompt = scopeSystemPrompt({});
     expect(prompt).not.toContain('{{');
     expect(prompt).not.toContain('<!--');
     expect(prompt).toContain('accounts (email and password sign up, sign in, sign out)');
-    expect(prompt).toContain('payments (payments)');
+    expect(prompt).toContain('payments (payments): a checkout form validates its fields');
+    expect(prompt).toContain('maps (geolocation)');
     expect(prompt).toContain('None yet.');
   });
 
@@ -22,6 +23,8 @@ describe('system prompts', () => {
     expect(prompt).toContain('"id": "F03"');
     expect(prompt).toContain('"name": "Add a book to the reading list"');
     expect(prompt).toContain('accounts (');
+    expect(prompt).toContain('emailSending (notifications, password reset by email): the website shows the email as sent');
+    expect(prompt).toContain('i18n (translations)');
   });
 
   it('answersBlock lists one answer per line', () => {

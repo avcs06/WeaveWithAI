@@ -48,6 +48,31 @@ describe('every rule has a failing fixture', () => {
   });
 });
 
+describe('simulated capabilities (FL7)', () => {
+  it('FLOW-022 allows a simulated mention once the scope marks the capability needed, and flags it otherwise', () => {
+    const mutate = flowMutations['FLOW-022'];
+    if (!mutate) throw new Error('no mutation for FLOW-022');
+    const emailing = mutate(flows);
+    expect(ruleIds(validateFlows(emailing, scope))).toContain('FLOW-022');
+
+    const needsEmail = structuredClone(scope);
+    needsEmail.capabilities.push({ id: 'emailSending', needed: true, note: 'Confirms each new book.' });
+    expect(ruleIds(validateFlows(emailing, needsEmail))).not.toContain('FLOW-022');
+  });
+
+  it('SCOPE-004 ignores a needed simulated capability and requires an out-of-scope entry for a skipped one', () => {
+    const simulated = structuredClone(scope);
+    simulated.capabilities.push({ id: 'payments', needed: true, note: 'Readers buy books.' });
+    expect(ruleIds(validateScope(simulated))).not.toContain('SCOPE-004');
+
+    const skipped = structuredClone(scope);
+    skipped.capabilities.push({ id: 'maps', needed: true, note: 'Bookshops nearby.' });
+    expect(ruleIds(validateScope(skipped))).toContain('SCOPE-004');
+    skipped.outOfScope.push({ item: 'Bookshop map', reason: 'Maps (geolocation) are skipped.', placeholder: 'The website shows the bookshop address as text.' });
+    expect(ruleIds(validateScope(skipped))).not.toContain('SCOPE-004');
+  });
+});
+
 describe("the spec's hand-broken flows", () => {
   it('fail exactly FLOW-007, FLOW-011 and FLOW-017', () => {
     const broken = structuredClone(flows);

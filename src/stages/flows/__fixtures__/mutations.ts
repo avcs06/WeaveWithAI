@@ -25,7 +25,7 @@ export const scopeMutations: Record<string, (scope: Scope) => Scope> = {
   'SCOPE-001': edit((s) => s.roles.push({ ...s.roles[0]!, name: 'Reader again' })),
   'SCOPE-002': edit((s) => (s.vocabulary[0]!.noun = 'books')),
   'SCOPE-003': edit((s) => (s.questions[0]!.defaultAnswer = '')),
-  'SCOPE-004': edit((s) => s.capabilities.push({ id: 'payments', needed: true, note: 'Readers buy books.' })),
+  'SCOPE-004': edit((s) => s.capabilities.push({ id: 'maps', needed: true, note: 'Readers find bookshops nearby.' })),
   'SCOPE-005': edit((s) => (s.assumptions[1]!.id = 'A1')),
   'SCOPE-006': edit((s) => (s.inScope = s.inScope.slice(0, 2))),
 };

@@ -24,7 +24,7 @@ export const rule = defineRule<Scope>('SCOPE-004', 'mandatory', (scope, fail) =>
   const issues: Issue[] = [];
   for (const entry of scope.capabilities) {
     const capability = CAPABILITIES.find((c) => c.id === entry.id);
-    if (!capability || capability.supported || !entry.needed) continue;
+    if (!capability || capability.mode !== 'skip' || !entry.needed) continue;
     const pattern = mentionPattern(capability);
     const covered = scope.outOfScope.some(
       (item) => item.placeholder.trim() !== '' && pattern.test(`${item.item} ${item.reason}`),
@@ -32,7 +32,7 @@ export const rule = defineRule<Scope>('SCOPE-004', 'mandatory', (scope, fail) =>
     if (!covered) {
       issues.push(
         fail(
-          `Capability "${entry.id}" is needed but unsupported and has no outOfScope entry; add one naming ${capability.description} with a placeholder saying what the app does instead.`,
+          `Capability "${entry.id}" is needed but skipped in the MVP and has no outOfScope entry; add one naming ${capability.description} with a placeholder saying what the app does instead.`,
           'outOfScope',
         ),
       );
