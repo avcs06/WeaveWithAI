@@ -194,21 +194,37 @@ Notes:
 
 - [x] **A. Meta Model API (default).** `muse-spark-1.3` and `muse-wonder-1.0` as
       routed by D1.8. Paid from the $150 credits.
-- [x] **B. Meta open-weight models on Modal.** Muse Spark Open (or Muse Glimmer)
-      behind an OpenAI-compatible endpoint on Modal, paid from the $100 Modal
-      credits. This is the run the infrastructure partner verifies for the $10k
-      "Best Build on Meta Open Weight Models" prize.
-- [x] **C. Meta open-weight models on own hardware.** The same models through a
+- [x] **B. Muse Glimmer on a Modal Dedicated Endpoint.** Modal runs
+      `meta-models/Muse-Glimmer-30B` (SGLang, one H200, scale to zero) behind
+      an OpenAI-compatible endpoint that supports `json_schema` output. Billed
+      as GPU time, which the $100 Modal credits cover. A run the
+      infrastructure partner can verify for the $10k "Best Build on Meta Open
+      Weight Models" prize. Modal offers Muse Spark Open only as a Shared
+      Endpoint, per token, and its dashboard says plan credits do not apply
+      to Shared Endpoints, so that path is not used.
+- [ ] **C. Meta open-weight models on own hardware.** The same models through a
       local OpenAI-compatible server (vLLM with a GPU; llama.cpp or Ollama on
       CPU for a small Glimmer). The development machine shows no GPU in WSL and
       has 15 GB RAM, so expect CPU speed; best effort.
+- [x] **D. Muse Spark Open on Baseten.** Baseten's Model API
+      (`https://inference.baseten.co/v1`), per token ($1.25 in, $0.15 cached,
+      $4.25 out per 1M), paid from the $100 Baseten credits at up to 2M tokens
+      a minute. The hackathon key may call only
+      `meta-models/muse-spark-open-1026`. Baseten's docs say Spark Open there
+      has no structured output, but F8's smoke test got every construct of
+      the toy schema back valid, so the client needs no second output mode.
 
 One client and one schema bridge serve all three; `LLM_BACKEND` picks the base
 URL, key and model. Structured output (`response_format: json_schema`) is the
 part that differs per server and is checked in F8.
 
-Notes: A, B and C ticked on the user's instruction, 2026-10-28, to be eligible
-for the open-weights prize. B is the path that counts; C is a test.
+Notes: A and B ticked on the user's instruction, 2026-10-28, to be eligible
+for the open-weights prize. C was ticked by mistake and unticked on
+2026-10-29: the user never meant to host a model; "local" meant the
+generator on this machine calling the Model API, which is A. The same day,
+on the user's instruction: B changed from a self-deployed vLLM app to a
+Modal-managed endpoint (first Spark Open shared, then Glimmer dedicated once
+the credits rule was clear), and D was added after Baseten granted credits.
 
 ---
 

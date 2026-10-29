@@ -39,7 +39,7 @@ backend.
 
 - The model layer (step 03) returns parsed objects for any zod schema; a
   turn is just another schema. No tool-calling API is needed, which keeps
-  Modal and local backends in play.
+  the hosted open-weight backends in play.
 - Checks in the app: `node tools/validate-files.mjs <files>` (MCP validate),
   `pnpm typecheck`, `pnpm exec eslint <files> --format json`,
   `pnpm nx test web -- --testPathPattern <p>`, `pnpm verify <route>` (it

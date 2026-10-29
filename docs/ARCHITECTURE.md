@@ -202,11 +202,22 @@ corrected JSON (D1.5 default). After the last round the runner throws a
   a prompt or schema changes the key, so stale replays can't happen.
 - Model routing: `default` uses `LLM_MODEL`; `strong` uses `LLM_MODEL_STRONG`
   for a round that failed twice (D1.8).
-- Backends (D1.11): `LLM_BACKEND` picks the Meta Model API (default), a Modal
-  endpoint serving Muse Spark Open, or a local OpenAI-compatible server. Same
-  client, same schema bridge; the backend and model are logged per call and
-  are part of the replay key. F8 records how each server handles
-  `json_schema` output.
+- Backends (D1.11): `LLM_BACKEND` picks the Meta Model API (default), a
+  Modal Dedicated Endpoint serving Muse Glimmer, or Baseten's Model API
+  serving Muse Spark Open. Same client, same schema bridge; the backend and model are
+  logged per call and are part of the replay key. F8 records how each server
+  handles `json_schema` output.
+
+### Backend findings
+
+From `pnpm smoke --backend <name>` with the step F4 toy schema: nested arrays,
+an enum, a nullable number, a discriminated union.
+
+| Backend | Server | `json_schema` honoured | Bridge changes | Smoke call |
+| --- | --- | --- | --- | --- |
+| meta | Meta Model API, `muse-spark-1.3` | yes, every construct (2026-10-29) | none | 5.7 s; 253 tokens in, 914 out for a 492-character answer, so the billed output includes hidden reasoning tokens and output cost dominates |
+| modal | Modal Dedicated Endpoint, `meta-models/Muse-Glimmer-30B` on SGLang, one H200 | yes, every construct (2026-10-29) | none | 38 s for 573 output tokens once warm; the cold start answered 503 for about 4 minutes, longer than the client's 5 retries; two warm calls were cut at the 16384-token cap before one completed, so Glimmer's reasoning can run away; billed as GPU time, so $0 in the cost column |
+| baseten | Baseten Model API, `meta-models/muse-spark-open-1026` | yes, every construct (2026-10-29), although Baseten's docs say Spark Open there has none | none | 5.0 s; 164 tokens in, 1267 out, $0.0056; the hackathon key is scoped to the `-1026` id and gets 403 on every other model, including plain `muse-spark-open` |
 
 ## Design-system inventory (`src/ds/inventory.ts`)
 

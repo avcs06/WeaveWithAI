@@ -22,7 +22,23 @@ describe('loadEnv', () => {
       MODEL_API_KEY: 'k1',
       LLM_MODEL: 'muse-spark-1.3',
       LLM_REPLAY: true,
+      LLM_BACKEND: 'meta',
     });
+  });
+
+  it('reads the backend, defaults the Baseten URL, and treats a blank variable as unset', () => {
+    const env = { MODEL_API_KEY: 'k', LLM_BACKEND: 'modal', MODAL_MODEL: '', MODAL_PROXY_TOKEN: 'wk-1.ws-2' };
+    expect(loadEnv({ file: missing, env })).toMatchObject({
+      LLM_BACKEND: 'modal',
+      MODAL_PROXY_TOKEN: 'wk-1.ws-2',
+      BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
+    });
+    expect(loadEnv({ file: missing, env }).MODAL_MODEL).toBeUndefined();
+  });
+
+  it('throws naming MODAL_BASE_URL when it is not a URL', () => {
+    const env = { MODEL_API_KEY: 'k', MODAL_BASE_URL: 'not a url' };
+    expect(() => loadEnv({ file: missing, env })).toThrow(/MODAL_BASE_URL/);
   });
 
   it('throws naming MODEL_API_KEY when there is no file and no key', () => {

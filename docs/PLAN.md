@@ -140,24 +140,29 @@ Steps 01 to 08.
     <id>` prints its stage table and token totals.
 
 - [ ] **F8** Open-weight model backends (2 h). Depends: F4, F7. Decision D1.11.
-  - Added 2026-10-28: the user wants runs on Modal and locally as well as on
-    the Model API, so Weave qualifies for the open-weights prize.
-  - `LLM_BACKEND=meta|modal|local` (default `meta`) selects the base URL, key
-    and model from `MODAL_BASE_URL`, `MODAL_API_KEY`, `MODAL_MODEL`,
-    `LOCAL_BASE_URL`, `LOCAL_MODEL` (added to `.env.example` and `env.ts`).
-    The backend and model go into every event and into the replay key.
-  - Modal: deploy Muse Spark Open behind an OpenAI-compatible endpoint (Modal's
-    vLLM example), paid from the Modal credits. Local: the same model family on
-    a local server (llama.cpp or Ollama on CPU; vLLM if a GPU is available).
+  > Blocked: both smoke tests pass (modal: Glimmer on a Dedicated Endpoint; baseten: Spark Open) and `weave run --backend modal` completes, but the events grep in the Done-when cannot pass until FL5 replaces the stub scope stage, which makes no model call and writes no events. Tick after FL5, or decide the unit tests cover it.
+  - Added 2026-10-28: the user wants runs on Modal as well as on the Model
+    API, so Weave qualifies for the open-weights prize. Changed 2026-10-29: the
+    local backend (D1.11 C) is removed; "local" meant the generator on this
+    machine calling the Model API, not a model on own hardware. Also
+    2026-10-29: Modal became a Modal-managed Dedicated Endpoint for Muse
+    Glimmer (credits cover GPU time, not Shared Endpoints), so the
+    self-deployed vLLM app was removed; Baseten added for Spark Open (D1.11 D).
+  - `LLM_BACKEND=meta|modal|baseten` (default `meta`) selects the base URL,
+    key and model from `MODAL_BASE_URL`, `MODAL_PROXY_TOKEN`, `MODAL_MODEL`,
+    `BASETEN_API_KEY`, `BASETEN_MODEL` (in `.env.example` and `env.ts`). The
+    backend and model go into every event and into the replay key.
+  - Modal: Muse Glimmer 30B on a Dedicated Endpoint, GPU time from the Modal
+    credits. Baseten: Muse Spark Open on the Model API, per token from the
+    Baseten credits.
   - `pnpm smoke --backend <name>` runs the F4 toy schema. Record in
     ARCHITECTURE "Model layer" how each server handles `json_schema` output and
     what the schema bridge had to change.
-  - Done when: `pnpm smoke --backend modal` and `pnpm smoke --backend local`
-    print a parsed object; `pnpm weave run fixtures/ideas/project-tracker.md
-    --to scope --backend modal` completes; `events.jsonl` names the backend and
-    model per call; the Meta API run is unchanged and its tests still pass.
-    If local cannot run a model at usable speed, say so in ARCHITECTURE.md and
-    keep Modal.
+  - Done when: `pnpm smoke --backend modal` and `pnpm smoke --backend
+    baseten` print a parsed object; `pnpm weave run
+    fixtures/ideas/project-tracker.md --to scope --backend modal`
+    completes; `events.jsonl` names the backend and model per call; the Meta
+    API run is unchanged and its tests still pass.
 
 - [ ] **F9** Model client follow-ups (30 min). Depends: F3, F6
   - Found while building F2 and F3; each is a small decision that doesn't
@@ -166,6 +171,19 @@ Steps 01 to 08.
     returns 0 silently); cap an honoured `Retry-After` and read
     `retry-after-ms` too; treat a corrupt replay file as a miss or fail
     loudly; add an `enums` cap to `assertWithinLimits`.
+  - Added 2026-10-29 (F8): a scale-to-zero Modal endpoint answers 503 "no
+    upstreams available" for minutes while it cold-starts, and the client
+    gives up after 5 attempts (about 20 s). Give 503 on the `modal` backend a
+    longer budget, or warm the endpoint before a run. Also: two of three warm
+    smoke calls to Glimmer were cut at the 16384-token cap because reasoning
+    counts against `max_tokens`; consider a reasoning budget for that backend.
+
+- [ ] **BK1** Book keeping: one `src/core/utils.ts` for the shared helpers (20 min). Depends: F8, FL3
+  - Added 2026-10-29 by the user: `canonicalJson` and `sortKeys` are defined
+    in both `artifacts.ts` and `llm.ts`, `hashOf` and `sha256` do the same
+    job, `writeJson` (llm.ts) overlaps `writeJsonAtomic` (run.ts), and
+    `keysOf` is defined twice. Move each into one module and import it. One
+    commit named "book keeping", after the F4 to FL3 commits.
 
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
@@ -581,4 +599,4 @@ output from drifting and what proves it, which is the whole idea.
 | The model writes outside its files or edits tests           | The loop refuses writes outside the allowed paths and logs the attempt (FE1)                |
 | Lighthouse or the browser won't start on WSL                 | Playwright's Chromium with `--headless=new`; every tool in the benchmark is optional per run |
 | Prompt tuning turns into validator weakening                 | AGENTS.md forbids it; rule changes go through you                                           |
-| Local open-weight run too slow, or a server rejects `json_schema` | Modal with vLLM is the verified path for the prize; local is CPU-only here and best effort  |
+| A hosted endpoint rejects or mishandles `json_schema`         | Verified on Modal and Baseten 2026-10-29; the smoke test checks it before any run          |

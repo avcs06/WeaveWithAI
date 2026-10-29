@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import OpenAI from 'openai';
 import type { z } from 'zod';
+import { type Backend, resolveBackend } from './backends';
 import type { Config } from './env';
 import { costUsd, type Usage } from './prices';
 import { toJsonSchema } from './schema';
@@ -67,6 +68,8 @@ export type ChatClient = {
 
 export type LlmDeps = {
   config: Config;
+  /** Defaults to the backend LLM_BACKEND names. */
+  backend?: Backend;
   client?: ChatClient;
   replayDir?: string;
   sleep?: (ms: number) => Promise<void>;
@@ -77,7 +80,6 @@ export type Llm = {
   generateStructured<T>(input: GenerateInput<T>): Promise<GenerateResult<T>>;
 };
 
-const BACKEND = 'meta';
 const TEMPERATURE = 0.2;
 const DEFAULT_MAX_TOKENS = 8192;
 const MAX_OUTPUT_TOKENS = 16_384;
@@ -98,6 +100,7 @@ type ReplayRecord = Completed & { request: Request; createdAt: string };
 
 export function createLlm(deps: LlmDeps): Llm {
   const { config } = deps;
+  const backend = deps.backend ?? resolveBackend(config);
   const replayDir = deps.replayDir ?? '.weave-cache/replay';
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const now = deps.now ?? Date.now;
@@ -105,23 +108,23 @@ export function createLlm(deps: LlmDeps): Llm {
 
   const getClient = (): ChatClient =>
     (client ??= new OpenAI({
-      apiKey: config.MODEL_API_KEY,
-      baseURL: config.LLM_BASE_URL,
+      apiKey: backend.apiKey,
+      baseURL: backend.baseURL,
       maxRetries: 0,
     }).chat.completions);
 
   async function generateStructured<T>(input: GenerateInput<T>): Promise<GenerateResult<T>> {
     const started = now();
-    const model = input.model === 'strong' ? config.LLM_MODEL_STRONG : config.LLM_MODEL;
+    const model = input.model === 'strong' ? backend.strongModel : backend.model;
     const bridged = toJsonSchema(input.schema, input.schemaName);
     const request: Request = {
-      backend: BACKEND,
+      backend: backend.name,
       model,
       messages: input.messages,
       schemaName: input.schemaName,
       schema: bridged.schema,
     };
-    const key = sha256(canonicalJson({ backend: BACKEND, model, messages: input.messages, schema: bridged.schema }));
+    const key = sha256(canonicalJson({ backend: backend.name, model, messages: input.messages, schema: bridged.schema }));
     const replayFile = path.join(replayDir, `${key}.json`);
 
     let record = config.LLM_REPLAY ? await readJson<ReplayRecord>(replayFile) : undefined;
@@ -139,14 +142,14 @@ export function createLlm(deps: LlmDeps): Llm {
       usage: record.usage,
       costUsd: replayed ? 0 : costUsd(model, record.usage),
       replayed,
-      backend: BACKEND,
+      backend: backend.name,
       model,
       durationMs: now() - started,
     };
 
     if (input.runDir) {
       await writeJson(path.join(input.runDir, 'llm', `${input.stage}-r${input.round}.json`), {
-        request: { model, messages: input.messages, schemaName: input.schemaName },
+        request: { backend: backend.name, model, messages: input.messages, schemaName: input.schemaName },
         response: record.content,
         usage: record.usage,
         costUsd: result.costUsd,

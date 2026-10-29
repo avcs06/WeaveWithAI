@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { hasArtifact, isStale } from './core/artifacts';
+import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
 import { type Config, config as loadConfig } from './core/env';
 import { formatForTerminal, type Issue, splitIssues } from './core/issues';
 import { createLlm, type Llm } from './core/llm';
@@ -49,15 +50,20 @@ export async function runCommand(args: RunArgs, deps: CliDeps = {}): Promise<Run
     }
   }
 
+  if (args.backend !== undefined && !isBackendName(args.backend)) {
+    throw new UsageError(`--backend ${args.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`);
+  }
+
   const loaded = deps.config ?? loadConfig();
   const config: Config = args.replay === false ? { ...loaded, LLM_REPLAY: false } : loaded;
   const run = args.run ? openRun(args.run, runsDir) : createRun({ idea: args.idea, runsDir });
+  const backend = resolveBackend(config, args.backend);
   const ctx: StageContext = {
     run,
     config,
-    llm: deps.llm ?? createLlm({ config }),
+    llm: deps.llm ?? createLlm({ config, backend }),
     interactive: args.interactive ?? false,
-    backend: args.backend ?? 'meta',
+    backend: backend.name,
   };
   out(`run ${run.id} (${run.dir})`);
 

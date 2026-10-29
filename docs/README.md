@@ -72,8 +72,9 @@ login required) and the submission form on the same platform.
 - Bonus prizes that Weave can aim at: Best Agentic Use-Case ($5k: autonomy,
   effectiveness, usefulness). Best Build on Meta Open Weight Models ($10k)
   needs Muse Glimmer or Muse Spark Open on own hardware or partner inference;
-  the plan runs the pipeline on Muse Spark Open through Modal and locally as
-  well (D1.11), and the infrastructure partner verifies the run. Most Viral
+  the plan runs the pipeline on Muse Glimmer through a Modal endpoint and
+  on Muse Spark Open through Baseten (D1.11), and the infrastructure partner
+  verifies the run. Most Viral
   needs an X post; Community Vote is the public gallery.
 - Anti-projects (disqualified or discouraged): medical advice, basic RAG,
   simple image analyzers, education chatbots, job screeners, nutrition

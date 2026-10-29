@@ -4,11 +4,13 @@ import path from 'node:path';
 import OpenAI from 'openai';
 import { afterAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import type { Backend } from './backends';
 import type { Config } from './env';
 import {
   type ChatClient,
   createLlm,
   type GenerateInput,
+  type LlmDeps,
   ModelOutputInvalid,
   ModelOutputTruncated,
   ModelRequestFailed,
@@ -22,6 +24,22 @@ const config: Config = {
   LLM_MODEL_STRONG: 'muse-wonder-1.0',
   LLM_MODEL_VISION: 'muse-spark-1.3',
   LLM_REPLAY: false,
+  LLM_BACKEND: 'meta',
+  BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
+};
+const modalBackend: Backend = {
+  name: 'modal',
+  baseURL: 'https://acme--ep-hackathon-server.us-west.modal.direct/v1',
+  apiKey: 'wk-id.ws-secret',
+  model: 'hackathon',
+  strongModel: 'hackathon',
+};
+const basetenBackend: Backend = {
+  name: 'baseten',
+  baseURL: 'https://inference.baseten.co/v1',
+  apiKey: 'bt-key',
+  model: 'meta-models/muse-spark-open-1026',
+  strongModel: 'meta-models/muse-spark-open-1026',
 };
 
 const Doc = z.object({ title: z.string() });
@@ -58,7 +76,7 @@ function apiError(status: number, message: string, headers: Record<string, strin
 }
 
 /** An llm whose client pops scripted results, plus the requests and sleeps it made. */
-function harness(script: Array<OpenAI.ChatCompletion | Error>, cfg: Config = config) {
+function harness(script: Array<OpenAI.ChatCompletion | Error>, cfg: Config = config, extra: Partial<LlmDeps> = {}) {
   const calls: OpenAI.ChatCompletionCreateParamsNonStreaming[] = [];
   const sleeps: number[] = [];
   const client: ChatClient = {
@@ -74,6 +92,7 @@ function harness(script: Array<OpenAI.ChatCompletion | Error>, cfg: Config = con
     config: cfg,
     client,
     replayDir: tmp(),
+    ...extra,
     sleep: async (ms) => {
       sleeps.push(ms);
     },
@@ -179,5 +198,36 @@ describe('generateStructured', () => {
 
     expect(error).toBeInstanceOf(ModelOutputInvalid);
     expect((error as ModelOutputInvalid).issues).toEqual([expect.objectContaining({ path: ['title'] })]);
+  });
+});
+
+describe('backends', () => {
+  it('sends to the backend model, prices by model name, and names the backend everywhere', async () => {
+    const runDir = tmp();
+    const { llm, calls } = harness([completion('{"title":"Weave"}')], config, { backend: modalBackend });
+    const result = await llm.generateStructured({ ...input(), runDir });
+
+    expect(calls[0]?.model).toBe('hackathon');
+    // A GPU-time endpoint's model is not in the price table, so it costs 0 here.
+    expect(result).toMatchObject({ backend: 'modal', model: 'hackathon', costUsd: 0 });
+    expect(result.usage.output).toBe(50);
+    const audit = JSON.parse(readFileSync(path.join(runDir, 'llm', 'flows-r1.json'), 'utf8')) as { request: { backend: string } };
+    expect(audit.request.backend).toBe('modal');
+
+    const baseten = harness([completion('{"title":"Weave"}')], config, { backend: basetenBackend });
+    // 80 uncached * 1.25 + 20 cached * 0.15 + 50 out * 4.25, per 1M tokens
+    expect((await baseten.llm.generateStructured(input())).costUsd).toBeCloseTo(0.0003155, 9);
+  });
+
+  it("never replays one backend's recording for another", async () => {
+    const replayDir = tmp();
+    const replaying = { ...config, LLM_REPLAY: true };
+    const meta = harness([completion('{"title":"Meta"}')], replaying, { replayDir });
+    const modal = harness([completion('{"title":"Modal"}')], replaying, { replayDir, backend: modalBackend });
+
+    expect((await meta.llm.generateStructured(input())).data).toEqual({ title: 'Meta' });
+    expect((await modal.llm.generateStructured(input())).data).toEqual({ title: 'Modal' });
+    expect(modal.calls).toHaveLength(1);
+    expect((await modal.llm.generateStructured(input())).replayed).toBe(true);
   });
 });

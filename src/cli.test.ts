@@ -18,6 +18,8 @@ const config: Config = {
   LLM_MODEL_STRONG: 'muse-wonder-1.0',
   LLM_MODEL_VISION: 'muse-spark-1.3',
   LLM_REPLAY: true,
+  LLM_BACKEND: 'meta',
+  BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
 };
 const llm: Llm = {
   generateStructured() {
