@@ -193,7 +193,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - `src/config/capabilities.ts` and `src/stages/flows/schema.ts`, as in the spec.
   - Done when: a test passes both schemas through `toJsonSchema`; `pnpm typecheck`.
 
-- [ ] **FL2** Validators with tests (90 min). Depends: FL1
+- [x] **FL2** Validators with tests (90 min) (done 2026-10-29). Depends: FL1
   - Every SCOPE and FLOW rule in `src/stages/flows/validate.ts`.
   - Fixtures in `src/stages/flows/__fixtures__/`: a small hand-written valid
     scope and flows for a reading-list app (5 flows; deliberately not one of the

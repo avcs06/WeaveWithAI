@@ -1,0 +1,64 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { splitIssues } from '../../core/issues';
+import { flowMutations, scopeMutations } from './__fixtures__/mutations';
+import { Flows, Scope } from './schema';
+import { flowRules, scopeRules, validateFlows, validateScope } from './validate';
+
+const load = (name: string): unknown =>
+  JSON.parse(readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), 'utf8'));
+// Parsing through the schemas also proves the fixtures are valid artifacts.
+const scope = Scope.parse(load('reading-list.scope.json'));
+const flows = Flows.parse(load('reading-list.flows.json'));
+
+const ruleIds = (issues: { rule: string }[]) => issues.map((issue) => issue.rule);
+
+describe('the reading-list fixture', () => {
+  it('passes every scope rule', () => {
+    const { mandatory, warnings } = splitIssues(validateScope(scope));
+    if (warnings.length > 0) console.log('scope warnings:', warnings);
+    expect(mandatory).toEqual([]);
+  });
+
+  it('passes every flow rule', () => {
+    const { mandatory, warnings } = splitIssues(validateFlows(flows, scope));
+    if (warnings.length > 0) console.log('flow warnings:', warnings);
+    expect(mandatory).toEqual([]);
+  });
+});
+
+describe('every rule has a failing fixture', () => {
+  it('pairs each rule with exactly one mutation', () => {
+    expect(Object.keys(scopeMutations).sort()).toEqual(scopeRules.map((rule) => rule.id).sort());
+    expect(Object.keys(flowMutations).sort()).toEqual(flowRules.map((rule) => rule.id).sort());
+  });
+
+  it.each(scopeRules.map((rule) => rule.id))('%s fires on its mutation and not on the valid scope', (id) => {
+    const mutate = scopeMutations[id];
+    if (!mutate) throw new Error(`no mutation for ${id}`);
+    expect(ruleIds(validateScope(mutate(scope)))).toContain(id);
+    expect(ruleIds(validateScope(scope))).not.toContain(id);
+  });
+
+  it.each(flowRules.map((rule) => rule.id))('%s fires on its mutation and not on the valid flows', (id) => {
+    const mutate = flowMutations[id];
+    if (!mutate) throw new Error(`no mutation for ${id}`);
+    expect(ruleIds(validateFlows(mutate(flows), scope))).toContain(id);
+    expect(ruleIds(validateFlows(flows, scope))).not.toContain(id);
+  });
+});
+
+describe("the spec's hand-broken flows", () => {
+  it('fail exactly FLOW-007, FLOW-011 and FLOW-017', () => {
+    const broken = structuredClone(flows);
+    const addBook = broken.flows.find((flow) => flow.id === 'F03');
+    const signIn = broken.flows.find((flow) => flow.id === 'F02');
+    if (!addBook || !signIn) throw new Error('fixture changed');
+    addBook.alternatives = addBook.alternatives.filter((alternative) => alternative.kind !== 'invalid');
+    signIn.steps[1]!.fields.find((field) => field.name === 'password')!.type = 'text';
+    addBook.steps[1]!.websiteResponse += ' The endpoint returns the book.';
+
+    const { mandatory } = splitIssues(validateFlows(broken, scope));
+    expect([...new Set(ruleIds(mandatory))].sort()).toEqual(['FLOW-007', 'FLOW-011', 'FLOW-017']);
+  });
+});

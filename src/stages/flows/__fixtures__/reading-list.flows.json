@@ -1,0 +1,201 @@
+{
+  "flows": [
+    {
+      "id": "F01",
+      "name": "Sign up",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signUp",
+      "goal": "Create an account to keep a private reading list.",
+      "preconditions": ["Not signed in."],
+      "steps": [
+        {
+          "id": "F01.S01",
+          "kind": "user",
+          "userAction": "The visitor chooses to sign up.",
+          "websiteResponse": "The website shows the sign-up form.",
+          "fields": [],
+          "effects": []
+        },
+        {
+          "id": "F01.S02",
+          "kind": "user",
+          "userAction": "The visitor fills in the form and submits it.",
+          "websiteResponse": "The website creates the account, signs the reader in and shows their start page.",
+          "fields": [
+            { "name": "email", "label": "Email", "meaning": "How the reader signs in and can be reached", "type": "email", "required": true, "minLength": null, "maxLength": 254, "min": null, "max": null, "options": [], "example": "ana@example.com" },
+            { "name": "password", "label": "Password", "meaning": "The secret that protects the reader's list", "type": "password", "required": true, "minLength": 8, "maxLength": 128, "min": null, "max": null, "options": [], "example": "correct-horse-battery" }
+          ],
+          "effects": []
+        }
+      ],
+      "alternatives": [
+        { "id": "F01.A01", "from": "F01.S02", "kind": "invalid", "condition": "The email is not an address or the password is shorter than 8 characters.", "websiteResponse": "The website marks the field and keeps what was typed.", "resumesAt": "F01.S02" },
+        { "id": "F01.A02", "from": "F01.S02", "kind": "failure", "condition": "Creating the account fails.", "websiteResponse": "The website keeps the values and offers to try again.", "resumesAt": "F01.S02" },
+        { "id": "F01.A03", "from": "F01.S02", "kind": "conflict", "condition": "The email already has an account.", "websiteResponse": "The website says so and offers to sign in instead.", "resumesAt": "" }
+      ],
+      "outcome": "The reader has an account and is signed in; after a refresh they are still signed in."
+    },
+    {
+      "id": "F02",
+      "name": "Sign in",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signIn",
+      "goal": "Get back to the reading list.",
+      "preconditions": ["Has an account.", "Not signed in."],
+      "steps": [
+        {
+          "id": "F02.S01",
+          "kind": "user",
+          "userAction": "The reader chooses to sign in.",
+          "websiteResponse": "The website shows the sign-in form.",
+          "fields": [],
+          "effects": []
+        },
+        {
+          "id": "F02.S02",
+          "kind": "user",
+          "userAction": "The reader enters their email and password and submits.",
+          "websiteResponse": "The website signs the reader in and takes them to their reading list.",
+          "fields": [
+            { "name": "email", "label": "Email", "meaning": "How the reader signs in and can be reached", "type": "email", "required": true, "minLength": null, "maxLength": 254, "min": null, "max": null, "options": [], "example": "ana@example.com" },
+            { "name": "password", "label": "Password", "meaning": "The secret that protects the reader's list", "type": "password", "required": true, "minLength": 8, "maxLength": 128, "min": null, "max": null, "options": [], "example": "correct-horse-battery" }
+          ],
+          "effects": []
+        }
+      ],
+      "alternatives": [
+        { "id": "F02.A01", "from": "F02.S02", "kind": "invalid", "condition": "A field is empty.", "websiteResponse": "The website marks the field and keeps what was typed.", "resumesAt": "F02.S02" },
+        { "id": "F02.A02", "from": "F02.S02", "kind": "denied", "condition": "The email and password do not match an account.", "websiteResponse": "The website says so and keeps the email typed.", "resumesAt": "F02.S02" }
+      ],
+      "outcome": "The reader is signed in and stays signed in after a refresh."
+    },
+    {
+      "id": "F03",
+      "name": "Add a book to the reading list",
+      "role": "reader",
+      "category": "core",
+      "authKind": "none",
+      "goal": "Remember a book to read later.",
+      "preconditions": ["Signed in."],
+      "steps": [
+        {
+          "id": "F03.S01",
+          "kind": "user",
+          "userAction": "The reader chooses to add a book.",
+          "websiteResponse": "The website shows an empty book form.",
+          "fields": [],
+          "effects": []
+        },
+        {
+          "id": "F03.S02",
+          "kind": "user",
+          "userAction": "The reader fills in the book and saves it.",
+          "websiteResponse": "The website saves the book and shows it first in the reading list.",
+          "fields": [
+            { "name": "title", "label": "Title", "meaning": "How the reader refers to the book", "type": "text", "required": true, "minLength": null, "maxLength": 200, "min": null, "max": null, "options": [], "example": "The Left Hand of Darkness" },
+            { "name": "author", "label": "Author", "meaning": "Who wrote it, to tell books with similar titles apart", "type": "text", "required": false, "minLength": null, "maxLength": 120, "min": null, "max": null, "options": [], "example": "Ursula K. Le Guin" },
+            { "name": "shelf", "label": "Shelf", "meaning": "Where the reader is with the book", "type": "singleChoice", "required": true, "minLength": null, "maxLength": null, "min": null, "max": null, "options": ["To read", "Reading", "Finished"], "example": "To read" }
+          ],
+          "effects": [{ "noun": "Book", "change": "create" }]
+        }
+      ],
+      "alternatives": [
+        { "id": "F03.A01", "from": "F03.S02", "kind": "invalid", "condition": "The title is empty.", "websiteResponse": "The website marks the field and keeps what was typed.", "resumesAt": "F03.S02" },
+        { "id": "F03.A02", "from": "F03.S02", "kind": "failure", "condition": "Saving fails.", "websiteResponse": "The website keeps the values and offers to retry.", "resumesAt": "F03.S02" },
+        { "id": "F03.A03", "from": "F03.S01", "kind": "cancel", "condition": "The reader cancels.", "websiteResponse": "Nothing is saved; the website shows the reading list as it was.", "resumesAt": "" }
+      ],
+      "outcome": "The book is saved and is still there after a refresh."
+    },
+    {
+      "id": "F04",
+      "name": "Browse and search the shelf",
+      "role": "reader",
+      "category": "browse",
+      "authKind": "none",
+      "goal": "Find a book on the list.",
+      "preconditions": ["Signed in."],
+      "steps": [
+        {
+          "id": "F04.S01",
+          "kind": "user",
+          "userAction": "The reader opens their reading list.",
+          "websiteResponse": "The website lists the reader's books, newest first, each with its title, author and shelf.",
+          "fields": [],
+          "effects": [{ "noun": "Book", "change": "list" }]
+        },
+        {
+          "id": "F04.S02",
+          "kind": "user",
+          "userAction": "The reader types part of a title or an author.",
+          "websiteResponse": "The website narrows the list to the books that match as the reader types.",
+          "fields": [],
+          "effects": [{ "noun": "Book", "change": "list" }]
+        }
+      ],
+      "alternatives": [
+        { "id": "F04.A01", "from": "F04.S01", "kind": "empty", "condition": "The reader has no books yet.", "websiteResponse": "The website says the list is empty and offers to add a book.", "resumesAt": "" },
+        { "id": "F04.A02", "from": "F04.S02", "kind": "empty", "condition": "No book matches.", "websiteResponse": "The website says nothing matched and offers to clear the search.", "resumesAt": "F04.S01" }
+      ],
+      "outcome": "Nothing changed; the reader has found the book they were after."
+    },
+    {
+      "id": "F05",
+      "name": "Delete a book",
+      "role": "reader",
+      "category": "manage",
+      "authKind": "none",
+      "goal": "Remove a book the reader no longer wants on the list.",
+      "preconditions": ["Signed in.", "At least one book on the list."],
+      "steps": [
+        {
+          "id": "F05.S01",
+          "kind": "user",
+          "userAction": "The reader opens a book from the list.",
+          "websiteResponse": "The website shows the book's title, author and shelf.",
+          "fields": [],
+          "effects": [{ "noun": "Book", "change": "read" }]
+        },
+        {
+          "id": "F05.S02",
+          "kind": "user",
+          "userAction": "The reader chooses to delete the book and confirms.",
+          "websiteResponse": "The website removes the book and shows the reading list without it.",
+          "fields": [],
+          "effects": [{ "noun": "Book", "change": "delete" }]
+        }
+      ],
+      "alternatives": [
+        { "id": "F05.A01", "from": "F05.S02", "kind": "cancel", "condition": "The reader decides to keep the book.", "websiteResponse": "Nothing is removed; the website shows the book again.", "resumesAt": "F05.S01" },
+        { "id": "F05.A02", "from": "F05.S01", "kind": "notFound", "condition": "The book was deleted in the meantime.", "websiteResponse": "The website says the book is gone and shows the reading list.", "resumesAt": "" }
+      ],
+      "outcome": "The book is gone and stays gone after a refresh."
+    },
+    {
+      "id": "F06",
+      "name": "Sign out",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signOut",
+      "goal": "Leave the reading list private on a shared device.",
+      "preconditions": ["Signed in."],
+      "steps": [
+        {
+          "id": "F06.S01",
+          "kind": "user",
+          "userAction": "The reader chooses to sign out.",
+          "websiteResponse": "The website signs the reader out and shows the public start page.",
+          "fields": [],
+          "effects": []
+        }
+      ],
+      "alternatives": [],
+      "outcome": "The reader is signed out; a refresh still shows the public start page."
+    }
+  ],
+  "assumptions": [
+    { "id": "A03", "text": "Books are listed newest first; there is no manual ordering.", "kind": "presentation", "affects": ["F04"] }
+  ],
+  "questions": []
+}

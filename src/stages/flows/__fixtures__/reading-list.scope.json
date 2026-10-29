@@ -1,0 +1,43 @@
+{
+  "app": {
+    "name": "Shelf",
+    "summary": "Shelf is a reading list for one reader at a time. You add the books you mean to read, keep each on a shelf that says where you are with it, and find them again by title or author. Nothing else gets in the way.",
+    "audience": "People who read a lot and lose track of what they wanted to read next."
+  },
+  "roles": [
+    { "id": "reader", "name": "Reader", "description": "Keeps a private reading list.", "signedIn": true }
+  ],
+  "vocabulary": [
+    { "noun": "Book", "description": "A book the reader wants to read, is reading or has finished.", "belongsTo": "reader" },
+    { "noun": "Shelf", "description": "Where a book stands: to read, reading or finished.", "belongsTo": "reader" }
+  ],
+  "capabilities": [
+    { "id": "accounts", "needed": true, "note": "Each reader signs in to see their own list." },
+    { "id": "userOwnedData", "needed": true, "note": "Books belong to the reader who added them." },
+    { "id": "crud", "needed": true, "note": "Add, browse and delete books." },
+    { "id": "search", "needed": true, "note": "Find a book by title or author." },
+    { "id": "fileUploads", "needed": false, "note": "No cover images in the MVP." }
+  ],
+  "inScope": [
+    "Sign up and sign in with email and password",
+    "Add a book with a title, an author and a shelf",
+    "Browse the list and search it by title or author",
+    "Delete a book"
+  ],
+  "outOfScope": [
+    { "item": "Cover images", "reason": "File uploads are not supported in the MVP.", "placeholder": "The website shows the title and author as text." }
+  ],
+  "assumptions": [
+    { "id": "A01", "text": "A reader keeps one list; there are no shared lists.", "kind": "scope", "affects": [] },
+    { "id": "A02", "text": "A reader fixes a mistake by deleting the Book and adding it again; editing a Book comes after the MVP.", "kind": "behavior", "affects": [] }
+  ],
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "Should a reader be able to rate a finished book?",
+      "whyItMatters": "A rating adds a field and a place to show it.",
+      "defaultAnswer": "No; the shelf alone says where the reader is with a book.",
+      "blocking": false
+    }
+  ]
+}
