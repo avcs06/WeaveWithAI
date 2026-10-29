@@ -189,7 +189,7 @@ Steps 01 to 08.
 
 Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
 
-- [ ] **FL1** Capabilities and schemas (40 min). Depends: F2
+- [x] **FL1** Capabilities and schemas (40 min) (done 2026-10-29). Depends: F2
   - `src/config/capabilities.ts` and `src/stages/flows/schema.ts`, as in the spec.
   - Done when: a test passes both schemas through `toJsonSchema`; `pnpm typecheck`.
 
