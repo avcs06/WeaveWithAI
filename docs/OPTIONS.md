@@ -443,7 +443,13 @@ and name, and the validators enforce usage (user, 2026-10-29).
       the inventory; a mapping pass picks DS components and turns the rest into
       new ones. Most original look; more reconciliation work.
 
-Notes:
+Notes: B, with the page kind deciding the weight (user, 2026-10-30). Inner
+pages (list, detail, form, dashboard, editor, settings, auth) are design-system
+first. Public pages (landing and other marketing content) are visual first:
+sections are composed from elements and layout boxes on the tokens, and a
+component is used only where it fits, mainly the interactive ones. A component
+is never used because it exists. Section recipes for marketing content are a
+later extension of the design system, not this week's.
 
 ### D3.2 Design representation (pick one)
 

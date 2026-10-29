@@ -1,0 +1,286 @@
+{
+  "Button/sm": {
+    "height": 32
+  },
+  "Button/md": {
+    "height": 40
+  },
+  "IconButton/xs": {
+    "height": 24,
+    "width": 24
+  },
+  "IconButton/sm": {
+    "height": 32,
+    "width": 32
+  },
+  "IconButton/md": {
+    "height": 40,
+    "width": 40
+  },
+  "PopoverButton/sm": {
+    "height": 32
+  },
+  "PopoverButton/md": {
+    "height": 40
+  },
+  "Avatar/sm": {
+    "height": 28,
+    "width": 28
+  },
+  "Avatar/md": {
+    "height": 36,
+    "width": 36
+  },
+  "Avatar/lg": {
+    "height": 56,
+    "width": 56
+  },
+  "Tag/xs": {
+    "height": 24
+  },
+  "Tag/sm": {
+    "height": 32
+  },
+  "Chip/sm": {
+    "height": 32
+  },
+  "Chip/md": {
+    "height": 40
+  },
+  "Checkbox/sm": {
+    "height": 18
+  },
+  "Checkbox/sm/box": {
+    "height": 18,
+    "width": 18
+  },
+  "Checkbox/md": {
+    "height": 22
+  },
+  "Checkbox/md/box": {
+    "height": 22,
+    "width": 22
+  },
+  "Radio/sm/box": {
+    "height": 18,
+    "width": 18
+  },
+  "Radio/md/box": {
+    "height": 22,
+    "width": 22
+  },
+  "Switch/sm": {
+    "height": 24
+  },
+  "Switch/sm/track": {
+    "height": 24,
+    "width": 42
+  },
+  "Switch/md": {
+    "height": 32
+  },
+  "Switch/md/track": {
+    "height": 32,
+    "width": 56
+  },
+  "FormControl/sm": {
+    "height": 80
+  },
+  "FormControl/sm/label-row": {
+    "height": 16
+  },
+  "FormControl/sm/box": {
+    "height": 32
+  },
+  "FormControl/sm/help": {
+    "height": 16
+  },
+  "FormControl/md": {
+    "height": 88
+  },
+  "FormControl/md/label-row": {
+    "height": 16
+  },
+  "FormControl/md/box": {
+    "height": 40
+  },
+  "FormControl/md/help": {
+    "height": 16
+  },
+  "FormControl/sm+error": {
+    "height": 104
+  },
+  "FormControl/sm+error/label-row": {
+    "height": 16
+  },
+  "FormControl/sm+error/box": {
+    "height": 32
+  },
+  "FormControl/sm+error/help": {
+    "height": 16
+  },
+  "FormControl/sm+error/message": {
+    "height": 16
+  },
+  "FormControl/md+error": {
+    "height": 112
+  },
+  "FormControl/md+error/label-row": {
+    "height": 16
+  },
+  "FormControl/md+error/box": {
+    "height": 40
+  },
+  "FormControl/md+error/help": {
+    "height": 16
+  },
+  "FormControl/md+error/message": {
+    "height": 16
+  },
+  "Input/sm": {
+    "height": 80
+  },
+  "Input/sm/box": {
+    "height": 32
+  },
+  "Input/md": {
+    "height": 88
+  },
+  "Input/md/box": {
+    "height": 40
+  },
+  "NumberInput/sm": {
+    "height": 80
+  },
+  "NumberInput/sm/box": {
+    "height": 32
+  },
+  "NumberInput/md": {
+    "height": 88
+  },
+  "NumberInput/md/box": {
+    "height": 40
+  },
+  "PasswordInput/sm": {
+    "height": 80
+  },
+  "PasswordInput/sm/box": {
+    "height": 32
+  },
+  "PasswordInput/md": {
+    "height": 88
+  },
+  "PasswordInput/md/box": {
+    "height": 40
+  },
+  "SearchInput/sm": {
+    "height": 80
+  },
+  "SearchInput/sm/box": {
+    "height": 32
+  },
+  "SearchInput/md": {
+    "height": 88
+  },
+  "SearchInput/md/box": {
+    "height": 40
+  },
+  "Select/sm": {
+    "height": 80
+  },
+  "Select/sm/box": {
+    "height": 32
+  },
+  "Select/md": {
+    "height": 88
+  },
+  "Select/md/box": {
+    "height": 40
+  },
+  "MultiSelect/sm/box": {
+    "minHeight": 32
+  },
+  "MultiSelect/md/box": {
+    "minHeight": 40
+  },
+  "Textarea/sm": {
+    "height": 128
+  },
+  "Textarea/sm/box": {
+    "height": 80,
+    "minHeight": 32
+  },
+  "Textarea/md": {
+    "height": 136
+  },
+  "Textarea/md/box": {
+    "height": 88,
+    "minHeight": 40
+  },
+  "Accordion/header": {
+    "height": 66
+  },
+  "Collapsible/header": {
+    "height": 66
+  },
+  "Tabs/list": {
+    "height": 42
+  },
+  "Tabs/trigger": {
+    "height": 42
+  },
+  "Section/header": {
+    "height": 52
+  },
+  "Dropdown/item": {
+    "height": 30
+  },
+  "Table/header": {
+    "height": 36
+  },
+  "Table/row": {
+    "height": 37
+  },
+  "Pagination/full": {
+    "height": 32
+  },
+  "Pagination/minimal": {
+    "height": 32
+  },
+  "SelectOption": {
+    "height": 30
+  },
+  "Dialog/sm": {
+    "width": 400
+  },
+  "Dialog/sm/header": {
+    "height": 56,
+    "width": 400
+  },
+  "Dialog/sm/footer": {
+    "height": 64,
+    "width": 400
+  },
+  "Dialog/md": {
+    "width": 520
+  },
+  "Dialog/md/header": {
+    "height": 56,
+    "width": 520
+  },
+  "Dialog/md/footer": {
+    "height": 64,
+    "width": 520
+  },
+  "Dialog/lg": {
+    "width": 720
+  },
+  "Dialog/lg/header": {
+    "height": 56,
+    "width": 720
+  },
+  "Dialog/lg/footer": {
+    "height": 64,
+    "width": 720
+  }
+}

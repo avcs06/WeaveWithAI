@@ -266,14 +266,27 @@ an enum, a nullable number, a discriminated union.
 
 The design system is read from `template/` by
 `template/tools/export-design-system.mjs`, run as a child process (it needs
-the template's own TypeScript tooling and folder). It prints components with
-props, variant values, descriptions, superseded alternatives and recipe names,
-plus all tokens. Loading takes about 7 seconds, so the result is cached in
-`.weave-cache/inventory-<hash>.json`, keyed by a hash of the files under
-`template/packages/**/src` and `template/tokens.ts` and `template/colors.ts`.
+the template's own TypeScript tooling and folder). The inventory keeps what
+the design stage needs per component: name, category, one-line description,
+variant values, the recipe's default variants, every look its `look` prop
+accepts (`src/ds/looks.ts`, read from the recipes files), the fixed box
+dimensions by size and part (`template/tools/measure-design-system.mjs`,
+measured in a browser from the `Measure` story on Storybook), what it shows
+and the pseudo entries the exporter cannot see, like Toast
+(`src/ds/curated.json`, hand-written), and the components that go inside it
+(`src/ds/compose.ts`, from the recipes' JSX). Plus all tokens and the settings
+a project decides once (`src/ds/project.ts`: theme and page colors, focus
+ring, radius, fonts). Components of the placeholder web app, config
+components that render nothing and internals never placed by a design are
+left out. Loading takes about 7 seconds and the measurement needs Storybook
+on 6006, so the result is cached in `.weave-cache/inventory-<hash>.json`,
+keyed by a hash of the files under `template/packages/*/src`, `tokens.ts`,
+`colors.ts` and `designsystem.config.json`.
 
-Prompts receive a slim summary (name, one-line description, variant values,
-about 4 KB for 43 components). Validators receive the full inventory.
+Prompts receive the inventory as prose (`src/ds/prose.ts`): one block per
+component with its facts on short lines, subcomponents indented under the
+one they belong to, about 11 KB for 40 components. Validators receive the
+full inventory.
 
 ## Generated app
 

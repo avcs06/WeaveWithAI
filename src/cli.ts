@@ -12,6 +12,8 @@ import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
 import { type Config, config as loadConfig } from './core/env';
 import { formatForTerminal, type Issue, splitIssues } from './core/issues';
 import { createLlm, type Llm } from './core/llm';
+import { inventory, type InventoryOptions } from './ds/inventory';
+import { inventoryProse } from './ds/prose';
 import {
   createRun,
   DEFAULT_RUNS_DIR,
@@ -260,6 +262,23 @@ export function goldenCommand(
   return lines;
 }
 
+/** Loads the design-system inventory, exporting it on a cache miss, and prints its counts. */
+export async function dsCommand(
+  deps: InventoryOptions & Pick<CliDeps, 'out'> = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const inv = await inventory(deps);
+  const { project } = inv;
+  const lines = [
+    `${inv.components.length} components, ${inv.components.filter((c) => c.looks).length} with looks, ${inv.tokens.length} tokens`,
+    `prose ${Buffer.byteLength(inventoryProse(inv))} bytes`,
+    `box: ${inv.components.filter((c) => c.box).length} components measured`,
+    `project: focus ring ${project.focusRing.value}, radius ${project.radius.surface} surface ${project.radius.control} control, fonts ${project.fonts.ui} ${project.fonts.display} ${project.fonts.mono}, ${project.colors.entity.length} entity sets`,
+  ];
+  for (const line of lines) out(line);
+  return lines;
+}
+
 /** Exit codes: 0 ok, 1 error, 2 usage. */
 export async function main(argv: string[]): Promise<number> {
   try {
@@ -298,7 +317,7 @@ export async function main(argv: string[]): Promise<number> {
         goldenCommand(first, second, values.stages);
         return 0;
       case 'ds':
-        console.log('ds: added in step DS1');
+        await dsCommand();
         return 0;
       case 'bench':
         console.log('bench: added in step B7');

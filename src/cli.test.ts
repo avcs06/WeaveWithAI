@@ -1,8 +1,10 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
+  dsCommand,
   goldenCommand,
   runCommand,
   showCommand,
@@ -16,6 +18,16 @@ import { readState, type Run, runPath } from './core/run';
 
 const runsDir = mkdtempSync(path.join(tmpdir(), 'weave-cli-'));
 afterAll(() => rmSync(runsDir, { recursive: true, force: true }));
+const fixture = (name: string) =>
+  fileURLToPath(new URL(`./ds/__fixtures__/${name}`, import.meta.url));
+const printFile = (file: string) => ({
+  file: 'node',
+  args: [
+    '-e',
+    'process.stdout.write(require("fs").readFileSync(process.argv[1], "utf8"))',
+    file,
+  ],
+});
 
 const config: Config = {
   MODEL_API_KEY: 'test-key',
@@ -150,5 +162,24 @@ describe('weave run', () => {
       'flows: no artifact to validate',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
+  });
+});
+
+describe('weave ds', () => {
+  it('prints the counts, the summary size and the project settings', async () => {
+    lines.length = 0;
+    // Fake tools print the fixtures; the cache lives in the temp folder.
+    const printed = await dsCommand({
+      templateDir: 'template',
+      cacheDir: path.join(runsDir, 'cache'),
+      exporter: printFile(fixture('export.json')),
+      measurer: printFile(fixture('boxes.json')),
+      out: deps.out,
+    });
+    expect(printed).toEqual(lines);
+    expect(lines[0]).toMatch(/^\d+ components, \d+ with looks, \d+ tokens$/);
+    expect(lines[1]).toMatch(/^prose \d+ bytes$/);
+    expect(lines[2]).toMatch(/^box: \d+ components measured$/);
+    expect(lines[3]).toMatch(/^project: focus ring halo, .* entity sets$/);
   });
 });

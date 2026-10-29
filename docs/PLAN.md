@@ -367,7 +367,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
 
 Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 23.
 
-- [ ] **DS1** Design-system inventory (45 min). Depends: F1
+- [x] **DS1** Design-system inventory (45 min) (done 2026-10-29). Depends: F1
   - `src/ds/inventory.ts`: runs `node template/tools/export-design-system.mjs`
     with execa; caches in `.weave-cache/inventory-<hash>.json`, keyed by a hash
     of `template/packages/*/src/**`, `template/tokens.ts`, `template/colors.ts`;
@@ -376,6 +376,21 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - `pnpm weave ds` prints counts and the summary's size.
   - Done when: a cached call returns in under 200 ms; the summary of the
     fixture is under 6 KB and lists every component with its variant values.
+
+- [x] **DS1b** Fixed box dimensions (2 h) (done 2026-10-29). Depends: DS1
+  - Why: the design stage lays out and validates with fixed heights (a Button
+    is 32px or 40px tall, an Accordion header one row); many come from padding
+    plus line height or from the implementation, so a browser render is the
+    only reliable source.
+  - `template/packages/ui/src/Measure.stories.tsx` renders every case with
+    short and long content; `template/tools/measure-design-system.mjs` reads
+    each root and part box on the running Storybook (6006, like `pnpm verify
+    --recipes`) and prints what stayed equal; `inventory()` stores it as `box`
+    per component, size and part. A real measurement is the fixture, so tests
+    and runs never need Storybook.
+  - Done when: the rebuilt inventory lists Button sm 32 and md 40, FormControl
+    boxes, Avatar sizes, Dialog widths and an Accordion trigger height;
+    `pnpm test` and the template's lint and typecheck pass.
 
 - [ ] **DS2** Design config (20 min). Depends: F1
   - `src/config/design.ts`: templates, section kinds, element tags, the

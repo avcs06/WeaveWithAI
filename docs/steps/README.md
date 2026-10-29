@@ -41,6 +41,7 @@ spec's table.
 | 13  | FL5  | Wire the flows stage                            | 2     | 30 min  | [13-FL5-flows-stage.md](13-FL5-flows-stage.md) |
 | 14  | FL6  | Reference ideas                                 | 2     | 60 min  | [14-FL6-reference-ideas.md](14-FL6-reference-ideas.md) |
 | 15  | DS1  | Design-system inventory                         | 3     | 45 min  | [15-DS1-inventory.md](15-DS1-inventory.md) |
+| 15b | DS1b | Fixed box dimensions                            | 3     | 2 h     | [15b-DS1b-box-dimensions.md](15b-DS1b-box-dimensions.md) |
 | 16  | DS2  | Design config                                   | 3     | 20 min  | [16-DS2-design-config.md](16-DS2-design-config.md) |
 | 17  | DS3  | Brief                                           | 3     | 60 min  | [17-DS3-brief.md](17-DS3-brief.md) |
 | 18  | DS4  | Theme generator                                 | 3     | 90 min  | [18-DS4-theme.md](18-DS4-theme.md) |

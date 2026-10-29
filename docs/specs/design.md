@@ -16,6 +16,15 @@ fits, the model declares a new component with reasons; the validator checks
 the reasons, flags duplicates of DS components, and every run writes a gap
 report so missing components become your DS backlog.
 
+The page kind sets the weight (D3.1 notes). Inner pages, the task screens of
+the app, are design-system first: a control, a field, a table, a dialog is the
+component. Public pages such as the landing page are visual first: the design
+decides the composition, sections are built from elements and layout boxes on
+the tokens, and a component is used only where it fits, mainly the interactive
+ones. A component is never used because it exists; a Card around every block
+or Tabs for a feature list is a defect. Prompts say this by page template, and
+DESIGN-006 and DESIGN-007 apply to inner pages only.
+
 ## Shape
 
 ```text
