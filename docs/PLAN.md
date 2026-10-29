@@ -130,7 +130,7 @@ Steps 01 to 08.
     persistent issues end in `StageFailed` with the report after 3 rounds;
     round 3 uses the `strong` model.
 
-- [ ] **F7** CLI (30 min). Depends: F6
+- [x] **F7** CLI (30 min) (done 2026-10-29). Depends: F6
   - `src/cli.ts` with `node:util` `parseArgs`:
     `run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]`,
     `validate <runId> [stage]` (validators only, no model calls), `show <runId>`,
