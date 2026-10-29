@@ -201,7 +201,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     one mutation per rule.
   - Done when: each rule has a passing and a failing test; `pnpm test` is green.
 
-- [ ] **FL3** Prompts (30 min). Depends: FL1
+- [x] **FL3** Prompts (30 min) (done 2026-10-29). Depends: FL1
   - Review and finish `src/stages/flows/prompt-scope.md` and `prompt-flows.md`
     (drafts provided). Placeholders: capabilities, scope, answers, example flow
     (from the valid fixture).

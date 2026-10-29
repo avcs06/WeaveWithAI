@@ -4,9 +4,11 @@ const PLACEHOLDER = /\{\{(\w+)\}\}/g;
 
 /** Reads a prompt or idea `.md`; the HTML comments hold notes for us, not the model. */
 export function loadPrompt(file: string): string {
-  return readFileSync(file, 'utf8')
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .trim();
+  return stripComments(readFileSync(file, 'utf8'));
+}
+
+export function stripComments(text: string): string {
+  return text.replace(/<!--[\s\S]*?-->/g, '').trim();
 }
 
 export function fillPrompt(template: string, values: Record<string, string>): string {
