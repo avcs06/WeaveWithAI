@@ -114,7 +114,7 @@ Steps 01 to 08.
     schema bridge needed changes for the API to accept it, note them in
     ARCHITECTURE.md under "Model layer".
 
-- [ ] **F5** Runs, artifacts, events, issues (40 min). Depends: F1
+- [x] **F5** Runs, artifacts, events, issues (40 min) (done 2026-10-29). Depends: F1
   - `src/core/run.ts`, `artifacts.ts`, `issues.ts`: run IDs like
     `20261028-2010-project-tracker`; envelope with canonical hash, version and
     inputs; `isStale`; `appendEvent`; `writeReport`; `state.json`.
