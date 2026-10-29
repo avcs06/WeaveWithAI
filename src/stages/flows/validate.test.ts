@@ -98,6 +98,22 @@ describe('every rule has a failing fixture', () => {
   );
 });
 
+describe('choices from records (FL12)', () => {
+  it('FLOW-005 accepts a choice that takes its options from a vocabulary noun, and flags a noun the scope does not have', () => {
+    const fromShelves = structuredClone(flows);
+    const shelf = fromShelves.fields.find((field) => field.id === 'FD05');
+    if (!shelf) throw new Error('fixture changed');
+    shelf.options = [];
+    shelf.optionsFrom = 'Shelf';
+    expect(ruleIds(validateFlows(fromShelves, scope))).not.toContain(
+      'FLOW-005',
+    );
+
+    shelf.optionsFrom = 'Genre';
+    expect(ruleIds(validateFlows(fromShelves, scope))).toContain('FLOW-005');
+  });
+});
+
 describe('one expansion batch (FL9)', () => {
   const batch = (flowIds: string[]) => ({
     flows: flows.flows.filter((flow) => flowIds.includes(flow.id)),

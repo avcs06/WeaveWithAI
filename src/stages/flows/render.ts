@@ -174,6 +174,8 @@ export function fieldLine(field: Field): string {
   else if (field.min !== null) rules.push(`at least ${field.min}${unit}`);
   if (field.options.length > 0)
     rules.push(`one of: ${field.options.join(', ')}`);
+  if (field.optionsFrom !== '')
+    rules.push(`one of the ${field.optionsFrom} records`);
   return `${field.label} (${rules.join(', ')}), e.g. "${field.example}"`;
 }
 

@@ -91,6 +91,7 @@
       "min": null,
       "max": 254,
       "options": [],
+      "optionsFrom": "",
       "example": "ana@example.com"
     },
     {
@@ -102,6 +103,7 @@
       "min": 8,
       "max": 128,
       "options": [],
+      "optionsFrom": "",
       "example": "correct-horse-battery"
     },
     {
@@ -113,6 +115,7 @@
       "min": null,
       "max": 200,
       "options": [],
+      "optionsFrom": "",
       "example": "The Left Hand of Darkness"
     },
     {
@@ -124,6 +127,7 @@
       "min": null,
       "max": 120,
       "options": [],
+      "optionsFrom": "",
       "example": "Ursula K. Le Guin"
     },
     {
@@ -139,6 +143,7 @@
         "Reading",
         "Finished"
       ],
+      "optionsFrom": "",
       "example": "To read"
     }
   ],

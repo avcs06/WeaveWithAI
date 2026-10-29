@@ -42,6 +42,15 @@ describe('render', () => {
     expect(text).toMatchSnapshot();
   });
 
+  it('a choice from records names the records it offers', () => {
+    const fromShelves = structuredClone(flows);
+    const shelf = fromShelves.fields.find((field) => field.id === 'FD05');
+    if (!shelf) throw new Error('fixture changed');
+    shelf.options = [];
+    shelf.optionsFrom = 'Shelf';
+    expect(renderFlows(fromShelves, scope)).toContain('one of the Shelf records');
+  });
+
   it('catalog lists every flow with its description and the reusable parts', () => {
     const text = renderCatalog(catalog, scope);
     expect(text).toContain(

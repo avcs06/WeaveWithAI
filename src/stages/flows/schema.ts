@@ -116,6 +116,11 @@ export const Field = z.object({
       'Longest length for text types, largest value for numbers; null when none',
     ),
   options: z.array(z.string()).describe('Choice types only; [] otherwise'),
+  optionsFrom: z
+    .string()
+    .describe(
+      'The vocabulary noun whose records are the choices, with options []; "" for fixed options',
+    ),
   example: z.string(),
 });
 

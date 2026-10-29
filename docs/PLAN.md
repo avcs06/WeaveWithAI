@@ -316,7 +316,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     wording; the expand guide capabilities and wording.
   - Done when: `pnpm test`; `pnpm typecheck`.
 
-- [ ] **FL12** Choice fields whose options come from records (20 min). Depends: FL1
+- [x] **FL12** Choice fields whose options come from records (20 min) (done 2026-10-29). Depends: FL1
   - Added 2026-10-29 by the user: a choice field cannot take its options
     from records, so the ecommerce catalog took 4 rounds (the glaze choice
     must offer the glazes the owner manages, and FLOW-005 asks for at least 2
