@@ -1,0 +1,200 @@
+{
+  "flows": [
+    {
+      "id": "F01",
+      "name": "Sign up",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signUp",
+      "goal": "Create an account to keep a private reading list.",
+      "preconditions": [
+        "Not signed in."
+      ],
+      "outcome": "The reader has an account and is signed in; after a refresh they are still signed in.",
+      "description": "A new reader creates an account with an email and a password and lands on their empty reading list."
+    },
+    {
+      "id": "F02",
+      "name": "Sign in",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signIn",
+      "goal": "Get back to the reading list.",
+      "preconditions": [
+        "Has an account.",
+        "Not signed in."
+      ],
+      "outcome": "The reader is signed in and stays signed in after a refresh.",
+      "description": "A returning reader signs in with their email and password and sees their reading list."
+    },
+    {
+      "id": "F03",
+      "name": "Add a book to the reading list",
+      "role": "reader",
+      "category": "core",
+      "authKind": "none",
+      "goal": "Remember a book to read later.",
+      "preconditions": [
+        "Signed in."
+      ],
+      "outcome": "The book is saved and is still there after a refresh.",
+      "description": "The reader adds a book with its title, author and shelf; the book appears first in the list."
+    },
+    {
+      "id": "F04",
+      "name": "Browse and search the shelf",
+      "role": "reader",
+      "category": "browse",
+      "authKind": "none",
+      "goal": "Find a book on the list.",
+      "preconditions": [
+        "Signed in."
+      ],
+      "outcome": "Nothing changed; the reader has found the book they were after.",
+      "description": "The reader browses the list, newest first, and narrows it by typing part of a title or author."
+    },
+    {
+      "id": "F05",
+      "name": "Delete a book",
+      "role": "reader",
+      "category": "manage",
+      "authKind": "none",
+      "goal": "Remove a book the reader no longer wants on the list.",
+      "preconditions": [
+        "Signed in.",
+        "At least one book on the list."
+      ],
+      "outcome": "The book is gone and stays gone after a refresh.",
+      "description": "The reader picks a book and deletes it after confirming; the list no longer shows it."
+    },
+    {
+      "id": "F06",
+      "name": "Sign out",
+      "role": "reader",
+      "category": "auth",
+      "authKind": "signOut",
+      "goal": "Leave the reading list private on a shared device.",
+      "preconditions": [
+        "Signed in."
+      ],
+      "outcome": "The reader is signed out; a refresh still shows the public start page.",
+      "description": "The reader signs out and sees the landing page."
+    }
+  ],
+  "fields": [
+    {
+      "id": "FD01",
+      "label": "Email",
+      "meaning": "How the reader signs in and can be reached",
+      "type": "email",
+      "required": true,
+      "min": null,
+      "max": 254,
+      "options": [],
+      "example": "ana@example.com"
+    },
+    {
+      "id": "FD02",
+      "label": "Password",
+      "meaning": "The secret that protects the reader's list",
+      "type": "password",
+      "required": true,
+      "min": 8,
+      "max": 128,
+      "options": [],
+      "example": "correct-horse-battery"
+    },
+    {
+      "id": "FD03",
+      "label": "Title",
+      "meaning": "How the reader refers to the book",
+      "type": "text",
+      "required": true,
+      "min": null,
+      "max": 200,
+      "options": [],
+      "example": "The Left Hand of Darkness"
+    },
+    {
+      "id": "FD04",
+      "label": "Author",
+      "meaning": "Who wrote it, to tell books with similar titles apart",
+      "type": "text",
+      "required": false,
+      "min": null,
+      "max": 120,
+      "options": [],
+      "example": "Ursula K. Le Guin"
+    },
+    {
+      "id": "FD05",
+      "label": "Shelf",
+      "meaning": "Where the reader is with the book",
+      "type": "singleChoice",
+      "required": true,
+      "min": null,
+      "max": null,
+      "options": [
+        "To read",
+        "Reading",
+        "Finished"
+      ],
+      "example": "To read"
+    }
+  ],
+  "forms": [
+    {
+      "id": "FM01",
+      "name": "Book form",
+      "fields": [
+        "FD03",
+        "FD04",
+        "FD05"
+      ]
+    }
+  ],
+  "subflows": [
+    {
+      "id": "SF01",
+      "name": "Confirm a deletion",
+      "steps": [
+        {
+          "id": "SF01.S01",
+          "kind": "user",
+          "userAction": "The reader chooses to delete the book and confirms.",
+          "websiteResponse": "The website removes the book and shows the reading list without it.",
+          "fields": [],
+          "form": "",
+          "subflow": "",
+          "effects": [
+            {
+              "noun": "Book",
+              "change": "delete"
+            }
+          ]
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "SF01.A01",
+          "from": "SF01.S01",
+          "kind": "cancel",
+          "condition": "The reader decides to keep the book.",
+          "websiteResponse": "Nothing is removed; the website shows the book again.",
+          "resumesAt": ""
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "A03",
+      "text": "Books are listed newest first; there is no manual ordering.",
+      "kind": "presentation",
+      "affects": [
+        "F04"
+      ]
+    }
+  ],
+  "questions": []
+}

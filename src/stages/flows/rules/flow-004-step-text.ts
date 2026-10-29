@@ -1,8 +1,8 @@
 /**
  * FLOW-004 · mandatory
- * Every step has a websiteResponse; a user step has a userAction; a system step has userAction "".
- * Pass: { kind: 'user', userAction: 'Clicks Add', websiteResponse: 'Shows the form.' } · { kind: 'system', userAction: '', websiteResponse: 'Marks the book overdue.' }
- * Fail: { kind: 'user', userAction: '' } · { websiteResponse: '' } · { kind: 'system', userAction: 'Waits a day' }
+ * Every step has a websiteResponse; a user step has a userAction; a system step has userAction "". A step that runs a subflow has neither text, no fields and no effects: the subflow carries them.
+ * Pass: { kind: 'user', userAction: 'Clicks Add', websiteResponse: 'Shows the form.' } · { subflow: 'SF01', userAction: '', websiteResponse: '', fields: [], effects: [] }
+ * Fail: { kind: 'user', userAction: '' } · { websiteResponse: '' } · { subflow: 'SF01', websiteResponse: 'Shows...' }
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
@@ -14,6 +14,23 @@ export const rule = defineRule<FlowInput>(
   ({ flows }, fail) => {
     const issues: Issue[] = [];
     for (const { step } of eachStep(flows)) {
+      if (step.subflow !== '') {
+        const carried = [
+          step.userAction !== '' && 'a userAction',
+          step.websiteResponse !== '' && 'a websiteResponse',
+          (step.fields.length > 0 || step.form !== '') && 'fields',
+          step.effects.length > 0 && 'effects',
+        ].filter((item): item is string => typeof item === 'string');
+        if (carried.length > 0) {
+          issues.push(
+            fail(
+              `${step.id} runs subflow ${step.subflow} but also has ${carried.join(', ')}; a subflow step carries nothing of its own.`,
+              step.id,
+            ),
+          );
+        }
+        continue;
+      }
       if (step.websiteResponse.trim() === '') {
         issues.push(
           fail(

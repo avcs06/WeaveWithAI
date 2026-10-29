@@ -157,12 +157,12 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
   const state = readState(run);
   const header = ['stage', 'status', 'version', 'rounds', 'known', 'updated'];
-  const rows = PIPELINE.flatMap((name) => {
+  const row = (name: string, label: string) => {
     const stage = state.stages[name];
     if (!stage) return [];
     return [
       [
-        name,
+        label,
         stage.status,
         String(stage.version ?? ''),
         String(stage.rounds ?? ''),
@@ -170,7 +170,15 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
         stage.updatedAt,
       ],
     ];
-  });
+  };
+  // A stage that ran its work as child stages (flows-expand-1, ...) lists them indented under it.
+  const rows = PIPELINE.flatMap((name) => [
+    ...row(name, name),
+    ...Object.keys(state.stages)
+      .filter((child) => new RegExp(`^${name}-\\d+$`).test(child))
+      .sort()
+      .flatMap((child) => row(child, `  ${child}`)),
+  ]);
   const widths = header.map((cell, i) =>
     Math.max(cell.length, ...rows.map((row) => row[i]?.length ?? 0)),
   );
@@ -202,7 +210,7 @@ export function goldenCommand(
 ): string[] {
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
-  const names = (stageList ?? 'scope,flows')
+  const names = (stageList ?? 'scope,flows-catalog,flows')
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);

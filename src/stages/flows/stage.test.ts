@@ -13,8 +13,15 @@ import type { Config } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
 import { createRun, readState, runPath } from '../../core/run';
 import type { StageContext } from '../index';
-import { flowsStage, readAnswers, scopeStage, terminalAsk } from './stage';
-import { Flows, type Question, Scope } from './schema';
+import {
+  catalogStage,
+  expandStage,
+  flowsStage,
+  readAnswers,
+  scopeStage,
+  terminalAsk,
+} from './stage';
+import { Catalog, Flows, type Question, Scope } from './schema';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-flows-stage-'));
 const idea = path.join(root, 'idea.md');
@@ -27,10 +34,20 @@ const load = (name: string): unknown =>
   );
 const scopeFixture = Scope.parse(load('reading-list.scope.json'));
 const flowsFixture = Flows.parse(load('reading-list.flows.json'));
+const catalogFixture = Catalog.parse(load('reading-list.catalog.json'));
 
 const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
+const emptyPatch = {
+  upsertFlows: [],
+  upsertFields: [],
+  upsertForms: [],
+  upsertSubflows: [],
+  removeFlows: [],
+  assumptions: [],
+  questions: [],
+};
 
-/** Answers by schema: the fixtures for the stages, an empty review for the reviewers. */
+/** Answers by schema: the fixtures for scope and catalog, the fixture flows named in the message for a batch, nothing to review or patch. */
 function fakeLlm() {
   const inputs: GenerateInput<unknown>[] = [];
   const llm: Llm = {
@@ -39,11 +56,26 @@ function fakeLlm() {
         ...input,
         messages: [...input.messages],
       } as GenerateInput<unknown>);
-      const data = {
-        Scope: scopeFixture,
-        Flows: flowsFixture,
-        Review: { blockers: [] },
-      }[input.schemaName];
+      const user = input.messages.at(-1)?.content ?? '';
+      const answers: Record<string, () => unknown> = {
+        Scope: () => scopeFixture,
+        FlowCatalog: () => catalogFixture,
+        FlowBatch: () => {
+          const ids =
+            /expand these flows[\s\S]*?Write the full flows ([^,]+(?:, [^,\s]+)*)/
+              .exec(user)?.[1]
+              ?.split(', ') ?? [];
+          return {
+            flows: flowsFixture.flows.filter((flow) => ids.includes(flow.id)),
+            newFields: [],
+            newForms: [],
+            newSubflows: [],
+          };
+        },
+        FlowsPatch: () => emptyPatch,
+        Review: () => ({ blockers: [] }),
+      };
+      const data = answers[input.schemaName]?.();
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
       return {
         data: data as never,
@@ -60,9 +92,9 @@ function fakeLlm() {
   return { llm, inputs };
 }
 
-describe('scope and flows stages', () => {
-  it('write both artifacts, their markdown, the answers file and the run state', async () => {
-    const run = createRun({ idea, runsDir: root, id: 'both' });
+describe('the four stages', () => {
+  it('scope, catalog, expansion in batches and reconciliation write their artifacts, markdown and state', async () => {
+    const run = createRun({ idea, runsDir: root, id: 'all' });
     const { llm, inputs } = fakeLlm();
     const ctx: StageContext = {
       run,
@@ -73,43 +105,58 @@ describe('scope and flows stages', () => {
     };
 
     await scopeStage.run(ctx);
+    await catalogStage.run(ctx);
+    await expandStage.run(ctx);
     await flowsStage.run(ctx);
 
-    expect(readArtifact<Scope>(run, 'scope').meta).toMatchObject({
+    expect(readArtifact<Catalog>(run, 'flows-catalog').meta).toMatchObject({
       version: 1,
-      stage: 'scope',
-      model: 'muse-spark-1.3',
-      rounds: 2,
-    });
-    expect(readArtifact<Flows>(run, 'flows').meta).toMatchObject({
-      version: 1,
+      stage: 'flows-catalog',
       inputs: { scope: { version: 1 } },
     });
-    expect(readFileSync(runPath(run, '01-scope.md'), 'utf8')).toContain(
-      '# Shelf: scope',
+    expect(
+      readArtifact<Flows>(run, 'flows-draft').data.flows.map((flow) => flow.id),
+    ).toEqual(['F01', 'F02', 'F03', 'F04', 'F05', 'F06']);
+    expect(readArtifact<Flows>(run, 'flows').meta).toMatchObject({
+      version: 1,
+      inputs: { 'flows-draft': { version: 1 } },
+    });
+    expect(readFileSync(runPath(run, '01-flows-catalog.md'), 'utf8')).toContain(
+      '## Flows',
     );
     expect(readFileSync(runPath(run, '01-flows.md'), 'utf8')).toContain(
       '## F03 Add a book to the reading list',
     );
     expect(readAnswers(run)).toEqual({});
-    expect(readState(run).stages).toMatchObject({
-      scope: { status: 'done', known: 0 },
-      flows: { status: 'done', known: 0 },
+
+    const stages = readState(run).stages;
+    expect(stages['flows-expand']).toMatchObject({
+      status: 'done',
+      batches: 1,
+      known: 0,
     });
-    // Generator, two reviewers, per stage; the flows reviewers saw the scope JSON.
-    expect(inputs.map((input) => input.stage)).toEqual([
+    expect(stages['flows-expand-1']).toMatchObject({
+      status: 'done',
+      rounds: 2,
+      known: 0,
+    });
+    // Reconciliation starts from the draft: one validation round, nothing generated, no reviewers.
+    expect(stages.flows).toMatchObject({ status: 'done', rounds: 1, known: 0 });
+
+    const calls = inputs.map((input) => input.stage);
+    expect(calls).toEqual([
       'scope',
       'scope-review1',
       'scope-review2',
-      'flows',
-      'flows-review1',
-      'flows-review2',
+      'flows-catalog',
+      'flows-catalog-review1',
+      'flows-catalog-review2',
+      'flows-expand-1',
+      'flows-expand-1-review1',
+      'flows-expand-1-review2',
     ]);
-    expect(inputs[3]?.messages[1]?.content).toContain(
-      '# Scope (01-scope.json)',
-    );
-    expect(inputs[4]?.messages[0]?.content).toContain(
-      'Challenge, and report as a blocker',
+    expect(inputs[6]?.messages[1]?.content).toContain(
+      'Write the full flows F01, F02, F03, F04, F05, F06',
     );
   });
 
@@ -121,10 +168,19 @@ describe('scope and flows stages', () => {
       JSON.stringify({ meta: {}, data: scopeFixture }),
     );
     writeFileSync(
+      runPath(run, '01-flows-catalog.json'),
+      JSON.stringify({ meta: {}, data: catalogFixture }),
+    );
+    writeFileSync(
       runPath(run, '01-flows.json'),
       JSON.stringify({ meta: {}, data: flowsFixture }),
     );
     expect(scopeStage.validate?.(run)).toEqual([]);
+    expect(
+      catalogStage
+        .validate?.(run)
+        ?.filter((issue) => issue.severity === 'mandatory'),
+    ).toEqual([]);
     expect(
       flowsStage
         .validate?.(run)
@@ -176,12 +232,9 @@ describe('terminalAsk', () => {
     expect(await ask({ questions })).toEqual({});
   });
 
-  it('skips a question answered in an earlier run, but not an id reused for another question', async () => {
+  it('skips a question already answered in an earlier run, by its text', async () => {
     const ask = terminalAsk(
-      {
-        Q01: { question: 'Ratings?', answer: 'No.' },
-        Q03: { question: 'Export?', answer: 'No.' },
-      },
+      { Q01: { question: 'Ratings?', answer: 'No.' } },
       async () => 'typed',
       () => {},
     );

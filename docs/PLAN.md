@@ -269,8 +269,21 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     `prompt-answers.md`.
   - Done when: `pnpm test`; `pnpm typecheck`.
 
-- [ ] **FL5** Wire the stage (30 min). Depends: FL2, FL3, FL4, F7, F10
-  > Blocked: code and tests done 2026-10-29 (stage.ts, review guides, terminal questions, stages registered, stub removed); the live run on freelancer-workspace waits until the user has fixed the idea files.
+- [x] **FL9** Flows in three stages: catalog, expand, reconcile (7 h) (done 2026-10-29). Depends: FL5, FL8. Decisions: D2.1 E, D2.3
+  - Added 2026-10-29 by the user: one call cannot write the flows of a detailed
+    idea (freelancer workspace: 83k characters and unfinished at 64k tokens).
+  - `flows-catalog`: headers and descriptions, reusable fields, forms and
+    subflows, assumptions, questions; its own rules and reviewer.
+    `flows-expand`: batches of 8 ids, each a stage run in parallel, expanding
+    while reusing parts by name; assembled into a draft. `flows`:
+    reconciliation that starts from the draft, validates everything and
+    fixes by patches, without reviewers. Runner gains `start` and `compose`.
+  - Done when: `pnpm test`, `pnpm typecheck`, and `pnpm weave run
+    fixtures/ideas/freelancer-workspace.md --to flows` completes with a
+    readable `01-flows.md`; `weave show` lists the batches.
+
+- [x] **FL5** Wire the stage (30 min) (done 2026-10-29). Depends: FL2, FL3, FL4, F7, F10
+  - Its live check ran as FL9's: freelancer workspace to flows, three stages, zero known issues.
   - `src/stages/flows/stage.ts`: scope, then flows. With `--interactive`
     each stage passes `ask` to the runner (F11): the blocking, unanswered
     questions are asked on the terminal with their defaults after each new
@@ -281,7 +294,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - Done when: `pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows`
     ends with zero mandatory issues or a readable `StageFailed` report.
 
-- [ ] **FL6** Reference ideas (60 min). Depends: FL5
+- [ ] **FL6** Reference ideas (60 min). Depends: FL5, FL9
   - Tune on the freelancer workspace and the dashboard editor: change
     prompts, never validators, until each passes within 3 rounds. Read every
     `01-flows.md` and fix the prompt for anything you'd reject.

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { renderFlows, renderScope } from './render';
-import { Flows, Scope } from './schema';
+import { renderCatalog, renderFlows, renderScope } from './render';
+import { Catalog, Flows, Scope } from './schema';
 
 const load = (name: string): unknown =>
   JSON.parse(
@@ -9,6 +9,7 @@ const load = (name: string): unknown =>
   );
 const scope = Scope.parse(load('reading-list.scope.json'));
 const flows = Flows.parse(load('reading-list.flows.json'));
+const catalog = Catalog.parse(load('reading-list.catalog.json'));
 
 describe('render', () => {
   it('scope reads as a short spec page', () => {
@@ -31,6 +32,21 @@ describe('render', () => {
     expect(text).toContain(
       '- F03.A03 (from 1, cancel) The reader cancels: Nothing is saved; the website shows the reading list as it was. Flow ends.',
     );
+    expect(text).toContain(
+      '2. The reader fills in the book and saves it. (Book form)',
+    );
+    expect(text).toContain('2. Confirm a deletion (subflow SF01):');
+    expect(text).toContain('## Fields');
+    expect(text).toMatchSnapshot();
+  });
+
+  it('catalog lists every flow with its description and the reusable parts', () => {
+    const text = renderCatalog(catalog, scope);
+    expect(text).toContain(
+      '- F03 Add a book to the reading list (Reader, core): The reader adds a book',
+    );
+    expect(text).toContain('- FM01 Book form: FD03, FD04, FD05');
+    expect(text).toContain('## SF01 Confirm a deletion (subflow)');
     expect(text).toMatchSnapshot();
   });
 });

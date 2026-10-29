@@ -1,24 +1,52 @@
-import type { Alternative, Flow, Flows, Scope, Step } from '../schema';
+import type {
+  Alternative,
+  Catalog,
+  Flows,
+  Scope,
+  Step,
+  StepContainer,
+} from '../schema';
 
 export type FlowInput = { flows: Flows; scope: Scope };
 
-export function* eachStep(flows: Flows): Generator<{ flow: Flow; step: Step }> {
-  for (const flow of flows.flows)
-    for (const step of flow.steps) yield { flow, step };
+/** Every step of every flow and every subflow, with the container it belongs to. */
+export function* eachStep(
+  flows: Flows,
+): Generator<{ container: StepContainer; step: Step }> {
+  for (const container of containers(flows))
+    for (const step of container.steps) yield { container, step };
 }
 
-export const alternativesFrom = (flow: Flow, stepId: string): Alternative[] =>
-  flow.alternatives.filter((alternative) => alternative.from === stepId);
+/** Flows first, then subflows: both have steps and alternatives. */
+export const containers = (flows: Flows): StepContainer[] => [
+  ...flows.flows,
+  ...flows.subflows,
+];
 
-/** Every prose field of a flow with the id it belongs to, for word scans. */
-export function flowTexts(flow: Flow): { at: string; text: string }[] {
+export const alternativesFrom = (
+  container: StepContainer,
+  stepId: string,
+): Alternative[] =>
+  container.alternatives.filter((alternative) => alternative.from === stepId);
+
+/** Every prose field of a flow or subflow with the id it belongs to, for word scans. */
+export function containerTexts(
+  container: StepContainer & { goal?: string; outcome?: string },
+): { at: string; text: string }[] {
   return [
-    { at: flow.id, text: `${flow.goal} ${flow.outcome}` },
-    ...flow.steps.map((step) => ({
+    ...(container.goal !== undefined
+      ? [
+          {
+            at: container.id,
+            text: `${container.goal} ${container.outcome ?? ''}`,
+          },
+        ]
+      : []),
+    ...container.steps.map((step) => ({
       at: step.id,
       text: `${step.userAction} ${step.websiteResponse}`,
     })),
-    ...flow.alternatives.map((alternative) => ({
+    ...container.alternatives.map((alternative) => ({
       at: alternative.id,
       text: `${alternative.condition} ${alternative.websiteResponse}`,
     })),
@@ -36,4 +64,16 @@ export function explanations({ flows, scope }: FlowInput): string[] {
   ];
 }
 
-export const idNumber = (id: string): number => Number(id.slice(1));
+export const idNumber = (id: string): number => Number(id.replace(/^\D+/, ''));
+
+export type CatalogInput = { catalog: Catalog; scope: Scope };
+
+/** A catalog seen as a flows document with no steps yet, so the flow rules that need no steps can run on it. */
+export const catalogAsFlows = (catalog: Catalog): Flows => ({
+  ...catalog,
+  flows: catalog.flows.map(({ description: _description, ...header }) => ({
+    ...header,
+    steps: [],
+    alternatives: [],
+  })),
+});

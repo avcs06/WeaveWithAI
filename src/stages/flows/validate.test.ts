@@ -1,11 +1,18 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { splitIssues } from '../../core/issues';
-import { flowMutations, scopeMutations } from './__fixtures__/mutations';
-import { Flows, Scope } from './schema';
 import {
+  catalogMutations,
+  flowMutations,
+  scopeMutations,
+} from './__fixtures__/mutations';
+import { Catalog, Flows, Scope } from './schema';
+import {
+  catalogFlowRules,
+  catalogRules,
   flowRules,
   scopeRules,
+  validateCatalog,
   validateFlows,
   validateScope,
 } from './validate';
@@ -17,6 +24,7 @@ const load = (name: string): unknown =>
 // Parsing through the schemas also proves the fixtures are valid artifacts.
 const scope = Scope.parse(load('reading-list.scope.json'));
 const flows = Flows.parse(load('reading-list.flows.json'));
+const catalog = Catalog.parse(load('reading-list.catalog.json'));
 
 const ruleIds = (issues: { rule: string }[]) =>
   issues.map((issue) => issue.rule);
@@ -25,6 +33,14 @@ describe('the reading-list fixture', () => {
   it('passes every scope rule', () => {
     const { mandatory, warnings } = splitIssues(validateScope(scope));
     if (warnings.length > 0) console.log('scope warnings:', warnings);
+    expect(mandatory).toEqual([]);
+  });
+
+  it('passes every catalog rule', () => {
+    const { mandatory, warnings } = splitIssues(
+      validateCatalog(catalog, scope),
+    );
+    if (warnings.length > 0) console.log('catalog warnings:', warnings);
     expect(mandatory).toEqual([]);
   });
 
@@ -40,9 +56,14 @@ describe('every rule has a failing fixture', () => {
     expect(Object.keys(scopeMutations).sort()).toEqual(
       scopeRules.map((rule) => rule.id).sort(),
     );
+    expect(Object.keys(catalogMutations).sort()).toEqual(
+      catalogRules.map((rule) => rule.id).sort(),
+    );
     expect(Object.keys(flowMutations).sort()).toEqual(
       flowRules.map((rule) => rule.id).sort(),
     );
+    // The flow rules the catalog reuses are flow rules, so the flow mutations cover them.
+    expect(flowRules).toEqual(expect.arrayContaining([...catalogFlowRules]));
   });
 
   it.each(scopeRules.map((rule) => rule.id))(
@@ -52,6 +73,16 @@ describe('every rule has a failing fixture', () => {
       if (!mutate) throw new Error(`no mutation for ${id}`);
       expect(ruleIds(validateScope(mutate(scope)))).toContain(id);
       expect(ruleIds(validateScope(scope))).not.toContain(id);
+    },
+  );
+
+  it.each(catalogRules.map((rule) => rule.id))(
+    '%s fires on its mutation and not on the valid catalog',
+    (id) => {
+      const mutate = catalogMutations[id];
+      if (!mutate) throw new Error(`no mutation for ${id}`);
+      expect(ruleIds(validateCatalog(mutate(catalog), scope))).toContain(id);
+      expect(ruleIds(validateCatalog(catalog, scope))).not.toContain(id);
     },
   );
 
@@ -115,11 +146,11 @@ describe("the spec's hand-broken flows", () => {
     const addBook = broken.flows.find((flow) => flow.id === 'F03');
     const signIn = broken.flows.find((flow) => flow.id === 'F02');
     if (!addBook || !signIn) throw new Error('fixture changed');
+    // A form without an invalid path, a field name the catalog does not define, the word "endpoint".
     addBook.alternatives = addBook.alternatives.filter(
       (alternative) => alternative.kind !== 'invalid',
     );
-    signIn.steps[1]!.fields.find((field) => field.name === 'password')!.type =
-      'text';
+    signIn.steps[1]!.fields = ['FD01', 'FD99'];
     addBook.steps[1]!.websiteResponse += ' The endpoint returns the book.';
 
     const { mandatory } = splitIssues(validateFlows(broken, scope));

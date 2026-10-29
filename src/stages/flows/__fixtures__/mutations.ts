@@ -1,4 +1,4 @@
-import type { Field, Flows, Scope } from '../schema';
+import type { Catalog, Field, Flow, Flows, Scope } from '../schema';
 
 /** Each mutation copies the fixture and breaks exactly one rule. */
 const edit =
@@ -9,27 +9,23 @@ const edit =
     return copy;
   };
 
-function field(
-  flows: Flows,
-  flowId: string,
-  stepIndex: number,
-  name: string,
-): Field {
-  const found = flows.flows
-    .find((flow) => flow.id === flowId)
-    ?.steps[stepIndex]?.fields.find((f) => f.name === name);
-  if (!found)
-    throw new Error(
-      `fixture has no field ${name} at ${flowId} step ${stepIndex}`,
-    );
+function field(flows: Pick<Flows, 'fields'>, id: string): Field {
+  const found = flows.fields.find((candidate) => candidate.id === id);
+  if (!found) throw new Error(`fixture has no field ${id}`);
   return found;
 }
 
-function flow(flows: Flows, id: string) {
-  const found = flows.flows.find((candidate) => candidate.id === id);
+function flow<T extends { id: string }>(doc: { flows: T[] }, id: string): T {
+  const found = doc.flows.find((candidate) => candidate.id === id);
   if (!found) throw new Error(`fixture has no flow ${id}`);
   return found;
 }
+
+const step = (flows: Flows, flowId: string, index: number) => {
+  const found = flow<Flow>(flows, flowId).steps[index];
+  if (!found) throw new Error(`fixture has no step ${index} in ${flowId}`);
+  return found;
+};
 
 export const scopeMutations: Record<string, (scope: Scope) => Scope> = {
   'SCOPE-001': edit((s) =>
@@ -48,28 +44,39 @@ export const scopeMutations: Record<string, (scope: Scope) => Scope> = {
   'SCOPE-006': edit((s) => (s.inScope = s.inScope.slice(0, 2))),
 };
 
+export const catalogMutations: Record<string, (catalog: Catalog) => Catalog> = {
+  'CAT-001': edit((c) => (flow(c, 'F03').description = '')),
+  'CAT-002': edit((c) => (c.forms[0]!.fields = [])),
+  'CAT-003': edit((c) => (c.subflows[0]!.steps = [])),
+  'CAT-004': edit((c) => {
+    flow(c, 'F05').name = 'Remove an entry';
+    flow(c, 'F05').description = 'The reader removes an entry.';
+  }),
+};
+
 export const flowMutations: Record<string, (flows: Flows) => Flows> = {
-  'FLOW-001': edit((f) => (flow(f, 'F01').steps[0]!.id = 'F01-S01')),
-  'FLOW-002': edit((f) => (flow(f, 'F06').steps[0]!.id = 'F06.S02')),
+  'FLOW-001': edit((f) => (step(f, 'F01', 0).id = 'F01-S01')),
+  'FLOW-002': edit((f) => (step(f, 'F06', 0).id = 'F06.S02')),
   'FLOW-003': edit((f) => (flow(f, 'F03').role = 'librarian')),
-  'FLOW-004': edit((f) => (flow(f, 'F03').steps[0]!.userAction = '')),
-  'FLOW-005': edit((f) => (field(f, 'F03', 1, 'shelf').options = ['To read'])),
-  'FLOW-006': edit((f) => (field(f, 'F03', 1, 'author').name = 'Author')),
-  'FLOW-007': edit((f) => (field(f, 'F02', 1, 'password').type = 'text')),
-  'FLOW-008': edit(
-    (f) => (flow(f, 'F05').steps[0]!.effects[0]!.noun = 'Novel'),
-  ),
+  'FLOW-004': edit((f) => (step(f, 'F03', 0).userAction = '')),
+  'FLOW-005': edit((f) => (field(f, 'FD05').options = ['To read'])),
+  'FLOW-006': edit((f) => {
+    field(f, 'FD04').id = 'author';
+    f.forms[0]!.fields = ['FD03', 'author', 'FD05'];
+  }),
+  'FLOW-007': edit((f) => step(f, 'F03', 1).fields.push('FD99')),
+  'FLOW-008': edit((f) => (step(f, 'F05', 0).effects[0]!.noun = 'Novel')),
   'FLOW-009': edit((f) => {
-    for (const step of flow(f, 'F04').steps) step.effects = [];
-    flow(f, 'F05').steps[0]!.effects = [];
+    for (const s of flow(f, 'F04').steps) s.effects = [];
+    step(f, 'F05', 0).effects = [];
   }),
   'FLOW-010': edit((f) => {
-    flow(f, 'F03').steps[1]!.effects.push({ noun: 'Shelf', change: 'create' });
-    flow(f, 'F04').steps[0]!.effects.push({ noun: 'Shelf', change: 'read' });
+    step(f, 'F03', 1).effects.push({ noun: 'Shelf', change: 'create' });
+    step(f, 'F04', 0).effects.push({ noun: 'Shelf', change: 'read' });
   }),
   'FLOW-011': edit((f) => flow(f, 'F03').alternatives.splice(0, 1)),
   'FLOW-012': edit((f) => flow(f, 'F04').alternatives.splice(0, 1)),
-  'FLOW-013': edit((f) => flow(f, 'F05').alternatives.splice(0, 1)),
+  'FLOW-013': edit((f) => (f.subflows[0]!.alternatives = [])),
   'FLOW-014': edit(
     (f) => (f.flows = f.flows.filter((candidate) => candidate.id !== 'F06')),
   ),
@@ -79,27 +86,29 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
   'FLOW-016': edit((f) => (flow(f, 'F03').alternatives[0]!.from = 'F03.S09')),
   'FLOW-017': edit(
     (f) =>
-      (flow(f, 'F03').steps[1]!.websiteResponse +=
-        ' The endpoint returns the book.'),
+      (step(f, 'F03', 1).websiteResponse += ' The endpoint returns the book.'),
   ),
   'FLOW-018': edit(
     (f) =>
-      (flow(f, 'F03').steps[0]!.websiteResponse =
+      (step(f, 'F03', 0).websiteResponse =
         'The website opens a modal with an empty book form.'),
   ),
   'FLOW-019': edit((f) => (flow(f, 'F03').outcome = '')),
   'FLOW-020': edit((f) => {
-    const only = flow(f, 'F06').steps[0]!;
+    const only = step(f, 'F06', 0);
     flow(f, 'F06').steps = Array.from({ length: 17 }, (_, i) => ({
       ...only,
       id: `F06.S${String(i + 1).padStart(2, '0')}`,
     }));
   }),
-  'FLOW-021': edit((f) => (field(f, 'F03', 1, 'title').example = '')),
+  'FLOW-021': edit((f) => (field(f, 'FD03').example = '')),
   'FLOW-022': edit(
     (f) =>
-      (flow(f, 'F03').steps[1]!.websiteResponse +=
+      (step(f, 'F03', 1).websiteResponse +=
         ' The website sends an email to confirm.'),
   ),
   'FLOW-023': edit((f) => (f.assumptions[0]!.id = 'A02')),
+  'FLOW-024': edit((f) =>
+    f.fields.push({ ...field(f, 'FD03'), id: 'FD06', label: 'ISBN' }),
+  ),
 };

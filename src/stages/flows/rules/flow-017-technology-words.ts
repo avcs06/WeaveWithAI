@@ -1,12 +1,12 @@
 /**
  * FLOW-017 · mandatory
- * No technology words in goals, outcomes, steps or alternatives: endpoint, API, HTTP, REST, GraphQL, SQL, database, JSON, or upper-case GET, POST, PUT, PATCH, DELETE.
+ * No technology words in goals, outcomes, steps or alternatives, subflows included: endpoint, API, HTTP, REST, GraphQL, SQL, database, JSON, or upper-case GET, POST, PUT, PATCH, DELETE.
  * Pass: websiteResponse: 'Shows the saved book in the list.'
  * Fail: 'Calls the API and saves the JSON.' · 'POST the form' (lower-case 'post' as in 'a blog post' is fine)
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule, wholeWords } from '../../../core/rules';
-import { type FlowInput, flowTexts } from './helpers';
+import { containers, containerTexts, type FlowInput } from './helpers';
 
 export const TECHNOLOGY_WORDS = [
   'endpoint',
@@ -25,8 +25,8 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const flow of flows.flows) {
-      for (const { at, text } of flowTexts(flow)) {
+    for (const container of containers(flows)) {
+      for (const { at, text } of containerTexts(container)) {
         const found = [
           ...wholeWords(text, TECHNOLOGY_WORDS),
           ...wholeWords(text, HTTP_VERBS, { caseSensitive: true }),

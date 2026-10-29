@@ -59,8 +59,14 @@ export class ModelRequestFailed extends Error {
   }
 }
 
+/** Carries what the cut attempts cost and how far the visible JSON got, so a run can account for them. */
 export class ModelOutputTruncated extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    public model: string,
+    public usage: Usage,
+    public contentLength: number,
+  ) {
     super(message);
     this.name = 'ModelOutputTruncated';
   }
@@ -211,6 +217,7 @@ export function createLlm(deps: LlmDeps): Llm {
     maxTokens: number,
   ): Promise<Completed> {
     let limit = maxTokens;
+    const cut: Usage = { input: 0, cachedInput: 0, output: 0 };
     for (let grown = false; ; grown = true) {
       const completion = await requestWithRetries({
         model: request.model,
@@ -233,10 +240,17 @@ export function createLlm(deps: LlmDeps): Llm {
         );
 
       if (choice.finish_reason === 'length') {
+        cut.input += completion.usage?.prompt_tokens ?? 0;
+        cut.cachedInput +=
+          completion.usage?.prompt_tokens_details?.cached_tokens ?? 0;
+        cut.output += completion.usage?.completion_tokens ?? 0;
         const larger = Math.min(MAX_OUTPUT_TOKENS, limit * 2);
         if (grown || larger === limit) {
           throw new ModelOutputTruncated(
-            `${request.model} output was cut at ${limit} tokens`,
+            `${request.model} output was cut at ${limit} tokens (visible JSON so far: ${choice.message.content?.length ?? 0} characters, ${completion.usage?.completion_tokens ?? 0} output tokens including reasoning)`,
+            request.model,
+            cut,
+            choice.message.content?.length ?? 0,
           );
         }
         limit = larger;

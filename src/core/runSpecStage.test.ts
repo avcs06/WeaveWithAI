@@ -7,7 +7,7 @@ import { type Issue, readReport } from './issues';
 import type { GenerateInput, Llm } from './llm';
 import type { Review } from './review';
 import { createRun, readEvents, readState } from './run';
-import { type Answers, runSpecStage } from './runSpecStage';
+import { type Answers, type Compose, runSpecStage } from './runSpecStage';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-stage-'));
 const idea = path.join(root, 'idea.md');
@@ -433,5 +433,101 @@ describe('runSpecStage without a review guide', () => {
       1, 2, 3, 4,
     ]);
     expect(readState(run).stages.doc).toMatchObject({ rounds: 4, known: 1 });
+  });
+});
+
+describe('runSpecStage with start and compose', () => {
+  it('start: round 1 validates the given document without generating; a fix uses compose.fix', async () => {
+    const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
+    const run = createRun({ idea, runsDir: root, id: 'started' });
+    const fixes: Issue[][] = [];
+    const compose: Compose<Doc> = {
+      draft: () => Promise.reject(new Error('must not draft')),
+      async fix(call, _current, pending) {
+        fixes.push(pending);
+        const result = await call({
+          stage: 'doc-patch',
+          schema: Doc,
+          schemaName: 'Doc',
+          messages: [{ role: 'user', content: 'patch' }],
+        });
+        return { data: result.data, raw: result.raw, model: result.model };
+      },
+    };
+    const result = await runSpecStage({
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: requireTitle,
+      compose,
+      start: { data: { title: '' }, raw: '{"title":""}', model: 'none' },
+      llm,
+    });
+
+    expect(result).toMatchObject({
+      output: { title: 'Cats' },
+      known: [],
+      rounds: 2,
+    });
+    expect(fixes).toEqual([[missingTitle]]);
+    expect(inputs.map((input) => input.stage)).toEqual(['doc-patch']);
+    const rounds = readEvents(run).filter(
+      (event) => event.type === 'stage:round',
+    );
+    expect(rounds.map((event) => event.generated)).toEqual([false, true]);
+  });
+
+  it('compose: every call is logged, and the draft text reaches the reviewers', async () => {
+    const { llm, inputs } = fakeLlm([
+      { title: 'A' },
+      { title: 'B' },
+      clean,
+      clean,
+    ]);
+    const run = createRun({ idea, runsDir: root, id: 'composed' });
+    const compose: Compose<Doc> = {
+      async draft(call) {
+        const [a, b] = await Promise.all([
+          call({
+            stage: 'doc-part1',
+            schema: Doc,
+            schemaName: 'Doc',
+            messages: [{ role: 'user', content: 'part 1' }],
+          }),
+          call({
+            stage: 'doc-part2',
+            schema: Doc,
+            schemaName: 'Doc',
+            messages: [{ role: 'user', content: 'part 2' }],
+          }),
+        ]);
+        const data = { title: `${a.data.title}${b.data.title}` };
+        return { data, raw: JSON.stringify(data), model: a.model };
+      },
+      fix: () => Promise.reject(new Error('nothing to fix')),
+    };
+    const result = await runSpecStage({
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: () => [],
+      review: guide,
+      compose,
+      llm,
+    });
+
+    expect(result.output).toEqual({ title: 'AB' });
+    expect(
+      readEvents(run)
+        .filter((event) => event.type === 'llm:call')
+        .map((event) => event.stage),
+    ).toEqual(['doc-part1', 'doc-part2', 'doc-review1', 'doc-review2']);
+    expect(lastUser(inputs[2])).toContain('{"title":"AB"}');
   });
 });

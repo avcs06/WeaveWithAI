@@ -285,6 +285,10 @@ reasoning tokens.
 
 Notes: A ticked by the user on 2026-10-29, raised from the proposed low to
 medium.
+The flows generators also run at medium since the same night: at the
+model's own level the catalog call wrote 27k characters of JSON and was still
+cut at 32k tokens, two thirds of the budget being reasoning. Scope keeps the
+model's own level. Catalog budget 32k, batches and patches 16k.
 
 ---
 
@@ -298,13 +302,26 @@ medium.
       vocabulary, capabilities, assumptions and questions; flows build on it.
 - [ ] **C. Catalog, then expand each flow in parallel.** Scales to big apps;
       needs a consistency pass because flows written apart drift on field names.
+- [x] **E. Scope, then three flows stages (user, 2026-10-29).** A catalog
+      stage writes every flow's header and description plus the reusable
+      parts (fields defined once, forms, subflows), assumptions and
+      questions. An expansion stage splits the flow ids into batches, each a
+      stage of its own run in parallel, expanding its flows while reusing the
+      parts by name. A reconciliation stage starts from the assembled draft
+      without a first generation: it validates the whole document with every
+      rule and fixes by patches (flows and parts that change); no reviewers,
+      the batches were reviewed already.
+      Names cannot drift because every reusable part is defined once.
 
 Combine with (pick any):
 
 - [ ] **D. Critic pass.** A reviewer call lists flows a typical user would expect
       but are missing; findings become warnings or a revision round.
 
-Notes:
+Notes: E on the user's instruction, 2026-10-29, after B failed on the
+freelancer workspace: the one-call flows document passed 83k characters and
+was still unfinished at a 64k-token budget, three attempts costing about $1.
+The reviewer calls of D1.12 replace the critic pass D.
 
 ### D2.2 Step granularity (pick one)
 
@@ -322,7 +339,12 @@ Notes:
       limits, options, example.
 - [ ] **B. Minimal (R3).** Name, type, required.
 
-Notes:
+Notes: A, with three changes on 2026-10-29 (FL9): fields are defined once in
+a catalog at the document level with ids FD01, FD02, ... and steps and forms
+refer to them by id; fields carry no technical name, so the contract stage
+chooses names freely from label and meaning (user); and the four limit keys
+become two, `min` and `max`, read as lengths for text types and as values
+for numbers.
 
 ### D2.4 Alternative paths (pick one)
 

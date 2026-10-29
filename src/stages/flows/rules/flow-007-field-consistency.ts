@@ -1,13 +1,11 @@
 /**
- * FLOW-007 · mandatory (a label difference alone is a warning)
- * A field name means one thing everywhere: the same type and the same options in every step that uses it.
- * Pass: 'shelf' is singleChoice with ['To read', 'Reading', 'Done'] in F03 and in F05
- * Fail: 'password' is type password in F01.S01 and type text in F02.S01
- * Warning: 'title' is labelled 'Title' in one step and 'Book title' in another
+ * FLOW-007 · mandatory
+ * Every id a step or form refers to exists in the catalog: field ids, the step's form, the step's subflow, a form's fields. A subflow step never runs another subflow.
+ * Pass: fields: [{ id: 'FD01' }], forms: [{ id: 'FM01', fields: ['FD01'] }], a step with form 'FM01' and fields []
+ * Fail: a step with fields ['FD99'] · a step with form 'FM09' when no such form · a form listing 'FD42' with no such field
  */
 import type { Issue } from '../../../core/issues';
-import { defineRule, issue } from '../../../core/rules';
-import type { Field } from '../schema';
+import { defineRule } from '../../../core/rules';
 import { eachStep, type FlowInput } from './helpers';
 
 export const rule = defineRule<FlowInput>(
@@ -15,31 +13,48 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    const first = new Map<string, { field: Field; at: string }>();
-    for (const { step } of eachStep(flows)) {
-      for (const field of step.fields) {
-        const seen = first.get(field.name);
-        if (!seen) {
-          first.set(field.name, { field, at: step.id });
-          continue;
-        }
-        const sameType = seen.field.type === field.type;
-        const sameOptions =
-          JSON.stringify(seen.field.options) === JSON.stringify(field.options);
-        if (!sameType || !sameOptions) {
+    const fieldIds = new Set(flows.fields.map((field) => field.id));
+    const formIds = new Set(flows.forms.map((form) => form.id));
+    const subflowIds = new Set(flows.subflows.map((subflow) => subflow.id));
+    flows.forms.forEach((form, i) => {
+      for (const id of form.fields.filter((id) => !fieldIds.has(id))) {
+        issues.push(
+          fail(
+            `Form ${form.id} lists field ${id}, which is not in the catalog; define it in fields or fix the id.`,
+            `forms[${i}]`,
+          ),
+        );
+      }
+    });
+    for (const { container, step } of eachStep(flows)) {
+      for (const id of step.fields.filter((id) => !fieldIds.has(id))) {
+        issues.push(
+          fail(
+            `${step.id} asks for field ${id}, which is not in the catalog; define it in fields or fix the id.`,
+            step.id,
+          ),
+        );
+      }
+      if (step.form !== '' && !formIds.has(step.form)) {
+        issues.push(
+          fail(
+            `${step.id} uses form ${step.form}, which is not in the catalog; define it in forms or fix the id.`,
+            step.id,
+          ),
+        );
+      }
+      if (step.subflow !== '') {
+        if (!subflowIds.has(step.subflow)) {
           issues.push(
             fail(
-              `Field "${field.name}" at ${step.id} is ${describe(field)} but at ${seen.at} it is ${describe(seen.field)}; a name keeps one type and one option list everywhere.`,
+              `${step.id} runs subflow ${step.subflow}, which is not in the catalog; define it in subflows or fix the id.`,
               step.id,
             ),
           );
-        } else if (seen.field.label !== field.label) {
-          // Same meaning, different wording: worth a look, not a rerun.
+        } else if (container.id.startsWith('SF')) {
           issues.push(
-            issue(
-              'FLOW-007',
-              'warning',
-              `Field "${field.name}" is labelled "${field.label}" at ${step.id} but "${seen.field.label}" at ${seen.at}; use one label.`,
+            fail(
+              `${step.id} runs subflow ${step.subflow} from inside subflow ${container.id}; subflows do not nest.`,
               step.id,
             ),
           );
@@ -49,8 +64,3 @@ export const rule = defineRule<FlowInput>(
     return issues;
   },
 );
-
-const describe = (field: Field): string =>
-  field.options.length > 0
-    ? `${field.type} with options [${field.options.join(', ')}]`
-    : field.type;

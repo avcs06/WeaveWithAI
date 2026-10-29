@@ -145,6 +145,8 @@ describe('weave run', () => {
     expect(validateCommand(run.id, undefined, deps)).toEqual([]);
     expect(lines).toEqual([
       'scope: 0 mandatory, 0 warnings',
+      'flows-catalog: no artifact to validate',
+      'flows-expand: no artifact to validate',
       'flows: no artifact to validate',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);

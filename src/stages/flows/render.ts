@@ -2,13 +2,16 @@ import { capability } from '../../config/capabilities';
 import type {
   Alternative,
   Assumption,
+  Catalog,
   Field,
   Flow,
   Flows,
+  Form,
   Question,
   Scope,
-  Step,
+  StepContainer,
 } from './schema';
+import { stepFields } from './schema';
 
 export function renderScope(scope: Scope): string {
   const lines: string[] = [
@@ -55,93 +58,181 @@ export function renderScope(scope: Scope): string {
   return `${lines.join('\n')}\n`;
 }
 
+/** The catalog page: every flow in a line with its description, then the reusable parts. */
+export function renderCatalog(catalog: Catalog, scope: Scope): string {
+  const roles = roleNames(scope);
+  const lines = [`# ${scope.app.name}: flows catalog`, '', '## Flows'];
+  for (const flow of catalog.flows) {
+    lines.push(
+      `- ${flow.id} ${flow.name} (${roles.get(flow.role) ?? flow.role}, ${flow.category}): ${flow.description}`,
+    );
+  }
+  lines.push(
+    ...partLines(catalog),
+    ...assumptionLines(catalog.assumptions, 'New assumptions'),
+    ...questionLines(catalog.questions, 'New questions'),
+  );
+  return `${lines.join('\n')}\n`;
+}
+
 export function renderFlows(flows: Flows, scope: Scope): string {
-  const roles = new Map(scope.roles.map((role) => [role.id, role.name]));
+  const roles = roleNames(scope);
   const lines = [`# ${scope.app.name}: user flows`];
   for (const flow of flows.flows)
-    lines.push('', ...flowLines(flow, roles.get(flow.role) ?? flow.role));
+    lines.push(
+      '',
+      ...flowLines(flow, roles.get(flow.role) ?? flow.role, flows),
+    );
   lines.push(
+    ...partLines(flows),
     ...assumptionLines(flows.assumptions, 'New assumptions'),
     ...questionLines(flows.questions, 'New questions'),
   );
   return `${lines.join('\n')}\n`;
 }
 
-function flowLines(flow: Flow, roleName: string): string[] {
+function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   const lines = [
     `## ${flow.id} ${flow.name}`,
     `${roleName} · ${flow.category} · Goal: ${flow.goal}`,
   ];
   if (flow.preconditions.length > 0)
     lines.push(`Before: ${flow.preconditions.join('; ')}`);
-  lines.push('');
-  flow.steps.forEach((step, i) => lines.push(...stepLines(step, i + 1)));
-  if (flow.alternatives.length > 0) {
-    lines.push(
-      '',
-      'Other paths',
-      ...flow.alternatives.map((alternative) =>
-        alternativeLine(flow, alternative),
-      ),
-    );
-  }
+  lines.push('', ...stepsLines(flow, doc, ''));
   lines.push('', `Outcome: ${flow.outcome}`);
   return lines;
 }
 
-function stepLines(step: Step, number: number): string[] {
-  if (step.kind === 'system')
-    return [
-      `${number}. (system) ${step.websiteResponse}`,
-      ...effectLines(step),
-    ];
-  if (step.fields.length === 0)
-    return [
-      `${number}. ${step.userAction} ${step.websiteResponse}`,
-      ...effectLines(step),
-    ];
-  return [
-    `${number}. ${step.userAction}`,
-    ...step.fields.map((field) => `   - ${fieldLine(field)}`),
-    `   ${step.websiteResponse}`,
-    ...effectLines(step),
-  ];
+/** Numbered steps, then the other paths; a subflow step shows the subflow's steps indented under it. */
+function stepsLines(
+  container: StepContainer,
+  doc: Flows,
+  indent: string,
+): string[] {
+  const lines: string[] = [];
+  container.steps.forEach((step, i) => {
+    const number = `${indent}${i + 1}.`;
+    const subflow = doc.subflows.find(
+      (candidate) => candidate.id === step.subflow,
+    );
+    if (subflow) {
+      lines.push(
+        `${number} ${subflow.name} (subflow ${subflow.id}):`,
+        ...stepsLines(subflow, doc, `${indent}   `),
+      );
+      return;
+    }
+    const fields = stepFields(step, doc);
+    const form = doc.forms.find((candidate) => candidate.id === step.form);
+    if (step.kind === 'system')
+      lines.push(`${number} (system) ${step.websiteResponse}`);
+    else if (fields.length === 0)
+      lines.push(`${number} ${step.userAction} ${step.websiteResponse}`);
+    else {
+      lines.push(
+        `${number} ${step.userAction}${form ? ` (${form.name})` : ''}`,
+        ...fields.map((field) => `${indent}   - ${fieldLine(field)}`),
+        `${indent}   ${step.websiteResponse}`,
+      );
+    }
+    if (step.effects.length > 0) {
+      lines.push(
+        `${indent}   Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
+      );
+    }
+  });
+  if (container.alternatives.length > 0) {
+    lines.push(
+      '',
+      `${indent}Other paths`,
+      ...container.alternatives.map(
+        (alternative) =>
+          `${indent}- ${alternativeLine(container, alternative)}`,
+      ),
+    );
+  }
+  return lines;
 }
 
-function effectLines(step: Step): string[] {
-  if (step.effects.length === 0) return [];
-  return [
-    `   Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
-  ];
-}
-
-function fieldLine(field: Field): string {
+export function fieldLine(field: Field): string {
   const rules = [field.required ? 'required' : 'optional'];
-  if (field.maxLength !== null && field.minLength !== null)
-    rules.push(`${field.minLength} to ${field.maxLength} characters`);
-  else if (field.maxLength !== null)
-    rules.push(`up to ${field.maxLength} characters`);
-  else if (field.minLength !== null)
-    rules.push(`at least ${field.minLength} characters`);
+  const lengths = [
+    'text',
+    'longText',
+    'email',
+    'password',
+    'url',
+    'phone',
+  ].includes(field.type);
+  const unit = lengths ? ' characters' : '';
   if (field.min !== null && field.max !== null)
-    rules.push(`${field.min} to ${field.max}`);
-  else if (field.min !== null) rules.push(`at least ${field.min}`);
-  else if (field.max !== null) rules.push(`at most ${field.max}`);
+    rules.push(`${field.min} to ${field.max}${unit}`);
+  else if (field.max !== null)
+    rules.push(`${lengths ? 'up to' : 'at most'} ${field.max}${unit}`);
+  else if (field.min !== null) rules.push(`at least ${field.min}${unit}`);
   if (field.options.length > 0)
     rules.push(`one of: ${field.options.join(', ')}`);
   return `${field.label} (${rules.join(', ')}), e.g. "${field.example}"`;
 }
 
-function alternativeLine(flow: Flow, alternative: Alternative): string {
+function alternativeLine(
+  container: StepContainer,
+  alternative: Alternative,
+): string {
   const position = (id: string) =>
-    flow.steps.findIndex((step) => step.id === id) + 1;
+    container.steps.findIndex((step) => step.id === id) + 1;
   const condition = alternative.condition.replace(/\.$/, '');
   const back =
     alternative.resumesAt === ''
       ? 'Flow ends.'
       : `Back to ${position(alternative.resumesAt)}.`;
-  return `- ${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
+  return `${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
 }
+
+/** The reusable parts, once per document. */
+function partLines(
+  doc: Pick<Flows, 'fields' | 'forms' | 'subflows'>,
+): string[] {
+  const lines: string[] = [];
+  if (doc.fields.length > 0)
+    lines.push(
+      '',
+      '## Fields',
+      ...doc.fields.map(
+        (field) => `- ${field.id} ${fieldLine(field)}. ${field.meaning}`,
+      ),
+    );
+  if (doc.forms.length > 0)
+    lines.push(
+      '',
+      '## Forms',
+      ...doc.forms.map(
+        (form: Form) => `- ${form.id} ${form.name}: ${form.fields.join(', ')}`,
+      ),
+    );
+  for (const subflow of doc.subflows) {
+    lines.push(
+      '',
+      `## ${subflow.id} ${subflow.name} (subflow)`,
+      '',
+      ...stepsLines(
+        subflow,
+        { ...emptyDoc, ...doc, subflows: [] } as Flows,
+        '',
+      ),
+    );
+  }
+  return lines;
+}
+
+const emptyDoc: Flows = {
+  flows: [],
+  fields: [],
+  forms: [],
+  subflows: [],
+  assumptions: [],
+  questions: [],
+};
 
 function assumptionLines(
   assumptions: Assumption[],
@@ -169,6 +260,9 @@ function questionLines(questions: Question[], title = 'Questions'): string[] {
     ),
   ];
 }
+
+const roleNames = (scope: Scope) =>
+  new Map(scope.roles.map((role) => [role.id, role.name]));
 
 const owner = (scope: Scope, belongsTo: string): string =>
   belongsTo === 'shared'

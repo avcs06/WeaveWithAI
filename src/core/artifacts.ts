@@ -4,6 +4,8 @@ import { hashOf, writeJsonAtomic } from './utils';
 
 export type ArtifactName =
   | 'scope'
+  | 'flows-catalog'
+  | 'flows-draft'
   | 'flows'
   | 'brief'
   | 'theme'
@@ -33,6 +35,8 @@ export type ArtifactMeta = {
 
 export const FILE_OF: Record<ArtifactName, string> = {
   scope: '01-scope.json',
+  'flows-catalog': '01-flows-catalog.json',
+  'flows-draft': '01-flows-draft.json',
   flows: '01-flows.json',
   brief: '02-brief.json',
   theme: '02-theme.json',

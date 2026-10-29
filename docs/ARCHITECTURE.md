@@ -9,7 +9,7 @@ the artifacts it was made from.
 
 ```text
 idea.md (+ answers.json)
-  └─ scope ─ flows                                  Phase 2   specs/flows.md
+  └─ scope ─ flows-catalog ─ flows-expand (batches) ─ flows (reconcile)   Phase 2   D2.1 E
         ├─ design: brief ─ theme ─ screens          Phase 3   specs/design.md
         └─ contracts                                Phase 4   specs/contracts.md
               (design and contracts run in parallel from the same flows version)
@@ -107,8 +107,10 @@ runs/<runId>/            one generator run (gitignored)
 runs/<runId>/
   input/idea.md
   input/answers.json           answers to questions, each with the question as asked (interactive mode or by hand)
-  01-scope.json                artifacts: envelope + data
-  01-flows.json  01-flows.md   JSON and its human rendering
+  01-scope.json  01-scope.md  artifacts: envelope + data, and the human rendering
+  01-flows-catalog.json  01-flows-catalog.md   every flow's header and description, the reusable fields, forms, subflows
+  01-flows-draft.json          the expansion batches assembled, before reconciliation
+  01-flows.json  01-flows.md   the flows every later stage reads
   02-brief.json  02-theme.json  02-screens.json  02-design.md
   03-contract.json  03-contract.md
   04-matrix.json  04-reconcile.md
@@ -173,8 +175,18 @@ async function runSpecStage<T>(o: {
   validate: (output: T) => Issue[];
   review?: string; // the stage's review guide; without it, no reviewer calls
   ask?: (output: T) => Promise<Answers>; // interactive stages: blocking questions, after each new output
-}): Promise<{ output: T; warnings: Issue[]; known: Issue[]; answers: Answers; rounds: number }>;
+  compose?: Compose<T>; // how the document is produced: draft(call) and fix(call, current, pending, answers); default one conversation
+  start?: Draft<T>; // a document to validate in round 1 instead of generating one (reconciliation)
+}): Promise<{ output: T; warnings: Issue[]; known: Issue[]; answers: Answers; model: string; rounds: number }>;
 ```
+
+The flows stage uses both (D2.1 E): `flows-catalog` runs the default
+conversation; `flows-expand` runs one child stage per batch of eight flow ids
+in parallel, each with a compose whose draft is one expansion call and whose
+fix resends the issues, and assembles the batches into the draft; `flows`
+starts from the draft with no reviewer and a compose whose fix asks for a
+patch and applies it. Every call a compose makes is logged as an `llm:call`
+under its own stage name (`flows-expand-2`, `flows-patch`).
 
 The schedule (D1.12):
 

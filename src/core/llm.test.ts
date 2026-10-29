@@ -204,9 +204,16 @@ describe('generateStructured', () => {
       completion('{', 'length'),
       completion('{"ti', 'length'),
     ]);
-    await expect(llm.generateStructured(input())).rejects.toBeInstanceOf(
-      ModelOutputTruncated,
-    );
+    const error: unknown = await llm
+      .generateStructured(input())
+      .catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ModelOutputTruncated);
+    // Both cut attempts were billed: 100 in and 50 out each from the fake usage.
+    expect(error as ModelOutputTruncated).toMatchObject({
+      model: 'muse-spark-1.3',
+      usage: { input: 200, output: 100 },
+      contentLength: 4,
+    });
     expect(calls).toHaveLength(2);
   });
 
@@ -285,12 +292,26 @@ describe('reasoning effort', () => {
   it('is sent only when given and changes the replay key', async () => {
     const replayDir = tmp();
     const replaying = { ...config, LLM_REPLAY: true };
-    const { llm, calls } = harness([completion('{"title":"A"}'), completion('{"title":"B"}')], replaying, { replayDir });
+    const { llm, calls } = harness(
+      [completion('{"title":"A"}'), completion('{"title":"B"}')],
+      replaying,
+      { replayDir },
+    );
 
     await llm.generateStructured(input());
-    expect((await llm.generateStructured({ ...input(), reasoningEffort: 'low' })).data).toEqual({ title: 'B' });
-    expect(calls.map((call) => (call as { reasoning_effort?: string }).reasoning_effort)).toEqual([undefined, 'low']);
-    expect((await llm.generateStructured({ ...input(), reasoningEffort: 'low' })).replayed).toBe(true);
+    expect(
+      (await llm.generateStructured({ ...input(), reasoningEffort: 'low' }))
+        .data,
+    ).toEqual({ title: 'B' });
+    expect(
+      calls.map(
+        (call) => (call as { reasoning_effort?: string }).reasoning_effort,
+      ),
+    ).toEqual([undefined, 'low']);
+    expect(
+      (await llm.generateStructured({ ...input(), reasoningEffort: 'low' }))
+        .replayed,
+    ).toBe(true);
   });
 });
 
