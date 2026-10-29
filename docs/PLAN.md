@@ -107,7 +107,7 @@ Steps 01 to 08.
     `Retry-After`; `finish_reason: 'length'` retried once with more tokens, then
     an error; replay hit and miss; cost from usage.
 
-- [ ] **F4** Smoke test (15 min). Depends: F3
+- [x] **F4** Smoke test (15 min) (done 2026-10-29). Depends: F3
   - `src/smoke.ts`: a toy schema with nested arrays, an enum, a nullable number
     and a discriminated union, sent to the real API.
   - Done when: `pnpm smoke` prints the parsed object, tokens and cost. If the
