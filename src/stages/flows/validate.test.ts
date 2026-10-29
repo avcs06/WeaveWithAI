@@ -98,49 +98,6 @@ describe('every rule has a failing fixture', () => {
   );
 });
 
-describe('simulated capabilities (FL7)', () => {
-  it('FLOW-022 allows a simulated mention once the scope marks the capability needed, and flags it otherwise', () => {
-    const mutate = flowMutations['FLOW-022'];
-    if (!mutate) throw new Error('no mutation for FLOW-022');
-    const emailing = mutate(flows);
-    expect(ruleIds(validateFlows(emailing, scope))).toContain('FLOW-022');
-
-    const needsEmail = structuredClone(scope);
-    needsEmail.capabilities.push({
-      id: 'emailSending',
-      needed: true,
-      note: 'Confirms each new book.',
-    });
-    expect(ruleIds(validateFlows(emailing, needsEmail))).not.toContain(
-      'FLOW-022',
-    );
-  });
-
-  it('SCOPE-004 ignores a needed simulated capability and requires an out-of-scope entry for a skipped one', () => {
-    const simulated = structuredClone(scope);
-    simulated.capabilities.push({
-      id: 'payments',
-      needed: true,
-      note: 'Readers buy books.',
-    });
-    expect(ruleIds(validateScope(simulated))).not.toContain('SCOPE-004');
-
-    const skipped = structuredClone(scope);
-    skipped.capabilities.push({
-      id: 'maps',
-      needed: true,
-      note: 'Bookshops nearby.',
-    });
-    expect(ruleIds(validateScope(skipped))).toContain('SCOPE-004');
-    skipped.outOfScope.push({
-      item: 'Bookshop map',
-      reason: 'Maps (geolocation) are skipped.',
-      placeholder: 'The website shows the bookshop address as text.',
-    });
-    expect(ruleIds(validateScope(skipped))).not.toContain('SCOPE-004');
-  });
-});
-
 describe('one expansion batch (FL9)', () => {
   const batch = (flowIds: string[]) => ({
     flows: flows.flows.filter((flow) => flowIds.includes(flow.id)),
@@ -153,37 +110,34 @@ describe('one expansion batch (FL9)', () => {
     expect(validateBatch(batch(['F05']), catalog, scope)).toEqual([]);
 
     const brokenCatalog = structuredClone(catalog);
-    brokenCatalog.subflows[0]!.steps[0]!.websiteResponse +=
-      ' The endpoint confirms.';
+    brokenCatalog.subflows[0]!.steps[0]!.websiteResponse = '';
     expect(
       ruleIds(validateBatch(batch(['F01']), brokenCatalog, scope)),
-    ).not.toContain('FLOW-017');
+    ).not.toContain('FLOW-004');
     expect(
       ruleIds(
         validateFlows({ ...flows, subflows: brokenCatalog.subflows }, scope),
       ),
-    ).toContain('FLOW-017');
+    ).toContain('FLOW-004');
   });
 });
 
 describe("the spec's hand-broken flows", () => {
-  it('fail exactly FLOW-007, FLOW-011 and FLOW-017', () => {
+  it('fail exactly FLOW-007 and FLOW-011', () => {
     const broken = structuredClone(flows);
     const addBook = broken.flows.find((flow) => flow.id === 'F03');
     const signIn = broken.flows.find((flow) => flow.id === 'F02');
     if (!addBook || !signIn) throw new Error('fixture changed');
-    // A form without an invalid path, a field name the catalog does not define, the word "endpoint".
+    // A form without an invalid path, a field name the catalog does not define.
     addBook.alternatives = addBook.alternatives.filter(
       (alternative) => alternative.kind !== 'invalid',
     );
     signIn.steps[1]!.fields = ['FD01', 'FD99'];
-    addBook.steps[1]!.websiteResponse += ' The endpoint returns the book.';
 
     const { mandatory } = splitIssues(validateFlows(broken, scope));
     expect([...new Set(ruleIds(mandatory))].sort()).toEqual([
       'FLOW-007',
       'FLOW-011',
-      'FLOW-017',
     ]);
   });
 });

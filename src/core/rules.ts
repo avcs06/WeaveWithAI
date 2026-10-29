@@ -52,22 +52,6 @@ export function duplicates<T>(
   return [...repeated];
 }
 
-/** The listed words that occur as whole words in `text`. */
-export function wholeWords(
-  text: string,
-  words: readonly string[],
-  options: { caseSensitive?: boolean } = {},
-): string[] {
-  const flags = options.caseSensitive ? '' : 'i';
-  return words.filter((word) =>
-    new RegExp(`\\b${escapeRegExp(word)}\\b`, flags).test(text),
-  );
-}
-
-export function escapeRegExp(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 export function levenshtein(a: string, b: string): number {
   let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
   for (let i = 1; i <= a.length; i += 1) {

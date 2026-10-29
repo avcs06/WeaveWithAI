@@ -304,6 +304,29 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     catalog reviewer name them; the renderer marks them; fixtures use SF01.
   - Done when: `pnpm test`; `pnpm typecheck`.
 
+- [x] **FL11** Word-matching rules move to the reviewers (30 min) (done 2026-10-29). Depends: FL9
+  - Added 2026-10-29 by the user: a rule that guesses from the model's
+    wording fires on false matches (the ecommerce run: "checkout" and "UPI
+    paid" read as payments, "3 left" as layout), so a reviewer judges these.
+  - Removed FLOW-010, FLOW-017, FLOW-018, FLOW-022, CAT-004 and SCOPE-004
+    with their mutations and tests, and `wholeWords`, `escapeRegExp`,
+    `containerTexts` and `explanations`. Each review guide lists its share
+    under "Non-deterministic checks": the scope guide skipped capabilities;
+    the catalog guide in-scope coverage, records never edited or deleted, and
+    wording; the expand guide capabilities and wording.
+  - Done when: `pnpm test`; `pnpm typecheck`.
+
+- [ ] **FL12** Choice fields whose options come from records (20 min). Depends: FL1
+  - Added 2026-10-29 by the user: a choice field cannot take its options
+    from records, so the ecommerce catalog took 4 rounds (the glaze choice
+    must offer the glazes the owner manages, and FLOW-005 asks for at least 2
+    fixed options).
+  - A field gets `optionsFrom`: the vocabulary noun whose records are the
+    options, or "" for fixed options. The flows prompt asks the model to set
+    it. FLOW-005 asks for 2 or more options only when `optionsFrom` is "",
+    and checks that a non-empty `optionsFrom` is a vocabulary noun.
+  - Done when: `pnpm test`; `pnpm typecheck`.
+
 - [ ] **FL6** Reference ideas (60 min). Depends: FL5, FL9
   - Tuning notes from the freelancer run (2026-10-29), to apply to the prompts
     before the next runs: writers' first drafts skipped the "empty" path on

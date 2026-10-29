@@ -6,7 +6,6 @@ import {
   isPascal,
   levenshtein,
   runRules,
-  wholeWords,
 } from './rules';
 
 describe('rule helpers', () => {
@@ -33,23 +32,6 @@ describe('rule helpers', () => {
       'a',
       'b',
     ]);
-  });
-
-  it('matches whole words, case-insensitive unless asked otherwise', () => {
-    expect(
-      wholeWords('The API endpoint returns JSON.', [
-        'api',
-        'endpoint',
-        'json',
-        'point',
-      ]),
-    ).toEqual(['api', 'endpoint', 'json']);
-    expect(
-      wholeWords('Get the post', ['GET', 'POST'], { caseSensitive: true }),
-    ).toEqual([]);
-    expect(
-      wholeWords('POST it', ['GET', 'POST'], { caseSensitive: true }),
-    ).toEqual(['POST']);
   });
 
   it('computes edit distance', () => {
