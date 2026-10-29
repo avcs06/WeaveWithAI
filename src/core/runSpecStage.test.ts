@@ -107,6 +107,7 @@ describe('runSpecStage with reviewers', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
+      model: 'muse-spark-1.3',
       rounds: 2,
     });
     expect(inputs.map((input) => input.stage)).toEqual([
@@ -121,11 +122,13 @@ describe('runSpecStage with reviewers', () => {
           input.round,
           input.model,
           input.temperature,
+          input.reasoningEffort,
+          input.maxTokens,
           input.schemaName,
         ]),
     ).toEqual([
-      [2, 'default', 0.7, 'Review'],
-      [2, 'default', 0.7, 'Review'],
+      [2, 'default', 0.7, 'medium', 8192, 'Review'],
+      [2, 'default', 0.7, 'medium', 8192, 'Review'],
     ]);
     const review1 = lastUser(inputs[1]);
     expect(review1).toContain('Reviewer 1 of 2');
@@ -170,6 +173,7 @@ describe('runSpecStage with reviewers', () => {
       warnings: [],
       known: [],
       answers: {},
+      model: 'muse-wonder-1.0',
       rounds: 3,
     });
     expect(inputs.map((input) => input.stage)).toEqual([
@@ -199,6 +203,42 @@ describe('runSpecStage with reviewers', () => {
       { round: 1, issues: [missingTitle] },
       { round: 2, issues: [genericIssue] },
       { round: 3, issues: [] },
+    ]);
+  });
+
+  it('reviews the round-2 fix even when it still fails validation', async () => {
+    const { llm, inputs } = fakeLlm([
+      { title: '' },
+      { title: '' },
+      clean,
+      clean,
+      { title: 'Cats' },
+      clean,
+    ]);
+    const { run, promise } = stage('parallel', llm, requireTitle, guide);
+    const result = await promise;
+
+    expect(inputs.map((input) => input.stage)).toEqual([
+      'doc',
+      'doc',
+      'doc-review1',
+      'doc-review2',
+      'doc',
+      'doc-review1',
+    ]);
+    expect(result).toMatchObject({
+      output: { title: 'Cats' },
+      known: [],
+      rounds: 3,
+    });
+    expect(
+      readEvents(run)
+        .filter((event) => event.type === 'stage:round')
+        .map((event) => [event.mandatory, event.blockers]),
+    ).toEqual([
+      [1, 0],
+      [1, 0],
+      [0, 0],
     ]);
   });
 
@@ -270,7 +310,9 @@ describe('runSpecStage with questions (interactive)', () => {
         review: guide,
         ask: async (draft): Promise<Answers> => {
           asked.push(draft);
-          return asked.length === 1 ? { Q01: 'Siamese' } : { Q02: 'no' };
+          return asked.length === 1
+            ? { Q01: { question: 'Breed?', answer: 'Siamese' } }
+            : { Q02: { question: 'Kittens?', answer: 'no' } };
         },
       }),
     );
@@ -278,7 +320,10 @@ describe('runSpecStage with questions (interactive)', () => {
     expect(asked).toEqual([{ title: '' }, { title: 'Cats' }]);
     expect(result).toMatchObject({
       output: { title: 'Cats' },
-      answers: { Q01: 'Siamese', Q02: 'no' },
+      answers: {
+        Q01: { question: 'Breed?', answer: 'Siamese' },
+        Q02: { question: 'Kittens?', answer: 'no' },
+      },
       known: [],
       rounds: 2,
     });
@@ -290,8 +335,8 @@ describe('runSpecStage with questions (interactive)', () => {
     ]);
     const fixup = lastUser(inputs[1]);
     expect(fixup).toContain('- DOC-001 at title: title must not be empty');
-    expect(fixup).toContain('The user answered these questions');
-    expect(fixup).toContain('- Q01: Siamese');
+    expect(fixup).toContain('Answers the user gave to your questions');
+    expect(fixup).toContain('- Q01 "Breed?": Siamese');
     expect(fixup).not.toContain('Q02');
     expect(
       readEvents(run).filter((event) => event.type === 'stage:answers'),
@@ -302,12 +347,14 @@ describe('runSpecStage with questions (interactive)', () => {
     const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
     const run = createRun({ idea, runsDir: root, id: 'carried' });
     const result = await runSpecStage(
-      opts(run, llm, { ask: async () => ({ Q01: 'yes' }) }),
+      opts(run, llm, {
+        ask: async () => ({ Q01: { question: 'Breed?', answer: 'yes' } }),
+      }),
     );
 
     expect(result).toMatchObject({
       output: { title: 'Cats' },
-      answers: { Q01: 'yes' },
+      answers: { Q01: { question: 'Breed?', answer: 'yes' } },
       rounds: 1,
     });
     expect(inputs).toHaveLength(1);
@@ -324,6 +371,7 @@ describe('runSpecStage without a review guide', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
+      model: 'muse-spark-1.3',
       rounds: 1,
     });
     expect(inputs).toHaveLength(1);
@@ -347,6 +395,7 @@ describe('runSpecStage without a review guide', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
+      model: 'muse-spark-1.3',
       rounds: 2,
     });
     const messages = inputs[1]?.messages ?? [];
@@ -358,6 +407,9 @@ describe('runSpecStage without a review guide', () => {
       '- DOC-001 at title: title must not be empty',
     );
     expect(messages[3]?.content).not.toContain('DOC-002');
+    expect(messages[3]?.content).toContain(
+      'keep the question in the output:\nNone.',
+    );
   });
 
   it('keeps an issue that never clears as known after four generations', async () => {

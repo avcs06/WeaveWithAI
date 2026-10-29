@@ -1,8 +1,14 @@
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { runCommand, showCommand, UsageError, validateCommand } from './cli';
+import {
+  goldenCommand,
+  runCommand,
+  showCommand,
+  UsageError,
+  validateCommand,
+} from './cli';
 import { readArtifact } from './core/artifacts';
 import type { Config } from './core/env';
 import type { Llm } from './core/llm';
@@ -21,26 +27,51 @@ const config: Config = {
   LLM_BACKEND: 'meta',
   BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
 };
+const load = (name: string): unknown =>
+  JSON.parse(
+    readFileSync(
+      new URL(`./stages/flows/__fixtures__/${name}`, import.meta.url),
+      'utf8',
+    ),
+  );
+const byScheme: Record<string, unknown> = {
+  Scope: load('reading-list.scope.json'),
+  Flows: load('reading-list.flows.json'),
+  Review: { blockers: [] },
+};
+/** The fixtures for the stages, an empty review for the reviewers; 10 tokens in, 5 out, $0.001 per call. */
 const llm: Llm = {
-  generateStructured() {
-    throw new Error('the stub stage must not call the model');
+  async generateStructured(input) {
+    const data = byScheme[input.schemaName];
+    if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
+    return {
+      data: data as never,
+      raw: JSON.stringify(data),
+      usage: { input: 10, cachedInput: 0, output: 5 },
+      costUsd: 0.001,
+      replayed: false,
+      backend: 'meta',
+      model: 'muse-spark-1.3',
+      durationMs: 1,
+    };
   },
 };
 const lines: string[] = [];
 const deps = { runsDir, config, llm, out: (line: string) => lines.push(line) };
-const idea = 'fixtures/ideas/project-tracker.md';
+const idea = 'fixtures/ideas/freelancer-workspace.md';
 
 describe('weave run', () => {
   let run: Run;
 
-  it('creates the run folder and runs the stub scope stage', async () => {
+  it('creates the run folder and runs the scope stage', async () => {
     run = await runCommand({ idea, to: 'scope' }, deps);
-    expect(run.id).toMatch(/^\d{8}-\d{4}-project-tracker$/);
+    expect(run.id).toMatch(/^\d{8}-\d{4}-freelancer-workspace$/);
     expect(existsSync(runPath(run, 'input', 'idea.md'))).toBe(true);
     expect(readArtifact(run, 'scope').meta).toMatchObject({
       version: 1,
-      model: null,
+      model: 'muse-spark-1.3',
       stage: 'scope',
+      rounds: 2,
     });
     expect(readState(run).stages.scope).toMatchObject({
       status: 'done',
@@ -49,7 +80,7 @@ describe('weave run', () => {
     expect(lines).toEqual([
       `run ${run.id} (${run.dir})`,
       'scope: running',
-      'scope: done v1',
+      'scope: done v1, 2 rounds',
     ]);
   });
 
@@ -79,13 +110,43 @@ describe('weave run', () => {
     expect(text).toContain(`run ${run.id}`);
     expect(text).toMatch(/stage\s+status\s+version\s+rounds\s+known\s+updated/);
     expect(text).toMatch(/scope\s+done\s+2/);
-    expect(text).toContain('0 calls, 0 tokens in, 0 out, $0.0000');
+    // Two scope runs (the first and the --from rerun), each one generation and two reviews.
+    expect(text).toContain('6 calls, 60 tokens in, 30 out, $0.0060');
   });
 
-  it('validate reports stages without validators and rejects unknown ones', () => {
+  it('golden copies the accepted artifacts and their markdown, and prints the stage totals', () => {
+    lines.length = 0;
+    // Writes into the real fixtures/golden; a throwaway idea name, removed at the end.
+    const ideaName = `tmp-test-${process.pid}`;
+    const dest = path.join('fixtures', 'golden', ideaName);
+    try {
+      const printed = goldenCommand(run.id, ideaName, 'scope', deps);
+      expect(existsSync(path.join(dest, '01-scope.json'))).toBe(true);
+      expect(existsSync(path.join(dest, '01-scope.md'))).toBe(true);
+      expect(printed).toEqual([
+        'scope: 2 rounds, 0 known issues, 6 calls, 60 tokens in, 30 out, $0.0060',
+      ]);
+      expect(lines[0]).toContain(
+        `golden ${ideaName}: 01-scope.json, 01-scope.md ->`,
+      );
+      expect(() => goldenCommand(run.id, ideaName, 'flows', deps)).toThrow(
+        /no flows artifact/,
+      );
+      expect(() => goldenCommand(run.id, ideaName, 'nope', deps)).toThrow(
+        UsageError,
+      );
+    } finally {
+      rmSync(dest, { recursive: true, force: true });
+    }
+  });
+
+  it('validate reruns the rules on the stored scope, reports a missing flows artifact and rejects unknown stages', () => {
     lines.length = 0;
     expect(validateCommand(run.id, undefined, deps)).toEqual([]);
-    expect(lines).toEqual(['scope: no validators registered']);
+    expect(lines).toEqual([
+      'scope: 0 mandatory, 0 warnings',
+      'flows: no artifact to validate',
+    ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
   });
 });

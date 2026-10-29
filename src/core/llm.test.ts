@@ -181,7 +181,7 @@ describe('generateStructured', () => {
     expect(sleeps).toEqual([0]);
   });
 
-  it('retries a truncated answer once with max_tokens doubled, capped at 16384', async () => {
+  it('retries a truncated answer once with max_tokens doubled, capped at 65536', async () => {
     const doubled = harness([
       completion('{"title":"We', 'length'),
       completion('{"title":"Weave"}'),
@@ -193,9 +193,9 @@ describe('generateStructured', () => {
       completion('{"title":"We', 'length'),
       completion('{"title":"Weave"}'),
     ]);
-    await capped.llm.generateStructured({ ...input(), maxTokens: 10_000 });
+    await capped.llm.generateStructured({ ...input(), maxTokens: 40_000 });
     expect(capped.calls.map((call) => call.max_tokens)).toEqual([
-      10_000, 16_384,
+      40_000, 65_536,
     ]);
   });
 
@@ -278,6 +278,19 @@ describe('temperature', () => {
     expect(
       (await llm.generateStructured({ ...input(), temperature: 0.7 })).replayed,
     ).toBe(true);
+  });
+});
+
+describe('reasoning effort', () => {
+  it('is sent only when given and changes the replay key', async () => {
+    const replayDir = tmp();
+    const replaying = { ...config, LLM_REPLAY: true };
+    const { llm, calls } = harness([completion('{"title":"A"}'), completion('{"title":"B"}')], replaying, { replayDir });
+
+    await llm.generateStructured(input());
+    expect((await llm.generateStructured({ ...input(), reasoningEffort: 'low' })).data).toEqual({ title: 'B' });
+    expect(calls.map((call) => (call as { reasoning_effort?: string }).reasoning_effort)).toEqual([undefined, 'low']);
+    expect((await llm.generateStructured({ ...input(), reasoningEffort: 'low' })).replayed).toBe(true);
   });
 });
 

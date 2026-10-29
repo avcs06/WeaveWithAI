@@ -166,8 +166,11 @@ Notes: C. Since 2026-10-29 (F11, user) the asking happens inside the stage
 loop: after every round that produced new output, an interactive stage asks
 the blocking questions not yet answered. Answers ride along with the next fix
 if one happens and never force one; all of them are returned and saved to
-`input/answers.json`, so the next stage and any rerun see them as already
-given.
+`input/answers.json` with the question as asked, so the next stage and any
+rerun see them as already given. Blocking narrowed 2026-10-29 (FL8, user): a
+question is raised when the answer changes scope, permissions, business rules
+or data; it is blocking only when a wrong default would make the app wrong
+for its users, at most 5 per scope (SCOPE-003).
 
 ### D1.8 Model routing (pick one)
 
@@ -259,9 +262,29 @@ Notes: B on the user's instruction, 2026-10-29, revised the same day from a
 "gate the stage" version to the fixed schedule. It replaces the AGENTS.md rule
 that model review only produces warnings, D1.6's 3 drafting rounds (now 4 for
 spec stages) and the principle that leftover blockers stop the run. Worst
-case per stage: four generator calls and three reviewer calls; outputs that
-fail validation are not reviewed until fixed, which saves most reviewer
-tokens.
+case per stage: four generator calls and three reviewer calls. From round 2
+on, validation and review look at the same output, whatever the validators
+found: a heuristic, not a gate (user, 2026-10-29).
+
+### D1.13 Output budget and reasoning effort (pick one)
+
+Meta's models reason before they answer; the reasoning tokens count toward
+`max_tokens` and are billed as output (docs, 2026-10-29). The first flows run
+was cut at 16k tokens, and each reviewer's empty verdict cost about 8k
+reasoning tokens.
+
+- [x] **A. Per-stage budgets, reviewers at medium effort (user, 2026-10-29).**
+      The generator keeps the model's own reasoning level with a budget per
+      stage (scope 16k, flows 32k, doubled once when the answer is cut, capped
+      at 64k). Reviewers run at `reasoning_effort: medium` with an 8k budget:
+      they return a short list, so most of their tokens are reasoning, and
+      medium keeps the verdict considered without the model-determined cost.
+- [ ] **B. Low effort everywhere.** Cheapest; first drafts of big artifacts
+      lose quality.
+- [ ] **C. Your levels:** ___
+
+Notes: A ticked by the user on 2026-10-29, raised from the proposed low to
+medium.
 
 ---
 
@@ -889,12 +912,20 @@ Notes:
 
 ### D12.1 Reference ideas (pick any)
 
-- [ ] **A. Project tracker: development idea, end to end (default)**
-- [ ] **B. Client notes: unseen test, end to end (default)**
-- [ ] **C. Dashboard editor (your widget example): new-component stress test, planning stages (default)**
-- [ ] **D. Appointment booking: business-rule stress test, planning stages (default)**
+- [x] **A. Freelancer workspace: development idea, end to end (user, 2026-10-29).**
+      Project tracker, client notes and appointment booking merged into one
+      brief: clients with notes and follow-ups, projects with tasks, a public
+      booking page. Also the business-rule stress test (slot availability).
+- [x] **B. Dashboard editor (your widget example): new-component stress test, planning stages (user, 2026-10-29).**
+- [x] **C. Ecommerce store: unseen test, then end to end (user, 2026-10-29).**
+      Each planning stage runs it once untuned and records the result; after
+      that it joins tuning so it reaches the second end-to-end run (G8).
 
 Notes:
+
+- 2026-10-29: three ideas, none of them simple. The earlier four (project
+  tracker, client notes, dashboard editor, appointment booking) are replaced
+  by the three above. Descope to fewer ideas only if time runs out.
 
 ### D12.2 What the demo measures (pick any)
 

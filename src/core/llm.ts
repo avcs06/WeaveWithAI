@@ -13,6 +13,14 @@ export type ChatMessage = {
   content: string;
 };
 export type ModelChoice = 'default' | 'strong';
+/** Meta's `reasoning_effort`; omitted, the model picks its own level. Reasoning tokens count toward max_tokens. */
+export type ReasoningEffort =
+  | 'minimal'
+  | 'low'
+  | 'medium'
+  | 'high'
+  | 'xhigh'
+  | 'max';
 
 export type GenerateInput<T> = {
   stage: string;
@@ -24,6 +32,8 @@ export type GenerateInput<T> = {
   maxTokens?: number;
   /** Default 0.2; part of the replay key. */
   temperature?: number;
+  /** Omitted by default; part of the replay key. */
+  reasoningEffort?: ReasoningEffort;
   /** When given, the call is written to `<runDir>/llm/<stage>-r<round>.json`. */
   runDir?: string;
 };
@@ -89,7 +99,7 @@ export type Llm = {
 
 const TEMPERATURE = 0.2;
 const DEFAULT_MAX_TOKENS = 8192;
-const MAX_OUTPUT_TOKENS = 16_384;
+const MAX_OUTPUT_TOKENS = 65_536;
 const MAX_ATTEMPTS = 5;
 const MAX_BACKOFF_MS = 30_000;
 const JITTER_MS = 250;
@@ -99,6 +109,7 @@ type Request = {
   model: string;
   messages: ChatMessage[];
   temperature: number;
+  reasoningEffort?: ReasoningEffort;
   schemaName: string;
   schema: Record<string, unknown>;
 };
@@ -135,6 +146,9 @@ export function createLlm(deps: LlmDeps): Llm {
       model,
       messages: input.messages,
       temperature: input.temperature ?? TEMPERATURE,
+      ...(input.reasoningEffort
+        ? { reasoningEffort: input.reasoningEffort }
+        : {}),
       schemaName: input.schemaName,
       schema: bridged.schema,
     };
@@ -202,6 +216,9 @@ export function createLlm(deps: LlmDeps): Llm {
         model: request.model,
         messages: request.messages,
         temperature: request.temperature,
+        ...(request.reasoningEffort
+          ? { reasoning_effort: request.reasoningEffort }
+          : {}),
         max_tokens: limit,
         response_format: {
           type: 'json_schema',

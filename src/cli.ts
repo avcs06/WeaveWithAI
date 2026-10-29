@@ -1,7 +1,13 @@
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { hasArtifact, isStale } from './core/artifacts';
+import {
+  type ArtifactName,
+  FILE_OF,
+  hasArtifact,
+  isStale,
+} from './core/artifacts';
 import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
 import { type Config, config as loadConfig } from './core/env';
 import { formatForTerminal, type Issue, splitIssues } from './core/issues';
@@ -10,8 +16,10 @@ import {
   createRun,
   DEFAULT_RUNS_DIR,
   openRun,
+  readEvents,
   readState,
   type Run,
+  runPath,
   totals,
 } from './core/run';
 import { PIPELINE, type StageContext, stages } from './stages/index';
@@ -40,6 +48,7 @@ const USAGE = `usage:
   weave run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
   weave validate <runId> [stage]
   weave show <runId>
+  weave golden <runId> <ideaName> [--stages scope,flows]
   weave ds
   weave bench <runId>`;
 
@@ -182,6 +191,60 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
   ].join('\n');
 }
 
+const DEFAULT_GOLDEN_DIR = 'fixtures/golden';
+
+/** Copies a run's accepted artifacts (and their markdown) to fixtures/golden/<idea>/ and prints rounds, tokens and cost per stage. */
+export function goldenCommand(
+  runId: string,
+  ideaName: string,
+  stageList: string | undefined,
+  deps: CliDeps = {},
+): string[] {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const names = (stageList ?? 'scope,flows')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+  const dest = path.join(DEFAULT_GOLDEN_DIR, ideaName);
+  mkdirSync(dest, { recursive: true });
+  const copied: string[] = [];
+  const lines: string[] = [];
+  const state = readState(run);
+  const calls = readEvents(run).filter((event) => event.type === 'llm:call');
+  for (const name of names) {
+    if (!(name in FILE_OF)) {
+      throw new UsageError(
+        `${name}: no such artifact. Known: ${Object.keys(FILE_OF).join(', ')}`,
+      );
+    }
+    const artifact = name as ArtifactName;
+    if (!hasArtifact(run, artifact))
+      throw new UsageError(`run ${runId} has no ${name} artifact yet`);
+    const json = FILE_OF[artifact];
+    const markdown = json.replace(/\.json$/, '.md');
+    for (const file of [json, markdown]) {
+      if (!existsSync(runPath(run, file))) continue;
+      copyFileSync(runPath(run, file), path.join(dest, file));
+      copied.push(file);
+    }
+    // The generator's calls plus its reviewers' (`<stage>-review<n>`).
+    const own = calls.filter(
+      (event) =>
+        event.stage === name ||
+        String(event.stage).startsWith(`${name}-review`),
+    );
+    const sum = (key: string) =>
+      own.reduce((total, event) => total + Number(event[key] ?? 0), 0);
+    lines.push(
+      `${name}: ${state.stages[name]?.rounds ?? '?'} rounds, ${state.stages[name]?.known ?? 0} known issues, ${own.length} calls, ${sum('input')} tokens in, ${sum('output')} out, $${sum('costUsd').toFixed(4)}`,
+    );
+  }
+  out(`golden ${ideaName}: ${copied.join(', ')} -> ${dest}`);
+  for (const line of lines) out(line);
+  return lines;
+}
+
 /** Exit codes: 0 ok, 1 error, 2 usage. */
 export async function main(argv: string[]): Promise<number> {
   try {
@@ -196,6 +259,7 @@ export async function main(argv: string[]): Promise<number> {
         interactive: { type: 'boolean' },
         replay: { type: 'boolean' },
         backend: { type: 'string' },
+        stages: { type: 'string' },
       },
     });
     const [command, first, second] = positionals;
@@ -212,6 +276,11 @@ export async function main(argv: string[]): Promise<number> {
       case 'show':
         if (!first) throw new UsageError('show needs a run id');
         console.log(showCommand(first));
+        return 0;
+      case 'golden':
+        if (!first || !second)
+          throw new UsageError('golden needs a run id and an idea name');
+        goldenCommand(first, second, values.stages);
         return 0;
       case 'ds':
         console.log('ds: added in step DS1');

@@ -34,13 +34,13 @@ saying why, never extra work in the current step.
 | Gate | When          | Done when                                                                                       |
 | ---- | ------------- | ----------------------------------------------------------------------------------------------- |
 | G0   | Oct 28, 16:30 | Repo restructured; template checks pass from `template/` (done)                                 |
-| G1   | Oct 29, 01:30 | The three tuning ideas produce scope and flows with zero mandatory issues; client notes (unseen) run once and recorded; golden fixtures saved |
+| G1   | Oct 29, 01:30 | Freelancer workspace and dashboard editor produce scope and flows with zero mandatory issues; ecommerce store (unseen) run once untuned and recorded, then passes too; golden fixtures saved |
 | G2   | Oct 29, night | Every golden idea produces brief, theme and screens with zero mandatory issues; gap report works |
 | G3   | Oct 30, 13:00 | Every golden idea produces a contract, in parallel with design; seeds validate                 |
 | G4   | Oct 30, night | Every golden spec set frozen; seeded defects found and fixed within limits                     |
-| G5   | Oct 31        | Project tracker scaffolded and themed from the frozen spec; typed client, hooks and mock API generated from the contract; contract tests pass against the mock; the app builds |
-| G6   | Nov 1         | Project tracker works end to end by hand on the mock API: pages from the screens, new components built, hooks wired, rendered checks pass |
-| G7   | Nov 2         | Benchmark table generated for the project tracker; e2e tests generated from the frozen flows pass after bounded repairs |
+| G5   | Oct 31        | Freelancer workspace scaffolded and themed from the frozen spec; typed client, hooks and mock API generated from the contract; contract tests pass against the mock; the app builds |
+| G6   | Nov 1         | Freelancer workspace works end to end by hand on the mock API: pages from the screens, new components built, hooks wired, rendered checks pass |
+| G7   | Nov 2         | Benchmark table generated for the freelancer workspace; e2e tests generated from the frozen flows pass after bounded repairs |
 | G8   | Nov 3         | Two ideas generated end to end without manual edits (or every edit logged); both benchmarked; one run on Muse Spark Open through Modal; run dashboard works |
 | G9   | Nov 4         | Demo video recorded, README has real numbers and separates hackathon work from the design system, submitted |
 
@@ -116,7 +116,7 @@ Steps 01 to 08.
 
 - [x] **F5** Runs, artifacts, events, issues (40 min) (done 2026-10-29). Depends: F1
   - `src/core/run.ts`, `artifacts.ts`, `issues.ts`: run IDs like
-    `20261028-2010-project-tracker`; envelope with canonical hash, version and
+    `20261028-2010-freelancer-workspace`; envelope with canonical hash, version and
     inputs; `isStale`; `appendEvent`; `writeReport`; `state.json`.
   - Done when: tests cover hash independence from key order, version
     increments, staleness after an input changes, and the mandatory/warning split.
@@ -135,7 +135,7 @@ Steps 01 to 08.
     `run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]`,
     `validate <runId> [stage]` (validators only, no model calls), `show <runId>`,
     `ds` (filled in by DS1), `bench <runId>` (filled in by B7).
-  - Done when: `pnpm weave run fixtures/ideas/project-tracker.md --to scope`
+  - Done when: `pnpm weave run fixtures/ideas/freelancer-workspace.md --to scope`
     creates a run folder (with a stub stage until FL5) and `pnpm weave show
     <id>` prints its stage table and token totals.
 
@@ -160,7 +160,7 @@ Steps 01 to 08.
     what the schema bridge had to change.
   - Done when: `pnpm smoke --backend modal` and `pnpm smoke --backend
     baseten` print a parsed object; `pnpm weave run
-    fixtures/ideas/project-tracker.md --to scope --backend modal`
+    fixtures/ideas/freelancer-workspace.md --to scope --backend modal`
     completes; `events.jsonl` names the backend and model per call; the Meta
     API run is unchanged and its tests still pass.
 
@@ -254,7 +254,23 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - `src/stages/flows/render.ts`: `01-scope.md` (short) and `01-flows.md` in the spec's format.
   - Done when: a snapshot test renders the valid fixture.
 
+- [x] **FL8** Product-manager standard shared by the scope and flows prompts (60 min) (done 2026-10-29). Depends: FL7, F11
+  - Added 2026-10-29 by the user: the two prompts and the two review guides
+    carried four drifting copies of what a product manager checks.
+  - `src/stages/flows/product-manager.md`: the MVP decisions and the measures
+    a reviewer counts, filled into both prompts and both guides through
+    `{{productManager}}`; keeping users, growth and operations stay out.
+  - Prompts reordered (answers first, capabilities in their own section, flow
+    rules grouped); the landing page and roles that never sign in are
+    modelled; the capability list no longer reads as a whitelist; `blocking`
+    narrowed to a risky default (schema description, D1.7 note).
+  - Answers keep the question text (`input/answers.json`, "Answers already
+    given", the fix message); `prompt-fix.md` replaces `prompt-fixup.md` and
+    `prompt-answers.md`.
+  - Done when: `pnpm test`; `pnpm typecheck`.
+
 - [ ] **FL5** Wire the stage (30 min). Depends: FL2, FL3, FL4, F7, F10
+  > Blocked: code and tests done 2026-10-29 (stage.ts, review guides, terminal questions, stages registered, stub removed); the live run on freelancer-workspace waits until the user has fixed the idea files.
   - `src/stages/flows/stage.ts`: scope, then flows. With `--interactive`
     each stage passes `ask` to the runner (F11): the blocking, unanswered
     questions are asked on the terminal with their defaults after each new
@@ -262,16 +278,16 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     the CLI.
   - Added 2026-10-29 (F10): `review-scope.md` and `review-flows.md`, the
     review guides each stage passes to the runner.
-  - Done when: `pnpm weave run fixtures/ideas/project-tracker.md --to flows`
+  - Done when: `pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows`
     ends with zero mandatory issues or a readable `StageFailed` report.
 
 - [ ] **FL6** Reference ideas (60 min). Depends: FL5
-  - Tune on project tracker, dashboard editor and appointment booking: change
+  - Tune on the freelancer workspace and the dashboard editor: change
     prompts, never validators, until each passes within 3 rounds. Read every
     `01-flows.md` and fix the prompt for anything you'd reject.
-  - Then run client notes once, untuned: it's the unseen test. Record what
-    happened, even if it fails; fix prompts only for failures that also show up
-    on the other ideas.
+  - Then run the ecommerce store once, untuned: it's the unseen test. Record
+    what happened, even if it fails. After that it joins tuning until it
+    passes too; it is the second end-to-end idea (G8).
   - Save accepted artifacts to `fixtures/golden/<idea>/01-scope.json` and
     `01-flows.json`; record rounds, tokens and cost per idea in
     `fixtures/golden/README.md`.
@@ -299,7 +315,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
 
 - [ ] **DS3** Brief (60 min). Depends: DS1, DS2, FL6
   - Brief schema, `prompt-brief.md`, BRIEF rules with tests.
-  - Done when: golden project tracker produces a brief with zero mandatory issues.
+  - Done when: golden freelancer workspace produces a brief with zero mandatory issues.
 
 - [ ] **DS4** Theme generator (90 min). Depends: DS3
   - `pnpm add culori` (add types if your editor wants them).
@@ -324,14 +340,14 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     nodes call per screen with `p-limit(3)`; assemble `02-screens.json`; run
     whole-artifact rules; rerun only failing screens; write `02-ds-gaps.json`
     and append to `.weave-cache/ds-gaps.jsonl`.
-  - Done when: golden project tracker produces screens with zero mandatory issues.
+  - Done when: golden freelancer workspace produces screens with zero mandatory issues.
 
 - [ ] **DS8** Renderers (45 min). Depends: DS7
   - `02-design.md` as in the spec. Optional: `02-wireframes.html` (D3.6 D).
   - Done when: you can review any screen from the markdown alone.
 
 - [ ] **DS9** Every golden idea (60 min). Depends: DS8
-  - Run design for every golden flow set; tune prompts on all but client notes; save golden `02-*`.
+  - Run design for every golden flow set; the ecommerce store runs once untuned first, recorded; tune prompts; save golden `02-*`.
   - Done when: **G2**, including at least one justified new component for the
     dashboard editor.
 
@@ -357,11 +373,11 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
   - `prompt.ts` fills `src/stages/contracts/prompt.md` (draft provided);
     `weave run` runs design and contracts with `Promise.all` after flows, both
     recording the same flows version.
-  - Done when: golden project tracker produces a contract with zero mandatory issues.
+  - Done when: golden freelancer workspace produces a contract with zero mandatory issues.
 
 - [ ] **C5** Renderer (30 min). Depends: C4
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.
-  - Done when: renders the golden project-tracker contract.
+  - Done when: renders the golden freelancer-workspace contract.
 
 - [ ] **C6** Every golden idea (40 min). Depends: C5
   - Save golden `03-contract.json` for each.
@@ -373,7 +389,7 @@ Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.
 
 - [ ] **R1** Coverage matrix (60 min). Depends: C6, DS9
   - `src/stages/reconcile/matrix.ts`: `buildMatrix`, data resolution as in the spec.
-  - Done when: tests on the golden project-tracker set; every row has screens
+  - Done when: tests on the golden freelancer-workspace set; every row has screens
     and operations or is local.
 
 - [ ] **R2** Mismatch rules (60 min). Depends: R1
@@ -392,7 +408,7 @@ Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.
 - [ ] **R5** Procedure, freeze, report (60 min). Depends: R2, R4
   - `procedure.ts` in the spec's order with 2 rounds per pass; `spec.lock.json`;
     `04-reconcile.md`. CLI: `--to freeze`.
-  - Done when: golden project tracker freezes.
+  - Done when: golden freelancer workspace freezes.
 
 - [ ] **R6** Seeded defects and every golden idea (60 min). Depends: R5
   - The three seeded defects from the spec as tests with recorded responses;
@@ -412,7 +428,7 @@ file, all inside the generated app, by code and without model calls.
     `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets),
     `tokens.ts` (radius, focus ring) and `packages/styles/src/fonts.ts`;
     THEME-003 checks base, surface and status sets are untouched.
-  - Done when: `pnpm weave run … --to scaffold` on the golden project tracker
+  - Done when: `pnpm weave run … --to scaffold` on the golden freelancer workspace
     yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
     pass, with the theme's colors in `colors.ts`.
 
@@ -440,9 +456,9 @@ file, all inside the generated app, by code and without model calls.
     per entity: every operation's happy path and every listed error, pagination
     and sort, cascade on delete, unauthenticated and cross-user access, and data
     surviving a store reload (D8.4 A to D, applied to the mock).
-  - Done when: `pnpm nx test web` passes in the generated project tracker.
+  - Done when: `pnpm nx test web` passes in the generated freelancer workspace.
 
-- [ ] **S5** Golden project tracker to app (45 min). Depends: S4
+- [ ] **S5** Golden freelancer workspace to app (45 min). Depends: S4
   - `weave run … --to codegen` end to end; `pnpm build` of the app; record
     sizes and timings; fix codegen bugs found on the way.
   - Done when: **G5**.
@@ -478,22 +494,22 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - One loop session per screen filling the shell's sections from the nodes,
     using recipes, the entity hooks and the DS, with loading, empty, error,
     invalid and submitting states; `pnpm verify <route>` as the last check.
-  - Done when: every project-tracker route passes validate, typecheck, lint
+  - Done when: every freelancer-workspace route passes validate, typecheck, lint
     and verify, and the core loop works by hand.
 
 - [ ] **FE5** Rendered checks (90 min). Depends: FE2
   - `src/checks/`: DESIGN-R-001 to 009 with Playwright (axe, contrast, keyboard
     walk, target size, overflow, first viewport, type size, color variables,
     proximity), written as reusable collectors the benchmark reuses.
-  - Done when: each rule has a test on a fixture page; the project tracker's
+  - Done when: each rule has a test on a fixture page; the freelancer workspace's
     routes pass the mandatory rules.
 
 - [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
   - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence
     (D3.8 A); warnings only.
-  - Done when: a rubric report exists for the project tracker.
+  - Done when: a rubric report exists for the freelancer workspace.
 
-- [ ] **FE7** Golden project tracker end to end (60 min). Depends: FE4, FE5
+- [ ] **FE7** Golden freelancer workspace end to end (60 min). Depends: FE4, FE5
   - `weave run … --to frontend`; walk every flow by hand on the mock API.
   - Done when: **G6**.
 
@@ -515,7 +531,7 @@ again after repairs; one table with every number.
     cookie header; scores, LCP, FCP, CLS, TBT, Speed Index, bytes, DOM size;
     JSON and HTML reports saved.
   - Done when: `benchmark/lighthouse/*.json` exists for every route of the
-    project tracker.
+    freelancer workspace.
 
 - [ ] **B3** Accessibility: axe, contrast, targets (45 min). Depends: FE5, B1
   - Reuse the FE5 collectors on the production server: axe violations by
@@ -542,7 +558,7 @@ again after repairs; one table with every number.
     in new components, data access outside entities), knip unused code,
     first-load JS per route from the build manifests, lines by origin from
     the ledger.
-  - Done when: `benchmark/code.json` exists for the project tracker with a
+  - Done when: `benchmark/code.json` exists for the freelancer workspace with a
     deliberately planted duplicate detected.
 
 - [ ] **B7** Benchmark table and CLI (60 min). Depends: B2 to B6
@@ -550,7 +566,7 @@ again after repairs; one table with every number.
     threshold, verdict) and `05-benchmark.md` (summary, per-route table, code
     table, deltas against the previous benchmark of the run). `weave bench
     <runId>`; `weave run` runs it after `frontend` and after `repair`.
-  - Done when: **G7** part one: the project tracker's table is generated and
+  - Done when: **G7** part one: the freelancer workspace's table is generated and
     every threshold has a verdict.
 
 ## Phase 9: Tests and repair (Mon Nov 2, afternoon to Tue Nov 3)
@@ -563,7 +579,7 @@ D8.4. Steps 55 to 58.
     generated by code from steps, fields, alternatives and node IDs; the model
     only turns outcomes into assertions (structured call); a Playwright config
     with a seeded store and a `pnpm test:e2e` script in the app.
-  - Done when: the golden project tracker gets one spec per flow that compiles.
+  - Done when: the golden freelancer workspace gets one spec per flow that compiles.
 
 - [ ] **T2** Run, evidence, repair requests (60 min). Depends: T1, FE7
   - Run the specs, map failures to flow, step and screen, attach screenshot
@@ -578,7 +594,7 @@ D8.4. Steps 55 to 58.
   - Done when: the planted defect is repaired within the limits; a spec edit
     attempted by the model is refused and logged.
 
-- [ ] **T4** Golden project tracker e2e green (45 min). Depends: T3
+- [ ] **T4** Golden freelancer workspace e2e green (45 min). Depends: T3
   - Done when: **G7**.
 
 ## Phase 10: Prove and submit (Tue Nov 3 to Wed Nov 4)
@@ -592,9 +608,9 @@ Decisions: D1.10 B, D12.1, D12.2. Steps 59 to 62.
     timeline, issues per round, the coverage matrix and the benchmark table.
 
 - [ ] **P2** Two full runs, a Modal run, benchmarks (3 h). Depends: T4, F8, P1
-  - Project tracker and client notes end to end without manual edits (or every
-    edit logged); one run on Muse Spark Open through Modal; both benchmarked;
-    numbers into `fixtures/golden/README.md`.
+  - Freelancer workspace and ecommerce store end to end without manual edits
+    (or every edit logged); one run on Muse Spark Open through Modal; both
+    benchmarked; numbers into `fixtures/golden/README.md`.
   - Done when: **G8**.
 
 - [ ] **P3** README and submission answers (90 min). Depends: P2

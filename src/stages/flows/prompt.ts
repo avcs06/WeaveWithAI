@@ -5,42 +5,49 @@ import {
   skippedList,
 } from '../../config/capabilities';
 import { fillPrompt, loadPrompt, stripComments } from '../../core/prompt';
+import { type Answers, formatAnswers } from '../../core/runSpecStage';
 import { pathBeside } from '../../core/utils';
 import { Flows, type Scope } from './schema';
 
-/** Question id to the answer given, from input/answers.json or the terminal. */
-export type Answers = Record<string, string>;
+const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
+
+/** The standard both prompts and both review guides share. */
+const productManager = () => load('./product-manager.md');
+
+const capabilityLists = () => ({
+  capabilitiesBuild: buildList(),
+  capabilitiesSimulated: simulatedList(),
+  capabilitiesSkipped: skippedList(),
+});
 
 export function answersBlock(answers: Answers): string {
-  const entries = Object.entries(answers);
-  if (entries.length === 0) return 'None yet.';
-  return entries.map(([id, answer]) => `- ${id}: ${answer}`).join('\n');
+  return Object.keys(answers).length === 0
+    ? 'None yet.'
+    : formatAnswers(answers);
 }
 
 export function scopeSystemPrompt(answers: Answers): string {
-  return fillPrompt(
-    loadPrompt(pathBeside(import.meta.url, './prompt-scope.md')),
-    {
-      capabilitiesBuild: buildList(),
-      capabilitiesSimulated: simulatedList(),
-      capabilitiesSkipped: skippedList(),
-      answers: answersBlock(answers),
-    },
-  );
+  return fillPrompt(load('./prompt-scope.md'), {
+    productManager: productManager(),
+    ...capabilityLists(),
+    answers: answersBlock(answers),
+  });
 }
 
 export function flowsSystemPrompt(answers: Answers): string {
-  return fillPrompt(
-    loadPrompt(pathBeside(import.meta.url, './prompt-flows.md')),
-    {
-      capabilitiesBuild: buildList(),
-      capabilitiesSimulated: simulatedList(),
-      capabilitiesSkipped: skippedList(),
-      answers: answersBlock(answers),
-      exampleFlow: exampleFlow(),
-    },
-  );
+  return fillPrompt(load('./prompt-flows.md'), {
+    productManager: productManager(),
+    ...capabilityLists(),
+    answers: answersBlock(answers),
+    exampleFlow: exampleFlow(),
+  });
 }
+
+export const scopeReviewGuide = (): string =>
+  fillPrompt(load('./review-scope.md'), { productManager: productManager() });
+
+export const flowsReviewGuide = (): string =>
+  fillPrompt(load('./review-flows.md'), { productManager: productManager() });
 
 /** The "add a book" flow from the reading-list fixture; never a reference idea's flow. */
 function exampleFlow(): string {

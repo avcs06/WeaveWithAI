@@ -106,7 +106,7 @@ runs/<runId>/            one generator run (gitignored)
 ```text
 runs/<runId>/
   input/idea.md
-  input/answers.json           answers to questions (interactive mode or by hand)
+  input/answers.json           answers to questions, each with the question as asked (interactive mode or by hand)
   01-scope.json                artifacts: envelope + data
   01-flows.json  01-flows.md   JSON and its human rendering
   02-brief.json  02-theme.json  02-screens.json  02-design.md
@@ -185,22 +185,26 @@ The schedule (D1.12):
 | 3 | fix the mandatory issues and blockers | validate | 1 call |
 | 4 | final fix | validate | |
 
-Round 1 sends system + user. A fix appends the model's JSON and a user
-message listing what is pending (mandatory issues and blockers), asking for
+Round 1 sends system + user. A fix appends the model's JSON and one user
+message (`src/core/prompt-fix.md`) listing what is pending (mandatory issues
+and blockers) and the answers given since the last generation, asking for
 the full corrected JSON (D1.5 default); a fix with nothing pending is skipped,
-but the round's reviewer calls still run. A reviewer gets the generator's
-system and user messages, its JSON, the warnings as already known and the
-stage's `review-<stage>.md` guide, and answers through the `Review` schema
-(`src/core/review.ts`, blockers only); each blocker becomes a mandatory
-issue with rule `REVIEW`. The stage ends as soon as a review finds nothing on
-validator-clean output, so a clean first draft costs one generation and two
-reviews. After round 4 whatever is pending is the stage's known issues: in
-the report, the `stage:done` event, `state.json` and the result. The stage
-never fails on issues; `weave run` exits 1 only for real errors. With `ask`
-(interactive runs, D1.7 C) the runner asks after every round that produced
-new output; the answers ride along with the next fix in their own message
-and never force a generation, and all of them come back in `answers` for the
-stage to save.
+but the round's reviewer calls still run. From round 2 on, validators and
+reviewers look at the same output, whatever the validators found: a
+heuristic, not a gate. A reviewer gets the generator's system and user messages, its
+JSON, the warnings as already known and the stage's `review-<stage>.md`
+guide, and answers through the `Review` schema (`src/core/review.ts`,
+blockers only); each blocker becomes a mandatory issue with rule `REVIEW`.
+The stage ends as soon as a review finds nothing on validator-clean output,
+so a clean first draft costs one generation and two reviews. After round 4
+whatever is pending is the stage's known issues: in the report, the
+`stage:done` event, `state.json` and the result. The stage never fails on
+issues; `weave run` exits 1 only for real errors. With `ask` (interactive
+runs, D1.7 C) the runner asks after every round that produced new output;
+the answers ride along with the next fix and never force a generation, and
+all of them come back in `answers` for the stage to save. An answer keeps
+the question as asked, so a rerun that numbers its questions differently
+does not mistake an old answer for a new question.
 
 ## Model layer (`src/core/llm.ts`)
 
@@ -226,6 +230,9 @@ stage to save.
   a prompt or schema changes the key, so stale replays can't happen.
 - Model routing: `default` uses `LLM_MODEL`; `strong` uses `LLM_MODEL_STRONG`
   for a round that failed twice (D1.8).
+- Output budget: `max_tokens` caps reasoning and visible output together on
+  Meta's models, and reasoning is billed as output. Stages pass their own
+  budget (D1.13); reviewer calls run at `reasoning_effort: medium`.
 - Backends (D1.11): `LLM_BACKEND` picks the Meta Model API (default), a
   Modal Dedicated Endpoint serving Muse Glimmer, or Baseten's Model API
   serving Muse Spark Open. Same client, same schema bridge; the backend and model are
