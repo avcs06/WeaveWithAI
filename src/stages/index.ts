@@ -42,7 +42,12 @@ const scopeStub: StageDef = {
   name: 'scope',
   produces: ['scope'],
   async run({ run }) {
-    writeArtifact(run, 'scope', { stub: true }, { stage: 'scope', model: null, rounds: 0, inputs: [] });
+    writeArtifact(
+      run,
+      'scope',
+      { stub: true },
+      { stage: 'scope', model: null, rounds: 0, inputs: [] },
+    );
   },
 };
 

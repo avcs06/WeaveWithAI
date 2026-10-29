@@ -37,9 +37,20 @@ describe('weave run', () => {
     run = await runCommand({ idea, to: 'scope' }, deps);
     expect(run.id).toMatch(/^\d{8}-\d{4}-project-tracker$/);
     expect(existsSync(runPath(run, 'input', 'idea.md'))).toBe(true);
-    expect(readArtifact(run, 'scope').meta).toMatchObject({ version: 1, model: null, stage: 'scope' });
-    expect(readState(run).stages.scope).toMatchObject({ status: 'done', version: 1 });
-    expect(lines).toEqual([`run ${run.id} (${run.dir})`, 'scope: running', 'scope: done v1']);
+    expect(readArtifact(run, 'scope').meta).toMatchObject({
+      version: 1,
+      model: null,
+      stage: 'scope',
+    });
+    expect(readState(run).stages.scope).toMatchObject({
+      status: 'done',
+      version: 1,
+    });
+    expect(lines).toEqual([
+      `run ${run.id} (${run.dir})`,
+      'scope: running',
+      'scope: done v1',
+    ]);
   });
 
   it('skips a stage that is done and not stale on a rerun', async () => {
@@ -55,8 +66,12 @@ describe('weave run', () => {
   });
 
   it('rejects an unknown stage before touching the disk', async () => {
-    await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toBeInstanceOf(UsageError);
-    await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toThrow(/Known stages: scope, flows/);
+    await expect(
+      runCommand({ idea, to: 'nowhere' }, deps),
+    ).rejects.toBeInstanceOf(UsageError);
+    await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toThrow(
+      /Known stages: scope, flows/,
+    );
   });
 
   it('show prints the stage table and the totals', () => {

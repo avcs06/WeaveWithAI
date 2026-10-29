@@ -33,12 +33,42 @@ import { rule as scope005 } from './rules/scope-005-ids';
 import { rule as scope006 } from './rules/scope-006-summary-and-size';
 import type { Flows, Scope } from './schema';
 
-export const scopeRules: readonly Rule<Scope>[] = [scope001, scope002, scope003, scope004, scope005, scope006];
-
-export const flowRules: readonly Rule<FlowInput>[] = [
-  flow001, flow002, flow003, flow004, flow005, flow006, flow007, flow008, flow009, flow010, flow011, flow012,
-  flow013, flow014, flow015, flow016, flow017, flow018, flow019, flow020, flow021, flow022, flow023,
+export const scopeRules: readonly Rule<Scope>[] = [
+  scope001,
+  scope002,
+  scope003,
+  scope004,
+  scope005,
+  scope006,
 ];
 
-export const validateScope = (scope: Scope): Issue[] => runRules(scopeRules, scope);
-export const validateFlows = (flows: Flows, scope: Scope): Issue[] => runRules(flowRules, { flows, scope });
+export const flowRules: readonly Rule<FlowInput>[] = [
+  flow001,
+  flow002,
+  flow003,
+  flow004,
+  flow005,
+  flow006,
+  flow007,
+  flow008,
+  flow009,
+  flow010,
+  flow011,
+  flow012,
+  flow013,
+  flow014,
+  flow015,
+  flow016,
+  flow017,
+  flow018,
+  flow019,
+  flow020,
+  flow021,
+  flow022,
+  flow023,
+];
+
+export const validateScope = (scope: Scope): Issue[] =>
+  runRules(scopeRules, scope);
+export const validateFlows = (flows: Flows, scope: Scope): Issue[] =>
+  runRules(flowRules, { flows, scope });

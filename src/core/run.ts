@@ -4,10 +4,9 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
-  renameSync,
-  writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
+import { writeJsonAtomic } from './utils';
 
 export type StageStatus = 'pending' | 'running' | 'done' | 'failed';
 export type StageState = {
@@ -27,7 +26,10 @@ export type RunState = {
 };
 export type Run = { id: string; dir: string };
 
-export type EventInput = { type: string; stage?: string } & Record<string, unknown>;
+export type EventInput = { type: string; stage?: string } & Record<
+  string,
+  unknown
+>;
 export type Event = EventInput & { ts: string };
 
 export const DEFAULT_RUNS_DIR = 'runs';
@@ -45,20 +47,30 @@ export function runId(ideaPath: string, now = new Date()): string {
   return `${date}-${time}-${kebab}`;
 }
 
-export function createRun(opts: { idea: string; runsDir?: string; id?: string }): Run {
+export function createRun(opts: {
+  idea: string;
+  runsDir?: string;
+  id?: string;
+}): Run {
   const id = opts.id ?? runId(opts.idea);
   const dir = path.join(opts.runsDir ?? DEFAULT_RUNS_DIR, id);
   if (existsSync(dir)) throw new Error(`Run ${id} already exists at ${dir}`);
   mkdirSync(path.join(dir, 'input'), { recursive: true });
   copyFileSync(opts.idea, path.join(dir, 'input', 'idea.md'));
-  const state: RunState = { id, idea: opts.idea, createdAt: new Date().toISOString(), stages: {} };
+  const state: RunState = {
+    id,
+    idea: opts.idea,
+    createdAt: new Date().toISOString(),
+    stages: {},
+  };
   writeJsonAtomic(path.join(dir, 'state.json'), state);
   return { id, dir };
 }
 
 export function openRun(id: string, runsDir = DEFAULT_RUNS_DIR): Run {
   const dir = path.join(runsDir, id);
-  if (!existsSync(path.join(dir, 'state.json'))) throw new Error(`No run ${id} in ${runsDir}`);
+  if (!existsSync(path.join(dir, 'state.json')))
+    throw new Error(`No run ${id} in ${runsDir}`);
   return { id, dir };
 }
 
@@ -67,13 +79,26 @@ export function runPath(run: Run, ...parts: string[]): string {
 }
 
 export function readState(run: Run): RunState {
-  return JSON.parse(readFileSync(runPath(run, 'state.json'), 'utf8')) as RunState;
+  return JSON.parse(
+    readFileSync(runPath(run, 'state.json'), 'utf8'),
+  ) as RunState;
 }
 
-export function updateStage(run: Run, stage: string, patch: Partial<StageState>): void {
+export function updateStage(
+  run: Run,
+  stage: string,
+  patch: Partial<StageState>,
+): void {
   const state = readState(run);
-  const current: StageState = state.stages[stage] ?? { status: 'pending', updatedAt: '' };
-  state.stages[stage] = { ...current, ...patch, updatedAt: new Date().toISOString() };
+  const current: StageState = state.stages[stage] ?? {
+    status: 'pending',
+    updatedAt: '',
+  };
+  state.stages[stage] = {
+    ...current,
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  };
   writeJsonAtomic(runPath(run, 'state.json'), state);
 }
 
@@ -92,7 +117,12 @@ export function readEvents(run: Run): Event[] {
 }
 
 /** Sums the `llm:call` events. */
-export function totals(run: Run): { calls: number; input: number; output: number; costUsd: number } {
+export function totals(run: Run): {
+  calls: number;
+  input: number;
+  output: number;
+  costUsd: number;
+} {
   const sum = { calls: 0, input: 0, output: 0, costUsd: 0 };
   for (const event of readEvents(run)) {
     if (event.type !== 'llm:call') continue;
@@ -109,8 +139,3 @@ function asNumber(value: unknown): number {
 }
 
 /** Writes `<file>.tmp` then renames, so a reader never sees a half-written file. */
-export function writeJsonAtomic(file: string, value: unknown): void {
-  mkdirSync(path.dirname(file), { recursive: true });
-  writeFileSync(`${file}.tmp`, `${JSON.stringify(value, null, 2)}\n`);
-  renameSync(`${file}.tmp`, file);
-}

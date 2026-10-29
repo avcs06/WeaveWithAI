@@ -1,10 +1,10 @@
-import { fileURLToPath } from 'node:url';
 import type { z } from 'zod';
 import { formatIssues, type Issue, splitIssues, writeReport } from './issues';
 import type { ChatMessage, GenerateResult, Llm } from './llm';
 import { fillPrompt, loadPrompt } from './prompt';
 import { Review, toIssues } from './review';
 import { appendEvent, type Run, updateStage } from './run';
+import { pathBeside } from './utils';
 
 /** Question id to the answer given. */
 export type Answers = Record<string, string>;
@@ -47,11 +47,18 @@ const STRONG_FROM_ROUND = 3;
 const REVIEW_TEMPERATURE = 0.7;
 const NOT_REREVIEWED = ' (addressed in the final fix, not re-reviewed)';
 
-const here = (file: string) => fileURLToPath(new URL(file, import.meta.url));
-const fixupPrompt = loadPrompt(here('./prompt-fixup.md'));
-const answersPrompt = loadPrompt(here('./prompt-answers.md'));
-const reviewPrompt = loadPrompt(here('./prompt-review.md'));
-const reviewInput = loadPrompt(here('./prompt-review-input.md'));
+const fixupPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-fixup.md'),
+);
+const answersPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-answers.md'),
+);
+const reviewPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review.md'),
+);
+const reviewInput = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review-input.md'),
+);
 
 /** Generate, validate, review on schedule, fix what is pending; whatever is left at the end is known, never fatal. */
 export async function runSpecStage<T>(

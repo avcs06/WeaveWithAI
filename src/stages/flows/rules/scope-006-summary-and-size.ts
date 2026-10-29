@@ -17,10 +17,20 @@ export const rule = defineRule<Scope>('SCOPE-006', 'warning', (scope, fail) => {
   const issues: Issue[] = [];
   const sentences = sentenceCount(scope.app.summary);
   if (sentences < 2 || sentences > 4) {
-    issues.push(fail(`The summary has ${sentences} sentences; write 2 to 4: who it is for, the problem, the core loop.`, 'app.summary'));
+    issues.push(
+      fail(
+        `The summary has ${sentences} sentences; write 2 to 4: who it is for, the problem, the core loop.`,
+        'app.summary',
+      ),
+    );
   }
   if (scope.inScope.length < MIN_IN_SCOPE) {
-    issues.push(fail(`inScope lists ${scope.inScope.length} items; list at least ${MIN_IN_SCOPE} things the MVP does.`, 'inScope'));
+    issues.push(
+      fail(
+        `inScope lists ${scope.inScope.length} items; list at least ${MIN_IN_SCOPE} things the MVP does.`,
+        'inScope',
+      ),
+    );
   }
   return issues;
 });

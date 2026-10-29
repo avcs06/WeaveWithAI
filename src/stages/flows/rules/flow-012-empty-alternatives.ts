@@ -8,15 +8,28 @@ import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
 import { alternativesFrom, eachStep, type FlowInput } from './helpers';
 
-export const rule = defineRule<FlowInput>('FLOW-012', 'mandatory', ({ flows }, fail) => {
-  const issues: Issue[] = [];
-  for (const { flow, step } of eachStep(flows)) {
-    const lists = step.effects.filter((effect) => effect.change === 'list');
-    if (lists.length === 0) continue;
-    if (!alternativesFrom(flow, step.id).some((alternative) => alternative.kind === 'empty')) {
-      const nouns = lists.map((effect) => effect.noun).join(', ');
-      issues.push(fail(`${step.id} lists ${nouns} but has no "empty" alternative; add ${flow.id}.A0n with kind empty from ${step.id} saying what the user sees when there is nothing yet.`, step.id));
+export const rule = defineRule<FlowInput>(
+  'FLOW-012',
+  'mandatory',
+  ({ flows }, fail) => {
+    const issues: Issue[] = [];
+    for (const { flow, step } of eachStep(flows)) {
+      const lists = step.effects.filter((effect) => effect.change === 'list');
+      if (lists.length === 0) continue;
+      if (
+        !alternativesFrom(flow, step.id).some(
+          (alternative) => alternative.kind === 'empty',
+        )
+      ) {
+        const nouns = lists.map((effect) => effect.noun).join(', ');
+        issues.push(
+          fail(
+            `${step.id} lists ${nouns} but has no "empty" alternative; add ${flow.id}.A0n with kind empty from ${step.id} saying what the user sees when there is nothing yet.`,
+            step.id,
+          ),
+        );
+      }
     }
-  }
-  return issues;
-});
+    return issues;
+  },
+);

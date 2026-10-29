@@ -9,7 +9,11 @@ export type Backend = {
   strongModel: string;
 };
 
-export const BACKEND_NAMES: readonly BackendName[] = ['meta', 'modal', 'baseten'];
+export const BACKEND_NAMES: readonly BackendName[] = [
+  'meta',
+  'modal',
+  'baseten',
+];
 
 export function isBackendName(value: string): value is BackendName {
   return (BACKEND_NAMES as readonly string[]).includes(value);
@@ -17,7 +21,10 @@ export function isBackendName(value: string): value is BackendName {
 
 export function resolveBackend(config: Config, override?: string): Backend {
   const name = override ?? config.LLM_BACKEND;
-  if (!isBackendName(name)) throw new Error(`Unknown backend ${name}; use one of ${BACKEND_NAMES.join(', ')}`);
+  if (!isBackendName(name))
+    throw new Error(
+      `Unknown backend ${name}; use one of ${BACKEND_NAMES.join(', ')}`,
+    );
   switch (name) {
     case 'meta':
       return {
@@ -28,11 +35,11 @@ export function resolveBackend(config: Config, override?: string): Backend {
         strongModel: config.LLM_MODEL_STRONG,
       };
     case 'modal': {
-      const { MODAL_BASE_URL, MODAL_PROXY_TOKEN, MODAL_MODEL } = required(config, name, [
-        'MODAL_BASE_URL',
-        'MODAL_PROXY_TOKEN',
-        'MODAL_MODEL',
-      ]);
+      const { MODAL_BASE_URL, MODAL_PROXY_TOKEN, MODAL_MODEL } = required(
+        config,
+        name,
+        ['MODAL_BASE_URL', 'MODAL_PROXY_TOKEN', 'MODAL_MODEL'],
+      );
       return {
         name,
         baseURL: MODAL_BASE_URL,
@@ -42,7 +49,10 @@ export function resolveBackend(config: Config, override?: string): Backend {
       };
     }
     case 'baseten': {
-      const { BASETEN_API_KEY, BASETEN_MODEL } = required(config, name, ['BASETEN_API_KEY', 'BASETEN_MODEL']);
+      const { BASETEN_API_KEY, BASETEN_MODEL } = required(config, name, [
+        'BASETEN_API_KEY',
+        'BASETEN_MODEL',
+      ]);
       return {
         name,
         baseURL: config.BASETEN_BASE_URL,
@@ -54,8 +64,17 @@ export function resolveBackend(config: Config, override?: string): Backend {
   }
 }
 
-function required<K extends keyof Config>(config: Config, backend: BackendName, keys: K[]): Record<K, string> {
+function required<K extends keyof Config>(
+  config: Config,
+  backend: BackendName,
+  keys: K[],
+): Record<K, string> {
   const missing = keys.filter((key) => !config[key]);
-  if (missing.length > 0) throw new Error(`Backend ${backend} needs ${missing.join(', ')} set in .env`);
-  return Object.fromEntries(keys.map((key) => [key, config[key] as string])) as Record<K, string>;
+  if (missing.length > 0)
+    throw new Error(
+      `Backend ${backend} needs ${missing.join(', ')} set in .env`,
+    );
+  return Object.fromEntries(
+    keys.map((key) => [key, config[key] as string]),
+  ) as Record<K, string>;
 }

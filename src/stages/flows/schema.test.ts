@@ -1,14 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { toJsonSchema } from '../../core/schema';
+import { keysOf } from '../../core/utils';
 import { Flows, Scope } from './schema';
 
 /** Every key at every level, so a test can prove a key is absent. */
-function keysOf(node: unknown): string[] {
-  if (Array.isArray(node)) return node.flatMap(keysOf);
-  if (typeof node !== 'object' || node === null) return [];
-  return Object.entries(node).flatMap(([key, value]) => [key, ...keysOf(value)]);
-}
-
 describe('flows stage schemas', () => {
   it.each([
     ['Scope', Scope],
@@ -23,6 +18,8 @@ describe('flows stage schemas', () => {
 
   it('Flows carries flows, assumptions and questions', () => {
     const { schema } = toJsonSchema(Flows, 'Flows');
-    expect(Object.keys(schema.properties as object)).toEqual(expect.arrayContaining(['flows', 'assumptions', 'questions']));
+    expect(Object.keys(schema.properties as object)).toEqual(
+      expect.arrayContaining(['flows', 'assumptions', 'questions']),
+    );
   });
 });

@@ -17,7 +17,10 @@ const modal = {
   MODAL_PROXY_TOKEN: 'wk-id.ws-secret',
   MODAL_MODEL: 'hackathon',
 };
-const baseten = { BASETEN_API_KEY: 'bt-key', BASETEN_MODEL: 'meta-models/muse-spark-open' };
+const baseten = {
+  BASETEN_API_KEY: 'bt-key',
+  BASETEN_MODEL: 'meta-models/muse-spark-open',
+};
 
 describe('resolveBackend', () => {
   it('meta uses the Model API variables', () => {
@@ -60,6 +63,8 @@ describe('resolveBackend', () => {
   });
 
   it('rejects an unknown override', () => {
-    expect(() => resolveBackend(config, 'cloud')).toThrow('Unknown backend cloud; use one of meta, modal, baseten');
+    expect(() => resolveBackend(config, 'cloud')).toThrow(
+      'Unknown backend cloud; use one of meta, modal, baseten',
+    );
   });
 });

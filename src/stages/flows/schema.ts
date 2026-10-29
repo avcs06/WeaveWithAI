@@ -4,20 +4,45 @@ import { CAPABILITY_IDS } from '../../config/capabilities';
 // Every field is required; "none" is "", [] or null. Nesting stays within 8 levels (Meta allows 10).
 
 export const FIELD_TYPES = [
-  'text', 'longText', 'email', 'password', 'url', 'phone',
-  'integer', 'decimal', 'money', 'percent',
-  'date', 'time', 'datetime', 'boolean', 'singleChoice', 'multiChoice',
+  'text',
+  'longText',
+  'email',
+  'password',
+  'url',
+  'phone',
+  'integer',
+  'decimal',
+  'money',
+  'percent',
+  'date',
+  'time',
+  'datetime',
+  'boolean',
+  'singleChoice',
+  'multiChoice',
 ] as const;
+
 export const CHANGES = ['create', 'list', 'read', 'update', 'delete'] as const;
+
 export const ALTERNATIVE_KINDS = [
-  'invalid', 'failure', 'empty', 'cancel', 'confirm', 'denied', 'notFound', 'conflict', 'other',
+  'invalid',
+  'failure',
+  'empty',
+  'cancel',
+  'confirm',
+  'denied',
+  'notFound',
+  'conflict',
+  'other',
 ] as const;
 
 export const Assumption = z.object({
   id: z.string().describe('A01, A02, ...'),
   text: z.string(),
   kind: z.enum(['scope', 'permission', 'behavior', 'data', 'presentation']),
-  affects: z.array(z.string()).describe('Flow or step IDs it affects; [] while scoping'),
+  affects: z
+    .array(z.string())
+    .describe('Flow or step IDs it affects; [] while scoping'),
 });
 
 export const Question = z.object({
@@ -25,39 +50,57 @@ export const Question = z.object({
   question: z.string(),
   whyItMatters: z.string(),
   defaultAnswer: z.string().describe('What will be assumed if nobody answers'),
-  blocking: z.boolean().describe('True only if the answer changes scope, permissions, business rules or data'),
+  blocking: z
+    .boolean()
+    .describe(
+      'True only if the answer changes scope, permissions, business rules or data',
+    ),
 });
 
 export const Scope = z.object({
   app: z.object({
     name: z.string(),
-    summary: z.string().describe('Who it is for, the problem, the core loop: 2 to 4 sentences'),
+    summary: z
+      .string()
+      .describe('Who it is for, the problem, the core loop: 2 to 4 sentences'),
     audience: z.string(),
   }),
-  roles: z.array(z.object({
-    id: z.string().describe('camelCase, e.g. member'),
-    name: z.string(),
-    description: z.string(),
-    signedIn: z.boolean(),
-  })),
-  vocabulary: z.array(z.object({
-    noun: z.string().describe('PascalCase singular, e.g. Project'),
-    description: z.string(),
-    belongsTo: z.string().describe('Role id that owns these records, or "shared"'),
-  })),
-  capabilities: z.array(z.object({
-    id: z.enum(CAPABILITY_IDS),
-    needed: z.boolean(),
-    note: z.string(),
-  })),
+  roles: z.array(
+    z.object({
+      id: z.string().describe('camelCase, e.g. member'),
+      name: z.string(),
+      description: z.string(),
+      signedIn: z.boolean(),
+    }),
+  ),
+  vocabulary: z.array(
+    z.object({
+      noun: z.string().describe('PascalCase singular, e.g. Project'),
+      description: z.string(),
+      belongsTo: z
+        .string()
+        .describe('Role id that owns these records, or "shared"'),
+    }),
+  ),
+  capabilities: z.array(
+    z.object({
+      id: z.enum(CAPABILITY_IDS),
+      needed: z.boolean(),
+      note: z.string(),
+    }),
+  ),
   inScope: z.array(z.string()),
-  outOfScope: z.array(z.object({ item: z.string(), reason: z.string(), placeholder: z.string() })),
+  outOfScope: z.array(
+    z.object({ item: z.string(), reason: z.string(), placeholder: z.string() }),
+  ),
   assumptions: z.array(Assumption),
   questions: z.array(Question),
 });
 
 export const Field = z.object({
-  name: z.string().describe('camelCase; the same name means the same thing in every flow'),
+  name: z
+    .string()
+    .describe('camelCase; the same name means the same thing in every flow'),
   label: z.string(),
   meaning: z.string().describe('What the value means to the business'),
   type: z.enum(FIELD_TYPES),
@@ -79,8 +122,12 @@ export const Step = z.object({
   id: z.string().describe('F01.S01'),
   kind: z.enum(['user', 'system']),
   userAction: z.string().describe('"" for system steps'),
-  websiteResponse: z.string().describe('What the user can see, or what changes'),
-  fields: z.array(Field).describe('Every field the user fills in at this step; [] if none'),
+  websiteResponse: z
+    .string()
+    .describe('What the user can see, or what changes'),
+  fields: z
+    .array(Field)
+    .describe('Every field the user fills in at this step; [] if none'),
   effects: z.array(Effect).describe('[] when nothing is stored or loaded'),
 });
 
@@ -90,26 +137,42 @@ export const Alternative = z.object({
   kind: z.enum(ALTERNATIVE_KINDS),
   condition: z.string(),
   websiteResponse: z.string(),
-  resumesAt: z.string().describe('Step ID the user returns to, or "" if the flow ends'),
+  resumesAt: z
+    .string()
+    .describe('Step ID the user returns to, or "" if the flow ends'),
 });
 
 export const Flow = z.object({
   id: z.string().describe('F01'),
   name: z.string(),
   role: z.string().describe('A role id from the scope'),
-  category: z.enum(['auth', 'onboarding', 'core', 'manage', 'browse', 'settings', 'admin']),
+  category: z.enum([
+    'auth',
+    'onboarding',
+    'core',
+    'manage',
+    'browse',
+    'settings',
+    'admin',
+  ]),
   authKind: z.enum(['none', 'signUp', 'signIn', 'signOut']),
   goal: z.string(),
   preconditions: z.array(z.string()),
   steps: z.array(Step),
   alternatives: z.array(Alternative),
-  outcome: z.string().describe('What changed and what is still there after a refresh'),
+  outcome: z
+    .string()
+    .describe('What changed and what is still there after a refresh'),
 });
 
 export const Flows = z.object({
   flows: z.array(Flow),
-  assumptions: z.array(Assumption).describe('New assumptions made while writing flows'),
-  questions: z.array(Question).describe('New questions; each has a default answer'),
+  assumptions: z
+    .array(Assumption)
+    .describe('New assumptions made while writing flows'),
+  questions: z
+    .array(Question)
+    .describe('New questions; each has a default answer'),
 });
 
 export type Scope = z.infer<typeof Scope>;

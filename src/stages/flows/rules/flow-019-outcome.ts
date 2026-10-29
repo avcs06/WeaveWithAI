@@ -8,12 +8,21 @@ import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
 import type { FlowInput } from './helpers';
 
-export const rule = defineRule<FlowInput>('FLOW-019', 'mandatory', ({ flows }, fail) => {
-  const issues: Issue[] = [];
-  for (const flow of flows.flows) {
-    if (flow.outcome.trim() === '') {
-      issues.push(fail(`${flow.id} has no outcome; say what changed and what is still there after a refresh.`, flow.id));
+export const rule = defineRule<FlowInput>(
+  'FLOW-019',
+  'mandatory',
+  ({ flows }, fail) => {
+    const issues: Issue[] = [];
+    for (const flow of flows.flows) {
+      if (flow.outcome.trim() === '') {
+        issues.push(
+          fail(
+            `${flow.id} has no outcome; say what changed and what is still there after a refresh.`,
+            flow.id,
+          ),
+        );
+      }
     }
-  }
-  return issues;
-});
+    return issues;
+  },
+);

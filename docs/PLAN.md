@@ -187,7 +187,7 @@ Steps 01 to 08.
   - Done when: `runSpecStage.test.ts` covers asking per generation, answers
     in the fix message, and answers carried forward; `pnpm typecheck`.
 
-- [ ] **BK1** Book keeping: one `src/core/utils.ts` for the shared helpers (20 min). Depends: F8, FL3
+- [x] **BK1** Book keeping: one `src/core/utils.ts` for the shared helpers (20 min) (done 2026-10-29). Depends: F8, FL3
   - Added 2026-10-29 by the user: `canonicalJson` and `sortKeys` are defined
     in both `artifacts.ts` and `llm.ts`, `hashOf` and `sha256` do the same
     job, `writeJson` (llm.ts) overlaps `writeJsonAtomic` (run.ts), and

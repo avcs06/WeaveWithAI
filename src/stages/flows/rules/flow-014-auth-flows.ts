@@ -8,14 +8,23 @@ import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
 import type { FlowInput } from './helpers';
 
-export const rule = defineRule<FlowInput>('FLOW-014', 'mandatory', ({ flows, scope }, fail) => {
-  if (!scope.roles.some((role) => role.signedIn)) return [];
-  const issues: Issue[] = [];
-  const present = new Set(flows.flows.map((flow) => flow.authKind));
-  for (const kind of ['signUp', 'signIn', 'signOut'] as const) {
-    if (!present.has(kind)) {
-      issues.push(fail(`A role signs in but no flow has authKind "${kind}"; add an auth flow for it.`, 'flows'));
+export const rule = defineRule<FlowInput>(
+  'FLOW-014',
+  'mandatory',
+  ({ flows, scope }, fail) => {
+    if (!scope.roles.some((role) => role.signedIn)) return [];
+    const issues: Issue[] = [];
+    const present = new Set(flows.flows.map((flow) => flow.authKind));
+    for (const kind of ['signUp', 'signIn', 'signOut'] as const) {
+      if (!present.has(kind)) {
+        issues.push(
+          fail(
+            `A role signs in but no flow has authKind "${kind}"; add an auth flow for it.`,
+            'flows',
+          ),
+        );
+      }
     }
-  }
-  return issues;
-});
+    return issues;
+  },
+);

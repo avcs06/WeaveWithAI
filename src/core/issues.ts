@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { type Run, runPath, writeJsonAtomic } from './run';
+import { type Run, runPath } from './run';
+import { writeJsonAtomic } from './utils';
 
 export type Severity = 'mandatory' | 'warning';
 export type Owner = 'flows' | 'design' | 'contract';
@@ -12,7 +13,10 @@ export type Issue = {
 };
 export type Report = { rounds: { round: number; issues: Issue[] }[] };
 
-export function splitIssues(issues: Issue[]): { mandatory: Issue[]; warnings: Issue[] } {
+export function splitIssues(issues: Issue[]): {
+  mandatory: Issue[];
+  warnings: Issue[];
+} {
   return {
     mandatory: issues.filter((issue) => issue.severity === 'mandatory'),
     warnings: issues.filter((issue) => issue.severity === 'warning'),
@@ -25,7 +29,12 @@ export function readReport(run: Run, stage: string): Report | undefined {
   return JSON.parse(readFileSync(file, 'utf8')) as Report;
 }
 
-export function writeReport(run: Run, stage: string, round: number, issues: Issue[]): void {
+export function writeReport(
+  run: Run,
+  stage: string,
+  round: number,
+  issues: Issue[],
+): void {
   const report = readReport(run, stage) ?? { rounds: [] };
   // Rerunning a round replaces its entry instead of adding a duplicate.
   const rounds = report.rounds.filter((entry) => entry.round !== round);
@@ -46,7 +55,9 @@ export function formatForModel(issues: Issue[]): string {
 
 export function formatForTerminal(issues: Issue[]): string {
   const { mandatory, warnings } = splitIssues(issues);
-  const lines = [`${mandatory.length} mandatory, ${warnings.length} ${warnings.length === 1 ? 'warning' : 'warnings'}`];
+  const lines = [
+    `${mandatory.length} mandatory, ${warnings.length} ${warnings.length === 1 ? 'warning' : 'warnings'}`,
+  ];
   for (const [title, list] of [
     ['Mandatory', mandatory],
     ['Warnings', warnings],

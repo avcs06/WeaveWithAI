@@ -65,7 +65,8 @@ src/
     llm.ts               the only model client: structured output, retries,
                          usage and cost, replay cache, model routing
     schema.ts            zod to JSON Schema, plus checks for Meta's limits
-    artifacts.ts         envelope, canonical hash, versions, staleness
+    artifacts.ts         envelope, versions, staleness
+    utils.ts             canonical JSON and hashing, atomic JSON writes, paths beside a module
     run.ts               run folder, state.json, events.jsonl
     issues.ts            Issue type, report writing, mandatory/warning split
     runSpecStage.ts      generate, validate, feed back mandatory issues, repeat

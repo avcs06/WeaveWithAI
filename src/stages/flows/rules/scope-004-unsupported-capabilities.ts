@@ -14,29 +14,39 @@ import type { Scope } from '../schema';
 function mentionPattern(capability: Capability): RegExp {
   const words = [
     ...capability.id.split(/(?=[A-Z])/),
-    ...capability.description.split(/[^a-zA-Z]+/).filter((word) => word.length >= 4),
+    ...capability.description
+      .split(/[^a-zA-Z]+/)
+      .filter((word) => word.length >= 4),
   ];
-  const stems = [...new Set(words.map((word) => word.toLowerCase().replace(/s$/, '')))];
+  const stems = [
+    ...new Set(words.map((word) => word.toLowerCase().replace(/s$/, ''))),
+  ];
   return new RegExp(`\\b(${stems.map(escapeRegExp).join('|')})s?\\b`, 'i');
 }
 
-export const rule = defineRule<Scope>('SCOPE-004', 'mandatory', (scope, fail) => {
-  const issues: Issue[] = [];
-  for (const entry of scope.capabilities) {
-    const capability = CAPABILITIES.find((c) => c.id === entry.id);
-    if (!capability || capability.mode !== 'skip' || !entry.needed) continue;
-    const pattern = mentionPattern(capability);
-    const covered = scope.outOfScope.some(
-      (item) => item.placeholder.trim() !== '' && pattern.test(`${item.item} ${item.reason}`),
-    );
-    if (!covered) {
-      issues.push(
-        fail(
-          `Capability "${entry.id}" is needed but skipped in the MVP and has no outOfScope entry; add one naming ${capability.description} with a placeholder saying what the app does instead.`,
-          'outOfScope',
-        ),
+export const rule = defineRule<Scope>(
+  'SCOPE-004',
+  'mandatory',
+  (scope, fail) => {
+    const issues: Issue[] = [];
+    for (const entry of scope.capabilities) {
+      const capability = CAPABILITIES.find((c) => c.id === entry.id);
+      if (!capability || capability.mode !== 'skip' || !entry.needed) continue;
+      const pattern = mentionPattern(capability);
+      const covered = scope.outOfScope.some(
+        (item) =>
+          item.placeholder.trim() !== '' &&
+          pattern.test(`${item.item} ${item.reason}`),
       );
+      if (!covered) {
+        issues.push(
+          fail(
+            `Capability "${entry.id}" is needed but skipped in the MVP and has no outOfScope entry; add one naming ${capability.description} with a placeholder saying what the app does instead.`,
+            'outOfScope',
+          ),
+        );
+      }
     }
-  }
-  return issues;
-});
+    return issues;
+  },
+);

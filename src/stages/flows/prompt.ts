@@ -1,13 +1,15 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { buildList, simulatedList, skippedList } from '../../config/capabilities';
+import {
+  buildList,
+  simulatedList,
+  skippedList,
+} from '../../config/capabilities';
 import { fillPrompt, loadPrompt, stripComments } from '../../core/prompt';
+import { pathBeside } from '../../core/utils';
 import { Flows, type Scope } from './schema';
 
 /** Question id to the answer given, from input/answers.json or the terminal. */
 export type Answers = Record<string, string>;
-
-const here = (file: string): string => fileURLToPath(new URL(file, import.meta.url));
 
 export function answersBlock(answers: Answers): string {
   const entries = Object.entries(answers);
@@ -16,27 +18,40 @@ export function answersBlock(answers: Answers): string {
 }
 
 export function scopeSystemPrompt(answers: Answers): string {
-  return fillPrompt(loadPrompt(here('./prompt-scope.md')), {
-    capabilitiesBuild: buildList(),
-    capabilitiesSimulated: simulatedList(),
-    capabilitiesSkipped: skippedList(),
-    answers: answersBlock(answers),
-  });
+  return fillPrompt(
+    loadPrompt(pathBeside(import.meta.url, './prompt-scope.md')),
+    {
+      capabilitiesBuild: buildList(),
+      capabilitiesSimulated: simulatedList(),
+      capabilitiesSkipped: skippedList(),
+      answers: answersBlock(answers),
+    },
+  );
 }
 
 export function flowsSystemPrompt(answers: Answers): string {
-  return fillPrompt(loadPrompt(here('./prompt-flows.md')), {
-    capabilitiesBuild: buildList(),
-    capabilitiesSimulated: simulatedList(),
-    capabilitiesSkipped: skippedList(),
-    answers: answersBlock(answers),
-    exampleFlow: exampleFlow(),
-  });
+  return fillPrompt(
+    loadPrompt(pathBeside(import.meta.url, './prompt-flows.md')),
+    {
+      capabilitiesBuild: buildList(),
+      capabilitiesSimulated: simulatedList(),
+      capabilitiesSkipped: skippedList(),
+      answers: answersBlock(answers),
+      exampleFlow: exampleFlow(),
+    },
+  );
 }
 
 /** The "add a book" flow from the reading-list fixture; never a reference idea's flow. */
 function exampleFlow(): string {
-  const fixture = Flows.parse(JSON.parse(readFileSync(here('./__fixtures__/reading-list.flows.json'), 'utf8')));
+  const fixture = Flows.parse(
+    JSON.parse(
+      readFileSync(
+        pathBeside(import.meta.url, './__fixtures__/reading-list.flows.json'),
+        'utf8',
+      ),
+    ),
+  );
   const flow = fixture.flows.find((candidate) => candidate.id === 'F03');
   if (!flow) throw new Error('The reading-list fixture has no flow F03');
   return JSON.stringify(flow, null, 2);

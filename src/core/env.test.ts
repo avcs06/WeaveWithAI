@@ -27,7 +27,12 @@ describe('loadEnv', () => {
   });
 
   it('reads the backend, defaults the Baseten URL, and treats a blank variable as unset', () => {
-    const env = { MODEL_API_KEY: 'k', LLM_BACKEND: 'modal', MODAL_MODEL: '', MODAL_PROXY_TOKEN: 'wk-1.ws-2' };
+    const env = {
+      MODEL_API_KEY: 'k',
+      LLM_BACKEND: 'modal',
+      MODAL_MODEL: '',
+      MODAL_PROXY_TOKEN: 'wk-1.ws-2',
+    };
     expect(loadEnv({ file: missing, env })).toMatchObject({
       LLM_BACKEND: 'modal',
       MODAL_PROXY_TOKEN: 'wk-1.ws-2',

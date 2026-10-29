@@ -12,27 +12,53 @@ export const FLOW_ID = /^F\d{2,}$/;
 export const STEP_ID = /^F\d{2,}\.S\d{2,}$/;
 export const ALTERNATIVE_ID = /^F\d{2,}\.A\d{2,}$/;
 
-export const rule = defineRule<FlowInput>('FLOW-001', 'mandatory', ({ flows }, fail) => {
-  const issues: Issue[] = [];
-  for (const id of duplicates(flows.flows, (flow) => flow.id)) {
-    issues.push(fail(`Flow id "${id}" is used by more than one flow; number flows F01, F02, ... once each.`, id));
-  }
-  for (const flow of flows.flows) {
-    if (!FLOW_ID.test(flow.id)) issues.push(fail(`Flow id "${flow.id}" is malformed; use F01, F02, ...`, flow.id));
-    const groups: { items: { id: string }[]; pattern: RegExp; letter: string }[] = [
-      { items: flow.steps, pattern: STEP_ID, letter: 'S' },
-      { items: flow.alternatives, pattern: ALTERNATIVE_ID, letter: 'A' },
-    ];
-    for (const { items, pattern, letter } of groups) {
-      for (const item of items) {
-        if (!pattern.test(item.id) || !item.id.startsWith(`${flow.id}.`)) {
-          issues.push(fail(`Id "${item.id}" in ${flow.id} is malformed; use ${flow.id}.${letter}01, ${flow.id}.${letter}02, ...`, item.id));
+export const rule = defineRule<FlowInput>(
+  'FLOW-001',
+  'mandatory',
+  ({ flows }, fail) => {
+    const issues: Issue[] = [];
+    for (const id of duplicates(flows.flows, (flow) => flow.id)) {
+      issues.push(
+        fail(
+          `Flow id "${id}" is used by more than one flow; number flows F01, F02, ... once each.`,
+          id,
+        ),
+      );
+    }
+    for (const flow of flows.flows) {
+      if (!FLOW_ID.test(flow.id))
+        issues.push(
+          fail(`Flow id "${flow.id}" is malformed; use F01, F02, ...`, flow.id),
+        );
+      const groups: {
+        items: { id: string }[];
+        pattern: RegExp;
+        letter: string;
+      }[] = [
+        { items: flow.steps, pattern: STEP_ID, letter: 'S' },
+        { items: flow.alternatives, pattern: ALTERNATIVE_ID, letter: 'A' },
+      ];
+      for (const { items, pattern, letter } of groups) {
+        for (const item of items) {
+          if (!pattern.test(item.id) || !item.id.startsWith(`${flow.id}.`)) {
+            issues.push(
+              fail(
+                `Id "${item.id}" in ${flow.id} is malformed; use ${flow.id}.${letter}01, ${flow.id}.${letter}02, ...`,
+                item.id,
+              ),
+            );
+          }
+        }
+        for (const id of duplicates(items, (item) => item.id)) {
+          issues.push(
+            fail(
+              `Id "${id}" appears twice in ${flow.id}; renumber so every id is unique.`,
+              id,
+            ),
+          );
         }
       }
-      for (const id of duplicates(items, (item) => item.id)) {
-        issues.push(fail(`Id "${id}" appears twice in ${flow.id}; renumber so every id is unique.`, id));
-      }
     }
-  }
-  return issues;
-});
+    return issues;
+  },
+);

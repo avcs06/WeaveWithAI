@@ -34,10 +34,15 @@ export function toJsonSchema(schema: z.ZodType, name: string): BridgedSchema {
   return bridged;
 }
 
-export function assertWithinLimits(bridged: BridgedSchema, limits: { properties?: number } = {}): void {
+export function assertWithinLimits(
+  bridged: BridgedSchema,
+  limits: { properties?: number } = {},
+): void {
   const { name, stats } = bridged;
   if (stats.depth > MAX_DEPTH) {
-    throw new SchemaBridgeError(`${name} nests ${stats.depth} levels; Meta allows ${MAX_DEPTH}`);
+    throw new SchemaBridgeError(
+      `${name} nests ${stats.depth} levels; Meta allows ${MAX_DEPTH}`,
+    );
   }
   if (limits.properties !== undefined && stats.properties > limits.properties) {
     throw new SchemaBridgeError(
@@ -69,7 +74,8 @@ function measure(root: JsonSchema): BridgedSchema['stats'] {
     // A union stands in for its holder, so its branches sit at the holder's level.
     for (const key of ['anyOf', 'allOf']) {
       const branches = node[key];
-      if (Array.isArray(branches)) for (const branch of branches) visit(branch, level);
+      if (Array.isArray(branches))
+        for (const branch of branches) visit(branch, level);
     }
     if (!isContainer(node)) return;
     stats.depth = Math.max(stats.depth, level);
@@ -80,7 +86,8 @@ function measure(root: JsonSchema): BridgedSchema['stats'] {
     }
     visit(node.items, level + 1);
     visit(node.additionalProperties, level + 1);
-    if (Array.isArray(node.prefixItems)) for (const item of node.prefixItems) visit(item, level + 1);
+    if (Array.isArray(node.prefixItems))
+      for (const item of node.prefixItems) visit(item, level + 1);
   };
   visit(root, 1);
   return stats;

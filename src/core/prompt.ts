@@ -11,11 +11,21 @@ export function stripComments(text: string): string {
   return text.replace(/<!--[\s\S]*?-->/g, '').trim();
 }
 
-export function fillPrompt(template: string, values: Record<string, string>): string {
-  const names = new Set([...template.matchAll(PLACEHOLDER)].map((match) => match[1] as string));
+export function fillPrompt(
+  template: string,
+  values: Record<string, string>,
+): string {
+  const names = new Set(
+    [...template.matchAll(PLACEHOLDER)].map((match) => match[1] as string),
+  );
   const missing = [...names].filter((name) => !(name in values));
-  if (missing.length > 0) throw new Error(`Prompt is missing values for: ${missing.join(', ')}`);
+  if (missing.length > 0)
+    throw new Error(`Prompt is missing values for: ${missing.join(', ')}`);
   const unused = Object.keys(values).filter((key) => !names.has(key));
-  if (unused.length > 0) throw new Error(`Prompt has no placeholder for: ${unused.join(', ')}`);
-  return template.replace(PLACEHOLDER, (_, name: string) => values[name] as string);
+  if (unused.length > 0)
+    throw new Error(`Prompt has no placeholder for: ${unused.join(', ')}`);
+  return template.replace(
+    PLACEHOLDER,
+    (_, name: string) => values[name] as string,
+  );
 }
