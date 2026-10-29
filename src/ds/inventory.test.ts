@@ -9,6 +9,7 @@ import {
   inventory,
   radiusKeys,
   spacingKeys,
+  typeScaleKeys,
 } from './inventory';
 
 const fixturePath = fileURLToPath(
@@ -99,6 +100,16 @@ describe('inventory fixture', () => {
     expect(radiusKeys(fixture)).toEqual(
       expect.arrayContaining(['1', 'full', 'surface', 'control']),
     );
+    expect(typeScaleKeys(fixture)).toEqual([
+      'display',
+      'title',
+      'heading',
+      'subheading',
+      'body',
+      'label',
+      'caption',
+      'micro',
+    ]);
   });
 
   it('records the per-project settings', () => {

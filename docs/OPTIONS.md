@@ -460,6 +460,12 @@ later extension of the design system, not this week's.
       big outputs.
 - [ ] **C. Screens, then typed sections, then nodes (default).** Sections carry
       intent (hero, form, list, detail), nodes carry components and coverage.
+      Note (user, 2026-10-30): a node carries its box and a prose `what` ("a
+      password input, size md") for the coding stage, plus the closest
+      `component`, `size` and `look` for validation and the skeleton, stripped
+      before coding. A named component forced the wrong one (Input for a
+      PasswordInput) and doubled the validation the MCP already does on the
+      code; the coding stage picks from the prose.
 - [ ] **D. Code first (R2's "use the actual components from the beginning").** The
       agent writes prototype pages in TSX; specs are read from annotations.
       Strongest fidelity, weakest structured validation.

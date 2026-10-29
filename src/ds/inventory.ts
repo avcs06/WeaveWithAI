@@ -244,3 +244,5 @@ function groupKeys(inv: Inventory, group: string): [string, ...string[]] {
 
 export const spacingKeys = (inv: Inventory) => groupKeys(inv, 'spacing');
 export const radiusKeys = (inv: Inventory) => groupKeys(inv, 'radius');
+/** The type sizes: display, title, heading, subheading, body, label, caption, micro. */
+export const typeScaleKeys = (inv: Inventory) => groupKeys(inv, 'fontSize');

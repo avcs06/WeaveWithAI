@@ -392,7 +392,14 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     boxes, Avatar sizes, Dialog widths and an Accordion trigger height;
     `pnpm test` and the template's lint and typecheck pass.
 
-- [ ] **DS2** Design config (20 min). Depends: F1
+- [ ] **DS1c** Container paddings and gaps (30 min). Depends: DS1b
+  - Why: the layout skeleton needs each container's inner padding and gap
+    (Card, Section, Dialog body, Table cell), not only its outer box.
+  - The measure tool also reads computed padding and gap of every case root
+    and part; the inventory stores them under `box` as `padding` and `gap`.
+  - Done when: the fixture lists Card padding and Section gap; a test checks each.
+
+- [x] **DS2** Design config (20 min) (done 2026-10-30). Depends: F1
   - `src/config/design.ts`: templates, section kinds, element tags, the
     superseded-tag fallback map, the new-component budget.
     `src/config/fonts.ts`: font allowlists with weights.
@@ -410,8 +417,9 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Done when: for 12 hues times 3 chroma levels every theme passes THEME-001
     in light and dark (a property-style test).
 
-- [ ] **DS5** Screens schemas (45 min). Depends: DS1, DS2
-  - `makeScreensSchema` exactly as in the spec.
+- [x] **DS5** Screens schemas (45 min) (done 2026-10-30). Depends: DS1, DS2
+  - `makeScreensSchema` exactly as in the spec, box model and new-component
+    layout and behavior prose included (user, 2026-10-30).
   - Done when: built from the fixture inventory, `Ia` and `ScreenNodes` pass
     `toJsonSchema` within Meta's limits (test).
 
@@ -420,11 +428,33 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     screens fixture for the reading-list app, one mutation per rule.
   - Done when: each rule has a passing and a failing test.
 
+- [ ] **DS6b** Layout solver and skeleton (2.5 h). Depends: DS5, DS1c
+  - Why: design is the product's main strength; a page must be checkable as
+    composition before any code exists.
+  - `src/stages/design/layout.ts`: from the nodes' boxes, the inventory boxes
+    and the type scale, a deterministic row, column and grid solver computes a
+    rectangle per node at 1280 and 375; written as `02-skeleton.json`;
+    `02-wireframes.html` draws the rectangles as lines.
+  - Done when: the golden freelancer workspace renders every screen as lines
+    with no overlap, and a hand-built fixture page solves to known rectangles.
+
+- [ ] **DS6c** Layout rules from the heuristics catalog (3 h). Depends: DS6b
+  - Why: the catalog in `specs/layout-heuristics.md` holds the rules that
+    separate composed from generated; the user reviewed it on 2026-10-30 and
+    every rule left in it is accepted.
+  - Each rule becomes `LAYOUT-0NN`, matching `H-NN`, checked on the skeleton
+    at both viewports, with a passing and a failing fixture. The rules marked
+    prompt only go to DS7's prompts and the reviewer guidance instead.
+  - Done when: every rule has its tests and is ticked in the catalog, and the
+    fixture screens pass the mandatory ones.
+
 - [ ] **DS7** IA and nodes stage (90 min). Depends: DS3, DS4, DS6
   - `prompt-ia.md`, `prompt-nodes.md` (drafts provided); IA call, then one
     nodes call per screen with `p-limit(3)`; assemble `02-screens.json`; run
     whole-artifact rules; rerun only failing screens; write `02-ds-gaps.json`
     and append to `.weave-cache/ds-gaps.jsonl`.
+  - The prompts carry the gap scale by depth and the catalog's prompt-only
+    rules (H-42, H-53, H-59), which compare words and so are not validators.
   - Done when: golden freelancer workspace produces screens with zero mandatory issues.
 
 - [ ] **DS8** Renderers (45 min). Depends: DS7
@@ -511,7 +541,9 @@ file, all inside the generated app, by code and without model calls.
   - `src/app/scaffold.ts`: copy `template/` to `runs/<id>/app` with
     `generate.mjs`, install, build the MCP. `src/app/theme.ts`: apply
     `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets),
-    `tokens.ts` (radius, focus ring) and `packages/styles/src/fonts.ts`;
+    `tokens.ts` (radius, focus ring) and `packages/styles/src/fonts.ts`
+    (the theme's three families, mono included: the brief picks it since
+    2026-10-30, so not a fixed JetBrains Mono);
     THEME-003 checks base, surface and status sets are untouched.
   - Done when: `pnpm weave run … --to scaffold` on the golden freelancer workspace
     yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
@@ -579,6 +611,9 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - One loop session per screen filling the shell's sections from the nodes,
     using recipes, the entity hooks and the DS, with loading, empty, error,
     invalid and submitting states; `pnpm verify <route>` as the last check.
+  - Nodes reach the session and the shell's manifests without `component`,
+    `size` and `look`, which serve validation only; the session picks the
+    component from `what` through the MCP (design spec, 2026-10-30).
   - Done when: every freelancer-workspace route passes validate, typecheck, lint
     and verify, and the core loop works by hand.
 
