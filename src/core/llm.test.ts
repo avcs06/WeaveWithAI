@@ -201,6 +201,19 @@ describe('generateStructured', () => {
   });
 });
 
+describe('temperature', () => {
+  it('sends the given temperature and keeps it in the replay key', async () => {
+    const replayDir = tmp();
+    const replaying = { ...config, LLM_REPLAY: true };
+    const { llm, calls } = harness([completion('{"title":"A"}'), completion('{"title":"B"}')], replaying, { replayDir });
+
+    expect((await llm.generateStructured(input())).data).toEqual({ title: 'A' });
+    expect((await llm.generateStructured({ ...input(), temperature: 0.7 })).data).toEqual({ title: 'B' });
+    expect(calls.map((call) => call.temperature)).toEqual([0.2, 0.7]);
+    expect((await llm.generateStructured({ ...input(), temperature: 0.7 })).replayed).toBe(true);
+  });
+});
+
 describe('backends', () => {
   it('sends to the backend model, prices by model name, and names the backend everywhere', async () => {
     const runDir = tmp();

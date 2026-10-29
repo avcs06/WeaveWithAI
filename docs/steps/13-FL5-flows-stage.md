@@ -1,6 +1,6 @@
 # 13 · FL5 Wire the flows stage
 
-Phase 2 · 30 min · Depends: FL2, FL3, FL4, F7 · Decisions: D1.7 C, D2.1 B ·
+Phase 2 · 30 min · Depends: FL2, FL3, FL4, F7, F10 · Decisions: D1.7 C, D1.12 B, D2.1 B ·
 Spec: specs/flows.md "Shape"
 
 ## Goal
@@ -15,11 +15,16 @@ mode.
    works alone.
 2. **The scope stage** reads the idea and any saved answers, calls the model
    through the runner with the scope validator, writes the artifact and its
-   markdown. In interactive mode it then asks each blocking question on the
-   terminal, showing the default, and saves the answers so reruns reuse them.
+   markdown. In interactive mode it passes `ask` to the runner (step 53): after
+   each new draft the blocking, unanswered questions are asked on the
+   terminal, showing the default; the runner applies the answers in the next
+   fix and returns them all, and the stage saves them so reruns reuse them.
 3. **The flows stage** does the same with the scope as input and the flows
    validator.
 4. **The stub stage from step 07 goes away.**
+5. **Each stage has a review guide** (`review-scope.md`, `review-flows.md`
+   beside its prompt: what a reviewer looks for and what it ignores) and
+   passes it to the runner as `review` (step 51).
 5. **A test with a fake model** runs both stages on a temp run.
 
 After this step `weave run <idea> --to flows` produces a validated user-flow

@@ -52,8 +52,11 @@ restructure) stay as they are.
 - Artifacts are JSON validated by zod schemas in the stage's `schema.ts`.
   Never parse free text from a model.
 - Validators are pure functions: artifacts in, `Issue[]` out. No I/O, no model
-  calls. A model-based review lives in a separate reviewer and only produces
-  warnings.
+  calls. Model review is separate: on the fixed round schedule (D1.12) the
+  stage runner asks reviewer calls for major blockers through a review
+  schema; blockers join the fix rounds like mandatory issues, and whatever is
+  left after the last round is recorded as known issues while the run
+  continues. Reviewers ignore minor, low-impact and rare cases.
 - Every validator rule has an id (`FLOW-007`), a severity (`mandatory` or
   `warning`), and a unit test with one passing and one failing fixture.
 - Never weaken a rule, threshold, fixture or test to make a run pass. If a rule

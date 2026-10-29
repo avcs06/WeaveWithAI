@@ -62,7 +62,7 @@ describe('weave run', () => {
   it('show prints the stage table and the totals', () => {
     const text = showCommand(run.id, deps);
     expect(text).toContain(`run ${run.id}`);
-    expect(text).toMatch(/stage\s+status\s+version\s+rounds\s+updated/);
+    expect(text).toMatch(/stage\s+status\s+version\s+rounds\s+known\s+updated/);
     expect(text).toMatch(/scope\s+done\s+2/);
     expect(text).toContain('0 calls, 0 tokens in, 0 out, $0.0000');
   });

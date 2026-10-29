@@ -15,6 +15,8 @@ export type StageState = {
   version?: number;
   hash?: string;
   rounds?: number;
+  /** Mandatory issues and reviewer blockers left after the last round (D1.12). */
+  known?: number;
   updatedAt: string;
 };
 export type RunState = {

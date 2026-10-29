@@ -19,6 +19,8 @@ export type GenerateInput<T> = {
   messages: ChatMessage[];
   model?: ModelChoice;
   maxTokens?: number;
+  /** Default 0.2; part of the replay key. */
+  temperature?: number;
   /** When given, the call is written to `<runDir>/llm/<stage>-r<round>.json`. */
   runDir?: string;
 };
@@ -91,6 +93,7 @@ type Request = {
   backend: string;
   model: string;
   messages: ChatMessage[];
+  temperature: number;
   schemaName: string;
   schema: Record<string, unknown>;
 };
@@ -121,10 +124,11 @@ export function createLlm(deps: LlmDeps): Llm {
       backend: backend.name,
       model,
       messages: input.messages,
+      temperature: input.temperature ?? TEMPERATURE,
       schemaName: input.schemaName,
       schema: bridged.schema,
     };
-    const key = sha256(canonicalJson({ backend: backend.name, model, messages: input.messages, schema: bridged.schema }));
+    const key = sha256(canonicalJson(request));
     const replayFile = path.join(replayDir, `${key}.json`);
 
     let record = config.LLM_REPLAY ? await readJson<ReplayRecord>(replayFile) : undefined;
@@ -167,7 +171,7 @@ export function createLlm(deps: LlmDeps): Llm {
       const completion = await requestWithRetries({
         model: request.model,
         messages: request.messages,
-        temperature: TEMPERATURE,
+        temperature: request.temperature,
         max_tokens: limit,
         response_format: {
           type: 'json_schema',

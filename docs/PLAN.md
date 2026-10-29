@@ -178,12 +178,44 @@ Steps 01 to 08.
     smoke calls to Glimmer were cut at the 16384-token cap because reasoning
     counts against `max_tokens`; consider a reasoning budget for that backend.
 
+- [x] **F11** Questions inside the stage loop (30 min) (done 2026-10-29). Depends: F10. Decision D1.7 C
+  - Added 2026-10-29 by the user: answer the draft's questions while the
+    stage runs instead of after it. `runSpecStage` takes `ask?`; after every
+    round that produced new output it asks, the answers ride along with the
+    next fix (`prompt-answers.md`) and never force a generation, and the
+    result carries `answers` for the stage to save. FL5 wires the terminal.
+  - Done when: `runSpecStage.test.ts` covers asking per generation, answers
+    in the fix message, and answers carried forward; `pnpm typecheck`.
+
 - [ ] **BK1** Book keeping: one `src/core/utils.ts` for the shared helpers (20 min). Depends: F8, FL3
   - Added 2026-10-29 by the user: `canonicalJson` and `sortKeys` are defined
     in both `artifacts.ts` and `llm.ts`, `hashOf` and `sha256` do the same
     job, `writeJson` (llm.ts) overlaps `writeJsonAtomic` (run.ts), and
-    `keysOf` is defined twice. Move each into one module and import it. One
-    commit named "book keeping", after the F4 to FL3 commits.
+    `keysOf` is defined twice. Move each into one module and import it. Also
+    `prettier --write src` once with the root `.prettierrc` (added
+    2026-10-29), so editor saves stop rewrapping files. One commit named
+    "book keeping", after the F4 to FL3 and F10 commits.
+
+- [x] **F10** Reviewer agents in the stage runner (60 min) (done 2026-10-29). Depends: F6. Decision D1.12
+  - Added 2026-10-29 by the user: validators alone miss problems a reader
+    sees at once, so the loop becomes a fixed schedule with model review.
+  - `runSpecStage` runs four rounds: generate and validate; fix and validate,
+    then two reviewer calls; fix (issues and blockers) and validate, then one
+    reviewer call; a final fix and validate. A fix with nothing to fix is
+    skipped but the round's reviewers still run; the stage ends as soon as a
+    review finds nothing on validator-clean output, so a clean first draft
+    costs one generation and two reviews. It never throws for issues: what remains is recorded as known
+    issues in the report, the `stage:done` event and `state.json`, the
+    artifact is written, and the run continues. `weave show` prints the count.
+  - Reviewers get the generator's full prompt, its JSON, the warnings as
+    known, and the stage's guide, through one shared review schema
+    (`src/core/review.ts`) listing major blockers only; blockers are mandatory
+    issues with rule `REVIEW` for the next fix.
+  - Prompts in `src/core/prompt-review.md` (reviewer rules, the ignore list)
+    and `prompt-review-input.md`; each stage adds a `review-<stage>.md` guide.
+  - Done when: `runSpecStage.test.ts` covers the schedule (calls per round,
+    skipped fixes, early end, known issues after round 4, no reviewers without
+    a guide); `pnpm test`; `pnpm typecheck`.
 
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
@@ -211,10 +243,14 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - `src/stages/flows/render.ts`: `01-scope.md` (short) and `01-flows.md` in the spec's format.
   - Done when: a snapshot test renders the valid fixture.
 
-- [ ] **FL5** Wire the stage (30 min). Depends: FL2, FL3, FL4, F7
-  - `src/stages/flows/stage.ts`: scope, then (with `--interactive`) blocking
-    questions with their defaults on the terminal, answers saved to
-    `input/answers.json`, then flows. Register in the CLI.
+- [ ] **FL5** Wire the stage (30 min). Depends: FL2, FL3, FL4, F7, F10
+  - `src/stages/flows/stage.ts`: scope, then flows. With `--interactive`
+    each stage passes `ask` to the runner (F11): the blocking, unanswered
+    questions are asked on the terminal with their defaults after each new
+    draft, and every answer is saved to `input/answers.json`. Register in
+    the CLI.
+  - Added 2026-10-29 (F10): `review-scope.md` and `review-flows.md`, the
+    review guides each stage passes to the runner.
   - Done when: `pnpm weave run fixtures/ideas/project-tracker.md --to flows`
     ends with zero mandatory issues or a readable `StageFailed` report.
 

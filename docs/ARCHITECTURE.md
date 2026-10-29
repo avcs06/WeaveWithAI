@@ -38,9 +38,10 @@ benchmark stage (section 13) reports the frontend's quality in one table.
    input. When an input changes, everything downstream is stale and reruns.
 4. **Mandatory versus warning.** A stage is done when it has zero mandatory
    issues, not when it is perfect. Warnings are reported, never looped on.
-5. **Bounded loops.** Drafting gets 3 rounds, each reconciliation loop 2,
-   coding repair 2 (D1.6). Blockers left after the last round stop the run
-   with a report naming them.
+5. **Bounded loops.** Spec stages run a fixed four-round schedule with
+   model review on rounds 2 and 3 (D1.12); each reconciliation loop gets 2
+   rounds, coding repair 2 (D1.6). Issues left after the last round are
+   recorded as known issues in the report and the run state; the run goes on.
 6. **Deterministic where possible.** Theme palettes, contract code, test
    scaffolds, Git and packaging are code. A model is used only where judgement
    is needed.
@@ -157,7 +158,8 @@ type Issue = {
 ```
 
 Messages are written for the model that will fix them: name the ID, the
-constraint and the expected shape. Only mandatory issues are sent back.
+constraint and the expected shape. Only mandatory issues are sent back;
+reviewer blockers are mandatory issues with rule `REVIEW`.
 
 ## Stage runner
 
@@ -168,15 +170,36 @@ async function runSpecStage<T>(o: {
   system: string; // filled prompt
   user: string; // inputs, serialized
   validate: (output: T) => Issue[];
-  maxRounds: number;
-  model?: 'default' | 'strong';
-}): Promise<{ output: T; warnings: Issue[]; rounds: number }>;
+  review?: string; // the stage's review guide; without it, no reviewer calls
+  ask?: (output: T) => Promise<Answers>; // interactive stages: blocking questions, after each new output
+}): Promise<{ output: T; warnings: Issue[]; known: Issue[]; answers: Answers; rounds: number }>;
 ```
 
-Round 1 sends system + user. A round with mandatory issues appends the model's
-JSON and a user message listing only those issues, asking for the full
-corrected JSON (D1.5 default). After the last round the runner throws a
-`StageFailed` error carrying the report; the CLI prints it and exits non-zero.
+The schedule (D1.12):
+
+| Round | Generator | Then | Reviewers |
+| --- | --- | --- | --- |
+| 1 | generate | validate | |
+| 2 | fix the mandatory issues | validate | 2 calls |
+| 3 | fix the mandatory issues and blockers | validate | 1 call |
+| 4 | final fix | validate | |
+
+Round 1 sends system + user. A fix appends the model's JSON and a user
+message listing what is pending (mandatory issues and blockers), asking for
+the full corrected JSON (D1.5 default); a fix with nothing pending is skipped,
+but the round's reviewer calls still run. A reviewer gets the generator's
+system and user messages, its JSON, the warnings as already known and the
+stage's `review-<stage>.md` guide, and answers through the `Review` schema
+(`src/core/review.ts`, blockers only); each blocker becomes a mandatory
+issue with rule `REVIEW`. The stage ends as soon as a review finds nothing on
+validator-clean output, so a clean first draft costs one generation and two
+reviews. After round 4 whatever is pending is the stage's known issues: in
+the report, the `stage:done` event, `state.json` and the result. The stage
+never fails on issues; `weave run` exits 1 only for real errors. With `ask`
+(interactive runs, D1.7 C) the runner asks after every round that produced
+new output; the answers ride along with the next fix in their own message
+and never force a generation, and all of them come back in `answers` for the
+stage to save.
 
 ## Model layer (`src/core/llm.ts`)
 

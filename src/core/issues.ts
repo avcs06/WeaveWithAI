@@ -34,11 +34,14 @@ export function writeReport(run: Run, stage: string, round: number, issues: Issu
   writeJsonAtomic(runPath(run, 'reports', `${stage}.json`), { rounds });
 }
 
-/** Mandatory issues only, one per line, the way they go back to the model. */
+/** One `- RULE at ID: message` line per issue, the way issues go to the model. */
+export function formatIssues(issues: Issue[]): string {
+  return issues.map((issue) => `- ${describe(issue)}`).join('\n');
+}
+
+/** Mandatory issues only. */
 export function formatForModel(issues: Issue[]): string {
-  return splitIssues(issues)
-    .mandatory.map((issue) => `- ${describe(issue)}`)
-    .join('\n');
+  return formatIssues(splitIssues(issues).mandatory);
 }
 
 export function formatForTerminal(issues: Issue[]): string {

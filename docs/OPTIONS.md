@@ -162,7 +162,12 @@ Notes:
       Blocking means the answer changes scope, permissions, business rules or
       data. Answers are saved to `input/answers.json` and reused on reruns.
 
-Notes:
+Notes: C. Since 2026-10-29 (F11, user) the asking happens inside the stage
+loop: after every round that produced new output, an interactive stage asks
+the blocking questions not yet answered. Answers ride along with the next fix
+if one happens and never force one; all of them are returned and saved to
+`input/answers.json`, so the next stage and any rerun see them as already
+given.
 
 ### D1.8 Model routing (pick one)
 
@@ -226,6 +231,38 @@ on the user's instruction: B changed from a self-deployed vLLM app to a
 Modal-managed endpoint (first Spark Open shared, then Glimmer dedicated once
 the credits rule was clear), and D was added after Baseten granted credits.
 
+### D1.12 Reviewer agents in the stage loop (pick one)
+
+- [ ] **A. Validators only.** The loop of D1.5 and D1.6 as built in F6: a
+      model-based review, if any, produces warnings and never blocks.
+- [x] **B. A fixed four-round schedule with reviewer calls (user, 2026-10-29).**
+      Round 1: generate, validate. Round 2: fix the mandatory issues, validate,
+      then two reviewer calls. Round 3: fix the mandatory issues and the
+      blockers, validate, then one reviewer call. Round 4: a final fix,
+      validate, stop. A fix is skipped when there is nothing to fix, but the
+      reviewer calls of that round still run; the stage ends as soon as a
+      review finds nothing on validator-clean output, so a clean first draft
+      costs one generation and two reviews. Whatever remains after round 4
+      is recorded as known issues (mandatory and blockers) and the run
+      continues to the next stage; the stage does not fail. A reviewer gets
+      the generator's full prompt (system and user messages), the JSON it
+      produced, the validator warnings as already known, and the stage's
+      review guide (what to look for, what to ignore); nothing else. It
+      answers through one shared review schema, different from the stage
+      schema, listing major blockers only, which become mandatory issues for
+      the next fix. Reviewers ignore minor, no-impact and low-impact problems,
+      rare edge cases and non-ideal scenarios; each stage's guide says which
+      scenarios count. Reviewers use the default model; the strong-model
+      escalation of D1.8 applies to the generator from round 3.
+
+Notes: B on the user's instruction, 2026-10-29, revised the same day from a
+"gate the stage" version to the fixed schedule. It replaces the AGENTS.md rule
+that model review only produces warnings, D1.6's 3 drafting rounds (now 4 for
+spec stages) and the principle that leftover blockers stop the run. Worst
+case per stage: four generator calls and three reviewer calls; outputs that
+fail validation are not reviewed until fixed, which saves most reviewer
+tokens.
+
 ---
 
 ## 2. User flow agent
@@ -279,7 +316,6 @@ Notes:
       (payments, uploads, email, realtime, maps, external APIs) go to
       out-of-scope with a placeholder behavior.
 - [ ] **B. No boundary.** The flows describe whatever the idea implies.
-
 Notes:
 
 ### D2.6 Data effects on steps (pick one)
