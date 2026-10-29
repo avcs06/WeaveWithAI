@@ -34,7 +34,7 @@ saying why, never extra work in the current step.
 | Gate | When          | Done when                                                                                       |
 | ---- | ------------- | ----------------------------------------------------------------------------------------------- |
 | G0   | Oct 28, 16:30 | Repo restructured; template checks pass from `template/` (done)                                 |
-| G1   | Oct 29, 01:30 | Freelancer workspace and dashboard editor produce scope and flows with zero mandatory issues; ecommerce store (unseen) run once untuned and recorded, then passes too; golden fixtures saved |
+| G1   | Oct 29, 01:30 | Freelancer workspace and dashboard editor produce scope and flows with zero mandatory issues; ecommerce store (unseen) run once untuned and recorded, then passes too; golden fixtures saved (done) |
 | G2   | Oct 29, night | Every golden idea produces brief, theme and screens with zero mandatory issues; gap report works |
 | G3   | Oct 30, 13:00 | Every golden idea produces a contract, in parallel with design; seeds validate                 |
 | G4   | Oct 30, night | Every golden spec set frozen; seeded defects found and fixed within limits                     |
@@ -327,7 +327,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     and checks that a non-empty `optionsFrom` is a vocabulary noun.
   - Done when: `pnpm test`; `pnpm typecheck`.
 
-- [ ] **FL6** Reference ideas (60 min). Depends: FL5, FL9
+- [x] **FL6** Reference ideas (60 min) (done 2026-10-29). Depends: FL5, FL9
   - Tuning notes from the freelancer run (2026-10-29), to apply to the prompts
     before the next runs: writers' first drafts skipped the "empty" path on
     list steps and the "confirm or cancel" path on deletes (FLOW-012 and

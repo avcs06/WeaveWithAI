@@ -172,10 +172,11 @@ export function fieldLine(field: Field): string {
   else if (field.max !== null)
     rules.push(`${lengths ? 'up to' : 'at most'} ${field.max}${unit}`);
   else if (field.min !== null) rules.push(`at least ${field.min}${unit}`);
+  const pick = field.type === 'multiChoice' ? 'any of' : 'one of';
   if (field.options.length > 0)
-    rules.push(`one of: ${field.options.join(', ')}`);
+    rules.push(`${pick}: ${field.options.join(', ')}`);
   if (field.optionsFrom !== '')
-    rules.push(`one of the ${field.optionsFrom} records`);
+    rules.push(`${pick} the ${field.optionsFrom} records`);
   return `${field.label} (${rules.join(', ')}), e.g. "${field.example}"`;
 }
 

@@ -2,42 +2,46 @@
   "meta": {
     "artifact": "scope",
     "version": 1,
-    "hash": "a5a34345814fbcb64cf24acc42c8f8cf8544ed44c2142fe9892d12bfda71217c",
+    "hash": "b9a02673fe79df4f82ba97cabf65145712801ccb5ecf664c56e4f1f040d1879a",
     "inputs": {},
     "stage": "scope",
     "model": "muse-spark-1.3",
     "rounds": 2,
-    "createdAt": "2026-10-29T12:52:42.216Z"
+    "createdAt": "2026-10-29T15:35:43.516Z"
   },
   "data": {
     "app": {
       "name": "TidyDash",
-      "summary": "For people who want a personal at-a-glance space for small bits of info. They juggle notes, counts, to-dos and links across apps and paper. TidyDash lets them create a dashboard, add note, counter, checklist and link-list widgets, arrange and resize them, with every change saved automatically.",
-      "audience": "Individuals who want a personal space for notes, numbers, tasks and links"
+      "summary": "For people who want one tidy place for small personal bits. Scattered notes, counts, to-dos and links are hard to keep together. TidyDash lets them create a dashboard, add note, counter, checklist and link-list widgets, then configure, arrange and use them with automatic saving.",
+      "audience": "People building personal dashboards for notes, counts, tasks and links"
     },
     "roles": [
       {
-        "id": "visitor",
-        "name": "Visitor",
-        "description": "Someone discovering personal dashboards; views the landing page and can sign up or sign in.",
-        "signedIn": false
-      },
-      {
         "id": "member",
         "name": "Member",
-        "description": "Signed-in owner who creates dashboards and manages their own widgets.",
+        "description": "Builds and owns personal dashboards and widgets",
         "signedIn": true
       }
     ],
     "vocabulary": [
       {
         "noun": "Dashboard",
-        "description": "Named collection of widgets with last-edited time.",
+        "description": "Named container for widgets; has name and last edited time",
         "belongsTo": "member"
       },
       {
         "noun": "Widget",
-        "description": "Block inside a dashboard with title, type (note, counter, checklist, link list), size (small, medium, large), position and type-specific content.",
+        "description": "Block inside a dashboard of type note, counter, checklist or link list; has title, position, size small/medium/large and type settings",
+        "belongsTo": "member"
+      },
+      {
+        "noun": "ChecklistItem",
+        "description": "Single to-do inside a checklist widget; has text and ticked or unticked state",
+        "belongsTo": "member"
+      },
+      {
+        "noun": "LinkEntry",
+        "description": "Single entry inside a link list widget; has title and web address",
         "belongsTo": "member"
       }
     ],
@@ -45,124 +49,121 @@
       {
         "id": "accounts",
         "needed": true,
-        "note": "Email/password sign up, sign in, sign out for dashboard owners"
+        "note": "Email and password sign up, sign in, sign out for dashboard owners"
       },
       {
         "id": "userOwnedData",
         "needed": true,
-        "note": "Each member sees only their own dashboards and widgets"
+        "note": "Each user sees only their own dashboards and widgets"
       },
       {
         "id": "crud",
         "needed": true,
-        "note": "Create, list, view, rename, duplicate, edit, delete dashboards and widgets"
-      },
-      {
-        "id": "roles",
-        "needed": true,
-        "note": "Visitor for landing page, member for private dashboards"
-      },
-      {
-        "id": "publicPages",
-        "needed": true,
-        "note": "Public landing page explaining dashboards and how to start"
+        "note": "Create, list, rename, duplicate, delete dashboards; add, rename, configure, remove widgets and their items"
       },
       {
         "id": "reorder",
         "needed": true,
-        "note": "Change widget position relative to other widgets"
+        "note": "Change widget position relative to other widgets; new widgets append at end"
       },
       {
         "id": "datesDeadlines",
         "needed": true,
-        "note": "Show when each dashboard was last edited, updated by autosave"
+        "note": "Show when each dashboard was last edited"
+      },
+      {
+        "id": "publicPages",
+        "needed": true,
+        "note": "Public landing page explaining personal dashboards and how to start"
       }
     ],
     "inScope": [
-      "Public landing page explaining personal dashboards and how to start",
-      "Create a new dashboard and open it in the editor",
-      "List of my dashboards showing name and when each was last edited",
-      "Rename, duplicate and delete a dashboard",
-      "Add note, counter, checklist and link-list widgets to a dashboard",
-      "Configure each widget with a title and type settings: note plain text, counter label and number with increase/decrease, checklist items with tick and add, link titles and web addresses",
-      "Manage widgets: rename, change position relative to others, resize between small, medium and large, and remove",
-      "Editor saves every change automatically and updates last-edited time"
+      "Public landing page that says what personal dashboards are for and how to start",
+      "Create dashboards; list shows all of my dashboards with when each was last edited",
+      "Rename, duplicate and delete dashboards; dashboards are private to their owner",
+      "Open a dashboard in an editor that saves changes automatically",
+      "Add note, counter, checklist and link list widgets and configure title plus type settings",
+      "Rename widget, change its position relative to other widgets, resize between small, medium and large, and remove it",
+      "Use widgets in place: edit note text, increase or decrease counter with label, tick off and add checklist items, add titles with web addresses and open links"
     ],
     "outOfScope": [],
     "assumptions": [
       {
         "id": "A01",
-        "text": "New dashboard created via Create starts empty with a default name like Untitled dashboard that can be renamed.",
-        "kind": "scope",
+        "text": "New dashboards start empty with the name Untitled dashboard which can be renamed immediately.",
+        "kind": "behavior",
         "affects": []
       },
       {
         "id": "A02",
-        "text": "Duplicate creates a full copy including all widgets and their content with name like Copy of {name}.",
-        "kind": "data",
+        "text": "Duplicating a dashboard creates a full copy named Copy of {name} with copies of all its widgets and sets last edited to now.",
+        "kind": "behavior",
         "affects": []
       },
       {
         "id": "A03",
-        "text": "Every dashboard and widget change saves automatically without a Save button and updates the dashboard last-edited time.",
+        "text": "Deleting a dashboard permanently removes it and all its widgets after a confirm, with no trash or undo; removing a widget permanently removes its items.",
         "kind": "behavior",
         "affects": []
       },
       {
         "id": "A04",
-        "text": "Dashboard list is ordered most-recently-edited first.",
+        "text": "New widgets are appended at the end in medium size with sensible defaults: empty note text, counter 0 with empty label, empty checklist, empty link list.",
         "kind": "behavior",
         "affects": []
       },
       {
         "id": "A05",
-        "text": "New widget defaults to medium size, title defaulting to its type name, appended after existing widgets.",
-        "kind": "data",
+        "text": "Counter value starts at 0, increases or decreases by 1 per tap, allows negative values, with no min or max.",
+        "kind": "behavior",
         "affects": []
       },
       {
         "id": "A06",
-        "text": "Counter starts at 0, increases or decreases by 1 per click, label is editable, allows negative values with no min or max.",
-        "kind": "behavior",
+        "text": "Checklist items have text and ticked state, start unticked, require text to add.",
+        "kind": "data",
         "affects": []
       },
       {
         "id": "A07",
-        "text": "Checklist items can be added, ticked and unticked, edited and removed; ticked items stay visible.",
-        "kind": "behavior",
+        "text": "Link entries require a title and a web address; addresses starting without http(s) get https prepended and open in a new tab.",
+        "kind": "data",
         "affects": []
       },
       {
         "id": "A08",
-        "text": "Link list stores a title plus web address; selecting a link opens it in a new browser tab; only http/https addresses are accepted.",
-        "kind": "behavior",
+        "text": "Dashboards and widgets are private to the user who created them; there is no sharing.",
+        "kind": "permission",
         "affects": []
       },
       {
         "id": "A09",
-        "text": "Deleting a dashboard permanently removes it and its widgets after confirm with no trash or undo; removing a widget deletes it immediately.",
+        "text": "Any dashboard or widget change updates last edited to now and autosaves immediately with a saved indicator; refresh restores the saved state.",
         "kind": "behavior",
         "affects": []
       },
       {
         "id": "A10",
-        "text": "Dashboards and widgets are private to the member who created them; no sharing.",
-        "kind": "permission",
-        "affects": []
-      },
-      {
-        "id": "A11",
-        "text": "Visual style is playful but tidy; exact on-screen placement is up to design while relative widget order is preserved.",
+        "text": "Widget order is a relative list order; exact on-screen placement is up to the design.",
         "kind": "presentation",
-        "affects": []
-      },
-      {
-        "id": "A12",
-        "text": "No limit on number of dashboards per user or widgets per dashboard.",
-        "kind": "scope",
         "affects": []
       }
     ],
-    "questions": []
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "Should there be limits on number of dashboards or widgets per dashboard?",
+        "whyItMatters": "Determines whether validation and limit messaging are in scope",
+        "defaultAnswer": "No limits in MVP",
+        "blocking": false
+      },
+      {
+        "id": "Q02",
+        "question": "Should deleted dashboards or widgets be recoverable from trash?",
+        "whyItMatters": "Changes data retention and UI scope",
+        "defaultAnswer": "No, delete is permanent with confirm",
+        "blocking": false
+      }
+    ]
   }
 }

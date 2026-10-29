@@ -1,0 +1,1824 @@
+{
+  "meta": {
+    "artifact": "flows",
+    "version": 1,
+    "hash": "ef0167ad642007de9aa622790d65a44b2c2d12c6361411d077d305037391206c",
+    "inputs": {
+      "scope": {
+        "version": 1,
+        "hash": "f35efcc6173484635a0657ff1e9f0250b13af4e886e1773f70134b33f14b9bab"
+      },
+      "flows-catalog": {
+        "version": 1,
+        "hash": "33894ac54a630e2c930476a7a259a22c88cc9d7f418e797259049d2ed2e68b42"
+      },
+      "flows-draft": {
+        "version": 1,
+        "hash": "ef0167ad642007de9aa622790d65a44b2c2d12c6361411d077d305037391206c"
+      }
+    },
+    "stage": "flows",
+    "model": "muse-spark-1.3",
+    "rounds": 1,
+    "createdAt": "2026-10-29T15:38:51.095Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "Discover the studio on the landing page",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what the studio sells and start shopping.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F01.S01",
+            "kind": "user",
+            "userAction": "The visitor opens the landing page.",
+            "websiteResponse": "The website shows what the Jaipur studio sells with featured photos and explains Jaipur studio pickup and courier with Rs 99 shipping and free above Rs 1,500.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F01.S02",
+            "kind": "user",
+            "userAction": "The visitor chooses Start shopping.",
+            "websiteResponse": "The website shows the public shop with pieces, photos, prices and honest remaining counts.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F01.A01",
+            "from": "F01.S02",
+            "kind": "empty",
+            "condition": "No products are listed yet.",
+            "websiteResponse": "The website says nothing is available yet and invites the visitor to check back later.",
+            "resumesAt": "F01.S02"
+          }
+        ],
+        "outcome": "No data changes; refresh still shows the same studio intro, featured photos and Start shopping entry."
+      },
+      {
+        "id": "F02",
+        "name": "Browse and filter the shop",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Find pieces that are still available.",
+        "preconditions": [],
+        "steps": [
+          {
+            "id": "F02.S01",
+            "kind": "user",
+            "userAction": "The visitor opens the shop.",
+            "websiteResponse": "The website shows each piece with photo, price and remaining count, marking zero-stock pieces as Sold out.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F02.S02",
+            "kind": "user",
+            "userAction": "The visitor filters by product type and in-stock only.",
+            "websiteResponse": "The website shows only pieces matching the chosen type and availability with honest remaining counts and Sold out flags.",
+            "fields": [
+              "FD25",
+              "FD26"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F02.A01",
+            "from": "F02.S01",
+            "kind": "empty",
+            "condition": "No products are listed yet.",
+            "websiteResponse": "The website says nothing is available right now and invites the visitor to check back later.",
+            "resumesAt": "F02.S01"
+          },
+          {
+            "id": "F02.A02",
+            "from": "F02.S02",
+            "kind": "empty",
+            "condition": "No pieces match the chosen type or in-stock filter.",
+            "websiteResponse": "The website says nothing matches and invites the visitor to clear the filters or choose another type.",
+            "resumesAt": "F02.S02"
+          }
+        ],
+        "outcome": "No data changes; refresh still shows the same list with honest remaining counts and Sold out flags."
+      },
+      {
+        "id": "F03",
+        "name": "View product glaze and size availability",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Decide on glaze and size with honest availability.",
+        "preconditions": [
+          "At least one product exists."
+        ],
+        "steps": [
+          {
+            "id": "F03.S01",
+            "kind": "user",
+            "userAction": "The visitor opens a product from the shop.",
+            "websiteResponse": "The website shows its photos, price, description and glaze and size choices with remaining counts per combo where sold-out combos cannot be chosen.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F03.S02",
+            "kind": "user",
+            "userAction": "The visitor picks a glaze and size.",
+            "websiteResponse": "The website shows how many pieces remain for that glaze and size and whether it can be ordered.",
+            "fields": [
+              "FD09",
+              "FD10"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F03.A01",
+            "from": "F03.S01",
+            "kind": "notFound",
+            "condition": "The product was removed in the meantime.",
+            "websiteResponse": "The website says the piece is no longer available and shows the shop again.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F03.A02",
+            "from": "F03.S02",
+            "kind": "other",
+            "condition": "The chosen glaze and size combo has zero left.",
+            "websiteResponse": "The website shows that combo as Sold out and invites the visitor to pick another glaze or size that is still available.",
+            "resumesAt": "F03.S02"
+          }
+        ],
+        "outcome": "No data changes; refresh still shows the same product with the same per-combo availability."
+      },
+      {
+        "id": "F04",
+        "name": "Place a pay-later guest order",
+        "role": "visitor",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Order chosen pieces for pickup or courier without signing in.",
+        "preconditions": [
+          "At least one product with available stock."
+        ],
+        "steps": [
+          {
+            "id": "F04.S01",
+            "kind": "user",
+            "userAction": "The visitor adds a piece with chosen glaze, size and quantity to the basket.",
+            "websiteResponse": "The website adds the choice to the basket and shows the basket with items, per-item prices and remaining counts.",
+            "fields": [
+              "FD09",
+              "FD10",
+              "FD11"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F04.S02",
+            "kind": "user",
+            "userAction": "The visitor chooses pickup or courier, enters contact details and optionally a discount code.",
+            "websiteResponse": "The website shows the order summary with percent-off applied before shipping, Rs 99 courier fee with free above Rs 1,500 after discount and free pickup with studio address text, plus totals.",
+            "fields": [],
+            "form": "FM04",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              },
+              {
+                "noun": "DiscountCode",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F04.S03",
+            "kind": "user",
+            "userAction": "The visitor places the order as pay-by-UPI-later.",
+            "websiteResponse": "The website creates the order with status New, reduces stock for the ordered combos, and shows a pay-later confirmation with totals and UPI instructions.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "create"
+              },
+              {
+                "noun": "Product",
+                "change": "update"
+              },
+              {
+                "noun": "Glaze",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F04.A01",
+            "from": "F04.S01",
+            "kind": "invalid",
+            "condition": "The quantity is empty or exceeds what is left for the chosen glaze and size.",
+            "websiteResponse": "The website marks the quantity, keeps the chosen glaze and size, and shows how many remain.",
+            "resumesAt": "F04.S01"
+          },
+          {
+            "id": "F04.A02",
+            "from": "F04.S01",
+            "kind": "failure",
+            "condition": "Adding to the basket fails.",
+            "websiteResponse": "The website keeps the chosen values and offers to try adding again.",
+            "resumesAt": "F04.S01"
+          },
+          {
+            "id": "F04.A03",
+            "from": "F04.S02",
+            "kind": "invalid",
+            "condition": "Name, phone or courier address is missing or incorrect.",
+            "websiteResponse": "The website marks what is wrong and keeps all typed values and the basket.",
+            "resumesAt": "F04.S02"
+          },
+          {
+            "id": "F04.A04",
+            "from": "F04.S02",
+            "kind": "failure",
+            "condition": "Saving the checkout details fails.",
+            "websiteResponse": "The website keeps all typed values and offers to try again.",
+            "resumesAt": "F04.S02"
+          },
+          {
+            "id": "F04.A05",
+            "from": "F04.S02",
+            "kind": "other",
+            "condition": "The discount code is unknown, expired or over its usage limit.",
+            "websiteResponse": "The website keeps the basket and details, shows the code was not applied, and shows totals without discount.",
+            "resumesAt": "F04.S02"
+          },
+          {
+            "id": "F04.A06",
+            "from": "F04.S03",
+            "kind": "conflict",
+            "condition": "The last pieces sold out before the order was placed.",
+            "websiteResponse": "The website says the combo just sold out, removes it from the basket, and shows the updated basket with what is still available.",
+            "resumesAt": "F04.S01"
+          },
+          {
+            "id": "F04.A07",
+            "from": "F04.S03",
+            "kind": "failure",
+            "condition": "Placing the order fails.",
+            "websiteResponse": "The website keeps the basket and details and offers to place the order again.",
+            "resumesAt": "F04.S03"
+          }
+        ],
+        "outcome": "An Order is created with status New and stock is reduced; refresh still shows the pay-later confirmation with totals and UPI instructions."
+      },
+      {
+        "id": "F05",
+        "name": "Owner sign up",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create the single studio owner account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F05.S01",
+            "kind": "user",
+            "userAction": "The owner chooses to sign up.",
+            "websiteResponse": "The website shows an empty owner auth form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F05.S02",
+            "kind": "user",
+            "userAction": "The owner fills in email and password and submits.",
+            "websiteResponse": "The website creates the single owner account and shows the signed-in owner workspace with products, glazes, orders and discount codes.",
+            "fields": [],
+            "form": "FM01",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F05.A01",
+            "from": "F05.S02",
+            "kind": "invalid",
+            "condition": "Email or password is missing or incorrect.",
+            "websiteResponse": "The website marks what is wrong and keeps the typed values.",
+            "resumesAt": "F05.S02"
+          },
+          {
+            "id": "F05.A02",
+            "from": "F05.S02",
+            "kind": "failure",
+            "condition": "Creating the account fails.",
+            "websiteResponse": "The website keeps the typed values and offers to try again.",
+            "resumesAt": "F05.S02"
+          },
+          {
+            "id": "F05.A03",
+            "from": "F05.S02",
+            "kind": "conflict",
+            "condition": "An owner account already exists for that email.",
+            "websiteResponse": "The website says the account already exists and invites the owner to sign in instead.",
+            "resumesAt": "F05.S02"
+          }
+        ],
+        "outcome": "Owner account created and signed in; refresh still shows the signed-in owner workspace."
+      },
+      {
+        "id": "F06",
+        "name": "Owner sign in",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Access the owner workspace.",
+        "preconditions": [
+          "Owner account exists.",
+          "Not signed in."
+        ],
+        "steps": [
+          {
+            "id": "F06.S01",
+            "kind": "user",
+            "userAction": "The owner chooses to sign in.",
+            "websiteResponse": "The website shows an empty owner auth form.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F06.S02",
+            "kind": "user",
+            "userAction": "The owner fills in email and password and submits.",
+            "websiteResponse": "The website signs the owner in and shows the private workspace with products, glazes, orders and discount codes.",
+            "fields": [],
+            "form": "FM01",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F06.A01",
+            "from": "F06.S02",
+            "kind": "invalid",
+            "condition": "Email or password is missing or incorrect.",
+            "websiteResponse": "The website marks what is wrong and keeps the typed values.",
+            "resumesAt": "F06.S02"
+          },
+          {
+            "id": "F06.A02",
+            "from": "F06.S02",
+            "kind": "failure",
+            "condition": "Signing in fails.",
+            "websiteResponse": "The website keeps the typed values and offers to try again.",
+            "resumesAt": "F06.S02"
+          },
+          {
+            "id": "F06.A03",
+            "from": "F06.S02",
+            "kind": "denied",
+            "condition": "The email or password does not match.",
+            "websiteResponse": "The website says the credentials were not recognized and invites the owner to try again.",
+            "resumesAt": "F06.S02"
+          }
+        ],
+        "outcome": "Owner is signed in; refresh still shows the signed-in workspace."
+      },
+      {
+        "id": "F07",
+        "name": "Owner sign out",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "Leave the workspace secure.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "steps": [
+          {
+            "id": "F07.S01",
+            "kind": "user",
+            "userAction": "The owner chooses to sign out.",
+            "websiteResponse": "The website closes the workspace and shows the public shop in a signed-out state.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [],
+        "outcome": "Owner is signed out; refresh still shows the signed-out state and the public shop remains visible."
+      },
+      {
+        "id": "F08",
+        "name": "Track orders and mark packing progress",
+        "role": "shopOwner",
+        "category": "core",
+        "authKind": "none",
+        "goal": "See newest orders first and move them to Packed then Shipped or Picked up.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "steps": [
+          {
+            "id": "F08.S01",
+            "kind": "user",
+            "userAction": "The owner opens the orders list.",
+            "websiteResponse": "The website shows orders sorted new-first with placed date, buyer, items, glaze, size, fulfilment, discount and totals including shipping math.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F08.S02",
+            "kind": "user",
+            "userAction": "The owner filters by New, Packed, Shipped or Picked up.",
+            "websiteResponse": "The website shows only orders with the chosen packing status, still sorted new-first.",
+            "fields": [
+              "FD27"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F08.S03",
+            "kind": "user",
+            "userAction": "The owner opens an order for detail.",
+            "websiteResponse": "The website shows the order detail with buyer contact, items, glaze, size, quantities, fulfilment, discount and totals.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F08.S04",
+            "kind": "user",
+            "userAction": "The owner marks the order Packed then Shipped for courier or Picked up for pickup.",
+            "websiteResponse": "The website saves the new packing status and shows the updated order and list.",
+            "fields": [
+              "FD28"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F08.A01",
+            "from": "F08.S01",
+            "kind": "empty",
+            "condition": "No orders have been placed yet.",
+            "websiteResponse": "The website says there are no orders yet and invites the owner to keep the shop stocked and check back for new orders.",
+            "resumesAt": "F08.S01"
+          },
+          {
+            "id": "F08.A02",
+            "from": "F08.S02",
+            "kind": "empty",
+            "condition": "No orders have the chosen status.",
+            "websiteResponse": "The website says no orders have that status and invites the owner to clear the filter.",
+            "resumesAt": "F08.S02"
+          },
+          {
+            "id": "F08.A03",
+            "from": "F08.S03",
+            "kind": "notFound",
+            "condition": "The order was deleted in the meantime.",
+            "websiteResponse": "The website says the order is gone and shows the orders list again.",
+            "resumesAt": "F08.S01"
+          },
+          {
+            "id": "F08.A04",
+            "from": "F08.S04",
+            "kind": "invalid",
+            "condition": "The chosen status is not the allowed next step for that order.",
+            "websiteResponse": "The website marks the status, keeps the order unchanged, and shows the allowed next step of Packed then Shipped or Picked up.",
+            "resumesAt": "F08.S04"
+          },
+          {
+            "id": "F08.A05",
+            "from": "F08.S04",
+            "kind": "failure",
+            "condition": "Saving the new status fails.",
+            "websiteResponse": "The website keeps the order as it was and offers to try saving again.",
+            "resumesAt": "F08.S04"
+          }
+        ],
+        "outcome": "Order statuses updated to Packed, Shipped or Picked up persist after refresh; list remains new-first with status filter."
+      },
+      {
+        "id": "F09",
+        "name": "Add a product",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "List a new piece type with photos, price, sizes, glazes and stock.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "steps": [
+          {
+            "id": "F09.S01",
+            "kind": "user",
+            "userAction": "The owner chooses to add a product.",
+            "websiteResponse": "The website shows an empty product form with glaze choices and a photo preview area.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          },
+          {
+            "id": "F09.S02",
+            "kind": "user",
+            "userAction": "The owner fills in the product and saves it.",
+            "websiteResponse": "The website validates and previews the photo, saves the product with its per-combo stock and shows it in the product list and the public shop.",
+            "fields": [],
+            "form": "FM02",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "create"
+              },
+              {
+                "noun": "Glaze",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F09.A01",
+            "from": "F09.S02",
+            "kind": "invalid",
+            "condition": "A required value is missing or the price or stock quantity is not valid.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F09.S02"
+          },
+          {
+            "id": "F09.A02",
+            "from": "F09.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F09.S02"
+          },
+          {
+            "id": "F09.A03",
+            "from": "F09.S02",
+            "kind": "cancel",
+            "condition": "The owner cancels without saving.",
+            "websiteResponse": "Nothing is saved; the website shows the product list as it was.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F09.A04",
+            "from": "F09.S02",
+            "kind": "empty",
+            "condition": "There are no glazes to offer yet.",
+            "websiteResponse": "The website says there are no glazes yet and offers to add a glaze before saving the product.",
+            "resumesAt": "F09.S02"
+          }
+        ],
+        "outcome": "New Product is created and visible in the public shop; refresh still shows it."
+      },
+      {
+        "id": "F10",
+        "name": "Edit product and restock",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep price, description, sizes, glazes and per-combo stock honest.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one product exists."
+        ],
+        "steps": [
+          {
+            "id": "F10.S01",
+            "kind": "user",
+            "userAction": "The owner opens the product list and filters by type or stock state.",
+            "websiteResponse": "The website shows the owner's products with photo, price, type and remaining counts per glaze and size.",
+            "fields": [
+              "FD25",
+              "FD26"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F10.S02",
+            "kind": "user",
+            "userAction": "The owner opens a product for editing.",
+            "websiteResponse": "The website shows the product's current name, type, description, price, photo, sizes, glazes and per-combo stock.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F10.S03",
+            "kind": "user",
+            "userAction": "The owner edits the product and saves the changes.",
+            "websiteResponse": "The website saves the changes and shows the updated product; the public shop reflects the new details and availability.",
+            "fields": [],
+            "form": "FM02",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F10.A01",
+            "from": "F10.S01",
+            "kind": "empty",
+            "condition": "There are no products yet.",
+            "websiteResponse": "The website says there are no products yet and offers to add one.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F10.A02",
+            "from": "F10.S02",
+            "kind": "notFound",
+            "condition": "The product was deleted in the meantime.",
+            "websiteResponse": "The website says the product is gone and shows the product list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F10.A03",
+            "from": "F10.S03",
+            "kind": "invalid",
+            "condition": "A required value is missing or the price or stock quantity is not valid.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F10.S03"
+          },
+          {
+            "id": "F10.A04",
+            "from": "F10.S03",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F10.S03"
+          },
+          {
+            "id": "F10.A05",
+            "from": "F10.S03",
+            "kind": "cancel",
+            "condition": "The owner cancels without saving.",
+            "websiteResponse": "Nothing is changed; the website shows the product as it was.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Product changes are saved and the public shop reflects them after refresh."
+      },
+      {
+        "id": "F11",
+        "name": "Delete a product",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Remove a piece type no longer sold.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one product exists."
+        ],
+        "steps": [
+          {
+            "id": "F11.S01",
+            "kind": "user",
+            "userAction": "The owner opens the product list.",
+            "websiteResponse": "The website shows the owner's products with photo, price and remaining counts.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F11.S02",
+            "kind": "user",
+            "userAction": "The owner opens a product to delete.",
+            "websiteResponse": "The website shows the product's details and remaining stock.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F11.S03",
+            "kind": "user",
+            "userAction": "The owner chooses Delete on the product.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "Product",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F11.A01",
+            "from": "F11.S01",
+            "kind": "empty",
+            "condition": "There are no products to delete.",
+            "websiteResponse": "The website says there are no products and offers to add one.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A02",
+            "from": "F11.S02",
+            "kind": "notFound",
+            "condition": "The product was deleted in the meantime.",
+            "websiteResponse": "The website says the product is gone and shows the product list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A03",
+            "from": "F11.S03",
+            "kind": "confirm",
+            "condition": "The owner confirms the deletion.",
+            "websiteResponse": "The website removes the product from the public shop; past orders keep their item snapshot.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A04",
+            "from": "F11.S03",
+            "kind": "cancel",
+            "condition": "The owner cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the product again, unchanged.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Product is removed from the shop and stays gone after refresh; past orders keep their snapshot."
+      },
+      {
+        "id": "F12",
+        "name": "Manage glazes and spot low stock",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Maintain glaze options and know when a glaze is nearly gone.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "steps": [
+          {
+            "id": "F12.S01",
+            "kind": "user",
+            "userAction": "The owner opens the glaze list.",
+            "websiteResponse": "The website shows all glazes with remaining piece counts across products, flagging glazes with 5 or fewer pieces left as nearly gone.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Glaze",
+                "change": "list"
+              },
+              {
+                "noun": "Product",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F12.S02",
+            "kind": "user",
+            "userAction": "The owner enters a new glaze name and saves it.",
+            "websiteResponse": "The website saves the glaze and shows it in the glaze list.",
+            "fields": [
+              "FD17"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Glaze",
+                "change": "create"
+              }
+            ]
+          },
+          {
+            "id": "F12.S03",
+            "kind": "user",
+            "userAction": "The owner chooses a glaze and renames it.",
+            "websiteResponse": "The website saves the new glaze name and shows the updated list with refreshed low-stock flags.",
+            "fields": [
+              "FD17"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Glaze",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F12.S04",
+            "kind": "user",
+            "userAction": "The owner chooses Delete on a glaze.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "Glaze",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F12.A01",
+            "from": "F12.S01",
+            "kind": "empty",
+            "condition": "There are no glazes yet.",
+            "websiteResponse": "The website says there are no glazes yet and offers to add the first one.",
+            "resumesAt": "F12.S02"
+          },
+          {
+            "id": "F12.A02",
+            "from": "F12.S02",
+            "kind": "invalid",
+            "condition": "The glaze name is empty.",
+            "websiteResponse": "The website marks the field and keeps what was typed.",
+            "resumesAt": "F12.S02"
+          },
+          {
+            "id": "F12.A03",
+            "from": "F12.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the typed value and offers to retry.",
+            "resumesAt": "F12.S02"
+          },
+          {
+            "id": "F12.A04",
+            "from": "F12.S03",
+            "kind": "invalid",
+            "condition": "The new glaze name is empty.",
+            "websiteResponse": "The website marks the field and keeps what was typed.",
+            "resumesAt": "F12.S03"
+          },
+          {
+            "id": "F12.A05",
+            "from": "F12.S03",
+            "kind": "failure",
+            "condition": "Saving the rename fails.",
+            "websiteResponse": "The website keeps the typed value and offers to retry.",
+            "resumesAt": "F12.S03"
+          },
+          {
+            "id": "F12.A06",
+            "from": "F12.S03",
+            "kind": "notFound",
+            "condition": "The glaze was deleted in the meantime.",
+            "websiteResponse": "The website says the glaze is gone and shows the glaze list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F12.A07",
+            "from": "F12.S04",
+            "kind": "confirm",
+            "condition": "The owner confirms the deletion.",
+            "websiteResponse": "The website removes the glaze from the list; past orders keep their glaze snapshot.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F12.A08",
+            "from": "F12.S04",
+            "kind": "cancel",
+            "condition": "The owner cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the glaze list unchanged.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Glaze list with low-stock flags persists after refresh and guides the next batch."
+      },
+      {
+        "id": "F13",
+        "name": "Manage discount codes",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Offer weekend percent-off codes for Instagram.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "steps": [
+          {
+            "id": "F13.S01",
+            "kind": "user",
+            "userAction": "The owner opens the discount code list.",
+            "websiteResponse": "The website shows all discount codes with code text, percent off, start and end dates and usage limit.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "DiscountCode",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F13.S02",
+            "kind": "user",
+            "userAction": "The owner fills in a new weekend code and saves it.",
+            "websiteResponse": "The website saves the code and shows it in the code list as usable by buyers.",
+            "fields": [],
+            "form": "FM03",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "DiscountCode",
+                "change": "create"
+              }
+            ]
+          },
+          {
+            "id": "F13.S03",
+            "kind": "user",
+            "userAction": "The owner opens a code, edits its details and saves.",
+            "websiteResponse": "The website saves the changes and shows the updated code list.",
+            "fields": [],
+            "form": "FM03",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "DiscountCode",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F13.S04",
+            "kind": "user",
+            "userAction": "The owner chooses Delete on a discount code.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "DiscountCode",
+                "change": "delete"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F13.A01",
+            "from": "F13.S01",
+            "kind": "empty",
+            "condition": "There are no discount codes yet.",
+            "websiteResponse": "The website says there are no discount codes yet and offers to create one.",
+            "resumesAt": "F13.S02"
+          },
+          {
+            "id": "F13.A02",
+            "from": "F13.S02",
+            "kind": "invalid",
+            "condition": "The code text, percent, dates or limit are missing or not valid, or the end date is before the start date.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F13.S02"
+          },
+          {
+            "id": "F13.A03",
+            "from": "F13.S02",
+            "kind": "failure",
+            "condition": "Saving fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F13.S02"
+          },
+          {
+            "id": "F13.A04",
+            "from": "F13.S03",
+            "kind": "invalid",
+            "condition": "The edited code text, percent, dates or limit are missing or not valid, or the end date is before the start date.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F13.S03"
+          },
+          {
+            "id": "F13.A05",
+            "from": "F13.S03",
+            "kind": "failure",
+            "condition": "Saving the edit fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F13.S03"
+          },
+          {
+            "id": "F13.A06",
+            "from": "F13.S03",
+            "kind": "notFound",
+            "condition": "The code was deleted in the meantime.",
+            "websiteResponse": "The website says the discount code is gone and shows the code list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F13.A07",
+            "from": "F13.S04",
+            "kind": "confirm",
+            "condition": "The owner confirms the deletion.",
+            "websiteResponse": "The website removes the code; it can no longer be used by buyers.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F13.A08",
+            "from": "F13.S04",
+            "kind": "cancel",
+            "condition": "The owner cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the code list unchanged.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Discount codes with dates and limits persist after refresh and become usable by buyers."
+      },
+      {
+        "id": "F14",
+        "name": "Correct or remove an order",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Fix buyer mistakes by editing or deleting an order.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one order exists."
+        ],
+        "steps": [
+          {
+            "id": "F14.S01",
+            "kind": "user",
+            "userAction": "The owner opens the orders list and filters by packing status.",
+            "websiteResponse": "The website shows orders newest first with placed date, buyer, items, fulfilment and totals.",
+            "fields": [
+              "FD27"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F14.S02",
+            "kind": "user",
+            "userAction": "The owner opens an order for detail.",
+            "websiteResponse": "The website shows the order's buyer name and phone, fulfilment method, address for courier, items with glaze, size and quantities, discount, shipping and total.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "read"
+              }
+            ]
+          },
+          {
+            "id": "F14.S03",
+            "kind": "user",
+            "userAction": "The owner corrects contact, fulfilment, quantities or status and saves.",
+            "websiteResponse": "The website enforces that quantities cannot exceed what is left, updates totals with discount and shipping math, adjusts stock counts and shows the corrected order.",
+            "fields": [
+              "FD12",
+              "FD13",
+              "FD14",
+              "FD15",
+              "FD11",
+              "FD28"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "update"
+              },
+              {
+                "noun": "Product",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F14.S04",
+            "kind": "user",
+            "userAction": "The owner chooses Delete on the mistaken order.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "Order",
+                "change": "delete"
+              },
+              {
+                "noun": "Product",
+                "change": "update"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F14.A01",
+            "from": "F14.S01",
+            "kind": "empty",
+            "condition": "There are no orders yet.",
+            "websiteResponse": "The website says there are no orders yet.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F14.A02",
+            "from": "F14.S02",
+            "kind": "notFound",
+            "condition": "The order was deleted in the meantime.",
+            "websiteResponse": "The website says the order is gone and shows the orders list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F14.A03",
+            "from": "F14.S03",
+            "kind": "invalid",
+            "condition": "A required contact value is missing or not valid.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F14.S03"
+          },
+          {
+            "id": "F14.A04",
+            "from": "F14.S03",
+            "kind": "conflict",
+            "condition": "The raised quantity is more than what is left for that glaze and size.",
+            "websiteResponse": "The website says only that many pieces are left, keeps the typed values and offers to use the available quantity.",
+            "resumesAt": "F14.S03"
+          },
+          {
+            "id": "F14.A05",
+            "from": "F14.S03",
+            "kind": "failure",
+            "condition": "Saving the correction fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F14.S03"
+          },
+          {
+            "id": "F14.A06",
+            "from": "F14.S04",
+            "kind": "confirm",
+            "condition": "The owner confirms the deletion.",
+            "websiteResponse": "The website removes the order, returns its stock to the glaze and size counts and shows the orders list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F14.A07",
+            "from": "F14.S04",
+            "kind": "cancel",
+            "condition": "The owner cancels.",
+            "websiteResponse": "Nothing is deleted; the website shows the order again, unchanged.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Order corrections or removal persist after refresh and stock counts reflect the change."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Product name",
+        "meaning": "What the piece is called in the shop",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Speckled Chai Mug"
+      },
+      {
+        "id": "FD02",
+        "label": "Product type",
+        "meaning": "Category of piece used for filtering",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "mug",
+          "bowl",
+          "planter",
+          "vase"
+        ],
+        "optionsFrom": "",
+        "example": "mug"
+      },
+      {
+        "id": "FD03",
+        "label": "Product description",
+        "meaning": "Short story and care details that help the buyer decide",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Wheel-thrown stoneware mug with speckled glaze."
+      },
+      {
+        "id": "FD04",
+        "label": "Product price",
+        "meaning": "Selling price in rupees before discount and shipping",
+        "type": "money",
+        "required": true,
+        "min": 1,
+        "max": 100000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "650"
+      },
+      {
+        "id": "FD05",
+        "label": "Product photo",
+        "meaning": "Cover photo the buyer sees; validated and previewed for the session",
+        "type": "url",
+        "required": true,
+        "min": null,
+        "max": 500,
+        "options": [],
+        "optionsFrom": "",
+        "example": "https://example.com/mug-sage.jpg"
+      },
+      {
+        "id": "FD06",
+        "label": "Available sizes",
+        "meaning": "Sizes this product is sold in",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "optionsFrom": "",
+        "example": "Medium"
+      },
+      {
+        "id": "FD07",
+        "label": "Glazes offered",
+        "meaning": "Glaze options this product can be ordered in",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "Glaze",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD08",
+        "label": "Stock quantity for glaze and size combo",
+        "meaning": "How many pieces remain for one glaze and size combination",
+        "type": "integer",
+        "required": true,
+        "min": 0,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "12"
+      },
+      {
+        "id": "FD09",
+        "label": "Glaze selection",
+        "meaning": "Glaze the buyer chose for the piece",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "Glaze",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD10",
+        "label": "Size selection",
+        "meaning": "Size the buyer chose for the piece",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "optionsFrom": "",
+        "example": "Medium"
+      },
+      {
+        "id": "FD11",
+        "label": "Quantity",
+        "meaning": "How many of the chosen glaze and size the buyer wants",
+        "type": "integer",
+        "required": true,
+        "min": 1,
+        "max": 99,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2"
+      },
+      {
+        "id": "FD12",
+        "label": "Buyer name",
+        "meaning": "Who the order is for and who the owner contacts on UPI",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Ananya Sharma"
+      },
+      {
+        "id": "FD13",
+        "label": "Buyer phone",
+        "meaning": "Phone number for pickup coordination and UPI collection",
+        "type": "phone",
+        "required": true,
+        "min": null,
+        "max": 15,
+        "options": [],
+        "optionsFrom": "",
+        "example": "9829012345"
+      },
+      {
+        "id": "FD14",
+        "label": "Fulfilment method",
+        "meaning": "Whether the buyer picks up in Jaipur or wants courier delivery",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Studio pickup",
+          "Courier"
+        ],
+        "optionsFrom": "",
+        "example": "Courier"
+      },
+      {
+        "id": "FD15",
+        "label": "Delivery address",
+        "meaning": "Where the courier should deliver; only asked for courier orders",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 500,
+        "options": [],
+        "optionsFrom": "",
+        "example": "B-12 Malviya Nagar Jaipur 302017"
+      },
+      {
+        "id": "FD16",
+        "label": "Buyer discount code",
+        "meaning": "Weekend code the buyer types to get percent off",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 30,
+        "options": [],
+        "optionsFrom": "",
+        "example": "CLAY10"
+      },
+      {
+        "id": "FD17",
+        "label": "Glaze name",
+        "meaning": "Finish colour option shown to buyers",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 80,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD18",
+        "label": "Code text",
+        "meaning": "Text buyers type from Instagram to get the discount",
+        "type": "text",
+        "required": true,
+        "min": 3,
+        "max": 30,
+        "options": [],
+        "optionsFrom": "",
+        "example": "CLAYWEEKEND"
+      },
+      {
+        "id": "FD19",
+        "label": "Percent off",
+        "meaning": "How much the code takes off the items total before shipping",
+        "type": "percent",
+        "required": true,
+        "min": 1,
+        "max": 90,
+        "options": [],
+        "optionsFrom": "",
+        "example": "10"
+      },
+      {
+        "id": "FD20",
+        "label": "Start date",
+        "meaning": "First day the code can be used",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-01"
+      },
+      {
+        "id": "FD21",
+        "label": "End date",
+        "meaning": "Last day the code can be used",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-03"
+      },
+      {
+        "id": "FD22",
+        "label": "Usage limit",
+        "meaning": "How many orders can use the code in total; empty means unlimited",
+        "type": "integer",
+        "required": false,
+        "min": 1,
+        "max": 10000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "50"
+      },
+      {
+        "id": "FD23",
+        "label": "Owner email",
+        "meaning": "Login for the single studio owner account",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "optionsFrom": "",
+        "example": "studio@jaipurclay.in"
+      },
+      {
+        "id": "FD24",
+        "label": "Owner password",
+        "meaning": "Secret that protects the owner workspace",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": 128,
+        "options": [],
+        "optionsFrom": "",
+        "example": "clay-studio-123"
+      },
+      {
+        "id": "FD25",
+        "label": "Product type filter",
+        "meaning": "Narrows the shop to one piece type",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "mug",
+          "bowl",
+          "planter",
+          "vase"
+        ],
+        "optionsFrom": "",
+        "example": "mug"
+      },
+      {
+        "id": "FD26",
+        "label": "In-stock only",
+        "meaning": "Hides sold-out pieces when turned on",
+        "type": "boolean",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "true"
+      },
+      {
+        "id": "FD27",
+        "label": "Order status filter",
+        "meaning": "Narrows the owner orders list to one packing status",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "New",
+          "Packed",
+          "Shipped",
+          "Picked up"
+        ],
+        "optionsFrom": "",
+        "example": "New"
+      },
+      {
+        "id": "FD28",
+        "label": "Order status",
+        "meaning": "Where the order is in packing and handover",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "New",
+          "Packed",
+          "Shipped",
+          "Picked up"
+        ],
+        "optionsFrom": "",
+        "example": "Packed"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Owner auth form",
+        "fields": [
+          "FD23",
+          "FD24"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Product form",
+        "fields": [
+          "FD01",
+          "FD02",
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07",
+          "FD08"
+        ]
+      },
+      {
+        "id": "FM03",
+        "name": "Discount code form",
+        "fields": [
+          "FD18",
+          "FD19",
+          "FD20",
+          "FD21",
+          "FD22"
+        ]
+      },
+      {
+        "id": "FM04",
+        "name": "Buyer checkout details form",
+        "fields": [
+          "FD12",
+          "FD13",
+          "FD14",
+          "FD15",
+          "FD16"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "STD01",
+        "name": "Confirm deletion",
+        "steps": [
+          {
+            "id": "STD01.S01",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website asks to confirm the deletion and says what else will be removed with it.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "STD01.A01",
+            "from": "STD01.S01",
+            "kind": "confirm",
+            "condition": "The user confirms.",
+            "websiteResponse": "The website deletes the record and what belongs to it.",
+            "resumesAt": ""
+          },
+          {
+            "id": "STD01.A02",
+            "from": "STD01.S01",
+            "kind": "cancel",
+            "condition": "The user cancels.",
+            "websiteResponse": "Nothing is deleted; the record stays as it was.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A11",
+        "text": "Sizes are Small, Medium and Large where applicable; a product offers at least one size and stock is tracked per glaze/size combo.",
+        "kind": "data",
+        "affects": [
+          "F03",
+          "F04",
+          "F09",
+          "F10"
+        ]
+      },
+      {
+        "id": "A12",
+        "text": "Product photos are simulated uploads: validated and previewed and kept for the session; MVP shows one cover photo per product and that photo is required to list.",
+        "kind": "behavior",
+        "affects": [
+          "F02",
+          "F03",
+          "F09",
+          "F10"
+        ]
+      },
+      {
+        "id": "A13",
+        "text": "Deleting a product or glaze does not delete past orders; orders keep a snapshot of product name, price, glaze and size.",
+        "kind": "behavior",
+        "affects": [
+          "F11",
+          "F12"
+        ]
+      },
+      {
+        "id": "A14",
+        "text": "If the owner deletes an order or lowers its quantity the freed stock returns to the glaze/size count; raising quantity follows the same honest stock rule as checkout.",
+        "kind": "behavior",
+        "affects": [
+          "F04",
+          "F08",
+          "F14"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q03",
+        "question": "Do pieces use standard Small, Medium and Large sizes or custom dimensions per product?",
+        "whyItMatters": "Decides size options, product form fields and per-combo stock tracking.",
+        "defaultAnswer": "Assume Small, Medium and Large cover all piece types for MVP.",
+        "blocking": false
+      }
+    ]
+  }
+}

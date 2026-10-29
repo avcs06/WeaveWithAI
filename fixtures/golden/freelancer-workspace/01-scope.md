@@ -1,65 +1,61 @@
-# Studio Hub: scope
+# Solo Studio: scope
 
-For a solo freelance UX designer juggling clients, notes, tasks and bookings across inbox, notes and spreadsheets. It brings clients with follow-ups, projects with tasks, and self-serve booking for discovery calls, design reviews and workshops into one calm workspace. The core loop is add a client, track notes and tasks to done, open availability and let visitors book themselves, then start each day from today's sessions, follow-ups and overdue tasks.
+For a freelance UX designer whose clients, notes, tasks and bookings are scattered across inbox, notes, spreadsheets and email. The app gives her one calm private workspace for clients, notes, projects, tasks and self-serve booking. She manages follow-ups and tasks, sets availability and session types, and visitors book from a public page that links bookings to clients.
 
-Audience: Solo freelance UX designer
+Audience: Solo freelance UX designer managing her own clients, projects and bookings
 
 ## Roles
-- Freelancer (freelancer, signs in): Freelance UX designer who manages clients, projects, tasks, availability and sessions
-- Booker (booker, no sign-in): Visitor who books a discovery call, design review or workshop without an account
+- Designer (designer, signs in): Freelance UX designer who signs in to manage clients, notes, projects, tasks, availability, session types and bookings.
+- Booker (booker, no sign-in): Visitor who books a session from the public booking page with name and email and cancels via link, without ever signing in.
 
 ## Vocabulary
-- Client (owned by Freelancer): Name, email, company optional, profile, status Lead Active Past, next follow-up date
-- Note (owned by Freelancer): Dated text under a client with optional follow-up date
-- Project (owned by Freelancer): Name, description, optional due date belonging to a client
-- Task (owned by Freelancer): Title, status To do In progress Done, priority Low Medium High, optional due date belonging to a project
-- Availability (owned by Freelancer): Weekly days with start and end time defining when sessions can be booked
-- SessionType (owned by Freelancer): Name, duration, displayed price and maximum seats, e.g. discovery 30min free 1, review 60min 4000 1, workshop 2hr 2500 8
-- Session (owned by Freelancer): Bookable time slot of a session type with date, start and end time
-- Booking (owned by Freelancer): Name and email reservation for a session with on-screen cancellation link, linked to a client by email
+- Client (owned by Designer): Person or company the designer works with; has name, email, optional company, short profile and status Lead, Active or Past.
+- Note (owned by Designer): Dated note under a client with text, created date and optional follow-up date that can be marked done or pushed a week.
+- Project (owned by Designer): Work for a client with name, short description and optional due date; shows how many tasks are still open.
+- Task (owned by Designer): Work item in a project with title, status To do, In progress or Done, priority Low, Medium or High, and optional due date.
+- Availability (owned by Designer): Weekly availability rule with weekday plus start and end time defining when sessions can be offered.
+- SessionType (owned by Designer): Bookable offering with name, duration, displayed price and maximum people per slot, for example 30-min free discovery for 1.
+- Session (owned by Designer): Scheduled slot from availability and a session type with date, start and end time; full when bookings reach the type maximum.
+- Booking (owned by Designer): Reservation on a session with booker name and email linked to a client, with an on-screen cancellation link.
 
 ## Capabilities
-- accounts: Single freelancer signs up, signs in and out to access private workspace
-- userOwnedData: Freelancer sees only their own clients, projects, tasks, sessions and bookings
-- crud: Create, view, edit, delete clients, notes, projects, tasks, availability, session types, sessions and bookings
-- search: Search tasks by title
-- filterSort: Filter tasks by status and priority; clients sorted overdue follow-up first
-- roles: Signed-in freelancer plus public booker without account
-- publicPages: Public landing page and public booking page plus cancellation link page
-- statusWorkflow: Client Lead, Active, Past; Task To do, In progress, Done
-- datesDeadlines: Note dates, follow-up dates, task and project due dates, availability windows, session slots
-- simpleCounts: Open task counts per project, seats booked vs maximum, today and week lists
+- accounts: Designer signs up, signs in and signs out with email and password.
+- userOwnedData: Designer sees only their own clients, projects, tasks, notes, sessions and bookings.
+- crud: Create, list, view, edit and delete clients, notes, projects, tasks, availability, session types, sessions and bookings.
+- search: Search tasks by title.
+- filterSort: Filter tasks by status and priority; client list sorted overdue follow-ups first.
+- roles: Designer signed in plus booker with no account using public booking only.
+- publicPages: Public landing page plus public booking page with session types, open slots and cancellation link.
+- statusWorkflow: Client Lead/Active/Past and Task To do/In progress/Done with allowed transitions.
+- datesDeadlines: Follow-up dates, task and project due dates, weekly availability and session slots for next two weeks.
+- simpleCounts: Open task counts per project and booking counts per slot to decide full.
 
 ## In scope
-- Public landing page explaining the workspace and how to sign in or book a session
-- Private home screen with today's sessions, follow-ups due this week, and overdue tasks
-- Clients list with status Lead, Active, Past showing who is due for follow-up, overdue first
-- Create and edit clients with name, email, company optional, profile, status; delete client deletes its projects, tasks, notes and bookings
-- Dated notes under each client with optional follow-up date; mark follow-up done or push it a week with one click
-- Projects belonging to a client with name, description and optional due date; projects list shows how many tasks are still open
-- Tasks in a project with title, status To do, In progress, Done, priority Low, Medium, High and optional due date; search by title, filter by status and priority, tick done quickly, overdue tasks stand out
-- Edit and delete projects and tasks; deleting a project deletes its tasks
-- Weekly availability setting with days and start to end time
-- Session types: 30 minute discovery call free 1 person, 60 minute design review ₹4,000 shown for information 1 person, 2 hour Figma workshop ₹2,500 a seat up to 8 people; prices displayed only
-- Upcoming sessions list with bookings; cancel a slot cancels everyone booked on it
-- Public booking page: pick session type, see open slots for the next two weeks, book with name and email; a slot is full at the session type maximum
-- Booking by email match lands under that client, otherwise creates a new Lead client; confirmation shows a cancellation link on screen with no emails sent
-- Cancel a booking via its cancellation link without signing in
+- Public landing page explaining the private client, project and booking workspace and how to sign in and share the booking page.
+- Home dashboard showing todays sessions, follow-ups due this week, and overdue tasks.
+- Clients with name, email, optional company, profile and status Lead, Active, Past; dated notes with follow-up dates; client list shows who is due with overdue first; one-click mark follow-up done or push a week.
+- Projects belonging to a client with name, description and optional due date; project list shows open task counts; project detail shows tasks with filter by status and priority, search by title, quick tick done and overdue highlight; edit and delete clients, projects and tasks.
+- Business rules: deleting a project deletes its tasks; deleting a client deletes its projects, tasks and notes; a slot is full when bookings reach the session type maximum; booking email matching an existing client links there otherwise creates a new Lead client.
+- Weekly availability with days plus start and end times and session types with duration, displayed price and max people; upcoming sessions list with cancel slot that cancels everyone booked.
+- Public booking page where visitors without accounts pick a session type, see open slots for the next two weeks, book with name and email, and receive an on-screen cancellation link to cancel without sign-in.
 
 ## Out of scope
-- Online payments and checkout: Idea says prices are only displayed, nobody pays in the app Instead: Prices shown as text only; no checkout or charge
-- Email notifications and reminders: Idea says no emails are sent Instead: Confirmation and cancellation link shown on screen only
+- Online payments and checkout: Idea states prices are shown for information and nobody pays in the app. Instead: Prices shown as text on session types and booking page; no checkout form or charge.
+- Email confirmations, reminders and notifications: Idea states after booking they see a cancellation link on screen and no emails are sent. Instead: Confirmation and cancellation link shown on screen after booking; designer relies on home dashboard; nothing is sent.
+- Team access and shared lists: Idea is just for me with no shared access. Instead: Single designer account owns all data; no invites or sharing.
 
 ## Assumptions
-- A01 (scope): Only one freelancer uses the private workspace; no teams, collaborators or client logins.
-- A02 (data): Each client has one next follow-up date set from a note; marking done clears it, pushing it adds 7 days.
-- A03 (behavior): Overdue means follow-up date or task due date is before today and not done; overdue follow-ups sort first and overdue tasks are highlighted.
-- A04 (behavior): Open slots are generated by splitting each weekly availability window into back-to-back slots matching the session type duration for the next 14 days, excluding past times.
-- A05 (behavior): Cancelling a session removes it and all its bookings; cancelling a single booking frees one seat and keeps the session for others.
-- A06 (data): Booking email match to an existing client is case-insensitive exact match; no match creates a new Lead client with the booking name and email.
-- A07 (behavior): Deleting a client deletes its projects, tasks, notes and bookings; deleting a project deletes its tasks; sessions without bookings remain until cancelled.
-- A08 (scope): Session types start as the three named types and the freelancer can create, edit and delete them; prices are shown as text only.
+- A01 (scope): All Clients, Notes, Projects, Tasks, Availability rules, SessionTypes, Sessions and Bookings belong to the signed-in designer; each designer sees only their own data and bookers never sign in.
+- A02 (data): Required fields only: Client name and email; Note text; Project name; Task title; Availability weekday, start and end time; SessionType name, duration and max people; Booking name and email. Company, profile text, descriptions and due dates are optional; new Clients default to Lead and new Tasks default to To do / Medium.
+- A03 (behavior): Mark follow-up done clears the follow-up date; Push a week adds 7 days to the existing follow-up date, or to today if missing or already overdue.
+- A04 (behavior): Overdue means follow-up date or Task due date is before today and not done; client list sorts overdue follow-ups first then by nearest date, and overdue tasks are visually highlighted.
+- A05 (behavior): Home shows Sessions dated today, Notes with follow-ups due in the next 7 calendar days including overdue, and Tasks that are overdue and not Done.
+- A06 (behavior): Open slots are generated from weekly availability plus SessionType durations for the next 14 days, excluding past times, full slots and cancelled slots; bookers see only open slots, never other bookers names or emails.
+- A07 (behavior): Booking matches Client by case-insensitive exact email within the designers clients; on match the Booking links to that Client, otherwise a new Lead Client is created with the booking name and email and empty company and profile.
+- A08 (behavior): Designer cancelling a Session removes the slot and all its Bookings; cancelling a single Booking frees one seat and keeps the slot open.
+- A09 (behavior): Deleting a Project deletes its Tasks; deleting a Client deletes its Projects, Tasks under those Projects, and Notes; Sessions remain but Bookings for a deleted Client email stay on the Session for seat history.
+- A10 (scope): Availability starts empty so no slots show until set; the three SessionTypes from the idea (30-min free discovery for 1, 60-min review Rs.4,000 for 1, 2-hour workshop Rs.2,500 per seat up to 8) are pre-created and editable.
 
 ## Questions
-- Q01 (blocking): How should slot start times be calculated inside an availability window? Why: Changes when visitors can book and whether slots match expected calendar times Default: Split each availability window into back-to-back slots matching the session duration starting at the window start
-- Q02: Does the freelancer need to block specific dates like holidays within the next two weeks? Why: Adds exception dates to availability scope Default: No, use weekly availability only and cancel individual slots to block time
+- Q01: Should workshop slots show seats left (for example 3 of 8 left) or only open versus full? Why: Changes what booking data is shown and whether scarcity is used to drive bookings. Default: Show only open versus full without seat counts or other bookers details.
+- Q02: Should past sessions and cancelled bookings stay visible as history? Why: Changes whether history lists and retention are in scope. Default: Upcoming lists show only future items; past sessions and done history are hidden in MVP.

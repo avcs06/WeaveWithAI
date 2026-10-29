@@ -1,0 +1,710 @@
+{
+  "meta": {
+    "artifact": "flows-catalog",
+    "version": 1,
+    "hash": "33894ac54a630e2c930476a7a259a22c88cc9d7f418e797259049d2ed2e68b42",
+    "inputs": {
+      "scope": {
+        "version": 1,
+        "hash": "f35efcc6173484635a0657ff1e9f0250b13af4e886e1773f70134b33f14b9bab"
+      }
+    },
+    "stage": "flows-catalog",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-29T15:37:36.323Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "Discover the studio on the landing page",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what the studio sells and start shopping.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "No data changes; refresh still shows the same studio intro, featured photos and Start shopping entry.",
+        "description": "A visitor arrives on the public landing page and the website shows what the Jaipur studio sells with featured photos, the studio pickup and courier explainer with Rs 99 shipping and free above Rs 1,500, and a Start shopping entry that leads into the shop; nothing is stored."
+      },
+      {
+        "id": "F02",
+        "name": "Browse and filter the shop",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Find pieces that are still available.",
+        "preconditions": [],
+        "outcome": "No data changes; refresh still shows the same list with honest remaining counts and Sold out flags.",
+        "description": "A visitor browses the public shop and the website shows each piece with photo, price and honest remaining counts with zero-stock shown as Sold out; the visitor narrows the list by product type and in-stock only and the filtered list persists for browsing."
+      },
+      {
+        "id": "F03",
+        "name": "View product glaze and size availability",
+        "role": "visitor",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Decide on glaze and size with honest availability.",
+        "preconditions": [
+          "At least one product exists."
+        ],
+        "outcome": "No data changes; refresh still shows the same product with the same per-combo availability.",
+        "description": "A visitor opens a product and the website shows its photos, price, description, glaze and size choices with remaining counts per combo where sold-out combos cannot be chosen; the visitor picks a glaze and size to check availability before ordering."
+      },
+      {
+        "id": "F04",
+        "name": "Place a pay-later guest order",
+        "role": "visitor",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Order chosen pieces for pickup or courier without signing in.",
+        "preconditions": [
+          "At least one product with available stock."
+        ],
+        "outcome": "An Order is created with status New and stock is reduced; refresh still shows the pay-later confirmation with totals and UPI instructions.",
+        "description": "A visitor builds a basket of glaze, size and quantity choices, picks Jaipur studio pickup or courier, optionally applies one percent-off code, enters name, phone and courier address only, and places the order as pay-by-UPI-later; the website enforces that quantity cannot exceed what is left, decrements stock on placement, applies Rs 99 courier fee with free above Rs 1,500 after discount and free pickup, and shows a confirmation with totals and UPI instructions."
+      },
+      {
+        "id": "F05",
+        "name": "Owner sign up",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create the single studio owner account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Owner account created and signed in; refresh still shows the signed-in owner workspace.",
+        "description": "A new studio owner creates the single owner account with email and password and the website signs them into the owner workspace with their own products, glazes, orders and codes."
+      },
+      {
+        "id": "F06",
+        "name": "Owner sign in",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Access the owner workspace.",
+        "preconditions": [
+          "Owner account exists.",
+          "Not signed in."
+        ],
+        "outcome": "Owner is signed in; refresh still shows the signed-in workspace.",
+        "description": "A returning owner signs in with email and password and the website opens their private workspace with products, glazes, orders and discount codes."
+      },
+      {
+        "id": "F07",
+        "name": "Owner sign out",
+        "role": "shopOwner",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "Leave the workspace secure.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "outcome": "Owner is signed out; refresh still shows the signed-out state and the public shop remains visible.",
+        "description": "A signed-in owner signs out and the website closes the workspace and returns to the public shop; public browsing is unaffected."
+      },
+      {
+        "id": "F08",
+        "name": "Track orders and mark packing progress",
+        "role": "shopOwner",
+        "category": "core",
+        "authKind": "none",
+        "goal": "See newest orders first and move them to Packed then Shipped or Picked up.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "outcome": "Order statuses updated to Packed, Shipped or Picked up persist after refresh; list remains new-first with status filter.",
+        "description": "A signed-in owner opens the orders list sorted new-first with placed date, buyer, items, glaze, size, fulfilment, discount and totals including shipping math, filters by New, Packed, Shipped or Picked up, opens an order for detail and marks it Packed then Shipped for courier or Picked up for pickup; the updated statuses stay after refresh."
+      },
+      {
+        "id": "F09",
+        "name": "Add a product",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "List a new piece type with photos, price, sizes, glazes and stock.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "outcome": "New Product is created and visible in the public shop; refresh still shows it.",
+        "description": "A signed-in owner creates a product with name, type, description, price, cover photo validated and previewed, sizes, glazes offered and stock per glaze and size combo; the website validates required name, price, photo and at least one stock quantity and the new piece appears in the public shop."
+      },
+      {
+        "id": "F10",
+        "name": "Edit product and restock",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep price, description, sizes, glazes and per-combo stock honest.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one product exists."
+        ],
+        "outcome": "Product changes are saved and the public shop reflects them after refresh.",
+        "description": "A signed-in owner finds a product in the list by type or stock state, opens it and edits name, type, description, price, photo, sizes, glazes and per-combo stock to keep availability honest; the website saves the changes and the public shop reflects them."
+      },
+      {
+        "id": "F11",
+        "name": "Delete a product",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Remove a piece type no longer sold.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one product exists."
+        ],
+        "outcome": "Product is removed from the shop and stays gone after refresh; past orders keep their snapshot.",
+        "description": "A signed-in owner removes a product no longer sold after confirming; the website takes it out of the public shop while past orders keep their item snapshot."
+      },
+      {
+        "id": "F12",
+        "name": "Manage glazes and spot low stock",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Maintain glaze options and know when a glaze is nearly gone.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "outcome": "Glaze list with low-stock flags persists after refresh and guides the next batch.",
+        "description": "A signed-in owner views all glazes with remaining counts across products where glazes with 5 or fewer pieces left are flagged as nearly gone, and creates, renames or removes glazes to plan the next batch; changes persist and flags update as orders reduce stock."
+      },
+      {
+        "id": "F13",
+        "name": "Manage discount codes",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Offer weekend percent-off codes for Instagram.",
+        "preconditions": [
+          "Signed in as shop owner."
+        ],
+        "outcome": "Discount codes with dates and limits persist after refresh and become usable by buyers.",
+        "description": "A signed-in owner creates percent-off weekend codes with code text, start and end dates and optional total-use limit, and edits or deletes codes when plans change; active codes become usable once per order in checkout and the list persists after refresh."
+      },
+      {
+        "id": "F14",
+        "name": "Correct or remove an order",
+        "role": "shopOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Fix buyer mistakes by editing or deleting an order.",
+        "preconditions": [
+          "Signed in as shop owner.",
+          "At least one order exists."
+        ],
+        "outcome": "Order corrections or removal persist after refresh and stock counts reflect the change.",
+        "description": "A signed-in owner corrects a buyer mistake by editing order contact, address, quantities or status within the honest stock rule, or deletes a mistaken order after confirming with freed stock returned; the corrected list and totals stay after refresh."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Product name",
+        "meaning": "What the piece is called in the shop",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Speckled Chai Mug"
+      },
+      {
+        "id": "FD02",
+        "label": "Product type",
+        "meaning": "Category of piece used for filtering",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "mug",
+          "bowl",
+          "planter",
+          "vase"
+        ],
+        "optionsFrom": "",
+        "example": "mug"
+      },
+      {
+        "id": "FD03",
+        "label": "Product description",
+        "meaning": "Short story and care details that help the buyer decide",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Wheel-thrown stoneware mug with speckled glaze."
+      },
+      {
+        "id": "FD04",
+        "label": "Product price",
+        "meaning": "Selling price in rupees before discount and shipping",
+        "type": "money",
+        "required": true,
+        "min": 1,
+        "max": 100000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "650"
+      },
+      {
+        "id": "FD05",
+        "label": "Product photo",
+        "meaning": "Cover photo the buyer sees; validated and previewed for the session",
+        "type": "url",
+        "required": true,
+        "min": null,
+        "max": 500,
+        "options": [],
+        "optionsFrom": "",
+        "example": "https://example.com/mug-sage.jpg"
+      },
+      {
+        "id": "FD06",
+        "label": "Available sizes",
+        "meaning": "Sizes this product is sold in",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "optionsFrom": "",
+        "example": "Medium"
+      },
+      {
+        "id": "FD07",
+        "label": "Glazes offered",
+        "meaning": "Glaze options this product can be ordered in",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "Glaze",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD08",
+        "label": "Stock quantity for glaze and size combo",
+        "meaning": "How many pieces remain for one glaze and size combination",
+        "type": "integer",
+        "required": true,
+        "min": 0,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "12"
+      },
+      {
+        "id": "FD09",
+        "label": "Glaze selection",
+        "meaning": "Glaze the buyer chose for the piece",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "Glaze",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD10",
+        "label": "Size selection",
+        "meaning": "Size the buyer chose for the piece",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "optionsFrom": "",
+        "example": "Medium"
+      },
+      {
+        "id": "FD11",
+        "label": "Quantity",
+        "meaning": "How many of the chosen glaze and size the buyer wants",
+        "type": "integer",
+        "required": true,
+        "min": 1,
+        "max": 99,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2"
+      },
+      {
+        "id": "FD12",
+        "label": "Buyer name",
+        "meaning": "Who the order is for and who the owner contacts on UPI",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Ananya Sharma"
+      },
+      {
+        "id": "FD13",
+        "label": "Buyer phone",
+        "meaning": "Phone number for pickup coordination and UPI collection",
+        "type": "phone",
+        "required": true,
+        "min": null,
+        "max": 15,
+        "options": [],
+        "optionsFrom": "",
+        "example": "9829012345"
+      },
+      {
+        "id": "FD14",
+        "label": "Fulfilment method",
+        "meaning": "Whether the buyer picks up in Jaipur or wants courier delivery",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Studio pickup",
+          "Courier"
+        ],
+        "optionsFrom": "",
+        "example": "Courier"
+      },
+      {
+        "id": "FD15",
+        "label": "Delivery address",
+        "meaning": "Where the courier should deliver; only asked for courier orders",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 500,
+        "options": [],
+        "optionsFrom": "",
+        "example": "B-12 Malviya Nagar Jaipur 302017"
+      },
+      {
+        "id": "FD16",
+        "label": "Buyer discount code",
+        "meaning": "Weekend code the buyer types to get percent off",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 30,
+        "options": [],
+        "optionsFrom": "",
+        "example": "CLAY10"
+      },
+      {
+        "id": "FD17",
+        "label": "Glaze name",
+        "meaning": "Finish colour option shown to buyers",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 80,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Sage Green"
+      },
+      {
+        "id": "FD18",
+        "label": "Code text",
+        "meaning": "Text buyers type from Instagram to get the discount",
+        "type": "text",
+        "required": true,
+        "min": 3,
+        "max": 30,
+        "options": [],
+        "optionsFrom": "",
+        "example": "CLAYWEEKEND"
+      },
+      {
+        "id": "FD19",
+        "label": "Percent off",
+        "meaning": "How much the code takes off the items total before shipping",
+        "type": "percent",
+        "required": true,
+        "min": 1,
+        "max": 90,
+        "options": [],
+        "optionsFrom": "",
+        "example": "10"
+      },
+      {
+        "id": "FD20",
+        "label": "Start date",
+        "meaning": "First day the code can be used",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-01"
+      },
+      {
+        "id": "FD21",
+        "label": "End date",
+        "meaning": "Last day the code can be used",
+        "type": "date",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-03"
+      },
+      {
+        "id": "FD22",
+        "label": "Usage limit",
+        "meaning": "How many orders can use the code in total; empty means unlimited",
+        "type": "integer",
+        "required": false,
+        "min": 1,
+        "max": 10000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "50"
+      },
+      {
+        "id": "FD23",
+        "label": "Owner email",
+        "meaning": "Login for the single studio owner account",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": 254,
+        "options": [],
+        "optionsFrom": "",
+        "example": "studio@jaipurclay.in"
+      },
+      {
+        "id": "FD24",
+        "label": "Owner password",
+        "meaning": "Secret that protects the owner workspace",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": 128,
+        "options": [],
+        "optionsFrom": "",
+        "example": "clay-studio-123"
+      },
+      {
+        "id": "FD25",
+        "label": "Product type filter",
+        "meaning": "Narrows the shop to one piece type",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "mug",
+          "bowl",
+          "planter",
+          "vase"
+        ],
+        "optionsFrom": "",
+        "example": "mug"
+      },
+      {
+        "id": "FD26",
+        "label": "In-stock only",
+        "meaning": "Hides sold-out pieces when turned on",
+        "type": "boolean",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "true"
+      },
+      {
+        "id": "FD27",
+        "label": "Order status filter",
+        "meaning": "Narrows the owner orders list to one packing status",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "New",
+          "Packed",
+          "Shipped",
+          "Picked up"
+        ],
+        "optionsFrom": "",
+        "example": "New"
+      },
+      {
+        "id": "FD28",
+        "label": "Order status",
+        "meaning": "Where the order is in packing and handover",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "New",
+          "Packed",
+          "Shipped",
+          "Picked up"
+        ],
+        "optionsFrom": "",
+        "example": "Packed"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Owner auth form",
+        "fields": [
+          "FD23",
+          "FD24"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Product form",
+        "fields": [
+          "FD01",
+          "FD02",
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07",
+          "FD08"
+        ]
+      },
+      {
+        "id": "FM03",
+        "name": "Discount code form",
+        "fields": [
+          "FD18",
+          "FD19",
+          "FD20",
+          "FD21",
+          "FD22"
+        ]
+      },
+      {
+        "id": "FM04",
+        "name": "Buyer checkout details form",
+        "fields": [
+          "FD12",
+          "FD13",
+          "FD14",
+          "FD15",
+          "FD16"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "STD01",
+        "name": "Confirm deletion",
+        "steps": [
+          {
+            "id": "STD01.S01",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website asks to confirm the deletion and says what else will be removed with it.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "STD01.A01",
+            "from": "STD01.S01",
+            "kind": "confirm",
+            "condition": "The user confirms.",
+            "websiteResponse": "The website deletes the record and what belongs to it.",
+            "resumesAt": ""
+          },
+          {
+            "id": "STD01.A02",
+            "from": "STD01.S01",
+            "kind": "cancel",
+            "condition": "The user cancels.",
+            "websiteResponse": "Nothing is deleted; the record stays as it was.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A11",
+        "text": "Sizes are Small, Medium and Large where applicable; a product offers at least one size and stock is tracked per glaze/size combo.",
+        "kind": "data",
+        "affects": [
+          "F03",
+          "F04",
+          "F09",
+          "F10"
+        ]
+      },
+      {
+        "id": "A12",
+        "text": "Product photos are simulated uploads: validated and previewed and kept for the session; MVP shows one cover photo per product and that photo is required to list.",
+        "kind": "behavior",
+        "affects": [
+          "F02",
+          "F03",
+          "F09",
+          "F10"
+        ]
+      },
+      {
+        "id": "A13",
+        "text": "Deleting a product or glaze does not delete past orders; orders keep a snapshot of product name, price, glaze and size.",
+        "kind": "behavior",
+        "affects": [
+          "F11",
+          "F12"
+        ]
+      },
+      {
+        "id": "A14",
+        "text": "If the owner deletes an order or lowers its quantity the freed stock returns to the glaze/size count; raising quantity follows the same honest stock rule as checkout.",
+        "kind": "behavior",
+        "affects": [
+          "F04",
+          "F08",
+          "F14"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q03",
+        "question": "Do pieces use standard Small, Medium and Large sizes or custom dimensions per product?",
+        "whyItMatters": "Decides size options, product form fields and per-combo stock tracking.",
+        "defaultAnswer": "Assume Small, Medium and Large cover all piece types for MVP.",
+        "blocking": false
+      }
+    ]
+  }
+}

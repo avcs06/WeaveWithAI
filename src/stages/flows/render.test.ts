@@ -51,6 +51,16 @@ describe('render', () => {
     expect(renderFlows(fromShelves, scope)).toContain('one of the Shelf records');
   });
 
+  it('a multi-choice says any of', () => {
+    const multi = structuredClone(flows);
+    const shelf = multi.fields.find((field) => field.id === 'FD05');
+    if (!shelf) throw new Error('fixture changed');
+    shelf.type = 'multiChoice';
+    expect(renderFlows(multi, scope)).toContain(
+      'any of: To read, Reading, Finished',
+    );
+  });
+
   it('catalog lists every flow with its description and the reusable parts', () => {
     const text = renderCatalog(catalog, scope);
     expect(text).toContain(
