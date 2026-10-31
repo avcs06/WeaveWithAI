@@ -463,7 +463,9 @@ width range, text and lists, with its fixed words inline. A node that stands
 for a slot names it, so words that differ by instance come from the
 instance. The widget's top heading takes its level from the instance, the
 levels below it are relative to it, and the text right under it is sized
-relative to it.
+relative to it. When the flow of a step it serves goes on at a step only
+another screen lists, the control that does the step opens that screen;
+code lists those steps in its input (DS50).
 
 ### Frame (`07frame`)
 
@@ -471,7 +473,8 @@ Medium reasoning, 0.2, output reviewer. One call per used shell, with the
 node guide: it expands the theme's frame into nodes in its regions, draws
 each navigation item its pages need and each screen's frame changes, and
 serves the steps catalog gave the frame, which count on every page that uses
-it.
+it. Its checks solve the shell around an empty page, so a node too tall for
+a fixed-height region fails LAYOUT-071 in its own rounds (DS53).
 
 ### Assemble (`08assemble`)
 
@@ -555,7 +558,7 @@ widths the design system fixes (user, 2026-10-30).
 | THEME-003 | mandatory | When applied to an app: the brand, base, page (divider, backdrop and skeleton included), entity and status colors in `colors.ts` are the theme's (user, 2026-10-30; status, 2026-11-01) |
 | THEME-004 | mandatory | Fonts in the Google catalog with a latin subset; radius values on the DS radius scale; focus ring is halo, offset or glow |
 | THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `background` is colors and gradients only: every color parses, and it loads no image (DS35) |
-| THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits the smallest button and its padding |
+| THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits a button of the theme's default size and its padding |
 | THEME-007 | mandatory | The spacing every page gets from its layout: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages (H-08); the main area and each needed part pad at least their gap (H-06). Only the theme call can change these, so they are checked here and not left to the LAYOUT rules |
 | THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`, `divider` also on every color of the page background, since cards draw their borders with it; `backdrop` darker than the page and the frame |
 | THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
@@ -594,7 +597,7 @@ widths the design system fixes (user, 2026-10-30).
 | DESIGN-025 | mandatory | Every navigation item is a navigation node going to its screen, in a region of a shell used by a page of the item's access |
 | DESIGN-026 | mandatory | An action, navigation or input is a design-system component or a declared new component; `none` is for text, headings, media and layout boxes |
 | DESIGN-027 | mandatory | A node whose size or look differs from the theme's default for its component has an `overrideReason` |
-| DESIGN-028 | mandatory | The copy deck: code builds it from every fixed word and slot, with its own ids, each string once; a step shown with two wordings fails; a frame's link to a navigation item's page says the item's label, and that page's H1 says it too; a frame's wordmark says the app's name |
+| DESIGN-028 | mandatory | The copy deck: code builds it from every fixed word and slot, with its own ids, each string once; a step shown with two wordings is a warning; a frame's link to a navigation item's page says the item's label, and that page's H1 says it too; a frame's wordmark says the app's name |
 | DESIGN-029 | mandatory | Composition: widget ids like `W01`, unique; each screen's parts are widgets and declared components; every widget and component is a part of some screen; at the screen, every part placed by an instance, each instance in a box or a slot of its screen |
 | DESIGN-030 | mandatory | Heading plan: on a page, the instances whose widgets contain a heading take levels: exactly one at level 1, showing the page's title, and levels never skip in reading order; a dialog or drawer has no level 1. In a widget, its top heading comes first at level 1 when it contains one, and the levels below never skip. A widget no longer keeps one level (user, 2026-10-31). In the catalog, a page with a title has a widget with a heading and a `title` words slot |
 | DESIGN-031 | mandatory | Extra states: each state the architect adds to a screen is a state of one of its widgets. Required states and fields come from the processing steps |
@@ -615,6 +618,7 @@ widths the design system fixes (user, 2026-10-30).
 | DESIGN-046 | mandatory | A widget used on several screens serves only steps every one of them serves; a part that differs, such as a header's add button, is a small widget per screen in a parts slot (catalog) |
 | DESIGN-047 | mandatory | A confirmation's steps sit on a dialog of the page that asks, never on the page (architect) |
 | DESIGN-048 | mandatory | A confirmation's words are one sentence each and name what is destroyed: its instances' slot words (screen), a widget's own text when it serves a confirmation (draw) |
+| DESIGN-049 | mandatory | A step whose flow goes on at a step that no screen showing the widget lists, only other screens: a node serving the step opens one of those screens. The next step is the flow's next, or the first step of the subflow the step runs; a screen lists the steps its frame serves too (draw, DS50) |
 
 ### Rendered checks (Phase 7, on prototype pages)
 

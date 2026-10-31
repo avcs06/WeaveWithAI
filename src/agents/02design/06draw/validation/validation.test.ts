@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { Issue } from '../../../../core/issues';
-import { builds, catalog, ctx, plan, theme } from '../../__fixtures__/chain';
+import { builds, catalog, ctx, flows, plan, theme } from '../../__fixtures__/chain';
 import { planAsIa } from '../../02architect/process';
 import { kindOf } from '../../calls';
+import { leadsOf } from '../../rules/helpers';
 import type { Build } from '../schema';
 import { validateDrawn, validateWidget, widgetRules } from './validation';
 
@@ -14,10 +15,11 @@ const build = (id: string): Build => {
   if (!found) throw new Error(`no build for ${id}`);
   return structuredClone(found);
 };
+const leads = (id: string) => leadsOf(widgets.get(id)!, plan, catalog, flows);
 const check = (b: Build, components = newComponents) =>
-  validateWidget(b, widgets.get(b.widget)!, kindOf(b.widget, plan, catalog), components, ctx, theme);
+  validateWidget(b, widgets.get(b.widget)!, leads(b.widget), kindOf(b.widget, plan, catalog), components, ctx, theme);
 const drawn = (b: Build, id: string) =>
-  validateDrawn(b, widgets.get(id)!, kindOf(id, plan, catalog), newComponents, ctx, theme);
+  validateDrawn(b, widgets.get(id)!, leads(id), kindOf(id, plan, catalog), newComponents, ctx, theme);
 
 describe('the reading-list widgets', () => {
   it('pass every draw check, warnings included', () => {
@@ -27,7 +29,7 @@ describe('the reading-list widgets', () => {
 
 describe('a draw call', () => {
   it('pairs each widget rule with a test', () => {
-    expect(widgetRules.map((r) => r.id)).toEqual(['DESIGN-030', 'DESIGN-032', 'DESIGN-033', 'DESIGN-044', 'DESIGN-048']);
+    expect(widgetRules.map((r) => r.id)).toEqual(['DESIGN-030', 'DESIGN-032', 'DESIGN-033', 'DESIGN-044', 'DESIGN-048', 'DESIGN-049']);
   });
 
   it("fails DESIGN-048 when a confirmation's own text says two sentences or names no record, and leaves other text alone", () => {
@@ -89,6 +91,37 @@ describe('a draw call', () => {
     const missing = build('W09');
     missing.nodes = missing.nodes.filter((n) => n.newComponent !== 'TitleCover');
     expect(at(missing)).toContain('W09');
+  });
+
+  it('leads a step to the screens that list the next step of its flow, or the first step of the subflow it runs', () => {
+    const steps = (id: string) => leads(id).map((l) => [l.step, l.next, l.screens.map((s) => s.id)]);
+    expect(steps('W05')).toEqual([['F03.S01', 'F03.S02', ['S05']]]);
+    expect(steps('W08')).toEqual([['F05.S02', 'STD01.S01', ['S07']]]);
+    // F04.S01 goes on at F04.S02, which the shelf lists itself.
+    expect(steps('W06').map(([step]) => step)).not.toContain('F04.S01');
+  });
+
+  it("leads a step that runs a shared subflow only to the screens that list something of the step's own flow", () => {
+    const two = structuredClone(plan);
+    const confirm = two.screens.find((s) => s.id === 'S07')!;
+    two.screens.push({ ...structuredClone(confirm), id: 'S08', name: 'Remove this shelf?', flowSteps: ['STD01.S01'] });
+    const at = () => leadsOf(widgets.get('W08')!, two, catalog, flows).map((l) => l.screens.map((s) => s.id));
+    expect(at()).toEqual([['S07']]);
+    confirm.flowSteps = ['STD01.S01'];
+    expect(at()).toEqual([]);
+  });
+
+  it('fails DESIGN-049 at the control that does a step when it does not open the screen its flow goes on to', () => {
+    const b = build('W05');
+    const add = b.nodes.find((n) => n.flowSteps.includes('F03.S01'))!;
+    expect(add.navigatesTo).toBe('S05');
+    add.navigatesTo = '';
+    expect(check(b).filter((i) => i.rule === 'DESIGN-049').map((i) => [i.at, i.message])).toEqual([
+      [
+        add.id,
+        `W05 serves F03.S01, and the flow goes on at F03.S02 on S05 Add a book. The control that does F03.S01 opens that screen. Set navigatesTo of ${add.id} to S05.`,
+      ],
+    ]);
   });
 
   it('fails DESIGN-042 for a shape sized by content', () => {

@@ -156,7 +156,7 @@ Navigation: Your shelf → S04 (signedIn), Sign in → S02 (public).
 
 The frame of every framed app page, from the theme's app layout. Frames S04, S06.
 
-- SH1.r1 top, 56 tall, row gap 3 padding 3 align center justify between: start: the wordmark; end: the Shelf link
+- SH1.r1 top, 72 tall, row gap 3 padding 3 align center justify between: start: the wordmark; end: the Shelf link
   - [Truncate] Shelf \`SH1.n01\`
   - [Button sm ghost · navigation] Your shelf → S04 (72 wide; over the defaults: Navigation in the top bar reads as a link, not a call to action.) \`SH1.n02\`
 
@@ -164,7 +164,7 @@ The frame of every framed app page, from the theme's app layout. Frames S04, S06
 
 The frame of every framed marketing page, from the theme's marketing layout. Frames S01.
 
-- SH2.r1 top, over the page, 64 tall, row gap 4 padding 4 align center justify between: start: the wordmark; end: Sign in
+- SH2.r1 top, over the page, 72 tall, row gap 4 padding 4 align center justify between: start: the wordmark; end: Sign in
   - [Truncate] Shelf \`SH2.n01\`
   - [Button sm ghost · navigation] Sign in → S02 (over the defaults: Navigation in the top bar reads as a link, not a call to action.) \`SH2.n02\`
 

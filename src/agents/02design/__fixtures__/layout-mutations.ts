@@ -173,5 +173,9 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
   'LAYOUT-066': edit((s) => (node(s, 'S05.n08').layout!.gap = '1')),
   'LAYOUT-067': edit((s) => (node(s, 'S06.n01').look = 'ghost')),
   'LAYOUT-070': edit((s) => (section(s, 'S01.sec1').layout.padding = '0')),
-  'LAYOUT-071': edit((s) => (node(s, 'SH1.n02').size = 'md')),
+  // An md button, 40 tall, in a 56 tall bar with 12 above and below it.
+  'LAYOUT-071': edit((s) => {
+    node(s, 'SH1.n02').size = 'md';
+    find(find(s.shells, 'SH1').regions, 'SH1.r1').box.heightPx = 56;
+  }),
 };

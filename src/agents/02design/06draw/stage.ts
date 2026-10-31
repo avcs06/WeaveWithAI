@@ -9,6 +9,7 @@ import { planAsIa, type Processed as Plan } from '../02architect/process';
 import type { Defined, Processed as Catalog } from '../03catalog/process';
 import { caller, designInputs, kindOf } from '../calls';
 import { withFixedGaps } from '../gaps';
+import { leadsOf } from '../rules/helpers';
 import {
   widgetReviewGuides,
   widgetsSystemPrompt,
@@ -62,6 +63,7 @@ function drawing(ctx: StageContext, inv: Inventory) {
     const widget = widgets.get(id);
     if (!widget) throw new Error(`the catalog has no widget ${id}`);
     const fixed = (build: Build) => withFixedGaps(build, widget.kind === 'list' || widget.kind === 'cards');
+    const leads = leadsOf(widget, plan, catalog, flows);
     const { output, model } = await call({
       stage: `design-draw-${id}${start ? '-fix' : ''}`,
       schema: Build,
@@ -69,7 +71,7 @@ function drawing(ctx: StageContext, inv: Inventory) {
       system: widgetsSystemPrompt(brief, inv),
       user: widgetsUserMessage(widget, plan, catalog, flows, scope, brief, theme),
       validate: (build) =>
-        validateDrawn(fixed(build), widget, kindOf(id, plan, catalog), newComponents, context, theme),
+        validateDrawn(fixed(build), widget, leads, kindOf(id, plan, catalog), newComponents, context, theme),
       review: start ? undefined : widgetReviewGuides(),
       maxTokens: DRAW_MAX_TOKENS,
       reasoningEffort: DRAW_EFFORT,

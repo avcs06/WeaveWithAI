@@ -81,6 +81,7 @@ describe('design rules on the reading-list fixture', () => {
     expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
     copy.nodes.push({ ...like('S04.n06'), id: 'S04.n31', order: 9, text: 'New book' });
     expect(design(copy).map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-028', 'F03.S01']);
+    expect(design(copy).find((i) => i.rule === 'DESIGN-028' && i.at === 'F03.S01')?.severity).toBe('warning');
   });
 
   it("DESIGN-028 keeps a frame's wordmark to the app's name, even when it links to a page with a navigation item", () => {
@@ -90,7 +91,30 @@ describe('design rules on the reading-list fixture', () => {
     Object.assign(mark, { role: 'navigation', navigatesTo: item.screen });
     expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
     mark.text = item.label;
-    expect(design(copy).filter((i) => i.rule === 'DESIGN-028').map((i) => i.at)).toEqual(['SH1.n01']);
+    expect(design(copy).filter((i) => i.rule === 'DESIGN-028').map((i) => [i.at, i.severity])).toEqual([['SH1.n01', 'mandatory']]);
+  });
+
+  it("DESIGN-028 holds a frame's link to its navigation item's label as mandatory", () => {
+    const copy = structuredClone(screens);
+    copy.nodes.find((n) => n.id === 'SH1.n02')!.text = 'Home';
+    expect(design(copy).filter((i) => i.rule === 'DESIGN-028').map((i) => [i.at, i.severity])).toEqual([['SH1.n02', 'mandatory']]);
+  });
+
+  it('DESIGN-028 leaves a shell box whose `what` mentions the wordmark to the leaf it holds', () => {
+    const copy = structuredClone(screens);
+    const mark = copy.nodes.find((n) => n.id === 'SH1.n01')!;
+    copy.nodes.push({
+      ...structuredClone(mark),
+      id: 'SH1.n03',
+      what: 'top wordmark and navigation column',
+      component: 'none',
+      typeScale: 'none',
+      text: 'Menu',
+      role: 'container',
+      layout: { direction: 'column', gap: '2', padding: '0', columns: 0, align: 'start', justify: 'start', wrap: false },
+    });
+    mark.parent = 'SH1.n03';
+    expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
   });
 
   it('pairs each design rule with exactly one mutation; DESIGN-007 is dropped', () => {

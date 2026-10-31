@@ -173,7 +173,8 @@ recorded.
       Added 2026-10-30 (user): the solver draws a fixed region at its height
       whatever its nodes need, so a clipped bar passed every other rule.
       Text in a fixed-height region is single-line with an ellipsis, so its
-      height is exact (user, 2026-10-31, DS28).
+      height is exact (user, 2026-10-31, DS28). The frame call runs it on
+      its shell alone, and assemble runs it again (DS53).
 
 ## J. Dialogs, popovers and toasts
 

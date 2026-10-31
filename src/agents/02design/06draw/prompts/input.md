@@ -1,4 +1,4 @@
-<!-- User message of a draw call (DS23). Placeholders: widget, steps, components, screens, vocabulary, look. -->
+<!-- User message of a draw call (DS23). Placeholders: widget, steps, components, screens, leads, vocabulary, look. -->
 # To draw
 
 The widget's definition: what it holds, its narrowest and widest width in px, its steps, fields, data and states, whether it contains a heading, its slots and the new components it holds.
@@ -22,6 +22,12 @@ The new components the widget holds, as the architect described them, with their
 The screens a node can open with `navigatesTo`.
 
 {{screens}}
+
+# Where the flow goes on
+
+The steps whose flow goes on on another screen, each with that screen. The control that does the step opens it with `navigatesTo`.
+
+{{leads}}
 
 # Vocabulary
 

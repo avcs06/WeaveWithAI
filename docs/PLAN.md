@@ -1392,35 +1392,47 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - A rule that a component a widget holds is never also a part of the
     screen was dropped (user): a small reusable component can be both.
 
-- [ ] **DS50** A step that goes on to another screen links there (60 min). Depends: DS49
+- [x] **DS50** A step that goes on to another screen links there (60 min) (done 2026-11-01). Depends: DS49
   - Why: in the ecommerce run of 2026-11-01 01:50 no control opens S04
     Order confirmation or S11 Order detail, so an owner cannot open an
     order and a checkout never reaches its confirmation. Severe (user).
-  - Step file: `docs/steps/65-DS50-step-links.md`. Ready, not run yet.
+  - Step file: `docs/steps/65-DS50-step-links.md`.
+  - Of several screens that run a shared subflow, a lead keeps those that
+    list something of the step's own flow. Without that, a note's delete in
+    the freelancer run led to five confirm dialogs of other records.
 
-- [ ] **DS51** The wordmark is a leaf (10 min). Depends: DS45
+- [x] **DS51** The wordmark is a leaf (10 min) (done 2026-11-01). Depends: DS45
   - Why: in the freelancer run of 2026-11-01 01:50 boxes whose `what`
     mentions the wordmark matched as the wordmark, so the wireframes drew
     the logo over the sidebar's navigation.
-  - Step file: `docs/steps/66-DS51-wordmark-leaf.md`. Ready, not run yet.
+  - Step file: `docs/steps/66-DS51-wordmark-leaf.md`.
 
-- [ ] **DS52** Step wording is a warning (10 min). Depends: DS51
+- [x] **DS52** Step wording is a warning (10 min) (done 2026-11-01). Depends: DS51
   - Why: DESIGN-028's step wording made 24 of the 33 known issues of the
     three runs of 2026-11-01, mostly controls in error states or tagged
     with a step they do not do (user: a noisy check becomes a warning).
-  - Step file: `docs/steps/67-DS52-step-wording-warning.md`. Ready, not
-    run yet.
+  - Step file: `docs/steps/67-DS52-step-wording-warning.md`.
 
-- [ ] **DS53** A fixed-height region fits what the frame puts in it (65 min). Depends: DS42
+- [x] **DS53** A fixed-height region fits what the frame puts in it (65 min) (done 2026-11-01). Depends: DS42
   - Why: LAYOUT-071 stayed known in all three runs of 2026-11-01: THEME-006
     sizes a fixed bar for the smallest button while frames place the
     default size, and the frame never checks its regions in its own rounds.
-  - Step file: `docs/steps/68-DS53-fixed-region-fit.md`. Ready, not run yet.
+  - Step file: `docs/steps/68-DS53-fixed-region-fit.md`.
+  - The screens fixture's shells mirror the theme's layouts, so their
+    headers went to 72 too, and the LAYOUT-071 mutation sets its bar back
+    to 56 to keep its md button too tall.
 
-- [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
+- [ ] **DS54** Each delete that asks first has its own confirm dialog (30 min). Depends: DS50
+  - Found in DS50: in the freelancer run of 2026-11-01 01:50 deleting a
+    note (F09.S05) and a task (F17.S02) run the confirm subflow, but the
+    architect gave them no dialog. The five confirm dialogs there belong to
+    other records, so neither delete can ask first.
+
+- [x] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min) (dropped 2026-11-01, DS52). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a
     wording on its own, so they may still differ.
+  - Dropped: DS52 made the step wording a warning, so nothing routes it.
 
 - [ ] **DS29** Fallback: design ends at invent (1 h). Depends: F15
   - Why: the MVP backup (user, 2026-10-31). Pick it up only if the design

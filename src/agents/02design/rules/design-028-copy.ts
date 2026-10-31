@@ -1,9 +1,9 @@
 import type { Issue } from '../../../core/issues';
-import { defineRule } from '../../../core/rules';
-import { ACTIONS, type ScreensInput } from './helpers';
+import { defineRule, issue } from '../../../core/rules';
+import { ACTIONS, isWordmark, type ScreensInput } from './helpers';
 
 /**
- * DESIGN-028 · mandatory
+ * DESIGN-028 · mandatory (a step shown with two wordings is a warning)
  * Code builds the copy deck from every word shown (DS23), so the rule checks
  * what a deck cannot fix: one step is shown with one wording everywhere (not a
  * node showing a record's value, whose words differ by record, and not a
@@ -11,8 +11,10 @@ import { ACTIONS, type ScreensInput } from './helpers';
  * frame's link to a navigation item's page says the item's label, and a page
  * with a navigation item has that label as its level-1 heading. A frame's
  * wordmark is the logo, so it says the app's name wherever it links (DS45).
+ * The step wording only warns (user, 2026-11-01): most hits are controls in
+ * error states or tagged with a step they do not do.
  * Pass: "Add book" on every control of F03.S01; the Shelf item and its H1 both "Your shelf".
- * Fail: "Add book" on the shelf and "New book" in the empty state, both serving F03.S01.
+ * Fail: the app frame's Shelf link says "Home". "Add book" and "New book" both serving F03.S01 warn.
  */
 export const rule = defineRule<ScreensInput>(
   'DESIGN-028',
@@ -20,7 +22,7 @@ export const rule = defineRule<ScreensInput>(
   ({ screens, ctx }, fail) => {
     const issues: Issue[] = [];
     const shells = new Set(screens.shells.flatMap((s) => s.regions.map((r) => r.id)));
-    const wordmark = (n: (typeof screens.nodes)[number]) => shells.has(n.section) && /wordmark/i.test(n.what);
+    const wordmark = (n: (typeof screens.nodes)[number]) => shells.has(n.section) && isWordmark(n);
     const app = ctx.scope.app.name;
     for (const node of screens.nodes.filter((n) => wordmark(n) && n.text !== app))
       issues.push(
@@ -40,7 +42,9 @@ export const rule = defineRule<ScreensInput>(
     for (const [step, texts] of wordings)
       if (texts.size > 1)
         issues.push(
-          fail(
+          issue(
+            'DESIGN-028',
+            'warning',
             `${step} is shown as ${[...texts].map((t) => `"${t}"`).join(' and ')}. One step keeps one wording on every control that serves it. Pick one of those, and give it to every control that serves ${step}.`,
             step,
           ),

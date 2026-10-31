@@ -824,7 +824,7 @@
             "width": "fill",
             "widthPx": 0,
             "height": "fixed",
-            "heightPx": 56,
+            "heightPx": 72,
             "minHeightPx": 0
           },
           "layout": {
@@ -853,7 +853,7 @@
             "width": "fill",
             "widthPx": 0,
             "height": "fixed",
-            "heightPx": 64,
+            "heightPx": 72,
             "minHeightPx": 0
           },
           "layout": {

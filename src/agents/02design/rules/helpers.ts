@@ -49,8 +49,10 @@ export type ScreenInput = {
   width: number;
   gapPx: number;
 };
-/** One widget as its call built it, with the catalog's definition of it. */
-export type WidgetInput = { build: Build; widget: Defined; ctx: DesignContext };
+/** A step whose flow goes on at `next`, which only other screens list: the control that does `step` opens one of `screens`. */
+export type Lead = { step: string; next: string; screens: { id: string; name: string }[] };
+/** One widget as its call built it, with the catalog's definition of it and its leads. */
+export type WidgetInput = { build: Build; widget: Defined; leads: Lead[]; ctx: DesignContext };
 /** A component's root box as invent drew it, with the width range catalog gave it. */
 export type ComponentInput = {
   name: string;
@@ -91,6 +93,39 @@ export const confirmingSteps = (flows: Flows) =>
   flows.subflows
     .filter((s) => s.alternatives.some((a) => a.kind === 'confirm'))
     .flatMap((s) => s.steps.map((step) => step.id));
+
+/**
+ * Where the flow of each step `widget` serves goes on: the next step of its
+ * flow, or the first step of the subflow it runs, when no screen showing the
+ * widget lists it. A screen lists the steps its frame serves too. Several
+ * flows share a subflow, so of several screens that run it, the lead keeps
+ * those that list something of the step's own flow.
+ */
+export function leadsOf(widget: Defined, plan: Plan, catalog: Catalog, flows: Flows): Lead[] {
+  const listed = (screen: string) => [
+    ...(plan.screens.find((s) => s.id === screen)?.flowSteps ?? []),
+    ...(catalog.screens.find((s) => s.screen === screen)?.frameSteps ?? []),
+  ];
+  const shows = catalog.screens.filter((s) => s.parts.includes(widget.id)).map((s) => s.screen);
+  const subflows = new Map(flows.subflows.map((s) => [s.id, s]));
+  return [...flows.flows, ...flows.subflows].flatMap(({ id: flow, steps }) =>
+    steps.flatMap((step, i) => {
+      if (!widget.flowSteps.includes(step.id)) return [];
+      const next = (step.subflow ? subflows.get(step.subflow)?.steps[0] : steps[i + 1])?.id;
+      if (!next || shows.some((screen) => listed(screen).includes(next))) return [];
+      const all = plan.screens.filter((s) => listed(s.id).includes(next));
+      const screens = (step.subflow && all.length > 1
+        ? all.filter((s) => listed(s.id).some((id) => id.startsWith(`${flow}.`)))
+        : all
+      ).map(({ id, name }) => ({ id, name }));
+      return screens.length ? [{ step: step.id, next, screens }] : [];
+    }),
+  );
+}
+
+/** The wordmark is the leaf that shows the app's name; a box whose `what` mentions it only holds it (DS51). */
+export const isWordmark = (node: Pick<DesignNode, 'what' | 'role'>) =>
+  node.role !== 'container' && /wordmark/i.test(node.what);
 
 /** The screen an id belongs to: `S03` of `S03.sec2` or `S03.n07`; the shell `SH1` of `SH1.n01`. */
 export const screenOf = (id: string) => id.split('.')[0] ?? '';

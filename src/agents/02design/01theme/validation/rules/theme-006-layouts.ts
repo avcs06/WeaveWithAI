@@ -7,8 +7,8 @@ import type { ThemeInput } from '../helpers';
  * THEME-006 · mandatory
  * In each page layout, a needed header, sidebar or footer holds something and
  * a needed sidebar has a width; the two sidebars sit on different sides; a
- * fixed container has a width; a header or footer of fixed height fits at
- * least the smallest button and its padding (LAYOUT-071 measures the rest).
+ * fixed container has a width; a header or footer of fixed height fits a
+ * button of the default size and its padding (LAYOUT-071 measures the rest).
  * Pass: the reading-list app layout, a header with the wordmark and the shelf.
  * Fail: a needed sidebar 0 wide.
  */
@@ -18,11 +18,9 @@ export const rule = defineRule<ThemeInput>(
   ({ theme, inventory }, fail) => {
     const issues: Issue[] = [];
     const px = sizes(inventory, []).spacing;
-    const button = Math.min(
-      ...Object.values(
-        inventory.components.find((c) => c.name === 'Button')?.box ?? {},
-      ).flatMap((box) => (box.height ? [box.height] : [])),
-    );
+    const size = theme.defaults.Button?.size || 'md';
+    const box = inventory.components.find((c) => c.name === 'Button')?.box;
+    const button = box?.[size]?.height ?? box?.md?.height ?? 0;
     for (const [kind, layout] of Object.entries(theme.layouts)) {
       const { header, sidebar, extraSidebar, footer, main } = layout;
       const empty = (part: string) =>
@@ -42,7 +40,7 @@ export const rule = defineRule<ThemeInput>(
         if (bar.needed && bar.heightPx > 0 && bar.heightPx < least)
           issues.push(
             fail(
-              `The ${kind} ${part} is ${bar.heightPx} tall, which does not fit a ${button} tall button and its padding; make it at least ${least}, or 0 to fit its content.`,
+              `The ${kind} ${part} is ${bar.heightPx} tall, which does not fit a ${button} tall ${size} button and its padding; make it at least ${least}, or 0 to fit its content.`,
               `${kind}.${part}.heightPx`,
             ),
           );

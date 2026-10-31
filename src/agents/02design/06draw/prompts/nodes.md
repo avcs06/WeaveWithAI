@@ -56,6 +56,7 @@
 - `navigatesTo`: the screen an action or a navigation opens. "" otherwise.
   - A navigation always opens a screen. The exception is a navigation whose component changes the view in place: Tab, Tabs, Pagination, Accordion or Collapsible.
   - A node on the parent page opens each dialog or drawer.
+  - When the flow of a step goes on on another screen, the control that does the step opens that screen.
 
 Write every word in this voice: {{voice}}.
 

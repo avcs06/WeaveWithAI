@@ -19,7 +19,11 @@ A shell is the frame of one page kind, made of regions such as a header. Every f
 - A wordmark may link home, under the app's name. Say wordmark in its `what`: the theme sets its font, weight, case, spacing and color.
 - Serve every step the input gives the frame. Put each step on the control that handles it, such as a sign-out action in the account menu.
 - Each page shows its own title. So the frame has no level-1 heading.
-- Text in a region of fixed height stays on one line. Make it a Truncate.
+- A region of fixed height holds every node inside its padding. The input gives its height and padding.
+  - A node there is at most the height less the padding above and below it.
+  - Use a control at size sm when the theme's default size does not fit.
+  - A search field there has no visible label.
+  - Text there stays on one line. Make it a Truncate.
 
 ## Changes for a page
 

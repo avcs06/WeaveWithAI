@@ -52,6 +52,16 @@ describe('a frame call', () => {
     expect(check(f, signOutInFrame())).toEqual([]);
   });
 
+  it('fails LAYOUT-071 for an md button, 40 tall, in a 64 tall bar with 16 above and below it, and passes at 72', () => {
+    const f = frame('SH2');
+    f.nodes.find((n) => n.id === 'SH2.n02')!.size = 'md';
+    const low = structuredClone(theme);
+    low.layouts.marketing.header.heightPx = 64;
+    const issues = validateFrame(f, plan, frameStepsOf(plan, catalog, shell('SH2')), ctx, low);
+    expect(issues.map((i) => [i.rule, i.at])).toEqual([['LAYOUT-071', 'SH2.r1']]);
+    expect(check(f)).toEqual([]);
+  });
+
   it("fails DESIGN-001 for a change of a page the frame does not frame, an added id not like the change's, and a removed node the shell lacks", () => {
     const f = frame('SH1');
     f.changes.push(

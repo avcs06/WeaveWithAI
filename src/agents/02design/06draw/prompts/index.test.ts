@@ -32,4 +32,14 @@ describe('the draw prompt', () => {
     expect(widgetsUserMessage(defined('W09'), plan, catalog, flows, scope, brief, theme)).toContain('"name": "TitleCover"');
     expect(widgetsUserMessage(defined('W05'), plan, catalog, flows, scope, brief, theme)).not.toContain('"name": "TitleCover"');
   });
+
+  it('names the screen each step goes on to, or none', () => {
+    const goesOn = (id: string) => {
+      const message = widgetsUserMessage(defined(id), plan, catalog, flows, scope, brief, theme);
+      const start = message.indexOf('# Where the flow goes on');
+      return message.slice(start, message.indexOf('# Vocabulary', start));
+    };
+    expect(goesOn('W01')).toContain('F01.S01 → S03 Sign up\nF02.S01 → S02 Sign in');
+    expect(goesOn('W10')).toContain('None.');
+  });
 });

@@ -13,7 +13,8 @@ import { widgetRule as design033 } from '../../rules/design-033-widget-states';
 import { rule as design042 } from '../../rules/design-042-shape-box';
 import { rule as design044 } from '../../rules/design-044-slots-drawn';
 import { widgetRule as design048 } from '../../rules/design-048-confirmation-words';
-import type { DesignContext, WidgetInput } from '../../rules/helpers';
+import { widgetRule as design049 } from '../../rules/design-049-step-links';
+import type { DesignContext, Lead, WidgetInput } from '../../rules/helpers';
 import type { NewComponent } from '../../schema';
 import { nodeRules } from '../../rules/index';
 import type { Build, ModelNode } from '../schema';
@@ -22,7 +23,7 @@ import type { Build, ModelNode } from '../schema';
 // alone, and the layout rules inside it, solved at its narrowest and widest.
 
 /** Rules on one widget's build against its definition. */
-export const widgetRules: readonly Rule<WidgetInput>[] = [design030, design032, design033, design044, design048];
+export const widgetRules: readonly Rule<WidgetInput>[] = [design030, design032, design033, design044, design048, design049];
 
 /** The node rules that hold for a widget alone; a screen's states and headings are DESIGN-033's and 030's there. */
 export const widgetNodeRules = nodeRules.filter(
@@ -65,13 +66,14 @@ export function aloneChecks(
 export function validateWidget(
   build: Build,
   widget: Defined,
+  leads: Lead[],
   kind: 'app' | 'marketing',
   components: NewComponent[],
   ctx: DesignContext,
   theme: Theme,
 ): Issue[] {
   return [
-    ...runRules(widgetRules, { build, widget, ctx }),
+    ...runRules(widgetRules, { build, widget, leads, ctx }),
     ...aloneChecks(
       widget.id,
       build.nodes,
@@ -88,12 +90,13 @@ export function validateWidget(
 export function validateDrawn(
   build: Build,
   widget: Defined,
+  leads: Lead[],
   kind: 'app' | 'marketing',
   components: NewComponent[],
   ctx: DesignContext,
   theme: Theme,
 ): Issue[] {
   return build.widget === widget.id
-    ? validateWidget(build, widget, kind, components, ctx, theme)
+    ? validateWidget(build, widget, leads, kind, components, ctx, theme)
     : [issue('DESIGN-029', 'mandatory', `The answer builds ${build.widget}, but this call builds ${widget.id}. The answer builds only the widget this call was given. Set widget to ${widget.id}, and build ${widget.id}.`, build.widget)];
 }

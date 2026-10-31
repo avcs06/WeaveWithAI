@@ -1,6 +1,7 @@
 import type { Rect, ScreenSkeleton, Skeleton } from './skeleton/skeleton';
 import type { DesignNode, Screens } from '../schema';
 import type { NodeLayout } from '../schema-boxes';
+import { isWordmark } from '../rules/helpers';
 
 // 02-design/08-wireframes.html (DS6b): every screen of the skeleton drawn as lines at
 // desktop width. One self-contained file: inline styles, no scripts, no
@@ -121,7 +122,7 @@ function shape(
   const over =
     rect.overflowX || x + width > viewportWidth + 0.5 ? ' overflow' : '';
   const title = tooltip(rect, node);
-  if (logo && node?.id.startsWith('SH') && /wordmark/i.test(node.what))
+  if (logo && node?.id.startsWith('SH') && isWordmark(node))
     return `<g>${title}<rect class="hit${over}" ${box}/>${wordmark(rect, node, logo, size)}</g>`;
   switch (rect.kind) {
     case 'frame':

@@ -29,6 +29,31 @@ describe('renderWireframes', () => {
     expect(html).not.toContain('SHELF</text>');
   });
 
+  it('draws a shell box whose `what` mentions the wordmark as a container, and only the leaf inside it as the logo', () => {
+    const logo = { family: 'Playfair Display', weight: '600', case: 'upper' as const, letterSpacing: '0.06em', color: '#1F4A4C' };
+    const held = structuredClone(screens);
+    const mark = held.nodes.find((node) => node.id === 'SH2.n01')!;
+    held.nodes.push({
+      ...structuredClone(mark),
+      id: 'SH2.n03',
+      what: 'a row holding the wordmark',
+      component: 'none',
+      typeScale: 'none',
+      text: '',
+      role: 'container',
+      layout: { direction: 'row', gap: '2', padding: '0', columns: 0, align: 'center', justify: 'start', wrap: false },
+    });
+    mark.parent = 'SH2.n03';
+    const branded = renderWireframes(skeleton(held, inventory), held, 'reading-list', logo);
+    const drawn = (id: string) => {
+      const start = branded.indexOf(`<g><title>${id} · `);
+      return branded.slice(start, branded.indexOf('</g>', start));
+    };
+    expect(drawn('SH2.n03')).toContain('<rect class="container"');
+    expect(drawn('SH2.n03')).not.toContain('Playfair Display');
+    expect(drawn('SH2.n01')).toContain('fill="#1F4A4C">SHELF</text>');
+  });
+
   it('draws every screen at desktop width, with a hover title per rectangle', () => {
     for (const screen of solved.screens) {
       const start = html.indexOf(`<section class="screen" id="${screen.id}">`);

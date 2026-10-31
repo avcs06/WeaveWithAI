@@ -11,7 +11,7 @@ import type { Processed as Plan } from '../../02architect/process';
 import type { Defined, Processed as Catalog } from '../../03catalog/process';
 import { HEADING_SIZES } from '../../08assemble/nodes';
 import { type Kind, look, screenList } from '../../prompts';
-import { stepFields } from '../../rules/helpers';
+import { leadsOf, stepFields } from '../../rules/helpers';
 
 /** The node guide the draw, invent and frame prompts share, with each level's heading size. */
 export function nodeGuide(brief: Brief): string {
@@ -35,7 +35,7 @@ export function widgetsSystemPrompt(brief: Brief, inv: Inventory): string {
 /**
  * A draw call's user message: the widget it draws with its definition, the
  * steps it serves with their fields, the new components it holds, the
- * screens, the vocabulary and the look.
+ * screens, where its steps' flows go on, the vocabulary and the look.
  */
 export function widgetsUserMessage(
   widget: Defined,
@@ -58,6 +58,9 @@ export function widgetsUserMessage(
       .map((s) => plan.screens.find((x) => x.id === s.screen)?.kind ?? 'app'),
   );
   const holds = new Set(widget.newComponents);
+  const leads = leadsOf(widget, plan, catalog, flows).map(
+    ({ step, screens }) => `${step} → ${screens.map((s) => `${s.id} ${s.name}`).join(' or ')}`,
+  );
   return fillPrompt(load('./input.md'), {
     widget: json(widget),
     steps: json({
@@ -73,6 +76,7 @@ export function widgetsUserMessage(
         .map((c) => ({ ...c, ...catalog.components.find((x) => x.name === c.name) })),
     ),
     screens: json(screenList(plan)),
+    leads: leads.join('\n') || 'None.',
     vocabulary: json(scope.vocabulary),
     look: json(look(brief, theme, [...kinds])),
   });

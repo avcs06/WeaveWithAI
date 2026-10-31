@@ -228,10 +228,11 @@ describe('theme rules', () => {
     expect(at((t) => (t.layouts.app.main.container = 'fixed'))).toEqual([
       'app.main.maxWidthPx',
     ]);
-    // A 32 tall button and 12 above and below it need 56.
-    expect(at((t) => (t.layouts.app.header.heightPx = 48))).toEqual([
-      'app.header.heightPx',
+    // The default md button is 40 tall; with 16 above and below it needs 72.
+    expect(at((t) => (t.layouts.marketing.header.heightPx = 64))).toEqual([
+      'marketing.header.heightPx',
     ]);
+    expect(at((t) => (t.layouts.marketing.header.heightPx = 72))).toEqual([]);
     expect(at((t) => (t.layouts.app.header.heightPx = 0))).toEqual([]);
   });
 
