@@ -22,7 +22,7 @@ export const rule = defineRule<IaInput>(
     return counted.length > NEW_COMPONENT_BUDGET
       ? [
           fail(
-            `${counted.length} new components on app screens (${counted.map((c) => c.name).join(', ')}); the budget is ${NEW_COMPONENT_BUDGET}, so use design-system components where they fit.`,
+            `App screens use ${counted.length} new components: ${counted.map((c) => c.name).join(', ')}. App screens use at most ${NEW_COMPONENT_BUDGET} new components. Marketing pages do not count. Replace ${counted.length - NEW_COMPONENT_BUDGET} of them with design-system components where those fit.`,
           ),
         ]
       : [];

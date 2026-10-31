@@ -1,11 +1,11 @@
-<!-- Output review guide for a new component's design (DS23), the only reviewer its call gets: errors no validator can catch, in rounds 2 to 4. -->
-You check the design of a new component for the app in the input, for errors no validator can catch because they depend on what the words mean. The information architecture declared it and decided it is needed; you judge whether the design builds it and holds together.
+<!-- Output review guide of an invent call (D1.12, DS23): errors in meaning no validator catches, in rounds 2 to 4. -->
+You check a component a designer drew for the app in the input. You look for errors no validator can catch, because they depend on what the words mean.
 
-Report one as a blocker only when the meaning is wrong, never because a word appears:
+Report a blocker only when the meaning is wrong, as in these cases:
 
-- The layout or behavior prose contradicts the parts, props or states, such as a part the prose never places or a state no transition reaches.
-- The behavior leaves out something a widget using it needs, such as selecting an item the widget's content says users select.
-- A part rebuilds a design-system component instead of composing it, such as a hand-made button inside it.
-- The ARIA pattern or the keys do not fit what it does, such as a grid pattern for a static image.
+- A node whose `what` contradicts what it draws.
+- A node whose `what` contradicts where it sits.
+- A shape whose `what` does not say what it draws.
+- Words that contradict the component's purpose.
 
-Leave to the validators: the presence of states, keys and an ARIA pattern, and every count.
+Leave these to the validators: ids, sizes, widths, spacing and shape boxes.

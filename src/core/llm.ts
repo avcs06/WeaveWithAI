@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, rmSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import OpenAI from 'openai';
@@ -77,6 +77,8 @@ export class ModelOutputTruncated extends Error {
 }
 
 export class ModelOutputInvalid extends Error {
+  /** The model and the tokens of an answer the model gave but the schema refused, so its cost is logged. */
+  public paid?: { model: string; usage: Usage };
   constructor(
     message: string,
     public issues: unknown,
@@ -197,10 +199,20 @@ export function createLlm(deps: LlmDeps): Llm {
         request,
         createdAt: new Date(now()).toISOString(),
       };
-      writeJsonAtomic(replayFile, record);
     }
 
-    const data = parseContent(input.schema, record.content);
+    // Only an answer the schema takes is cached, so a retry asks the model again.
+    let data: T;
+    try {
+      data = parseContent(input.schema, record.content);
+    } catch (error) {
+      if (!(error instanceof ModelOutputInvalid)) throw error;
+      if (replayed) rmSync(replayFile, { force: true });
+      else error.paid = { model, usage: record.usage };
+      if (input.runDir) writeInvalid(input, model, record.content, error);
+      throw error;
+    }
+    if (!replayed) writeJsonAtomic(replayFile, record);
     const result: GenerateResult<T> = {
       data,
       raw: record.content,
@@ -258,6 +270,25 @@ export function createLlm(deps: LlmDeps): Llm {
     });
   }
 
+  /** An answer the schema refused, in `<runDir>/llm/<stage>-r<round>-invalid.json`, so it can be read; a second in the round gets `-invalid-2`. */
+  function writeInvalid(
+    input: GenerateInput<unknown>,
+    model: string,
+    content: string,
+    error: ModelOutputInvalid,
+  ): void {
+    const dir = path.join(input.runDir ?? '', 'llm');
+    const name = (n: number) =>
+      path.join(dir, `${input.stage}-r${input.round}-invalid${n > 1 ? `-${n}` : ''}.json`);
+    let n = 1;
+    while (existsSync(name(n))) n += 1;
+    writeJsonAtomic(name(n), {
+      request: { backend: backend.name, model, messages: input.messages, schemaName: input.schemaName },
+      error: error.message,
+      response: content,
+    });
+  }
+
   /** One request, plus a single retry with a larger output limit when the answer was cut short. */
   async function requestUntilComplete(
     request: Request,
@@ -276,7 +307,8 @@ export function createLlm(deps: LlmDeps): Llm {
         max_tokens: limit,
         response_format: {
           type: 'json_schema',
-          json_schema: { name: request.schemaName, schema: request.schema },
+          // Strict decoding keeps the answer to the schema: no prose, no wrong types (user, 2026-10-31).
+          json_schema: { name: request.schemaName, schema: request.schema, strict: true },
         },
       });
       const choice = completion.choices[0];

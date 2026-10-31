@@ -4,11 +4,11 @@ import { type NodesInput, stepFields, steps } from './helpers';
 
 /**
  * DESIGN-011 · mandatory
- * A screen's nodes show every state the IA lists for it; a screen serving a list
- * effect shows loading, empty and error, and one serving a submission invalid,
- * submitting, error and success (or its submit navigates on). The IA's list
- * alone shows nothing.
- * Pass: the shelf with loading, empty and error.
+ * A screen's nodes show every state the plan lists for it, and a screen
+ * serving a list effect shows empty and error. Loading, a field's error and a
+ * submit's result are the design system's or a toast (user, 2026-10-31). The
+ * plan's list alone shows nothing.
+ * Pass: the shelf with its empty state and its load error.
  * Fail: the shelf without empty.
  */
 export const rule = defineRule<NodesInput>(
@@ -20,28 +20,18 @@ export const rule = defineRule<NodesInput>(
     const served = steps(ctx.flows).filter((step) =>
       own.flowSteps.includes(step.id),
     );
-    // The IA's states say what the screen must show; only its nodes show them.
+    // The plan's states say what the screen must show; only its nodes show them.
     const shown = new Set<string>(nodes.flatMap((node) => node.states));
     const needed = new Set<string>(
       own.states.filter((state) => state !== 'default'),
     );
     if (served.some((step) => step.effects.some((e) => e.change === 'list')))
-      for (const state of ['loading', 'empty', 'error']) needed.add(state);
-    if (
-      served.some(
-        (step) =>
-          step.kind === 'user' && stepFields(ctx.flows, step).length > 0,
-      )
-    )
-      for (const state of ['invalid', 'submitting', 'error', 'success'])
-        needed.add(state);
-    if (nodes.some((node) => node.role === 'primary-action' && node.navigatesTo))
-      needed.delete('success');
+      for (const state of ['empty', 'error']) needed.add(state);
     const missing = [...needed].filter((state) => !shown.has(state));
     return missing.length
       ? [
           fail(
-            `${screen} must show ${missing.join(', ')}, but none of its nodes does; add a node for ${missing.length === 1 ? 'it' : 'each'}.`,
+            `${screen} must show ${missing.join(', ')}, but no node of ${screen} shows in ${missing.length === 1 ? 'that state' : 'those states'}. A screen shows every state its plan lists. A screen that lists records also shows empty and error. Add a node for ${missing.length === 1 ? 'it' : 'each'}, with ${missing.length === 1 ? 'that state' : 'its state'} in its states.`,
             screen,
           ),
         ]

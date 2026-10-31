@@ -24,7 +24,7 @@ export const rule = defineRule<LayoutInput>(
             if (kid.kind === 'text' && view.node(kid.id)?.box.width === 'fill')
               issues.push(
                 fail(
-                  `${kid.id} fills the centred block ${rect.id}, so its text reads left-aligned; give it a content or fixed width so the block centres as a whole.`,
+                  `${kid.id} is text with box width fill, inside ${rect.id}, a column with layout align center. Its lines read left-aligned. Text in a column with layout align center has box width content or fixed, so the column centres it as one block. Set the box width of ${kid.id} to content, or to fixed with a widthPx.`,
                   kid.id,
                 ),
               );
@@ -41,7 +41,7 @@ export const rule = defineRule<LayoutInput>(
           if (text && centred)
             issues.push(
               fail(
-                `${kid.id} centres its text inside the left-aligned ${rect.id}; centre the whole block or nothing.`,
+                `${kid.id} is a column with layout align center, inside ${rect.id}, which holds text and has layout align ${layout.align}. A column with text is centred as a whole or not at all. Set the layout align of ${kid.id} to ${layout.align}, or set the layout align of ${rect.id} to center so the whole column is centred.`,
                 kid.id,
               ),
             );

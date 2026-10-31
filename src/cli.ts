@@ -37,8 +37,10 @@ import {
   type Run,
   runPath,
   totals,
+  watchEvents,
 } from './core/run';
-import { PIPELINE, type StageContext, stages } from './agents/stages';
+import { runLog } from './core/log';
+import { PIPELINE, type StageContext, type StageDef, stageBatches, stages } from './agents/stages';
 import { skeleton } from './agents/02design/09assemble/skeleton/skeleton';
 import { makeScreensSchema } from './agents/02design/schema';
 import type { Theme } from './agents/02design/02theme/build';
@@ -116,33 +118,46 @@ export async function runCommand(
     backend: backend.name,
   };
   out(`run ${run.id} (${run.dir})`);
+  const log = runLog(PIPELINE, out);
+  const stopLog = watchEvents(run, log.event);
 
-  let forced = false;
-  for (const name of PIPELINE) {
-    if (name === args.from) forced = true;
-    const def = stages.find((stage) => stage.name === name);
-    if (def) {
-      const before = readState(run).stages[name];
-      const upToDate =
-        before?.status === 'done' &&
-        def.produces.every(
-          (artifact) => hasArtifact(run, artifact) && !isStale(run, artifact),
-        );
-      if (upToDate && !forced) {
-        out(`${name}: up to date (v${before.version ?? '?'})`);
-      } else {
-        out(`${name}: running`);
-        await def.run(ctx);
-        const after = readState(run).stages[name];
-        const version = after?.version ? ` v${after.version}` : '';
-        const rounds = after?.rounds ? `, ${after.rounds} rounds` : '';
-        const known = after?.known
-          ? `, ${after.known} known ${after.known === 1 ? 'issue' : 'issues'}`
-          : '';
-        out(`${name}: ${after?.status ?? 'done'}${version}${rounds}${known}`);
+  try {
+    let forced = false;
+    const order = PIPELINE.slice(0, to ? PIPELINE.indexOf(to) + 1 : undefined);
+    for (const batch of stageBatches(order)) {
+      const due: StageDef[] = [];
+      for (const name of batch) {
+        if (name === args.from) forced = true;
+        const def = stages.find((stage) => stage.name === name);
+        if (!def) continue;
+        const before = readState(run).stages[name];
+        const upToDate =
+          before?.status === 'done' &&
+          def.produces.every(
+            (artifact) => hasArtifact(run, artifact) && !isStale(run, artifact),
+          );
+        if (upToDate && !forced) log.line(name, `up to date (v${before.version ?? '?'})`);
+        else due.push(def);
       }
+      // Every stage of a batch finishes before the first failure ends the run, so none writes after it.
+      const settled = await Promise.allSettled(
+        due.map(async (def) => {
+          log.line(def.name, 'running');
+          await def.run(ctx);
+          const after = readState(run).stages[def.name];
+          const version = after?.version ? ` v${after.version}` : '';
+          const rounds = after?.rounds ? `, ${after.rounds} rounds` : '';
+          const known = after?.known
+            ? `, ${after.known} known ${after.known === 1 ? 'issue' : 'issues'}`
+            : '';
+          log.line(def.name, `${after?.status ?? 'done'}${version}${rounds}${known}`);
+        }),
+      );
+      const failed = settled.find((s) => s.status === 'rejected');
+      if (failed) throw failed.reason;
     }
-    if (name === to) break;
+  } finally {
+    stopLog();
   }
   return run;
 }
@@ -310,14 +325,14 @@ export async function wireframesCommand(
 ): Promise<string[]> {
   const out = deps.out ?? console.log;
   const inv = await inventory(deps);
-  const screens = makeScreensSchema(inv).Screens.parse(
-    JSON.parse(readFileSync(file, 'utf8')),
-  );
+  // A run's 09-assemble.json is an artifact envelope; a bare screens file is its data.
+  const raw = JSON.parse(readFileSync(file, 'utf8')) as { data?: unknown; meta?: unknown };
+  const screens = makeScreensSchema(inv).Screens.parse(raw.meta && raw.data ? raw.data : raw);
   const name = path.basename(file).replace(/\.json$/, '');
   const dest =
     outDir ?? path.join(deps.runsDir ?? DEFAULT_RUNS_DIR, 'wireframes', name);
   mkdirSync(dest, { recursive: true });
-  const solved = skeleton(screens, inv);
+  const solved = skeleton(screens, inv, 'picture');
   const files = ['02-skeleton.json', '02-wireframes.html'].map((f) =>
     path.join(dest, f),
   );

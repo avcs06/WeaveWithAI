@@ -18,7 +18,7 @@ export const iaRule = defineRule<IaInput>('DESIGN-014', 'mandatory', ({ ia }) =>
           issue(
             'DESIGN-014',
             'warning',
-            `${screen.id} has ${count} sections; more than 8 is a lot for one page, so split it.`,
+            `${screen.id} has ${count} sections. More than 8 sections is a lot for one page. Split ${screen.id} into more than one page.`,
             screen.id,
           ),
         ]
@@ -38,7 +38,7 @@ export const nodesRule = defineRule<NodesInput>(
       if (inputs > 12)
         issues.push(
           fail(
-            `${section} has ${inputs} inputs; at most 12 in a section, so split it.`,
+            `${section} has ${inputs} inputs. A section holds at most 12 inputs. Split ${section} into sections of 12 inputs or fewer.`,
             section,
           ),
         );
@@ -47,7 +47,7 @@ export const nodesRule = defineRule<NodesInput>(
           issue(
             'DESIGN-014',
             'warning',
-            `${section} has ${inputs} inputs; group them or split the section.`,
+            `${section} has ${inputs} inputs. From 8 to 12 inputs in one section is a lot to fill in. Group the inputs, or split ${section}.`,
             section,
           ),
         );
@@ -56,7 +56,7 @@ export const nodesRule = defineRule<NodesInput>(
           issue(
             'DESIGN-014',
             'warning',
-            `${section} has ${controls} controls; more than 7 at once is a lot.`,
+            `${section} has ${controls} controls. More than 7 controls at once is a lot to take in. Keep 7 or fewer controls in ${section}.`,
             section,
           ),
         );

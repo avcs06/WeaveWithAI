@@ -32,7 +32,16 @@ describe('applyColors', () => {
     expect(base(after)).toContain(`fg: '${theme.colors.dark!.base.fg}'`);
     const status = (text: string) => text.slice(text.indexOf('status: {'), text.indexOf('entity: {'));
     expect(status(after)).toBe(status(before));
-    expect(after).toContain("divider: '#ECEBE7'");
+    expect(after).toContain(`divider: '${light.page.divider}'`);
+    // The page background is CSS, a gradient here, beside its solid pageBg.
+    expect(after).toContain(`pageBackground: '${light.page.pageBackground}'`);
+    expect(after).toContain(`pageBackground: '${theme.colors.dark!.page.pageBackground}'`);
+  });
+
+  it('escapes a quote in a page background inside its string', () => {
+    const quoted = structuredClone(theme);
+    quoted.colors.light!.page.pageBackground = "linear-gradient(180deg, #FFF 0%, #EEE 100%) /* 'paper' */";
+    expect(applyColors(before, quoted)).toContain("pageBackground: 'linear-gradient(180deg, #FFF 0%, #EEE 100%) /* \\'paper\\' */'");
   });
 
   it('adds a set per colored entity in each mode, and gives the same file when applied twice', () => {

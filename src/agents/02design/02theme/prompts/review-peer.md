@@ -9,6 +9,6 @@ Challenge, and report as a blocker only when you would not sign it off:
 - The marketing frame: the landing page cannot read as one surface, such as a heavy header with a divider above a hero.
 - The content area: the container works against the content, such as a fluid one for reading and forms, or a narrow fixed one for wide tables; the padding and section gap do not follow the density.
 - Component defaults: they work against the feel or the density, such as small controls for spacious, calm use; or a semantic default is changed, such as a toast's status or a dialog's size.
-- A default: the theme would fit any app; nothing in it comes from this brief, such as colors copied from a stock palette like Tailwind's instead of made from the brief's hues.
+- A default: the theme would fit any app; nothing in it comes from this brief, such as every set on the same steps, so the brand, the base and the entities read alike.
 
-Taste alone is not a blocker. Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators: contrast ratios, hex values, empty or zero-width parts, the sides of the sidebars, the section gap and padding ranges, and values from the lists.
+Taste alone is not a blocker. Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators: contrast ratios, ramp steps, empty or zero-width parts, the sides of the sidebars, the section gap and padding ranges, and values from the lists.

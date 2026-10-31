@@ -6,10 +6,13 @@ import type { Inventory } from '../../ds/inventory';
 import { Brief } from './01brief/schema';
 import { makeScreensSchema } from './schema';
 import { makeThemeSchema } from './02theme/schema';
-import { makeArchitectSchemas } from './03architect/schema';
-import { makeInventSchemas } from './06invent/schema';
-import { makeDrawSchemas } from './07draw/schema';
-import { makeFrameSchemas } from './08frame/schema';
+import { patchSchema } from '../../runner/patch';
+import { makeArchitectSchema, PLAN_KEYS } from './03architect/schema';
+import { CATALOG_KEYS, makeCatalogSchema } from './04catalog/schema';
+import { SCREEN_KEYS, ScreenLayouts } from './05screen/schema';
+import { DESIGN_KEYS, makeInventSchemas } from './06invent/schema';
+import { BUILD_KEYS, makeDrawSchemas } from './07draw/schema';
+import { FRAME_KEYS, makeFrameSchemas } from './08frame/schema';
 
 const inventory = JSON.parse(
   readFileSync(
@@ -75,11 +78,20 @@ describe('screens schemas', () => {
     ['Theme', makeThemeSchema(brief, inventory)],
     ['Ia', schemas.Ia],
     ['ScreenNodes', schemas.ScreenNodes],
-    ['Ia (widgets)', makeArchitectSchemas(inventory).Ia],
-    ['ComponentDesign', makeInventSchemas(inventory).ComponentDesign],
-    ['WidgetBatch', makeDrawSchemas(inventory).WidgetBatch],
-    ['FrameBuild', makeFrameSchemas(inventory).FrameBuild],
-  ])('%s converts within the API limits', (name, schema) => {
+    ...(
+      [
+        ['Plan', makeArchitectSchema(inventory).Plan, PLAN_KEYS],
+        ['Catalog', makeCatalogSchema(inventory).Catalog, CATALOG_KEYS],
+        ['ScreenLayouts', ScreenLayouts, SCREEN_KEYS],
+        ['ComponentDesign', makeInventSchemas(inventory).ComponentDesign, DESIGN_KEYS],
+        ['Build', makeDrawSchemas(inventory).Build, BUILD_KEYS],
+        ['FrameBuild', makeFrameSchemas(inventory).FrameBuild, FRAME_KEYS],
+      ] as const
+    ).flatMap(([name, schema, keys]) => [
+      [name, schema],
+      [`${name}Patch`, patchSchema(schema, keys)],
+    ]),
+  ] as [string, Parameters<typeof toJsonSchema>[0]][])('%s converts within the API limits', (name, schema) => {
     const bridged = toJsonSchema(schema, name);
     expect(bridged.stats.depth).toBeLessThanOrEqual(8);
     expect(keysOf(bridged.schema)).not.toContain('oneOf');
@@ -100,20 +112,11 @@ describe('screens schemas', () => {
     expect(parses(node('the page title', { ...heading, typeScale: 'huge' }))).toBe(false);
   });
 
-  it('a new component carries its boxes and the prose the coding agent builds from', () => {
+  it('a new component carries its look and no behavior: the coding stage gives it that', () => {
     const { schema } = toJsonSchema(schemas.NewComponent, 'NewComponent');
     expect(schema.required).toEqual(
-      expect.arrayContaining([
-        'box',
-        'parts',
-        'layout',
-        'behavior',
-        'closestExisting',
-        'keyboard',
-        'ariaPattern',
-      ]),
+      expect.arrayContaining(['description', 'minWidthPx', 'maxWidthPx', 'box', 'layout', 'nodes', 'closestExisting']),
     );
-    const parts = (schema.properties as Record<string, { items: { required: string[] } }>).parts;
-    expect(parts?.items.required).toEqual(['name', 'description', 'box']);
+    for (const gone of ['behavior', 'keyboard', 'ariaPattern', 'parts']) expect(schema.required).not.toContain(gone);
   });
 });

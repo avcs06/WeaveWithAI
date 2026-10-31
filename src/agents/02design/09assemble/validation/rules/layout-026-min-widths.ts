@@ -9,7 +9,7 @@ import type { LayoutInput } from '../helpers';
  * Pass: the Title field filling the 472 inside the Add a book dialog.
  * Fail: the Title field fixed at 120.
  */
-const CONTROLS = new Set(['Checkbox', 'Radio', 'Switch', 'IconButton']);
+const CONTROLS = new Set(['Checkbox', 'Radio', 'Switch', 'IconButton', 'Chip']);
 
 export const rule = defineRule<LayoutInput>(
   'LAYOUT-026',
@@ -25,7 +25,7 @@ export const rule = defineRule<LayoutInput>(
         const too = (what: string, min: number) =>
           issues.push(
             fail(
-              `${rect.id} is ${Math.round(rect.width)} wide; ${what} is at least ${min}.`,
+              `${rect.id} is ${what} ${Math.round(rect.width)}px wide. ${what === 'a field' ? 'A field' : 'A card'} is at least ${min}px wide. Set the box width of ${rect.id} to fixed with a widthPx of at least ${min}, or let it fill a parent at least ${min}px wide.`,
               rect.id,
             ),
           );
@@ -43,7 +43,7 @@ export const rule = defineRule<LayoutInput>(
         if (node.box.width === 'fixed' && node.box.widthPx > inner)
           issues.push(
             fail(
-              `${rect.id} is fixed at ${node.box.widthPx}, wider than the ${inner} inside the dialog; narrow it or give the dialog a wider content width.`,
+              `${rect.id} has a fixed width of ${node.box.widthPx}px, but the inside of the ${view.screen.type} ${view.screen.id} is ${Math.floor(inner)}px wide. A node of fixed width fits inside its ${view.screen.type}. Set the widthPx of ${rect.id} to ${Math.floor(inner)} or less, or give the ${view.screen.type} ${view.screen.id} a wider content width.`,
               rect.id,
             ),
           );

@@ -22,7 +22,7 @@ export const rule = defineRule<LayoutInput>(
           if (padding < low || padding > high)
             issues.push(
               fail(
-                `${rect.id} has padding ${padding}; ${what} takes ${low} to ${high}.`,
+                `${rect.id} is ${what} with layout padding ${padding}px. The layout padding of ${what} is ${low}px to ${high}px. Set the layout padding of ${rect.id} to ${low}px to ${high}px.`,
                 rect.id,
               ),
             );

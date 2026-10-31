@@ -2,9 +2,9 @@ import { CONTENT_WIDTH_PX, DIALOG_SIZE } from '../../config';
 import { VIEWPORT } from './config';
 import type { Inventory } from '../../../../ds/inventory';
 import { type Item, type RectKind, round, type Solved } from './arrange';
-import { NO_PADDING, type Sizes, sizes } from './boxes';
+import { NO_PADDING, type Sizes, sizes, type TextMode } from './boxes';
 import { context, emit, type Rect } from './solve';
-import type { DesignNode, DesignScreen, Screens } from '../../schema';
+import type { DesignNode, DesignScreen, DesignSection, Screens } from '../../schema';
 import type { NodeBox, Region } from '../../schema-boxes';
 
 // The layout skeleton (DS6b): a rectangle for every shell region, section and
@@ -80,28 +80,59 @@ function tree(screens: Screens, screen: DesignScreen) {
   };
   const top = (container: string) =>
     (children.get(`${container}|`) ?? []).sort(byOrder);
-  const sections = screens.sections
-    .filter((section) => section.screen === screen.id)
-    .sort(byOrder)
-    .flatMap((section): Item[] => {
-      const kids = top(section.id).flatMap((node) => build(node) ?? []);
-      if (top(section.id).length && !kids.length) {
-        const states = [
-          ...new Set(top(section.id).flatMap((node) => node.states)),
-        ];
-        hidden.push({ id: section.id, states });
-        return [];
-      }
-      const { id, title, box, layout } = section;
-      return [
-        { id, kind: 'section', what: title, box, layout, children: kids },
+  const sectionItem = (section: DesignSection): Item[] => {
+    const kids = top(section.id).flatMap((node) => build(node) ?? []);
+    if (top(section.id).length && !kids.length) {
+      const states = [
+        ...new Set(top(section.id).flatMap((node) => node.states)),
       ];
-    });
+      hidden.push({ id: section.id, states });
+      return [];
+    }
+    const { id, title, box, layout, share } = section;
+    return [
+      { id, kind: 'section', what: title, box, layout, share, children: kids },
+    ];
+  };
+  // The screen's box tree (DS23): boxes hold boxes and sections, each by order.
+  const own = screens.sections.filter((s) => s.screen === screen.id);
+  const boxes = (screens.boxes ?? []).filter((b) => b.screen === screen.id);
+  const inside = (parent: string): Item[] =>
+    [
+      ...boxes.filter((b) => b.parent === parent).map((b) => ({ order: b.order, id: b.id, box: b })),
+      ...own.filter((s) => s.in === parent).map((s) => ({ order: s.order, id: s.id, section: s })),
+    ]
+      .sort(byOrder)
+      .flatMap((entry): Item[] =>
+        'section' in entry
+          ? sectionItem(entry.section)
+          : [
+              {
+                id: entry.box.id,
+                kind: 'container',
+                what: 'a box of the screen',
+                box: entry.box.box,
+                layout: entry.box.layout,
+                share: entry.box.share,
+                children: inside(entry.box.id),
+              },
+            ],
+      );
+  const sections = inside('');
   const shell = screens.shells.find((s) => s.id === screen.shell);
+  // A screen shows its shell's default nodes less the ones it removes, and the frame nodes only it adds (DS23).
+  const changes = screens.frameChanges ?? [];
+  const mine = changes.find((c) => c.screen === screen.id);
+  const others = new Set(
+    changes.filter((c) => c.screen !== screen.id).flatMap((c) => c.add),
+  );
+  const hiddenHere = new Set([...(mine?.remove ?? []), ...others]);
   const regions = (shell?.regions ?? []).map((region) => ({
     region,
     what: `${shell?.name} shell, ${region.place}`,
-    kids: top(region.id).flatMap((node) => build(node) ?? []),
+    kids: top(region.id)
+      .filter((node) => !hiddenHere.has(node.id))
+      .flatMap((node) => build(node) ?? []),
   }));
   return { sections, regions, hidden };
 }
@@ -291,9 +322,13 @@ function layoutScreen(
   return { width: vw, height: Math.max(vh, y + height + 16), rects };
 }
 
-/** Every screen at desktop width. */
-export function skeleton(screens: Screens, inv: Inventory): Skeleton {
-  const s = sizes(inv, screens.newComponents);
+/** Every screen at desktop width; the rules read the minimum, the wireframes draw the picture (DS28). */
+export function skeleton(
+  screens: Screens,
+  inv: Inventory,
+  text: TextMode = 'minimum',
+): Skeleton {
+  const s = sizes(inv, screens.newComponents, text);
   return {
     viewport: VIEWPORT,
     screens: screens.screens.map((screen) => {

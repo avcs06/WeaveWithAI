@@ -1,51 +1,53 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { designs, ia, inventory } from '../../__fixtures__/widgets';
 import type { Issue } from '../../../../core/issues';
-import type { Scope } from '../../../01flows/01scope/schema';
-import type { Flows } from '../../../01flows/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import { makeThemeSchema } from '../../02theme/schema';
-import { layoutShells } from '../../02theme/shells';
-import type { DesignContext } from '../../rules/helpers';
+import { catalog, ctx, designs, plan, theme } from '../../__fixtures__/chain';
+import { kindOf } from '../../calls';
+import type { ComponentDesign } from '../schema';
 import { validateComponent } from './validation';
 
-const read = (file: string): unknown =>
-  JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  makeThemeSchema(brief, inventory).parse(
-    read('../../__fixtures__/reading-list.theme.json'),
-  ),
-);
-
-const ctx: DesignContext = {
-  scope: read('../../../01flows/__fixtures__/reading-list.scope.json') as Scope,
-  flows: read('../../../01flows/__fixtures__/reading-list.flows.json') as Flows,
-  inventory,
-  shells: layoutShells(theme.layouts),
-  defaults: theme.defaults,
-};
-
 const rules = (issues: Issue[]) => [...new Set(issues.map((i) => i.rule))];
+const cover = designs.get('TitleCover');
+const range = catalog.components.find((c) => c.name === 'TitleCover');
+if (!cover || !range) throw new Error('the fixture declares TitleCover');
+const check = (design: ComponentDesign, widths = range) =>
+  validateComponent('TitleCover', design, widths, 'app', ctx, theme);
 
-const [cover] = ia.newComponents;
+function changed(change: (copy: ComponentDesign) => void): ComponentDesign {
+  const copy = structuredClone(cover!);
+  change(copy);
+  return copy;
+}
 
-const coverDesign = designs.get(cover?.name ?? '');
+describe('an invent call', () => {
+  it("passes TitleCover's design with no mandatory issue", () => {
+    expect(check(cover).filter((i) => i.severity === 'mandatory')).toEqual([]);
+  });
 
-if (!cover || !coverDesign) throw new Error('the fixture declares TitleCover');
+  it("fails DESIGN-001 for a node id that is not the component's", () => {
+    expect(rules(check(changed((d) => (d.nodes[0]!.id = 'Cover-1'))))).toContain('DESIGN-001');
+  });
 
-describe('a component call', () => {
-  it('fails DESIGN-004 for a design without states', () => {
-    const issues = validateComponent(
-      { ...cover, ...coverDesign, states: [], usedOn: ['S06'] },
-      ia,
-      ctx,
+  it('draws a component held only in widgets for the kind of the screens those widgets are on', () => {
+    expect(kindOf('TitleCover', plan, catalog)).toBe('app');
+    const marketing = structuredClone(plan);
+    marketing.screens.find((s) => s.id === 'S06')!.kind = 'marketing';
+    expect(kindOf('TitleCover', marketing, catalog)).toBe('marketing');
+  });
+
+  it("fails DESIGN-041 for a root outside the catalog's width range", () => {
+    expect(check(changed((d) => (d.box.widthPx = 200))).map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-041', 'TitleCover']);
+  });
+
+  it('fails DESIGN-042 for a shape sized by content it does not have', () => {
+    const ring = changed((d) =>
+      d.nodes.push({ ...structuredClone(d.nodes[1]!), id: 'TitleCover.n03', order: 3, role: 'shape', text: '' }),
     );
-    expect(rules(issues)).toEqual(['DESIGN-004']);
+    expect(check(ring).map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-042', 'TitleCover.n03']);
+  });
+
+  it("stands as one node holding its nodes, so its padding is its own and not a section's", () => {
+    // 16 of padding would be too little for a padded section (LAYOUT-014).
+    expect(cover.box.padding).toBe('4');
+    expect(rules(check(cover))).not.toContain('LAYOUT-014');
   });
 });

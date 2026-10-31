@@ -1,4 +1,4 @@
-import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -155,36 +155,38 @@ describe('inventory()', () => {
     ],
   });
   const print = printFile('export.json');
-  const measure = printFile('boxes.json');
+  const boxesFile = fileURLToPath(new URL('./__fixtures__/boxes.json', import.meta.url));
   const fail = { file: 'node', args: ['-e', 'process.exit(1)'] };
+  const odd = path.join(cacheDir, 'odd-boxes.json');
+  writeFileSync(odd, JSON.stringify({ 'Nope/sm': { height: 1 } }));
 
-  it('builds the inventory from the export and the measurement, then serves the cache without them', async () => {
-    const first = await inventory({ templateDir: 'template', cacheDir, exporter: print, measurer: measure });
+  it('builds the inventory from the export and the boxes file, then serves the cache without the export', async () => {
+    const first = await inventory({ templateDir: 'template', cacheDir, exporter: print, boxesFile });
     expect(first).toEqual(fixture);
-    expect(readdirSync(cacheDir)).toEqual([
+    expect(readdirSync(cacheDir).filter((file) => file.startsWith('inventory-'))).toEqual([
       expect.stringMatching(/^inventory-[0-9a-f]{64}\.json$/),
     ]);
 
     const start = performance.now();
-    const second = await inventory({ templateDir: 'template', cacheDir, exporter: fail, measurer: fail });
+    const second = await inventory({ templateDir: 'template', cacheDir, exporter: fail, boxesFile });
     expect(performance.now() - start).toBeLessThan(200);
     expect(second).toEqual(first);
+
+    // Other boxes miss the cache, so the export runs again.
+    await expect(
+      inventory({ templateDir: 'template', cacheDir, exporter: fail, boxesFile: odd }),
+    ).rejects.toThrow(/mcp:setup/);
   });
 
-  it('names the setup step when a tool fails', async () => {
-    const empty = path.join(cacheDir, 'empty');
+  it('names the setup step when the export fails', async () => {
     await expect(
-      inventory({ templateDir: 'template', cacheDir: empty, exporter: fail, measurer: measure }),
+      inventory({ templateDir: 'template', cacheDir: path.join(cacheDir, 'empty'), exporter: fail, boxesFile }),
     ).rejects.toThrow(/mcp:setup/);
-    await expect(
-      inventory({ templateDir: 'template', cacheDir: empty, exporter: print, measurer: fail }),
-    ).rejects.toThrow(/storybook/);
   });
 
   it('rejects a box for a component the inventory does not have', async () => {
-    const odd = { file: 'node', args: ['-e', 'process.stdout.write(JSON.stringify({ "Nope/sm": { height: 1 } }))'] };
     await expect(
-      inventory({ templateDir: 'template', cacheDir: path.join(cacheDir, 'odd'), exporter: print, measurer: odd }),
+      inventory({ templateDir: 'template', cacheDir: path.join(cacheDir, 'odd'), exporter: print, boxesFile: odd }),
     ).rejects.toThrow(/box Nope\/sm: no such component/);
   });
 });

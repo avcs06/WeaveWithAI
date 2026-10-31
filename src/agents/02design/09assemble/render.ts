@@ -100,8 +100,10 @@ function sectionLines(section: DesignSection, nodes: DesignNode[]): string[] {
     section.box.width === 'fixed' ? `, ${section.box.widthPx} wide` : '';
   const surface =
     section.surface === 'page' ? '' : `, on the ${section.surface} surface`;
+  const box = section.in ? `, in ${section.in}` : '';
+  const share = section.box.width === 'fill' && section.share !== 1 ? `, share ${section.share}` : '';
   return [
-    `### ${section.id} ${section.title} (${section.kind}, ${layoutTag(section.layout)}${size}${surface})`,
+    `### ${section.id} ${section.title} (${section.kind}, ${layoutTag(section.layout)}${size}${share}${box}${surface})`,
     '',
     section.purpose,
     '',
@@ -159,6 +161,15 @@ function screenLines(screen: DesignScreen, screens: Screens): string[] {
     screen.purpose,
     '',
     `States: ${screen.states.join(', ')}. Serves: ${screen.flowSteps.join(', ') || 'no flow step'}. Sections: ${layoutTag(screen.layout)}.`,
+    ...screens.boxes
+      .filter((b) => b.screen === screen.id)
+      .map((b) => {
+        const size = b.box.width === 'fixed' ? `${b.box.widthPx} wide` : b.box.width === 'fill' ? 'fills' : 'its content';
+        return `Box ${b.id}${b.parent ? ` in ${b.parent}` : ''}: ${layoutTag(b.layout)}, ${size}.`;
+      }),
+    ...screens.frameChanges
+      .filter((c) => c.screen === screen.id)
+      .map((c) => `Frame: adds ${c.add.join(', ') || 'nothing'}; leaves out ${c.remove.join(', ') || 'nothing'}.`),
     '',
     ...screens.sections
       .filter((section) => section.screen === screen.id)
@@ -219,12 +230,9 @@ function newComponentLines(component: NewComponent): string[] {
     component.purpose,
     '',
     `- Closest existing: ${component.closestExisting.join(', ')}. Why not: ${component.whyNotExisting}`,
-    `- Built from: ${component.composedOf.join(', ') || 'nothing named'}.`,
-    `- Box: ${component.box.width === 'fixed' ? `${component.box.widthPx} wide` : component.box.width}, ${component.box.height === 'fixed' ? `${component.box.heightPx} tall` : component.box.height}, padding ${component.box.padding}, gap ${component.box.gap}.`,
-    `- Parts: ${component.parts.map((part) => `${part.name} (${part.description})`).join('; ') || 'none'}.`,
-    `- Layout: ${component.layout}`,
-    `- Behavior: ${component.behavior}`,
-    `- States: ${component.states.join(', ')}. ARIA pattern: ${component.ariaPattern}. Keyboard: ${component.keyboard.map((k) => `${k.key} ${k.action}`).join('; ') || 'none'}.`,
+    `- Look: ${component.description}`,
+    `- Width: ${component.minWidthPx} to ${component.maxWidthPx || 'fill'}. Box: ${component.box.width === 'fixed' ? `${component.box.widthPx} wide` : component.box.width}, ${component.box.height === 'fixed' ? `${component.box.heightPx} tall` : component.box.height}, padding ${component.box.padding}, gap ${component.box.gap}; ${layoutTag(component.layout)}.`,
+    ...component.nodes.map((node) => `  - [${node.component === 'none' ? node.role : node.component}] ${node.what}${node.text ? `: ${node.text}` : ''} \`${node.id}\``),
     `- Used on: ${component.usedOn.join(', ')}.`,
     '',
   ];
@@ -246,7 +254,7 @@ export function renderDesign(
     '',
     `- Density ${theme.density}, radius ${theme.radius.surface} surfaces and ${theme.radius.control} controls, focus ring ${theme.focusRing}, imagery ${brief.imagery}.`,
     `- Fonts: ${theme.fonts.ui} for text, ${theme.fonts.display} for headings, ${theme.fonts.mono} for code.`,
-    `- Style ${brief.feel.join(' and ')}, ${brief.colorScheme === 'both' ? 'light and dark' : `${brief.colorScheme} only`}; brand hue ${brief.seedHue}, ${brief.seedChroma}; page hue ${brief.pageHue}, ${brief.pageChroma}; frame hue ${brief.frameHue}, ${brief.frameChroma}.${brief.references.length ? ` References: ${brief.references.join(', ')}.` : ''}`,
+    `- Style ${brief.feel.join(' and ')}, ${brief.colorScheme === 'both' ? 'light and dark' : `${brief.colorScheme} only`}; brand hue ${brief.seedHue}, ${brief.seedChroma}; page background ${brief.pageBackground}; frame hue ${brief.frameHue}, ${brief.frameChroma}.${brief.references.length ? ` References: ${brief.references.join(', ')}.` : ''}`,
     '- Wireframes of every screen at desktop width: `02-design/09-wireframes.html`.',
     '',
     '## Palette',

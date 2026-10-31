@@ -1,26 +1,6 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ia, inventory } from '../../__fixtures__/widgets';
-import { Scope } from '../../../01flows/01scope/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import type { ThemeCall } from '../../02theme/schema';
-import { layoutShells } from '../../02theme/shells';
+import { brief, ctx, inventory, plan, scope, theme } from '../../__fixtures__/chain';
 import { frameSystemPrompt, frameUserMessage } from './index';
-
-const read = (path: string) =>
-  JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as unknown;
-
-const scope = Scope.parse(
-  read('../../../01flows/__fixtures__/reading-list.scope.json'),
-);
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  read('../../__fixtures__/reading-list.theme.json') as ThemeCall,
-);
 
 const filled = (text: string) => {
   expect(text).not.toContain('{{');
@@ -28,24 +8,23 @@ const filled = (text: string) => {
 };
 
 describe('the frame prompt', () => {
-  it('gives a shell its regions, the framed pages of its kind and the navigation', () => {
-    filled(frameSystemPrompt('SH1', brief, inventory));
-    expect(frameSystemPrompt('SH1', brief, inventory)).toContain(
-      'IDs SH1.n01, SH1.n02',
-    );
-    const message = frameUserMessage(
-      'SH1',
-      ia,
-      layoutShells(theme.layouts),
-      scope,
-      brief,
-      theme,
-    );
+  it('carries the node guide and the change ids, the same for every shell', () => {
+    const prompt = frameSystemPrompt(brief, inventory);
+    filled(prompt);
+    expect(prompt).toContain('SH1.n01, SH1.n02');
+    expect(prompt).toContain('SH1.S04.n01');
+    for (const field of ['nodes', 'section', 'changes', 'add', 'remove']) expect(prompt, field).toContain(`\`${field}\``);
+  });
+
+  it('gives a shell its regions, the framed pages of its kind with how each frame differs, its steps and the navigation', () => {
+    const message = frameUserMessage('SH1', plan, ['F06.S01'], ctx.shells, scope, brief, theme);
     filled(message);
-    const target = message.slice(0, message.indexOf('# Navigation'));
+    const target = message.slice(0, message.indexOf('# Steps the frame serves'));
     expect(target).toContain('"id": "SH1.r1"');
     expect(target).toContain('"route": "/shelf"');
+    expect(target).toContain('"frame": ""');
     expect(target).not.toContain('"route": "/sign-in"');
-    expect(message).toContain(`"label": "${ia.navigation.items[0]?.label}"`);
+    expect(message).toContain('"F06.S01"');
+    expect(message).toContain('"label": "Your shelf"');
   });
 });

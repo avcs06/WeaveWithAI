@@ -1,141 +1,106 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import {
-  builds,
-  designs,
-  frames,
-  ia,
-  inventory,
-} from '../../__fixtures__/widgets';
 import type { Issue } from '../../../../core/issues';
-import type { Scope } from '../../../01flows/01scope/schema';
-import type { Flows } from '../../../01flows/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import { makeThemeSchema } from '../../02theme/schema';
-import { layoutShells } from '../../02theme/shells';
-import { validateComponent } from '../../06invent/validation/validation';
-import type { Build } from '../../07draw/schema';
-import { validateWidget } from '../../07draw/validation/validation';
-import type { FrameBuild } from '../../08frame/schema';
-import { validateFrame } from '../../08frame/validation/validation';
-import type { DesignContext } from '../../rules/helpers';
-import type { WidgetIa } from '../schema';
-import { validateWidgetIa } from './validation';
-
-const read = (file: string): unknown =>
-  JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  makeThemeSchema(brief, inventory).parse(
-    read('../../__fixtures__/reading-list.theme.json'),
-  ),
-);
-
-const ctx: DesignContext = {
-  scope: read('../../../01flows/__fixtures__/reading-list.scope.json') as Scope,
-  flows: read('../../../01flows/__fixtures__/reading-list.flows.json') as Flows,
-  inventory,
-  shells: layoutShells(theme.layouts),
-  defaults: theme.defaults,
-};
+import { ctx, flows, planCall, scope, theme } from '../../__fixtures__/chain';
+import { processPlan } from '../process';
+import type { Plan } from '../schema';
+import { planIaRules, planRules, validatePlan } from './validation';
 
 const rules = (issues: Issue[]) => [...new Set(issues.map((i) => i.rule))];
 
-const copyOf = (text: string) => ia.copy.find((c) => c.text === text)?.id ?? '';
+const check = (plan: Plan) =>
+  validatePlan(processPlan(plan, flows, scope), theme.layouts, ctx);
 
-function changed(change: (copy: WidgetIa) => void): WidgetIa {
-  const copy = structuredClone(ia);
+function changed(change: (copy: Plan) => void): Plan {
+  const copy = structuredClone(planCall);
   change(copy);
   return copy;
 }
 
-const widgetIssues = (b: Build, on = ia) => validateWidget(b, on, ctx, theme);
+const screen = (plan: Plan, id: string) => {
+  const found = plan.screens.find((s) => s.id === id);
+  if (!found) throw new Error(`the plan has no ${id}`);
+  return found;
+};
 
-const frameIssues = (f: FrameBuild) => validateFrame(f, ia, ctx, theme);
-
-const [cover] = ia.newComponents;
-
-const coverDesign = designs.get(cover?.name ?? '');
-
-if (!cover || !coverDesign) throw new Error('the fixture declares TitleCover');
-
-describe('the reading-list widget design', () => {
-  it('passes the IA, every widget, both frames and the component, warnings included', () => {
-    expect(validateWidgetIa(ia, ctx)).toEqual([]);
-    for (const b of builds) expect(widgetIssues(b), b.widget).toEqual([]);
-    for (const f of frames) expect(frameIssues(f), f.screen).toEqual([]);
-    expect(
-      validateComponent({ ...cover, ...coverDesign, usedOn: ['S06'] }, ia, ctx),
-    ).toEqual([]);
+describe('the reading-list plan', () => {
+  it('passes every architect rule after its processing step, warnings included', () => {
+    expect(check(planCall)).toEqual([]);
   });
 });
 
-const iaCases: [string, string, (x: WidgetIa) => void][] = [
-  [
-    'DESIGN-028',
-    'a navigation label that is not its page title',
-    (x: WidgetIa) => (x.navigation.items[0]!.label = copyOf('Shelf')),
-  ],
-  [
-    'DESIGN-028',
-    'a string in the deck twice',
-    (x: WidgetIa) =>
-      x.copy.push({ id: 'C900', kind: 'action', text: 'Add book' }),
-  ],
-  [
-    'DESIGN-029',
-    'a main-side page with two main placements',
-    (x: WidgetIa) =>
-      (x.placements.find((p) => p.id === 'S06.sec2')!.area = 'main'),
-  ],
-  [
-    'DESIGN-029',
-    'a widget placed nowhere',
-    (x: WidgetIa) =>
-      void (x.placements = x.placements.filter((p) => p.id !== 'S04.sec4')),
-  ],
-  [
-    'DESIGN-030',
-    'a level skipped after the H1',
-    (x: WidgetIa) =>
-      (x.placements.find((p) => p.id === 'S06.sec2')!.headingLevel = 3),
-  ],
-  [
-    'DESIGN-030',
-    'a page without its level-1 widget',
-    (x: WidgetIa) =>
-      (x.placements.find((p) => p.id === 'S04.sec1')!.headingLevel = 2),
-  ],
-  [
-    'DESIGN-031',
-    'a list without its empty state',
-    (x: WidgetIa) => (x.widgets.find((w) => w.id === 'W08')!.states = []),
-  ],
-  [
-    'DESIGN-031',
-    'a field no widget takes',
-    (x: WidgetIa) =>
-      (x.widgets.find((w) => w.id === 'W09')!.fields = ['FD03', 'FD04']),
-  ],
-  [
-    'DESIGN-018',
-    'sign in behind sign in',
-    (x: WidgetIa) =>
-      (x.screens.find((s) => s.id === 'S02')!.access = 'signedIn'),
-  ],
-  [
-    'DESIGN-004',
-    'a declaration without its reason',
-    (x: WidgetIa) => (x.newComponents[0]!.whyNotExisting = ''),
-  ],
-];
+const cases: Record<string, (p: Plan) => void> = {
+  'DESIGN-001': (p) => (screen(p, 'S07').id = 'S7'),
+  'DESIGN-004': (p) => (p.newComponents[0]!.whyNotExisting = ''),
+  'DESIGN-005': (p) => (p.newComponents[0]!.name = 'Button'),
+  'DESIGN-009': (p) => {
+    const book = screen(p, 'S06');
+    book.flowSteps = book.flowSteps.filter((id) => id !== 'F05.S02');
+  },
+  'DESIGN-017': (p) => {
+    for (const s of p.screens) s.entry = false;
+  },
+  'DESIGN-021': (p) =>
+    p.screens.push({ ...screen(p, 'S06'), id: 'S08', route: '/settings', flowSteps: [], states: [] }),
+  'DESIGN-023': (p) => (screen(p, 'S05').framed = true),
+  'DESIGN-036': (p) => (p.navigation[0]!.slot = 'sidebar.top'),
+  'DESIGN-043': (p) => (screen(p, 'S06').route = ''),
+  // Saving a book on the shelf page as well as on its dialog.
+  'DESIGN-045': (p) => screen(p, 'S04').flowSteps.push('F03.S02'),
+  // Confirming the deletion on the book page, not its dialog.
+  'DESIGN-047': (p) => screen(p, 'S06').flowSteps.push('STD01.S01'),
+};
 
-describe('the IA rules', () => {
-  it.each(iaCases)('%s fails %s', (rule, _what, change) => {
-    expect(rules(validateWidgetIa(changed(change), ctx))).toContain(rule);
+describe('the architect rules', () => {
+  it('pairs each rule with one case', () => {
+    expect(Object.keys(cases).sort()).toEqual(
+      [...new Set([...planRules, ...planIaRules].map((r) => r.id))].sort(),
+    );
+  });
+
+  it.each(Object.keys(cases))('%s fails its case', (rule) => {
+    expect(rules(check(changed(cases[rule]!)))).toContain(rule);
+  });
+
+  it('DESIGN-009 leaves a step reported impossible, and its alternatives, to the reconcile stage', () => {
+    const reported = changed((p) => {
+      const dialog = screen(p, 'S05');
+      dialog.flowSteps = dialog.flowSteps.filter((id) => id !== 'F03.S02');
+      p.impossibleSteps.push({ step: 'F03.S02', reason: 'no storage for books' });
+    });
+    expect(check(reported).filter((i) => i.rule === 'DESIGN-009')).toEqual([]);
+    expect(
+      check(changed((p) => (screen(p, 'S05').flowSteps = screen(p, 'S05').flowSteps.filter((id) => id !== 'F03.S02'))))
+        .filter((i) => i.rule === 'DESIGN-009')
+        .map((i) => i.at),
+    ).toEqual(['F03.S02', 'F03.A01', 'F03.A02']);
+  });
+
+  it('DESIGN-036 wants a slot the layout fills, in a part it needs', () => {
+    const at = (slot: string) =>
+      check(changed((p) => (p.navigation[0]!.slot = slot))).map((i) => i.rule);
+    expect(at('header.end')).toEqual([]);
+    expect(at('header.center')).toEqual(['DESIGN-036']);
+    expect(at('footer.end')).toEqual(['DESIGN-036']);
+  });
+
+  it("DESIGN-036 reads a public item's slot in the marketing layout, whose frame draws it", () => {
+    const layouts = structuredClone(theme.layouts);
+    layouts.marketing.header.end = '';
+    const issues = validatePlan(processPlan(planCall, flows, scope), layouts, ctx);
+    expect(issues.map((i) => [i.rule, i.at])).toEqual([['DESIGN-036', 'S02']]);
+  });
+
+  it('DESIGN-043 wants each page its own route and none on a dialog, and warns on a dialog of more than 6 fields', () => {
+    const at = (change: (p: Plan) => void) =>
+      check(changed(change))
+        .filter((i) => i.rule === 'DESIGN-043')
+        .map((i) => [i.at, i.severity]);
+    expect(at((p) => (screen(p, 'S06').route = '/shelf'))).toEqual([['S06', 'mandatory']]);
+    expect(at((p) => (screen(p, 'S05').route = '/add'))).toEqual([['S05', 'mandatory']]);
+    // Signing up takes two fields and adding a book three: five in one dialog is fine, seven is not.
+    const long = structuredClone(ctx);
+    long.flows.forms.find((f) => f.id === 'FM01')!.fields.push('FD01', 'FD02', 'FD06', 'FD07');
+    const issues = validatePlan(processPlan(planCall, long.flows, scope), theme.layouts, long);
+    expect(issues.map((i) => [i.rule, i.at, i.severity])).toEqual([['DESIGN-043', 'S05', 'warning']]);
   });
 });

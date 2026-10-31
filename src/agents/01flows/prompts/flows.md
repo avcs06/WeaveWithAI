@@ -19,7 +19,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
 
 ## How a flow is written
 
-1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. Flow ids are F01, F02, and so on. `role` is a role id from the scope. `outcome` says what changed and what a refresh still shows. `preconditions` are states that another flow sets up. Auth flows have category "auth" and the matching `authKind`. Every other flow has `authKind` "none".
+1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. Flow ids are F01, F02, and so on. `role` is a role id from the scope. `outcome` says what changed and what a refresh still shows. `preconditions` are states that another flow sets up. Auth flows have category "auth" and the matching `authKind`. Every other flow has `authKind` "none". `signedOut` is true when the user is not signed in during the flow: on the landing page, while signing up or signing in, and in every flow of a role that never signs in. Every other flow, signing out included, has `signedOut` false.
 2. Steps are F01.S01, F01.S02, ... numbered without gaps. A user step pairs what the user does (`userAction`) with what the website visibly does in response (`websiteResponse`). A step the system starts on its own (a deadline passes) has kind "system", a `websiteResponse` and an empty `userAction`.
 3. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
    - A label and a business meaning. No technical name: the engineers name the field later from these.
@@ -27,7 +27,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
    - `min` and `max`: lengths for text, values for numbers, `null` when there are none.
    - `options`: a fixed list of at least 2 for singleChoice and multiChoice, `[]` for every other type.
    - `optionsFrom`: when a choice offers records the app keeps, the vocabulary noun of those records, and `options` is `[]`. Otherwise "".
-   - A realistic example.
+   - A realistic `example`, written as text in quotes even for a number, a date or a yes or no: "60", "2026-11-03", "yes".
 
    A step asks for fields by id in `fields`, or for a whole `form`, and asks for each field once. A form holds the fields one screen asks for, when more than one flow shows that screen. Forms are in `forms` with an id (FM01, ...).
 4. A subflow is a step sequence that flows share, kept in `subflows` with an id (SF01, ...). A step that runs a `subflow` says in `userAction` what triggers it and carries the `effects` the subflow applies to this flow's records. The subflow's steps give the website's response, so the step has no `websiteResponse` and no fields. The subflows every app has are already in `subflows` under their own ids. Run them by id and never rewrite them.

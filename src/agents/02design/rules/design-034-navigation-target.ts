@@ -29,7 +29,7 @@ export const rule = defineRule<NodesInput>(
       )
       .map((node) =>
         fail(
-          `${node.id} is navigation with no target; set navigatesTo to the screen it opens, or make it the action it is.`,
+          `${node.id} is navigation with navigatesTo "". A navigation node goes to a screen, unless its component is Tab, Tabs, Pagination, Accordion or Collapsible, which change the view in place. Set navigatesTo of ${node.id} to the screen it opens, or give it the role of the action it is, such as secondary-action.`,
           node.id,
         ),
       ),

@@ -5,7 +5,7 @@ import { BORDERED, type LayoutInput } from '../helpers';
 /**
  * LAYOUT-039 · mandatory · H-39 No box in a box
  * A bordered component (Card, Section, Accordion, Popover) never sits inside
- * another or inside a dialog.
+ * another or inside a dialog. A Card in a CardGroup is an option of a field.
  * Pass: Cards directly in a page section.
  * Fail: a Card inside a dialog.
  */
@@ -22,7 +22,8 @@ export const rule = defineRule<LayoutInput>(
       ]),
     );
     for (const node of screens.nodes) {
-      if (!BORDERED.has(node.component)) continue;
+      // A Card in a CardGroup is an option of a field, not a box.
+      if (!BORDERED.has(node.component) || (node.component === 'Card' && byId.get(node.parent)?.component === 'CardGroup')) continue;
       const seen = new Set<string>();
       let outer = byId.get(node.parent);
       while (outer && !BORDERED.has(outer.component) && !seen.has(outer.id)) {
@@ -33,14 +34,14 @@ export const rule = defineRule<LayoutInput>(
       if (outer && BORDERED.has(outer.component))
         issues.push(
           fail(
-            `${node.id} is a ${node.component} inside the ${outer.component} ${outer.id}; a box in a box is a defect, so drop one border.`,
+            `${node.id} has component ${node.component}, and it sits inside ${outer.id}, which has component ${outer.component}. A Card, Section, Accordion or Popover draws a border, and never sits inside another one of these. Keep one of the two borders. Set the component of ${node.id} to none, so it is a plain layout box, or set the component of ${outer.id} to none.`,
             node.id,
           ),
         );
       else if (screen && screen.type !== 'page')
         issues.push(
           fail(
-            `${node.id} is a ${node.component} inside the ${screen.type} ${screen.id}; the ${screen.type} is the box, so lay its content out plainly.`,
+            `${node.id} has component ${node.component}, and it sits inside the ${screen.type} ${screen.id}. A ${screen.type} already draws the box, so nothing inside it is a Card, Section, Accordion or Popover. Set the component of ${node.id} to none, so it is a plain layout box.`,
             node.id,
           ),
         );

@@ -1,4 +1,5 @@
 import type { Issue } from '../../../../../core/issues';
+import { readBackground } from '../../../background';
 import { defineRule } from '../../../../../core/rules';
 import {
   colorSets,
@@ -15,7 +16,8 @@ import type { ThemeInput } from '../helpers';
  * 4.5:1 for fg and fgMuted on bg, fg on hoverBg, accentFg on accentBg and
  * accentHoverBg, for the theme, base and every entity set; for pageFg and
  * pageFgMuted on pageBg and frameBg; and for the theme's and base's fg on
- * pageBg and frameBg, where a link draws it; in every mode the theme has.
+ * pageBg and frameBg, where a link draws it; and for pageFg and pageFgMuted
+ * on every color of the page background (DS35); in every mode the theme has.
  * Pass: the reading-list theme.
  * Fail: fgMuted set to the bg color.
  */
@@ -40,6 +42,9 @@ export const rule = defineRule<ThemeInput>(
       const { page } = colors;
       for (const [fg, bg] of PAGE_PAIRS)
         check('page', mode, fg, bg, page[fg], page[bg]);
+      for (const color of readBackground(page.pageBackground).colors)
+        for (const fg of ['pageFg', 'pageFgMuted'] as const)
+          check('page', mode, fg, `the background's ${color}`, page[fg], color);
       for (const name of SURFACE_SETS)
         for (const [fg, bg] of SURFACE_TEXT_PAIRS)
           check(name, mode, fg, bg, colors[name][fg], page[bg]);

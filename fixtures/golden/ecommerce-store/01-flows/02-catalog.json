@@ -2,7 +2,7 @@
   "meta": {
     "artifact": "flows-catalog",
     "version": 1,
-    "hash": "dfe29594c388a3790a4e5a841d80f4955a29563096900d71ed7d1d99fac4b76d",
+    "hash": "8d1acf43bb16983f00458c5865985cbbb7d2b3f93b4efc3f2dd9a83e66f9ac53",
     "inputs": {
       "flows-scope": {
         "version": 1,
@@ -22,6 +22,7 @@
         "role": "shopper",
         "category": "browse",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Understand what the studio sells and how to order, and start shopping.",
         "preconditions": [
           "Not signed in"
@@ -35,6 +36,7 @@
         "role": "shopper",
         "category": "browse",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Browse live pieces and find what is still available.",
         "preconditions": [
           "Not signed in"
@@ -48,6 +50,7 @@
         "role": "shopper",
         "category": "core",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Order chosen pieces as a guest without messaging.",
         "preconditions": [
           "Not signed in",
@@ -62,6 +65,7 @@
         "role": "studioOwner",
         "category": "auth",
         "authKind": "signUp",
+        "signedOut": true,
         "goal": "Create the studio-owner account.",
         "preconditions": [
           "Not signed in."
@@ -75,6 +79,7 @@
         "role": "studioOwner",
         "category": "auth",
         "authKind": "signIn",
+        "signedOut": true,
         "goal": "Sign in to manage the shop.",
         "preconditions": [
           "Not signed in."
@@ -88,6 +93,7 @@
         "role": "studioOwner",
         "category": "auth",
         "authKind": "signOut",
+        "signedOut": false,
         "goal": "Leave the shop account safely.",
         "preconditions": [
           "Signed in as studio owner."
@@ -101,6 +107,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "See new orders and move them through packing, dispatch and payment.",
         "preconditions": [
           "Signed in as studio owner."
@@ -114,6 +121,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Add a new piece with its glaze and size options.",
         "preconditions": [
           "Signed in as studio owner."
@@ -127,6 +135,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Keep listings, prices and stock counts correct.",
         "preconditions": [
           "Signed in as studio owner.",
@@ -141,6 +150,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Remove a piece from sale without losing order history.",
         "preconditions": [
           "Signed in as studio owner.",
@@ -155,6 +165,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Manage weekend Instagram discount codes.",
         "preconditions": [
           "Signed in as studio owner."
@@ -168,6 +179,7 @@
         "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Know which glazes are nearly gone.",
         "preconditions": [
           "Signed in as studio owner."

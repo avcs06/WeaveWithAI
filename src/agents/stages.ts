@@ -13,9 +13,11 @@ import {
   architectStage,
   assembleStage,
   briefStage,
+  designCatalogStage,
   drawStage,
   frameStage,
   inventStage,
+  screenStage,
   themeStage,
 } from './02design/stages';
 
@@ -44,6 +46,8 @@ export const PIPELINE: string[] = [
   'design-brief',
   'design-theme',
   'design-architect',
+  'design-catalog',
+  'design-screen',
   'design-invent',
   'design-draw',
   'design-frame',
@@ -60,6 +64,23 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
+/** Stages that read nothing of each other's, so they run side by side: after the catalog, the layouts, components, widgets and frames (DS32). */
+export const SIDE_BY_SIDE: string[][] = [
+  ['design-screen', 'design-invent', 'design-draw', 'design-frame'],
+];
+
+/** `order` in runs of stages that start together: each side-by-side group as one batch, every other stage alone. */
+export function stageBatches(order: string[], groups = SIDE_BY_SIDE): string[][] {
+  const batches: string[][] = [];
+  for (const name of order) {
+    const last = batches.at(-1);
+    const group = groups.find((g) => g.includes(name));
+    if (group && last?.length && group.includes(last[0] ?? '')) last.push(name);
+    else batches.push([name]);
+  }
+  return batches;
+}
+
 export const stages: StageDef[] = [
   scopeStage,
   catalogStage,
@@ -68,6 +89,8 @@ export const stages: StageDef[] = [
   briefStage,
   themeStage,
   architectStage,
+  designCatalogStage,
+  screenStage,
   inventStage,
   drawStage,
   frameStage,

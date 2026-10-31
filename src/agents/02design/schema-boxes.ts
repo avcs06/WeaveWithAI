@@ -16,43 +16,53 @@ export function boxSchemas(inv: Inventory) {
   const Box = z.object({
     width: z
       .enum(SIZING)
-      .describe('fill the parent, size to the content, or a fixed px width'),
-    widthPx: z.number().int().describe('Only when width is fixed; 0 otherwise'),
+      .describe(
+        'Its width. fill: fills its parent. content: as wide as its content. fixed: widthPx wide',
+      ),
+    widthPx: z
+      .number()
+      .int()
+      .describe('Its width in px when width is fixed. 0 otherwise'),
     height: z
       .enum(SIZING)
       .describe(
-        'A design-system component has its height from the inventory: say content',
+        'Its height. A design-system component takes content, because the design system sets its height',
       ),
     heightPx: z
       .number()
       .int()
-      .describe('Only when height is fixed; 0 otherwise'),
-    minHeightPx: z.number().int().describe('0 for none'),
+      .describe('Its height in px when height is fixed. 0 otherwise'),
+    minHeightPx: z
+      .number()
+      .int()
+      .describe('Its minimum height in px. 0 for none'),
     span: z
       .number()
       .int()
-      .describe('Grid columns this node spans in a grid parent; 1 otherwise'),
+      .describe('The grid columns it spans when its parent is a grid. 1 otherwise'),
   });
 
   const Layout = z.object({
     direction: z.enum(['row', 'column', 'grid']),
     gap: z
       .enum(spacing)
-      .describe('A spacing token key between the children: 4 means 16px'),
+      .describe('The space between its children, as a spacing token key. 4 means 16px'),
     padding: z
       .enum(spacing)
-      .describe('A spacing token key inside the box, all sides; 0 for none'),
+      .describe('The space inside its edge on every side, as a spacing token key. 0 for none'),
     columns: z
       .number()
       .int()
-      .describe('Grid columns on desktop, 1 to 4; 0 for row and column'),
+      .describe('For a grid, its columns on desktop, 1 to 4. 0 for a row or a column'),
     align: z
       .enum(['start', 'center', 'end', 'stretch'])
-      .describe('Children across the direction'),
+      .describe('Where its children sit across its direction'),
     justify: z
       .enum(['start', 'center', 'end', 'between'])
-      .describe('Children along the direction'),
-    wrap: z.boolean().describe('A row that wraps when its children do not fit'),
+      .describe('Where its children sit along its direction'),
+    wrap: z
+      .boolean()
+      .describe('True for a row whose children wrap to a new line when they do not fit'),
   });
 
   /** A new component's root or part: a box with its own padding and gap. */
@@ -62,32 +72,32 @@ export function boxSchemas(inv: Inventory) {
   });
 
   const Region = z.object({
-    id: z.string().describe('SH1.r1'),
+    id: z.string().describe('SH1.r1, SH1.r2, ...'),
     place: z
       .enum(REGION_PLACES)
       .describe(
-        'The edge it docks to. Regions dock in order, each on the space the ones before it left: a top region first spans the whole width, a left region first runs the whole height',
+        'The edge it docks to. Regions dock in order, each in the space the regions before it leave. So a top region that docks first spans the whole width, and a left region that docks first runs the whole height',
       ),
     overlay: z
       .boolean()
       .describe(
-        'A top region drawn over the page instead of above it, such as a header on a hero; the content starts under it',
+        'True for a top region drawn over the page instead of above it, such as a header over a hero. The page content starts under it',
       ),
     box: Box.omit({ span: true }).describe(
-      'A top or bottom region fills the width with a fixed or content height; a left or right region has a fixed width and fills the height',
+      'Its size. A top or bottom region fills the width and has a fixed or content height. A left or right region has a fixed width and fills the height',
     ),
     layout: Layout,
     holds: z
       .string()
       .describe(
-        'What it holds, in a sentence: "the wordmark, the main navigation, the account menu"',
+        'What it holds, in one sentence, such as "the wordmark, the main navigation, the account menu"',
       ),
   });
 
   const Shell = z.object({
-    id: z.string().describe('SH1'),
-    name: z.string().describe('A short name, e.g. app or marketing'),
-    purpose: z.string().describe('The pages it frames and why it suits them'),
+    id: z.string().describe('SH1, SH2, ...'),
+    name: z.string().describe('A short name, such as app or marketing'),
+    purpose: z.string().describe('The pages it frames, and why it suits them'),
     regions: z.array(Region),
   });
 

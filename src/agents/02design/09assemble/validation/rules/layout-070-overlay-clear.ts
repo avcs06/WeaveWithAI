@@ -35,7 +35,7 @@ export const rule = defineRule<LayoutInput>(
           )
             issues.push(
               fail(
-                `${rect.id} starts at ${Math.round(rect.y)}, under ${region.id}, which ends at ${Math.round(bar.y + bar.height)}; pad the first section so the content clears it.`,
+                `${rect.id} starts ${Math.round(rect.y)}px from the top, under the overlay region ${region.id}, which ends ${Math.round(bar.y + bar.height)}px from the top. The content of a page starts below every overlay region drawn over it. Raise the layout padding of ${view.node(rect.id)?.section ?? rect.parent} by at least ${Math.ceil(bar.y + bar.height - rect.y)}px, so ${rect.id} starts below ${region.id}.`,
                 rect.id,
               ),
             );

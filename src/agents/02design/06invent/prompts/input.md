@@ -1,18 +1,17 @@
-<!-- A component call's user message. Placeholders: declaration, widgets, vocabulary, look. -->
+<!-- User message of an invent call (DS23). Placeholders: component, widgets, vocabulary, look. -->
+# To draw
 
-# To design
+The new component as the architect declared and described it, with its narrowest and widest width in px.
 
-The IA's declaration of the component.
-
-{{declaration}}
+{{component}}
 
 # Where it is used
 
-The widgets that use it, with where each is placed.
+The widgets that hold it, and the screens it is placed on.
 
 {{widgets}}
 
-# Vocabulary (01-flows/01-scope.json)
+# Vocabulary
 
 {{vocabulary}}
 
@@ -21,3 +20,7 @@ The widgets that use it, with where each is placed.
 The brief's feel, personality, density, radius and imagery, and the theme's component defaults.
 
 {{look}}
+
+# Your job in this call: the component's look
+
+Draw this component's root box, its layout and its nodes. Draw its look only. An engineer adds its behavior, props, keys and ARIA later.

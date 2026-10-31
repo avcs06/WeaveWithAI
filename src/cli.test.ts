@@ -90,10 +90,22 @@ describe('weave run', () => {
       status: 'done',
       version: 1,
     });
+    const call = '(muse-spark-1.3, 10 in, 5 out, $0.0010, 0.0s)';
     expect(lines).toEqual([
       `run ${run.id} (${run.dir})`,
-      'flows-scope: running',
-      'flows-scope: done v1, 2 rounds',
+      'flows',
+      '  scope',
+      '    scope running',
+      '    scope round 1 started',
+      `    scope round 1 written ${call}`,
+      '    scope round 1 validate passed',
+      '    scope round 1 finished: nothing pending',
+      '    scope round 2 review peer started',
+      '    scope round 2 review output started',
+      `    scope round 2 review peer found 0 blockers ${call}`,
+      `    scope round 2 review output found 0 blockers ${call}`,
+      '    scope round 2 finished: nothing pending',
+      '    scope done v1, 2 rounds',
     ]);
   });
 
@@ -101,7 +113,7 @@ describe('weave run', () => {
     lines.length = 0;
     await runCommand({ idea, run: run.id, to: 'flows-scope' }, deps);
     expect(readArtifact(run, 'flows-scope').meta.version).toBe(1);
-    expect(lines[1]).toBe('flows-scope: up to date (v1)');
+    expect(lines.slice(1)).toEqual(['flows', '  scope', '    scope up to date (v1)']);
   });
 
   it('reruns from the stage named by --from', async () => {
@@ -167,6 +179,8 @@ describe('weave run', () => {
       'design-brief: no artifact to validate',
       'design-theme: no validators registered',
       'design-architect: no validators registered',
+      'design-catalog: no validators registered',
+      'design-screen: no validators registered',
       'design-invent: no validators registered',
       'design-draw: no validators registered',
       'design-frame: no validators registered',
@@ -184,7 +198,7 @@ describe('weave ds', () => {
       templateDir: 'template',
       cacheDir: path.join(runsDir, 'cache'),
       exporter: printFile(fixture('export.json')),
-      measurer: printFile(fixture('boxes.json')),
+      boxesFile: fixture('boxes.json'),
       out: deps.out,
     });
     expect(printed).toEqual(lines);
@@ -208,7 +222,7 @@ describe('weave wireframes', () => {
       templateDir: 'template',
       cacheDir: path.join(runsDir, 'cache'),
       exporter: printFile(fixture('export.json')),
-      measurer: printFile(fixture('boxes.json')),
+      boxesFile: fixture('boxes.json'),
       runsDir,
       out: deps.out,
     });

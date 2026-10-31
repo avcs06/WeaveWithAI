@@ -43,7 +43,7 @@ export const rule = defineRule<LayoutInput>(
         if (found && (found.gap < 4 || found.gap > 10))
           issues.push(
             fail(
-              `${rect.id} puts ${found.text.id} ${found.gap} from ${found.mark.id}; an icon or avatar and its text are a pair, 4 to 10 apart.`,
+              `${rect.id} is a row of the icon or avatar ${found.mark.id} and the text ${found.text.id}, ${found.gap}px apart. An icon or avatar and the text beside it are a pair, 4px to 10px apart. Set the layout gap of ${rect.id} to 4px to 10px, which is spacing key 1, 1.5, 2 or 2.5.`,
               rect.id,
             ),
           );

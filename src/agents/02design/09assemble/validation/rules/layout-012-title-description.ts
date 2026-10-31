@@ -29,7 +29,7 @@ export const rule = defineRule<LayoutInput>(
         if (text.gapBefore !== 4)
           issues.push(
             fail(
-              `${text.id} is ${text.gapBefore} below its title ${rect.id}; a description sits 4 below its title.`,
+              `${text.id} is a description ${text.gapBefore}px below its title ${rect.id}. A description sits 4px below its title. ${siblings.length === 2 ? `Set the layout gap of ${parent.id} to 4px (spacing key 1).` : `Put ${rect.id} and ${text.id} in a column node of their own, with a layout gap of 4px (spacing key 1).`}`,
               text.id,
             ),
           );
@@ -54,7 +54,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `${content.id} is ${gap} below the description of ${rect.id}; content follows a description at 12 to 16.`,
+              `${content.id} is ${gap}px below the description of the title ${rect.id}. The content after a description sits 12px to 16px below it. Set the layout gap of ${content.parent} to 12px to 16px.`,
               content.id,
             ),
           );

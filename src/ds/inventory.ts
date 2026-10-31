@@ -56,8 +56,8 @@ export type InventoryOptions = {
   cacheDir?: string;
   /** The export command, run with the template as working directory. */
   exporter?: Command;
-  /** The box measurement command, run the same way; needs Storybook on 6006. */
-  measurer?: Command;
+  /** The measured boxes; `pnpm ds:measure` rewrites the default `src/ds/boxes.json` from Storybook on 6006. */
+  boxesFile?: string;
 };
 
 type Command = { file: string; args: string[] };
@@ -104,7 +104,6 @@ const INTERNAL = new Set([
   'LoadingIcon',
   'MinusIcon',
 ]);
-const MEASURER = { file: 'node', args: ['tools/measure-design-system.mjs'] };
 const SOURCES = [
   'packages/*/src/**/*',
   'tokens.ts',
@@ -167,9 +166,14 @@ export async function inventory(
 ): Promise<Inventory> {
   const templateDir = path.resolve(opts.templateDir ?? 'template');
   const cacheDir = opts.cacheDir ?? '.weave-cache';
+  const boxesText = readFileSync(
+    opts.boxesFile ?? pathBeside(import.meta.url, './boxes.json'),
+    'utf8',
+  );
+  // A new measurement makes a new cache file, as a changed source does.
   const cacheFile = path.join(
     cacheDir,
-    `inventory-${sourcesHash(templateDir)}.json`,
+    `inventory-${sha256(sourcesHash(templateDir) + boxesText)}.json`,
   );
   if (existsSync(cacheFile))
     return JSON.parse(readFileSync(cacheFile, 'utf8')) as Inventory;
@@ -179,11 +183,7 @@ export async function inventory(
     opts.exporter ?? EXPORTER,
     'design-system export failed (is the MCP built? pnpm --dir template mcp:setup)',
   );
-  const boxes = await runTool<Record<string, Box>>(
-    templateDir,
-    opts.measurer ?? MEASURER,
-    'box measurement failed (is Storybook running? pnpm --dir template storybook)',
-  );
+  const boxes = JSON.parse(boxesText) as Record<string, Box>;
   const recipes = readRecipes(templateDir);
   // The web app is a placeholder, and a config component (Table.Sort) renders nothing.
   const kept = exported.components.filter(

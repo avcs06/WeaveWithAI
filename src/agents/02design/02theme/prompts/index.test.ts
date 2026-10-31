@@ -35,7 +35,11 @@ describe('theme prompt', () => {
 
   it("names the brief's modes and colored entities, every color role and every layout part", () => {
     expect(prompt).toContain('Write the colors for light and dark.');
-    expect(prompt).toContain('as strong as the brand: shelf (hue 230).');
+    expect(prompt).toContain('from its own ramp: shelf (hue 230).');
+    // The ramps code built: every set in both modes, twelve steps each, with their contrast.
+    for (const title of ['light mode, theme:', 'dark mode, base:', 'light mode, entity shelf:'])
+      expect(prompt).toContain(title);
+    expect(prompt).toMatch(/^12 #[0-9A-F]{6} on white \d+\.\d{2}, on black \d+\.\d{2}$/m);
     for (const role of [...ROLES, ...PAGE_ROLES])
       expect(prompt).toContain(`\`${role}\``);
     for (const part of [
@@ -56,7 +60,7 @@ describe('theme prompt', () => {
     );
     expect(plain).toContain('Write the colors for dark only.');
     expect(plain).toContain(
-      'as strong as the brand: none, so `entity` stays empty.',
+      'from its own ramp: none, so `entity` stays empty.',
     );
   });
 

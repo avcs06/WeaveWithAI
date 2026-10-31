@@ -42,15 +42,27 @@ export const rule = defineRule<LayoutInput>(
       );
       const problems = [
         texts.length === 1 && text && sentences(text.text) === 1
-          ? ''
-          : `one sentence (has ${texts.length} text nodes)`,
-        names ? '' : 'the sentence names what is destroyed',
-        buttons.length === 2 ? '' : `two buttons (has ${buttons.length})`,
-      ].filter(Boolean);
+          ? []
+          : [
+              texts.length === 1 && text
+                ? `a text of ${sentences(text.text)} sentences`
+                : `${texts.length} text nodes`,
+              `Give ${screen.id} exactly one text node, of one sentence.`,
+            ],
+        names
+          ? []
+          : [
+              'a text that does not name what is destroyed',
+              "Name what is destroyed in that sentence. Show the record's value through its data, as Noun.attribute, or put the record's name in quotes.",
+            ],
+        buttons.length === 2
+          ? []
+          : [`${buttons.length} buttons`, `Give ${screen.id} exactly two buttons.`],
+      ].filter((pair) => pair.length);
       if (problems.length)
         issues.push(
           fail(
-            `The confirmation ${screen.id} needs ${problems.join(', ')}.`,
+            `${screen.id} is a confirmation, a ${screen.type} whose one job is a destructive action. It has ${new Intl.ListFormat('en-GB').format(problems.map(([wrong]) => wrong ?? ''))}. A confirmation says one sentence that names what is destroyed, and offers two buttons. ${problems.map(([, fix]) => fix).join(' ')}`,
             screen.id,
           ),
         );

@@ -6,6 +6,7 @@
       "role": "reader",
       "category": "auth",
       "authKind": "signUp",
+      "signedOut": true,
       "goal": "Create an account to keep a private reading list.",
       "preconditions": [
         "Not signed in."
@@ -69,6 +70,7 @@
       "role": "reader",
       "category": "auth",
       "authKind": "signIn",
+      "signedOut": true,
       "goal": "Get back to the reading list.",
       "preconditions": [
         "Has an account.",
@@ -125,6 +127,7 @@
       "role": "reader",
       "category": "core",
       "authKind": "none",
+      "signedOut": false,
       "goal": "Remember a book to read later.",
       "preconditions": [
         "Signed in."
@@ -190,6 +193,7 @@
       "role": "reader",
       "category": "browse",
       "authKind": "none",
+      "signedOut": false,
       "goal": "Find a book on the list.",
       "preconditions": [
         "Signed in."
@@ -252,6 +256,7 @@
       "role": "reader",
       "category": "manage",
       "authKind": "none",
+      "signedOut": false,
       "goal": "Remove a book the reader no longer wants on the list.",
       "preconditions": [
         "Signed in.",
@@ -323,6 +328,7 @@
       "role": "reader",
       "category": "auth",
       "authKind": "signOut",
+      "signedOut": false,
       "goal": "Leave the reading list private on a shared device.",
       "preconditions": [
         "Signed in."

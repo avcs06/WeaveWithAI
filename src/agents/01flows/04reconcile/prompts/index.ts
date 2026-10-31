@@ -1,5 +1,6 @@
 import { fillPrompt, loadPrompt, stripComments } from '../../../../core/prompt';
 import { pathBeside } from '../../../../core/utils';
+import { patchFormat } from '../../../../runner/patch';
 import type { Scope } from '../../01scope/schema';
 import { fenced } from '../../prompts/index';
 import { Flows } from '../../schema';
@@ -18,6 +19,7 @@ export function patchUserMessage(
     idea: stripComments(idea),
     scope: fenced('Scope (01-flows/01-scope.json)', scope),
     flows: fenced('Current flows (01-flows/03-expand.json)', flows),
+    patch: patchFormat,
     issues,
     answers,
   });

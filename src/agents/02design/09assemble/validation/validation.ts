@@ -16,7 +16,6 @@ import { rule as layout003 } from './rules/layout-003-related-pairs';
 import { rule as layout004 } from './rules/layout-004-icon-text';
 import { rule as layout005 } from './rules/layout-005-groups-apart';
 import { rule as layout006 } from './rules/layout-006-padding-over-gap';
-import { rule as layout008 } from './rules/layout-008-section-gaps';
 import { rule as layout009 } from './rules/layout-009-form-spacing';
 import { rule as layout010 } from './rules/layout-010-row-rhythm';
 import { rule as layout011 } from './rules/layout-011-button-groups';
@@ -56,7 +55,6 @@ export const layoutRules: readonly Rule<LayoutInput>[] = [
   layout004,
   layout005,
   layout006,
-  layout008,
   layout009,
   layout010,
   layout011,

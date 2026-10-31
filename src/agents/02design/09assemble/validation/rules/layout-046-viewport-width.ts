@@ -27,7 +27,7 @@ export const rule = defineRule<LayoutInput>(
       for (const rect of overflowing)
         issues.push(
           fail(
-            `${rect.id} does not fit its ${Math.round(rect.width)}; let it wrap, stack it, or shorten its items.`,
+            `${rect.id} is a row ${Math.round(rect.width)}px wide, and its children need more width than that. The children of a row fit inside its width, except inside a table, which scrolls. Set the layout wrap of ${rect.id} to true, set its layout direction to column, or make its children narrower.`,
             rect.id,
           ),
         );
@@ -41,7 +41,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `${rect.id} runs past the ${view.width} viewport; nothing is wider than the viewport.`,
+              `${rect.id} runs from ${Math.round(rect.x)}px to ${Math.round(rect.x + rect.width)}px, past the edges of the ${view.width}px viewport. Every node fits inside the viewport, except inside a table, which scrolls. Make ${rect.id} fit inside ${view.width}px: set its box width to fill, or give it a smaller widthPx.`,
               rect.id,
             ),
           );

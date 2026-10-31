@@ -16,7 +16,7 @@ export const rule = defineRule<BriefInput>(
     const issues: Issue[] = [];
     const hue = (value: number) => value >= 0 && value <= 360;
     const colored = brief.entities.filter((entity) => entity.colored);
-    for (const field of ['seedHue', 'baseHue', 'pageHue', 'frameHue'] as const)
+    for (const field of ['seedHue', 'baseHue', 'frameHue'] as const)
       if (!hue(brief[field]))
         issues.push(
           fail(

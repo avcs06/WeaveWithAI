@@ -31,7 +31,9 @@ function setStrings(text: string, [open, close]: [number, number], values: Recor
   for (const [name, value] of Object.entries(values)) {
     const line = new RegExp(`(\\n\\s*${name}: )'[^']*'`);
     if (!line.test(inner)) throw new Error(`no ${name} to set`);
-    inner = inner.replace(line, `$1'${value}'`);
+    // A CSS background may hold a quote or a backslash; escape both inside the string literal.
+    const literal = value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    inner = inner.replace(line, (_, prefix: string) => `${prefix}'${literal}'`);
   }
   return text.slice(0, open) + inner + text.slice(close);
 }
@@ -48,7 +50,10 @@ export function applyColors(text: string, theme: Theme): string {
     };
     out = setStrings(out, within('primary'), Object.fromEntries(ROLES.map((role) => [role, colors.theme[role]])));
     out = setStrings(out, within('base'), Object.fromEntries(ROLES.map((role) => [role, colors.base[role]])));
-    out = setStrings(out, within('surface'), Object.fromEntries(PAGE_ROLES.map((role) => [role, colors.page[role]])));
+    out = setStrings(out, within('surface'), {
+      ...Object.fromEntries(PAGE_ROLES.map((role) => [role, colors.page[role]])),
+      pageBackground: colors.page.pageBackground,
+    });
     const [open, close] = within('entity');
     const sets = Object.entries(colors.entity).map(
       ([name, set]) =>

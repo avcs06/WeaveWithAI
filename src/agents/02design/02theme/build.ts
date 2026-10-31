@@ -1,6 +1,7 @@
 import { wcagContrast } from 'culori';
 import { z } from 'zod';
-import type { Brief } from '../01brief/schema';
+import { type Brief, chosenFonts } from '../01brief/schema';
+import { rampsOf } from './ramps';
 import {
   ColorSet,
   type ComponentDefaults,
@@ -10,12 +11,15 @@ import {
   PageColors,
   type PageRole,
   type Role,
+  ROLES,
+  type StepSet,
   type ThemeCall,
 } from './schema';
 
-// The theme (DS4a, D3.3 E): the theme call writes every color, the page
-// layouts and the component defaults; code adds the brief's fonts, radius,
-// focus ring and density and the contrast table the THEME rules check.
+// The theme (DS4a, D3.3 E): the theme call picks every color as a step of a
+// ramp (DS27), the page layouts and the component defaults; code turns the
+// steps into hex and adds the brief's fonts, radius, focus ring and density
+// and the contrast table the THEME rules check.
 
 export type { ColorSet, Mode } from './schema';
 
@@ -157,28 +161,44 @@ const RADIUS: Record<Brief['radius'], [string, string]> = {
   pill: ['16px', '9999px'],
 };
 
-/** The brief and the theme call's values as one theme; hex values in capitals. */
+/** The brief and the theme call's values as one theme: each step turned into its ramp's hex, in capitals. */
 export function buildTheme(brief: Brief, call: ThemeCall): Theme {
-  const upper = <T extends Record<string, string>>(set: T): T =>
-    Object.fromEntries(
-      Object.entries(set).map(([role, hex]) => [role, hex.toUpperCase()]),
-    ) as T;
+  const ramps = rampsOf(brief);
   const modes = modesOf(brief);
   const colors = Object.fromEntries(
     modes.flatMap((mode) => {
       const values = call.colors[mode];
-      if (!values) return [];
-      const entity = Object.fromEntries(
-        Object.entries(values.entity).map(([name, set]) => [name, upper(set)]),
-      );
+      const ramp = ramps[mode];
+      if (!values || !ramp) return [];
+      const at = (hexes: string[], step: number) => hexes[step - 1] ?? '';
+      const set = (hexes: string[], picked: StepSet) =>
+        Object.fromEntries(
+          ROLES.map((role) => [role, at(hexes, picked[role])]),
+        ) as ColorSet;
+      const { page } = values;
       return [
         [
           mode,
           {
-            theme: upper(values.theme),
-            base: upper(values.base),
-            page: upper(values.page),
-            entity,
+            theme: set(ramp.theme, values.theme),
+            base: set(ramp.base, values.base),
+            page: {
+              pageBg: at(ramp[page.pageBg.ramp], page.pageBg.step),
+              pageFg: at(ramp[page.pageFg.ramp], page.pageFg.step),
+              pageFgMuted: at(ramp[page.pageFgMuted.ramp], page.pageFgMuted.step),
+              frameBg: at(ramp.frame, page.frameBg),
+              divider: at(ramp[page.divider.ramp], page.divider.step),
+              backdrop: at(ramp[page.backdrop.ramp], page.backdrop.step),
+              skeleton: at(ramp[page.skeleton.ramp], page.skeleton.step),
+              // The brief writes its first mode's background; the theme the other's.
+              pageBackground: page.background ?? brief.pageBackground,
+            },
+            entity: Object.fromEntries(
+              Object.entries(values.entity).map(([name, picked]) => [
+                name,
+                set(ramp.entity[name] ?? [], picked),
+              ]),
+            ),
           },
         ],
       ];
@@ -189,7 +209,7 @@ export function buildTheme(brief: Brief, call: ThemeCall): Theme {
   return {
     modes,
     colors,
-    fonts: { ...brief.fonts },
+    fonts: chosenFonts(brief),
     radius: { surface, control },
     focusRing: brief.focusRing,
     density: brief.density,

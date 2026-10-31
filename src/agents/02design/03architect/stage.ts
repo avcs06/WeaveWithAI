@@ -3,36 +3,37 @@ import { type Inventory, inventory } from '../../../ds/inventory';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { StageContext, StageDef } from '../../stages';
 import { designInputs } from '../calls';
-import { iaReviewGuides, iaSystemPrompt, iaUserMessage } from './prompts/index';
-import { makeArchitectSchemas } from './schema';
-import { validateWidgetIa } from './validation/validation';
+import { processPlan } from './process';
+import { planReviewGuides, planSystemPrompt, planUserMessage } from './prompts/index';
+import { makeArchitectSchema, PLAN_KEYS } from './schema';
+import { validatePlan } from './validation/validation';
 
-// The IA writes the screens, the copy deck, the widgets and their placements, and reasons at high; it starts
-// at the client's 64k cap, so no cut is billed before a doubling (user, 2026-10-30).
-const IA_MAX_TOKENS = 65_536;
-const IA_EFFORT = 'high';
+// The architect plans every screen once, at high reasoning, its first draft at
+// 0.7 (DS23); it starts at the client's 64k cap, so no cut is billed before a
+// doubling (user, 2026-10-30).
+const PLAN_MAX_TOKENS = 65_536;
+const PLAN_EFFORT = 'high';
 
-/** The IA call: every screen planned once, with its copy, widgets and placements (DS23). */
-export async function runArchitect(
-  ctx: StageContext,
-  inv: Inventory,
-): Promise<void> {
+/** The architect's call: the screens, the navigation and the new components, with what follows from them filled in (DS23). */
+export async function runArchitect(ctx: StageContext, inv: Inventory): Promise<void> {
   const { run, llm } = ctx;
   const { scope, flows, brief, theme, context } = designInputs(run, inv);
   const result = await runSpecStage({
     run,
     llm,
     stage: 'design-architect',
-    schema: makeArchitectSchemas(inv).Ia,
-    schemaName: 'Ia',
-    system: iaSystemPrompt(brief, inv),
-    user: iaUserMessage(scope, flows, brief, theme.layouts),
-    validate: (draft) => validateWidgetIa(draft, context),
-    review: iaReviewGuides(),
-    maxTokens: IA_MAX_TOKENS,
-    reasoningEffort: IA_EFFORT,
+    schema: makeArchitectSchema(inv).Plan,
+    schemaName: 'Plan',
+    system: planSystemPrompt(brief, inv),
+    user: planUserMessage(scope, flows, brief, theme.layouts),
+    validate: (plan) => validatePlan(processPlan(plan, flows, scope), theme.layouts, context),
+    review: planReviewGuides(),
+    maxTokens: PLAN_MAX_TOKENS,
+    reasoningEffort: PLAN_EFFORT,
+    temperature: 0.7,
+    patchKeys: PLAN_KEYS,
   });
-  writeArtifact(run, 'design-architect', result.output, {
+  writeArtifact(run, 'design-architect', processPlan(result.output, flows, scope), {
     stage: 'design-architect',
     model: result.model,
     rounds: result.rounds,

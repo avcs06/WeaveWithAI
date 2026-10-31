@@ -7,27 +7,21 @@ import type { Scope } from '../../../01flows/01scope/schema';
 import type { Flows } from '../../../01flows/schema';
 import type { Brief } from '../../01brief/schema';
 import type { Layouts } from '../../02theme/schema';
-import {
-  COPY_KINDS,
-  NEW_COMPONENT_BUDGET,
-  SECTION_KINDS,
-  SIDE_WIDTH_PX,
-} from '../../config';
+import { NEW_COMPONENT_BUDGET } from '../../config';
 
-/** The IA call's system prompt: the density, the section and copy kinds, the side panel, the design system and the budget. */
-export function iaSystemPrompt(brief: Brief, inv: Inventory): string {
+const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
+
+/** The architect's system prompt: the density, the design system and the budget. */
+export function planSystemPrompt(brief: Brief, inv: Inventory): string {
   return fillPrompt(load('./prompt.md'), {
     density: brief.density,
-    sectionKinds: SECTION_KINDS.map((kind) => `- ${kind}`).join('\n'),
-    copyKinds: COPY_KINDS.join(', '),
-    sideWidth: String(SIDE_WIDTH_PX),
-    dsProse: inventoryProse(inv),
     newComponentBudget: String(NEW_COMPONENT_BUDGET),
+    dsProse: inventoryProse(inv),
   });
 }
 
-/** The IA call's user message: the scope, the flows, the brief and the theme's two page layouts. */
-export function iaUserMessage(
+/** The architect's user message: the scope, the flows, the brief and the theme's two page layouts. */
+export function planUserMessage(
   scope: Scope,
   flows: Flows,
   brief: Brief,
@@ -41,13 +35,11 @@ export function iaUserMessage(
   });
 }
 
-const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
-
 /** A review guide beside this file: `review-peer` or `review-output`. */
 const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});
 
-/** The call's two review guides (D1.12): the product designer peer, then the output reviewer. */
-export const iaReviewGuides = (): ReviewGuides => ({
+/** The architect's two review guides (D1.12): the product designer peer, then the output reviewer. */
+export const planReviewGuides = (): ReviewGuides => ({
   peer: guide('review-peer'),
   output: guide('review-output'),
 });

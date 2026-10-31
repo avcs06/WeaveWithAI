@@ -25,7 +25,7 @@ export const rule = defineRule<NodesInput>(
         if (node.size || node.look)
           issues.push(
             fail(
-              `${node.id} has size "${node.size}" and look "${node.look}" but no design-system component; leave both "".`,
+              `${node.id} has size "${node.size}" and look "${node.look}", but its component ${node.component} is not a design-system component. Only a design-system component takes a size and a look. Give ${node.id} size "" and look "".`,
               node.id,
             ),
           );
@@ -35,7 +35,7 @@ export const rule = defineRule<NodesInput>(
       if (node.size && !sizes.includes(node.size))
         issues.push(
           fail(
-            `${node.id} is a ${component.name} of size ${node.size}; its sizes are ${sizes.join(', ') || 'none'}.`,
+            `${node.id} is a ${component.name} of size ${node.size}, which ${component.name} does not have. A node's size is one of its component's sizes. ${sizes.length ? `The sizes of ${component.name} are ${sizes.join(', ')}. Give ${node.id} one of those, or "" for the app's default.` : `${component.name} has no sizes. Give ${node.id} size "".`}`,
             node.id,
           ),
         );
@@ -43,7 +43,7 @@ export const rule = defineRule<NodesInput>(
       if (node.look && node.look !== 'base' && !looks.includes(node.look))
         issues.push(
           fail(
-            `${node.id} is a ${component.name} with look "${node.look}"; its looks are ${looks.filter(Boolean).join(', ') || 'none'}.`,
+            `${node.id} is a ${component.name} with look "${node.look}", which ${component.name} does not have. A node's look is one of its component's looks, or base for the design system's plain look. ${looks.some(Boolean) ? `The looks of ${component.name} are ${looks.filter(Boolean).join(', ')}. Give ${node.id} one of those, base, or "" for the app's default.` : `${component.name} has no looks. Give ${node.id} look base, or "" for the app's default.`}`,
             node.id,
           ),
         );

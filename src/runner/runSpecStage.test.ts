@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { type Issue, readReport, writeReport } from '../core/issues';
-import { type GenerateInput, type Llm, ModelOutputTruncated } from '../core/llm';
+import { type GenerateInput, type Llm, ModelOutputInvalid, ModelOutputTruncated } from '../core/llm';
 import type { Review } from './review';
 import { createRun, readEvents, readState } from '../core/run';
 import {
@@ -155,12 +155,26 @@ describe('runSpecStage with reviewers', () => {
 
     expect(readEvents(run).map((event) => event.type)).toEqual([
       'stage:start',
+      'round:start',
       'llm:call',
+      'round:validated',
       'stage:round',
+      'review:start',
+      'review:start',
       'llm:call',
       'llm:call',
       'stage:round',
       'stage:done',
+    ]);
+    expect(
+      readEvents(run)
+        .filter((event) => event.reviewer)
+        .map((event) => [event.type, event.reviewer, event.blockers]),
+    ).toEqual([
+      ['review:start', 'peer', undefined],
+      ['review:start', 'output', undefined],
+      ['llm:call', 'peer', 0],
+      ['llm:call', 'output', 0],
     ]);
     expect(
       readEvents(run)
@@ -572,10 +586,18 @@ describe('runSpecStage without a review guide', () => {
     expect(inputs).toHaveLength(1);
     expect(readEvents(run).map((event) => event.type)).toEqual([
       'stage:start',
+      'round:start',
       'llm:call',
+      'round:validated',
       'stage:round',
       'stage:done',
     ]);
+    expect(readEvents(run).find((event) => event.type === 'round:validated')).toMatchObject({
+      round: 1,
+      mandatory: 0,
+      warnings: 1,
+      rules: [],
+    });
   });
 
   it('sends only the mandatory issues back and ends in round 2', async () => {
@@ -596,14 +618,14 @@ describe('runSpecStage without a review guide', () => {
     const messages = inputs[1]?.messages ?? [];
     expect(messages[2]).toEqual({ role: 'assistant', content: '{"title":""}' });
     expect(messages[3]?.content).toContain(
-      'return the complete corrected JSON',
+      'Return the complete corrected document as JSON.',
     );
     expect(messages[3]?.content).toContain(
       '- DOC-001 at title: title must not be empty',
     );
     expect(messages[3]?.content).not.toContain('DOC-002');
     expect(messages[3]?.content).toContain(
-      'keep the question in the output:\nNone.',
+      'Answers the user gave to your questions:\nNone.',
     );
   });
 
@@ -820,13 +842,15 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     expect(inputs[1]).toEqual(inputs[0]);
     expect(readEvents(run).map((event) => event.type)).toEqual([
       'stage:start',
+      'round:start',
       'llm:call',
       'warning',
       'llm:call',
+      'round:validated',
       'stage:round',
       'stage:done',
     ]);
-    const [truncated, warning, answered] = readEvents(run).slice(1, 4);
+    const [truncated, warning, answered] = readEvents(run).slice(2, 5);
     expect(truncated).toMatchObject({
       stage: 'doc',
       round: 1,
@@ -846,6 +870,25 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     expect(answered).not.toHaveProperty('truncated');
   });
 
+  it('retries once an answer the schema refuses, logging what it cost, and fails on a second', async () => {
+    const invalid = () => {
+      const error = new ModelOutputInvalid('output is not JSON: Unexpected token', []);
+      error.paid = { model: 'muse-spark-1.3', usage: { input: 10, cachedInput: 0, output: 40 } };
+      return error;
+    };
+    const once = fakeLlm([invalid(), { title: 'Cats' }]);
+    const first = stage('invalid-once', once.llm, () => []);
+    expect(await first.promise).toMatchObject({ output: { title: 'Cats' }, rounds: 1 });
+    expect(once.inputs).toHaveLength(2);
+    const [refused, warning] = readEvents(first.run).slice(2, 4);
+    expect(refused).toMatchObject({ type: 'llm:call', invalid: true, output: 40 });
+    expect(warning?.message).toContain('did not match the schema');
+    const twice = fakeLlm([invalid(), invalid()]);
+    const second = stage('invalid-twice', twice.llm, () => []);
+    await expect(second.promise).rejects.toBeInstanceOf(ModelOutputInvalid);
+    expect(twice.inputs).toHaveLength(2);
+  });
+
   it('fails the stage when the retry is cut too, logging each cut call once', async () => {
     const { llm, inputs } = fakeLlm([cut(), cut()]);
     const { run, promise } = stage('cut-twice', llm, () => []);
@@ -860,6 +903,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
       readEvents(run).map((event) => [event.type, event.truncated]),
     ).toEqual([
       ['stage:start', undefined],
+      ['round:start', undefined],
       ['llm:call', true],
       ['warning', undefined],
       ['llm:call', true],
@@ -891,5 +935,75 @@ describe('runSpecStage with an answer cut at the output limit', () => {
           'doc round 2: the answer was cut at the output limit; retrying once',
       },
     ]);
+  });
+});
+
+describe('runSpecStage with patch keys', () => {
+  const Shelf = z.object({
+    title: z.string(),
+    books: z.array(z.object({ id: z.string(), name: z.string() })),
+  });
+  type Shelf = z.infer<typeof Shelf>;
+  const draft: Shelf = {
+    title: 'Shelf',
+    books: [
+      { id: 'B1', name: '' },
+      { id: 'B2', name: 'Dune' },
+    ],
+  };
+  const nameEveryBook = (shelf: Shelf): Issue[] =>
+    shelf.books
+      .filter((book) => !book.name)
+      .map((book) => ({
+        rule: 'DOC-003',
+        severity: 'mandatory',
+        message: 'a book needs a name',
+        at: book.id,
+      }));
+
+  it('asks a fix for a patch, merges it, and validates and reviews the merged document', async () => {
+    const patch = {
+      title: null,
+      books: { upsert: [{ id: 'B1', name: 'Emma' }], remove: [] },
+    };
+    const { llm, inputs } = fakeLlm([draft, patch, clean] as never[]);
+    const run = createRun({ idea, runsDir: root, id: 'patch-fix' });
+    const result = await runSpecStage({
+      run,
+      stage: 'shelf',
+      schema: Shelf,
+      schemaName: 'Shelf',
+      system: 'Write a shelf.',
+      user: 'Two books.',
+      validate: nameEveryBook,
+      review: { output: guide.output },
+      patchKeys: { books: 'id' },
+      llm,
+    });
+
+    expect(result.output).toEqual({
+      title: 'Shelf',
+      books: [
+        { id: 'B1', name: 'Emma' },
+        { id: 'B2', name: 'Dune' },
+      ],
+    });
+    expect(result.known).toEqual([]);
+    expect(inputs.map((input) => input.schemaName)).toEqual([
+      'Shelf',
+      'ShelfPatch',
+      'Review',
+    ]);
+    expect(lastUser(inputs[1])).toContain('Return a patch, not the complete document');
+    expect(lastUser(inputs[1])).toContain('- DOC-003 at B1: a book needs a name');
+    expect(lastUser(inputs[2])).toContain('"name":"Emma"');
+  });
+
+  it('asks a stage without patch keys for the whole document', async () => {
+    const { llm, inputs } = fakeLlm([{ title: '' }, { title: 'Cats' }]);
+    const { promise } = stage('whole-fix', llm, requireTitle);
+    await promise;
+    expect(inputs[1]?.schemaName).toBe('Doc');
+    expect(lastUser(inputs[1])).toContain('Return the complete corrected document as JSON');
   });
 });

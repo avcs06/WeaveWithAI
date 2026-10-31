@@ -35,7 +35,7 @@ export const rule = defineRule<LayoutInput>(
           if (off)
             issues.push(
               fail(
-                `The ghost ${ghost.id} starts its text at ${Math.round(edge - rect.x)} in ${rect.id}, but ${off.id} starts at ${Math.round(off.x - rect.x)}; give the text a matching margin or the control a negative one.`,
+                `The ghost button ${ghost.id} starts its text ${Math.round(edge - rect.x)}px in from the left of ${rect.id}, but the text ${off.id} starts ${Math.round(off.x - rect.x)}px in. In a column, the text of a ghost control lines up with the text that starts the other lines. ${edge > off.x ? `Put ${off.id} and the other text that starts a line in ${rect.id} in a box with layout padding ${Math.round(edge - off.x)}px` : `Put ${ghost.id} in a box with layout padding ${Math.round(off.x - edge)}px`}, so the text edges match.`,
                 ghost.id,
               ),
             );

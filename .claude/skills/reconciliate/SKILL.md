@@ -14,10 +14,11 @@ fix that damage, and leave every change unstaged.
 
 The argument names the chain:
 
-- `design`: brief, theme, ia, component, then widgets and frame (both carry
-  the shared node guide), then assemble and layout. Also the design-system
-  inventory and prose, the design and font config, the design spec and the
-  layout heuristics catalog.
+- `design`: brief, theme, architect, catalog, screen, then invent, draw and
+  frame (all three carry the shared node guide), then assemble and layout.
+  Also the processing steps of the architect and the catalog, the
+  design-system inventory and prose, the design and font config, the design
+  spec and the layout heuristics catalog.
 - `flows`: scope, flows-catalog, flows-expand, flows. Also the subflow and
   capability config and the flows spec.
 - empty: every chain that `git status --short` touches, each reviewed whole.

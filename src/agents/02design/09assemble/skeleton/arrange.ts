@@ -17,6 +17,8 @@ export type Item = {
   box: NodeBox;
   layout: NodeLayout | null;
   node?: DesignNode;
+  /** Its weight among the fill items of a row; 1 when not given. */
+  share?: number;
   children: Item[];
 };
 export type Solved = {
@@ -152,10 +154,11 @@ function arrangeRow(
       sum(line.filter((item) => !fill(item)).map(basis)) +
       gap * (line.length - 1);
     if (fixedWidth > inner + EPSILON) overflowX = true;
+    const weights = sum(line.filter(fill).map((item) => item.share ?? 1));
     const fills = line.filter(fill).length;
-    const share = fills ? Math.max(0, inner - fixedWidth) / fills : 0;
+    const unit = weights ? Math.max(0, inner - fixedWidth) / weights : 0;
     const solved = line.map((item) =>
-      ctx.solve(item, fill(item) ? share : basis(item)),
+      ctx.solve(item, fill(item) ? unit * (item.share ?? 1) : basis(item)),
     );
     const height = Math.max(...solved.map((s) => s.height));
     const { start, extra } = spread(

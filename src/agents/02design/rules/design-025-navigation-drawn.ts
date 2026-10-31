@@ -36,7 +36,7 @@ export const rule = defineRule<ScreensInput>(
       .filter((item) => !drawn.has(`${item.screen} ${item.access}`))
       .map((item) =>
         fail(
-          `The navigation item ${item.label} is not drawn where its users are; add a navigation node going to ${item.screen} in a region of the shell its ${item.access} pages use.`,
+          `The navigation item "${item.label}" is not drawn where its users are. No navigation node goes to ${item.screen} in a shell that ${item.access} pages use. Every navigation item is drawn as a navigation node to its screen, in a shell that pages of its access use. Add a navigation node with navigatesTo ${item.screen} to a region of the shell the ${item.access} pages use.`,
           item.screen,
         ),
       );

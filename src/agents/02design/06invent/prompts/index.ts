@@ -6,29 +6,40 @@ import type { ReviewGuides } from '../../../../runner/runSpecStage';
 import type { Scope } from '../../../01flows/01scope/schema';
 import type { Brief } from '../../01brief/schema';
 import type { Theme } from '../../02theme/build';
-import type { WidgetIa } from '../../03architect/schema';
-import { placed } from '../../prompts';
+import type { Processed as Plan } from '../../03architect/process';
+import type { Processed as Catalog } from '../../04catalog/process';
+import { nodeGuide } from '../../07draw/prompts/index';
 
-/** A component call's system prompt. */
-export function componentSystemPrompt(name: string, inv: Inventory): string {
+const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
+
+/** An invent call's system prompt, the same for every component so its prefix is cached. */
+export function componentSystemPrompt(brief: Brief, inv: Inventory): string {
   return fillPrompt(load('./prompt.md'), {
-    componentName: name,
+    nodeGuide: nodeGuide(brief),
     dsProse: inventoryProse(inv),
   });
 }
 
-/** A component call's user message: its declaration, the widgets that use it and where, the vocabulary and the look. */
+/** An invent call's user message: the declaration and description with its width range, where it is used, the vocabulary and the look. */
 export function componentUserMessage(
   name: string,
-  ia: WidgetIa,
+  plan: Plan,
+  catalog: Catalog,
   scope: Scope,
   brief: Brief,
   theme: Theme,
 ): string {
-  const users = ia.widgets.filter((w) => w.newComponents.includes(name));
   return fillPrompt(load('./input.md'), {
-    declaration: json(ia.newComponents.find((c) => c.name === name)),
-    widgets: json(users.map((w) => ({ ...w, placements: placed(ia, w.id) }))),
+    component: json({
+      ...plan.newComponents.find((c) => c.name === name),
+      ...catalog.components.find((c) => c.name === name),
+    }),
+    widgets: json({
+      holding: catalog.widgets
+        .filter((w) => w.newComponents.includes(name))
+        .map(({ id, name: widget, holds }) => ({ id, name: widget, holds })),
+      placedOn: catalog.screens.filter((s) => s.parts.includes(name)).map((s) => s.screen),
+    }),
     vocabulary: json(scope.vocabulary),
     look: json({
       feel: brief.feel,
@@ -41,11 +52,8 @@ export function componentUserMessage(
   });
 }
 
+/** An invent call's two review guides (D1.12): the peer judges the drawing against the description, then the output reviewer. */
 export const componentReviewGuides = (): ReviewGuides => ({
-  output: guide('review-output'),
+  peer: fillPrompt(load('./review-peer.md'), {}),
+  output: fillPrompt(load('./review-output.md'), {}),
 });
-
-const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
-
-/** A review guide beside this file: `review-peer` or `review-output`. */
-const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});

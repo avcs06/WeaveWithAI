@@ -27,7 +27,7 @@ export const rule = defineRule<LayoutInput>(
         if (near.some((gap) => gap < ringPx))
           issues.push(
             fail(
-              `${rect.id} is ${Math.min(...near)} from a sibling; leave ${ringPx} for its focus ring.`,
+              `${rect.id} is focusable and sits ${Math.min(...near)}px from its sibling ${(rect.gapBefore === Math.min(...near) ? siblings[siblings.indexOf(rect) - 1] : next)?.id}. A focusable node keeps at least ${ringPx}px from its siblings, as room for its focus ring. Set the layout gap of ${rect.parent} to at least ${ringPx}px.`,
               rect.id,
             ),
           );

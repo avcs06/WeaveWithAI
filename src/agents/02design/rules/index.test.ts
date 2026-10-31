@@ -71,6 +71,18 @@ describe('design rules on the reading-list fixture', () => {
     expect(design(screens)).toEqual([]);
   });
 
+  it("DESIGN-028 leaves a record's value and a subflow's step to their own words, and holds every other step to one", () => {
+    const copy = structuredClone(screens);
+    const like = (id: string) => structuredClone(copy.nodes.find((n) => n.id === id)!);
+    // A second row opening a book, showing its title: words that differ by record.
+    copy.nodes.push({ ...like('S04.n09'), id: 'S04.n30', order: 9, text: 'Dune', data: ['Book.title'] });
+    // The confirm subflow's step worded for this flow's record.
+    copy.nodes.push({ ...like('S07.n03'), id: 'S07.n09', order: 9, text: 'Remove for good', flowSteps: ['STD01.A01'] });
+    expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
+    copy.nodes.push({ ...like('S04.n06'), id: 'S04.n31', order: 9, text: 'New book' });
+    expect(design(copy).map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-028', 'F03.S01']);
+  });
+
   it('pairs each design rule with exactly one mutation; DESIGN-007 is dropped', () => {
     expect(Object.keys(designMutations).sort()).toEqual(designIds);
     expect(designIds).not.toContain('DESIGN-007');
@@ -157,7 +169,7 @@ describe('design rules on the reading-list fixture', () => {
       [
         'DESIGN-011',
         'S06',
-        'S06 must show notFound, but none of its nodes does; add a node for it.',
+        'S06 must show notFound, but no node of S06 shows in that state. A screen shows every state its plan lists. A screen that lists records also shows empty and error. Add a node for it, with that state in its states.',
       ],
     ]);
   });

@@ -9,6 +9,12 @@ own spacing: its recipes use 8 most, then 16, 24, 12 and 32, and its
 components pad 4 to 24. The MVP has no phone layout. "Skeleton" means the rectangles the
 solver computes from the nodes and the inventory boxes (DS6b).
 
+A rule reads a height only where it is exact: a design-system component, a
+fixed box, an icon, an image, or single-line text that ends in an ellipsis.
+Multi-line text is content height: the rules read it at one line, its
+minimum, and the wireframes draw it at two to four lines, for the picture
+only (user, 2026-10-31, DS28).
+
 Severity is a suggestion: mandatory rules join the fix rounds, warnings are
 recorded.
 
@@ -36,17 +42,19 @@ recorded.
       dialog with padding 16 has inner gaps of 16 or less. Check: container
       padding against its largest child gap. Mandatory.
 - [x] **H-08 Sections neither touch nor float apart.** 24 to 32 between sections on inner pages, up to 48 on public pages;
-      more than 64 is too distributed. Check: gaps between top-level
-      sections. Mandatory outside the range.
+      more than 64 is too distributed. Check: the theme sets a page's
+      section gap, and THEME-007 checks it. Mandatory outside the range.
 - [x] **H-09 Form spacing.** Field to field 16, group to group 24. Check:
-      gaps around input nodes. Mandatory.
+      gaps between a form's stacked fields, and between stacked groups that
+      hold only fields; a row of search and filters is a toolbar. Mandatory.
 - [x] **H-10 Lists and tables keep one row rhythm.** Row heights constant and
       one gap: 0 to 12 between rows, 8 to 16 between cards, never both a
       divider and a gap. Check: the repeated items of a list or cards section
       (siblings sharing a component, not a heading or a pagination beside
-      them) share a height on each line and one gap. Mandatory. Loosened
-      2026-10-30 (user): it read a section's heading as a row and allowed only
-      0 or 8.
+      them) are one item repeated, stretched to one height on each line, with
+      one gap. Mandatory. Loosened 2026-10-30 (user): it read a section's
+      heading as a row and allowed only 0 or 8. Changed 2026-10-31 (user,
+      DS28): it checks the structure, not estimated heights.
 - [x] **H-11 Button groups.** 8 between buttons; a danger button never
       directly beside the primary without extra space or a divider. Check: gap
       between action nodes, and the roles of neighbours. Mandatory.
@@ -81,13 +89,16 @@ recorded.
 - [x] **H-25 Measure for reading.** Body text 45 to 90 characters per line; a
       text block at most 640 to 720 wide even in a wide layout. Check: text
       node width against its type size. Warning.
-- [x] **H-26 Minimum widths.** A field at least 160, a card at least 240,
+- [x] **H-26 Minimum widths.** A field at least 160 (a chip, checkbox,
+      radio or switch is a control, not a field), a card at least 240,
       and a node of fixed width fits inside its dialog. A button's width is the
       design system's and is not checked (user, 2026-10-30). Check: skeleton
       widths by node kind. Mandatory.
 - [x] **H-28 First viewport.** The H1 and the primary action inside 1280 by
       800 on entry pages; a hero never taller than one
-      viewport. Check: rectangles against the viewport. Mandatory.
+      viewport. Check: rectangles against the viewport, with multi-line text
+      at one line, its minimum, so it fails only when the page is too tall
+      even then (DS28). Mandatory.
 - [x] **H-30 Media ratios.** Images in a grid share an aspect ratio from
       16:9, 4:3, 1:1 or 3:4. Check: media node boxes in one section. Warning.
 
@@ -98,17 +109,20 @@ recorded.
       text it heads. Check: type scales of heading nodes by depth and against
       their content. Mandatory.
 - [x] **H-35 Empty states are composed.** Icon or illustration, one sentence,
-      one action, centred in the content area. Check: the empty state of a
-      list section has those three nodes. Mandatory.
+      one action, centred in the content area. Check: the nodes a list, table
+      or cards section shows only when empty, or every node of an empty-state
+      section, are those three, centred. Mandatory.
 
 ## E. Grouping and containers
 
 - [x] **H-38 Cards for repeated items only.** A card holds one item of a set
       or one option; a page is not a card deck and a form is not a card.
-      Check: Card nodes outside list, cards and option sections. Mandatory.
+      Check: Card nodes outside list and cards sections, unless a CardGroup
+      holds them as options. Mandatory.
 - [x] **H-39 No box in a box.** Containers nest at most two levels; a card in
-      a card, or a bordered box inside a bordered section, is a defect. Check:
-      container depth and border on nested containers. Mandatory.
+      a card, or a bordered box inside a bordered section, is a defect. A Card
+      in a CardGroup is an option of a field, not a box. Check: container
+      depth and border on nested containers. Mandatory.
 - [ ] **H-42 Related fields share a row.** City and postcode, first and last
       name, start and end; at most three fields in a row; unrelated fields
       never share one. Prompt only: it compares field names.
@@ -125,7 +139,8 @@ recorded.
       and Truncate use in table cells. Warning.
 - [ ] **H-53 One word for one action.** The same action has the same label on
       every screen: Save everywhere, not Save here and Submit there. Prompt
-      only: it compares action texts across screens.
+      only: it compares action texts across screens, so the node guide
+      carries it.
 
 ## H. Tables, lists and data
 
@@ -134,9 +149,9 @@ recorded.
 
 ## I. Page frame and navigation
 
-- [ ] **H-59 Title matches navigation.** The H1 repeats the navigation item
-      that opened the page. Prompt only: it compares the H1 with the
-      navigation label.
+- [x] **H-59 Title matches navigation.** The H1 repeats the navigation item
+      that opened the page. Check: DESIGN-028, the item's label and the H1
+      are both the page's title.
 - [x] **H-60 Page action in the header.** The screen's primary action sits in
       the page header at the end; secondary actions in a dropdown. Check: the
       primary action node's section kind. Warning.
@@ -150,6 +165,8 @@ recorded.
       every child of a fixed-height region ends inside its padding. Mandatory.
       Added 2026-10-30 (user): the solver draws a fixed region at its height
       whatever its nodes need, so a clipped bar passed every other rule.
+      Text in a fixed-height region is single-line with an ellipsis, so its
+      height is exact (user, 2026-10-31, DS28).
 
 ## J. Dialogs, popovers and toasts
 
@@ -162,10 +179,11 @@ recorded.
 
 ## K. States without layout shift
 
-- [x] **H-65 Every async action has a place for its state.** A submit button
-      shows loading in place; a list shows skeleton rows of the row height;
-      an inline error has reserved height so fields do not jump. Check: state
-      variants of a node share its box. Mandatory.
+- [x] **H-65 Every async action has a place for its state.** A message shown
+      only when something fails comes last in its group, so nothing jumps.
+      Loading, a field's error and a submit's progress are the design
+      system's, and a form's result is a toast (user, 2026-10-31). Check: a
+      failure node before content that always shows. Mandatory.
 
 ## L. Focus and hover
 

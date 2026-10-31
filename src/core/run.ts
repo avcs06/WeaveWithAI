@@ -104,9 +104,18 @@ export function updateStage(
   writeJsonAtomic(runPath(run, 'state.json'), state);
 }
 
+const watchers = new Map<string, (event: Event) => void>();
+
+/** Calls `watcher` with every event the run appends from now on, until the returned function is called. */
+export function watchEvents(run: Run, watcher: (event: Event) => void): () => void {
+  watchers.set(run.dir, watcher);
+  return () => watchers.delete(run.dir);
+}
+
 export function appendEvent(run: Run, event: EventInput): void {
-  const line = JSON.stringify({ ts: new Date().toISOString(), ...event });
-  appendFileSync(runPath(run, 'events.jsonl'), `${line}\n`);
+  const full: Event = { ts: new Date().toISOString(), ...event };
+  appendFileSync(runPath(run, 'events.jsonl'), `${JSON.stringify(full)}\n`);
+  watchers.get(run.dir)?.(full);
 }
 
 export function readEvents(run: Run): Event[] {

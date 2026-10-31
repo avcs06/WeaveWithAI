@@ -15,16 +15,28 @@ export type Height = {
 /** What a container adds around its children: padding, and a band above them (a header, a tab list). */
 export type Chrome = { padding: Padding; band: number; estimated: boolean };
 
+/**
+ * How the solver sizes text that wraps, whose height only a render knows
+ * (DS28): at one line, its minimum, for the rules, which read a height only
+ * where it is exact; or at a feasible height for the wireframes' picture.
+ */
+export type TextMode = 'minimum' | 'picture';
+
 export type Sizes = {
   byName: Map<string, InventoryComponent>;
   newComponents: Map<string, NewComponent>;
   spacing: (key: string) => number;
   type: (scale: string) => { size: number; line: number };
+  text: TextMode;
 };
 
 const px = (value: string | undefined) => Number.parseFloat(value ?? '') || 0;
 
-export function sizes(inv: Inventory, newComponents: NewComponent[]): Sizes {
+export function sizes(
+  inv: Inventory,
+  newComponents: NewComponent[],
+  text: TextMode = 'minimum',
+): Sizes {
   const token = (name: string) =>
     inv.tokens.find((t) => t.name === name)?.value;
   return {
@@ -35,6 +47,7 @@ export function sizes(inv: Inventory, newComponents: NewComponent[]): Sizes {
       size: px(token(`fontSize.${scale === 'none' ? 'body' : scale}`)),
       line: px(token(`lineHeight.${scale === 'none' ? 'body' : scale}`)),
     }),
+    text,
   };
 }
 
@@ -71,23 +84,26 @@ export function textWidth(text: string, scale: string, s: Sizes): number {
   return text.length * s.type(scale).size * CHAR_WIDTH_EM;
 }
 
+/** A Truncate is one line, exactly. Text that wraps is one line for the rules, and for the picture two to four lines picked from its id, when it does not fit in one. */
 export function textHeight(
-  text: string,
-  scale: string,
+  node: Pick<DesignNode, 'id' | 'text' | 'typeScale' | 'component'>,
   width: number,
   s: Sizes,
 ): Height {
-  const lines = Math.max(
-    1,
-    Math.ceil(
-      textWidth(text, scale, s) /
-        Math.max(width, s.type(scale).size * CHAR_WIDTH_EM) -
-        1e-9,
-    ),
-  );
+  const { size, line } = s.type(node.typeScale);
+  if (node.component === 'Truncate')
+    return { height: line, from: 'one truncated line', estimated: false, lines: 1 };
+  const fits =
+    textWidth(node.text, node.typeScale, s) <=
+    Math.max(width, size * CHAR_WIDTH_EM) + 1e-9;
+  const pick = [...node.id].reduce((sum, c) => sum + c.charCodeAt(0), 0) % 3;
+  const lines = s.text === 'minimum' || fits ? 1 : 2 + pick;
   return {
-    height: lines * s.type(scale).line,
-    from: `text ${lines} line${lines === 1 ? '' : 's'}`,
+    height: lines * line,
+    from:
+      s.text === 'minimum'
+        ? 'text at one line, its minimum'
+        : `text drawn at ${lines} line${lines === 1 ? '' : 's'}`,
     estimated: true,
     lines,
   };
@@ -203,7 +219,7 @@ export function leafHeight(node: DesignNode, width: number, s: Sizes): Height {
       : undefined) ??
     rowsHeight(node, s) ??
     (node.text || node.typeScale !== 'none'
-      ? textHeight(node.text, node.typeScale, width, s)
+      ? textHeight(node, width, s)
       : undefined) ?? {
       height: UNKNOWN_HEIGHT_PX,
       from: `no height, ${UNKNOWN_HEIGHT_PX} assumed`,

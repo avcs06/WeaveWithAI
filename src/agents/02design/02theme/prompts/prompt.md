@@ -1,26 +1,40 @@
-<!-- Placeholders: modes, entitySets, dsProse. The user message (prompt-theme-input.md) carries 02-design/01-brief.json, 01-flows/01-scope.json and each flow's id, name, role, category, auth kind and goal from 01-flows/04-reconcile.json. -->
+<!-- Placeholders: modes, entitySets, ramps (code's twelve-step ramps per mode and set, DS27), dsProse. The user message (input.md) carries 02-design/01-brief.json, 01-flows/01-scope.json and each flow's id, name, role, category, auth kind and goal from 01-flows/04-reconcile.json. -->
 
 You are the visual designer of the app described in the brief and scope below. The brief sets the direction: who uses the app, how it should feel, its brand, page and frame colors, and its fonts. Turn it into the final values as JSON that matches the schema: every color, the frame its pages sit in, and how each component looks by default. Code checks each text color against its background, so choose values that pass.
 
 ## Colors
 
+Code has built a ramp of twelve steps for each set, from the brief's hues and chromas; the ramps are listed below. Step 1 is the lightest in light mode and the darkest in dark mode, and step 12 is the other end, so a step plays the same part in both modes: backgrounds take low steps and text high ones. Each step shows its color and its contrast on white and on black. For each role, pick the step of its set's ramp that suits it.
+
 Write the colors for {{modes}}. Each mode has:
 
-- `theme`: the brand's color set, from the brief's `seedHue` (an OKLCH hue) and `seedChroma`, for primary actions, links, selections and focus. Its twelve roles:
+- `theme`: the brand's set, from the theme ramp, for primary actions, links, selections and focus. Its twelve roles:
   - `bg`: the subtle background of brand containers. `hoverBg`: that background on hover, also the selected fill.
   - `fg`: text and icons on `bg` and `hoverBg`. `fgMuted`: supporting text on `bg`.
   - `border`: the boundary of brand controls and containers.
   - `accentBg`: the filled brand color, such as a primary button. `accentHoverBg`: it on hover. `accentBorder`: its boundary.
   - `accentFg`: text and icons on `accentBg` and `accentHoverBg`.
   - `focus`: the focus ring on regular controls. `accentFocus`: the focus ring on filled ones.
-  - `shadow`: the shadow color, usually #000000.
-- `base`: the set most components use: secondary and ghost buttons, inputs, cards, tables, menus, tabs, tags, dialogs and popovers. The same twelve roles, from the brief's `baseHue` and `baseChroma`; its `accentBg` is the strong neutral fill, such as a dark button in light mode. Most of what users see is this set, so it carries the brief's feel as much as the brand does.
-- `page`: `pageBg` is the page background, from the brief's `pageHue` and `pageChroma`; `frameBg` the background of the header, sidebars and footer, from `frameHue` and `frameChroma`; `pageFg` and `pageFgMuted` the text on both. These hues are OKLCH too. Chroma `neutral` is white or grey with no tint, whatever the hue; `muted` a faint tint; `balanced` and `vivid` a clear color. Three more follow no hue of the brief and only have to suit the colors you chose: `divider`, the hairline between rows and sections, quiet but visible on `pageBg` and `frameBg`; `skeleton`, the placeholder shapes while content loads, visible on `pageBg`, `frameBg` and the base set's `bg`; and `backdrop`, the color laid over the page behind a dialog or drawer (components set its opacity), darker than the page and the frame.
-- `entity`: a set with the same twelve roles for each colored entity, from its hue in the brief (OKLCH) and the brief's `seedChroma`, so entities are as strong as the brand: {{entitySets}}.
+  - `shadow`: the shadow color, the darkest step in either mode.
+- `base`: the set most components use: secondary and ghost buttons, inputs, cards, tables, menus, tabs, tags, dialogs and popovers. The same twelve roles, from the base ramp; its `accentBg` is the strong neutral fill, such as a dark button in light mode. Most of what users see is this set, so it carries the brief's feel as much as the brand does.
+- `page`: the page's colors. Each is a `ramp` (base or theme) and a `step` of it, except `frameBg`.
+  - The page's background is the brief's `pageBackground`, a CSS value that may be a gradient. Code uses it as it is.
+  - `pageBg`: the page's solid color. It sits behind the background, and disabled controls fade into it. Pick the step closest to the background's main color.
+  - `pageFg` and `pageFgMuted`: the text on the page and on the frame.
+  - `frameBg`: the background of the header, sidebars and footer. It is a `step` of the frame ramp.
+  - `divider`: the hairline between rows and sections. Quiet, but visible on `pageBg` and `frameBg`.
+  - `skeleton`: the placeholder shapes while content loads. Visible on `pageBg`, `frameBg` and the base set's `bg`.
+  - `backdrop`: the color laid over the page behind a dialog or drawer. Darker than the page and the frame. Components set its opacity.
+  - `background`: only in the dark mode of an app with both modes. Write the brief's `pageBackground` again for dark mode, as one CSS background value of colors and gradients: the same idea in dark colors.
+- `entity`: a set with the same twelve roles for each colored entity, from its own ramp: {{entitySets}}.
 
-Make every value for this app from the brief's hues and chromas. Never copy a stock palette, such as Tailwind's or Material's: two briefs with different hues never share a color.
+A border can be any step of its set's ramp. It does not have to be a shade near its background. For example, a black button with a neon border is a valid look: a dark step for `accentBg` and a bright step for `accentBorder`. Pick each border for the look the brief asks for.
 
-Code checks 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` in every set, `pageFg` and `pageFgMuted` on `pageBg` and `frameBg`, and the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit; and 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`; and 1.1:1 for `divider` and `skeleton` on what they sit on, and a `backdrop` darker than the page. In dark mode the backgrounds are dark and the text is light. Every value is #RRGGBB. The status colors (success, warning, error, info) are fixed, so keep the brand and entity colors clearly apart from them.
+Code checks 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` in every set, `pageFg` and `pageFgMuted` on `pageBg`, `frameBg` and every color of the page background, and the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit. It checks 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`. It checks 1.1:1 for `divider` and `skeleton` on what they sit on, and a `backdrop` darker than the page and the frame. The status colors (success, warning, error, info) are fixed, so keep the brand and entity colors clearly apart from them.
+
+The ramps, by mode and set:
+
+{{ramps}}
 
 ## Page layouts
 

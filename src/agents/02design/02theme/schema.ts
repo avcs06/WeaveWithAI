@@ -2,8 +2,9 @@ import { z } from 'zod';
 import { type Inventory, spacingKeys } from '../../../ds/inventory';
 import type { Brief } from '../01brief/schema';
 
-// The theme call (D3.3 E) writes every final value from the brief: the colors
-// of each mode the brief names (brand, base, page and entity sets), a layout for app pages and one for marketing
+// The theme call (D3.3 E) chooses every final value from the brief: the colors
+// of each mode the brief names (brand, base, page and entity sets) as steps of
+// ramps code computes (DS27), a layout for app pages and one for marketing
 // pages, and each component's default variants and look. The schema is built
 // from the brief and the inventory, so the call writes exactly the modes,
 // entity sets, spacing keys and component values that exist.
@@ -41,8 +42,50 @@ const fields = <K extends string>(keys: readonly K[]) =>
   Object.fromEntries(keys.map((key) => [key, Hex])) as Record<K, typeof Hex>;
 export const ColorSet = z.object(fields(ROLES));
 export type ColorSet = z.infer<typeof ColorSet>;
-export const PageColors = z.object(fields(PAGE_ROLES));
+export const PageColors = z.object({
+  ...fields(PAGE_ROLES),
+  pageBackground: z.string().describe('The page background as one CSS background value; pageBg is its solid color'),
+});
 export type PageColors = z.infer<typeof PageColors>;
+
+/** A step of a ramp: 1 is the lightest in light mode and the darkest in dark mode, 12 the other end. */
+export const STEPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+export type Step = (typeof STEPS)[number];
+const Step = z.literal(STEPS).describe('A step of its ramp, 1 to 12');
+const steps = <K extends string>(keys: readonly K[]) =>
+  Object.fromEntries(keys.map((key) => [key, Step])) as Record<K, typeof Step>;
+/** A set's twelve roles, each a step of the set's ramp. */
+export const StepSet = z.object(steps(ROLES));
+export type StepSet = z.infer<typeof StepSet>;
+/** A page color: a step of the base set's ramp or the brand's (`theme`). */
+const PageStep = z.object({ ramp: z.enum(['base', 'theme']), step: Step });
+/** The page's colors as steps: its own from the base or the brand ramp, the frame's from the frame ramp. */
+export const PageSteps = z.object({
+  pageBg: PageStep.describe("The page's solid color: behind its background, and the color disabled controls fade into"),
+  pageFg: PageStep,
+  pageFgMuted: PageStep,
+  frameBg: Step.describe('A step of the frame ramp, 1 to 12'),
+  divider: PageStep,
+  backdrop: PageStep,
+  skeleton: PageStep,
+});
+/** The other mode's page, when the app has both: the brief's background made for it. */
+const OtherPageSteps = PageSteps.extend({
+  background: z
+    .string()
+    .describe(
+      "The page background for this mode as one CSS background value: the brief's pageBackground made for this mode, with colors and gradients only",
+    ),
+});
+export type PageSteps = z.infer<typeof PageSteps>;
+
+/** One mode's colors as the call picks them, by step. */
+export type ModeSteps = {
+  theme: StepSet;
+  base: StepSet;
+  page: PageSteps & { background?: string };
+  entity: Record<string, StepSet>;
+};
 
 /** One mode's colors: the brand set, the base set most components use, the page, and a set per colored entity, by name. */
 export type ModeColors = {
@@ -144,7 +187,7 @@ export type ComponentDefaults = Record<string, Record<string, string>>;
 
 /** What the theme call returns. */
 export type ThemeCall = {
-  colors: Partial<Record<Mode, ModeColors>>;
+  colors: Partial<Record<Mode, ModeSteps>>;
   layouts: Layouts;
   defaults: ComponentDefaults;
 };
@@ -154,14 +197,11 @@ export function makeThemeSchema(
   inv: Inventory,
 ): z.ZodType<ThemeCall> {
   const entity = z.object(
-    Object.fromEntries(entitySets(brief).map(({ name }) => [name, ColorSet])),
+    Object.fromEntries(entitySets(brief).map(({ name }) => [name, StepSet])),
   );
-  const mode = z.object({
-    theme: ColorSet,
-    base: ColorSet,
-    page: PageColors,
-    entity,
-  });
+  const mode = (page: typeof PageSteps) => z.object({ theme: StepSet, base: StepSet, page, entity });
+  // The brief writes the background of its first mode; the theme writes the other's.
+  const [first] = modesOf(brief);
   const spacing = z
     .enum(spacingKeys(inv))
     .describe('A spacing token key: 4 means 16px');
@@ -180,7 +220,7 @@ export function makeThemeSchema(
   });
   return z.object({
     colors: z.object(
-      Object.fromEntries(modesOf(brief).map((name) => [name, mode])),
+      Object.fromEntries(modesOf(brief).map((name) => [name, mode(name === first ? PageSteps : OtherPageSteps)])),
     ),
     layouts: z.object({ app: Layout, marketing: Layout }),
     defaults: z.object(Object.fromEntries(defaults)),

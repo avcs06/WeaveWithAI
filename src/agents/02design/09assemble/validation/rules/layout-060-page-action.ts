@@ -35,14 +35,14 @@ export const rule = defineRule<LayoutInput>(
       if (!inHeader.length)
         issues.push(
           fail(
-            `${view.screen.id} has a page header without the page's primary action; put it in ${header.id}, at the end.`,
+            `${view.screen.id} has the page header ${header.id}, and the page's primary action is not in it. On a page with a page header, the primary action is the last node of that header. ${primary[0] ? `Move ${primary[0].id} into ${header.id}, as its last node.` : `Put the page's primary action in ${header.id}, as its last node.`}`,
             header.id,
           ),
         );
       else if (last && !inHeader.includes(last))
         issues.push(
           fail(
-            `The primary action ${inHeader[0]?.id} is not at the end of the page header ${header.id}; put it last.`,
+            `The primary action ${inHeader[0]?.id} is in the page header ${header.id}, but ${last.id} comes after it. On a page with a page header, the primary action is the last node of that header. Move ${inHeader[0]?.id} to the end of ${header.id}, after ${last.id}.`,
             inHeader[0]?.id,
           ),
         );

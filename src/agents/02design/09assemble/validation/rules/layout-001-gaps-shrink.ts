@@ -22,7 +22,7 @@ export const rule = defineRule<LayoutInput>(
           if (around && view.gap(rect) >= view.gap(around))
             issues.push(
               fail(
-                `${rect.id} spaces its children ${view.gap(rect)} apart, not less than the ${view.gap(around)} of ${around.id} around it; gaps shrink with depth, so make it smaller.`,
+                `${rect.id} spaces its children ${view.gap(rect)}px apart, and ${around.id === `${view.screen.id}.content` ? `the ${view.screen.type} ${view.screen.id}` : around.id} around it spaces its children ${view.gap(around)}px apart. A box spaces its children closer than the box around it does. Set the layout gap of ${rect.id} to less than ${view.gap(around)}px.`,
                 rect.id,
               ),
             );

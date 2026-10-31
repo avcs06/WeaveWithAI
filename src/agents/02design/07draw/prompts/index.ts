@@ -7,14 +7,13 @@ import type { Scope } from '../../../01flows/01scope/schema';
 import type { Flows } from '../../../01flows/schema';
 import type { Brief } from '../../01brief/schema';
 import type { Theme } from '../../02theme/build';
-import type { WidgetIa } from '../../03architect/schema';
+import type { Processed as Plan } from '../../03architect/process';
+import type { Defined, Processed as Catalog } from '../../04catalog/process';
 import { HEADING_SIZES } from '../../09assemble/nodes';
-import { SIDE_WIDTH_PX } from '../../config';
-import { type Kind, look, placed, screenList } from '../../prompts';
-import { placementsOf, stepFields } from '../../rules/helpers';
-import type { NewComponent } from '../../schema';
+import { type Kind, look, screenList } from '../../prompts';
+import { stepFields } from '../../rules/helpers';
 
-/** The node guide the widget and frame prompts share, with each level's heading size. */
+/** The node guide the draw, invent and frame prompts share, with each level's heading size. */
 export function nodeGuide(brief: Brief): string {
   const sizes = (kind: Kind) =>
     HEADING_SIZES[kind].map((size, i) => `H${i + 1} ${size}`).join(', ');
@@ -25,53 +24,42 @@ export function nodeGuide(brief: Brief): string {
   });
 }
 
-/** A widget call's system prompt for the widgets it builds. */
-export function widgetsSystemPrompt(
-  ids: string[],
-  brief: Brief,
-  inv: Inventory,
-): string {
+/** A draw call's system prompt, the same for every call so its prefix is cached. */
+export function widgetsSystemPrompt(brief: Brief, inv: Inventory): string {
   return fillPrompt(load('./prompt.md'), {
-    widgetIds: ids.join(' and '),
-    sideWidth: String(SIDE_WIDTH_PX),
     nodeGuide: nodeGuide(brief),
     dsProse: inventoryProse(inv),
   });
 }
 
 /**
- * A widget call's user message: the widgets with their placements, the copy
- * deck, the screens, the steps they serve with their fields, the designed
- * components they use, the vocabulary and the look.
+ * A draw call's user message: the widget it draws with its definition, the
+ * steps it serves with their fields, the new components it holds, the
+ * screens, the vocabulary and the look.
  */
 export function widgetsUserMessage(
-  ids: string[],
-  ia: WidgetIa,
-  components: NewComponent[],
+  widget: Defined,
+  plan: Plan,
+  catalog: Catalog,
   flows: Flows,
   scope: Scope,
   brief: Brief,
   theme: Theme,
 ): string {
-  const widgets = ia.widgets.filter((w) => ids.includes(w.id));
-  const served = new Set(widgets.flatMap((w) => w.flowSteps));
+  const served = new Set(widget.flowSteps);
   const all = [...flows.flows, ...flows.subflows];
   const steps = all.flatMap((flow) =>
     flow.steps.filter((step) => served.has(step.id)),
   );
   const fields = new Set(steps.flatMap((step) => stepFields(flows, step)));
   const kinds = new Set<Kind>(
-    widgets.flatMap((w) =>
-      placementsOf(ia, w.id).map(
-        (p) => ia.screens.find((s) => s.id === p.screen)?.kind ?? 'app',
-      ),
-    ),
+    catalog.screens
+      .filter((s) => s.parts.includes(widget.id))
+      .map((s) => plan.screens.find((x) => x.id === s.screen)?.kind ?? 'app'),
   );
-  const uses = new Set(widgets.flatMap((w) => w.newComponents));
+  const holds = new Set(widget.newComponents);
   return fillPrompt(load('./input.md'), {
-    widgets: json(widgets.map((w) => ({ ...w, placements: placed(ia, w.id) }))),
-    deck: json(ia.copy),
-    screens: json(screenList(ia)),
+    widget: json(widget),
     steps: json({
       steps,
       alternatives: all.flatMap((flow) =>
@@ -79,13 +67,18 @@ export function widgetsUserMessage(
       ),
       fields: flows.fields.filter((field) => fields.has(field.id)),
     }),
-    components: json(components.filter((c) => uses.has(c.name))),
+    components: json(
+      plan.newComponents
+        .filter((c) => holds.has(c.name))
+        .map((c) => ({ ...c, ...catalog.components.find((x) => x.name === c.name) })),
+    ),
+    screens: json(screenList(plan)),
     vocabulary: json(scope.vocabulary),
     look: json(look(brief, theme, [...kinds])),
   });
 }
 
-/** The output reviewer alone for the calls that build on the IA (DS22): its decisions are already reviewed. */
+/** The output reviewer alone (DS22): the decisions were the architect's, already reviewed. */
 export const widgetReviewGuides = (): ReviewGuides => ({
   output: guide('review-output'),
 });

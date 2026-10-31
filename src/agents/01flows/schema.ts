@@ -80,7 +80,9 @@ export const Field = z.object({
     .describe(
       'The vocabulary noun whose records are the choices, with options []; "" for fixed options',
     ),
-  example: z.string(),
+  example: z
+    .string()
+    .describe('A realistic value as text, in quotes even for a number, a date or a yes or no: "60", "2026-11-03", "yes"'),
 });
 
 /** A group of fields one screen asks for, reused by every step that shows that form. */
@@ -153,6 +155,9 @@ export const Flow = z.object({
     'admin',
   ]),
   authKind: z.enum(['none', 'signUp', 'signIn', 'signOut']),
+  signedOut: z
+    .boolean()
+    .describe('True when the user is not signed in during the flow'),
   goal: z.string(),
   preconditions: z.array(z.string()),
   steps: z.array(Step),

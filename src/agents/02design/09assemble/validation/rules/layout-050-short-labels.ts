@@ -18,14 +18,14 @@ export const rule = defineRule<LayoutInput>(
       if (isButton(node) && count > 3)
         issues.push(
           fail(
-            `${node.id} says "${node.text}", ${count} words; a button label is at most three.`,
+            `${node.id} is a button that says "${node.text}", ${count} words. A button label is at most three words. Shorten the text of ${node.id} to three words or fewer.`,
             node.id,
           ),
         );
       if (node.role === 'heading' && count > 8)
         issues.push(
           fail(
-            `${node.id} says "${node.text}", ${count} words; a heading is at most eight.`,
+            `${node.id} is a heading that says "${node.text}", ${count} words. A heading is at most eight words. Shorten the text of ${node.id} to eight words or fewer.`,
             node.id,
           ),
         );

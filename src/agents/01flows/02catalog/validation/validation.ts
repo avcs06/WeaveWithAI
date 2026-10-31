@@ -18,6 +18,7 @@ import { rule as flow019 } from '../../rules/flow-019-outcome';
 import { rule as flow020 } from '../../rules/flow-020-size';
 import { rule as flow021 } from '../../rules/flow-021-field-meaning-example';
 import { rule as flow023 } from '../../rules/flow-023-new-ids';
+import { rule as flow025 } from '../../rules/flow-025-signed-out';
 import {
   catalogAsFlows,
   type CatalogInput,
@@ -49,6 +50,7 @@ export const catalogFlowRules: readonly Rule<FlowInput>[] = [
   flow020,
   flow021,
   flow023,
+  flow025,
 ];
 
 export const catalogRules: readonly Rule<CatalogInput>[] = [

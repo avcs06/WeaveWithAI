@@ -20,7 +20,7 @@ export const rule = defineRule<NodesInput>(
       if (here.length > 1)
         issues.push(
           fail(
-            `${section} has ${here.length} primary actions (${here.map((n) => n.id).join(', ')}); keep one and make the others secondary.`,
+            `${section} has ${here.length} primary actions: ${here.map((n) => n.id).join(', ')}. A section has at most one primary action. Keep the role primary-action on the main one, and give the others the role secondary-action.`,
             section,
           ),
         );
@@ -30,7 +30,7 @@ export const rule = defineRule<NodesInput>(
         issue(
           'DESIGN-012',
           'warning',
-          `${screen} has ${primary.length} primary actions; one screen has one main action.`,
+          `${screen} has ${primary.length} primary actions, each in a different section. A screen has one main action. Keep the role primary-action on the main one, and give the others the role secondary-action.`,
           screen,
         ),
       );

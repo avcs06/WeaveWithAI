@@ -21,6 +21,7 @@ import { rule as flow020 } from '../../rules/flow-020-size';
 import { rule as flow021 } from '../../rules/flow-021-field-meaning-example';
 import { rule as flow023 } from '../../rules/flow-023-new-ids';
 import { rule as flow024 } from '../../rules/flow-024-unused-parts';
+import { rule as flow025 } from '../../rules/flow-025-signed-out';
 import type { FlowInput } from '../../rules/helpers';
 import type { Flows } from '../../schema';
 
@@ -47,6 +48,7 @@ export const flowRules: readonly Rule<FlowInput>[] = [
   flow021,
   flow023,
   flow024,
+  flow025,
 ];
 
 export const validateFlows = (flows: Flows, scope: Scope): Issue[] =>

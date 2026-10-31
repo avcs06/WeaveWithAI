@@ -31,7 +31,7 @@ export const rule = defineRule<LayoutInput>(
         if (larger)
           issues.push(
             fail(
-              `${deeper.id} (H${deeper.headingLevel}, ${deeper.typeScale}) is not smaller than ${larger.id} (H${larger.headingLevel}, ${larger.typeScale}); deeper headings take smaller sizes.`,
+              `${deeper.id} is a level ${deeper.headingLevel} heading with typeScale ${deeper.typeScale}, and ${larger.id} is a level ${larger.headingLevel} heading with typeScale ${larger.typeScale}. ${deeper.typeScale === larger.typeScale ? 'Both have the same size.' : `typeScale ${deeper.typeScale} is larger than typeScale ${larger.typeScale}.`} A heading's typeScale is smaller than the typeScale of every heading with a smaller level number on the same screen. Give ${deeper.id} a typeScale smaller than ${larger.typeScale}.`,
               deeper.id,
             ),
           );
@@ -50,7 +50,7 @@ export const rule = defineRule<LayoutInput>(
         if (steps < 1 || steps > 2)
           issues.push(
             fail(
-              `${next.id} (${next.typeScale}) sits ${steps} type steps below its heading ${heading.id} (${heading.typeScale}); the text a heading heads is one or two steps smaller.`,
+              `${next.id} is text with typeScale ${next.typeScale}, right under the heading ${heading.id} with typeScale ${heading.typeScale}. ${steps < 1 ? 'The text is not smaller than the heading.' : `The text is ${steps} type steps smaller than the heading.`} The text right under a heading is one or two type steps smaller than the heading. Give ${next.id} a typeScale one or two steps smaller than ${heading.typeScale}.`,
               next.id,
             ),
           );

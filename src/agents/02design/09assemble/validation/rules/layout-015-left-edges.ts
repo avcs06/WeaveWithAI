@@ -46,9 +46,16 @@ export const rule = defineRule<LayoutInput>(
             lineStarts(view, rect).map((leaf) => Math.round(leaf.x - rect.x)),
           ),
         ].sort((a, b) => a - b);
+        const list = new Intl.ListFormat('en-GB');
+        const where = edges.map((edge) => {
+          const ids = lineStarts(view, rect)
+            .filter((leaf) => Math.round(leaf.x - rect.x) === edge)
+            .map((leaf) => leaf.id);
+          return `${list.format(ids)} ${ids.length > 1 ? 'start' : 'starts'} ${edge}px in`;
+        });
         issues.push(
           fail(
-            `The lines in ${rect.id} start at ${edges.length} left edges (${edges.join(', ')} in); align them on one, two at most.`,
+            `The lines in ${rect.id} start at ${edges.length} left edges. ${list.format(where)}. The lines of a column start on at most two left edges. Change the layout padding of the boxes that hold these nodes, so every line in ${rect.id} starts on one of at most two edges.`,
             rect.id,
           ),
         );

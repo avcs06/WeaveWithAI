@@ -34,7 +34,7 @@ export const rule = defineRule<LayoutInput>(
         if (rect.gapBefore < 8 || rect.gapBefore > 12)
           issues.push(
             fail(
-              `${rect.id} is ${rect.gapBefore} below the paragraph before it; paragraphs are 8 to 12 apart.`,
+              `${rect.id} is a paragraph ${rect.gapBefore}px below the paragraph ${before.id}. Paragraphs are 8px to 12px apart. Set the layout gap of ${parent.id} to 8px to 12px.`,
               rect.id,
             ),
           );
@@ -55,7 +55,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `${rect.id} is ${rect.gapBefore} below the paragraph before it, not less than the ${lead} between ${heading.id} and its first paragraph.`,
+              `${rect.id} is ${rect.gapBefore}px below the paragraph ${before.id}, and the heading ${heading.id} is ${lead}px above its first paragraph. Paragraphs are closer to each other than a heading is to its first paragraph. Put the paragraphs under ${heading.id} in a column node of their own, with a layout gap of less than ${lead}px.`,
               rect.id,
             ),
           );

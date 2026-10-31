@@ -30,7 +30,7 @@ export const rule = defineRule<LayoutInput>(
         if (above < 1.5 * below)
           issues.push(
             fail(
-              `${rect.id} has ${above} above it and ${below} below it; a heading belongs to what follows, so give it at least ${1.5 * below} above.`,
+              `${rect.id} is a heading with ${above}px above it and ${below}px below it. The space above a heading is at least 1.5 times the space below it, so the heading reads with what follows. Put ${rect.id} first in a column node of its own with the nodes it heads, and give that column a layout gap of at most ${Math.floor(above / 1.5)}px.`,
               rect.id,
             ),
           );

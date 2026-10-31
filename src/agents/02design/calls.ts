@@ -8,6 +8,8 @@ import type { Flows } from '../01flows/schema';
 import type { StageContext } from '../stages';
 import type { Brief } from './01brief/schema';
 import type { Theme } from './02theme/build';
+import type { Processed as Plan } from './03architect/process';
+import type { Processed as Catalog } from './04catalog/process';
 import { layoutShells } from './02theme/shells';
 import type { DesignContext } from './rules/helpers';
 
@@ -32,6 +34,16 @@ export function designInputs(run: Run, inv: Inventory) {
     defaults: theme.defaults,
   };
   return { scope, flows, brief, theme, shells, context };
+}
+
+/** The page kind a part is drawn for: marketing only when every screen that shows it, or a widget holding it, is marketing. */
+export function kindOf(part: string, plan: Plan, catalog: Catalog): 'app' | 'marketing' {
+  const holders = catalog.widgets.filter((w) => w.newComponents.includes(part)).map((w) => w.id);
+  const screens = catalog.screens
+    .filter((s) => s.parts.some((p) => p === part || holders.includes(p)))
+    .map((s) => s.screen);
+  const kinds = plan.screens.filter((s) => screens.includes(s.id)).map((s) => s.kind);
+  return kinds.length && kinds.every((k) => k === 'marketing') ? 'marketing' : 'app';
 }
 
 /** A call's output and the model that wrote it, which a fix starts from. */

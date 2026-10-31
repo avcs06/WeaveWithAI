@@ -33,7 +33,7 @@ export const rule = defineRule<ScreensInput>(
       if (!served)
         issues.push(
           fail(
-            `No control serves ${step.id} ("${step.userAction}"); add an action, navigation or input with it in flowSteps, on a screen that lists it.`,
+            `No control serves ${step.id} ("${step.userAction}") on a screen that lists ${step.id}. Every user step is served by an action, navigation or input on a screen whose flowSteps include the step. Add ${step.id} to the flowSteps of the control that does it, on a screen that lists ${step.id}.`,
             step.id,
           ),
         );

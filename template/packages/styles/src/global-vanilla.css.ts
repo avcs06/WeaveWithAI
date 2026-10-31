@@ -14,6 +14,7 @@ globalStyle('html', {
   fontSize: tokens.fontSize.body,
   lineHeight: 1.4,
   color: tokens.color.surface.pageFg,
+  // The solid color, under any transparent part of the body's background.
   backgroundColor: tokens.color.surface.pageBg,
 });
 
@@ -21,6 +22,8 @@ globalStyle('body', {
   fontFamily: 'inherit',
   lineHeight: 'inherit',
   margin: 0,
+  minHeight: '100vh',
+  background: tokens.color.surface.pageBackground,
 });
 
 globalStyle('h1, h2, p, pre', {

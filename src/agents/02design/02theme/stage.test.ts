@@ -13,6 +13,7 @@ import type { StageContext } from '../../stages';
 import { Brief } from '../01brief/schema';
 import { briefStage, runBrief } from '../01brief/stage';
 import { runTheme } from './stage';
+import type { ThemeCall } from './schema';
 import { buildTheme, type Theme } from './build';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-design-stage-'));
@@ -28,7 +29,7 @@ const inventory = read('../../../ds/__fixtures__/inventory.json') as Inventory;
 const brief = Brief.parse(read('../__fixtures__/reading-list.brief.json'));
 const { colors, layouts, defaults } = read(
   '../__fixtures__/reading-list.theme.json',
-) as Theme;
+) as ThemeCall;
 const call = { colors, layouts, defaults };
 
 const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;

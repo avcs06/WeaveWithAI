@@ -1,79 +1,35 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { designs, ia, inventory } from '../../__fixtures__/widgets';
-import { Scope } from '../../../01flows/01scope/schema';
-import { Flows } from '../../../01flows/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import type { ThemeCall } from '../../02theme/schema';
-import type { NewComponent } from '../../schema';
+import { brief, catalog, flows, inventory, plan, scope, theme } from '../../__fixtures__/chain';
 import { widgetsSystemPrompt, widgetsUserMessage } from './index';
-
-const read = (path: string) =>
-  JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as unknown;
-
-const scope = Scope.parse(
-  read('../../../01flows/__fixtures__/reading-list.scope.json'),
-);
-
-const flows = Flows.parse(
-  read('../../../01flows/__fixtures__/reading-list.flows.json'),
-);
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  read('../../__fixtures__/reading-list.theme.json') as ThemeCall,
-);
-
-const components: NewComponent[] = ia.newComponents.map((c) => ({
-  ...c,
-  ...designs.get(c.name)!,
-  usedOn: ['S06'],
-}));
 
 const filled = (text: string) => {
   expect(text).not.toContain('{{');
   expect(text).not.toContain('<!--');
 };
+const defined = (id: string) => catalog.widgets.find((w) => w.id === id)!;
 
-describe('the widget prompt', () => {
-  it('names the widgets it builds, the heading sizes by level and the node guide', () => {
-    const prompt = widgetsSystemPrompt(['W11', 'W12'], brief, inventory);
+describe('the draw prompt', () => {
+  it('carries the heading sizes by level, the node guide and the design system, the same for every call', () => {
+    const prompt = widgetsSystemPrompt(brief, inventory);
     filled(prompt);
-    expect(prompt).toContain('build widgets W11 and W12');
-    expect(prompt).toContain(
-      'on app screens H1 title, H2 heading, H3 subheading, H4 body',
-    );
-    expect(prompt).toContain('## Each node');
-    expect(prompt).toContain('IDs W03.n01, W03.n02');
+    expect(prompt).toContain('on app screens H1 title, H2 heading, H3 subheading, H4 body');
+    expect(prompt).toContain('`W03.n01`');
     expect(prompt).toMatch(/^Button: /m);
+    for (const field of ['widget', 'edge', 'layout', 'nodes', 'slot', 'field']) expect(prompt, field).toContain(`\`${field}\``);
   });
 
-  it('gives the widgets their definitions and placements, the deck, the steps they serve with their fields, and the components they use', () => {
-    const message = widgetsUserMessage(
-      ['W09', 'W12'],
-      ia,
-      components,
-      flows,
-      scope,
-      brief,
-      theme,
-    );
+  it('gives the definition it draws, the steps it serves with their fields, and only the components it holds', () => {
+    const message = widgetsUserMessage(defined('W07'), plan, catalog, flows, scope, brief, theme);
     filled(message);
-    const built = message.slice(0, message.indexOf('# Copy deck'));
-    expect(built).toContain('"id": "W09"');
-    expect(built).toContain('"W12 (this one)"');
-    expect(built).not.toContain('"id": "W05"');
-    expect(message).toContain(`"id": "${ia.copy[0]?.id}"`);
+    const drawn = message.slice(0, message.indexOf('# Flow steps served'));
+    expect(drawn).toContain('"id": "W07"');
+    expect(drawn).not.toContain('"id": "W05"');
+    expect(drawn).toContain('"minWidthPx"');
     expect(message).toContain('"id": "F03.S02"');
     expect(message).toContain('"id": "FD05"');
     expect(message).not.toContain('"id": "F04.S01"');
-    expect(message).toContain('"name": "TitleCover"');
     expect(message).toContain('"contentArea": {\n    "app"');
-    expect(
-      widgetsUserMessage(['W05'], ia, components, flows, scope, brief, theme),
-    ).not.toContain('"name": "TitleCover"');
+    expect(widgetsUserMessage(defined('W09'), plan, catalog, flows, scope, brief, theme)).toContain('"name": "TitleCover"');
+    expect(widgetsUserMessage(defined('W05'), plan, catalog, flows, scope, brief, theme)).not.toContain('"name": "TitleCover"');
   });
 });

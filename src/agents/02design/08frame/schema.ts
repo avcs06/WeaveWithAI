@@ -1,18 +1,28 @@
 import { z } from 'zod';
 import type { Inventory } from '../../../ds/inventory';
-import { Copy } from '../03architect/schema';
 import { makeDrawSchemas } from '../07draw/schema';
 
-/** A frame call's shapes: a shell's nodes, each in one of its regions. */
+/** A frame call's shapes: a shell's nodes, each in one of its regions, and how a screen's frame differs (DS23). */
 export function makeFrameSchemas(inv: Inventory) {
   const { ModelNode } = makeDrawSchemas(inv);
   const FrameNode = ModelNode.extend({
-    section: z.string().describe('The region it sits in, SH1.r1'),
+    section: z.string().describe('The id of the region it sits in, such as SH1.r1'),
+  });
+  const Change = z.object({
+    screen: z.string(),
+    add: z
+      .array(FrameNode)
+      .describe('The nodes only this screen shows, with ids such as SH1.S04.n01'),
+    remove: z
+      .array(z.string())
+      .describe('The ids of the default nodes this screen leaves out'),
   });
   const FrameBuild = z.object({
-    screen: z.string().describe('The shell, SH1'),
+    screen: z.string().describe('The id of the shell, such as SH1'),
     nodes: z.array(FrameNode),
-    copy: z.array(Copy),
+    changes: z
+      .array(Change)
+      .describe('One change for each screen whose frame differs. [] when no frame differs'),
   });
 
   return { FrameNode, FrameBuild };
@@ -23,3 +33,6 @@ type FrameSchemas = ReturnType<typeof makeFrameSchemas>;
 export type FrameNode = z.infer<FrameSchemas['FrameNode']>;
 
 export type FrameBuild = z.infer<FrameSchemas['FrameBuild']>;
+
+/** A frame's keyed lists, for patch fixes (F16). */
+export const FRAME_KEYS = { nodes: 'id', changes: 'screen' };

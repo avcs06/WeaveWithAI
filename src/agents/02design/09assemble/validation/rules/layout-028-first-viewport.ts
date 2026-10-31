@@ -25,13 +25,13 @@ export const rule = defineRule<LayoutInput>(
           (rect) => view.node(rect.id)?.role === 'primary-action',
         );
         for (const [what, rect] of [
-          ['the H1', title],
+          ['the level 1 heading', title],
           ['the primary action', primary],
         ] as const)
           if (rect && bottom(rect.id) > view.height)
             issues.push(
               fail(
-                `${rect.id}, ${what}, ends at ${Math.round(bottom(rect.id))}, below the first ${view.height}; move it up.`,
+                `${rect.id} is ${what} of the entry page ${view.screen.id}, and it ends ${Math.round(bottom(rect.id))}px from the top, below the first viewport of ${view.height}px. On an entry page, the level 1 heading and the primary action end inside the first viewport. Move ${rect.id} up by at least ${Math.ceil(bottom(rect.id) - view.height)}px, by making what sits above it shorter.`,
                 rect.id,
               ),
             );
@@ -40,7 +40,7 @@ export const rule = defineRule<LayoutInput>(
         if (view.section(rect.id)?.kind === 'hero' && rect.height > view.height)
           issues.push(
             fail(
-              `${rect.id} is ${Math.round(rect.height)} tall; a hero fits in one ${view.height} viewport.`,
+              `${rect.id} is a hero ${Math.round(rect.height)}px tall, and the viewport is ${view.height}px tall. A hero is at most one viewport tall. Make ${rect.id} at least ${Math.ceil(rect.height - view.height)}px shorter. Lower its box minHeightPx or its layout padding, or move nodes out of it.`,
               rect.id,
             ),
           );

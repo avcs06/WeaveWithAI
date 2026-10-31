@@ -19,6 +19,13 @@ const kind = (node: DesignNode | undefined) =>
         ? 'navigation'
         : 'content';
 
+const KIND_NAMES = {
+  input: 'an input',
+  action: 'an action',
+  navigation: 'navigation',
+  content: 'content',
+};
+
 export const rule = defineRule<LayoutInput>(
   'LAYOUT-005',
   'warning',
@@ -26,7 +33,7 @@ export const rule = defineRule<LayoutInput>(
     const issues: Issue[] = [];
     for (const view of views)
       for (const rect of view.rects) {
-        // Rows of items; the sections of a page are LAYOUT-008's.
+        // Rows of items; the theme spaces a page's sections (THEME-007).
         if (rect.kind === 'frame' || view.layout(rect)?.direction !== 'row')
           continue;
         const kids = view.kids(rect.id);
@@ -39,7 +46,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `${rect.id} lines up ${[...kinds].join(', ')} items one gap apart; group related items and space the groups apart.`,
+              `${rect.id} is a row of ${kids.length} nodes of ${kinds.size} kinds, all ${view.gap(rect)}px apart, and none of them is a group. ${new Intl.ListFormat('en-GB').format(leaves.map((leaf) => `${leaf.id} is ${KIND_NAMES[kind(view.node(leaf.id))]}`))}. A row of three or more nodes of different kinds puts the nodes that belong together in groups. Put the nodes of ${rect.id} that belong together in a row node of their own, one row node for each group. Then set the layout gap of ${rect.id} to at least twice the layout gap inside each group.`,
               rect.id,
             ),
           );
@@ -48,7 +55,7 @@ export const rule = defineRule<LayoutInput>(
         if (groups.length && kids.length >= 2 && view.gap(rect) < 2 * inner)
           issues.push(
             fail(
-              `${rect.id} spaces its groups ${view.gap(rect)} apart, less than twice their own gap of ${inner}.`,
+              `${rect.id} spaces its groups ${view.gap(rect)}px apart, and the largest gap inside a group is ${inner}px. The gap between the groups of a row is at least twice the gap inside each group. Set the layout gap of ${rect.id} to at least ${2 * inner}px.`,
               rect.id,
             ),
           );

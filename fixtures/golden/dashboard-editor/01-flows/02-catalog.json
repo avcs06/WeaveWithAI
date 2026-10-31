@@ -2,7 +2,7 @@
   "meta": {
     "artifact": "flows-catalog",
     "version": 1,
-    "hash": "5ba2c21f80ebc84b28a35a6c4b06c4c4e692f6c54ee7f7f57a91183cc20104eb",
+    "hash": "b78b1610dcaf936eb125135af17a04c2fbb7af1689137d1e06992a076d03e958",
     "inputs": {
       "flows-scope": {
         "version": 1,
@@ -22,6 +22,7 @@
         "role": "visitor",
         "category": "browse",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Understand what Tidyboards does and start using it.",
         "preconditions": [
           "Not signed in."
@@ -35,6 +36,7 @@
         "role": "member",
         "category": "auth",
         "authKind": "signUp",
+        "signedOut": true,
         "goal": "Create an account to own dashboards.",
         "preconditions": [
           "Not signed in."
@@ -48,6 +50,7 @@
         "role": "member",
         "category": "auth",
         "authKind": "signIn",
+        "signedOut": true,
         "goal": "Sign in to access my dashboards.",
         "preconditions": [
           "Not signed in."
@@ -61,6 +64,7 @@
         "role": "member",
         "category": "auth",
         "authKind": "signOut",
+        "signedOut": false,
         "goal": "Leave the account safely on this device.",
         "preconditions": [
           "Signed in."
@@ -74,6 +78,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Start a new dashboard to fill with widgets.",
         "preconditions": [
           "Signed in."
@@ -87,6 +92,7 @@
         "role": "member",
         "category": "browse",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Find a dashboard to open.",
         "preconditions": [
           "Signed in."
@@ -100,6 +106,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Open a dashboard to view and change it.",
         "preconditions": [
           "Signed in.",
@@ -114,6 +121,7 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Give a dashboard a meaningful name.",
         "preconditions": [
           "Signed in.",
@@ -128,6 +136,7 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Copy a dashboard with its widgets to reuse it.",
         "preconditions": [
           "Signed in.",
@@ -142,6 +151,7 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Permanently remove a dashboard I no longer need.",
         "preconditions": [
           "Signed in.",
@@ -156,6 +166,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Add a note, counter, checklist or link-list widget to a dashboard.",
         "preconditions": [
           "Signed in.",
@@ -170,6 +181,7 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Rename, resize and reposition widgets to keep the dashboard tidy.",
         "preconditions": [
           "Signed in.",
@@ -184,6 +196,7 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Remove a widget I no longer need.",
         "preconditions": [
           "Signed in.",
@@ -198,6 +211,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Capture plain text in a note widget.",
         "preconditions": [
           "Signed in.",
@@ -212,6 +226,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Track a number with a label using a counter.",
         "preconditions": [
           "Signed in.",
@@ -226,6 +241,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Track tickable tasks in a checklist.",
         "preconditions": [
           "Signed in.",
@@ -240,6 +256,7 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Keep titles and web addresses handy and open them.",
         "preconditions": [
           "Signed in.",

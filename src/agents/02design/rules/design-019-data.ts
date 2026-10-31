@@ -1,6 +1,6 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import type { NodesInput } from './helpers';
+import type { CatalogInput, NodesInput } from './helpers';
 
 /**
  * DESIGN-019 · mandatory
@@ -22,11 +22,27 @@ export const rule = defineRule<NodesInput>(
         if (!noun || !nouns.has(noun))
           issues.push(
             fail(
-              `${node.id} shows ${entry}; data is Noun.attribute with a noun of the vocabulary (${[...nouns].join(', ')}).`,
+              `${node.id} shows ${entry}, which is not Noun.attribute with a noun of the vocabulary. Each data entry is a noun of the vocabulary, a dot, and an attribute that starts with a lowercase letter. The nouns are ${[...nouns].join(', ')}. Change ${entry} in the data of ${node.id} to that form.`,
               node.id,
             ),
           );
       }
     return issues;
+  },
+);
+
+/** The catalog's widgets: the values each shows. */
+export const catalogRule = defineRule<CatalogInput>(
+  'DESIGN-019',
+  'mandatory',
+  ({ catalog, ctx }, fail) => {
+    const nouns = new Set(ctx.scope.vocabulary.map((v) => v.noun));
+    return catalog.widgets.flatMap((widget) =>
+      widget.data
+        .filter((entry) => !nouns.has(SHAPE.exec(entry)?.[1] ?? ''))
+        .map((entry) =>
+          fail(`${widget.id} shows ${entry}, which is not Noun.attribute with a noun of the vocabulary. Each data entry is a noun of the vocabulary, a dot, and an attribute that starts with a lowercase letter. The nouns are ${[...nouns].join(', ')}. Change ${entry} in the data of ${widget.id} to that form.`, widget.id),
+        ),
+    );
   },
 );

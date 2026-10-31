@@ -10,7 +10,7 @@ the artifacts it was made from.
 ```text
 idea.md (+ answers.json)
   └─ scope ─ flows-catalog ─ flows-expand (batches) ─ flows (reconcile)   Phase 2   D2.1 E
-        ├─ design: brief ─ theme ─ screens          Phase 3   specs/design.md
+        ├─ design: brief ─ theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
         └─ contracts                                Phase 4   specs/contracts.md
               (design and contracts run in parallel from the same flows version)
   └─ reconcile ─ freeze (spec.lock.json)            Phase 5   specs/reconciliation.md
@@ -38,13 +38,14 @@ benchmark stage (section 13) reports the frontend's quality in one table.
    input. When an input changes, everything downstream is stale and reruns.
 4. **Mandatory versus warning.** A stage is done when it has zero mandatory
    issues, not when it is perfect. Warnings are reported, never looped on.
-5. **Bounded loops.** Spec stages run a fixed four-round schedule with
-   model review on rounds 2 and 3 (D1.12); each reconciliation loop gets 2
+5. **Bounded loops.** Spec stages run a fixed five-round schedule with
+   model review on rounds 2 to 4 (D1.12); each reconciliation loop gets 2
    rounds, coding repair 2 (D1.6). Issues left after the last round are
    recorded as known issues in the report and the run state; the run goes on.
 6. **Deterministic where possible.** Contrast checks, the layout skeleton,
    contract code, test scaffolds, Git and packaging are code. A model is used
-   only where judgement is needed, the theme's colors included (D3.3 E).
+   only where judgement is needed, the theme's colors included (D3.3 E),
+   picked from ramps code computes (DS27).
 7. **Ownership.** Each stage may change only its own artifacts and folders.
    Implementation stages can never edit acceptance tests or thresholds (R2).
 8. **Resumable.** `--from <stage>` reruns from a checkpoint; recorded model
@@ -55,47 +56,40 @@ benchmark stage (section 13) reports the frontend's quality in one table.
 ```text
 src/
   tsconfig.json          the agent's TypeScript config (never at the repo root)
-  cli.ts                 weave run | validate | show | ds
+  cli.ts                 weave run | validate | show | golden | ds | wireframes | app | bench
   smoke.ts               one real structured call, for setup checks
-  config/
-    capabilities.ts      supported and unsupported MVP capabilities
-    fonts.ts             font allowlist for themes
-    design.ts            screen kinds, section kinds, node roles, states, layout limits
   core/
     llm.ts               the only model client: structured output, retries,
                          usage and cost, replay cache, model routing
+    backends.ts          the model backends: Meta Model API, Modal, Baseten
     schema.ts            zod to JSON Schema, plus checks for Meta's limits
     artifacts.ts         envelope, versions, staleness
     utils.ts             canonical JSON and hashing, atomic JSON writes, paths beside a module
     run.ts               run folder, state.json, events.jsonl
+    log.ts               the live log: events as lines under group, stage and part
     issues.ts            Issue type, report writing, mandatory/warning split
-    runSpecStage.ts      generate, validate, feed back mandatory issues, repeat
+    rules.ts             defineRule and the helpers every validator shares
     prompt.ts            loads prompt .md files and fills {{placeholders}}
+  runner/
+    runSpecStage.ts      generate, validate, review, fix what is pending, five rounds
+    patch.ts             patch schemas and merging for fixes (D1.5 C)
+    prompt-*.md          the fix, patch and review prompts
   ds/
     inventory.ts         design-system inventory from the template, cached
-  stages/
-    flows/               scope + flows: schema, prompts, validate, render, stage
-    design/              brief, theme, IA and nodes calls, resolve, routing, layout solver: same layout
-    contracts/           domain + operations: same layout, plus compile.ts
-    reconcile/           matrix.ts, patch.ts, procedure.ts, prompts
-    tests/               e2e specs generated from the frozen flows, run, evidence
-  app/
-    scaffold.ts          template copy, install, MCP build
-    theme.ts             02-design/02-theme.json written into an app's colors, tokens, fonts and recipes
-    preview.ts           an app from the template, and every component screenshotted in its theme
-  codegen/
-    ledger.ts            every file written into an app, with its origin
-    entities.ts          web/app/entities/<entity>: schemas, client, hooks
-    mockApi.ts           web/app/api/**/route.ts, web/mocks/*.json, store, session
-    apiTests.ts          contract tests against the mock
-    pages.ts             routes, navigation and page shells from 02-design/09-assemble.json
-  engine/
-    loop.ts              the action loop: read, write, list, recipe, check, done
-    tools.ts             the checks a session may run, through the app's tools
-  checks/                rendered checks (DESIGN-R-*), reusable collectors
-  bench/                 server, lighthouse, accessibility, screenReader,
+    prose.ts             the inventory as prose for the design prompts
+  agents/
+    stages.ts            the pipeline and its stage registry
+    01flows/             scope, catalog, expand, reconcile
+    02design/            brief, theme, architect, catalog, screen, invent, draw, frame, assemble
+    03contract/          domain + operations, plus compile.ts
+    04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
+                         each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
+  codegen/               planned: ledger, entities, mock API, API tests, page shells
+  engine/                planned: the action loop and the checks a session may run
+  checks/                planned: rendered checks (DESIGN-R-*), reusable collectors
+  bench/                 planned: server, lighthouse, accessibility, screen reader,
                          keyboard, code, report
-  dashboard/             one static HTML per run
+  dashboard/             planned: one static HTML per run
 fixtures/
   ideas/                 reference idea briefs
   golden/<idea>/         accepted artifacts, so later stages develop offline
@@ -112,7 +106,10 @@ runs/<runId>/
   01-flows/02-catalog.json  01-flows/02-catalog.md   every flow's header and description, the reusable fields, forms, subflows
   01-flows/03-expand.json          the expansion batches assembled, before reconciliation
   01-flows/04-reconcile.json  01-flows/04-reconcile.md   the flows every later stage reads
-  02-design/01-brief.json  02-design/02-theme.json  02-design/09-assemble.json  02-design/09-assemble.md
+  02-design/01-brief.json  02-design/02-theme.json
+  02-design/03-architect.json  02-design/04-catalog.json  02-design/05-screen.json   the plan, the widgets, the layouts
+  02-design/06-invent.json  02-design/07-draw.json  02-design/08-frame.json       the components, widgets and frames drawn
+  02-design/09-assemble.json  02-design/09-assemble.md
   02-design/09-skeleton.json  02-design/09-wireframes.html  02-design/09-ds-gaps.json
   02-design/02-theme-light.png  02-design/02-theme-dark.png   every component in the theme (weave app)
   03-contract.json  03-contract.md
@@ -125,7 +122,9 @@ runs/<runId>/
   reports/<stage>.json         issues per round
   llm/<stage>-r<round>.json    request and response, for audit and replay
   llm/<stage>-r<round>-cut.json  an answer cut at the output limit, as far as it got
-  events.jsonl                 one line per stage start, round, issue count, tokens, cost
+  llm/<stage>-r<round>-invalid.json  an answer the schema refused
+  events.jsonl                 one line per stage start, round start, call (tokens, cost,
+                               time), validation, review and round end
   state.json                   stage status and artifact versions
 ```
 
@@ -150,7 +149,9 @@ type Envelope<T> = {
 ```
 
 An artifact is **stale** when any `inputs[name].hash` differs from the current
-hash of that artifact. `weave run` reruns stale stages in pipeline order.
+hash of that artifact. `weave run` reruns stale stages in pipeline order;
+the stages that read nothing of each other's (`SIDE_BY_SIDE`: design screen,
+invent, draw and frame) start together, each with its own three calls at a time.
 
 ## Issues
 
@@ -199,22 +200,27 @@ The schedule (D1.12):
 | 1 | generate | validate | |
 | 2 | fix the mandatory issues | validate | 2 calls |
 | 3 | fix the mandatory issues and blockers | validate | 1 call |
-| 4 | final fix | validate | |
+| 4 | fix the mandatory issues and blockers | validate | 1 call |
+| 5 | final fix | validate | |
 
 Round 1 sends system + user. A fix appends the model's JSON and one user
 message (`src/runner/prompt-fix.md`) listing what is pending (mandatory issues
 and blockers) and the answers given since the last generation, asking for
-the full corrected JSON (D1.5 default); a fix with nothing pending is skipped,
+a patch: the items that changed and the new ones, each complete, and the ids
+to remove (D1.5 C, F16). The runner merges the patch into the current
+document, and validators and reviewers see the merged one. A stage with no
+keyed arrays, such as the brief, gets the full corrected JSON. A fix with
+nothing pending is skipped,
 but the round's reviewer calls still run. From round 2 on, validators and
 reviewers look at the same output, whatever the validators found: a
 heuristic, not a gate. A reviewer gets the generator's system and user messages, its
 JSON, the warnings as already known and one of the stage's two guides:
-`review-<stage>-peer.md`, a peer who challenges the decisions (round 2 only),
-or `review-<stage>-output.md`, which looks for errors in meaning the
-validators cannot catch (rounds 2 and 3). It answers through the `Review` schema (`src/runner/review.ts`,
+`prompts/review-peer.md`, a peer who challenges the decisions (round 2 only),
+or `prompts/review-output.md`, which looks for errors in meaning the
+validators cannot catch (rounds 2 to 4). It answers through the `Review` schema (`src/runner/review.ts`,
 blockers only); each blocker becomes a mandatory issue with rule `REVIEW`.
 The stage ends as soon as a review finds nothing on validator-clean output,
-so a clean first draft costs one generation and two reviews. After round 4
+so a clean first draft costs one generation and two reviews. After round 5
 whatever is pending is the stage's known issues: in the report, the
 `stage:done` event, `state.json` and the result. The stage never fails on
 issues; `weave run` exits 1 only for real errors. With `ask` (interactive
@@ -235,7 +241,8 @@ does not mistake an old answer for a new question.
   `$schema` and `additionalProperties: false`. Meta rejects `oneOf` only in
   strict mode, which is off by default, but `anyOf` is safe in both.)
 - Every schema in the specs was compiled with zod 4.6 on 2026-10-28: the
-  deepest (flows, and the flows patch) nests 8 levels, the largest (the
+  deepest (flows, the flows patch, and since DS23 the screen layouts'
+  patch) nest 8 levels, the largest (the
   contract) has 128 properties, none has a `$ref`, and only the node `ref`
   union produces `oneOf`.
 - Retries 429 and 5xx with exponential backoff and jitter, honouring
@@ -244,6 +251,11 @@ does not mistake an old answer for a new question.
   `finish_reason: 'length'` is a retryable error with a larger `max_tokens`
   once; the stage round then asks once more (F14), and a second cut is a
   stage failure. Each cut answer is kept in the run as far as it got.
+- Asks for strict decoding (`json_schema` with `strict: true`, DS34), so an
+  answer follows the schema; every stage schema and patch was accepted by the
+  Meta API on 2026-10-31. An answer the schema still refuses is never cached,
+  is kept as `llm/<stage>-r<round>-invalid.json`, and the round asks once
+  more; a second is a stage failure.
 - Logs tokens, cached tokens and cost per call to `events.jsonl`, using the
   prices in docs/README.md; a live call to a model without a price also logs a
   `warning` event, since its cost counts as 0.
@@ -285,19 +297,19 @@ the design stage needs per component: name, category, one-line description,
 variant values, the recipe's default variants, every look its `look` prop
 accepts (`src/ds/looks.ts`, read from the recipes files), the fixed box
 dimensions, padding and gap by size and part
-(`template/tools/measure-design-system.mjs`, measured in a browser from the
-`Measure` story on Storybook; padding is the inset to the content, summed
-down wrappers that hold one child), what it shows
+(`src/ds/boxes.json`, measured once in a browser from the `Measure` story on
+Storybook by `pnpm ds:measure`, never during a run; padding is the inset to
+the content, summed down wrappers that hold one child), what it shows
 and the pseudo entries the exporter cannot see, like Toast
 (`src/ds/curated.json`, hand-written), and the components that go inside it
 (`src/ds/compose.ts`, from the recipes' JSX). Plus all tokens and the settings
 a project decides once (`src/ds/project.ts`: theme and page colors, focus
 ring, radius, fonts). Components of the placeholder web app, config
 components that render nothing and internals never placed by a design are
-left out. Loading takes about 7 seconds and the measurement needs Storybook
-on 6006, so the result is cached in `.weave-cache/inventory-<hash>.json`,
-keyed by a hash of the files under `template/packages/*/src`, `tokens.ts`,
-`colors.ts` and `designsystem.config.json`.
+left out. Loading takes about 7 seconds, so the result is cached in
+`.weave-cache/inventory-<hash>.json`, keyed by a hash of the files under
+`template/packages/*/src`, `tokens.ts`, `colors.ts`,
+`designsystem.config.json` and `src/ds/boxes.json`.
 
 Prompts receive the inventory as prose (`src/ds/prose.ts`): one block per
 component with its facts on short lines, subcomponents indented under the

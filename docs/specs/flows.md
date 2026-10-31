@@ -149,6 +149,7 @@ export const Flow = z.object({
   role: z.string().describe('A role id from the scope'),
   category: z.enum(['auth', 'onboarding', 'core', 'manage', 'browse', 'settings', 'admin']),
   authKind: z.enum(['none', 'signUp', 'signIn', 'signOut']),
+  signedOut: z.boolean().describe('True when the user is not signed in during the flow'),
   goal: z.string(),
   preconditions: z.array(z.string()),
   steps: z.array(Step),
@@ -211,6 +212,7 @@ them in order. Every rule needs a passing and a failing fixture in
 | FLOW-021 | warning   | Every field has `meaning` and `example`                                                                                       |
 | FLOW-022 | warning   | Steps that mention payment, upload, attach, send email, notify, live, chat or map are covered by an out-of-scope entry or assumption |
 | FLOW-023 | mandatory | New assumption and question IDs continue the scope's numbering without clashes                                                |
+| FLOW-025 | mandatory | `signUp` and `signIn` flows and every flow of a role that never signs in are `signedOut`; a `signOut` flow is not            |
 
 Word checks match whole words, case-insensitively except the HTTP verbs.
 

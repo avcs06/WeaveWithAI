@@ -6,6 +6,8 @@ import type { BriefInput } from './helpers';
 import { rule as brief001 } from './rules/brief-001-ranges';
 import { rule as brief002 } from './rules/brief-002-entities';
 import { rule as brief003 } from './rules/brief-003-hues-apart';
+import { rule as brief005 } from './rules/brief-005-font-candidates';
+import { rule as brief006 } from './rules/brief-006-page-background';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
@@ -13,6 +15,8 @@ export const briefRules: readonly Rule<BriefInput>[] = [
   brief001,
   brief002,
   brief003,
+  brief005,
+  brief006,
 ];
 
 export function validateBrief(brief: Brief, scope: Scope): Issue[] {

@@ -13,21 +13,25 @@ import type { Config } from '../../../core/env';
 import { readReport } from '../../../core/issues';
 import type { GenerateInput, Llm } from '../../../core/llm';
 import { createRun, readState, runPath } from '../../../core/run';
-import { Scope } from '../../01flows/01scope/schema';
-import { Flows } from '../../01flows/schema';
 import type { StageContext } from '../../stages';
 import {
   builds,
+  catalogCall,
   designs,
+  flows,
   frames,
-  ia,
   inventory,
+  layouts,
+  planCall,
+  scope,
   screens as fixture,
-} from '../__fixtures__/widgets';
-import { Brief } from '../01brief/schema';
-import { buildTheme } from '../02theme/build';
-import type { ThemeCall } from '../02theme/schema';
+  brief,
+  theme,
+} from '../__fixtures__/chain';
+import type { Processed as Plan } from '../03architect/process';
 import { runArchitect } from '../03architect/stage';
+import { runCatalog } from '../04catalog/stage';
+import { groupsOf, runScreen } from '../05screen/stage';
 import { runInvent } from '../06invent/stage';
 import type { Build } from '../07draw/schema';
 import { runDraw } from '../07draw/stage';
@@ -40,40 +44,29 @@ const idea = path.join(root, 'reading-list.md');
 writeFileSync(idea, 'A reading list for one reader.\n');
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
-const read = (file: string): unknown =>
-  JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
-const scope = Scope.parse(
-  read('../../01flows/__fixtures__/reading-list.scope.json'),
-);
-const flows = Flows.parse(
-  read('../../01flows/__fixtures__/reading-list.flows.json'),
-);
-const brief = Brief.parse(read('../__fixtures__/reading-list.brief.json'));
-const theme = buildTheme(
-  brief,
-  read('../__fixtures__/reading-list.theme.json') as ThemeCall,
-);
 const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
 
-/** Answers by schema from the derived widget fixtures; `first` replaces a widget's build in its call's first answer. */
+/** Answers by schema from the chain fixture; `first` replaces a widget's build in its call's first answer. */
 function fakeLlm(first: Record<string, Build> = {}) {
   const inputs: GenerateInput<unknown>[] = [];
   const llm: Llm = {
     async generateStructured(input) {
       inputs.push(input as GenerateInput<unknown>);
-      const fix = input.stage.endsWith('-fix');
       const ids = input.stage
-        .replace(/^design-(draw|frame|invent)-/, '')
+        .replace(/^design-(screen|draw|frame|invent)-/, '')
         .replace(/-fix$/, '')
         .split('-');
+      const drawn = (fix: boolean) => (!fix && first[ids[0] ?? '']) || builds.find((b) => b.widget === ids[0]);
       const answers: Record<string, () => unknown> = {
-        Ia: () => ia,
+        Plan: () => planCall,
+        Catalog: () => catalogCall,
+        ScreenLayouts: () => {
+          const group = groupsOf({ ...planCall, navigation: [] } as unknown as Plan).get(ids[0] ?? '') ?? [];
+          return { screens: layouts.filter((l) => group.includes(l.screen)) };
+        },
         ComponentDesign: () => designs.get(ids[0] ?? ''),
-        WidgetBatch: () => ({
-          widgets: ids.map(
-            (id) => (!fix && first[id]) || builds.find((b) => b.widget === id),
-          ),
-        }),
+        Build: () => drawn(false),
+        BuildPatch: () => ({ widget: null, edge: null, layout: drawn(true)?.layout, nodes: { upsert: drawn(true)?.nodes ?? [], remove: [] } }),
         FrameBuild: () => frames.find((f) => f.screen === ids[0]),
       };
       const data = answers[input.schemaName]?.() ?? { blockers: [] };
@@ -131,6 +124,8 @@ const writers = (inputs: GenerateInput<unknown>[]) =>
 /** The design stages after the theme, in pipeline order. */
 async function design(ctx: StageContext, log: string) {
   await runArchitect(ctx, inventory);
+  await runCatalog(ctx, inventory);
+  await runScreen(ctx, inventory);
   await runInvent(ctx, inventory);
   await runDraw(ctx, inventory);
   await runFrame(ctx, inventory);
@@ -138,96 +133,64 @@ async function design(ctx: StageContext, log: string) {
 }
 
 describe('the design stages after the theme', () => {
-  it('run the IA, a call per component, per two widgets and per used shell, and assemble the screens, skeleton, wireframes, markdown and gap report', async () => {
+  it('plan, define, lay out, invent, draw each widget in its own call and frame each used shell, then assemble the screens, skeleton, wireframes, markdown and gap report', async () => {
     const run = prepared('clean');
     const { llm, inputs } = fakeLlm();
     const log = path.join(root, 'clean-gaps.jsonl');
     await design(contextFor(run, llm), log);
 
-    const pairs = [
-      'W01-W02',
-      'W03-W04',
-      'W05-W06',
-      'W07-W08',
-      'W09-W10',
-      'W11-W12',
-      'W13-W14',
-    ];
     expect(writers(inputs)).toEqual([
       'design-architect',
+      'design-catalog',
+      ...['S01', 'S02', 'S03', 'S04', 'S06'].map((page) => `design-screen-${page}`),
       'design-invent-TitleCover',
-      ...pairs.map((pair) => `design-draw-${pair}`),
+      ...['W01', 'W02', 'W03', 'W04', 'W05', 'W06', 'W07', 'W08', 'W09', 'W10', 'W11'].map((key) => `design-draw-${key}`),
       'design-frame-SH1',
       'design-frame-SH2',
     ]);
     const settings = (stage: string) => inputs.find((i) => i.stage === stage);
-    expect(settings('design-architect')).toMatchObject({
-      reasoningEffort: 'high',
-      maxTokens: 65_536,
-    });
-    expect(settings('design-invent-TitleCover')).toMatchObject({
-      reasoningEffort: 'high',
-      maxTokens: 16_384,
-    });
-    expect(settings('design-draw-W05-W06')).toMatchObject({
-      reasoningEffort: 'medium',
-      maxTokens: 16_384,
-    });
-    // The IA has both reviewers; the calls that build on it have the output reviewer alone.
-    const reviews = inputs
-      .map((i) => i.stage)
-      .filter((stage) => stage.includes('-review-'));
-    expect(
-      reviews.filter((stage) => stage.startsWith('design-architect-')),
-    ).toEqual([
-      'design-architect-review-peer',
-      'design-architect-review-output',
-    ]);
-    expect(
-      reviews.filter(
-        (stage) =>
-          !stage.startsWith('design-architect-') &&
-          !stage.endsWith('-review-output'),
-      ),
-    ).toEqual([]);
+    expect(settings('design-architect')).toMatchObject({ reasoningEffort: 'high', maxTokens: 65_536, temperature: 0.7 });
+    // The catalog and screen calls take the default 0.2.
+    expect(settings('design-catalog')).toMatchObject({ reasoningEffort: 'medium', maxTokens: 65_536, temperature: undefined });
+    expect(settings('design-screen-S04')).toMatchObject({ reasoningEffort: 'medium', maxTokens: 16_384, temperature: undefined });
+    expect(settings('design-invent-TitleCover')).toMatchObject({ reasoningEffort: 'medium', maxTokens: 16_384, temperature: 0.7 });
+    expect(settings('design-draw-W06')).toMatchObject({ reasoningEffort: 'medium', maxTokens: 32_768 });
+    // The architect and invent calls have both reviewers; the rest the output reviewer alone.
+    const peers = inputs.map((i) => i.stage).filter((stage) => stage.endsWith('-review-peer'));
+    expect(peers).toEqual(['design-architect-review-peer', 'design-invent-TitleCover-review-peer']);
 
     const screens = readArtifact<WidgetScreens>(run, 'design-assemble');
-    expect(screens.meta.inputs).toMatchObject({
-      'design-architect': {},
-      'design-invent': {},
-      'design-draw': {},
-      'design-frame': {},
-      'design-brief': {},
-      'design-theme': {},
-      'flows-scope': {},
-      'flows-reconcile': {},
-    });
-    expect(screens.data.nodes).toHaveLength(fixture.nodes.length);
-    expect(screens.data.screens.map((s) => [s.id, s.shell])).toEqual(
-      fixture.screens.map((s) => [s.id, s.shell]),
+    expect(Object.keys(screens.meta.inputs).sort()).toEqual(
+      [
+        'design-architect',
+        'design-catalog',
+        'design-screen',
+        'design-invent',
+        'design-draw',
+        'design-frame',
+        'design-brief',
+        'design-theme',
+        'flows-scope',
+        'flows-reconcile',
+      ].sort(),
     );
-    expect(screens.data.copy).toEqual(ia.copy);
-    expect(screens.data.widgets.find((w) => w.id === 'W01')).toMatchObject({
-      kind: 'hero',
-      edge: 'band',
-    });
-    for (const file of [
-      '02-design/09-skeleton.json',
-      '02-design/09-wireframes.html',
-      '02-design/09-assemble.md',
-    ])
+    expect(screens.data.nodes).toHaveLength(fixture.nodes.length);
+    expect(screens.data.screens.map((s) => [s.id, s.shell])).toEqual(fixture.screens.map((s) => [s.id, s.shell]));
+    expect(screens.data.widgets.find((w) => w.id === 'W01')).toMatchObject({ kind: 'hero', edge: 'band' });
+    for (const file of ['02-design/09-skeleton.json', '02-design/09-wireframes.html', '02-design/09-assemble.md'])
       expect(existsSync(runPath(run, file)), file).toBe(true);
-    const gaps = JSON.parse(
-      readFileSync(runPath(run, '02-design/09-ds-gaps.json'), 'utf8'),
-    ) as { name: string; usedOn: string[] }[];
+    const gaps = JSON.parse(readFileSync(runPath(run, '02-design/09-ds-gaps.json'), 'utf8')) as {
+      name: string;
+      usedOn: string[];
+    }[];
     expect(gaps).toMatchObject([{ name: 'TitleCover', usedOn: ['S06'] }]);
     expect(readFileSync(log, 'utf8').trim().split('\n')).toHaveLength(1);
-    expect(
-      readReport(run, 'design-assemble')?.rounds.map((r) => r.round),
-    ).toEqual([1]);
+    expect(readReport(run, 'design-assemble')?.rounds.map((r) => r.round)).toEqual([1]);
     const { stages } = readState(run);
     for (const stage of [
       'design-architect',
+      'design-catalog',
+      'design-screen',
       'design-invent',
       'design-draw',
       'design-frame',
@@ -237,33 +200,45 @@ describe('the design stages after the theme', () => {
     expect(stages['design-assemble']).toMatchObject({ known: 0 });
   });
 
-  it('send an issue found on the assembled page back to the call that built its widget, once, as a named fix', async () => {
+  it('run screen, invent, draw and frame side by side, as the CLI starts them, with every stage and call recorded', async () => {
+    const run = prepared('side-by-side');
+    const { llm } = fakeLlm();
+    const ctx = contextFor(run, llm);
+    await runArchitect(ctx, inventory);
+    await runCatalog(ctx, inventory);
+    await Promise.all([runScreen(ctx, inventory), runInvent(ctx, inventory), runDraw(ctx, inventory), runFrame(ctx, inventory)]);
+    await runAssemble(ctx, inventory, path.join(root, 'side-gaps.jsonl'));
+    const { stages } = readState(run);
+    for (const stage of ['design-screen', 'design-invent', 'design-draw', 'design-frame', 'design-assemble'])
+      expect(stages[stage], stage).toMatchObject({ status: 'done' });
+    for (const call of ['design-screen-S04', 'design-invent-TitleCover', 'design-draw-W08', 'design-frame-SH2'])
+      expect(stages[call], call).toMatchObject({ status: 'done' });
+    expect(stages['design-assemble']).toMatchObject({ known: 0 });
+    expect(readArtifact<WidgetScreens>(run, 'design-assemble').data.nodes).toHaveLength(fixture.nodes.length);
+  });
+
+  it('send an issue found on the assembled page back to the call that drew its widget, once, as a named patch fix', async () => {
     const run = prepared('routed');
-    // The toolbar spaces its items 32 apart: fine alone, but wider than the page spaces its widgets (LAYOUT-001).
+    // The books widget spaces its parts 32 apart: fine alone, but wider than the page spaces its widgets (LAYOUT-001).
     const loose = structuredClone(builds.find((b) => b.widget === 'W06')!);
     loose.layout.gap = '8';
     const { llm, inputs } = fakeLlm({ W06: loose });
     await design(contextFor(run, llm), path.join(root, 'routed-gaps.jsonl'));
 
-    expect(writers(inputs).filter((stage) => stage.endsWith('-fix'))).toEqual([
-      'design-draw-W05-W06-fix',
-    ]);
-    const fix = inputs.find((i) => i.stage === 'design-draw-W05-W06-fix');
+    expect(writers(inputs).filter((stage) => stage.endsWith('-fix'))).toEqual(['design-draw-W06-fix']);
+    const fix = inputs.find((i) => i.stage === 'design-draw-W06-fix');
+    expect(fix?.schemaName).toBe('BuildPatch');
     expect(fix?.messages.at(-1)?.content).toContain('LAYOUT-001 at W06');
     expect(fix?.messages.at(-1)?.content).toContain('W06 (as S04.sec2)');
     expect(fix?.messages.at(-2)?.role).toBe('assistant');
-    expect(
-      writers(inputs).filter((stage) => stage === 'design-architect'),
-    ).toHaveLength(1);
+    expect(writers(inputs).filter((stage) => stage === 'design-architect')).toHaveLength(1);
     const report = readReport(run, 'design-assemble');
-    expect(report?.rounds[0]?.issues.map((i) => i.rule)).toEqual([
-      'LAYOUT-001',
-    ]);
+    expect(report?.rounds[0]?.issues.map((i) => i.rule)).toEqual(['LAYOUT-001']);
     expect(report?.rounds[1]?.issues).toEqual([]);
     // The fix is the draw stage's own: a new version of its artifact, which the assembly reads.
     expect(readArtifact(run, 'design-draw').meta.version).toBe(2);
     const { stages } = readState(run);
-    expect(stages['design-draw-W05-W06-fix']).toMatchObject({ status: 'done' });
+    expect(stages['design-draw-W06-fix']).toMatchObject({ status: 'done' });
     expect(stages['design-assemble']).toMatchObject({ known: 0 });
   });
 });

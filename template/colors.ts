@@ -33,7 +33,9 @@ export type ColorSet = {
 
 /** Colors outside the color set roles: the page itself and one-off uses. */
 export type SurfaceColors = {
-  /** Page background; color sets are for controls and containers. */
+  /** The page's background as one CSS value: a color, or gradients of colors. */
+  pageBackground: string;
+  /** The page's solid color: shown until the background paints, and the color disabled states fade into. Color sets are for controls and containers. */
   pageBg: string;
   /** Header and footer background, framing the page content. */
   frameBg: string;
@@ -82,6 +84,7 @@ export const colors = {
   },
   surface: {
     light: {
+      pageBackground: '#FFFFFF',
       pageBg: '#FFFFFF',
       frameBg: '#FAFAFA',
       pageFg: '#18181B',
@@ -91,6 +94,7 @@ export const colors = {
       skeleton: '#E4E4E7',
     } satisfies SurfaceColors,
     dark: {
+      pageBackground: '#18181B',
       pageBg: '#18181B',
       frameBg: '#1F1F23',
       pageFg: '#FAFAFA',

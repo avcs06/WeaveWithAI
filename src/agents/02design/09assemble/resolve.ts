@@ -25,7 +25,7 @@ export function resolveScreens(
   ia: Ia,
   nodes: DesignNode[],
   theme: Theme,
-): Screens {
+): Omit<Screens, 'boxes' | 'frameChanges'> {
   const shells = layoutShells(theme.layouts);
   const framed = new Set(shells.map((shell) => shell.id));
   const screens = ia.screens.map((screen) => {

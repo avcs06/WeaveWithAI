@@ -22,7 +22,7 @@ export const rule = defineRule<NodesInput>(
       )
         issues.push(
           fail(
-            `${node.id} is a ${node.role} with no component; name the design-system component it is, or declare a new component in the IA and name it.`,
+            `${node.id} is a ${node.role} with component none and no newComponent. An action, a navigation or an input is a design-system component or a declared new component. Set the component of ${node.id} to the design-system component it is, or its newComponent to a declared new component.`,
             node.id,
           ),
         );

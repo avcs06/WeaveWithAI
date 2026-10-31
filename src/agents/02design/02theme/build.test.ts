@@ -1,9 +1,11 @@
 import { readFileSync } from 'node:fs';
+import { converter } from 'culori';
 import { describe, expect, it } from 'vitest';
 import type { Inventory } from '../../../ds/inventory';
 import { Brief } from '../01brief/schema';
 import { makeThemeSchema, type ThemeCall } from './schema';
 import { buildTheme, Theme } from './build';
+import { ramp, rampsOf } from './ramps';
 import { themeRules, validateTheme } from './validation/validation';
 
 const read = (path: string) =>
@@ -69,10 +71,12 @@ describe('buildTheme', () => {
     expect(validateTheme(theme, inventory)).toEqual([]);
   });
 
-  it('writes hex values in capitals and only the modes the brief names', () => {
-    const lower = structuredClone(call);
-    lower.colors.light!.theme.bg = '#e7f5f6';
-    expect(buildTheme(brief, lower).colors.light!.theme.bg).toBe('#E7F5F6');
+  it('turns each step into the hex of its ramp, in capitals, for only the modes the brief names', () => {
+    const ramps = rampsOf(brief);
+    expect(theme.colors.light!.theme.bg).toBe(ramps.light!.theme[1]);
+    expect(theme.colors.dark!.page.frameBg).toBe(ramps.dark!.frame[2]);
+    expect(theme.colors.light!.page.divider).toBe(ramps.light!.base[4]);
+    expect(theme.colors.light!.theme.bg).toMatch(/^#[0-9A-F]{6}$/);
     const light = buildTheme({ ...brief, colorScheme: 'light' }, call);
     expect(light.modes).toEqual(['light']);
     expect(light.colors.dark).toBeUndefined();
@@ -118,27 +122,28 @@ describe('theme rules', () => {
     },
   );
 
-  it('THEME-001 checks page text on the page and on the frame', () => {
+  it('THEME-001 checks page text on the page, on the frame and on every color of the background', () => {
     const copy = structuredClone(theme);
     copy.colors.dark!.page.pageFgMuted = copy.colors.dark!.page.frameBg;
-    expect(
-      validateTheme(copy, inventory).map((issue) => [issue.rule, issue.at]),
-    ).toEqual([
-      ['THEME-001', 'page.dark.pageFgMuted'],
-      ['THEME-001', 'page.dark.pageFgMuted'],
-    ]);
+    const issues = validateTheme(copy, inventory);
+    expect(issues.map((issue) => [issue.rule, issue.at])).toEqual(
+      Array(4).fill(['THEME-001', 'page.dark.pageFgMuted']),
+    );
+    // The dark background is a gradient of two colors.
+    expect(issues.filter((i) => i.message.includes("the background's #"))).toHaveLength(2);
   });
 
   it('THEME-001 and THEME-002 check the theme set straight on a tinted page, where links sit', () => {
     const copy = structuredClone(theme);
     const { page, theme: set } = copy.colors.light!;
-    page.pageBg = set.fg;
+    page.pageBg = set.focus;
     expect(
       validateTheme(copy, inventory)
         .filter((issue) => issue.at?.startsWith('theme.light'))
         .map((issue) => [issue.rule, issue.at]),
     ).toEqual([
       ['THEME-001', 'theme.light.fg'],
+      ['THEME-002', 'theme.light.border'],
       ['THEME-002', 'theme.light.focus'],
     ]);
   });
@@ -237,5 +242,34 @@ describe('theme rules', () => {
     // A part that is not needed, or a box with no padding, has nothing to check.
     expect(at((t) => (t.layouts.app.footer.gap = '6'))).toEqual([]);
     expect(at((t) => (t.layouts.app.main.padding = '0'))).toEqual([]);
+  });
+});
+
+describe('ramps', () => {
+  const hues = Array.from({ length: 12 }, (_, i) => i * 30);
+  const chromas = ['muted', 'balanced', 'vivid'] as const;
+  const hueOf = converter('oklch');
+
+  it('keep their hue on every step with color, in both modes', () => {
+    for (const hue of hues)
+      for (const chroma of chromas)
+        for (const mode of ['light', 'dark'] as const)
+          for (const hex of ramp(hue, chroma, mode)) {
+            const color = hueOf(hex)!;
+            if ((color.c ?? 0) < 0.03) continue;
+            const off = Math.abs((((color.h ?? 0) - hue + 540) % 360) - 180);
+            expect(off, `${hue} ${chroma} ${mode} ${hex}`).toBeLessThan(10);
+          }
+  });
+
+  it('never give two hues the same color on a step', () => {
+    for (const chroma of chromas)
+      for (const mode of ['light', 'dark'] as const) {
+        const ramps = hues.map((hue) => ramp(hue, chroma, mode));
+        for (let step = 0; step < 12; step += 1) {
+          const colors = ramps.map((r) => r[step]);
+          expect(new Set(colors).size, `${chroma} ${mode} step ${step + 1}`).toBe(hues.length);
+        }
+      }
   });
 });

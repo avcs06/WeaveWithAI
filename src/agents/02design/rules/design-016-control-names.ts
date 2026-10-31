@@ -19,14 +19,14 @@ export const rule = defineRule<NodesInput>(
       if (node.component.endsWith('IconButton') && !node.label.trim())
         issues.push(
           fail(
-            `${node.id} is an icon-only ${node.component}; give it a label.`,
+            `${node.id} is an icon-only ${node.component} with no label. An icon-only control has a label, its accessible name. Give ${node.id} a label that says what it does.`,
             node.id,
           ),
         );
       else if (!node.text.trim() && !node.label.trim())
         issues.push(
           fail(
-            `${node.id} is a ${node.role} with no text and no label; give it a name.`,
+            `${node.id} has the role ${node.role}, with no text and no label. Every control has visible text or a label. Give ${node.id} the text it shows, or a label when it shows no text.`,
             node.id,
           ),
         );

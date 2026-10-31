@@ -20,7 +20,7 @@ export const rule = defineRule<NodesInput>(
         .filter((node) => node.headingLevel === 1)
         .map((node) =>
           fail(
-            `${node.id} is a level-1 heading in the shell; the page's title is its only H1, so make the shell's text a plain line or a lower level.`,
+            `${node.id} is a level-1 heading in the shell ${screen}. A shell shows beside every page. A page's title is the page's only level-1 heading. Make ${node.id} plain text with heading level 0, or give it a level from 2 to 4.`,
             node.id,
           ),
         );
@@ -32,7 +32,7 @@ export const rule = defineRule<NodesInput>(
     if (ones !== 1)
       issues.push(
         fail(
-          `${screen} has ${ones} level-1 headings; a page has exactly one.`,
+          `${screen} has ${ones} level-1 headings. A page has exactly one level-1 heading. ${ones ? 'Keep level 1 on one of them, and give the others a level from 2 to 4.' : "Give the page's main heading level 1."}`,
           screen,
         ),
       );
@@ -41,7 +41,7 @@ export const rule = defineRule<NodesInput>(
       if (node.headingLevel > deepest + 1)
         issues.push(
           fail(
-            `${node.id} is an H${node.headingLevel} after an H${deepest}; heading levels never skip.`,
+            `${node.id} has heading level ${node.headingLevel}, but the highest level before it in reading order is ${deepest}. A level is at most one more than the levels before it. Give ${node.id} level ${deepest + 1} or lower.`,
             node.id,
           ),
         );

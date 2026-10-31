@@ -139,10 +139,12 @@ Notes:
       conversation, add "fix only these mandatory issues, return the full JSON".
 - [ ] **B. Fresh call (R3).** Re-send the prompt plus the issue list; the model
       regenerates from scratch, which can fix one thing and break another.
-- [ ] **C. Patch operations only.** The model returns changes by ID. Used for
+- [x] **C. Patch operations only.** The model returns changes by ID. Used for
       reconciliation (D5.4); heavier to implement for first drafts.
 
-Notes:
+Notes: C for every fix; the first draft stays whole (user, 2026-10-31,
+F16). A fix returns the items that changed and the new ones, each complete,
+and the ids to remove; the runner merges them into the current document.
 
 ### D1.6 Loop limits (pick one)
 
@@ -272,6 +274,8 @@ decisions (the product manager for scope and flows, a product designer for
 design), and an output reviewer finds the errors in meaning that validators
 cannot. Round 3's one call is the output reviewer; the peer runs once. Each
 stage has a peer and an output guide (user, 2026-10-30).
+Five rounds since DS22 (user, 2026-10-30): the output reviewer runs again in
+round 4, and round 5 is the final fix.
 
 ### D1.13 Output budget and reasoning effort (pick one)
 
@@ -465,6 +469,10 @@ sections are composed from elements and layout boxes on the tokens, and a
 component is used only where it fits, mainly the interactive ones. A component
 is never used because it exists. Section recipes for marketing content are a
 later extension of the design system, not this week's.
+Design is only look (user, 2026-10-31, DS23): the architect describes a new
+component's content, purpose, emphasis, feel and look, and invent draws it
+as layout and nodes. Its behavior, props, keyboard and ARIA are the coding
+stage's.
 
 ### D3.2 Design representation (pick one)
 
@@ -510,7 +518,7 @@ most reasoning and room to be creative; the values need care, not
 creativity. The brief decides audience, personality, voice, density, feel,
 light or dark or both, seed hue and chroma, fonts, radius, focus ring,
 which entities get a color with their hues, imagery and references. The
-theme call writes hex values for the 12 color roles of the brand set and of
+theme call chooses the values of the 12 color roles of the brand set and of
 the base set most components use (from the brief's `baseHue` and
 `baseChroma`, user, 2026-10-30) and the page colors (`pageBg`, `pageFg`,
 `pageFgMuted`, `frameBg`) in each mode, a palette per
@@ -518,6 +526,9 @@ colored entity, an app layout and a marketing layout, and the defaults.
 `divider`, `backdrop` and `skeleton` come from the theme call too, made to
 show on the colors it chose (user, 2026-10-30); only the status sets stay
 the template's.
+Colors from ramps (user, 2026-10-31, DS27): code builds a 12-step OKLCH
+ramp for each hue and chroma the brief names, the theme call assigns each
+color role to a step, and code turns the steps into hex.
 Phones are out of scope for now.
 
 ### D3.4 Customization policy, your "20% rule" (pick one)
@@ -610,7 +621,11 @@ Notes:
       sections, new components), then one call per screen for its nodes, 2 to 4
       in parallel (default).** Smaller calls, per-screen validation and reruns.
 
-Notes:
+Notes: replaced by a chain of calls (user, 2026-10-30 and 2026-10-31,
+DS23). An architect call plans the screens and their composition for the
+whole app; a catalog call defines each widget once; a screen call per page
+lays out its boxes and instances; invent, draw and frame expand components,
+widgets and frames into nodes, in parallel; code assembles.
 
 ---
 

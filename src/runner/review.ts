@@ -2,9 +2,9 @@ import { z } from 'zod';
 import type { Issue } from '../core/issues';
 
 export const Blocker = z.object({
-  at: z.string().describe('an ID or JSON path in the output'),
-  problem: z.string().describe('what is wrong, in one sentence'),
-  fix: z.string().describe('what the corrected output must say instead'),
+  at: z.string().describe('Where it is: an ID or a JSON path in the output'),
+  problem: z.string().describe('What is wrong, in one sentence'),
+  fix: z.string().describe('What the output must say instead'),
 });
 export const Review = z.object({ blockers: z.array(Blocker) });
 export type Review = z.infer<typeof Review>;

@@ -3,73 +3,58 @@ import { readArtifact, writeArtifact } from '../../../core/artifacts';
 import { appendEvent, updateStage } from '../../../core/run';
 import { type Inventory, inventory } from '../../../ds/inventory';
 import type { StageContext, StageDef } from '../../stages';
-import type { WidgetIa } from '../03architect/schema';
-import { caller, designInputs, PARALLEL } from '../calls';
-import type { NewComponent } from '../schema';
+import type { Processed as Plan } from '../03architect/process';
+import type { Processed as Catalog } from '../04catalog/process';
+import { caller, designInputs, kindOf, PARALLEL } from '../calls';
 import {
   componentReviewGuides,
   componentSystemPrompt,
   componentUserMessage,
 } from './prompts/index';
-import { type ComponentDesign, makeInventSchemas } from './schema';
+import { type ComponentDesign, DESIGN_KEYS, makeInventSchemas } from './schema';
 import { validateComponent } from './validation/validation';
 
-// A component is designed once, in full, at high (DS23).
+// Invent draws each new component at medium reasoning, its first draft at 0.7:
+// the creative expansion of the architect's description (DS23).
 const COMPONENT_MAX_TOKENS = 16_384;
-const COMPONENT_EFFORT = 'high';
+const COMPONENT_EFFORT = 'medium';
 
 /** `02-design/06-invent.json`: each declared component's design and the model that wrote it. */
 export type Invented = {
   components: { name: string; design: ComponentDesign; model: string }[];
 };
 
-/** Each component's design by name. */
-export const designsOf = (invented: Invented) =>
-  new Map(invented.components.map((c) => [c.name, c.design]));
-
-/** The IA's declarations with their designs, as the widget calls build on them. */
-export const componentsOf = (
-  ia: WidgetIa,
-  invented: Invented,
-): NewComponent[] => {
-  const designs = designsOf(invented);
-  return ia.newComponents.flatMap((c) => {
-    const design = designs.get(c.name);
-    return design ? [{ ...c, ...design, usedOn: [] }] : [];
-  });
-};
-
-/** A call per declared component, each designing it in full before any widget uses it. */
-export async function runInvent(
-  ctx: StageContext,
-  inv: Inventory,
-): Promise<void> {
+/** A call per declared component. */
+export async function runInvent(ctx: StageContext, inv: Inventory): Promise<void> {
   const { run } = ctx;
   appendEvent(run, { type: 'stage:start', stage: 'design-invent' });
   updateStage(run, 'design-invent', { status: 'running' });
-  const ia = readArtifact<WidgetIa>(run, 'design-architect').data;
+  const plan = readArtifact<Plan>(run, 'design-architect').data;
+  const catalog = readArtifact<Catalog>(run, 'design-catalog').data;
   const { scope, brief, theme, context } = designInputs(run, inv);
   const { ComponentDesign } = makeInventSchemas(inv);
   const { call, totals } = caller(ctx);
   const limit = pLimit(PARALLEL);
   const components = await Promise.all(
-    ia.newComponents.map((declared) =>
+    plan.newComponents.map((declared) =>
       limit(async () => {
+        const range = catalog.components.find((c) => c.name === declared.name) ?? {
+          minWidthPx: 0,
+          maxWidthPx: 0,
+        };
         const { output, model } = await call({
           stage: `design-invent-${declared.name}`,
           schema: ComponentDesign,
           schemaName: 'ComponentDesign',
-          system: componentSystemPrompt(declared.name, inv),
-          user: componentUserMessage(declared.name, ia, scope, brief, theme),
+          system: componentSystemPrompt(brief, inv),
+          user: componentUserMessage(declared.name, plan, catalog, scope, brief, theme),
           validate: (design) =>
-            validateComponent(
-              { ...declared, ...design, usedOn: [] },
-              ia,
-              context,
-            ),
+            validateComponent(declared.name, design, range, kindOf(declared.name, plan, catalog), context, theme),
           review: componentReviewGuides(),
           maxTokens: COMPONENT_MAX_TOKENS,
           reasoningEffort: COMPONENT_EFFORT,
+          temperature: 0.7,
+          patchKeys: DESIGN_KEYS,
         });
         return { name: declared.name, design: output, model };
       }),
@@ -80,15 +65,10 @@ export async function runInvent(
     stage: 'design-invent',
     model: components[0]?.model ?? null,
     rounds,
-    inputs: ['design-architect', 'design-brief', 'design-theme', 'flows-scope'],
+    inputs: ['design-architect', 'design-catalog', 'design-brief', 'design-theme', 'flows-scope'],
   });
   updateStage(run, 'design-invent', { rounds, known });
-  appendEvent(run, {
-    type: 'stage:done',
-    stage: 'design-invent',
-    rounds,
-    known,
-  });
+  appendEvent(run, { type: 'stage:done', stage: 'design-invent', rounds, known });
 }
 
 export const inventStage: StageDef = {

@@ -1,17 +1,18 @@
-import { z } from 'zod';
-import { Assumption, Field, Flow, Form, Question, Subflow } from '../schema';
+import type { z } from 'zod';
+import { type PatchKeys, patchSchema } from '../../../runner/patch';
+import { Flows } from '../schema';
+
+/** Every list of the flows document, by id. */
+export const FLOWS_KEYS: PatchKeys = {
+  flows: 'id',
+  fields: 'id',
+  forms: 'id',
+  subflows: 'id',
+  assumptions: 'id',
+  questions: 'id',
+};
 
 /** What a reconciliation call returns: only what changes. */
-export const FlowsPatch = z.object({
-  upsertFlows: z
-    .array(Flow)
-    .describe('Complete flows; the same id replaces, a new id adds'),
-  upsertFields: z.array(Field),
-  upsertForms: z.array(Form),
-  upsertSubflows: z.array(Subflow),
-  removeFlows: z.array(z.string()).describe('Flow ids to delete'),
-  assumptions: z.array(Assumption).describe('New ones only'),
-  questions: z.array(Question).describe('New ones only'),
-});
+export const FlowsPatch = patchSchema(Flows, FLOWS_KEYS);
 
 export type FlowsPatch = z.infer<typeof FlowsPatch>;

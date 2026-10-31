@@ -33,6 +33,12 @@ describe('renderWireframes', () => {
     }
   });
 
+  it('shows a button sized for its words with its whole label, drawn smaller if it must', () => {
+    for (const words of ['Add book', 'Save book', 'Create account'])
+      expect(html, words).toMatch(new RegExp(`class="name"[^>]*>${words}</text>`));
+    expect(html).not.toMatch(/class="name"[^>]*>(Add bo|Save bo|Create acco)[^<]*…<\/text>/);
+  });
+
   it('marks new components and lists what the default state hides', () => {
     expect(html).toContain('class="new"');
     expect(html).toContain('TitleCover');

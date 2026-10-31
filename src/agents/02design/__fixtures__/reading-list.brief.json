@@ -15,16 +15,54 @@
   "colorScheme": "both",
   "seedHue": 200,
   "seedChroma": "muted",
-  "pageHue": 200,
-  "pageChroma": "neutral",
+  "pageBackground": "linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%)",
   "frameHue": 200,
   "frameChroma": "muted",
   "baseHue": 200,
   "baseChroma": "muted",
   "fonts": {
-    "ui": "Inter",
-    "display": "Playfair Display",
-    "mono": "JetBrains Mono"
+    "ui": [
+      {
+        "family": "Inter",
+        "reason": "Plain and legible at small sizes, for a calm list read often."
+      },
+      {
+        "family": "Open Sans",
+        "reason": "Friendly and open, a close second for long titles."
+      },
+      {
+        "family": "Roboto",
+        "reason": "Neutral and compact, but colder than the brief wants."
+      }
+    ],
+    "display": [
+      {
+        "family": "Playfair Display",
+        "reason": "A bookish serif for page titles, warm against the plain text."
+      },
+      {
+        "family": "Montserrat",
+        "reason": "Clean and confident, but less literary."
+      },
+      {
+        "family": "Oswald",
+        "reason": "Condensed and strong, louder than a quiet reading app."
+      }
+    ],
+    "mono": [
+      {
+        "family": "JetBrains Mono",
+        "reason": "Clear digits for page counts and dates."
+      },
+      {
+        "family": "IBM Plex Mono",
+        "reason": "Softer shapes, a good second."
+      },
+      {
+        "family": "Roboto Mono",
+        "reason": "Plain, with less character."
+      }
+    ]
   },
   "radius": "soft",
   "focusRing": "halo",

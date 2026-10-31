@@ -37,19 +37,16 @@ export const NODE_ROLES = [
   'feedback',
   'media',
   'container',
+  'shape',
 ] as const;
 
-export const STATES = [
-  'default',
-  'loading',
-  'empty',
-  'error',
-  'success',
-  'invalid',
-  'submitting',
-  'denied',
-  'notFound',
-] as const;
+/**
+ * The states a design draws (user, 2026-10-31). Loading, a field's error and a
+ * submit's progress are the design system's own, and a form's result is a
+ * toast, so the design neither draws nor checks them. `error` is a list or a
+ * page that fails to load.
+ */
+export const STATES = ['default', 'empty', 'error', 'denied', 'notFound'] as const;
 
 /**
  * A section's background, each a pair THEME-001 checks: the page (pageFg on
@@ -60,35 +57,11 @@ export const SURFACES = ['page', 'frame', 'brand', 'accent'] as const;
 
 export const NEW_COMPONENT_BUDGET = 5;
 
-/** How a screen arranges its widgets: stacked, or one main widget beside one side panel (DS23). */
-export const ARRANGEMENTS = ['column', 'main-side'] as const;
-
-/** Where a placed widget sits on a `main-side` screen; `column` screens use `main` only. */
-export const AREAS = ['main', 'side'] as const;
-
-/** The width of a side panel, in px. */
-export const SIDE_WIDTH_PX = 300;
-
 /** The spacing key between a dialog's or drawer's widgets; the Dialog pads itself. */
 export const DIALOG_GAP = '5';
 
 /** What a widget's outer edge is, for the coding stage: a bordered box, a tinted surface, bare text, or a full-width band. */
 export const EDGES = ['bordered', 'surface', 'text', 'band'] as const;
-
-/** What a copy deck string is for. */
-export const COPY_KINDS = [
-  'title',
-  'heading',
-  'text',
-  'action',
-  'navigation',
-  'field',
-  'placeholder',
-  'empty',
-  'error',
-  'success',
-  'label',
-] as const;
 
 /** A page's content column; `full` is its layout's container. */
 export const CONTENT_WIDTHS = ['narrow', 'medium', 'wide', 'full'] as const;
@@ -96,7 +69,7 @@ export const CONTENT_WIDTHS = ['narrow', 'medium', 'wide', 'full'] as const;
 export const CONTENT_WIDTH_PX: Record<(typeof CONTENT_WIDTHS)[number], number> =
   { narrow: 640, medium: 960, wide: 1280, full: 0 };
 
-/** The gap between a page's sections by kind, in px (H-08): the theme sets it, LAYOUT-008 measures it. */
+/** The gap between a page's sections by kind, in px (H-08): the theme sets it, THEME-007 checks it. */
 export const SECTION_GAP_PX = {
   app: [24, 32],
   marketing: [24, 48],

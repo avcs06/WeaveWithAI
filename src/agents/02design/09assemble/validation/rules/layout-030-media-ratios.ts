@@ -37,7 +37,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `The images in ${rect.id} have ratios ${[...new Set(ratios.map((r) => r.toFixed(2)))].join(', ')}; give them one of 16:9, 4:3, 1:1 or 3:4.`,
+              `The images in the grid ${rect.id} have the width to height ratios ${new Intl.ListFormat('en-GB').format([...new Set(ratios.map((r) => r.toFixed(2)))])}. ${new Intl.ListFormat('en-GB').format(media(view, rect).map((m) => `${m.id} is ${Math.round(m.width)}px by ${Math.round(m.height)}px`))}. The images in a grid share one ratio, and it is 16:9, 4:3, 1:1 or 3:4. Set the box widthPx and heightPx of every image in ${rect.id} to the same ratio from that list.`,
               rect.id,
             ),
           );

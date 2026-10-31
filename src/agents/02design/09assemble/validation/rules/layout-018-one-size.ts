@@ -26,7 +26,7 @@ export const rule = defineRule<LayoutInput>(
         if (sizes.size > 1)
           issues.push(
             fail(
-              `${rect.id} mixes control sizes ${[...sizes].join(' and ')}; controls in one row share a size.`,
+              `${rect.id} is a row of controls of different sizes. ${new Intl.ListFormat('en-GB').format(sized.map((node) => `${node?.id} has size ${node?.size}`))}. Buttons, fields and chips in one row share one size. Give every control in ${rect.id} the same size.`,
               rect.id,
             ),
           );

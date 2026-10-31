@@ -10,7 +10,7 @@ export const SHELL_IDS = { app: 'SH1', marketing: 'SH2' } as const;
 
 type Part = Omit<Region, 'id'>;
 
-/** What a region holds, by slot, for the nodes call: "start: the wordmark; end: Sign in". */
+/** What a region holds, by slot, for the frame call: "start: the wordmark; end: Sign in". */
 function holds(slots: [string, string][]): string {
   return slots
     .filter(([, what]) => what)

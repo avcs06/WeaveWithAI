@@ -60,8 +60,8 @@ export const designMutations: Record<string, (screens: Screens) => Screens> = {
   }),
   'DESIGN-010': edit((s) => (node(s, 'S05.n01').field = '')),
   'DESIGN-011': edit((s) => {
-    screen(s, 'S04').states = ['default', 'loading', 'error'];
-    for (const id of ['S04.n12', 'S04.n13', 'S04.n14'])
+    screen(s, 'S04').states = ['default', 'error'];
+    for (const id of ['S04.n12', 'S04.n13', 'S04.n14', 'S04.n16'])
       node(s, id).states = ['default'];
   }),
   'DESIGN-012': edit((s) => (node(s, 'S04.n05').role = 'primary-action')),
@@ -75,7 +75,6 @@ export const designMutations: Record<string, (screens: Screens) => Screens> = {
   'DESIGN-015': edit((s) => (node(s, 'S01.n12').headingLevel = 4)),
   'DESIGN-016': edit((s) => (node(s, 'S04.n07').label = '')),
   'DESIGN-017': edit((s) => (node(s, 'S04.n09').navigatesTo = '')),
-  'DESIGN-018': edit((s) => (screen(s, 'S04').access = 'public')),
   'DESIGN-019': edit((s) => (node(s, 'S06.n08').data = ['Novel.author'])),
   'DESIGN-020': edit((s) => (node(s, 'S05.n06').text = 'Lorem ipsum')),
   'DESIGN-021': edit((s) => (screen(s, 'S06').flowSteps = [])),
@@ -87,6 +86,7 @@ export const designMutations: Record<string, (screens: Screens) => Screens> = {
   'DESIGN-025': edit((s) => (node(s, 'SH1.n02').role = 'secondary-action')),
   'DESIGN-026': edit((s) => (node(s, 'S05.n06').component = 'none')),
   'DESIGN-027': edit((s) => (node(s, 'SH1.n02').overrideReason = '')),
+  'DESIGN-028': edit((s) => (node(s, 'S04.n14').text = 'Add a book')),
   'DESIGN-034': edit((s) => (node(s, 'S02.n09').navigatesTo = '')),
   'DESIGN-035': edit((s) => (node(s, 'S06.n01').role = 'secondary-action')),
 };
@@ -111,4 +111,6 @@ export const briefMutations: Record<string, (brief: Brief) => Brief> = {
   'BRIEF-001': briefEdit((b) => (b.seedHue = 400)),
   'BRIEF-002': briefEdit((b) => (b.entities = b.entities.slice(0, 1))),
   'BRIEF-003': briefEdit((b) => (b.entities[1]!.hue = 210)),
+  'BRIEF-005': briefEdit((b) => (b.fonts.ui = b.fonts.ui.slice(0, 1))),
+  'BRIEF-006': briefEdit((b) => (b.pageBackground = 'url(paper.png)')),
 };

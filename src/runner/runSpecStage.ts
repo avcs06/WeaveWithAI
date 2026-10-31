@@ -12,12 +12,14 @@ import {
   type GenerateResult,
   type Llm,
   type ModelChoice,
+  ModelOutputInvalid,
   ModelOutputTruncated,
   type ReasoningEffort,
   type Temperature,
 } from '../core/llm';
 import { costUsd, isPriced } from '../core/prices';
 import { fillPrompt, loadPrompt } from '../core/prompt';
+import { applyPatch, type PatchKeys, patchFormat, patchSchema } from './patch';
 import { Review, toIssues } from './review';
 import { appendEvent, type Run, updateStage } from '../core/run';
 import { pathBeside } from '../core/utils';
@@ -74,6 +76,8 @@ export type SpecStageOptions<T> = {
   draftModel?: ModelChoice;
   /** How the document is produced; the default is one conversation with the model. */
   compose?: Compose<T>;
+  /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges (D1.5 C); without them, the whole document. */
+  patchKeys?: PatchKeys;
   /** A document to start from: round 1 validates it instead of generating one (reconciliation). */
   start?: Draft<T>;
   /** Issues found outside the stage's own validators, such as on the whole design; they join round 1's issues of `start`, so its first fix applies them. */
@@ -107,7 +111,12 @@ const REVIEW_EFFORT = 'medium';
 const REVIEW_MAX_TOKENS = 8192;
 const NOT_REREVIEWED = ' (addressed in the final fix, not re-reviewed)';
 
-const fixPrompt = loadPrompt(pathBeside(import.meta.url, './prompt-fix.md'));
+const fixPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-fix-whole.md'),
+);
+const patchFixPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-fix.md'),
+);
 const reviewPrompt = loadPrompt(
   pathBeside(import.meta.url, './prompt-review.md'),
 );
@@ -134,8 +143,10 @@ export async function runSpecStage<T>(
   const produce = async (
     round: number,
     make: (call: Call) => Promise<Draft<T>>,
+    fixing: number,
   ) => {
     const call = callerFor(o, round);
+    appendEvent(o.run, { type: 'round:start', stage: o.stage, round, fixing });
     try {
       const draft = await make(call);
       return { draft, issues: o.validate(draft.data) };
@@ -170,7 +181,7 @@ export async function runSpecStage<T>(
         draft: o.start,
         issues: [...o.validate(o.start.data), ...(o.seed ?? [])],
       }
-    : await produce(1, (call) => compose.draft(call));
+    : await produce(1, (call) => compose.draft(call), 0);
   await askAbout(last.draft.data);
 
   let pending: Issue[] = [];
@@ -183,8 +194,10 @@ export async function runSpecStage<T>(
     if (step.fix && hasPendingIssues) {
       const toApply = unapplied;
       unapplied = {};
-      last = await produce(round, (call) =>
-        compose.fix(call, last.draft, pending, toApply),
+      last = await produce(
+        round,
+        (call) => compose.fix(call, last.draft, pending, toApply),
+        pending.length,
       );
       await askAbout(last.draft.data);
     }
@@ -192,6 +205,15 @@ export async function runSpecStage<T>(
     const produced = round === 1 ? !o.start : hasPendingIssues;
 
     const { mandatory, warnings } = splitIssues(last.issues);
+    if (round === 1 || produced)
+      appendEvent(o.run, {
+        type: 'round:validated',
+        stage: o.stage,
+        round,
+        mandatory: mandatory.length,
+        warnings: warnings.length,
+        rules: mandatory.map((issue) => issue.rule),
+      });
     const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
     if (o.review && reviewers.length > 0) {
       blockers = await review(
@@ -274,19 +296,36 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
         temperature: o.temperature,
       }),
     // A fix edits the named issues and nothing else, so it runs at the default 0.2, and at medium when the stage sets an effort (user, 2026-10-30).
-    fix(call, current, pending, answers) {
+    async fix(call, current, pending, answers) {
+      const reasoningEffort = o.reasoningEffort ? FIX_EFFORT : undefined;
+      const keys = o.patchKeys;
       messages.push(
         { role: 'assistant', content: current.raw },
-        { role: 'user', content: fixMessage(pending, answers) },
+        {
+          role: 'user',
+          content: keys
+            ? patchFixMessage(pending, answers)
+            : fixMessage(pending, answers),
+        },
       );
-      return generate(call, {
-        reasoningEffort: o.reasoningEffort ? FIX_EFFORT : undefined,
+      if (!keys) return generate(call, { reasoningEffort });
+      const result = await call({
+        stage: o.stage,
+        schema: patchSchema(o.schema, keys),
+        schemaName: `${o.schemaName}Patch`,
+        messages,
+        maxTokens: o.maxTokens,
+        reasoningEffort,
       });
+      const data = o.schema.parse(
+        applyPatch(current.data as object, result.data, keys),
+      );
+      return { data, raw: JSON.stringify(data), model: result.model };
     },
   };
 }
 
-/** The fix message of D1.5 A: the pending issues and the answers given since the last generation. */
+/** The fix message of D1.5 A, for a document with no keyed lists: the pending issues and the answers given since the last generation. */
 export function fixMessage(pending: Issue[], answers: Answers): string {
   return fillPrompt(fixPrompt, {
     issues: formatIssues(pending),
@@ -294,9 +333,19 @@ export function fixMessage(pending: Issue[], answers: Answers): string {
   });
 }
 
+/** The fix message of D1.5 C: the same, asking for a patch. */
+function patchFixMessage(pending: Issue[], answers: Answers): string {
+  return fillPrompt(patchFixPrompt, {
+    patch: patchFormat,
+    issues: formatIssues(pending),
+    answers: Object.keys(answers).length > 0 ? formatAnswers(answers) : 'None.',
+  });
+}
+
 /**
  * A `Call` for one round: logs every call as an `llm:call` event.
- * A call cut at the output limit is retried once here, not around the compose, so a compose's side effects never repeat.
+ * A call cut at the output limit, or answered with what the schema refuses, is
+ * retried once here, not around the compose, so a compose's side effects never repeat.
  */
 function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   return async (input) => {
@@ -312,6 +361,30 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
         logCall(o.run, input.stage, round, result);
         return result;
       } catch (error) {
+        if (error instanceof ModelOutputInvalid) {
+          const paid = error.paid;
+          if (paid) {
+            appendEvent(o.run, {
+              type: 'llm:call',
+              stage: input.stage,
+              round,
+              invalid: true,
+              model: paid.model,
+              input: paid.usage.input,
+              cachedInput: paid.usage.cachedInput,
+              output: paid.usage.output,
+              costUsd: costUsd(paid.model, paid.usage),
+            });
+            warnUnpriced(o.run, input.stage, paid.model);
+          }
+          if (retried) throw error;
+          appendEvent(o.run, {
+            type: 'warning',
+            stage: input.stage,
+            message: `${input.stage} round ${round}: the answer did not match the schema (${error.message}); retrying once`,
+          });
+          continue;
+        }
         if (!(error instanceof ModelOutputTruncated)) throw error;
         appendEvent(o.run, {
           type: 'llm:call',
@@ -356,6 +429,7 @@ async function review<T>(
     reviewers.map(async (reviewer) => {
       const stage = `${o.stage}-review-${reviewer}`;
       const system = fillPrompt(reviewPrompt, { guide: guides[reviewer] ?? '' });
+      appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
       const result = await o.llm.generateStructured({
         stage,
         round,
@@ -370,11 +444,12 @@ async function review<T>(
         maxTokens: REVIEW_MAX_TOKENS,
         runDir: o.run.dir,
       });
-      logCall(o.run, stage, round, result);
-      return result.data;
+      const blockers = toIssues(result.data);
+      logCall(o.run, stage, round, result, { reviewer, blockers: blockers.length });
+      return blockers;
     }),
   );
-  return reviews.flatMap(toIssues);
+  return reviews.flat();
 }
 
 /** One `- Q01 "question": answer` line per answer, the way answers go to the model. */
@@ -399,12 +474,14 @@ function logCall(
   stage: string,
   round: number,
   result: GenerateResult<unknown>,
+  review?: { reviewer: string; blockers: number },
 ): void {
   if (!result.replayed) warnUnpriced(run, stage, result.model);
   appendEvent(run, {
     type: 'llm:call',
     stage,
     round,
+    ...review,
     backend: result.backend,
     model: result.model,
     input: result.usage.input,

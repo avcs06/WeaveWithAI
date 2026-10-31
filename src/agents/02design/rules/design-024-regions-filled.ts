@@ -20,7 +20,7 @@ export const rule = defineRule<ScreensInput>(
         if (!filled.has(region.id))
           issues.push(
             fail(
-              `${region.id} holds no nodes; fill it with what it holds (${region.holds}) or drop it.`,
+              `The shell region ${region.id} holds no nodes. Every region of a shell that a page uses holds at least one node. Add nodes to ${region.id} for what it holds, or drop the region. It holds: ${region.holds}.`,
               region.id,
             ),
           );

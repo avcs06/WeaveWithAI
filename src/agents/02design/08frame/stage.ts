@@ -6,14 +6,15 @@ import { type Inventory, inventory } from '../../../ds/inventory';
 import { draftOf } from '../../../runner/draft';
 import type { StageContext, StageDef } from '../../stages';
 import type { Shell } from '../schema';
-import type { WidgetIa } from '../03architect/schema';
+import type { Processed as Plan } from '../03architect/process';
+import type { Processed as Catalog } from '../04catalog/process';
 import { caller, designInputs, PARALLEL } from '../calls';
 import {
   frameReviewGuides,
   frameSystemPrompt,
   frameUserMessage,
 } from './prompts/index';
-import { type FrameBuild, makeFrameSchemas } from './schema';
+import { FRAME_KEYS, type FrameBuild, makeFrameSchemas } from './schema';
 import { validateFrame } from './validation/validation';
 
 // A frame call fills one shell at medium (DS23).
@@ -25,23 +26,30 @@ export type Framed = {
   frames: { shell: string; output: FrameBuild; model: string }[];
 };
 
-/** The shells a framed page uses: the frame of each page kind that has one. */
-export function usedShells(ia: WidgetIa, shells: Shell[]): string[] {
-  const kinds = new Set(
-    ia.screens.filter((s) => s.type === 'page' && s.framed).map((s) => s.kind),
+/** The steps a shell's frame serves: those catalog gave the frame of each framed page of its kind. */
+export function frameStepsOf(plan: Plan, catalog: Catalog, shell: Shell): string[] {
+  const pages = new Set(
+    plan.screens
+      .filter((s) => s.type === 'page' && s.framed && s.kind === shell.name)
+      .map((s) => s.id),
   );
-  return shells
-    .filter((shell) =>
-      kinds.has(shell.name as WidgetIa['screens'][number]['kind']),
-    )
-    .map((s) => s.id);
+  return [
+    ...new Set(
+      catalog.screens.filter((s) => pages.has(s.screen)).flatMap((s) => s.frameSteps),
+    ),
+  ];
 }
 
-/** What a stage needs to fill frames: the calls, the IA, the shells and the inputs. */
+/** What a stage needs to fill frames: the calls, the plan, the shells and the inputs. */
 function framing(ctx: StageContext, inv: Inventory) {
   const { run } = ctx;
-  const ia = readArtifact<WidgetIa>(run, 'design-architect').data;
+  const plan = readArtifact<Plan>(run, 'design-architect').data;
+  const catalog = readArtifact<Catalog>(run, 'design-catalog').data;
   const { scope, brief, theme, shells, context } = designInputs(run, inv);
+  const stepsOf = (shell: string) => {
+    const found = shells.find((s) => s.id === shell);
+    return found ? frameStepsOf(plan, catalog, found) : [];
+  };
   const { FrameBuild } = makeFrameSchemas(inv);
   const { call, totals } = caller(ctx);
   /** One call for `shell`; given issues, a fix from its last output named `<stage>-fix`, without reviewers. */
@@ -56,22 +64,24 @@ function framing(ctx: StageContext, inv: Inventory) {
       stage: `design-frame-${shell}${start ? '-fix' : ''}`,
       schema: FrameBuild,
       schemaName: 'FrameBuild',
-      system: frameSystemPrompt(shell, brief, inv),
-      user: frameUserMessage(shell, ia, shells, scope, brief, theme),
-      validate: (built) => validateFrame(built, ia, context, theme),
+      system: frameSystemPrompt(brief, inv),
+      user: frameUserMessage(shell, plan, stepsOf(shell), shells, scope, brief, theme),
+      validate: (built) => validateFrame(built, plan, stepsOf(shell), context, theme),
       review: start ? undefined : frameReviewGuides(),
       maxTokens: FRAME_MAX_TOKENS,
       reasoningEffort: FRAME_EFFORT,
+      patchKeys: FRAME_KEYS,
       start,
       seed: start && seed,
     });
     return { shell, output, model };
   };
-  return { ia, shells, frame, totals };
+  return { plan, shells, frame, totals };
 }
 
 const INPUTS = [
   'design-architect',
+  'design-catalog',
   'design-brief',
   'design-theme',
   'flows-scope',
@@ -85,10 +95,14 @@ export async function runFrame(
   const { run } = ctx;
   appendEvent(run, { type: 'stage:start', stage: 'design-frame' });
   updateStage(run, 'design-frame', { status: 'running' });
-  const { ia, shells, frame, totals } = framing(ctx, inv);
+  const { plan, shells, frame, totals } = framing(ctx, inv);
+  // The shells a framed page uses: the frame of each page kind that has one.
+  const kinds = new Set<string>(
+    plan.screens.filter((s) => s.type === 'page' && s.framed).map((s) => s.kind),
+  );
   const limit = pLimit(PARALLEL);
   const frames = await Promise.all(
-    usedShells(ia, shells).map((shell) => limit(() => frame(shell))),
+    shells.filter((s) => kinds.has(s.name)).map((s) => limit(() => frame(s.id))),
   );
   const { rounds, known } = totals();
   writeArtifact(run, 'design-frame', { frames } satisfies Framed, {

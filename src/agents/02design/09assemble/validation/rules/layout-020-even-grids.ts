@@ -24,7 +24,7 @@ export const rule = defineRule<LayoutInput>(
         if (counts.length > 1 && counts.at(-1) === 1)
           issues.push(
             fail(
-              `${rect.id} leaves one item alone in its last row; change the column count or the items so the rows stay even.`,
+              `${rect.id} is a grid of ${layout.columns} columns with ${view.kids(rect.id).length} items, so its last row holds one item alone. A grid leaves no single item alone in its last row. Set the layout columns of ${rect.id} to a count that puts two or more items in the last row, or change the number of items.`,
               rect.id,
             ),
           );

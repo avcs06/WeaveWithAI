@@ -1,17 +1,22 @@
-<!-- The IA call's user message. Placeholders: scope, flows, brief, layouts. -->
-
-# Scope (01-flows/01-scope.json)
+<!-- User message of the architect (DS23). Placeholders: scope, flows, brief, layouts. -->
+# Scope
 
 {{scope}}
 
-# Flows (01-flows/04-reconcile.json)
+# Flows
 
 {{flows}}
 
-# Brief (02-design/01-brief.json)
+# Brief
 
 {{brief}}
 
-# Page layouts (02-design/02-theme.json)
+# Page layouts
+
+Each framed page sits in the layout of its kind. A navigation item names a part and a slot of the layout that draws it.
 
 {{layouts}}
+
+# Your job in this call: the plan
+
+Plan every screen, the navigation and the new components. Leave out the widgets and the layouts. Later calls write them.

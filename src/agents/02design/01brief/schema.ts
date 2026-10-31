@@ -7,6 +7,12 @@ const SURFACE_CHROMA = ['neutral', 'muted', 'balanced', 'vivid'] as const;
 /** How tinted the base set is; it carries most components, so never vivid. */
 const BASE_CHROMA = ['neutral', 'muted', 'balanced'] as const;
 
+/** A role's font candidates, best first; a model favors the top of a list, so it names three and says why (DS26). */
+const candidates = <T extends readonly [string, ...string[]]>(names: T) =>
+  z
+    .array(z.object({ family: z.enum(names), reason: z.string() }))
+    .describe('Three families, best first, each with why it suits the brief');
+
 /**
  * The design direction the brief call picks, once per app; the theme call
  * turns it into exact values.
@@ -28,13 +34,10 @@ export const Brief = z.object({
     .number()
     .describe('Brand hue as a number of degrees on the color wheel, 0 to 360'),
   seedChroma: z.enum(['muted', 'balanced', 'vivid']),
-  pageHue: z
-    .number()
-    .describe('Hue of the page background, OKLCH degrees, 0 to 360'),
-  pageChroma: z
-    .enum(SURFACE_CHROMA)
+  pageBackground: z
+    .string()
     .describe(
-      'neutral is white or grey with no tint, muted a faint tint, balanced and vivid a clear color',
+      'The page background as one CSS background value: a color, or gradients of colors. For the light mode, or the dark mode when the app is dark only. Example: "linear-gradient(180deg, #FBF7F2 0%, #F2EADF 100%)"',
     ),
   frameHue: z
     .number()
@@ -53,9 +56,9 @@ export const Brief = z.object({
       'neutral is grey with no tint, muted a faint tint, balanced a clear one',
     ),
   fonts: z.object({
-    ui: z.enum(UI_FONTS),
-    display: z.enum(DISPLAY_FONTS),
-    mono: z.enum(MONO_FONTS),
+    ui: candidates(UI_FONTS),
+    display: candidates(DISPLAY_FONTS),
+    mono: candidates(MONO_FONTS),
   }),
   radius: z.enum(['sharp', 'soft', 'round', 'pill']),
   focusRing: z.enum(['halo', 'offset', 'glow']),
@@ -77,3 +80,10 @@ export const Brief = z.object({
 });
 
 export type Brief = z.infer<typeof Brief>;
+
+/** The family the app uses for each role: the first candidate, or the list's first when a brief has none. */
+export const chosenFonts = (brief: Brief) => ({
+  ui: brief.fonts.ui[0]?.family ?? UI_FONTS[0],
+  display: brief.fonts.display[0]?.family ?? DISPLAY_FONTS[0],
+  mono: brief.fonts.mono[0]?.family ?? MONO_FONTS[0],
+});

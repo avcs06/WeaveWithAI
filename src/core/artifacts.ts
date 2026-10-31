@@ -10,6 +10,8 @@ export type ArtifactName =
   | 'design-brief'
   | 'design-theme'
   | 'design-architect'
+  | 'design-catalog'
+  | 'design-screen'
   | 'design-invent'
   | 'design-draw'
   | 'design-frame'
@@ -46,6 +48,8 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'design-brief': '02-design/01-brief.json',
   'design-theme': '02-design/02-theme.json',
   'design-architect': '02-design/03-architect.json',
+  'design-catalog': '02-design/04-catalog.json',
+  'design-screen': '02-design/05-screen.json',
   'design-invent': '02-design/06-invent.json',
   'design-draw': '02-design/07-draw.json',
   'design-frame': '02-design/08-frame.json',

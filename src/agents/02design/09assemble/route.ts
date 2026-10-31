@@ -2,20 +2,25 @@ import type { Issue } from '../../../core/issues';
 import type { WidgetScreens } from './assemble';
 import { screenOf } from '../rules/helpers';
 
-// Where an issue found on the assembled design goes back to (DS23): the widget
+// Where an issue found on the assembled design goes back to (DS23): the draw
 // call that built the node or widget it names, or the frame call of the shell
-// it sits in. The IA is never rerun, and a region's box is the theme's, so an
-// issue on a screen, a region or the plan is recorded as known.
+// it sits in. The plan, the layouts and the components are never rerun, and a
+// region's box is the theme's, so an issue on those is recorded as known.
 
-const NODE = /^(S\d{2}|SH\d+)\.n\d+$/;
+const NODE = /^(S\d{2}|SH\d+)(\.S\d{2})?\.n\d+$/;
 const SECTION = /^S\d{2}\.sec\d+$/;
 const REGION = /^SH\d+\.r\d+$/;
 
-/** The widgets and shells whose calls fix an issue; [] when only the IA or the theme could. */
-export function ownersOf(issue: Issue, screens: WidgetScreens): string[] {
+/** The widgets and shells whose calls fix an issue; [] when only an earlier call or the theme could. */
+export function ownersOf(
+  issue: Issue,
+  screens: WidgetScreens,
+  origin: Map<string, string>,
+): string[] {
   const at = issue.at ?? '';
-  const widgetOf = (section: string) =>
-    screens.placements.find((p) => p.id === section)?.widget;
+  const drawn = new Set(screens.widgets.map((w) => w.id));
+  const owned = (owner: string | undefined) =>
+    owner && (drawn.has(owner) || owner.startsWith('SH')) ? [owner] : [];
   const listing = (has: (w: WidgetScreens['widgets'][number]) => boolean) =>
     screens.widgets.filter(has).map((w) => w.id);
   switch (issue.rule) {
@@ -30,11 +35,10 @@ export function ownersOf(issue: Issue, screens: WidgetScreens): string[] {
     case 'DESIGN-025':
       return [...new Set(screens.screens.map((s) => s.shell).filter(Boolean))];
   }
-  if (NODE.test(at)) {
-    const section = screens.nodes.find((node) => node.id === at)?.section ?? '';
-    return [widgetOf(section) ?? screenOf(section)].filter(Boolean);
-  }
-  if (SECTION.test(at)) return [widgetOf(at) ?? ''].filter(Boolean);
+  // A node is its call's: the widget or shell its written id starts with.
+  if (NODE.test(at)) return owned((origin.get(at) ?? at).split('.')[0]);
+  if (SECTION.test(at))
+    return owned(screens.placements.find((p) => p.id === at)?.widget);
   if (REGION.test(at) && issue.rule === 'DESIGN-024') return [screenOf(at)];
   return [];
 }
@@ -74,7 +78,7 @@ export function routeIssues(
   const calls = new Map<string, Issue[]>();
   const known: Issue[] = [];
   for (const issue of issues.filter((i) => i.severity === 'mandatory')) {
-    const owners = ownersOf(issue, screens);
+    const owners = ownersOf(issue, screens, origin);
     if (!owners.length) known.push(issue);
     for (const owner of owners)
       calls.set(owner, [

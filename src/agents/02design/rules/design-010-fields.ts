@@ -35,7 +35,7 @@ export const rule = defineRule<ScreensInput>(
         if (!found)
           issues.push(
             fail(
-              `${step.id} asks for ${field} but no input edits it on a screen serving the step; add an input with field ${field}.`,
+              `${step.id} asks for the field ${field}, but no input with field ${field} is on a screen serving ${step.id}. Every field of a user step has an input on a screen serving the step. Add an input with field ${field} on a screen that lists ${step.id}.`,
               step.id,
             ),
           );

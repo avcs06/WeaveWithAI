@@ -23,7 +23,7 @@ export const rule = defineRule<IaInput>(
       if (same) {
         issues.push(
           fail(
-            `New component ${c.name} is the design system's ${same}; use ${same} instead.`,
+            `New component ${c.name} has the name of the design system's ${same}, ignoring case. A new component has a name of its own, unlike every design-system name. Use ${same} instead, and drop ${c.name} from newComponents.`,
             c.name,
           ),
         );
@@ -40,7 +40,7 @@ export const rule = defineRule<IaInput>(
           issue(
             'DESIGN-005',
             'warning',
-            `New component ${c.name} is close to the design system's ${near}; check it is not ${near} under another name.`,
+            `New component ${c.name} has a name close to the design system's ${near}: at most 2 edits apart, or one name inside the other. A new component is never a design-system component under another name. If ${c.name} is ${near}, use ${near} instead and drop ${c.name} from newComponents.`,
             c.name,
           ),
         );

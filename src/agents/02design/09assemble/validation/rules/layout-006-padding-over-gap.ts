@@ -24,7 +24,7 @@ export const rule = defineRule<LayoutInput>(
         if (padding > 0 && gap > padding)
           issues.push(
             fail(
-              `${rect.id} has padding ${padding} but spaces its children ${gap} apart; the padding is never smaller than the gap inside it.`,
+              `${rect.id} has layout padding ${padding}px, but spaces its children ${gap}px apart. A box's padding is at least the gap between its children. Set the layout gap of ${rect.id} to ${padding}px or less, or its layout padding to ${gap}px or more.`,
               rect.id,
             ),
           );

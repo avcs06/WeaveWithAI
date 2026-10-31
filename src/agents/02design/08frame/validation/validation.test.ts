@@ -1,52 +1,69 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { designs, frames, ia, inventory } from '../../__fixtures__/widgets';
-import type { Scope } from '../../../01flows/01scope/schema';
-import type { Flows } from '../../../01flows/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import { makeThemeSchema } from '../../02theme/schema';
-import { layoutShells } from '../../02theme/shells';
-import type { DesignContext } from '../../rules/helpers';
+import type { Issue } from '../../../../core/issues';
+import { catalog, ctx, frames, plan, theme } from '../../__fixtures__/chain';
+import type { Processed as Catalog } from '../../04catalog/process';
 import type { FrameBuild } from '../schema';
+import { frameStepsOf } from '../stage';
 import { validateFrame } from './validation';
 
-const read = (file: string): unknown =>
-  JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
+const rules = (issues: Issue[]) => [...new Set(issues.map((i) => i.rule))];
+const shell = (id: string) => ctx.shells.find((s) => s.id === id)!;
+const frame = (id: string): FrameBuild => structuredClone(frames.find((f) => f.screen === id)!);
+const check = (f: FrameBuild, on: Catalog = catalog) =>
+  validateFrame(f, plan, frameStepsOf(plan, on, shell(f.screen)), ctx, theme);
 
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  makeThemeSchema(brief, inventory).parse(
-    read('../../__fixtures__/reading-list.theme.json'),
-  ),
-);
-
-const ctx: DesignContext = {
-  scope: read('../../../01flows/__fixtures__/reading-list.scope.json') as Scope,
-  flows: read('../../../01flows/__fixtures__/reading-list.flows.json') as Flows,
-  inventory,
-  shells: layoutShells(theme.layouts),
-  defaults: theme.defaults,
+// Signing out moved from the shelf's header to the app bar's frame.
+const signOutInFrame = () => {
+  const on = structuredClone(catalog);
+  on.screens.find((s) => s.screen === 'S04')!.frameSteps = ['F06.S01'];
+  return on;
 };
 
-const copyOf = (text: string) => ia.copy.find((c) => c.text === text)?.id ?? '';
-
-const frameIssues = (f: FrameBuild) => validateFrame(f, ia, ctx, theme);
-
-const [cover] = ia.newComponents;
-
-const coverDesign = designs.get(cover?.name ?? '');
-
-if (!cover || !coverDesign) throw new Error('the fixture declares TitleCover');
+describe('the reading-list frames', () => {
+  it('pass every frame check, warnings included', () => {
+    for (const f of frames) expect(check(f), f.screen).toEqual([]);
+  });
+});
 
 describe('a frame call', () => {
-  it("fails DESIGN-028 when the link drawing a navigation item does not say the item's label", () => {
-    const f = structuredClone(frames[0]!);
-    f.nodes[1]!.text = copyOf('Shelf');
-    expect(frameIssues(f).map((i) => [i.rule, i.at])).toEqual([
-      ['DESIGN-028', 'SH1.n02'],
-    ]);
+  it("serves the steps catalog gave the frame of each framed page of the shell's kind", () => {
+    expect(frameStepsOf(plan, signOutInFrame(), shell('SH1'))).toEqual(['F06.S01']);
+    expect(frameStepsOf(plan, signOutInFrame(), shell('SH2'))).toEqual([]);
+  });
+
+  it('fails DESIGN-032 for a frame step none of its nodes serves, and passes once a change adds it', () => {
+    const f = frame('SH1');
+    expect(check(f, signOutInFrame()).map((i) => [i.rule, i.at])).toEqual([['DESIGN-032', 'SH1']]);
+    f.changes.push({
+      screen: 'S04',
+      add: [
+        {
+          ...structuredClone(f.nodes[1]!),
+          id: 'SH1.S04.n01',
+          order: 3,
+          role: 'secondary-action',
+          text: 'Sign out',
+          navigatesTo: '',
+          flowSteps: ['F06.S01'],
+        },
+      ],
+      remove: [],
+    });
+    expect(check(f, signOutInFrame())).toEqual([]);
+  });
+
+  it("fails DESIGN-001 for a change of a page the frame does not frame, an added id not like the change's, and a removed node the shell lacks", () => {
+    const f = frame('SH1');
+    f.changes.push(
+      { screen: 'S99', add: [], remove: [] },
+      { screen: 'S01', add: [], remove: [] },
+      { screen: 'S06', add: [{ ...structuredClone(f.nodes[1]!), id: 'SH1.n09' }], remove: ['SH1.n07'] },
+    );
+    expect(
+      check(f)
+        .filter((i) => i.rule === 'DESIGN-001')
+        .map((i) => i.at),
+    ).toEqual(['SH1', 'SH1', 'SH1.n09', 'SH1.n07']);
+    expect(rules(check(f))).toEqual(['DESIGN-001']);
   });
 });

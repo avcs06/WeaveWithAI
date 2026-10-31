@@ -2,7 +2,7 @@
   "meta": {
     "artifact": "flows-catalog",
     "version": 1,
-    "hash": "bf0f6ecd00fd0dc2fece9f8faa9ecfd900b0a48e0a14a03bddb6c7ebc26b4f0f",
+    "hash": "a13dab00bb1114856fca2054c23bf987af0cf7ac7e00f5b053189cbf93aab5bc",
     "inputs": {
       "flows-scope": {
         "version": 1,
@@ -22,6 +22,7 @@
         "role": "designer",
         "category": "browse",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Understand what the app does and get started.",
         "preconditions": [
           "Not signed in."
@@ -35,6 +36,7 @@
         "role": "designer",
         "category": "auth",
         "authKind": "signUp",
+        "signedOut": true,
         "goal": "Create an account and reach home.",
         "preconditions": [
           "Not signed in."
@@ -48,6 +50,7 @@
         "role": "designer",
         "category": "auth",
         "authKind": "signIn",
+        "signedOut": true,
         "goal": "Sign in to the workspace.",
         "preconditions": [
           "Not signed in."
@@ -61,6 +64,7 @@
         "role": "designer",
         "category": "auth",
         "authKind": "signOut",
+        "signedOut": false,
         "goal": "Securely leave the workspace.",
         "preconditions": [
           "Signed in."
@@ -74,6 +78,7 @@
         "role": "designer",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "See what needs attention today.",
         "preconditions": [
           "Signed in."
@@ -87,6 +92,7 @@
         "role": "designer",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Remember a new client.",
         "preconditions": [
           "Signed in."
@@ -100,6 +106,7 @@
         "role": "designer",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Find a client and keep details current.",
         "preconditions": [
           "Signed in.",
@@ -114,6 +121,7 @@
         "role": "designer",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Remove a client and all its work.",
         "preconditions": [
           "Signed in.",
@@ -128,6 +136,7 @@
         "role": "designer",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Track calls and never miss a follow-up.",
         "preconditions": [
           "Signed in.",
@@ -142,6 +151,7 @@
         "role": "designer",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Organize work per client and see what is open.",
         "preconditions": [
           "Signed in.",
@@ -156,6 +166,7 @@
         "role": "designer",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Keep projects correct or remove them.",
         "preconditions": [
           "Signed in.",
@@ -170,6 +181,7 @@
         "role": "designer",
         "category": "core",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Track and complete project work quickly.",
         "preconditions": [
           "Signed in.",
@@ -184,6 +196,7 @@
         "role": "designer",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Correct or remove a task.",
         "preconditions": [
           "Signed in.",
@@ -198,6 +211,7 @@
         "role": "designer",
         "category": "settings",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Define when and what visitors can book.",
         "preconditions": [
           "Signed in."
@@ -211,6 +225,7 @@
         "role": "designer",
         "category": "manage",
         "authKind": "none",
+        "signedOut": false,
         "goal": "Manage upcoming bookings and cancel when needed.",
         "preconditions": [
           "Signed in."
@@ -224,6 +239,7 @@
         "role": "booker",
         "category": "core",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Book a session without an account.",
         "preconditions": [
           "Not signed in."
@@ -237,6 +253,7 @@
         "role": "booker",
         "category": "manage",
         "authKind": "none",
+        "signedOut": true,
         "goal": "Cancel a booking via link without an account.",
         "preconditions": [
           "A booking with a valid cancellation link exists."

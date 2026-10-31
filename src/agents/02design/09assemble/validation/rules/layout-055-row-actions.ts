@@ -37,14 +37,14 @@ export const rule = defineRule<LayoutInput>(
       if (icons.length > 3)
         issues.push(
           fail(
-            `${row.id} shows ${icons.length} icon buttons; show at most three and put the rest in a dropdown.`,
+            `${row.id} is a row in a ${kinds.get(row.section)} section, with ${icons.length} icon buttons. A row of a list, table or cards section shows at most three icon buttons. Keep three icon buttons in ${row.id}, and put ${icons.length === 4 ? 'the other one' : `the other ${icons.length - 3}`} in a Dropdown.`,
             row.id,
           ),
         );
       if (icons.length && firstIcon < lastOther)
         issues.push(
           fail(
-            `${row.id} puts its icon buttons before other content; row actions come last.`,
+            `${row.id} puts the icon button ${kids[firstIcon]?.id} before ${kids[lastOther]?.id}. The icon buttons of a row come last in it. Give each icon button of ${row.id} a larger order than every other node in ${row.id}.`,
             row.id,
           ),
         );

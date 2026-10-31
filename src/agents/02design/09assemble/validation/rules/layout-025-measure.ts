@@ -33,7 +33,7 @@ export const rule = defineRule<LayoutInput>(
         if (tooShort || perLine > 90 || (wraps && rect.width > 720))
           issues.push(
             fail(
-              `${rect.id} runs about ${perLine} characters a line, ${Math.round(rect.width)} wide; keep paragraphs 45 to 90 characters and at most 720 wide.`,
+              `${rect.id} is ${Math.round(rect.width)}px wide and holds an estimated ${perLine} characters a line${wraps ? ', and wraps' : ''}. A line of reading text holds at most 90 characters, and a paragraph that wraps holds at least 45 characters a line and is at most 720px wide. ${tooShort ? `Set the box width of ${rect.id} to fixed, with a widthPx of at least ${Math.ceil(45 * fontPx(node.typeScale) * CHAR_WIDTH_EM)}.` : `Set the box width of ${rect.id} to fixed, with a widthPx of at most ${Math.floor(Math.min(720, 90 * fontPx(node.typeScale) * CHAR_WIDTH_EM))}.`}`,
               rect.id,
             ),
           );

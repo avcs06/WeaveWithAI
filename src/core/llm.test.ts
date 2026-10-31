@@ -371,6 +371,28 @@ describe('generateStructured', () => {
       expect.objectContaining({ path: ['title'] }),
     ]);
   });
+
+  it('asks for strict decoding of the schema', async () => {
+    const { llm, calls } = harness([completion('{"title":"Weave"}')]);
+    await llm.generateStructured(input());
+    expect(calls[0]?.response_format).toMatchObject({ type: 'json_schema', json_schema: { name: 'doc', strict: true } });
+  });
+
+  it('keeps an answer the schema refuses out of the replay cache and in the run, with what it cost, so a retry asks again', async () => {
+    const runDir = tmp();
+    const { llm, calls } = harness([completion('Fixing the spacing now.'), completion('{"title":"Weave"}')], {
+      ...config,
+      LLM_REPLAY: true,
+    });
+    const error: unknown = await llm.generateStructured({ ...input(), runDir }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ModelOutputInvalid);
+    expect((error as ModelOutputInvalid).paid).toMatchObject({ model: 'muse-spark-1.3', usage: { output: 50 } });
+    const saved = JSON.parse(readFileSync(path.join(runDir, 'llm', 'flows-r1-invalid.json'), 'utf8')) as { response: string };
+    expect(saved.response).toBe('Fixing the spacing now.');
+    const again = await llm.generateStructured({ ...input(), runDir });
+    expect(calls).toHaveLength(2);
+    expect(again).toMatchObject({ data: { title: 'Weave' }, replayed: false });
+  });
 });
 
 describe('temperature', () => {

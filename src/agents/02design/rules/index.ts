@@ -33,7 +33,6 @@ import {
 import { rule as design015 } from './design-015-headings';
 import { rule as design016 } from './design-016-control-names';
 import { rule as design017 } from './design-017-reachable';
-import { rule as design018 } from './design-018-access';
 import { rule as design019 } from './design-019-data';
 import { rule as design020 } from './design-020-copy';
 import { rule as design021 } from './design-021-serves-steps';
@@ -46,6 +45,7 @@ import { rule as design024 } from './design-024-regions-filled';
 import { rule as design025 } from './design-025-navigation-drawn';
 import { rule as design026 } from './design-026-interactive-components';
 import { rule as design027 } from './design-027-override-reasons';
+import { rule as design028 } from './design-028-copy';
 import { rule as design034 } from './design-034-navigation-target';
 import { rule as design035 } from './design-035-way-back';
 import type {
@@ -58,7 +58,7 @@ import type {
 // The DESIGN rules the design agents share, one file per rule in this folder.
 // To add a rule: create its file, import it here, add it to its list.
 
-/** Rules on the IA alone: structure, new components, access, reach of the frame. */
+/** Rules on the IA alone: structure, new components, reach of the frame. */
 export const iaRules: readonly Rule<IaInput>[] = [
   design001Ia,
   design003Ia,
@@ -68,7 +68,6 @@ export const iaRules: readonly Rule<IaInput>[] = [
   design009Ia,
   design013Ia,
   design014Ia,
-  design018,
   design021,
   design022Ia,
   design023,
@@ -103,13 +102,14 @@ export const screensRules: readonly Rule<ScreensInput>[] = [
   design017,
   design024,
   design025,
+  design028,
 ];
 
 export function validateIa(ia: Ia, ctx: DesignContext): Issue[] {
   return runRules(iaRules, { ia, ctx });
 }
 
-/** One nodes call's output: the nodes it wrote for `screen`, a screen or a shell. */
+/** The nodes of `screen`, a screen or a shell, or of a widget or component alone. */
 export function validateScreenNodes(
   screen: string,
   nodes: DesignNode[],

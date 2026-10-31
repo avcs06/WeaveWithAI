@@ -1,41 +1,28 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ia, inventory } from '../../__fixtures__/widgets';
-import { Scope } from '../../../01flows/01scope/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import type { ThemeCall } from '../../02theme/schema';
+import { brief, catalog, inventory, plan, scope, theme } from '../../__fixtures__/chain';
 import { componentSystemPrompt, componentUserMessage } from './index';
-
-const read = (path: string) =>
-  JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as unknown;
-
-const scope = Scope.parse(
-  read('../../../01flows/__fixtures__/reading-list.scope.json'),
-);
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  read('../../__fixtures__/reading-list.theme.json') as ThemeCall,
-);
 
 const filled = (text: string) => {
   expect(text).not.toContain('{{');
   expect(text).not.toContain('<!--');
 };
 
-describe('the component prompt', () => {
-  it('gives the declaration and the widgets that use it', () => {
-    filled(componentSystemPrompt('TitleCover', inventory));
-    expect(componentSystemPrompt('TitleCover', inventory)).toContain(
-      'declared TitleCover',
-    );
-    const message = componentUserMessage('TitleCover', ia, scope, brief, theme);
+describe('the invent prompt', () => {
+  it('carries the node guide and the design system, the same for every component', () => {
+    const prompt = componentSystemPrompt(brief, inventory);
+    filled(prompt);
+    expect(prompt).toContain('TitleCover.n01');
+    expect(prompt).toContain('on app screens H1 title');
+    expect(prompt).toMatch(/^Button: /m);
+    for (const field of ['box', 'layout', 'nodes', 'what']) expect(prompt, field).toContain(`\`${field}\``);
+  });
+
+  it("gives the architect's description, the catalog's width range, the widgets that hold it and the look", () => {
+    const message = componentUserMessage('TitleCover', plan, catalog, scope, brief, theme);
     filled(message);
-    expect(message).toContain('"whyNotExisting"');
-    expect(message).toContain('"id": "W12"');
+    expect(message).toContain('"description": "A 160 by 240 block');
+    expect(message).toContain('"minWidthPx": 160');
+    expect(message).toContain('"id": "W09"');
     expect(message).toContain('"radius"');
   });
 });

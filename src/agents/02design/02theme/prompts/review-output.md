@@ -8,4 +8,4 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 - Slots that do not match the app: a slot names something the scope and flows do not have, such as search in an app with no search or a cart in an app that sells nothing; or a signed-in app has no place in its frame for the account or signing out.
 - Navigation with nowhere to go: the app has several top-level destinations, but no needed part of the app layout says it holds the navigation.
 
-Leave to the validators: contrast ratios, hex values, empty or zero-width parts, the sides of the sidebars, the section gap and padding ranges, and values from the lists.
+Leave to the validators: contrast ratios, ramp steps, empty or zero-width parts, the sides of the sidebars, the section gap and padding ranges, and values from the lists.

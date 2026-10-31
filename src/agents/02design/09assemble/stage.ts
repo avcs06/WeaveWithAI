@@ -3,23 +3,25 @@ import { type Issue, writeReport } from '../../../core/issues';
 import { appendEvent, updateStage } from '../../../core/run';
 import { type Inventory, inventory } from '../../../ds/inventory';
 import type { StageContext, StageDef } from '../../stages';
-import type { WidgetIa } from '../03architect/schema';
-import { designsOf, type Invented } from '../06invent/stage';
+import type { Processed as Plan } from '../03architect/process';
+import type { Processed as Catalog } from '../04catalog/process';
+import type { Laid } from '../05screen/stage';
+import type { Invented } from '../06invent/stage';
 import { type Drawn, fixWidgets } from '../07draw/stage';
 import { fixFrames, type Framed } from '../08frame/stage';
 import { designInputs } from '../calls';
-import { assembleScreens } from './assemble';
+import { assembleChain } from './assemble';
 import { routeIssues } from './route';
 import { skeleton } from './skeleton/skeleton';
 import { validateDesign } from './validation/validation';
 import { writeDesignFiles } from './write';
 
 /**
- * The screens from the IA, the components, the widgets and the frames, in code
- * (DS23): `02-design/09-assemble.json`, the skeleton, the wireframes,
- * `02-design/09-assemble.md` and the gap report. An issue on the assembled
- * design goes back once to the draw or frame call that built what it names, as
- * a separately named fix; the rest are recorded as known.
+ * The screens from the plan, the catalog, the layouts, the components, the
+ * widgets and the frames, in code (DS23): `02-design/09-assemble.json`, the
+ * skeleton, the wireframes, `02-design/09-assemble.md` and the gap report. An
+ * issue on the assembled design goes back once to the draw or frame call that
+ * built what it names, as a separately named fix; the rest are recorded as known.
  */
 export async function runAssemble(
   ctx: StageContext,
@@ -30,17 +32,24 @@ export async function runAssemble(
   appendEvent(run, { type: 'stage:start', stage: 'design-assemble' });
   updateStage(run, 'design-assemble', { status: 'running' });
   const { scope, flows, brief, theme, context } = designInputs(run, inv);
-  const ia = readArtifact<WidgetIa>(run, 'design-architect').data;
-  const designs = designsOf(readArtifact<Invented>(run, 'design-invent').data);
+  const plan = readArtifact<Plan>(run, 'design-architect').data;
+  const catalog = readArtifact<Catalog>(run, 'design-catalog').data;
+  const laid = readArtifact<Laid>(run, 'design-screen').data;
+  const invented = readArtifact<Invented>(run, 'design-invent').data;
+  const designs = new Map(invented.components.map((c) => [c.name, c.design]));
 
   const assemble = () => {
     const drawn = readArtifact<Drawn>(run, 'design-draw').data;
     const framed = readArtifact<Framed>(run, 'design-frame').data;
-    const { screens, origin } = assembleScreens(
-      ia,
-      designs,
-      drawn.batches.flatMap((batch) => batch.output.widgets),
-      framed.frames.map((frame) => frame.output),
+    const { screens, origin } = assembleChain(
+      {
+        plan,
+        catalog,
+        layouts: laid.calls.flatMap((c) => c.output.screens),
+        designs,
+        builds: drawn.widgets.map((w) => w.output),
+        frames: framed.frames.map((frame) => frame.output),
+      },
       theme,
     );
     const solved = skeleton(screens, inv);
@@ -78,6 +87,8 @@ export async function runAssemble(
     rounds,
     inputs: [
       'design-architect',
+      'design-catalog',
+      'design-screen',
       'design-invent',
       'design-draw',
       'design-frame',
@@ -90,7 +101,7 @@ export async function runAssemble(
   writeDesignFiles(
     run,
     screens,
-    solved,
+    skeleton(screens, inv, 'picture'),
     { brief, theme, flows, scope },
     gapsLog,
   );

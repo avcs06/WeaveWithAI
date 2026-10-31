@@ -1,6 +1,6 @@
 # 23 · DS9 Design for every golden idea
 
-Phase 3 · 60 min · Depends: DS8 · Spec: specs/design.md "Done when"
+Phase 3 · 60 min · Depends: DS8, DS23, DS26, DS27 · Spec: specs/design.md "Done when"
 
 ## Goal
 
@@ -11,7 +11,8 @@ ecommerce store's first run, golden `02-*` saved. Gate G2.
 
 1. **Run the design stage on every golden flow set**, reusing the Phase 2
    run folders.
-2. **Tune the IA and nodes prompts** on what you'd reject; never the rules.
+2. **Tune the chain's prompts** (architect, catalog, screen, invent, draw,
+   frame) on what you'd reject; never the rules.
 3. **The dashboard editor must declare a new component** with reasons (the
    widget canvas); if it doesn't, the prompt's wording about when to declare
    one is adjusted, not the budget.
@@ -24,18 +25,19 @@ can be developed offline.
 ## Implementation details
 
 1. For each idea with golden flows: `pnpm weave run fixtures/ideas/<idea>.md
-   --to design` (the flows stage replays or is skipped as done; use `--run
+   --to design-assemble` (the flows stage replays or is skipped as done; use `--run
    <id>` of the Phase 2 run to reuse its folder).
-2. Read every `02-design/09-assemble.md`. Tune `prompt-ia.md` and `prompt-nodes.md` for
-   what you'd reject: screens that don't serve their steps, sections with no
-   purpose, nodes with placeholder text, components used against their
-   recipe's "when not to use". Never touch `validate.ts`.
+2. Read every `02-design/09-assemble.md`. Tune each stage's
+   `prompts/prompt.md` for what you'd reject: screens that don't serve their
+   steps, widgets with no purpose, nodes with placeholder text, components
+   used against their recipe's "when not to use". Never touch the rules.
 3. The dashboard editor must declare at least one new component with
    reasons (a widget canvas or widget frame is the expected one). If it
-   doesn't, adjust the IA prompt's wording about when to declare one, not
-   the budget.
+   doesn't, adjust the architect prompt's wording about when to declare one,
+   not the budget.
 4. Ecommerce store: run once untuned, record; then tune on it too.
-5. `pnpm weave golden <runId> <idea> --stages brief,theme,screens` for each;
+5. `pnpm weave golden <runId> <idea> --stages
+   design-brief,design-theme,design-assemble` for each;
    fill the README table.
 
 ## Done when

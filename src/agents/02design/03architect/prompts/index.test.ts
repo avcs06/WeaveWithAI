@@ -1,75 +1,57 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { inventory } from '../../__fixtures__/widgets';
-import { Scope } from '../../../01flows/01scope/schema';
-import { Flows } from '../../../01flows/schema';
-import { Brief } from '../../01brief/schema';
-import { buildTheme } from '../../02theme/build';
-import type { ThemeCall } from '../../02theme/schema';
-import { COPY_KINDS, SECTION_KINDS } from '../../config';
-import { iaSystemPrompt, iaUserMessage } from './index';
-
-const read = (path: string) =>
-  JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as unknown;
-
-const scope = Scope.parse(
-  read('../../../01flows/__fixtures__/reading-list.scope.json'),
-);
-
-const flows = Flows.parse(
-  read('../../../01flows/__fixtures__/reading-list.flows.json'),
-);
-
-const brief = Brief.parse(read('../../__fixtures__/reading-list.brief.json'));
-
-const theme = buildTheme(
-  brief,
-  read('../../__fixtures__/reading-list.theme.json') as ThemeCall,
-);
+import { brief, flows, inventory, scope, theme } from '../../__fixtures__/chain';
+import { planSystemPrompt, planUserMessage } from './index';
 
 const filled = (text: string) => {
   expect(text).not.toContain('{{');
   expect(text).not.toContain('<!--');
 };
 
-describe('the IA prompt', () => {
-  it('fills the density, each section kind on its own line, the copy kinds, the side panel, the design system and the budget', () => {
-    const prompt = iaSystemPrompt(brief, inventory);
+describe('the architect prompt', () => {
+  it('fills the density, the design system and the budget', () => {
+    const prompt = planSystemPrompt(brief, inventory);
     filled(prompt);
-    for (const kind of SECTION_KINDS) expect(prompt).toContain(`\n- ${kind}`);
-    expect(prompt).toContain(COPY_KINDS.join(', '));
-    expect(prompt).toContain('one side panel 300 wide');
-    expect(prompt).toContain('comfortable density');
+    expect(prompt).toContain(`for ${brief.density} density`);
     expect(prompt).toMatch(/^Button: /m);
-    expect(prompt).toContain('at most 5:');
+    expect(prompt).toContain('Declare at most 5.');
   });
 
-  it('names every field of the IA schema it asks for', () => {
-    const prompt = iaSystemPrompt(brief, inventory);
+  it('names every field of the plan it asks for', () => {
+    const prompt = planSystemPrompt(brief, inventory);
     for (const field of [
-      'arrangement',
+      'screens',
+      'type',
+      'route',
+      'parent',
+      'kind',
+      'framed',
+      'contentWidth',
       'title',
-      'copy',
-      'content',
+      'purpose',
+      'entry',
       'flowSteps',
-      'fields',
-      'data',
       'states',
-      'repeat',
+      'composition',
+      'frame',
+      'alternativesElsewhere',
+      'navigation',
+      'screen',
+      'slot',
       'newComponents',
-      'area',
-      'surface',
-      'headingLevel',
+      'name',
       'closestExisting',
       'whyNotExisting',
+      'description',
+      'impossibleSteps',
     ])
       expect(prompt, field).toContain(`\`${field}\``);
   });
 
   it('puts the scope, the flows, the brief and the layouts in the user message', () => {
-    const message = iaUserMessage(scope, flows, brief, theme.layouts);
+    const message = planUserMessage(scope, flows, brief, theme.layouts);
     filled(message);
-    expect(message).toContain('# Page layouts (02-design/02-theme.json)');
+    expect(message).toContain('# Page layouts');
     expect(message).toContain('"docksFirst"');
+    expect(message).toContain('"id": "F05.S02"');
   });
 });

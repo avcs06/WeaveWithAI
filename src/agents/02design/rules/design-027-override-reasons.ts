@@ -22,7 +22,7 @@ export const rule = defineRule<NodesInput>(
       if (changed.length > 0 && !node.overrideReason.trim())
         issues.push(
           fail(
-            `${node.id} sets its own ${changed.map((p) => `${p} ${node[p] || '""'}`).join(' and ')} over the app's default; leave it "" or say why in overrideReason.`,
+            `${node.id} sets its own ${changed.map((p) => `${p} ${node[p] || '""'}`).join(' and ')}, with an empty overrideReason. The app's default for ${node.component} is ${changed.map((p) => `${p} ${preset[p] || '""'}`).join(' and ')}. A node uses the app's defaults, or says why it differs in overrideReason. Set ${changed.join(' and ')} "" on ${node.id} to use the default, or write in overrideReason why ${node.id} differs.`,
             node.id,
           ),
         );

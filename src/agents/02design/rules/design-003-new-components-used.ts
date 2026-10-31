@@ -21,7 +21,7 @@ export const iaRule = defineRule<IaInput>(
         ? []
         : [
             fail(
-              `${component.name} is used on ${component.usedOn.join(', ') || 'no screen'}; list the screens or shells that use it.`,
+              `${component.name} is used on ${component.usedOn.join(', ') || 'no screen'}. The usedOn of a new component lists at least one screen or shell, and only ids of screens or shells. Set the usedOn of ${component.name} to the screens or shells that use it.`,
               component.name,
             ),
           ],
@@ -38,7 +38,7 @@ export const nodesRule = defineRule<NodesInput>(
       node.newComponent && !declared.has(node.newComponent)
         ? [
             fail(
-              `${node.id} is a ${node.newComponent}, which is not declared in newComponents; declare it or use a design-system component.`,
+              `${node.id} is a ${node.newComponent}, which is not a declared new component. A node's newComponent names a declared new component. The declared ones are ${[...declared].join(', ') || 'none'}. Set the newComponent of ${node.id} to one of those, or set it to "" and use a design-system component.`,
               node.id,
             ),
           ]
@@ -57,7 +57,7 @@ export const screensRule = defineRule<ScreensInput>(
       if (!used.has(component.name))
         issues.push(
           fail(
-            `${component.name} is declared but no node is one; use it or drop it.`,
+            `${component.name} is declared, but no node is a ${component.name}. Every declared new component is used by a node. Set newComponent ${component.name} on the node that is one, or drop ${component.name} from newComponents.`,
             component.name,
           ),
         );

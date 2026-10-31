@@ -1,22 +1,19 @@
-<!-- A frame call's user message. Placeholders: target, navigation, deck, screens, vocabulary, look. -->
-
+<!-- User message of a frame call (DS23). Placeholders: target, steps, navigation, screens, vocabulary, look. -->
 # To fill
 
-The shell with its regions, and the framed pages that use it.
+The shell with its regions. Then the framed pages that use it, each with how its frame differs.
 
 {{target}}
 
+# Steps the frame serves
+
+{{steps}}
+
 # Navigation
 
-The items, each labelled with its page's title by copy id.
+The navigation items. Each item's label is its page's title.
 
 {{navigation}}
-
-# Copy deck
-
-Every string of the app, by id (02-design/09-assemble.json).
-
-{{deck}}
 
 # Screens
 
@@ -24,12 +21,16 @@ The screens a node can open with `navigatesTo`.
 
 {{screens}}
 
-# Vocabulary (01-flows/01-scope.json)
+# Vocabulary
 
 {{vocabulary}}
 
 # The look
 
-The brief's feel, personality and imagery, the theme's component defaults that "" stands for, and the content area of this page kind.
+The brief's feel, personality and imagery, the theme's component defaults, and the content area of this page kind. A node whose `size` or `look` is "" gets the theme's default.
 
 {{look}}
+
+# Your job in this call: the frame
+
+Fill the shell's regions with nodes. Write a change for each page whose frame differs. Keep the shell's regions as they are. Other calls draw the page content, so leave it out.

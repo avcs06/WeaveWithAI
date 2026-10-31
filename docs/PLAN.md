@@ -253,6 +253,51 @@ Steps 01 to 08.
     `runSpecStage.test.ts` shows the first draft at the stage's temperature
     and fixes and reviewers at the default; `pnpm test`; `pnpm typecheck`.
 
+- [x] **F16** Fixes return patches (60 min) (done 2026-10-31). Depends: F13, FL9. Decision D1.5 C
+  - Why: a fix that rewrites a whole long output brings back errors in parts
+    that were fine, and pays for the whole output again (user, 2026-10-31,
+    design brainstorm DR07). The flows patch already works this way, for
+    flows alone.
+  - First drafts stay whole. Every fix asks for a patch: the items that
+    changed and the new ones, each complete, and the ids of the items to
+    remove. A stage names its keyed arrays (the array and the key of its
+    items); the runner builds the patch schema from the stage's schema and
+    merges the patch into the current document. Validators and reviewers
+    see the merged document. A stage with no keyed arrays, such as the
+    brief, keeps whole fixes.
+  - `prompt-fix.md` asks for the patch. The flows reconcile stage's
+    `applyPatch` becomes the runner's merger, so a patch can remove fields,
+    forms and subflows too, not only flows.
+  - Done when: runner tests show a patch replacing an item by id, adding one
+    and removing one, and the merged document validated and reviewed; the
+    flows reconcile tests pass on the runner's merger; `pnpm typecheck`;
+    `pnpm test`.
+  - Built 2026-10-31: `src/runner/patch.ts` (`patchSchema`, `applyPatch`
+    and the shared patch format), a `patchKeys` option on `runSpecStage`,
+    `prompt-fix.md` for patches and `prompt-fix-whole.md` for whole fixes.
+    The flows reconciliation is the first stage with keys; DS23 names them
+    for the design chain.
+
+- [x] **F17** ARCHITECTURE and D1.12 follow F15 and DS22 (20 min) (done 2026-10-31). Depends: F15
+  - Found while applying the design brainstorm (2026-10-31): ARCHITECTURE's
+    code layout still lists `src/stages`, `src/config` and
+    `src/core/runSpecStage.ts`, and both it and OPTIONS D1.12 say four
+    rounds, where the runner runs five since DS22.
+  - Built 2026-10-31: the code layout follows `src/`, with the modules not
+    built yet marked planned; the schedule, the review rounds and D1.12's
+    notes say five rounds.
+
+- [x] **F18** A run's live log as a tree (30 min) (done 2026-10-31). Depends: F15
+  - Why: the user, 2026-10-31. The console showed only each stage's start
+    and end, so a long stage gave no sign of its rounds.
+  - Built: `src/core/log.ts` prints each group, each stage under it, and
+    each part's lines under the stage, every line named by its part, such as
+    `expand-2 round 2 review peer found 1 blocker (stats)`. A header repeats
+    when the next line belongs to another stage, since stages and parts run
+    side by side. The runner adds three events: `round:start`,
+    `round:validated` with the failed rule ids, and `review:start`. A
+    reviewer's `llm:call` carries its reviewer and blocker count.
+
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
 Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
@@ -401,6 +446,39 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     `01-flows/04-reconcile.json`; record rounds, tokens and cost per idea in
     `fixtures/golden/README.md`.
   - Done when: **G1**.
+
+- [x] **FL14** Flows that run signed out (45 min) (done 2026-10-31). Depends: FL13
+  - Why: DESIGN-018 counts a flow as signed in when its role signs in, so the
+    landing flow, which belongs to the role it invites in, makes the landing
+    page, sign up and sign in signedIn. Only its free-text precondition ("Not
+    signed in.") says otherwise, and code never reads a model's free text
+    (user, 2026-10-31, design brainstorm DR27).
+  - Each flow gets `signedOut`: true when the user is not signed in during
+    the flow, as on the landing page, while signing up or signing in, and in
+    every flow of a role that never signs in. The flows catalog writes it
+    with the other header fields, and `prompts/flows.md` explains it.
+  - FLOW-025 (mandatory): signUp and signIn flows and every flow of a role
+    that never signs in are signedOut; a signOut flow is not.
+  - DESIGN-018 reads `signedOut` in place of the role and the auth kind, and
+    the architect's processing step fills a screen's access from it (DS23).
+  - The reading-list fixture gets the field. The golden flow sets get it on
+    every flow, set by hand from their preconditions and auth kind; AGENTS.md
+    keeps golden files unchanged, so this needs the user's go.
+  - Done when: FLOW-025 has a passing and a failing test; a DESIGN-018 test
+    keeps a landing page that serves a signed-out flow of a signed-in role
+    public; the golden flows parse; `pnpm typecheck`; `pnpm test`.
+  - Built 2026-10-31: the golden sets mark the landing flows, sign up, sign
+    in and the booker's flows signed out (user's go); their hashes are
+    recomputed so the reconciled flows stay current against their catalog.
+    The IA prompt's access line reads `signedOut` until DS23 rewrites it.
+
+- [x] **FL15** A field's example is quoted text (10 min) (done 2026-10-31). Depends: FL14
+  - Why: the freelancer catalog was cut twice at the output limit on
+    2026-10-31 ($0.87), each answer stopping at a field's `"example":` and
+    writing about 59k spaces. The example is a string, so a number the
+    model wants to write there is never allowed, and spaces are.
+  - The schema and the flows prompt say the example is text in quotes, even
+    for a number, a date or a yes or no.
 
 ## Phase 3: Design (Thu Oct 29)
 
@@ -650,7 +728,10 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - The reading-list fixture gains a node for each state its IA lists.
   - Done when: `pnpm typecheck` and `pnpm test` pass.
 
-- [ ] **DS7** IA and nodes stage (90 min). Depends: DS3, DS4, DS6, DS4a, DS12, DS13
+- [x] **DS7** IA and nodes stage (90 min) (folded into DS23, 2026-10-31). Depends: DS3, DS4, DS6, DS4a, DS12, DS13
+  - Folded into DS23 (2026-10-31): the chain replaces the IA and nodes
+    calls, and DS23's done-when carries this one's, the freelancer
+    workspace with zero mandatory issues. The notes below are history.
   - The prompts are written (DS7e); `prompt.ts` adds their builders. Then
     the IA call, one nodes call per screen and per used shell with
     `p-limit(3)`, every call at temperature 0.2, the IA at high reasoning
@@ -715,11 +796,10 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     are DS6b's. The stage writes `02-design/09-assemble.md` once DS7 exists.
   - Done when: you can review any screen from the markdown alone.
 
-- [ ] **DS9** Every golden idea (60 min). Depends: DS8
+- [ ] **DS9** Every golden idea (60 min). Depends: DS8, DS23, DS26, DS27
   - Found in DS18 (2026-10-30): the freelancer and dashboard themes both
     gave the brand fill `#6D28D9`, Tailwind's violet-700, from different
-    hues and chromas; tune the theme prompt toward colors made from the
-    brief, not a stock palette.
+    hues and chromas. DS27 builds the colors from the brief's hues.
   - Run design for every golden flow set; the ecommerce store runs once untuned first, recorded; tune prompts; save golden `02-*`.
   - Done when: **G2**, including at least one justified new component for the
     dashboard editor.
@@ -812,128 +892,369 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - A default whose component has no recipe of its own is not applied and
     is listed, such as IconButton's ghost look, which lives in Button's.
 
-- [ ] **DS23** Widgets: the IA plans, widgets are defined, laid out per screen and built once, code assembles (1 day). Depends: DS7, DS22
+- [x] **DS26** Brief: a hue table and font candidates (30 min) (done 2026-10-31). Depends: DS3, DS14
+  - Why: a model reads hues as HSL and color names, and picks the same few
+    fonts from lists sorted most popular first (user, 2026-10-31, design
+    brainstorm DR01 and DR02).
+  - The brief prompt carries a table of 12 named hues with their OKLCH
+    degrees, red to pink. Code fills it with culori from one reference color
+    per name, so the numbers are exact.
+  - `fonts` becomes three candidates per role (ui, display, mono), best
+    first, each with a reason; the first of each role is the one used.
+    BRIEF-005 (mandatory): each role lists three different families.
+  - Done when: a prompt test shows the hue table; BRIEF-005 has a passing and
+    a failing test; the theme, the renderer and the apply step use the first
+    candidate; `pnpm typecheck`; `pnpm test`.
+  - Built 2026-10-31: the table names red, orange, amber, yellow, green,
+    mint, teal, sky, blue, violet, magenta and pink; `chosenFonts` gives the
+    theme the first candidate of each role, so the theme, the renderer and
+    the apply step read the theme's fonts as before.
+
+- [x] **DS27** Theme colors from computed ramps (2 h) (done 2026-10-31). Depends: DS4a, DS20, DS21
+  - Why: the theme call cannot work out contrast and falls back to palettes
+    it knows: two themes from different hues gave the same `#6D28D9`,
+    Tailwind's violet-700 (DS9). The model keeps choosing every value (D3.3
+    E), now from ramps code computes (user, 2026-10-31, design brainstorm
+    DR03).
+  - Code builds a 12-step OKLCH ramp, in each mode, for each hue and chroma
+    the brief names: the brand, the base set, the page, the frame and each
+    colored entity. The prompt shows each step's lightness and its contrast
+    on white and on black, so the call can choose pairs that pass.
+  - The theme call assigns each color role to a step of its set's ramp, in
+    each mode; `divider`, `skeleton` and `backdrop` take steps from the page
+    or the base ramp. `buildTheme` turns the steps into hex, so the theme
+    artifact keeps its shape and THEME-001, 002, 005 and 009 run as before.
+  - The theme prompt, its review guides, the reading-list theme fixture and
+    the spec's Theme section follow.
+  - Done when: for 12 hues times 3 chromas, every ramp keeps its hue and two
+    hues never share a step (test); the theme schema passes `toJsonSchema`
+    within Meta's limits; `pnpm typecheck`; `pnpm test`.
+  - Built 2026-10-31: `ramps.ts` (Radix-like lightness per step, chroma by
+    the brief's level, a share per step); the reading-list theme picks the
+    usual steps (backgrounds 2 and 3, borders 8, fills 9 and 10, text 12 and
+    11, accent text 1) and passes every THEME rule. The theme's seeded rerun
+    went: no stage routed issues to it any more.
+
+- [x] **DS28** Heights only where exact (1 h) (done 2026-10-31). Depends: DS6c
+  - Why: rules failed on text heights the solver estimates, which no model
+    can change (user, 2026-10-31, design brainstorm DR17). Spacing stays as
+    built: spacing by relation (DR16) was dropped the same day because it
+    adds scope (user).
+  - A rule reads a height only where it is exact: a design-system component,
+    a fixed box, an icon, an image, or single-line text that ends in an
+    ellipsis. Multi-line text is content height. The rules read the
+    skeleton solved with each multi-line text at one line, its minimum; the
+    wireframes draw it at a feasible height, two to four lines picked from
+    its id, for the picture only (user, 2026-10-31).
+    - LAYOUT-028 fails only when the page is too tall even at the minimum.
+    - LAYOUT-010 checks structure instead of heights: the repeated items are
+      one item repeated, stretched to one height on each line, with one gap.
+    - LAYOUT-071: text in a fixed-height region is single-line with an
+      ellipsis.
+  - The heuristics catalog (H-10, H-28, H-71), the node guide, the
+    reading-list fixtures and the spec follow.
+  - Done when: each changed rule has a passing and a failing test; the
+    wireframes draw a fixture's multi-line text at the same height on every
+    run; the reading-list screens pass every rule; `pnpm typecheck`;
+    `pnpm test`.
+  - Built 2026-10-31: the solver takes a text mode (`minimum` for the
+    rules, `picture` for the wireframes and the CLI); one-line text is a
+    Truncate, so the reading-list wordmarks in the fixed headers became
+    Truncates; the node guide asks for stretched cards and Truncate.
+
+- [ ] **DS23** Design chain: architect, catalog, screen, invent, draw, frame, assemble (1 day). Depends: DS22, F16, FL14, DS28
   - Why: the first live design run (DS7) cost $12.95 for one idea and left 87
-    issues found late; the IA wrote structure for every screen and was
-    rerun, the nodes calls redid shared parts per screen, and copy drifted
-    between screens (user, 2026-10-30, after a brainstorm).
-  - Revised 2026-10-31 (user, after a second brainstorm): the IA did too
-    much in one call (screens, widgets, copy and layout), and it cannot
-    place widgets side by side without knowing what fits. The IA now makes
-    the product decisions; widget definitions, layout and building are
-    separate calls, and code assembles.
-  - Every call runs D1.12's five rounds. The effort is the first draft's;
-    every fix runs at medium and 0.2. The calls, in order:
-    1. IA (high, draft at 0.7, peer and output reviewers): the screens with
-       their routes, access, entry and navigation (an item's label is its
-       page's title); the steps and states each screen serves; each screen's
-       blocks in reading order, with a purpose and the steps each serves, and
-       on a marketing page the composition it intends, such as "a
-       full-width band holding three features"; and the new components it
-       declares (name, purpose, closest design-system components, why not).
-       Its rules: every step and alternative on a screen, access both ways,
-       entry pages and dialog parents, at most 8 blocks on a page, and the
-       components' reasons, names and budget.
-    2. Widgets (medium, 0.2, output reviewer): one call for the whole app.
-       It turns blocks into widget definitions, and a block repeated across
-       screens becomes one widget. It writes the copy deck, every visible
-       string once with an id, and each widget's steps, fields, data,
-       states, heading level, width range (a minimum, and a maximum or fill),
-       height (fill or free) and slots. A slot is a box inside a container
-       widget that holds child widgets; anything with a background, such as
-       a band, is a widget. Its rules: every block becomes exactly one
-       widget, the copy deck rules, each screen's steps, fields and states
-       given to its widgets, and one level-1 widget per page with no
-       skipped levels.
-    3. Layout (medium, 0.2, output reviewer): one call per screen, in
-       parallel. It writes the screen's box tree: boxes as a flat list with
-       a parent and an order; each box a direction, a size along its
-       parent's direction (content, fill with a share, or a fixed width) and
-       an align (start, where content follows, by default; stretch for a row
-       of cards); each widget placed by its box and index, with child boxes
-       and widgets sharing one order. The gap between boxes and widgets is
-       the theme's section gap, and 20 in a dialog, so the call picks no
-       spacing. Its rules: at most three levels of boxes, at most one fill
-       among the boxes stacked in a column unless they split by share, a
-       fill height only under a parent of bounded height, each row's widget
-       minimums and gaps within its width (the content width from the
-       theme's layout, in exact numbers), the reading order of the IA's
-       blocks, and every widget of the screen placed once.
-    4. Components (medium, draft at 0.7, output reviewer): one call per
-       declared component. It designs the component in full (box, parts,
-       layout and behavior prose, props, states, keys, ARIA) to fit the
-       narrowest widget that holds it. It sees the design system's
-       component names with one line each, and the spacing, radius, type
-       and color scales, not the full design-system description.
-    5. Widget builds (medium, 0.2, output reviewer): three widgets per call,
-       with a 32k output budget. Each writes nodes with copy ids, picks the
-       design-system components, and records the widget's edge and root
-       layout. A container widget places its slots among its own nodes and
-       never builds the children; a fill widget designs its own scroll
-       region. Inside the call: the node rules on the widget alone, its
-       steps and fields, exactly its states, its heading level, navigation
-       with a target, and the LAYOUT rules solved at the widget's minimum
-       and maximum width.
-    6. Frames (medium, 0.2, output reviewer): one call per used shell fills
-       its header, sidebar and footer, as before (user, 2026-10-31: keep).
-  - Assembly (code, no model): each screen from its box tree. Every child
-    gets its minimum width and the rest goes by share up to each maximum; a
-    row that cannot fit its minimums stacks. Heights follow content, and the
-    parent resolves fill and free: a fill widget in a free box grows with
-    its content, a free widget in a fill box makes the box scroll, and a
-    fill widget in a fill box scrolls its own body. Ids, copy and heading
-    sizes work as before. The whole-design and layout rules then run; an
-    issue inside a widget goes back once to its build call and an issue in
-    a screen's boxes to its layout call, each as a separately named fix; the
-    rest are known issues.
-  - The tree of page boxes, widgets, nodes, slots and child widgets is what
-    the coding stage writes its flex layout from. It is desktop only; the
-    coding stage stacks rows below 640px on phones.
+    issues found late; the IA wrote structure for every screen, the nodes
+    calls redid shared parts per screen, and copy drifted between screens
+    (user, 2026-10-30). Two brainstorms on 2026-10-31 (user) split the work
+    by what a model does well: the creative calls decide, the labor calls
+    define and place, and code works out everything that follows from them.
+    Brainstorm ids are in brackets.
+  - Every model call runs D1.12's five rounds; fixes run at medium and 0.2
+    and return patches (F16). Each stage is a folder in
+    `src/agents/02design/` and a pipeline stage `design-<name>`. In order:
+    1. Architect (`03architect`; high, draft at 0.7; peer and output
+       reviewers). The creative call. It plans no blocks and no layout. It
+       writes:
+       - the screens, with their routes, entry pages, dialog parents, page
+         titles and the steps each serves;
+       - the navigation, fitted to the theme's page layouts; an item's label
+         is its page's title [DR25];
+       - for a screen whose frame differs from its layout's default, how it
+         differs, in prose [DR26];
+       - each screen's composition as prose, which catalog and screen follow
+         and the peer reviewer judges [DR06];
+       - the new components: name, purpose, the closest design-system
+         components and why not, and a description of each component's
+         content, purpose, emphasis, feel and look, in the theme's terms
+         (color set, radius, font, density) with one reference [DR30].
+       Its processing step fills each screen's access and roles from its
+       steps' flows (FL14) and its required states from what the steps do:
+       listing records needs empty and error; loading, a field's error and a
+       form's result are the design system's or a toast. It puts each alternative on its step's
+       screen. The architect adds only a state beyond these, or an
+       alternative shown on another screen [DR05].
+       Its rules: every step and alternative on a screen; entry pages and
+       dialog parents; every navigation item in a slot of its layout; a
+       route for each page; the components' reasons and names. The budget is
+       checked at assembly, where the components are placed.
+    2. Catalog (`04catalog`; medium, 0.2; output reviewer). One call for the
+       whole app. It sees every screen, so a widget that screens share is
+       defined once [DR10, DR20]. It writes:
+       - each widget's definition: an id, a kind, what it holds, the steps it
+         serves, the data it shows (Noun.attribute), `containsHeading`, and
+         its slots, each with a name, what goes in and a width range;
+       - each widget's coarse layout: its parts in rows and columns, each
+         part's minimum width from the table of possible boxes, and ellipsis
+         or wrap on each text part [DR11, DR13];
+       - a width range for each new component;
+       - the widgets and components each screen is made of, and which of
+         its steps its frame serves, such as sign out [DR26].
+       No implementation and no heights: heights follow content.
+       Its processing step fills each widget's fields and required states
+       from its steps [DR08], and adds up its minimum width from the coarse
+       layout [DR13].
+       Its rules: each screen's steps served by its widgets and components or
+       by its frame; every widget and component used; each extra state of a
+       screen held by one of its widgets; data names vocabulary nouns; every
+       minimum fits the content width; every slot fits inside its widget.
+    3. Screen (`05screen`; medium, 0.2; output reviewer). One call per page
+       with the dialogs and drawers it opens, in parallel [DR20]. It writes
+       the box tree and the instances. An instance places a widget or a
+       component into a box or into another instance's slot [DR21], with:
+       - a position id;
+       - fill or free for its height [DR14];
+       - a heading level, when its widget contains a heading [DR12];
+       - the words for its slots, such as a title and a description, in the
+         brief's voice [DR28, DR09].
+       The level-1 instance shows the page's title. The output reviewer
+       compares the box tree with the screen's composition prose [DR29].
+       Its rules: at most three levels of boxes; each row's minimum widths
+       and gaps fit its width [DR13]; every widget and component of the
+       screen placed; every slot fill within its slot's range; one level 1
+       per page and no skipped levels; a fill instance in a free page
+       section is a warning [DR14].
+    4. Invent (`06invent`; medium, draft at 0.7; peer and output reviewers).
+       One call per new component. The creative expansion: it turns the
+       architect's description into layout and nodes inside the component's
+       width range, creative within that description, which its peer
+       reviewer checks [DR24]. A visual no node can express, such as a ring
+       or a timeline bar, is a `shape` node: `what` prose and a box
+       [DR23]. Look only: behavior, props, keyboard and ARIA belong to the
+       coding stage.
+    5. Draw (`07draw`; medium, 0.2; output reviewer). One widget per call,
+       to measure its cost (three until the first live run, user 2026-10-31).
+       It expands each definition into layout and nodes: design-system
+       components, new components inside their width range, text and lists
+       [DR21]. The widget's heading takes its level from the instance, and
+       the text right under it is sized relative to it [DR12]. A widget is
+       layout and nodes only: words that differ by instance are slots
+       [DR28]. It writes its fixed text inline [DR09].
+    6. Frame (`08frame`; medium, 0.2; output reviewer). One call per used
+       shell. It expands the theme's frame into layout and nodes, draws the
+       navigation and each screen's frame changes, and serves the steps
+       catalog gave the frame, which count on every page that uses it
+       [DR26].
+    Screen, invent, draw and frame read only what the architect and catalog
+    wrote, so they run in parallel, three calls at a time (`PARALLEL`).
+  - Assemble (`09assemble`; code, no model). It builds each screen from its
+    box tree and instances, the widgets' and components' nodes and its
+    frame; sets each heading's size from its instance's level; and builds
+    the copy deck from every text and slot, with ids by code, flagging one
+    step shown with two wordings [DR09]. Then the whole-design and LAYOUT
+    rules run. An issue inside a widget or a frame goes back once through
+    its draw or frame stage; an architect mistake found here is a known
+    issue, left to the coding agent [DR19].
+  - Rules that change, each in the spec's table: DESIGN-004 drops keys and
+    ARIA; DESIGN-018 is dropped, as processing sets access (user, 2026-10-31); DESIGN-028 checks the deck
+    code builds; DESIGN-029 checks the catalog's screen lists and the
+    screen's instances; DESIGN-030 checks heading levels per instance, and a
+    widget no longer keeps one level [DR12]; DESIGN-031 checks only the
+    extra states; DESIGN-032 also checks a frame's steps. New: DESIGN-036
+    (a navigation item's slot), 037 (box depth and rows), 038 (slot fills),
+    039 (a fill instance in a free page section, warning), 040 (each
+    screen's steps served), 041 (widths fit), 042 (a shape node's box), 043
+    (routes and dialog size) and 044 (slots and components drawn).
+  - The tree of page boxes, instances, widgets, nodes and slots is what the
+    coding stage writes its flex layout from. It is desktop only; the coding
+    stage stacks rows below 640px on phones.
   - Folded in from DS22: fixes at medium effort; the strong model only for
     the first draft of the scope and the brief, no fallback; five rounds,
     the output reviewer again in round 4; reruns keep their own records;
     the prompts audited against their rules and review guides.
-  - Built 2026-10-30, the first version, with a fake model:
-    `schema-widgets.ts`, `assemble.ts` and `widget-nodes.ts`,
-    `validate-widgets.ts`, `route.ts`, `prompt-screens.ts` with
-    `prompt-ia.md`, `prompt-component.md`, `prompt-widgets.md`,
-    `prompt-frame.md` and the shared `prompt-nodes.md`, and the rewritten
-    `stage-screens.ts`. New rules DESIGN-028 to 035; DESIGN-018 both ways;
-    DESIGN-004 split between the IA and the component call. The
-    reading-list widget design is derived from its screens fixture
-    (`__fixtures__/widgets.ts`) and assembles back with every design and
-    layout rule passing. The revision replaces the IA's schema, prompt and
-    rules, `arrangement` and `area`, the fixed 300 side panel and the page
-    layouts code made; the widget builds, the frame and component calls,
-    the copy deck, the stitching and the routing stay.
-  - Decided while building, still holding: heading levels are real levels;
-    a widget keeps one, now on its definition (DESIGN-030), so its build can
-    size the text under a heading (LAYOUT-031), and code sets a heading's
-    type size from its level. A record's value is a node's `sample`, and
-    copy may hold `{Noun.attribute}` slots. A frame's link to a navigation
-    item says the item's label. A widget's own layout check keeps LAYOUT-070
-    for the first widget of a page only.
+  - Built 2026-10-30, the first version, with a fake model: the widget
+    schemas, assembly, the widget page checks, routing, the IA, component,
+    widget and frame prompts with the shared node guide, and the stage.
+    New rules DESIGN-028 to 035; DESIGN-018 both ways; DESIGN-004 split
+    between the IA and the component call. F15 moved it into the stage
+    folders.
+  - Decided while building, still holding: code sets a heading's type size
+    from its level. A record's value is a node's `sample`, and copy may hold
+    `{Noun.attribute}` slots. A frame's link to a navigation item says the
+    item's label. LAYOUT-070 runs at assembly, not in a widget's own check:
+    draw runs beside screen, so it cannot know which widget comes first on a
+    page.
   - Effort and temperature, decided 2026-10-31: high only for the scope, the
-    brief and the IA, the decisions made once for the app; the IA's first
-    draft at 0.7 now that it carries the product decisions and not the
-    mechanical rules; component designs at medium, reversing 2026-10-30's
-    high (user).
-  - Not done: the revision, after the folder restructure the user is
-    proposing (2026-10-31); then the first live run, freelancer workspace
-    from the brief, which also measures what fixes cost with three widgets
-    per call.
+    brief and the architect, the decisions made once for the app; the
+    architect's first draft at 0.7 now that it carries the product decisions
+    and not the mechanical rules; component designs at medium, reversing
+    2026-10-30's high (user).
+  - Done when: each stage's rules have a passing and a failing fixture; the
+    reading-list design passes every rule through the whole chain with a
+    fake model; `pnpm typecheck`; `pnpm test`. Then, with the user's go, the
+    first live run, freelancer workspace from the brief, ends with zero
+    mandatory issues (DS7's done-when) and records what fixes cost.
+  - Built 2026-10-31, with a fake model: all seven stages, their processing
+    steps, prompts, review guides, rules and tests. `__fixtures__/chain.ts`
+    derives every call's answer from `reading-list.screens.json`, and the
+    chain assembles it back with every design and layout rule passing. That
+    fixture now models the chain: S04's search, table and empty state are
+    one Books widget and S05's actions sit in its form, because a widget
+    serving a step shows all the step's states and takes all its fields
+    (DR08); one wording per step and the nav label as the page title
+    (DESIGN-028, now registered); S02, S03 and S06 lay out in boxes. Found
+    and fixed while building: a subflow's step gave its screen no flow, so
+    the delete dialog came out public; the catalog's patch schema was nine
+    levels deep, over the API's eight, so a part now names its `row`; a
+    component alone was checked as a padded section, and a widget alone
+    declared no components; DESIGN-001 refused a component's own node ids;
+    a component placed on its own had its nodes copied into the screen.
+    The reconcile pass and a bug review (2026-10-31) added DESIGN-043 and
+    044 and checks to 001, 036, 038, 040 and 041, and fixed DESIGN-030 for
+    dialogs, a component's padding counted twice, frame change nodes counted
+    on every page, and a held component's kind and width. Decided then
+    (user): DESIGN-018 is dropped; saving fields requires success unless the
+    submit opens another screen; DESIGN-009 leaves impossible steps to the
+    reconcile stage.
+    Left: the first live run, on the user's go.
 
-- [ ] **DS24** A frame can serve a step (30 min). Depends: DS23
-  - Found building DS23: the IA gives steps to widgets only, so a sign out
-    or an account link drawn in the app frame cannot be the control that
-    serves its step, and the IA has to put one in a widget too. Give the IA
-    the steps each layout's frame serves, and the frame call DESIGN-032.
+- [x] **DS24** A frame can serve a step (30 min) (folded into DS23, 2026-10-31). Depends: DS23
+  - Found building DS23: the IA gave steps to widgets only, so a sign out or
+    an account link drawn in the app frame could not be the control that
+    serves its step. Folded into DS23 (user, 2026-10-31, DR26): catalog
+    gives the frame the steps it serves, the architect says per screen in
+    prose how the frame differs from its default, and frame draws and
+    serves both.
 
-- [ ] **DS25** Route what the IA plans but widgets draw (30 min). Depends: DS23
+- [ ] **DS25** Route what the architect plans but widgets draw (30 min). Depends: DS23
   - Found building DS23: a page or dialog no control opens (DESIGN-017) is
-    recorded as known after assembly, though the widget whose `content`
-    names its opener could fix it. Route it to the widgets on the parent page
-    that name the screen.
+    recorded as known after assembly, though the widget that should hold
+    its opener could fix it. Route it to the draw call of the widgets on the
+    parent page whose `holds` names the screen.
+
+- [ ] **DS30** LAYOUT-013 and a column spread apart (15 min). Depends: DS23
+  - Found building DS23: TitleCover sets its title at the top and its author
+    at the bottom with justify between, on purpose; LAYOUT-013 reads them as
+    paragraphs 132 apart and warns. Needs the user's call: skip a column
+    whose justify is between, or keep the warning.
+
+- [x] **DS31** LAYOUT-035 on a widget's empty state (30 min) (done 2026-10-31). Depends: DS23
+  - Found building DS23: a list widget now holds its own empty state (DR08),
+    so chain output has no empty-state section and LAYOUT-035 checks
+    nothing. Check the nodes a section shows only when empty instead.
+  - Built 2026-10-31: the rule reads the nodes a section shows only when
+    empty, or every node of an empty-state section, and finds what centres
+    them: the one box holding them, or the box they sit in.
+
+- [x] **DS32** Run screen, invent, draw and frame side by side (45 min) (done 2026-10-31). Depends: DS23
+  - Found building DS23: the plan runs them in parallel after the catalog,
+    but the CLI runs pipeline stages one after another, so each waits for
+    the one before.
+  - Built 2026-10-31: `SIDE_BY_SIDE` in the stage registry names the group
+    and `stageBatches` cuts the pipeline into batches; `weave run` starts a
+    batch's due stages together and lets all of them finish before a
+    failure ends the run. Each keeps its own three calls at a time, so up to
+    twelve run at once.
+
+- [ ] **DS34** Fixes from the first live chain run (2 h). Depends: DS23, DS32
+  - Why: the freelancer run of 2026-10-31 reached draw with 22 steps on two
+    or more screens, widgets shared across screens with different steps, a
+    hero given three actions, a page title no widget could show, time chips
+    forced 160 wide, and a patch fix that emptied three widgets. Stopped at
+    draw (user); flows, brief, theme and architect kept.
+  - Built 2026-10-31: DESIGN-045 (a step that saves fields is on one
+    screen) and the architect's line on where a step goes; the catalog's
+    DESIGN-030 check and line on a page title's widget; LAYOUT-026 treats a
+    Chip as a control; LAYOUT-035 reads list, table and cards sections and
+    empty-state sections only; draw one widget a call, six calls at a time.
+  - Then, decided by the user the same day:
+    - DESIGN-046: a widget on several screens serves only shared steps; a
+      part that differs is a small widget per screen in a parts slot.
+    - DESIGN-047 and the architect's line: each page that deletes has its
+      own confirm dialog.
+    - A draw call answers one widget, and its fix patches nodes; a patch
+      keeps a list an update sends empty, and the patch prompt says lists
+      inside an item come in full.
+    - Strict decoding for every call, after a probe of all 20 schemas
+      ($0.06); an answer the schema refuses is kept, never cached, and asked
+      once more.
+    - The catalog's hero line, and the draw reviewer's line that a hero
+      leaving out a third action is no blocker.
+    - A Card in a CardGroup is an option of a field (LAYOUT-038 and 039),
+      and the node guide says when to use one.
+    - The design draws no loading, no field error and no form result:
+      the design system shows the first two, and a form's result, failure
+      or denial included, is a toast. `loading`, `invalid`, `submitting`
+      and `success` left the design states; a failed or denied submit's
+      step sits on its submit button. LAYOUT-009 checks a form's stacked
+      fields only, not a row of search and filters.
+  - After the run of 2026-10-31 (16 minutes, $5.51 for design, $6.57 from
+    scope; 22 known issues against yesterday's 88):
+    - DESIGN-028 leaves nodes that show a record's value, and subflow steps,
+      to their own words.
+    - A node's `sample` is its whole line as it shows; assembly shows it for
+      words that hold a {Noun.attribute}. Home's rows repeated their text.
+    - The wireframes shrink a label to fit before cutting it: buttons were
+      sized right but drawn with labels 25% larger. `weave wireframes`
+      reads a run's 09-assemble.json envelope.
+    - The node guide gives a marketing page a hero with a supporting
+      sentence and features with their own headings.
+  - The cost figures matched the bill on that run ($5.52 against $5.51).
+
+- [x] **DS35** Page backgrounds as CSS (2 h) (done 2026-10-31). Depends: DS27
+  - Why: a page hue and chroma rule out gradients and styled backgrounds
+    (user, 2026-10-31).
+  - Built 2026-10-31: the brief writes `pageBackground`, one CSS value of
+    colors and gradients, for its first mode; the theme writes the dark
+    mode's when the app has both. The page ramp is gone: `pageBg`, the solid
+    color under the background and the base disabled colors fade into, and
+    the page text are steps of the base or the brand ramp. BRIEF-006 and
+    THEME-005 keep the background to colors and gradients; THEME-001 checks
+    page text on every color in it. `template/colors.ts` has
+    `pageBackground` beside `pageBg`; `html` paints `pageBg` and `body` the
+    background.
+
+- [ ] **DS33** `weave validate` for the design stages (30 min). Depends: DS23
+  - Found building DS23: no design stage after the brief registers a
+    `validate` hook, so `weave validate` reruns nothing on a design run.
+
+- [x] **DS36** LAYOUT-008 on pages repeats THEME-007 (15 min). Depends: DS23 (done 2026-10-31)
+  - Found in the wording pass: code sets a page's section gap from the
+    theme's `main.sectionGap`, which THEME-007 checks against the same
+    range. On a page, LAYOUT-008 can fail only when the theme failed, and
+    the screen or widget call it routes to cannot change that gap.
+
+- [ ] **DS29** Fallback: design ends at invent (1 h). Depends: F15
+  - Why: the MVP backup (user, 2026-10-31). Pick it up only if the design
+    chain committed with F15 can't run cleanly on the freelancer idea after
+    about two hours of fixes. It drops draw, frame and assemble, the kind of
+    work that cost about $11 of the $14.10 design run on 2026-10-30.
+  - `PIPELINE` ends design at `design-invent`. `design-draw`, `design-frame`
+    and `design-assemble` leave it; their code stays.
+  - FE2 builds routes, navigation and page shells from
+    `02-design/03-architect.json`: its screens, its navigation, and each
+    screen's placements in order. A shell's manifest lists its widgets in
+    reading order, in place of sections and nodes.
+  - FE3 builds each component in `02-design/06-invent.json`.
+  - FE4's page task gets each placed widget's kind, purpose, copy text,
+    steps and data, plus the theme's defaults. The session picks the
+    design-system components itself, checked by MCP `validate`,
+    `pnpm typecheck`, `pnpm nx lint web` and `pnpm verify <route>`.
+  - FE5 takes its routes from the architect's screens.
+  - The FE2 to FE5 step files follow.
+  - Done when: `PIPELINE` has no draw, frame or assemble; the FE2 to FE5
+    step files read only the architect and invent artifacts;
+    `pnpm typecheck`; `pnpm test`.
 
 - [x] **DS20** Base colors per project (45 min) (done 2026-10-30). Depends: DS18
   - Why: most components wear the base set (secondary buttons, inputs,
@@ -1311,7 +1632,7 @@ output from drifting and what proves it, which is the whole idea.
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
 | Meta's API rejects a schema shape                            | F2 sanitizes and F4 smoke-tests every construct used; keep schemas flat                     |
 | Credits run out                                              | Replay cache, golden fixtures for offline work, Spark by default, costs logged per call     |
-| Design outputs too big or inconsistent                       | IA first, then per-screen nodes (D3.11 B); per-screen reruns                                |
+| Design outputs too big or inconsistent                       | Architect and catalog once, then calls per page, component, widget and shell (DS23); fixes return patches (F16) |
 | Phases 6 to 9 get one day each                               | The contract compiler (C2) feeds codegen; page shells are code; the model fills sections    |
 | The model writes outside its files or edits tests           | The loop refuses writes outside the allowed paths and logs the attempt (FE1)                |
 | Lighthouse or the browser won't start on WSL                 | Playwright's Chromium with `--headless=new`; every tool in the benchmark is optional per run |

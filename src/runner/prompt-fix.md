@@ -1,8 +1,15 @@
-<!-- Sent after a round that left mandatory issues or blockers (D1.5 A). Placeholders: issues, one "- RULE at ID: message" line each; answers, the user's answers since the last generation as one "- Q01 "question": answer" line each, or "None.". -->
-Fix the problems below, apply the answers below, and return the complete corrected JSON. Keep everything else exactly as it was.
+<!-- Sent after a round that left mandatory issues or blockers, to a stage whose document has keyed lists (D1.5 C, F16). Placeholders: patch, how a patch is written (prompt-patch.md); issues, one "- RULE at ID: message" line each; answers, the user's answers since the last generation as one "- Q01 "question": answer" line each, or "None.". The runner merges the patch into the current document. -->
+Fix each problem below and apply each answer below.
+
+- Apply each answer everywhere it affects the document.
+- Keep each answered question in the document.
+- Keep everything else exactly as it was.
+- Return a patch, not the complete document.
+
+{{patch}}
 
 Problems that must be fixed:
 {{issues}}
 
-Answers the user gave to your questions. Apply each answer everywhere it affects the output, and keep the question in the output:
+Answers the user gave to your questions:
 {{answers}}

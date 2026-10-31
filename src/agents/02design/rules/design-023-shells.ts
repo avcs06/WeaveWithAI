@@ -22,7 +22,7 @@ export const rule = defineRule<IaInput>(
         if (screen.framed && !frames.has(SHELL_IDS[screen.kind]))
           issues.push(
             fail(
-              `${screen.id} is framed, but the ${screen.kind} layout has no header, sidebar or footer; the theme gives that layout a frame, or the page sets framed false.`,
+              `${screen.id} is framed, but the ${screen.kind} layout has no header, sidebar or footer. A framed page sits in a layout with a frame. Only the theme gives a layout its frame. Set framed false on ${screen.id}.`,
               screen.id,
             ),
           );
@@ -31,14 +31,14 @@ export const rule = defineRule<IaInput>(
       if (screen.framed)
         issues.push(
           fail(
-            `${screen.id} is a ${screen.type} with framed true; only pages sit in a layout, so set it to false.`,
+            `${screen.id} is a ${screen.type} with framed true. Only a page sits in a layout. Set framed false on ${screen.id}.`,
             screen.id,
           ),
         );
       if (screen.layout.gap === '' || screen.layout.padding === '')
         issues.push(
           fail(
-            `${screen.id} is a ${screen.type} with no gap or padding; a dialog or drawer gives its own spacing keys.`,
+            `${screen.id} is a ${screen.type} with gap "${screen.layout.gap}" and padding "${screen.layout.padding}". A dialog or drawer sets its own gap and padding. Only a page takes them from its layout. Give ${screen.id} a spacing key for both, such as gap 5 and padding 0.`,
             screen.id,
           ),
         );

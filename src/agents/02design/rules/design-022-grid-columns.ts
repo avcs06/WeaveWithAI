@@ -15,7 +15,7 @@ const wrong = (layout: NodeLayout | null) =>
     ? layout.columns < 1 || layout.columns > 4
     : layout.columns !== 0);
 const say = (id: string, layout: NodeLayout) =>
-  `${id} is a ${layout.direction} with ${layout.columns} columns; a grid has 1 to 4, a row or column 0.`;
+  `${id} is a ${layout.direction} with ${layout.columns} columns. A grid has 1 to 4 columns. A row or a column has columns 0. Give ${id} ${layout.direction === 'grid' ? 'from 1 to 4 columns' : 'columns 0'}.`;
 
 export const iaRule = defineRule<IaInput>(
   'DESIGN-022',

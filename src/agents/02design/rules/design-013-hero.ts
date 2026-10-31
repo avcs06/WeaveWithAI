@@ -19,7 +19,7 @@ export const iaRule = defineRule<IaInput>(
       return heroes.length > 1
         ? [
             fail(
-              `${screen.id} has ${heroes.length} heroes; a screen has one at most.`,
+              `${screen.id} has ${heroes.length} hero sections. A screen has at most one hero. Keep one hero, and give the others another kind.`,
               screen.id,
             ),
           ]
@@ -43,7 +43,7 @@ export const nodesRule = defineRule<NodesInput>(
       if (headings !== 1 || texts > 1 || actions > 2)
         issues.push(
           fail(
-            `The hero ${hero.id} has ${headings} headings, ${texts} texts and ${actions} actions; a hero has one heading, at most one text and two actions.`,
+            `The hero ${hero.id} holds headings: ${headings}, texts: ${texts}, actions or navigation nodes: ${actions}. A hero has exactly one heading, at most one text, and at most two actions or navigation nodes. In ${hero.id}, ${[headings === 0 ? 'add one heading' : headings > 1 ? 'keep one heading' : '', texts > 1 ? 'keep one text' : '', actions > 2 ? 'keep two actions or navigation nodes' : ''].filter(Boolean).join(', ')}.`,
             hero.id,
           ),
         );

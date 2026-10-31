@@ -44,14 +44,14 @@ const catalogFixture = Catalog.parse(load('reading-list.catalog.json'));
 
 const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
 
+const none = { upsert: [], remove: [] };
 const emptyPatch = {
-  upsertFlows: [],
-  upsertFields: [],
-  upsertForms: [],
-  upsertSubflows: [],
-  removeFlows: [],
-  assumptions: [],
-  questions: [],
+  flows: none,
+  fields: none,
+  forms: none,
+  subflows: none,
+  assumptions: none,
+  questions: none,
 };
 
 /** Answers by schema: the fixtures for scope and catalog, the fixture flows named in the message for a batch, nothing to review or patch. */

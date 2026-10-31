@@ -50,6 +50,11 @@ describe('brief prompt', () => {
     ])
       expect(prompt).toContain(`\`${field}\``);
     expect(prompt).toContain('degrees on the color wheel, 0 to 360');
+    // The hue table: OKLCH degrees, not HSL ones (green 142, not 120; blue 266, not 240).
+    expect(prompt).toContain('- red: 29\n');
+    expect(prompt).toContain('- green: 142\n');
+    expect(prompt).toContain('- blue: 266\n');
+    expect(prompt.match(/^- [a-z]+: \d+$/gm)).toHaveLength(12);
     expect(prompt).not.toMatch(/^Button: /m);
   });
 

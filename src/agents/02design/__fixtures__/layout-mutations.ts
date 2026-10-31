@@ -16,7 +16,6 @@ function find<T extends { id: string }>(items: T[], id: string): T {
 }
 const node = (s: Screens, id: string) => find(s.nodes, id);
 const section = (s: Screens, id: string) => find(s.sections, id);
-const screen = (s: Screens, id: string) => find(s.screens, id);
 /** A new node like an existing one, with its own id and changes. */
 const add = (
   s: Screens,
@@ -38,32 +37,34 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
   'LAYOUT-003': edit((s) => (node(s, 'S06.n06').layout!.gap = '4')),
   'LAYOUT-004': edit((s) => (node(s, 'S06.n06').layout!.gap = '1')),
   'LAYOUT-005': edit((s) =>
-    add(s, 'S04.n05', 'S04.n15', {
+    add(s, 'S04.n05', 'S04.n17', {
       ...leaf,
       section: 'S04.sec2',
-      parent: '',
+      parent: 'S04.n15',
       order: 3,
       look: '',
       text: 'Clear search',
     }),
   ),
   'LAYOUT-006': edit((s) => (section(s, 'S06.sec2').layout.gap = '8')),
-  'LAYOUT-008': edit((s) => (screen(s, 'S04').layout.gap = '4')),
   'LAYOUT-009': edit((s) => (section(s, 'S05.sec1').layout.gap = '3')),
   'LAYOUT-010': edit((s) => {
     s.sections.push({
-      ...structuredClone(section(s, 'S04.sec3')),
-      id: 'S04.sec5',
-      order: 5,
+      ...structuredClone(section(s, 'S04.sec2')),
+      id: 'S04.sec3',
+      order: 3,
       kind: 'cards',
     });
+    // Side by side but aligned to the start: each card is as tall as its own text.
+    const cards = section(s, 'S04.sec3');
+    cards.layout = { ...cards.layout, direction: 'row', align: 'start' };
     for (const [id, min] of [
-      ['S04.n15', 120],
-      ['S04.n16', 200],
+      ['S04.n17', 120],
+      ['S04.n18', 200],
     ] as const)
       add(s, 'S04.n09', id, {
         ...leaf,
-        section: 'S04.sec5',
+        section: 'S04.sec3',
         component: 'Card',
         role: 'display',
         label: '',
@@ -77,7 +78,7 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
         },
       });
   }),
-  'LAYOUT-011': edit((s) => (section(s, 'S05.sec2').layout.gap = '3')),
+  'LAYOUT-011': edit((s) => (node(s, 'S05.n08').layout!.gap = '3')),
   'LAYOUT-012': edit((s) => (node(s, 'S04.n01').layout!.gap = '3')),
   'LAYOUT-013': edit((s) => {
     section(s, 'S07.sec1').layout.gap = '1';
@@ -114,7 +115,7 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
   ),
   'LAYOUT-038': edit((s) => (node(s, 'S06.n14').component = 'Card')),
   'LAYOUT-039': edit((s) =>
-    add(s, 'S05.n04', 'S05.n07', {
+    add(s, 'S05.n03', 'S05.n09', {
       ...leaf,
       order: 5,
       component: 'Card',
@@ -123,18 +124,18 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
     }),
   ),
   'LAYOUT-046': edit((s) => {
-    section(s, 'S04.sec2').layout.wrap = false;
+    node(s, 'S04.n15').layout!.wrap = false;
     node(s, 'S04.n07').box.widthPx = 1200;
   }),
   'LAYOUT-050': edit(
     (s) => (node(s, 'S05.n06').text = 'Save this book to my shelf'),
   ),
   'LAYOUT-055': edit((s) => {
-    add(s, 'S04.n09', 'S04.n15', {
+    add(s, 'S04.n09', 'S04.n17', {
       ...leaf,
       component: 'none',
       role: 'container',
-      order: 4,
+      order: 6,
       label: '',
       layout: {
         direction: 'row',
@@ -147,10 +148,10 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
       },
     });
     for (const [i, label] of ['Open', 'Move', 'Copy', 'Delete'].entries())
-      add(s, 'S04.n05', `S04.n${16 + i}`, {
+      add(s, 'S04.n05', `S04.n${18 + i}`, {
         ...leaf,
-        section: 'S04.sec3',
-        parent: 'S04.n15',
+        section: 'S04.sec2',
+        parent: 'S04.n17',
         order: i + 1,
         component: 'IconButton',
         look: '',
@@ -167,8 +168,9 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
       (node(s, 'S07.n01').text =
         'This removes “The Left Hand of Darkness” from your shelf. It cannot be undone.'),
   ),
-  'LAYOUT-065': edit((s) => (node(s, 'S05.n04').order = 0)),
-  'LAYOUT-066': edit((s) => (section(s, 'S05.sec2').layout.gap = '1')),
+  // The load error above the search row.
+  'LAYOUT-065': edit((s) => (node(s, 'S04.n11').order = 0)),
+  'LAYOUT-066': edit((s) => (node(s, 'S05.n08').layout!.gap = '1')),
   'LAYOUT-067': edit((s) => (node(s, 'S06.n01').look = 'ghost')),
   'LAYOUT-070': edit((s) => (section(s, 'S01.sec1').layout.padding = '0')),
   'LAYOUT-071': edit((s) => (node(s, 'SH1.n02').size = 'md')),

@@ -34,14 +34,17 @@ describe('brief rules', () => {
 
   it('the reading-list brief passes, and the schema takes fonts only from the catalog lists', () => {
     expect(check(brief)).toEqual([]);
+    const pick = (family: string) => [{ family, reason: 'x' }];
     expect(
-      Brief.safeParse({ ...brief, fonts: { ...brief.fonts, mono: 'Inter' } })
-        .success,
+      Brief.safeParse({
+        ...brief,
+        fonts: { ...brief.fonts, mono: pick('Inter') },
+      }).success,
     ).toBe(false);
     expect(
       Brief.safeParse({
         ...brief,
-        fonts: { ...brief.fonts, display: 'Comic Sans MS' },
+        fonts: { ...brief.fonts, display: pick('Comic Sans MS') },
       }).success,
     ).toBe(false);
   });
@@ -62,8 +65,15 @@ describe('brief rules', () => {
     },
   );
 
-  it('BRIEF-001 checks the page and frame hues, and counts personality and feel words and colored entities', () => {
-    expect(ruleIds(check({ ...brief, pageHue: -10 }))).toEqual(['BRIEF-001']);
+  it('BRIEF-006 takes a color or gradients of colors, and names what else it finds', () => {
+    expect(ruleIds(check({ ...brief, pageBackground: '#FBF7F2' }))).toEqual([]);
+    expect(ruleIds(check({ ...brief, pageBackground: 'radial-gradient(circle at top, #FFF4E5, #FBF7F2 60%)' }))).toEqual([]);
+    const issues = check({ ...brief, pageBackground: 'url(paper.png), #FFF' });
+    expect(issues.map((i) => i.message)).toEqual([expect.stringContaining('it loads an image with url()')]);
+  });
+
+  it('BRIEF-001 checks the base and frame hues, and counts personality and feel words and colored entities', () => {
+    expect(ruleIds(check({ ...brief, baseHue: -10 }))).toEqual(['BRIEF-001']);
     expect(ruleIds(check({ ...brief, frameHue: 400 }))).toEqual(['BRIEF-001']);
     expect(
       ruleIds(check({ ...brief, personality: ['calm', 'quiet'] })),

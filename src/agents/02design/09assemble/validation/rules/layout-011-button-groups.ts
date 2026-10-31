@@ -29,14 +29,14 @@ export const rule = defineRule<LayoutInput>(
         if (danger && rect.gapBefore <= 8)
           issues.push(
             fail(
-              `${rect.id} sits ${rect.gapBefore} from ${before.id}: a danger button never sits right beside the primary; add space or a divider.`,
+              `${a?.role === 'destructive-action' ? `The destructive button ${before.id} sits ${rect.gapBefore}px before the primary button ${rect.id}` : `The primary button ${before.id} sits ${rect.gapBefore}px before the destructive button ${rect.id}`}. A destructive button beside the primary button is more than 8px from it, or has a divider between them. Set the layout gap of ${parent.id} to more than 8px, or put a divider node between ${before.id} and ${rect.id}.`,
               rect.id,
             ),
           );
         if (!danger && rect.gapBefore !== 8)
           issues.push(
             fail(
-              `${rect.id} is ${rect.gapBefore} from the button before it; buttons in a group are 8 apart.`,
+              `${rect.id} is ${rect.gapBefore}px from the button ${before.id} before it. Buttons side by side are 8px apart. Set the layout gap of ${parent.id} to 8px (spacing key 2).`,
               rect.id,
             ),
           );

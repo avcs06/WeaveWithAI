@@ -1,46 +1,43 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import type { NewComponent } from '../schema';
-import type { IaInput } from './helpers';
+import type { IaInput, PlanInput } from './helpers';
 
 /**
  * DESIGN-004 · mandatory
  * A new component has a purpose, at least one closest design-system component,
- * a reason it is not one of them, an ARIA pattern and states; an interactive one lists its keys.
- * The IA declares the first three; the component's own call designs the rest (DS23).
- * Pass: TitleCover with all of them, ariaPattern none.
+ * a reason none of them fits, and a description of its content, purpose,
+ * emphasis, feel and look. Design is only look: its keys and ARIA are the
+ * coding stage's (DS23).
+ * Pass: TitleCover with all four.
  * Fail: TitleCover without whyNotExisting.
  */
-type Parts = (c: NewComponent) => string[];
+type Declared = {
+  name: string;
+  purpose: string;
+  closestExisting: string[];
+  whyNotExisting: string;
+  description: string;
+};
 
-const declared: Parts = (c) => [
-  c.purpose.trim() ? '' : 'a purpose',
-  c.closestExisting.length ? '' : 'a closest design-system component',
-  c.whyNotExisting.trim() ? '' : 'why no design-system component fits',
-];
-const designed: Parts = (c) => [
-  c.ariaPattern.trim() ? '' : 'an ARIA pattern ("none" if static)',
-  c.states.length ? '' : 'its states',
-  c.ariaPattern.trim() && c.ariaPattern !== 'none' && !c.keyboard.length
-    ? 'its keyboard behavior'
-    : '',
-];
+const missing = (c: Declared) =>
+  [
+    c.purpose.trim() ? '' : 'purpose',
+    c.closestExisting.length ? '' : 'closestExisting',
+    c.whyNotExisting.trim() ? '' : 'whyNotExisting',
+    c.description.trim() ? '' : 'description',
+  ].filter(Boolean);
 
-const check = (parts: Parts[]) =>
-  defineRule<IaInput>('DESIGN-004', 'mandatory', ({ ia }, fail) => {
+const check = <I>(of: (input: I) => Declared[]) =>
+  defineRule<I>('DESIGN-004', 'mandatory', (input, fail) => {
     const issues: Issue[] = [];
-    for (const c of ia.newComponents) {
-      const missing = parts.flatMap((part) => part(c)).filter(Boolean);
-      if (missing.length)
-        issues.push(
-          fail(`New component ${c.name} needs ${missing.join(', ')}.`, c.name),
-        );
+    for (const c of of(input)) {
+      const lacks = missing(c);
+      if (lacks.length)
+        issues.push(fail(`New component ${c.name} leaves ${lacks.join(' and ')} empty. A new component fills all four fields: purpose, closestExisting with at least one closest design-system component, whyNotExisting with why none of them fits, and description with its content, purpose, emphasis, feel and look. Fill in ${lacks.join(' and ')} for ${c.name}.`, c.name));
     }
     return issues;
   });
 
-export const rule = check([declared, designed]);
-/** What the IA writes when it declares a component. */
-export const declarationRule = check([declared]);
-/** What a component call writes when it designs one. */
-export const designRule = check([designed]);
+export const rule = check<IaInput>(({ ia }) => ia.newComponents);
+/** What the architect declares. */
+export const planRule = check<PlanInput>(({ plan }) => plan.newComponents);

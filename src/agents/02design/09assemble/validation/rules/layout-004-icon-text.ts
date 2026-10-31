@@ -27,7 +27,7 @@ export const rule = defineRule<LayoutInput>(
         if (found.gap < low || found.gap > high)
           issues.push(
             fail(
-              `${rect.id} puts its ${size} icon ${found.gap} from the text; at that size use ${low === high ? low : `${low} to ${high}`}.`,
+              `${rect.id} is a row of the ${size}px icon ${found.mark.id} and the text ${found.text.id}, ${found.gap}px apart. An icon and its text are 4px apart when the icon is under 16px, 6px to 8px apart when it is under 20px, and 8px to 10px apart when it is 20px or larger. Set the layout gap of ${rect.id} to ${low === high ? `${low}px, which is spacing key ${low / 4}` : `${low}px to ${high}px, which is spacing key ${low / 4} or ${high / 4}`}.`,
               rect.id,
             ),
           );
@@ -39,7 +39,7 @@ export const rule = defineRule<LayoutInput>(
         )
           issues.push(
             fail(
-              `${rect.id} spaces its icon and text ${found.gap} apart, not less than the ${view.gap(outer)} between the items of ${outer.id}.`,
+              `${rect.id} spaces its icon and its text ${found.gap}px apart, and the row ${outer.id} around it spaces its children ${view.gap(outer)}px apart. The gap between an icon and its text is smaller than the gap of the row they sit in. Set the layout gap of ${outer.id} to more than ${found.gap}px, or the layout gap of ${rect.id} to less than ${view.gap(outer)}px.`,
               rect.id,
             ),
           );

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Inventory } from '../../../../ds/inventory';
+import type { TextMode } from './boxes';
 import { type Rect, skeleton } from './skeleton';
 import { layoutShell } from '../../02theme/shells';
 import { type DesignNode, type DesignScreen, type DesignSection, makeScreensSchema, type Screens } from '../../schema';
@@ -94,6 +95,8 @@ const section = (rest: Partial<DesignSection> = {}): DesignSection => ({
   layout: layout('column', { gap: '4' }),
   surface: 'page',
   flowSteps: [],
+  in: '',
+  share: 1,
   ...rest,
 });
 
@@ -133,8 +136,12 @@ function solve(
   options: {
     screen?: Partial<DesignScreen>;
     section?: Partial<DesignSection>;
+    sections?: DesignSection[];
+    boxes?: Screens['boxes'];
+    frameChanges?: Screens['frameChanges'];
     regions?: Region[];
     container?: Screens['containers']['app'];
+    text?: TextMode;
   } = {},
 ) {
   const regions = options.regions ?? [region('r1', 'top', 56)];
@@ -142,15 +149,17 @@ function solve(
   const screens: Screens = {
     navigation: { items: [] },
     screens: [screen(options.screen)],
-    sections: [section(options.section)],
+    boxes: options.boxes ?? [],
+    sections: options.sections ?? [section(options.section)],
     newComponents: [],
     questions: [],
     impossibleSteps: [],
     containers: { app: container, marketing: container },
     shells: [{ id: 'SH1', name: 'app', purpose: '', regions }],
+    frameChanges: options.frameChanges ?? [],
     nodes,
   };
-  const rects = skeleton(screens, inventory).screens[0]?.rects ?? [];
+  const rects = skeleton(screens, inventory, options.text).screens[0]?.rects ?? [];
   return Object.fromEntries(
     rects.map((rect) => [rect.id.replace(/^S01\./, ''), rect]),
   );
@@ -201,9 +210,69 @@ describe('layout skeleton', () => {
     expect(at(desktop.n04)).toEqual([905.2, 128, 54.8, 40]);
     expect(desktop.n02?.gapBefore).toBe(16);
     expect(desktop.n04?.gapBefore).toBe(8);
-    expect(desktop.n01?.heightFrom).toBe('text 1 line');
+    expect(desktop.n01?.heightFrom).toBe('text at one line, its minimum');
     expect(desktop.n04?.heightFrom).toBe('inventory Button md');
     expect(at(desktop['SH1.r1'])).toEqual([0, 0, 1280, 56]);
+  });
+
+  it("lays out the screen's box tree, sections in a row sharing what is left, and shows a frame change on its own screen only", () => {
+    const filled = { ...box, width: 'fill' as const };
+    const nodes = [
+      node('n01', { box: filled }),
+      node('n02', { section: 'S01.sec2', box: filled }),
+      node('shell', { id: 'SH1.n01', section: 'SH1.r1', component: 'Button', size: 'md', text: 'Help' }),
+      node('added', { id: 'SH1.S02.n01', section: 'SH1.r1', component: 'Button', size: 'md', text: 'Export' }),
+    ];
+    const boxes: Screens['boxes'] = [
+      {
+        id: 'S01.b1',
+        screen: 'S01',
+        parent: '',
+        order: 1,
+        box: filled,
+        layout: layout('row', { gap: '4' }),
+        share: 1,
+      },
+    ];
+    const sections = [
+      section({ in: 'S01.b1', share: 2 }),
+      section({ id: 'S01.sec2', order: 2, in: 'S01.b1', share: 1 }),
+    ];
+    // A 640 column at x 320: a 16 gap leaves 624, two thirds and one third.
+    const rects = solve(nodes, { boxes, sections });
+    expect(at(rects.b1)?.slice(0, 3)).toEqual([320, 80, 640]);
+    expect([rects.sec1?.width, rects.sec2?.width]).toEqual([416, 208]);
+    expect(rects.sec2?.x).toBe(320 + 416 + 16);
+    // A node another screen's change adds never shows here, and a default this screen removes does not either.
+    expect(rects['SH1.n01']).toBeDefined();
+    const changed = solve(nodes, {
+      boxes,
+      sections,
+      frameChanges: [
+        { screen: 'S01', add: [], remove: ['SH1.n01'] },
+        { screen: 'S02', add: ['SH1.S02.n01'], remove: [] },
+      ],
+    });
+    expect(changed['SH1.n01']).toBeUndefined();
+    expect(changed['SH1.S02.n01']).toBeUndefined();
+  });
+
+  it('sizes text that wraps at one line for the rules and draws it at two to four lines, the same each run, for the picture; a Truncate is one line in both', () => {
+    const long = 'Notes you keep about a book while you read it. '.repeat(8);
+    const nodes = [
+      node('n01', { role: 'text', typeScale: 'body', text: long }),
+      node('n02', { role: 'text', typeScale: 'body', text: long, component: 'Truncate' }),
+    ];
+    const line = 20;
+    const minimum = solve(nodes);
+    expect(minimum.n01?.height).toBe(line);
+    expect(minimum.n02?.height).toBe(line);
+    const picture = solve(nodes, { text: 'picture' });
+    expect(picture.n01?.height).toBeGreaterThanOrEqual(2 * line);
+    expect(picture.n01?.height).toBeLessThanOrEqual(4 * line);
+    expect(solve(nodes, { text: 'picture' }).n01?.height).toBe(picture.n01?.height);
+    expect(picture.n02?.height).toBe(line);
+    expect(picture.n02?.heightFrom).toBe('one truncated line');
   });
 
   it('docks shell regions in order, each on the space the ones before it left', () => {

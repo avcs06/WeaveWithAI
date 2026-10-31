@@ -23,7 +23,7 @@ export const rule = defineRule<NodesInput>(
     return lost && !out
       ? [
           fail(
-            `${lost.id} shows notFound with no way out; add a navigation node shown then, going to the page the user came from.`,
+            `${lost.id} shows notFound, but no navigation node to another screen shows then. What shows notFound offers a way out: a navigation node, shown in notFound or always, that goes to another screen. Add a navigation node with notFound or default in its states, and navigatesTo set to the page the user came from.`,
             lost.id,
           ),
         ]

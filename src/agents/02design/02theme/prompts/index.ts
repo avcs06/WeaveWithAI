@@ -6,11 +6,12 @@ import type { ReviewGuides } from '../../../../runner/runSpecStage';
 import type { Scope } from '../../../01flows/01scope/schema';
 import type { Flows } from '../../../01flows/schema';
 import type { Brief } from '../../01brief/schema';
+import { rampsOf, rampTable } from '../ramps';
 import { entitySets, modesOf } from '../schema';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** The theme call's system prompt: the brief's modes and colored entities, and the design system as prose. */
+/** The theme call's system prompt: the brief's modes and colored entities, the ramps code built from its hues, and the design system as prose. */
 export function themeSystemPrompt(brief: Brief, inv: Inventory): string {
   const sets = entitySets(brief);
   return fillPrompt(load('./prompt.md'), {
@@ -21,6 +22,7 @@ export function themeSystemPrompt(brief: Brief, inv: Inventory): string {
     entitySets: sets.length
       ? sets.map(({ name, hue }) => `${name} (hue ${hue})`).join(', ')
       : 'none, so `entity` stays empty',
+    ramps: rampTable(rampsOf(brief)),
     dsProse: inventoryProse(inv),
   });
 }

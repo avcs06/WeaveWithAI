@@ -33,7 +33,12 @@ function tooltip(rect: Rect, node: DesignNode | undefined): string {
   return `<title>${escape(lines.filter(Boolean).join('\n'))}</title>`;
 }
 
-/** A label clipped to the characters that fit the width. */
+/**
+ * A label that fits the width: drawn smaller, down to three quarters of its
+ * size, before it is clipped. Labels are drawn larger than the text they
+ * stand for, so the picture is readable scaled down, and a button sized for
+ * its own words would otherwise lose its last letters.
+ */
 function label(
   text: string,
   x: number,
@@ -42,10 +47,12 @@ function label(
   size: number,
   cls: string,
 ): string {
-  const fits = Math.floor(width / (size * 0.56));
-  if (fits < 3 || !text) return '';
+  if (!text) return '';
+  const fitted = Math.max(size * 0.75, Math.min(size, width / (text.length * 0.56)));
+  const fits = Math.floor(width / (fitted * 0.56) + 1e-6);
+  if (fits < 3) return '';
   const shown = text.length > fits ? `${text.slice(0, fits - 1)}…` : text;
-  return `<text class="${cls}" x="${n(x)}" y="${n(y)}" font-size="${n(size)}">${escape(shown)}</text>`;
+  return `<text class="${cls}" x="${n(x)}" y="${n(y)}" font-size="${n(fitted)}">${escape(shown)}</text>`;
 }
 
 /** Text as one bar per estimated line; headings darker; the short last line centred in a centred block. */
