@@ -24,6 +24,7 @@ export const rule = defineRule<ThemeInput>(
         ['theme', colors.theme],
         ['page', page],
         ...Object.entries(colors.entity),
+        ...Object.entries(colors.status),
       ];
       for (const problem of readBackground(pageBackground).problems)
         issues.push(

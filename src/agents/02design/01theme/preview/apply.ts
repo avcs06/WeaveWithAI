@@ -3,14 +3,15 @@ import path from 'node:path';
 import ts from 'typescript';
 import { googleFont, TEXT_WEIGHTS } from '../fonts';
 import { objectKeys, propertyName } from '../../../../ds/ast';
+import { STATUSES } from '../brief';
 import { PAGE_ROLES, ROLES } from '../schema';
 import type { Theme } from '../build';
 
 // 02-design/01-theme.json written into an app's own files (S1): the brand, base, page
-// (divider, backdrop and skeleton included) and entity colors into colors.ts,
-// radius and focus ring into tokens.ts, the three families into fonts.ts and
-// Storybook's head, and the component defaults into each recipe's
-// defaultVariants. Only the status sets stay the template's (THEME-003).
+// (divider, backdrop and skeleton included), entity and status colors into
+// colors.ts, radius and focus ring into tokens.ts, the three families into
+// fonts.ts and Storybook's head, and the component defaults into each
+// recipe's defaultVariants.
 
 /** The braces of the object after `key: {`, searched within [from, to). */
 function block(text: string, key: string, from = 0, to = text.length): [number, number] {
@@ -38,7 +39,7 @@ function setStrings(text: string, [open, close]: [number, number], values: Recor
   return text.slice(0, open) + inner + text.slice(close);
 }
 
-/** colors.ts with the theme's brand and base sets, page colors and entity sets in each of its modes. */
+/** colors.ts with the theme's brand and base sets, page colors, entity sets and status sets in each of its modes. */
 export function applyColors(text: string, theme: Theme): string {
   let out = text;
   for (const mode of theme.modes) {
@@ -54,6 +55,10 @@ export function applyColors(text: string, theme: Theme): string {
       ...Object.fromEntries(PAGE_ROLES.map((role) => [role, colors.page[role]])),
       pageBackground: colors.page.pageBackground,
     });
+    for (const status of STATUSES) {
+      const [open, close] = within('status');
+      out = setStrings(out, block(out, status, open, close), Object.fromEntries(ROLES.map((role) => [role, colors.status[status][role]])));
+    }
     const [open, close] = within('entity');
     const sets = Object.entries(colors.entity).map(
       ([name, set]) =>

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type Inventory, spacingKeys } from '../../../ds/inventory';
-import { Brief } from './brief';
+import { Brief, type Status, STATUSES } from './brief';
 
 // The theme call (D3.3 F, user 2026-11-01) sets the direction and every final
 // value at once: the brief, the colors of each mode its color scheme names
@@ -87,6 +87,9 @@ export const ModeSteps = z.object({
   base: StepSet,
   page: PageSteps,
   logo: PageStep.describe("The wordmark's color: on the frame, and on the page under an overlay header"),
+  status: z
+    .object(Object.fromEntries(STATUSES.map((status) => [status, StepSet])) as Record<Status, typeof StepSet>)
+    .describe("A set for each status, from its own ramp: toasts, alerts, badges and field errors wear them"),
   entities: z
     .array(z.object({ noun: z.string(), steps: StepSet }))
     .describe("A set for each colored entity of the brief, by noun. [] when none is colored"),
@@ -108,6 +111,7 @@ export type ModeColors = {
   base: ColorSet;
   page: PageColors;
   entity: Record<string, ColorSet>;
+  status: Record<Status, ColorSet>;
 };
 
 /** The modes the brief's color scheme names. */

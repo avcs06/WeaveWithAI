@@ -112,4 +112,5 @@ export const briefMutations: Record<string, (brief: Brief) => Brief> = {
   'BRIEF-002': briefEdit((b) => (b.entities = b.entities.slice(0, 1))),
   'BRIEF-003': briefEdit((b) => (b.entities[1]!.hue = 210)),
   'BRIEF-005': briefEdit((b) => (b.fonts.ui = b.fonts.ui.slice(0, 1))),
+  'BRIEF-007': briefEdit((b) => (b.statusHues.error = 200)),
 };

@@ -7,6 +7,18 @@ const SURFACE_CHROMA = ['neutral', 'muted', 'balanced', 'vivid'] as const;
 /** How tinted the base set is; it carries most components, so never vivid. */
 const BASE_CHROMA = ['neutral', 'muted', 'balanced'] as const;
 
+/** The status colors, each a set of the theme's own (user, 2026-11-01). */
+export const STATUSES = ['success', 'warning', 'error', 'info'] as const;
+export type Status = (typeof STATUSES)[number];
+
+/** Each status's hue band, OKLCH degrees: inside it the color reads as its meaning. */
+export const STATUS_BANDS: Record<Status, [number, number]> = {
+  success: [135, 180],
+  warning: [65, 100],
+  error: [0, 45],
+  info: [220, 270],
+};
+
 /** A role's font candidates, best first; a model favors the top of a list, so it names three and says why (DS26). */
 const candidates = <T extends readonly [string, ...string[]]>(names: T) =>
   z
@@ -49,6 +61,11 @@ export const Brief = z.object({
     .enum(BASE_CHROMA)
     .describe(
       'neutral is grey with no tint, muted a faint tint, balanced a clear one',
+    ),
+  statusHues: z
+    .object(Object.fromEntries(STATUSES.map((status) => [status, z.number()])) as Record<Status, z.ZodNumber>)
+    .describe(
+      `OKLCH hues of the status colors, each inside its band: ${STATUSES.map((s) => `${s} ${STATUS_BANDS[s][0]} to ${STATUS_BANDS[s][1]}`).join(', ')}`,
     ),
   fonts: z.object({
     ui: candidates(UI_FONTS),

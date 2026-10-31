@@ -1,13 +1,10 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule, issue } from '../../../../../core/rules';
+import { STATUS_BANDS } from '../../brief';
 import type { BriefInput } from '../helpers';
 
-/** The fixed status colors' hue bands, OKLCH degrees, as the brief prompt names them. */
-const STATUS_BANDS: [string, number, number][] = [
-  ['error', 0, 45],
-  ['warning', 65, 100],
-  ['success', 135, 180],
-];
+/** The bands a brand or entity hue would read as a status in; info's blue is a common brand, so it stays out. */
+const BANDS = (['error', 'warning', 'success'] as const).map((s) => [s, ...STATUS_BANDS[s]] as const);
 const MIN_APART = 30;
 
 /** Degrees between two hues around the wheel. */
@@ -44,7 +41,7 @@ export const rule = defineRule<BriefInput>(
               one.at,
             ),
           );
-      const band = STATUS_BANDS.find(([, low, high]) => one.hue >= low && one.hue <= high);
+      const band = BANDS.find(([, low, high]) => one.hue >= low && one.hue <= high);
       if (band)
         issues.push(
           issue(

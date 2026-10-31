@@ -108,6 +108,7 @@ export const Brief = z.object({
   frameChroma: z.enum(['neutral', 'muted', 'balanced', 'vivid']),
   baseHue: z.number(),       // the base set most components use (secondary buttons, inputs, cards, tables, menus)
   baseChroma: z.enum(['neutral', 'muted', 'balanced']),
+  statusHues: { success, warning, error, info },  // each inside its band (BRIEF-007); the theme's own status colors
   fonts: z.object({  // three candidates per role, best first; the first is used (DS26)
     ui: z.array(z.object({ family: z.enum(UI_FONTS), reason: z.string() })),
     display: z.array(z.object({ family: z.enum(DISPLAY_FONTS), reason: z.string() })),
@@ -152,6 +153,7 @@ colors: [{ mode, background, theme, base, page, logo, entities }],  // each mode
   // theme: StepSet (the 12 roles, the brand's), base: StepSet (the set most components use)
   // page: { pageBg, pageFg, pageFgMuted, frameBg, divider, backdrop, skeleton }, each a ramp step
   // logo: the wordmark's color, a ramp step
+  // status: { success, warning, error, info }, a StepSet each, from a ramp at the brand's chroma, at least balanced
   // entities: [{ noun, steps: StepSet }], one per colored entity
 layouts: { app: PageLayout, marketing: PageLayout },
 defaults: { [Component]: { [variant]: value, look: value } },  // components whose recipe has defaults or looks
@@ -180,7 +182,7 @@ both come in one answer.
 
 The page also gets `divider`, `backdrop` and `skeleton`, which follow no hue
 of the brief; THEME-009 checks they show on the colors chosen (user,
-2026-10-30). Only the status sets stay the template's for every app.
+2026-10-30). The status sets are the theme's too (user, 2026-11-01).
 `themed(call)` in `build.ts` makes `02-design/01-theme.json`: the brief, and
 the theme, which is the call's values with hex in capitals, the brief's
 fonts, radius, focus ring and density, and a contrast table of every pair
@@ -543,9 +545,10 @@ widths the design system fixes (user, 2026-10-30).
 | BRIEF-002 | mandatory | `entities` are the scope vocabulary's nouns, each once, no other                                 |
 | BRIEF-003 | mandatory | Colored entities at least 30 degrees from each other and from `seedHue`; a brand or entity hue in a status band (0 to 45, 65 to 100, 135 to 180) is a warning |
 | BRIEF-005 | mandatory | Each font role lists three different families from its list (DS26)                               |
+| BRIEF-007 | mandatory | Each status hue sits in its band: success 135 to 180, warning 65 to 100, error 0 to 45, info 220 to 270 |
 | THEME-001 | mandatory | 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` for the theme, base and every entity set; `pageFg` and `pageFgMuted` on `pageBg` and `frameBg`; and the theme's and base's `fg` on `pageBg` and `frameBg`, where a link draws it; in every mode; and `pageFg` and `pageFgMuted` on every color of the page background (DS35) |
 | THEME-002 | warning   | 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`, a link's underline and focus ring |
-| THEME-003 | mandatory | When applied to an app: the status sets in `colors.ts` are unchanged; the brand, base, page (divider, backdrop and skeleton included) and entity colors are the theme's (user, 2026-10-30) |
+| THEME-003 | mandatory | When applied to an app: the brand, base, page (divider, backdrop and skeleton included), entity and status colors in `colors.ts` are the theme's (user, 2026-10-30; status, 2026-11-01) |
 | THEME-004 | mandatory | Fonts in the Google catalog with a latin subset; radius values on the DS radius scale; focus ring is halo, offset or glow |
 | THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `background` is colors and gradients only: every color parses, and it loads no image (DS35) |
 | THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits the smallest button and its padding |

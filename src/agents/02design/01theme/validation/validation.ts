@@ -9,6 +9,7 @@ import { rule as brief001 } from './rules/brief-001-ranges';
 import { rule as brief002 } from './rules/brief-002-entities';
 import { rule as brief003 } from './rules/brief-003-hues-apart';
 import { rule as brief005 } from './rules/brief-005-font-candidates';
+import { rule as brief007 } from './rules/brief-007-status-hues';
 import { rule as theme001 } from './rules/theme-001-text-contrast';
 import { rule as theme002 } from './rules/theme-002-edge-contrast';
 import { rule as theme004 } from './rules/theme-004-fonts-radius-ring';
@@ -27,6 +28,7 @@ export const briefRules: readonly Rule<BriefInput>[] = [
   brief002,
   brief003,
   brief005,
+  brief007,
 ];
 
 export const callRules: readonly Rule<CallInput>[] = [theme010];

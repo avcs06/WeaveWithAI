@@ -21,7 +21,7 @@ describe('applyColors', () => {
   const before = template('colors.ts');
   const after = applyColors(before, theme);
 
-  it('writes the brand and base sets and the page colors in each mode, and leaves status alone', () => {
+  it('writes the brand, base and status sets and the page colors in each mode', () => {
     const light = theme.colors.light!;
     expect(after).toContain(`accentBg: '${light.theme.accentBg}'`);
     expect(after).toContain(`pageBg: '${light.page.pageBg}'`);
@@ -30,7 +30,10 @@ describe('applyColors', () => {
     expect(base(after)).toContain(`border: '${light.base.border}'`);
     expect(base(after)).toContain(`fg: '${theme.colors.dark!.base.fg}'`);
     const status = (text: string) => text.slice(text.indexOf('status: {'), text.indexOf('entity: {'));
-    expect(status(after)).toBe(status(before));
+    expect(status(after)).not.toBe(status(before));
+    const error = (text: string) => status(text).slice(status(text).indexOf('error: {'), status(text).indexOf('info: {'));
+    expect(error(after)).toContain(`accentBg: '${light.status.error.accentBg}'`);
+    expect(status(after)).toContain(`fg: '${theme.colors.dark!.status.info.fg}'`);
     expect(after).toContain(`divider: '${light.page.divider}'`);
     // The page background is CSS, a gradient here, beside its solid pageBg.
     expect(after).toContain(`pageBackground: '${light.page.pageBackground}'`);

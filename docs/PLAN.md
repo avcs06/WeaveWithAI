@@ -1332,6 +1332,16 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     wireframes draw that node in the logo's style, loading nothing, and the
     design summary names it.
 
+- [x] **DS44** The theme picks the status colors (1 h) (done 2026-11-01). Depends: DS43
+  - Why: agreed on 2026-10-31 and paused; the user asked for it again
+    (2026-11-01), so the status colors fit each theme's mood instead of
+    staying the template's.
+  - The brief writes `statusHues`, each inside its band (BRIEF-007: success
+    135 to 180, warning 65 to 100, error 0 to 45, info 220 to 270). Code
+    builds a ramp per status at the brand's chroma, at least balanced; each
+    mode picks a `status` set per status. The THEME rules check them like
+    every set, and `weave app` writes them into `colors.ts`.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

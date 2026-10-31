@@ -1,9 +1,10 @@
 import { clampChroma, formatHex, wcagContrast } from 'culori';
+import { type Status, STATUSES } from './brief';
 import type { Brief } from './schema';
 import { entitySets, type Mode, modesOf } from './schema';
 
 // The theme call picks colors from ramps code computes from the brief's hues
-// (DS27, D3.3 E notes): a model cannot work out contrast, and writing hex it
+// (DS27, D3.3 F notes): a model cannot work out contrast, and writing hex it
 // falls back to palettes it knows.
 
 /** OKLCH lightness of each step: backgrounds first, then borders, solid fills, and text last. */
@@ -29,14 +30,18 @@ export function ramp(hue: number, chroma: ChromaLevel, mode: Mode): string[] {
   );
 }
 
-/** One mode's ramps: the brand's (`theme`), the base set's, the frame's and each colored entity's. The page's own background is the brief's CSS. */
+/** One mode's ramps: the brand's (`theme`), the base set's, the frame's, each colored entity's and each status's. The page's own background is CSS. */
 export type ModeRamps = {
   theme: string[];
   base: string[];
   frame: string[];
   entity: Record<string, string[]>;
+  status: Record<Status, string[]>;
 };
 export type Ramps = Partial<Record<Mode, ModeRamps>>;
+
+/** A status ramp's chroma: the brand's, at least balanced, so a quiet brand keeps statuses that read as their meaning (user, 2026-10-31). */
+const statusChroma = (brief: Brief): ChromaLevel => (brief.seedChroma === 'vivid' ? 'vivid' : 'balanced');
 
 /** The ramps of every hue and chroma the brief names, in each of its modes. Entities take the brand's chroma. */
 export function rampsOf(brief: Brief): Ramps {
@@ -53,6 +58,9 @@ export function rampsOf(brief: Brief): Ramps {
             ramp(hue, brief.seedChroma, mode),
           ]),
         ),
+        status: Object.fromEntries(
+          STATUSES.map((status) => [status, ramp(brief.statusHues[status], statusChroma(brief), mode)]),
+        ) as Record<Status, string[]>,
       },
     ]),
   );
@@ -104,7 +112,7 @@ export function stepGuide(): string {
     `- L in light mode: ${list(LIGHTNESS.light)}.`,
     `- L in dark mode: ${list(LIGHTNESS.dark)}.`,
     `- share: ${list(SHARE)}.`,
-    `- C by chroma: ${levels}. Entity ramps take the brand's chroma.`,
+    `- C by chroma: ${levels}. Entity ramps take the brand's chroma, status ramps the brand's but at least balanced.`,
     '',
     'Contrast follows lightness, so which steps read on which holds for every hue and chroma. In light mode:',
     table('light'),

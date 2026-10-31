@@ -20,6 +20,12 @@
     "frameChroma": "muted",
     "baseHue": 200,
     "baseChroma": "muted",
+    "statusHues": {
+      "success": 150,
+      "warning": 80,
+      "error": 25,
+      "info": 240
+    },
     "fonts": {
       "ui": [
         {
@@ -150,6 +156,64 @@
         "ramp": "theme",
         "step": 11
       },
+      "status": {
+        "success": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "warning": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "error": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "info": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        }
+      },
       "entities": [
         {
           "noun": "Shelf",
@@ -231,6 +295,64 @@
       "logo": {
         "ramp": "theme",
         "step": 11
+      },
+      "status": {
+        "success": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "warning": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "error": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "info": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 11,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        }
       },
       "entities": [
         {

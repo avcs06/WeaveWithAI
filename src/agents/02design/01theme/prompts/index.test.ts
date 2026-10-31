@@ -51,6 +51,7 @@ describe('theme prompt', () => {
       'seedChroma',
       'baseHue',
       'baseChroma',
+      'statusHues',
       'fonts',
       'radius',
       'focusRing',
@@ -84,6 +85,8 @@ describe('theme prompt', () => {
     for (const part of [
       'mode',
       'background',
+      'logo',
+      'status',
       'base',
       'entities',
       'docksFirst',

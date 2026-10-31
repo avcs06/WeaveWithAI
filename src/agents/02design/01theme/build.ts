@@ -1,5 +1,6 @@
 import { wcagContrast } from 'culori';
 import { z } from 'zod';
+import { type Status, STATUSES } from './brief';
 import { rampsOf } from './ramps';
 import {
   type Brief,
@@ -30,6 +31,7 @@ const ModeColors = z.object({
   base: ColorSet,
   page: PageColors,
   entity: z.record(z.string(), ColorSet),
+  status: z.object(Object.fromEntries(STATUSES.map((status) => [status, ColorSet])) as Record<Status, typeof ColorSet>),
 });
 
 export const Theme = z.object({
@@ -125,6 +127,7 @@ export function colorSets(
         mode,
         colors: set,
       })),
+      ...STATUSES.map((name) => ({ name, mode, colors: colors.status[name] })),
     ];
   });
 }
@@ -222,6 +225,9 @@ export function buildTheme(call: ThemeCall): Theme {
                 set(ramp.entity[setName(noun)] ?? [], steps),
               ]),
             ),
+            status: Object.fromEntries(
+              STATUSES.map((status) => [status, set(ramp.status[status], values.status[status])]),
+            ) as Record<Status, ColorSet>,
           },
         ],
       ];

@@ -533,8 +533,10 @@ the base set most components use (from the brief's `baseHue` and
 `pageFgMuted`, `frameBg`) in each mode, a palette per
 colored entity, an app layout and a marketing layout, and the defaults.
 `divider`, `backdrop` and `skeleton` come from the theme call too, made to
-show on the colors it chose (user, 2026-10-30); only the status sets stay
-the template's.
+show on the colors it chose (user, 2026-10-30). Since 2026-11-01 (user)
+the status sets are the theme's too: the brief picks a hue per status inside
+its band, code builds each ramp at the brand's chroma, at least balanced,
+and the call picks the steps.
 Colors from ramps (user, 2026-10-31, DS27): code builds a 12-step OKLCH
 ramp for each hue and chroma the brief names, the theme call assigns each
 color role to a step, and code turns the steps into hex.
