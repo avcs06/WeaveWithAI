@@ -29,3 +29,6 @@ export function fillPrompt(
     (_, name: string) => values[name] as string,
   );
 }
+
+export const json = (value: unknown) =>
+  `\`\`\`json\n${JSON.stringify(value, null, 2)}\n\`\`\``;

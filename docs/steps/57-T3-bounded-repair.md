@@ -25,7 +25,7 @@ you can see what each fix cost.
 
 ## Implementation details
 
-### `src/stages/tests/repair.ts`
+### `src/agents/tests/repair.ts`
 
 ```ts
 export async function runRepairs(ctx: StageContext, requests: RepairRequest[]): Promise<{ fixed: string[]; open: RepairRequest[] }>;

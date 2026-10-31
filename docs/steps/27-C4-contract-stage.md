@@ -1,7 +1,7 @@
 # 27 · C4 Contract prompt and stage
 
 Phase 4 · 40 min · Depends: C3, DS7 · Decisions: D4.1 D · Spec:
-specs/contracts.md "What this stage decides"; draft `src/stages/contracts/prompt.md`
+specs/contracts.md "What this stage decides"; draft `src/agents/03contract/prompts/prompt.md`
 
 ## Goal
 
@@ -22,7 +22,7 @@ After this step a run produces the design and the contract in parallel.
 
 ## Implementation details
 
-### 1. `src/stages/contracts/prompt.ts`
+### 1. `src/agents/03contract/prompt.ts`
 
 ```ts
 export function contractSystemPrompt(): string;                  // fills conventions, fieldKindTable
@@ -34,7 +34,7 @@ the form), that `auth.userFields` is the only way to extend `User`, and
 that `flowSteps` must list alternative ids too when an alternative has
 effects.
 
-### 2. `src/stages/contracts/stage.ts`
+### 2. `src/agents/03contract/stage.ts`
 
 `contractStage = { name: 'contract', produces: ['contract'], run }`:
 scope and flows in, `runSpecStage` with `Contract` and

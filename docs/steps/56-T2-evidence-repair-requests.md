@@ -22,7 +22,7 @@ After this step a failing test becomes a precise, bounded work order.
 
 ## Implementation details
 
-### `src/stages/tests/run.ts`
+### `src/agents/tests/run.ts`
 
 ```ts
 export type E2eResult = { flow: string; step: string; title: string; status: 'passed' | 'failed' | 'skipped'; error?: string; screenshot?: string; trace?: string; durationMs: number };

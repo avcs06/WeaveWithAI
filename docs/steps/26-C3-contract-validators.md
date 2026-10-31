@@ -27,7 +27,7 @@ API without surprises.
 
 ## Implementation details
 
-### 1. `src/stages/contracts/validate.ts`
+### 1. `src/agents/03contract/validate.ts`
 
 ```ts
 export type ContractContext = { scope: Scope; flows: Flows };
@@ -85,5 +85,5 @@ the body) yields exactly `{CONTRACT-009, CONTRACT-008, CONTRACT-012}`.
 ## Done when
 
 ```sh
-pnpm test -- src/stages/contracts
+pnpm test -- src/agents/contracts
 ```

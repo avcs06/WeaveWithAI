@@ -26,7 +26,7 @@ reading.
 
 ## Implementation details
 
-### `src/stages/reconcile/matrix.ts`
+### `src/agents/04reconcile/matrix.ts`
 
 ```ts
 export type MatrixRow = {...};   // the spec's type
@@ -63,5 +63,5 @@ resolves to `dueDate`.
 ## Done when
 
 ```sh
-pnpm test -- src/stages/reconcile/matrix.test.ts
+pnpm test -- src/agents/04reconcile/matrix.test.ts
 ```

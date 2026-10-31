@@ -25,7 +25,7 @@ After this step fixes can't drift unrelated parts of a spec.
 
 ## Implementation details
 
-### `src/stages/reconcile/patch.ts`
+### `src/agents/04reconcile/patch.ts`
 
 The spec's `FlowsPatch`, `DesignPatch` (built from the run-time screens
 schemas: `makeDesignPatch(schemas)`), `ContractPatch`; and:
@@ -55,5 +55,5 @@ refused removal (contract), and "unrelated items unchanged" by comparing
 ## Done when
 
 ```sh
-pnpm test -- src/stages/reconcile/patch.test.ts
+pnpm test -- src/agents/04reconcile/patch.test.ts
 ```

@@ -1,7 +1,7 @@
 # 11 · FL3 Flow prompts
 
 Phase 2 · 30 min · Depends: FL1 · Decisions: D2.1 B, D2.5 A · Spec:
-specs/flows.md "Shape"; drafts in `src/stages/flows/prompt-scope.md`,
+specs/flows.md "Shape"; drafts in `src/agents/01flows/01scope/prompts/prompt.md`,
 `prompt-flows.md`
 
 ## Goal
@@ -25,7 +25,7 @@ After this step the flows stage has its words; step 13 only wires them.
 
 ## Implementation details
 
-### 1. `src/stages/flows/prompt.ts`
+### 1. `src/agents/01flows/prompts/index.ts`
 
 ```ts
 export type Answers = Record<string, string>;          // question id → answer
@@ -33,7 +33,7 @@ export function answersBlock(answers: Answers): string; // "None yet." or "- Q01
 export function scopeSystemPrompt(answers: Answers): string;   // fills capabilitiesSupported, capabilitiesUnsupported, answers
 export function flowsSystemPrompt(answers: Answers): string;   // fills capabilitiesSupported, answers, exampleFlow
 export function scopeUserMessage(idea: string): string;        // "# Idea\n\n<idea text>"
-export function flowsUserMessage(idea: string, scope: Scope): string; // "# Idea" block, then "# Scope (01-scope.json)" with a ```json block
+export function flowsUserMessage(idea: string, scope: Scope): string; // "# Idea" block, then "# Scope (01-flows/01-scope.json)" with a ```json block
 ```
 
 `exampleFlow` is the "add a book" flow from the reading-list fixture,
@@ -51,7 +51,7 @@ exactly; nothing in a prompt contradicts a validator rule (a prompt that
 allows what a rule forbids wastes rounds). Keep the prompts in `.md`; code
 only fills placeholders (AGENTS.md).
 
-### 3. `src/stages/flows/prompt.test.ts`
+### 3. `src/agents/01flows/prompts/index.test.ts`
 
 - `scopeSystemPrompt({})` and `flowsSystemPrompt({ Q01: 'yes' })` contain no
   `{{` and contain "accounts (" and "- Q01: yes" respectively.
@@ -61,7 +61,7 @@ only fills placeholders (AGENTS.md).
 ## Done when
 
 ```sh
-pnpm test -- src/stages/flows/prompt.test.ts
+pnpm test -- src/agents/01flows/prompts/index.test.ts
 ```
 
 ## Watch out

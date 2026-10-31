@@ -377,7 +377,7 @@ Notes:
       out-of-scope with a placeholder behavior.
 - [ ] **B. No boundary.** The flows describe whatever the idea implies.
 - [x] **C. Three modes, no whitelist (user, 2026-10-29).** The app builds
-      whatever the idea needs. The list in `src/config/capabilities.ts` only
+      whatever the idea needs. The list in `src/agents/01flows/config/capabilities.ts` only
       names the exceptions: simulated capabilities get their full UI with a
       placeholder effect written in the list itself (payments: the checkout
       validates and shows success, nothing is charged; fileUploads: the file
@@ -416,7 +416,7 @@ Notes:
 - [ ] **A. The model writes every subflow.** Each catalog invents its own
       confirmation; the first drafts kept getting it wrong (FL6).
 - [x] **B. A registry of standard subflows every app has (user, 2026-10-29).**
-      `src/config/subflows.ts` holds subflows written once and injected into
+      `src/agents/01flows/config/subflows.ts` holds subflows written once and injected into
       every catalog before validation, so the model refers to them by id and
       never rewrites them. They keep their own ids, STD01, STD02, ..., so
       the model's SF01, SF02, ... never collide with them (user,

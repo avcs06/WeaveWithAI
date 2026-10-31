@@ -27,7 +27,7 @@ After this step the generated app works end to end on the mock API.
 
 ## Implementation details
 
-### `src/stages/frontend/pages.ts`
+### `src/agents/frontend/pages.ts`
 
 ```ts
 export async function buildPages(ctx: StageContext, inv: Inventory, screens: Screens, flows: Flows, contract: Contract): Promise<SessionResult[]>;

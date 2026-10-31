@@ -35,7 +35,7 @@ run's events so the README table can be filled.
 ### 2. Tuning loop (freelancer workspace, dashboard editor)
 
 For each idea: `pnpm weave run fixtures/ideas/<idea>.md --to flows`. Read
-`01-flows.md` fully. Fix the prompt for anything you would reject in a spec
+`01-flows/04-reconcile.md` fully. Fix the prompt for anything you would reject in a spec
 review: missing alternatives, vague website responses, fields without
 examples, flows that should exist (sign out, search where lists grow). Rerun
 with `--from scope` or `--from flows` as needed; the replay cache makes
@@ -58,7 +58,7 @@ Fill the README table: idea, stage, rounds, tokens in and out, cost.
 Gate **G1**: the freelancer workspace and the dashboard editor produce scope
 and flows with zero mandatory issues within 3 rounds; the ecommerce store ran
 once untuned and is recorded, then passes too;
-`fixtures/golden/<idea>/01-scope.json` and `01-flows.json` exist for every
+`fixtures/golden/<idea>/01-scope.json` and `01-flows/04-reconcile.json` exist for every
 idea.
 
 ## Watch out

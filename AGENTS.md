@@ -6,12 +6,46 @@ Hackathon (submissions close 2026-11-05 07:30 IST).
 
 | Path        | What it is                                                                                     | Who changes it                                       |
 | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `src/`      | The generator: CLI, stage runner, stages, validators, renderers                                | You, through tasks in `docs/PLAN.md`                 |
+| `src/`      | The generator: CLI, runner, agents (one folder per stage), core. See "Where the code lives"   | You, through tasks in `docs/PLAN.md`                 |
 | `template/` | The design-system workspace (packages, web, server, tools). Copied into every generated app    | Only tasks that name `template/`                     |
 | `mcps/`     | MCP servers, one folder each; `design-system` does design-system lookup and code validation    | Only tasks that name `mcps/`                         |
 | `docs/`     | Plan, options, architecture, stage specs, one step file per task in `docs/steps/`              | Tick tasks in `PLAN.md`; never change decisions      |
 | `fixtures/` | Reference idea briefs and golden artifacts used by tests and runs                              | Add files; don't rewrite existing ones               |
 | `runs/`     | Output of generator runs (gitignored)                                                          | Written by the generator only                        |
+
+## Where the code lives
+
+```text
+src/
+  cli.ts                 the weave command
+  core/                  model client, artifacts, runs, issues, rule helpers, prompt loader
+  runner/                running one stage: the rounds, reviewers and fixes (runSpecStage)
+  ds/                    the design-system inventory the agents read
+  agents/
+    stages.ts            the pipeline order
+    01flows/             scope, catalog, expand, reconcile; the flow shapes and rules they share
+    02design/            brief, theme, architect, invent, draw, frame, assemble; the shapes,
+                         config and DESIGN rules they share
+    03contract/ 04reconcile/   prompts of later stages, not built yet
+```
+
+Each stage is a folder `<NN><name>` in its group, and a full pipeline stage
+named `<group>-<name>` (`01flows/01scope` is `flows-scope`). It writes its
+artifact to `<NN>-<group>/<NN>-<name>.json` in the run, with its markdown beside
+it (`01-flows/01-scope.json`). Inside a stage folder:
+
+```text
+stage.ts       runs the stage and writes its artifact
+schema.ts      the shape its call answers
+render.ts      its markdown, when it writes one
+prompts/       prompt.md, input.md, review-peer.md, review-output.md, index.ts (fills them)
+validation/    validation.ts (the rule list), helpers.ts, rules/ (one file per rule)
+```
+
+Tests sit beside what they test. Code that several stages of a group share
+sits in the group folder, never in a stage of its own: `02design/schema.ts`,
+`02design/config.ts`, `02design/rules/`. Assembly code lives only in
+`02design/09assemble`; other stages import what they need from it.
 
 ## How to work
 
@@ -64,10 +98,10 @@ restructure) stay as they are.
   `warning`), and a unit test with one passing and one failing fixture.
 - Never weaken a rule, threshold, fixture or test to make a run pass. If a rule
   is wrong, add a task saying why and stop for the user.
-- Prompts live in `.md` files beside their stage. Code only fills
-  `{{placeholders}}`; no prompt prose inside TypeScript.
-- One stage per folder: `schema.ts`, `prompt*.md`, `validate.ts`,
-  `validate.test.ts`, `render.ts`, `stage.ts`. Keep files under about 300 lines.
+- Prompts live in `.md` files in their stage's `prompts/` folder. Code only
+  fills `{{placeholders}}`; no prompt prose inside TypeScript.
+- One stage per folder, laid out as in "Where the code lives". Keep files under
+  about 300 lines.
 - `template/` and each MCP in `mcps/` keep their own tooling (pnpm and Nx in
   `template/`, npm in the MCPs). Never add them to a root workspace. Run their commands with
   `pnpm --dir template <script>`.

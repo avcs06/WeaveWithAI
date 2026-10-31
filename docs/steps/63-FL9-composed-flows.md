@@ -22,7 +22,7 @@ reconciliation that validates and reviews the whole document and patches it.
    delete or signing in when needed); assumptions and questions. Its own
    validators (catalog rules), its own reviewer guide (coverage, reach,
    first success, reuse found), the D1.12 schedule, and the artifact
-   `01-flows-catalog.json`.
+   `01-flows/02-catalog.json`.
 2. **Stage `flows-expand`, in batches that are stages.** The catalog's flows
    are split into batches of `n` ids (start at 8; lower it when a batch is
    cut); each batch runs through the runner as its own stage,
@@ -30,7 +30,7 @@ reconciliation that validates and reviews the whole document and patches it.
    into full flows, reusing fields, forms and subflows by name, and may add
    a reusable part when none fits. Each batch is validated (flow rules that
    hold within a flow) and reviewed on its own, with its own rounds, report
-   and state entry. The batches are assembled into `01-flows-draft.json`.
+   and state entry. The batches are assembled into `01-flows/03-expand.json`.
 3. **Stage `flows`, reconciliation.** Starts from the draft without a first
    generation: round 1 validates the whole document with every flow rule,
    including the cross-flow ones (created nouns read and managed, auth
@@ -40,7 +40,7 @@ reconciliation that validates and reviews the whole document and patches it.
    in code. No reviewers here: the batches were reviewed, and this stage
    only makes the document consistent, so it runs validation rounds alone
    and ends as soon as the validators are clean. The result is
-   `01-flows.json`, the artifact every later stage reads, with subflows
+   `01-flows/04-reconcile.json`, the artifact every later stage reads, with subflows
    still referenced by name and a helper that inlines them for consumers.
 4. **Two runner additions**, nothing else in the loop changes: `start`, a
    document to validate in round 1 instead of generating one, and `compose`,
@@ -65,7 +65,7 @@ anything bigger, with the work split into calls that each fit their budget.
 
 ## Implementation details
 
-### 1. `src/stages/flows/schema.ts`
+### 1. `src/agents/01flows/schema.ts`
 
 ```ts
 export const Field = z.object({
@@ -93,10 +93,10 @@ export const FlowsPatch = z.object({ upsertFlows, upsertFields, upsertForms, ups
 export function inlineSubflows(flows: Flows): Flows;   // for consumers that want plain steps (renderer, design)
 ```
 
-Artifacts: `flows-catalog` → `01-flows-catalog.json`, `flows-draft` →
-`01-flows-draft.json`, `flows` → `01-flows.json` (the existing name).
+Artifacts: `flows-catalog` → `01-flows/02-catalog.json`, `flows-draft` →
+`01-flows/03-expand.json`, `flows` → `01-flows/04-reconcile.json` (the existing name).
 
-### 2. Prompts (`src/stages/flows/`)
+### 2. Prompts (`src/agents/01flows/`)
 
 User-message templates beside `prompt-flows.md`:
 
@@ -114,7 +114,7 @@ User-message templates beside `prompt-flows.md`:
   within the batch). Reconciliation passes no guide, so no reviewer runs;
   the current `review-flows.md` is split into those two.
 
-### 3. `src/core/runSpecStage.ts`
+### 3. `src/runner/runSpecStage.ts`
 
 ```ts
 export type Draft<T> = { data: T; raw: string; model: string; calls: GenerateResult<unknown>[] };
@@ -131,22 +131,22 @@ Every call in `draft.calls` is logged as an `llm:call`; `raw` is what the
 reviewers read. The schedule, reviewers, questions and known issues are
 untouched. With `start`, round 1 has `generated: false`.
 
-### 4. Stages (`src/stages/flows/`)
+### 4. Stages (`src/agents/01flows/`)
 
 - `catalog.ts`: `runCatalog` (default compose; `validateCatalog`; the
-  catalog guide), writes `01-flows-catalog.json` and `01-flows-catalog.md`.
+  catalog guide), writes `01-flows/02-catalog.json` and `01-flows/02-catalog.md`.
 - `expand.ts`: `runExpand` splits the catalog into batches of
   `EXPAND_BATCH_SIZE` (8), runs `runSpecStage` per batch in parallel with
   stage name `flows-expand-<n>`, compose = one expand call that returns a
   `FlowBatch` (its fix = the same call with the issues appended), validator
   = `validateBatch(batch, catalog)` (within-flow rules), the expand guide;
-  then `assemble` → `01-flows-draft.json`. The parent stage's state entry
+  then `assemble` → `01-flows/03-expand.json`. The parent stage's state entry
   records the batch count and the sum of rounds and known issues.
 - `reconcile.ts`: `runReconcile` with `start` = the draft, validator =
   `validateFlows` (all rules), compose = `{ draft: never called, fix: patch
-  call + applyPatch }`, no review guide; writes `01-flows.json` and
-  `01-flows.md`.
-- `stage.ts` registers the three `StageDef`s; `src/stages/index.ts` and
+  call + applyPatch }`, no review guide; writes `01-flows/04-reconcile.json` and
+  `01-flows/04-reconcile.md`.
+- `stage.ts` registers the three `StageDef`s; `src/agents/stages.ts` and
   `PIPELINE` list `flows-catalog`, `flows-expand`, `flows`.
 
 ### 5. Validators (`rules/`)
@@ -186,7 +186,7 @@ patch), `stage.test.ts` (the three stages end to end on fixtures).
 ```sh
 pnpm test
 pnpm typecheck
-pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows   # three stages complete; 01-flows.md readable
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows-reconcile   # three stages complete; 01-flows/04-reconcile.md readable
 pnpm weave show <runId>                                            # catalog, the batches, reconciliation with rounds and cost
 ```
 

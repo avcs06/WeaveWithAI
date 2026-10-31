@@ -22,7 +22,7 @@ guaranteed by construction, plus fonts, radius and focus ring.
    show the ratios.
 4. **Validators** check contrast, fonts and radius values; **a property test**
    runs 36 palettes through them.
-5. **The design stage** writes `02-theme.json` right after the brief, with
+5. **The design stage** writes `02-design/02-theme.json` right after the brief, with
    no model call.
 
 After this step every generated app gets an accessible palette without a
@@ -35,7 +35,7 @@ model ever writing a color.
 `pnpm add culori@^4.0.2`; add `@types/culori` if `tsc` can't find types.
 Used: `oklch`, `formatHex`, `clampChroma`, `wcagContrast`, `parse`.
 
-### 2. `src/stages/design/theme.ts`
+### 2. `src/agents/02design/02theme/build.ts`
 
 ```ts
 export const Theme = z.object({...});   // the spec's Theme schema (ColorSet, entity, fonts, radius, focusRing, density, contrast)
@@ -95,8 +95,8 @@ artifact `theme` with `model: null`, `inputs: ['brief']`.
 ## Done when
 
 ```sh
-pnpm test -- src/stages/design/theme.test.ts   # 36 palettes pass
-pnpm weave run … --to design                   # 02-theme.json beside 02-brief.json
+pnpm test -- src/agents/02design/02theme/build.test.ts   # 36 palettes pass
+pnpm weave run … --to design                   # 02-design/02-theme.json beside 02-design/01-brief.json
 ```
 
 ## Watch out

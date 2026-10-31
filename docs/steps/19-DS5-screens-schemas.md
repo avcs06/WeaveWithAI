@@ -25,17 +25,17 @@ separately, each in a shape the validators understand.
 
 ## Implementation details
 
-### 1. `src/stages/design/schema.ts` (second part)
+### 1. `src/agents/02design/schema.ts` (second part)
 
 Copy the spec's `makeScreensSchema(dsNames, spacingKeys)` and the constants
-(import the constants from `src/config/design.ts` instead of redefining
+(import the constants from `src/agents/02design/config.ts` instead of redefining
 them; `Question` from the flows schema). Export:
 
 ```ts
 export type ScreensSchemas = ReturnType<typeof makeScreensSchema>;
 export type Ia = z.infer<ScreensSchemas['Ia']>;
 export type Node = z.infer<ScreensSchemas['Node']>;
-export type Screens = Ia & { nodes: Node[] };          // 02-screens.json
+export type Screens = Ia & { nodes: Node[] };          // 02-design/09-assemble.json
 export function schemasFor(inv: Inventory): ScreensSchemas; // makeScreensSchema(dsNames(inv), spacingKeys(inv))
 ```
 
@@ -43,7 +43,7 @@ export function schemasFor(inv: Inventory): ScreensSchemas; // makeScreensSchema
 constrained decoding handles it and the validator checks values against
 the inventory.
 
-### 2. `src/stages/design/schema.test.ts`
+### 2. `src/agents/02design/schema.test.ts`
 
 From `src/ds/__fixtures__/inventory.json`:
 
@@ -55,7 +55,7 @@ From `src/ds/__fixtures__/inventory.json`:
 ## Done when
 
 ```sh
-pnpm test -- src/stages/design/schema.test.ts
+pnpm test -- src/agents/02design/schema.test.ts
 pnpm typecheck
 ```
 

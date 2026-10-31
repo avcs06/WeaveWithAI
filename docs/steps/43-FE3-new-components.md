@@ -27,7 +27,7 @@ any page is written.
 
 ## Implementation details
 
-### `src/stages/frontend/components.ts`
+### `src/agents/frontend/components.ts`
 
 ```ts
 export async function buildNewComponents(ctx: StageContext, inv: Inventory, screens: Screens): Promise<SessionResult[]>;
@@ -52,7 +52,7 @@ For each `screens.newComponents` entry, one session:
 - `checksAtEnd`: `validate` (the folder), `typecheck`, `lint` (the
   folder), `test` with pattern `components/<Name>`.
 
-Register the `frontend` stage now (`src/stages/frontend/stage.ts`): it
+Register the `frontend` stage now (`src/agents/frontend/stage.ts`): it
 runs `generatePages` (step 42), then `buildNewComponents`, then step 44's
 pages, then step 45's checks; later steps extend `run`.
 

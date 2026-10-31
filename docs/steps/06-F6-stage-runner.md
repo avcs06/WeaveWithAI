@@ -41,7 +41,7 @@ values for: a, b')` for leftovers and `Error('Prompt has no placeholder for:
 x')` for unused keys, so a renamed placeholder can't go unnoticed. Comment
 stripping uses `/<!--[\s\S]*?-->/g`. Idea files are loaded the same way.
 
-### 2. `src/core/runSpecStage.ts`
+### 2. `src/runner/runSpecStage.ts`
 
 ```ts
 export class StageFailed extends Error {

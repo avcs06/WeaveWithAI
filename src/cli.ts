@@ -8,13 +8,13 @@ import {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { applyTheme } from './app/theme';
+import { applyTheme } from './agents/02design/02theme/preview/apply';
 import {
   scaffolded,
   scaffoldApp,
   screenshotComponents,
   writeAllComponentsStory,
-} from './app/preview';
+} from './agents/02design/02theme/preview/storybook';
 import {
   type ArtifactName,
   FILE_OF,
@@ -38,12 +38,12 @@ import {
   runPath,
   totals,
 } from './core/run';
-import { PIPELINE, type StageContext, stages } from './stages/index';
-import { skeleton } from './stages/design/layout';
-import { makeScreensSchema } from './stages/design/schema';
-import type { Theme } from './stages/design/theme';
-import { renderWireframes } from './stages/design/wireframes';
-import type { Scope } from './stages/flows/schema';
+import { PIPELINE, type StageContext, stages } from './agents/stages';
+import { skeleton } from './agents/02design/09assemble/skeleton/skeleton';
+import { makeScreensSchema } from './agents/02design/schema';
+import type { Theme } from './agents/02design/02theme/build';
+import { renderWireframes } from './agents/02design/09assemble/wireframes';
+import type { Scope } from './agents/01flows/01scope/schema';
 import { writeJsonAtomic } from './core/utils';
 
 export class UsageError extends Error {}
@@ -195,13 +195,11 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
       ],
     ];
   };
-  // A stage that ran its work as child stages (flows-expand-1, design-ia, design-widgets-W01-W02-fix; design-nodes-S03 in runs before DS23) lists them indented under it.
+  // A stage that ran its work as child stages (flows-expand-1, design-draw-W01-W02-fix) lists them indented under it.
   const rows = PIPELINE.flatMap((name) => [
     ...row(name, name),
     ...Object.keys(state.stages)
-      .filter((child) =>
-        new RegExp(`^${name}-(\\d+|ia|(component|widgets|frame|nodes)-[\\w-]+)$`).test(child),
-      )
+      .filter((child) => child.startsWith(`${name}-`) && !PIPELINE.includes(child))
       .sort()
       .flatMap((child) => row(child, `  ${child}`)),
   ]);
@@ -236,7 +234,7 @@ export function goldenCommand(
 ): string[] {
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
-  const names = (stageList ?? 'scope,flows-catalog,flows')
+  const names = (stageList ?? 'flows-scope,flows-catalog,flows-reconcile')
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);
@@ -259,6 +257,7 @@ export function goldenCommand(
     const markdown = json.replace(/\.json$/, '.md');
     for (const file of [json, markdown]) {
       if (!existsSync(runPath(run, file))) continue;
+      mkdirSync(path.dirname(path.join(dest, file)), { recursive: true });
       copyFileSync(runPath(run, file), path.join(dest, file));
       copied.push(file);
     }
@@ -345,8 +344,8 @@ export async function appCommand(
 ): Promise<string[]> {
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
-  const { app } = readArtifact<Scope>(run, 'scope').data;
-  const theme = readArtifact<Theme>(run, 'theme').data;
+  const { app } = readArtifact<Scope>(run, 'flows-scope').data;
+  const theme = readArtifact<Theme>(run, 'design-theme').data;
   const slug = app.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const appDir = path.join(DEFAULT_APPS_DIR, slug);
   if (!scaffolded(appDir)) await scaffoldApp(appDir);
@@ -356,7 +355,7 @@ export async function appCommand(
   const shots = await screenshotComponents(
     appDir,
     Object.fromEntries(
-      theme.modes.map((mode) => [mode, runPath(run, `02-theme-${mode}.png`)]),
+      theme.modes.map((mode) => [mode, runPath(run, `02-design/02-theme-${mode}.png`)]),
     ),
   );
   const lines = [

@@ -28,7 +28,7 @@ because the rules are code with tests.
 
 ## Implementation details
 
-### 1. `src/stages/flows/validate.ts`
+### 1. `src/agents/01flows/04reconcile/validation/validation.ts`
 
 ```ts
 export function validateScope(scope: Scope): Issue[];
@@ -69,7 +69,7 @@ Notes per rule, where the table leaves room:
 Every message says what is wrong and what would fix it, naming the id:
 `"F03.S02 saves fields but has no 'invalid' alternative; add F03.A0n with kind invalid from F03.S02"`.
 
-### 2. Fixtures: `src/stages/flows/__fixtures__/`
+### 2. Fixtures: `src/agents/01flows/__fixtures__/`
 
 - `reading-list.scope.json`: app "Shelf"; roles `reader` (signs in);
   vocabulary `Book`, `Shelf`; capabilities accounts, userOwnedData, crud,
@@ -86,7 +86,7 @@ Every message says what is wrong and what would fix it, naming the id:
   SCOPE-001; `endpoint` in a websiteResponse for FLOW-017; remove the
   invalid alternative for FLOW-011; ...). One entry per rule in the spec.
 
-### 3. `src/stages/flows/validate.test.ts`
+### 3. `src/agents/01flows/validation.test.ts`
 
 1. The valid fixtures produce zero mandatory issues (warnings allowed; print them).
 2. For every rule in `scopeMutations` and `flowMutations`: the mutated
@@ -98,7 +98,7 @@ Every message says what is wrong and what would fix it, naming the id:
 ## Done when
 
 ```sh
-pnpm test -- src/stages/flows   # every rule has a passing and a failing case
+pnpm test -- src/agents/flows   # every rule has a passing and a failing case
 ```
 
 ## Watch out

@@ -26,7 +26,7 @@ After this step the flows stage has its data shapes and its vocabulary.
 
 ## Implementation details
 
-### 1. `src/config/capabilities.ts`
+### 1. `src/agents/01flows/config/capabilities.ts`
 
 ```ts
 export type Capability = { id: string; supported: boolean; description: string };
@@ -62,14 +62,14 @@ export const unsupportedList = () => CAPABILITIES.filter((c) => !c.supported).ma
 `z.enum` needs a tuple type; the cast above gives it one without
 hand-copying the ids.
 
-### 2. `src/stages/flows/schema.ts`
+### 2. `src/agents/01flows/schema.ts`
 
 Copy the spec's schema block verbatim (constants, `Assumption`, `Question`,
 `Scope`, `Field`, `Effect`, `Step`, `Alternative`, `Flow`, `Flows`, types).
 Also export `type Step`, `type Flow`, `type Field`, `type Question`,
 `type Assumption` with `z.infer`; later stages import them.
 
-### 3. `src/stages/flows/schema.test.ts`
+### 3. `src/agents/01flows/schema.test.ts`
 
 - `toJsonSchema(Scope, 'Scope')` and `toJsonSchema(Flows, 'Flows')` succeed.
 - `stats.depth <= 8` for both; no `oneOf` anywhere; print `stats` once so the
@@ -79,7 +79,7 @@ Also export `type Step`, `type Flow`, `type Field`, `type Question`,
 ## Done when
 
 ```sh
-pnpm test -- src/stages/flows/schema.test.ts
+pnpm test -- src/agents/01flows/schema.test.ts
 pnpm typecheck
 ```
 

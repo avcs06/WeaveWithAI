@@ -21,7 +21,7 @@ proven on three ideas.
 
 ## Implementation details
 
-### 1. Seeded defect tests (`src/stages/reconcile/seeded.test.ts`)
+### 1. Seeded defect tests (`src/agents/04reconcile/seeded.test.ts`)
 
 Each test copies the golden freelancer-workspace artifacts, plants one defect,
 runs the procedure with a fake llm whose responses were recorded once from

@@ -122,7 +122,7 @@ Steps 01 to 08.
     increments, staleness after an input changes, and the mandatory/warning split.
 
 - [x] **F6** Stage runner and prompt loader (30 min) (done 2026-10-29). Depends: F3, F5
-  - `src/core/runSpecStage.ts` as in ARCHITECTURE "Stage runner" (D1.5 A, D1.6
+  - `src/runner/runSpecStage.ts` as in ARCHITECTURE "Stage runner" (D1.5 A, D1.6
     A, D1.8 B); `src/core/prompt.ts` loads a `.md` file and fills
     `{{placeholders}}`, throwing on any it can't fill. It strips HTML comments
     first (prompt files and idea files keep notes for us in them).
@@ -214,9 +214,9 @@ Steps 01 to 08.
     artifact is written, and the run continues. `weave show` prints the count.
   - Reviewers get the generator's full prompt, its JSON, the warnings as
     known, and the stage's guide, through one shared review schema
-    (`src/core/review.ts`) listing major blockers only; blockers are mandatory
+    (`src/runner/review.ts`) listing major blockers only; blockers are mandatory
     issues with rule `REVIEW` for the next fix.
-  - Prompts in `src/core/prompt-review.md` (reviewer rules, the ignore list)
+  - Prompts in `src/runner/prompt-review.md` (reviewer rules, the ignore list)
     and `prompt-review-input.md`; each stage adds a `review-<stage>.md` guide.
   - Done when: `runSpecStage.test.ts` covers the schedule (calls per round,
     skipped fixes, early end, known issues after round 4, no reviewers without
@@ -258,19 +258,19 @@ Steps 01 to 08.
 Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
 
 - [x] **FL1** Capabilities and schemas (40 min) (done 2026-10-29). Depends: F2
-  - `src/config/capabilities.ts` and `src/stages/flows/schema.ts`, as in the spec.
+  - `src/agents/01flows/config/capabilities.ts` and `src/agents/01flows/schema.ts`, as in the spec.
   - Done when: a test passes both schemas through `toJsonSchema`; `pnpm typecheck`.
 
 - [x] **FL2** Validators with tests (90 min) (done 2026-10-29). Depends: FL1
-  - Every SCOPE and FLOW rule in `src/stages/flows/validate.ts`.
-  - Fixtures in `src/stages/flows/__fixtures__/`: a small hand-written valid
+  - Every SCOPE and FLOW rule in `src/agents/01flows/04reconcile/validation/validation.ts`.
+  - Fixtures in `src/agents/01flows/__fixtures__/`: a small hand-written valid
     scope and flows for a reading-list app (5 flows; deliberately not one of the
     reference ideas, because its flow becomes the prompt's format example), and
     one mutation per rule.
   - Done when: each rule has a passing and a failing test; `pnpm test` is green.
 
 - [x] **FL3** Prompts (30 min) (done 2026-10-29). Depends: FL1
-  - Review and finish `src/stages/flows/prompt-scope.md` and `prompt-flows.md`
+  - Review and finish `src/agents/01flows/01scope/prompts/prompt.md` and `prompt-flows.md`
     (drafts provided). Placeholders: capabilities, scope, answers, example flow
     (from the valid fixture).
   - Done when: a test fills both prompts with no missing placeholders.
@@ -287,13 +287,13 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     `pnpm typecheck`.
 
 - [x] **FL4** Renderer (30 min) (done 2026-10-29). Depends: FL1
-  - `src/stages/flows/render.ts`: `01-scope.md` (short) and `01-flows.md` in the spec's format.
+  - `src/agents/01flows/render.ts`: `01-flows/01-scope.md` (short) and `01-flows/04-reconcile.md` in the spec's format.
   - Done when: a snapshot test renders the valid fixture.
 
 - [x] **FL8** Product-manager standard shared by the scope and flows prompts (60 min) (done 2026-10-29). Depends: FL7, F11
   - Added 2026-10-29 by the user: the two prompts and the two review guides
     carried four drifting copies of what a product manager checks.
-  - `src/stages/flows/product-manager.md`: the MVP decisions and the measures
+  - `src/agents/01flows/prompts/product-manager.md`: the MVP decisions and the measures
     a reviewer counts, filled into both prompts and both guides through
     `{{productManager}}`; keeping users, growth and operations stay out.
   - Prompts reordered (answers first, capabilities in their own section, flow
@@ -316,11 +316,11 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     fixes by patches, without reviewers. Runner gains `start` and `compose`.
   - Done when: `pnpm test`, `pnpm typecheck`, and `pnpm weave run
     fixtures/ideas/freelancer-workspace.md --to flows` completes with a
-    readable `01-flows.md`; `weave show` lists the batches.
+    readable `01-flows/04-reconcile.md`; `weave show` lists the batches.
 
 - [x] **FL5** Wire the stage (30 min) (done 2026-10-29). Depends: FL2, FL3, FL4, F7, F10
   - Its live check ran as FL9's: freelancer workspace to flows, three stages, zero known issues.
-  - `src/stages/flows/stage.ts`: scope, then flows. With `--interactive`
+  - `src/agents/01flows/stages.ts`: scope, then flows. With `--interactive`
     each stage passes `ask` to the runner (F11): the blocking, unanswered
     questions are asked on the terminal with their defaults after each new
     draft, and every answer is saved to `input/answers.json`. Register in
@@ -334,7 +334,7 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - Added 2026-10-29 by the user: the confirmation subflow does not change
     per website, so it is written once and always available; the registry
     takes design-system subflows later.
-  - `src/config/subflows.ts` (registry, `withStandardSubflows`, the prompt
+  - `src/agents/01flows/config/subflows.ts` (registry, `withStandardSubflows`, the prompt
     list and the first free id); the catalog stage injects them before
     validation and into the artifact; the catalog and expand messages and the
     catalog reviewer name them; the renderer marks them; fixtures use SF01.
@@ -393,12 +393,12 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     step alone: its own confirm or cancel path, or a subflow that has one.
   - Tune on the freelancer workspace and the dashboard editor: change
     prompts, never validators, until each passes within 3 rounds. Read every
-    `01-flows.md` and fix the prompt for anything you'd reject.
+    `01-flows/04-reconcile.md` and fix the prompt for anything you'd reject.
   - Then run the ecommerce store once, untuned: it's the unseen test. Record
     what happened, even if it fails. After that it joins tuning until it
     passes too; it is the second end-to-end idea (G8).
   - Save accepted artifacts to `fixtures/golden/<idea>/01-scope.json` and
-    `01-flows.json`; record rounds, tokens and cost per idea in
+    `01-flows/04-reconcile.json`; record rounds, tokens and cost per idea in
     `fixtures/golden/README.md`.
   - Done when: **G1**.
 
@@ -439,9 +439,9 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Done when: the fixture lists Card padding and Section gap; a test checks each.
 
 - [x] **DS2** Design config (20 min) (done 2026-10-30). Depends: F1
-  - `src/config/design.ts`: templates, section kinds, element tags, the
+  - `src/agents/02design/config.ts`: templates, section kinds, element tags, the
     superseded-tag fallback map, the new-component budget.
-    `src/config/fonts.ts`: font allowlists with weights.
+    `src/agents/02design/01brief/fonts.ts`: font allowlists with weights.
   - Done when: `pnpm typecheck`.
 
 - [x] **DS3** Brief (60 min) (done 2026-10-30). Depends: DS1, DS2, FL6
@@ -474,7 +474,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
 
 - [x] **DS4** Theme generator (90 min) (done 2026-10-30). Depends: DS3
   - `pnpm add culori` (add types if your editor wants them).
-  - `src/stages/design/theme.ts`: brief to Theme, OKLCH targets from the spec,
+  - `src/agents/02design/02theme/build.ts`: brief to Theme, OKLCH targets from the spec,
     lightness nudged until contrast passes; entity sets; contrast table.
     THEME-001, 002, 004 with tests (THEME-003 lands with the apply step in S1).
   - Done when: for 12 hues times 3 chroma levels every theme passes THEME-001
@@ -553,7 +553,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     (user, 2026-10-30).
   - `main.separation` takes the parts' four values; the prompt, the
     renderer, the reading-list theme and the spec follow.
-  - Done when: `pnpm typecheck` and `pnpm test` pass, and `02-design.md`
+  - Done when: `pnpm typecheck` and `pnpm test` pass, and `02-design/09-assemble.md`
     shows a main separation other than none.
 
 - [x] **DS5** Screens schemas (45 min) (done 2026-10-30). Depends: DS1, DS2
@@ -563,17 +563,17 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     `toJsonSchema` within Meta's limits (test).
 
 - [x] **DS6** Design validators (2.5 h) (done 2026-10-30). Depends: DS5
-  - DESIGN-001 to 022 in `src/stages/design/validate.ts`; a small hand-written
+  - DESIGN-001 to 022 in `src/agents/02design/rules/index.ts`; a small hand-written
     screens fixture for the reading-list app, one mutation per rule.
   - Done when: each rule has a passing and a failing test.
 
 - [x] **DS6b** Layout solver and skeleton (2.5 h) (done 2026-10-30). Depends: DS5, DS1c
   - Why: design is the product's main strength; a page must be checkable as
     composition before any code exists.
-  - `src/stages/design/layout.ts`: from the nodes' boxes, the inventory boxes
+  - `src/agents/02design/09assemble/skeleton/skeleton.ts`: from the nodes' boxes, the inventory boxes
     and the type scale, a deterministic row, column and grid solver computes a
-    rectangle per node at 1280 and 375; written as `02-skeleton.json`;
-    `02-wireframes.html` draws the rectangles as lines.
+    rectangle per node at 1280 and 375; written as `02-design/09-skeleton.json`;
+    `02-design/09-wireframes.html` draws the rectangles as lines.
   - Done when: the golden freelancer workspace renders every screen as lines
     with no overlap, and a hand-built fixture page solves to known rectangles.
 
@@ -598,9 +598,9 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     only splits inner pages from public ones, and its eight values push pages
     like pricing or checkout into the wrong one.
   - Screen `template` becomes `kind: 'app' | 'marketing'`; `SCREEN_TEMPLATES`
-    and `INNER_TEMPLATES` leave `src/config/design.ts`. DESIGN-006, LAYOUT-008
+    and `INNER_TEMPLATES` leave `src/agents/02design/config.ts`. DESIGN-006, LAYOUT-008
     and `prompt-ia.md` read `kind`; DESIGN-021 exempts every marketing page,
-    not only the landing page; `02-design.md` and the wireframes show the
+    not only the landing page; `02-design/09-assemble.md` and the wireframes show the
     kind. The spec, the reading-list fixture and the snapshots follow.
   - Done when: `pnpm typecheck` and the design tests pass, and no
     `SCREEN_TEMPLATES`, `INNER_TEMPLATES` or `screen.template` is left.
@@ -655,10 +655,10 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     the IA call, one nodes call per screen and per used shell with
     `p-limit(3)`, every call at temperature 0.2, the IA at high reasoning
     and the nodes calls at medium (D1.13 C); each call's nodes get `withDefaults` before
-    `validateScreenNodes`; `resolveScreens` assembles `02-screens.json`;
+    `validateScreenNodes`; `resolveScreens` assembles `02-design/09-assemble.json`;
     the whole-artifact and layout rules run, and their issues go back to the
-    call that owns the value (DS12); write `02-skeleton.json`,
-    `02-wireframes.html`, `02-design.md` and `02-ds-gaps.json`, and append to
+    call that owns the value (DS12); write `02-design/09-skeleton.json`,
+    `02-design/09-wireframes.html`, `02-design/09-assemble.md` and `02-design/09-ds-gaps.json`, and append to
     `.weave-cache/ds-gaps.jsonl`.
   - The step file says how: `docs/steps/21-DS7-ia-nodes-stage.md`.
   - Done when: golden freelancer workspace produces screens with zero mandatory issues.
@@ -710,9 +710,9 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     measured on DS23's first live run.
 
 - [x] **DS8** Renderers (45 min) (done 2026-10-30). Depends: DS7
-  - `02-design.md` as in the spec. Optional: `02-wireframes.html` (D3.6 D).
+  - `02-design/09-assemble.md` as in the spec. Optional: `02-design/09-wireframes.html` (D3.6 D).
   - Built 2026-10-30 on the reading-list fixtures ahead of DS7; the wireframes
-    are DS6b's. The stage writes `02-design.md` once DS7 exists.
+    are DS6b's. The stage writes `02-design/09-assemble.md` once DS7 exists.
   - Done when: you can review any screen from the markdown alone.
 
 - [ ] **DS9** Every golden idea (60 min). Depends: DS8
@@ -804,11 +804,11 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     designed (user, 2026-10-30).
   - `weave app <runId>`: the template copied to the untracked `apps/<app
     name>` by its own generator and installed (pnpm, once per app);
-    `src/app/theme.ts` writes the run's theme into it (S1's apply: brand,
+    `src/agents/02design/02theme/preview/apply.ts` writes the run's theme into it (S1's apply: brand,
     page and entity colors, radius, focus ring, fonts with Storybook's
     head, and each component's own recipe defaults); one story renders
     every recipe; Storybook on port 6116, so one on 6006 is left alone,
-    gives `02-theme-light.png` and `02-theme-dark.png` in the run.
+    gives `02-design/02-theme-light.png` and `02-design/02-theme-dark.png` in the run.
   - A default whose component has no recipe of its own is not applied and
     is listed, such as IconButton's ghost look, which lives in Button's.
 
@@ -942,7 +942,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - The brief picks `baseHue` and `baseChroma` (neutral, muted or balanced,
     never vivid); the theme call writes the base set's twelve roles in each
     mode; THEME-001 and 002 check it like the brand set, on the page and the
-    frame too; `src/app/theme.ts` writes it into `colors.base`; THEME-003
+    frame too; `src/agents/02design/02theme/preview/apply.ts` writes it into `colors.base`; THEME-003
     keeps only status, divider, backdrop and skeleton fixed.
   - The theme prompt says what base is for, and to make every value from
     the brief's hues, never a stock palette (DS9's `#6D28D9` finding); the
@@ -977,8 +977,23 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
 
 Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 24 to 29.
 
+
+- [x] **F15** Folder structure: agents by stage group (2 h) (done 2026-10-31). Depends: DS23 first version
+  - Why: the generator's file names had become hard to follow, with one
+    folder holding the brief, theme, IA, widgets, layout and assembly (user,
+    2026-10-31). The user gave the layout.
+  - `src/agents/<NN><group>/<NN><stage>/`: each stage a folder with
+    `stage.ts`, `schema.ts`, `render.ts`, `prompts/` and `validation/`, and a
+    full pipeline stage named `<group>-<stage>` (`flows-scope`,
+    `design-architect`). The single `design` stage became `design-architect`,
+    `design-invent`, `design-draw`, `design-frame` and `design-assemble`, each
+    with its own artifact; assembly fixes through the draw and frame stages.
+    `src/runner/` holds running one stage. Artifacts live in
+    `<NN>-<group>/<NN>-<stage>.json` in a run, and the golden fixtures moved
+    to match, their data unchanged. AGENTS.md has the map.
+  - Runs made before this keep the old names and cannot be resumed.
 - [x] **C1** Conventions and schema (40 min) (done 2026-10-30). Depends: FL1
-  - `src/stages/contracts/conventions.ts` (the conventions table as data and
+  - `src/agents/03contract/conventions.ts` (the conventions table as data and
     functions: `pathFor(operation)`, `statusFor(code)`, built-in `User`) and `schema.ts`.
   - Done when: the schema passes `toJsonSchema`; unit tests for `pathFor` and `statusFor`.
 
@@ -992,7 +1007,7 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
   - Done when: each rule has a passing and a failing test.
 
 - [ ] **C4** Prompt and stage, in parallel with design (40 min). Depends: C3, DS7
-  - `prompt.ts` fills `src/stages/contracts/prompt.md` (draft provided);
+  - `prompt.ts` fills `src/agents/03contract/prompts/prompt.md` (draft provided);
     `weave run` runs design and contracts with `Promise.all` after flows, both
     recording the same flows version.
   - Done when: golden freelancer workspace produces a contract with zero mandatory issues.
@@ -1010,7 +1025,7 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
 Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.5. Steps 30 to 35.
 
 - [ ] **R1** Coverage matrix (60 min). Depends: C6, DS9
-  - `src/stages/reconcile/matrix.ts`: `buildMatrix`, data resolution as in the spec.
+  - `src/agents/04reconcile/matrix.ts`: `buildMatrix`, data resolution as in the spec.
   - Done when: tests on the golden freelancer-workspace set; every row has screens
     and operations or is local.
 
@@ -1045,9 +1060,9 @@ hooks, seed data and a mock API of Next.js route handlers backed by a JSON
 file, all inside the generated app, by code and without model calls.
 
 - [ ] **S1** Scaffold and theme apply (90 min). Depends: R6, DS4, DS4a
-  - `src/app/scaffold.ts`: copy `template/` to `runs/<id>/app` with
-    `generate.mjs`, install, build the MCP. `src/app/theme.ts`: apply
-    `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets,
+  - `src/agents/02design/02theme/preview/scaffold.ts`: copy `template/` to `runs/<id>/app` with
+    `generate.mjs`, install, build the MCP. `src/agents/02design/02theme/preview/apply.ts`: apply
+    `02-design/02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets,
     and the four page colors; a light-only or dark-only app pins its mode),
     `tokens.ts` (radius, focus ring), `packages/styles/src/fonts.ts`
     (the theme's three families, mono included: the brief picks it since
@@ -1105,7 +1120,7 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     refused, a failing check fed back, and the loop ending on `done`.
 
 - [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
-  - `src/codegen/pages.ts`: the page frame from `02-screens.json`'s shells,
+  - `src/codegen/pages.ts`: the page frame from `02-design/09-assemble.json`'s shells,
     one per kind: their regions docked as the layout says and filled from the
     shell nodes, the navigation among them, shared by every framed page of
     the kind. For every page screen a route folder with a `page.tsx` in its
@@ -1214,7 +1229,7 @@ Spec: [specs/flows.md](specs/flows.md) for the inputs. Decisions: D8.1 to
 D8.4. Steps 55 to 58.
 
 - [ ] **T1** Playwright tests from the frozen flows (2 h). Depends: R6, FE2
-  - `src/stages/tests/`: one `@playwright/test` spec per flow in `web/e2e/`,
+  - `src/agents/tests/`: one `@playwright/test` spec per flow in `web/e2e/`,
     generated by code from steps, fields, alternatives and node IDs; the model
     only turns outcomes into assertions (structured call); a Playwright config
     with a seeded store and a `pnpm test:e2e` script in the app.

@@ -5,7 +5,7 @@ specs/design.md "Rendering"
 
 ## Goal
 
-`02-design.md` for review and the demo; optionally `02-wireframes.html`.
+`02-design/09-assemble.md` for review and the demo; optionally `02-design/09-wireframes.html`.
 
 ## What this step does
 
@@ -20,7 +20,7 @@ After this step any screen can be reviewed from the markdown alone.
 
 ## Implementation details
 
-### `src/stages/design/render.ts`
+### `src/agents/02design/09assemble/render.ts`
 
 ```ts
 export function renderDesign(brief: Brief, theme: Theme, screens: Screens, flows: Flows): string;
@@ -57,8 +57,8 @@ contains one `<section id="S02">` per screen and no `<script`.
 ## Done when
 
 ```sh
-pnpm test -- src/stages/design/render.test.ts
+pnpm test -- src/agents/02design/09assemble/render.test.ts
 ```
 
-and you can review any screen of the freelancer workspace from `02-design.md`
+and you can review any screen of the freelancer workspace from `02-design/09-assemble.md`
 alone.

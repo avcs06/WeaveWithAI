@@ -28,7 +28,7 @@ of scope with a placeholder in the scope.
 
 ## Implementation details
 
-- `src/config/capabilities.ts`: `CapabilityMode`, `placeholder?`,
+- `src/agents/01flows/config/capabilities.ts`: `CapabilityMode`, `placeholder?`,
   `capability(id)`, `buildList()`, `simulatedList()`, `skippedList()`.
 - `prompt-scope.md` and `prompt-flows.md`: placeholders `capabilitiesBuild`,
   `capabilitiesSimulated`, `capabilitiesSkipped`; `prompt.ts` fills them.

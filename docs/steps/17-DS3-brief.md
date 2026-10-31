@@ -6,8 +6,8 @@ D1.13 C · Spec: specs/design.md "Brief", "Theme", BRIEF and THEME rules
 ## Goal
 
 The design stage starts: the brief call picks the direction, the theme call
-turns it into values, and both are saved, `02-brief.json` and
-`02-theme.json`.
+turns it into values, and both are saved, `02-design/01-brief.json` and
+`02-design/02-theme.json`.
 
 ## Already built
 
@@ -22,7 +22,7 @@ turns it into values, and both are saved, `02-brief.json` and
 
 ## What this step does
 
-1. **`src/stages/design/stage.ts`** with `runBrief(ctx)` and
+1. **`src/agents/02design/stages.ts`** with `runBrief(ctx)` and
    `runTheme(ctx, inv)`.
 2. **Registers `brief` and `theme` as pipeline stages** before `design`, as
    the flows have their catalog and expand stages: each artifact is checked
@@ -70,7 +70,7 @@ theme: both artifacts are written, the brief's first call is at high and
 
 ```sh
 pnpm weave run fixtures/ideas/freelancer-workspace.md --to design   # a brief and a theme with zero mandatory issues
-pnpm test -- src/stages/design
+pnpm test -- src/agents/design
 ```
 
 ## Watch out

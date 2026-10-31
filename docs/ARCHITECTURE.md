@@ -81,14 +81,14 @@ src/
     tests/               e2e specs generated from the frozen flows, run, evidence
   app/
     scaffold.ts          template copy, install, MCP build
-    theme.ts             02-theme.json written into an app's colors, tokens, fonts and recipes
+    theme.ts             02-design/02-theme.json written into an app's colors, tokens, fonts and recipes
     preview.ts           an app from the template, and every component screenshotted in its theme
   codegen/
     ledger.ts            every file written into an app, with its origin
     entities.ts          web/app/entities/<entity>: schemas, client, hooks
     mockApi.ts           web/app/api/**/route.ts, web/mocks/*.json, store, session
     apiTests.ts          contract tests against the mock
-    pages.ts             routes, navigation and page shells from 02-screens.json
+    pages.ts             routes, navigation and page shells from 02-design/09-assemble.json
   engine/
     loop.ts              the action loop: read, write, list, recipe, check, done
     tools.ts             the checks a session may run, through the app's tools
@@ -108,13 +108,13 @@ runs/<runId>/            one generator run (gitignored)
 runs/<runId>/
   input/idea.md
   input/answers.json           answers to questions, each with the question as asked (interactive mode or by hand)
-  01-scope.json  01-scope.md  artifacts: envelope + data, and the human rendering
-  01-flows-catalog.json  01-flows-catalog.md   every flow's header and description, the reusable fields, forms, subflows
-  01-flows-draft.json          the expansion batches assembled, before reconciliation
-  01-flows.json  01-flows.md   the flows every later stage reads
-  02-brief.json  02-theme.json  02-screens.json  02-design.md
-  02-skeleton.json  02-wireframes.html  02-ds-gaps.json
-  02-theme-light.png  02-theme-dark.png   every component in the theme (weave app)
+  01-flows/01-scope.json  01-flows/01-scope.md  artifacts: envelope + data, and the human rendering
+  01-flows/02-catalog.json  01-flows/02-catalog.md   every flow's header and description, the reusable fields, forms, subflows
+  01-flows/03-expand.json          the expansion batches assembled, before reconciliation
+  01-flows/04-reconcile.json  01-flows/04-reconcile.md   the flows every later stage reads
+  02-design/01-brief.json  02-design/02-theme.json  02-design/09-assemble.json  02-design/09-assemble.md
+  02-design/09-skeleton.json  02-design/09-wireframes.html  02-design/09-ds-gaps.json
+  02-design/02-theme-light.png  02-design/02-theme-dark.png   every component in the theme (weave app)
   03-contract.json  03-contract.md
   04-matrix.json  04-reconcile.md
   spec.lock.json               frozen versions for implementation
@@ -202,7 +202,7 @@ The schedule (D1.12):
 | 4 | final fix | validate | |
 
 Round 1 sends system + user. A fix appends the model's JSON and one user
-message (`src/core/prompt-fix.md`) listing what is pending (mandatory issues
+message (`src/runner/prompt-fix.md`) listing what is pending (mandatory issues
 and blockers) and the answers given since the last generation, asking for
 the full corrected JSON (D1.5 default); a fix with nothing pending is skipped,
 but the round's reviewer calls still run. From round 2 on, validators and
@@ -211,7 +211,7 @@ heuristic, not a gate. A reviewer gets the generator's system and user messages,
 JSON, the warnings as already known and one of the stage's two guides:
 `review-<stage>-peer.md`, a peer who challenges the decisions (round 2 only),
 or `review-<stage>-output.md`, which looks for errors in meaning the
-validators cannot catch (rounds 2 and 3). It answers through the `Review` schema (`src/core/review.ts`,
+validators cannot catch (rounds 2 and 3). It answers through the `Review` schema (`src/runner/review.ts`,
 blockers only); each blocker becomes a mandatory issue with rule `REVIEW`.
 The stage ends as soon as a review finds nothing on validator-clean output,
 so a clean first draft costs one generation and two reviews. After round 4

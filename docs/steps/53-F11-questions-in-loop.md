@@ -28,7 +28,7 @@ same stage applies them, instead of asking after the stage and rerunning.
 ## Done when
 
 ```sh
-pnpm test -- src/core/runSpecStage.test.ts
+pnpm test -- src/runner/runSpecStage.test.ts
 pnpm typecheck
 ```
 

@@ -10,7 +10,7 @@ design-system subflows can join.
 
 ## What this step does
 
-1. **A registry**, `src/config/subflows.ts`: `STANDARD_SUBFLOWS`, each a
+1. **A registry**, `src/agents/01flows/config/subflows.ts`: `STANDARD_SUBFLOWS`, each a
    `Subflow` plus a `source` ('standard' or 'design-system') and a `use` line
    for the prompts. Standard ids have their own prefix, STD01, STD02, ...,
    so the model's SF01, SF02, ... never collide with them; FLOW-001 and

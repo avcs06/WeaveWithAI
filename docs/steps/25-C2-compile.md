@@ -28,7 +28,7 @@ an app without hand-written schemas.
 
 ## Implementation details
 
-### `src/stages/contracts/compile.ts`
+### `src/agents/03contract/compile.ts`
 
 One table drives both runtime schemas and emitted source:
 
@@ -89,7 +89,7 @@ Enum schemas: `z.enum(values.map((v) => v.key))`; in source,
 ## Done when
 
 ```sh
-pnpm test -- src/stages/contracts/compile.test.ts
+pnpm test -- src/agents/03contract/compile.test.ts
 ```
 
 ## Watch out

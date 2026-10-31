@@ -26,7 +26,7 @@ with one table both the validators and the generated app read.
 
 ## Implementation details
 
-### 1. `src/stages/contracts/conventions.ts`
+### 1. `src/agents/03contract/conventions.ts`
 
 ```ts
 export const SERVER_FIELDS = ['id', 'createdAt', 'updatedAt', 'ownerId'] as const;
@@ -47,7 +47,7 @@ export function fieldKindTableForPrompt(): string; // the flow-type to kind tabl
 export function errorEnvelope(code: ErrorCode, message: string, fields?: { field: string; message: string }[]): { error: {...} };
 ```
 
-### 2. `src/stages/contracts/schema.ts`
+### 2. `src/agents/03contract/schema.ts`
 
 Copy the spec's schema (`FIELD_KINDS`, `ERROR_CODES`, `Value`, `EntityField`,
 `Entity`, `Enum`, `Param`, `Operation`, `Contract`) with `Assumption` and
@@ -64,7 +64,7 @@ and property count printed (expect about 128 properties).
 ## Done when
 
 ```sh
-pnpm test -- src/stages/contracts
+pnpm test -- src/agents/contracts
 pnpm typecheck
 ```
 

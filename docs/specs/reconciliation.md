@@ -1,6 +1,6 @@
 # Spec: reconciliation and freeze
 
-Decisions: D5.1 to D5.5. Prompts: `src/stages/reconcile/prompt-patch-flows.md`,
+Decisions: D5.1 to D5.5. Prompts: `src/agents/04reconcile/prompts/patch-flows.md`,
 `prompt-patch-design.md`, `prompt-patch-contract.md`.
 
 ## What this stage does
@@ -14,7 +14,7 @@ of the same differ, run in the order R2 proposed (D5.1 D).
 Source of truth when artifacts disagree (D5.3 A): flows own business meaning,
 design owns presentation, the contract owns technical shape.
 
-## Coverage matrix (`src/stages/reconcile/matrix.ts`)
+## Coverage matrix (`src/agents/04reconcile/matrix.ts`)
 
 Pure function: `buildMatrix(flows, screens, contract) → Matrix`. One row per
 step and per alternative:
@@ -59,7 +59,7 @@ conventions' `id`, `createdAt`, `updatedAt`. Unresolved needs become RECON-003.
 | RECON-010 | design   | mandatory | A new component serves no flow step                                                                       |
 | RECON-011 | the stale stage | mandatory | An artifact was built from an older version of its inputs                                           |
 
-## Procedure (`src/stages/reconcile/procedure.ts`)
+## Procedure (`src/agents/04reconcile/procedure.ts`)
 
 1. **Stale check.** If design or contract was built from an older flows
    version, rerun that stage first (RECON-011).
@@ -92,7 +92,7 @@ conventions' `id`, `createdAt`, `updatedAt`. Unresolved needs become RECON-003.
 
 Implementation stages read only the versions in the lock.
 
-## Patches (D5.4 B, `src/stages/reconcile/patch.ts`)
+## Patches (D5.4 B, `src/agents/04reconcile/patch.ts`)
 
 Typed upserts and removals by ID, so untouched items stay byte-identical.
 Whole flows are the unit for flows, because steps renumber.

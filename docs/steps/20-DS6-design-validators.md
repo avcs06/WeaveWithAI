@@ -28,7 +28,7 @@ without guessing.
 
 ## Implementation details
 
-### 1. `src/stages/design/validate.ts` (the rest)
+### 1. `src/agents/02design/rules/index.ts` (the rest)
 
 ```ts
 export type DesignContext = { scope: Scope; flows: Flows; inventory: Inventory; ia?: Ia };
@@ -94,7 +94,7 @@ element, a new component named `Button`) yields exactly
 ## Done when
 
 ```sh
-pnpm test -- src/stages/design   # every rule passing and failing
+pnpm test -- src/agents/design   # every rule passing and failing
 ```
 
 ## Watch out

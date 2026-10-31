@@ -66,7 +66,7 @@ text?)`.
 Scripts: `"test:e2e": "playwright test"`. Run `pnpm exec playwright install
 chromium` is not needed when the browser build matches `playwright-core`'s.
 
-### 2. `src/stages/tests/generate.ts`
+### 2. `src/agents/tests/generate.ts`
 
 ```ts
 export async function generateE2e(ctx: StageContext, lock: Lock): Promise<string[]>;

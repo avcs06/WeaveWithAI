@@ -23,7 +23,7 @@ After this step reconciliation knows what to send to whom.
 
 ## Implementation details
 
-### `src/stages/reconcile/rules.ts`
+### `src/agents/04reconcile/rules.ts`
 
 ```ts
 export type Mismatch = Issue & { owner: 'flows' | 'design' | 'contract' | 'stale' };
@@ -64,5 +64,5 @@ hash (011).
 ## Done when
 
 ```sh
-pnpm test -- src/stages/reconcile/rules.test.ts
+pnpm test -- src/agents/04reconcile/rules.test.ts
 ```

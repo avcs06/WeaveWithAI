@@ -1,7 +1,7 @@
 # Spec: design
 
 Decisions: D3.1 to D3.11, and DS23 for the screens. Prompts in
-`src/stages/design/`: `prompt-brief.md`, `prompt-theme.md`, `prompt-ia.md`,
+`src/agents/02design/`: `prompt-brief.md`, `prompt-theme.md`, `prompt-ia.md`,
 `prompt-component.md`, `prompt-widgets.md` and `prompt-frame.md`, each with
 its `-input.md` user message; the widget and frame prompts share the node
 guide in `prompt-nodes.md`. The brief, the theme and the IA have
@@ -34,21 +34,25 @@ the new-component budget (DESIGN-006) counts inner pages only.
 ## Shape
 
 ```text
-idea + scope ─▶ brief call (direction: audience, look, hues, fonts) ─▶ 02-brief.json
-brief + scope + flows ─▶ theme call (colors, page layouts, component defaults) ─▶ 02-theme.json
+idea + scope ─▶ brief call (direction: audience, look, hues, fonts) ─▶ 02-design/01-brief.json
+brief + scope + flows ─▶ theme call (colors, page layouts, component defaults) ─▶ 02-design/02-theme.json
 scope + flows + brief + layouts ─▶ IA call (navigation, screens, copy deck, widgets, placements, declared components)
 IA ─▶ a call per new component ─▶ a call per two widgets and per used shell (parallel)
-   ─▶ assembly in code ─▶ 02-screens.json ─▶ skeleton, whole-design and LAYOUT rules
-   ─▶ one fix per owning widget or frame call ─▶ 02-design.md, 02-wireframes.html, 02-ds-gaps.json
-Phase 7: prototype pages from 02-screens.json ─▶ rendered checks ─▶ visual rubric
+   ─▶ assembly in code ─▶ 02-design/09-assemble.json ─▶ skeleton, whole-design and LAYOUT rules
+   ─▶ one fix per owning widget or frame call ─▶ 02-design/09-assemble.md, 02-design/09-wireframes.html, 02-design/09-ds-gaps.json
+Phase 7: prototype pages from 02-design/09-assemble.json ─▶ rendered checks ─▶ visual rubric
 ```
 
 Each call runs the stage loop of D1.12 with its own validators and review
-guides. In the pipeline the brief and the theme are stages of their own,
-`brief` and `theme`, before `design`, which runs the IA, component, widget
-and frame calls. The calls run in order because each reads the one before:
-the IA needs the brief's density and the theme's layouts, a widget builds
-on the components it uses, and a frame fills regions the layouts define.
+guides. Each step is a pipeline stage of its own, in `src/agents/02design/`:
+`design-brief`, `design-theme`, `design-architect` (the IA), `design-invent`
+(the new components), `design-draw` (the widgets), `design-frame` (the
+shells) and `design-assemble` (code). Each writes its artifact to
+`02-design/NN-name.json` in the run. They run in order because each reads the
+one before: the IA needs the brief's density and the theme's layouts, a widget
+builds on the components it uses, and a frame fills regions the layouts
+define. Assembly sends an issue back once through the draw or frame stage's
+fix, which writes a new version of that stage's artifact.
 
 Screens are built from widgets (DS23, user, 2026-10-30). The IA plans every
 screen once and is never rerun: the copy deck, the widgets and where each is
@@ -61,7 +65,7 @@ reason at high; the widget and frame calls at medium; all at temperature 0.2
 
 ## Inputs
 
-- `01-scope.json`, `01-flows.json` (same version the contract stage uses)
+- `01-flows/01-scope.json`, `01-flows/04-reconcile.json` (same version the contract stage uses)
 - The idea text, for style cues ("calm", "like Linear", "for kids")
 - The design-system inventory (`src/ds/inventory.ts`): the theme, IA and nodes
   prompts get it as prose (`inventoryProse` in `src/ds/prose.ts`: name,
@@ -70,7 +74,7 @@ reason at high; the widget and frame calls at medium; all at temperature 0.2
 - Token keys from the inventory: spacing keys (`0`, `0.25`, `0.5` ... `16`),
   radius keys, font sizes.
 
-## Brief (`src/stages/design/schema.ts`)
+## Brief (`src/agents/02design/schema.ts`)
 
 The brief is the one call that decides the app's direction once: who uses it,
 how it feels, its brand hue, fonts and shapes (D3.3 E). It runs at high
@@ -107,8 +111,8 @@ export const Brief = z.object({
 });
 ```
 
-`UI_FONTS`, `DISPLAY_FONTS` and `MONO_FONTS` in `src/config/fonts.ts` come from the
-catalog `src/config/google-fonts.json` (user, 2026-10-30): the families
+`UI_FONTS`, `DISPLAY_FONTS` and `MONO_FONTS` in `src/agents/02design/01brief/fonts.ts` come from the
+catalog `src/agents/02design/01brief/google-fonts.json` (user, 2026-10-30): the families
 `next/font/google` exports with a latin subset and a Google popularity under
 120, 193, most popular first, each with its weights, whether it is variable,
 Google's category and popularity, a one-line description the brief prompt
@@ -141,7 +145,7 @@ defaults: { [Component]: { [variant]: value, look: value } },  // components who
 The page also gets `divider`, `backdrop` and `skeleton`, which follow no hue
 of the brief; THEME-009 checks they show on the colors chosen (user,
 2026-10-30). Only the status sets stay the template's for every app.
-`buildTheme(brief, call)` in `theme.ts` makes `02-theme.json`: the call's
+`buildTheme(brief, call)` in `theme.ts` makes `02-design/02-theme.json`: the call's
 values with hex in capitals, the brief's fonts, radius, focus ring and
 density, and a contrast table of every pair the THEME rules check. A failing
 pair goes back to the theme call in its fix rounds.
@@ -214,7 +218,7 @@ follows them without being told. A node leaves `size` and `look` "" to use
 them; one that must differ sets its own and says why in `overrideReason`
 (DESIGN-027).
 
-## Screens (`src/stages/design/schema.ts`)
+## Screens (`src/agents/02design/schema.ts`)
 
 The schema is built at run time by `makeScreensSchema(inventory)`, so
 spacing keys and type sizes are enums: constrained decoding then can't produce
@@ -226,7 +230,7 @@ the coding stage (user, 2026-10-30), so a nearest match never forces the
 wrong component. Its `size` and `look` reach the coding stage only on a node
 that overrides the theme's defaults, with its `overrideReason`. New components are declared by name and referenced by it. The
 fixed vocabularies (screen kinds, section kinds, node roles, states, content
-widths) live in `src/config/design.ts`.
+widths) live in `src/agents/02design/config.ts`.
 
 Every node carries a **box**, so a deterministic solver can compute a
 rectangle per node from the inventory's measured heights and draw the screen
@@ -237,7 +241,7 @@ sections and its padding is the page padding), and a section's `box` sizes it
 in that layout, so a side panel can be fixed 280 wide beside a main section
 that fills.
 
-The solver (`src/stages/design/layout.ts`) works at 1280 by 800; the MVP
+The solver (`src/agents/02design/09assemble/skeleton/skeleton.ts`) works at 1280 by 800; the MVP
 has no phone layout. A page's shell regions dock first, sized by their
 boxes and their nodes; the content takes the space left. The content column is centred and never wider
 than the viewport less the page padding; a dialog or drawer is the
@@ -251,7 +255,7 @@ Accordion, Popover). A field with a visible label is the whole field, label
 and help line included; without one it is its box. A wrapping row wraps,
 and a row that does not fit is marked `overflowX`, not fixed. The skeleton shows the default state; nodes shown
 only in other states are listed beside it. `pnpm weave wireframes
-<screens.json>` writes `02-skeleton.json` and `02-wireframes.html`.
+<screens.json>` writes `02-design/09-skeleton.json` and `02-design/09-wireframes.html`.
 
 ```ts
 const Box = z.object({
@@ -352,13 +356,13 @@ const ScreenNodes = z.object({ screen: z.string(), nodes: z.array(Node) });  // 
 ```
 
 A shell's nodes are `SH1.n01`, in its regions (`section` is `SH1.r1`), and
-show on every page that uses the shell. `02-screens.json` holds the screens
+show on every page that uses the shell. `02-design/09-assemble.json` holds the screens
 assembled from the widgets, with each screen's `shell` and a page's gap and
 padding filled in, the two layouts' containers, the shells and all nodes,
 and the copy deck, widgets and placements they came from:
 `{ ...ia, containers, shells: Shell[], nodes: Node[], copy, widgets, placements }`.
 
-## Widgets (DS23, `src/stages/design/schema-widgets.ts`)
+## Widgets (DS23, `src/agents/02design/03architect/schema.ts`)
 
 The IA call answers `makeWidgetSchemas(inventory).Ia`:
 
@@ -401,18 +405,18 @@ and padding from its layout and a dialog's gap 20 with no padding; then
   that use it are built (DS23).
 - A new component must not reimplement a DS component under another name: an
   exact name match fails; a near match warns (DESIGN-005).
-- Budget: at most 5 on the app screens (warning; `src/config/design.ts`).
+- Budget: at most 5 on the app screens (warning; `src/agents/02design/config.ts`).
 - In generated apps they live in `web/app/components/<Name>/` and follow the DS
   conventions in `template/packages/ui/AGENTS.md`: types file, `.css.ts` using
   tokens, `data-slot` on parts, `data-*` for states, disabled reasons, a test
   with axe. Phase 7 builds them.
-- `02-ds-gaps.json` lists each new component with purpose, closest DS
+- `02-design/09-ds-gaps.json` lists each new component with purpose, closest DS
   components and screens; `.weave-cache/ds-gaps.jsonl` accumulates them across
   runs, so the components asked for most become your DS backlog.
 
 ## Validator rules
 
-`src/stages/design/validate.ts`: `validateBrief`, `validateTheme`,
+`src/agents/02design/rules/index.ts`: `validateBrief`, `validateTheme`,
 `validateIa(ia, ctx)`, `validateScreenNodes(screen, nodes, ia, ctx)`,
 `validateScreens(screens, ctx)` for whole-artifact rules, and
 `validateLayout(screens, skeleton, inventory)` for the LAYOUT rules on the
@@ -421,7 +425,7 @@ and component defaults from the theme. Nodes get the theme's defaults
 (`withDefaults`) before they are checked, so "" and `base` are checked as
 the size and look they resolve to.
 
-`src/stages/design/validate-widgets.ts` checks each call of DS23 on its own
+`src/agents/02design/07draw/validation/validation.ts` checks each call of DS23 on its own
 output: `validateWidgetIa` (the IA rules on the widget IA, and the older IA
 rules on the sections its placements make), `validateComponent`,
 `validateBatch` and `validateWidget` (a widget's own rules, the node rules
@@ -530,12 +534,12 @@ tuning target, not a gate.
 
 ## Rendering
 
-- `02-design.md`: theme swatches with contrast ratios, fonts, the shells with
+- `02-design/09-assemble.md`: theme swatches with contrast ratios, fonts, the shells with
   their regions and nodes, navigation, then
   per screen: route, purpose, states, sections with their nodes as an indented
   list (`[Button default] Create project → S04 (F03.S01)`), and the new
   components with their reasons.
-- `02-wireframes.html` (D3.6 D, built in DS6b): one self-contained file drawing
+- `02-design/09-wireframes.html` (D3.6 D, built in DS6b): one self-contained file drawing
   each screen's skeleton at desktop width as lines. For review and the demo.
 
 ## Done when

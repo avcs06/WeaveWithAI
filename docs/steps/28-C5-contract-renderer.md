@@ -19,7 +19,7 @@ accept.
 
 ## Implementation details
 
-### `src/stages/contracts/render.ts`
+### `src/agents/03contract/render.ts`
 
 ```ts
 export function renderContract(contract: Contract): string;
@@ -48,7 +48,7 @@ Snapshot of `renderContract` on the fixture; the OpenAPI object has a
 ## Done when
 
 ```sh
-pnpm test -- src/stages/contracts/render.test.ts
+pnpm test -- src/agents/03contract/render.test.ts
 ```
 
 and `03-contract.md` of the golden freelancer workspace reads as an API spec.

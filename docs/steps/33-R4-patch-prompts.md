@@ -23,7 +23,7 @@ After this step each owner gets a precise, small fix request.
 
 ## Implementation details
 
-### `src/stages/reconcile/prompt.ts`
+### `src/agents/04reconcile/prompt.ts`
 
 ```ts
 export function formatMismatches(list: Mismatch[]): string;   // "- RECON-002 at F03.S02: message" per line
@@ -49,5 +49,5 @@ screens (count nodes in the JSON block).
 ## Done when
 
 ```sh
-pnpm test -- src/stages/reconcile/prompt.test.ts
+pnpm test -- src/agents/04reconcile/prompt.test.ts
 ```

@@ -31,7 +31,7 @@ every later stage relies on.
 
 ## Implementation details
 
-### 1. `src/stages/index.ts`: the registry
+### 1. `src/agents/stages.ts`: the registry
 
 ```ts
 export type StageContext = {
@@ -50,7 +50,7 @@ export const PIPELINE: string[] = ['scope', 'flows', 'design', 'contract', 'reco
 export const stages: StageDef[] = [ /* registered as steps land; a stub 'scope' now */ ];
 ```
 
-The stub `scope` stage writes a placeholder `01-scope.json` through
+The stub `scope` stage writes a placeholder `01-flows/01-scope.json` through
 `writeArtifact` so `show` has something to list; step 13 replaces it.
 
 ### 2. `src/cli.ts`
@@ -83,7 +83,7 @@ Print with plain `console.log` and padded columns; no CLI framework.
 
 Call the command functions directly (export `runCommand`, `showCommand`)
 with a temp `runsDir` and a fake llm: `run --to scope` creates
-`runs/<id>/input/idea.md`, `01-scope.json`, `state.json`; a second `run --run
+`runs/<id>/input/idea.md`, `01-flows/01-scope.json`, `state.json`; a second `run --run
 <id> --to scope` skips the stage (no new version); `show` output contains the
 stage name and `done`.
 

@@ -61,7 +61,7 @@ import { useRequireUser } from '@app/entities/auth';   // only for access: signe
 /*
  * Screen S02 "Projects" · template list · serves F02.S01, F02.A01, F03.S01
  * States: loading, empty, error
- * Sections and nodes to build (02-screens.json). Keep data-testid on every node's root element.
+ * Sections and nodes to build (02-design/09-assemble.json). Keep data-testid on every node's root element.
  * S02.sec1 page-header (row, gap 4) · serves F02.S01
  *   S02.n01 [h1] "Projects" (role heading, states default)
  *   S02.n02 [ds Button variant=primary] "Create project" → S03 (role primary-action, flowSteps F03.S01)

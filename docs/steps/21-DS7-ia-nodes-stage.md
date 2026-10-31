@@ -10,7 +10,7 @@ their `-input.md` messages (written in DS7e)
 The design stage end to end: brief, theme, one IA call, one nodes call per
 screen and per used shell in parallel, assembly, whole-artifact and layout
 validation with each issue sent back to the call that owns it, the gap
-report, and `02-screens.json`.
+report, and `02-design/09-assemble.json`.
 
 ## What this step does
 
@@ -20,14 +20,14 @@ report, and `02-screens.json`.
    stage loop of D1.12 at temperature 0.2; the IA at high reasoning, the
    nodes calls at medium; the brief runs at high, its first draft at 0.7.
 2. **Assemble and check the whole**: `resolveScreens` turns the IA, the
-   theme and all nodes into `02-screens.json`; the whole-artifact rules run,
+   theme and all nodes into `02-design/09-assemble.json`; the whole-artifact rules run,
    the skeleton is solved and the layout rules run on it. Each issue goes
    back to the call that owns the value (DS12); what is left after that
    call's rounds is recorded as known issues, and the run goes on.
 3. **Write the gap report**: every new component the design declared, with
    its reasons and screens, into the run and into a running log across runs,
    so the components asked for most become the design system's backlog.
-4. **Render** `02-design.md` (step 22) and `02-wireframes.html`.
+4. **Render** `02-design/09-assemble.md` (step 22) and `02-design/09-wireframes.html`.
 5. **A test with a fake model** builds the fixture and shows one rerun.
 
 After this step an idea becomes a validated, screen-by-screen design built
@@ -35,7 +35,7 @@ from the real design system.
 
 ## Implementation details
 
-### 1. Prompts (`src/stages/design/prompt.ts`)
+### 1. Prompts (`src/agents/02design/01brief/prompts/index.ts`)
 
 ```ts
 export function iaSystemPrompt(brief: Brief, inv: Inventory): string;   // density, sectionKinds, dsProse, newComponentBudget
@@ -58,7 +58,7 @@ carries:
 - DS13's additions: the brief's feel, personality and imagery, the theme's
   `defaults` and the kind's `main` block.
 
-### 2. `src/stages/design/stage-screens.ts`
+### 2. `src/agents/02design/09assemble/stage.ts`
 
 `runDesign(ctx)` in order:
 
@@ -82,9 +82,9 @@ carries:
    output with the issues as `seed` and no reviewers. An IA fix reruns the
    nodes of the screens it changed; a theme fix the shells'. One pass.
 6. `writeArtifact(run, 'screens', screens, { stage: 'design', inputs:
-   ['scope', 'flows', 'brief', 'theme'] })`; write `02-skeleton.json` and
-   `02-wireframes.html`.
-7. Gap report: `02-ds-gaps.json` = `newComponents.map(({ name, purpose,
+   ['scope', 'flows', 'brief', 'theme'] })`; write `02-design/09-skeleton.json` and
+   `02-design/09-wireframes.html`.
+7. Gap report: `02-design/09-ds-gaps.json` = `newComponents.map(({ name, purpose,
    closestExisting, usedOn }) => …)` plus idea name and run id; append one
    JSON line per component to `.weave-cache/ds-gaps.jsonl`.
 8. Render (step 22).
@@ -107,9 +107,9 @@ lists the fixture's new component.
 pnpm weave run fixtures/ideas/freelancer-workspace.md --to design
 ```
 
-produces `02-brief.json`, `02-theme.json`, `02-screens.json`,
-`02-skeleton.json`, `02-wireframes.html`, `02-design.md` and
-`02-ds-gaps.json` with zero mandatory issues; `show` lists `design` with its
+produces `02-design/01-brief.json`, `02-design/02-theme.json`, `02-design/09-assemble.json`,
+`02-design/09-skeleton.json`, `02-design/09-wireframes.html`, `02-design/09-assemble.md` and
+`02-design/09-ds-gaps.json` with zero mandatory issues; `show` lists `design` with its
 rounds.
 
 ## Watch out

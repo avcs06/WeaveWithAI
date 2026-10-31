@@ -5,7 +5,7 @@ Spec: specs/flows.md "Shape"
 
 ## Goal
 
-`weave run <idea> --to flows` produces `01-scope.json`, `01-flows.json` and
+`weave run <idea> --to flows` produces `01-flows/01-scope.json`, `01-flows/04-reconcile.json` and
 their markdown, asking blocking questions on the terminal in interactive
 mode.
 
@@ -32,7 +32,7 @@ spec from an idea.
 
 ## Implementation details
 
-### `src/stages/flows/stage.ts`
+### `src/agents/01flows/stages.ts`
 
 Two registered stages, so `--to scope` works on its own:
 
@@ -49,7 +49,7 @@ export const flowsStage: StageDef = { name: 'flows', produces: ['flows'], run: r
    scopeSystemPrompt(answers), user: scopeUserMessage(idea), validate:
    validateScope, llm })`.
 3. `writeArtifact(run, 'scope', output, { stage: 'scope', model, rounds, inputs: [] })`;
-   write `01-scope.md`.
+   write `01-flows/01-scope.md`.
 4. Interactive (`ctx.interactive`): for each question with `blocking: true`
    and no answer yet, print question, why it matters and the default; read a
    line with `node:readline/promises` (`rl.question`); empty input keeps the
@@ -58,13 +58,13 @@ export const flowsStage: StageDef = { name: 'flows', produces: ['flows'], run: r
 
 `runFlows(ctx)`: reads the scope envelope, same pattern with `Flows`,
 `validateFlows(output, scope.data)`, `inputs: ['scope']`, renders
-`01-flows.md`. Register both in `src/stages/index.ts` and delete the stub.
+`01-flows/04-reconcile.md`. Register both in `src/agents/stages.ts` and delete the stub.
 
 ### Tests
 
 `stage.test.ts` with a fake llm returning the reading-list fixtures: after
 `runScope` and `runFlows` on a temp run, both artifacts exist with version 1,
-`01-flows.md` contains `## F0`, and `state.json` marks both stages done.
+`01-flows/04-reconcile.md` contains `## F0`, and `state.json` marks both stages done.
 
 ## Done when
 
@@ -79,5 +79,5 @@ stages with rounds, tokens and cost.
 ## Watch out
 
 - The model's JSON is validated before it is written; a failed stage leaves
-  no `01-flows.json` behind.
+  no `01-flows/04-reconcile.json` behind.
 - Keep the terminal prompts short; the defaults are what runs unattended.

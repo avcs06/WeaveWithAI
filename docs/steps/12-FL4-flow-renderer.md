@@ -4,7 +4,7 @@ Phase 2 · 30 min · Depends: FL1 · Spec: specs/flows.md "Rendering"
 
 ## Goal
 
-`01-scope.md` and `01-flows.md`: the human reading of the artifacts, in the
+`01-flows/01-scope.md` and `01-flows/04-reconcile.md`: the human reading of the artifacts, in the
 spec's format, for review and the demo.
 
 ## What this step does
@@ -19,7 +19,7 @@ After this step every run has a human-readable spec next to the JSON.
 
 ## Implementation details
 
-### `src/stages/flows/render.ts`
+### `src/agents/01flows/render.ts`
 
 ```ts
 export function renderScope(scope: Scope): string;
@@ -56,5 +56,5 @@ step ids in the flow.
 ## Done when
 
 ```sh
-pnpm test -- src/stages/flows/render.test.ts
+pnpm test -- src/agents/01flows/render.test.ts
 ```

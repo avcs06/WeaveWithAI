@@ -43,7 +43,7 @@ const config: Config = {
 const load = (name: string): unknown =>
   JSON.parse(
     readFileSync(
-      new URL(`./stages/flows/__fixtures__/${name}`, import.meta.url),
+      new URL(`./agents/01flows/__fixtures__/${name}`, import.meta.url),
       'utf8',
     ),
   );
@@ -77,36 +77,39 @@ describe('weave run', () => {
   let run: Run;
 
   it('creates the run folder and runs the scope stage', async () => {
-    run = await runCommand({ idea, to: 'scope' }, deps);
+    run = await runCommand({ idea, to: 'flows-scope' }, deps);
     expect(run.id).toMatch(/^\d{8}-\d{4}-freelancer-workspace$/);
     expect(existsSync(runPath(run, 'input', 'idea.md'))).toBe(true);
-    expect(readArtifact(run, 'scope').meta).toMatchObject({
+    expect(readArtifact(run, 'flows-scope').meta).toMatchObject({
       version: 1,
       model: 'muse-spark-1.3',
-      stage: 'scope',
+      stage: 'flows-scope',
       rounds: 2,
     });
-    expect(readState(run).stages.scope).toMatchObject({
+    expect(readState(run).stages['flows-scope']).toMatchObject({
       status: 'done',
       version: 1,
     });
     expect(lines).toEqual([
       `run ${run.id} (${run.dir})`,
-      'scope: running',
-      'scope: done v1, 2 rounds',
+      'flows-scope: running',
+      'flows-scope: done v1, 2 rounds',
     ]);
   });
 
   it('skips a stage that is done and not stale on a rerun', async () => {
     lines.length = 0;
-    await runCommand({ idea, run: run.id, to: 'scope' }, deps);
-    expect(readArtifact(run, 'scope').meta.version).toBe(1);
-    expect(lines[1]).toBe('scope: up to date (v1)');
+    await runCommand({ idea, run: run.id, to: 'flows-scope' }, deps);
+    expect(readArtifact(run, 'flows-scope').meta.version).toBe(1);
+    expect(lines[1]).toBe('flows-scope: up to date (v1)');
   });
 
   it('reruns from the stage named by --from', async () => {
-    await runCommand({ idea, run: run.id, from: 'scope', to: 'scope' }, deps);
-    expect(readArtifact(run, 'scope').meta.version).toBe(2);
+    await runCommand(
+      { idea, run: run.id, from: 'flows-scope', to: 'flows-scope' },
+      deps,
+    );
+    expect(readArtifact(run, 'flows-scope').meta.version).toBe(2);
   });
 
   it('rejects an unknown stage before touching the disk', async () => {
@@ -114,7 +117,7 @@ describe('weave run', () => {
       runCommand({ idea, to: 'nowhere' }, deps),
     ).rejects.toBeInstanceOf(UsageError);
     await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toThrow(
-      /Known stages: scope, flows/,
+      /Known stages: flows-scope, flows-catalog/,
     );
   });
 
@@ -122,7 +125,7 @@ describe('weave run', () => {
     const text = showCommand(run.id, deps);
     expect(text).toContain(`run ${run.id}`);
     expect(text).toMatch(/stage\s+status\s+version\s+rounds\s+known\s+updated/);
-    expect(text).toMatch(/scope\s+done\s+2/);
+    expect(text).toMatch(/flows-scope\s+done\s+2/);
     // Two scope runs (the first and the --from rerun), each one generation and two reviews.
     expect(text).toContain('6 calls, 60 tokens in, 30 out, $0.0060');
   });
@@ -133,18 +136,18 @@ describe('weave run', () => {
     const ideaName = `tmp-test-${process.pid}`;
     const dest = path.join('fixtures', 'golden', ideaName);
     try {
-      const printed = goldenCommand(run.id, ideaName, 'scope', deps);
-      expect(existsSync(path.join(dest, '01-scope.json'))).toBe(true);
-      expect(existsSync(path.join(dest, '01-scope.md'))).toBe(true);
+      const printed = goldenCommand(run.id, ideaName, 'flows-scope', deps);
+      expect(existsSync(path.join(dest, '01-flows/01-scope.json'))).toBe(true);
+      expect(existsSync(path.join(dest, '01-flows/01-scope.md'))).toBe(true);
       expect(printed).toEqual([
-        'scope: 2 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
+        'flows-scope: 2 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
       ]);
       expect(lines[0]).toContain(
-        `golden ${ideaName}: 01-scope.json, 01-scope.md ->`,
+        `golden ${ideaName}: 01-flows/01-scope.json, 01-flows/01-scope.md ->`,
       );
-      expect(() => goldenCommand(run.id, ideaName, 'flows', deps)).toThrow(
-        /no flows artifact/,
-      );
+      expect(() =>
+        goldenCommand(run.id, ideaName, 'flows-reconcile', deps),
+      ).toThrow(/no flows-reconcile artifact/);
       expect(() => goldenCommand(run.id, ideaName, 'nope', deps)).toThrow(
         UsageError,
       );
@@ -157,13 +160,17 @@ describe('weave run', () => {
     lines.length = 0;
     expect(validateCommand(run.id, undefined, deps)).toEqual([]);
     expect(lines).toEqual([
-      'scope: 0 mandatory, 0 warnings',
+      'flows-scope: 0 mandatory, 0 warnings',
       'flows-catalog: no artifact to validate',
       'flows-expand: no artifact to validate',
-      'flows: no artifact to validate',
-      'brief: no artifact to validate',
-      'theme: no validators registered',
-      'design: no validators registered',
+      'flows-reconcile: no artifact to validate',
+      'design-brief: no artifact to validate',
+      'design-theme: no validators registered',
+      'design-architect: no validators registered',
+      'design-invent: no validators registered',
+      'design-draw: no validators registered',
+      'design-frame: no validators registered',
+      'design-assemble: no validators registered',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
   });
@@ -193,7 +200,7 @@ describe('weave wireframes', () => {
     lines.length = 0;
     const screens = fileURLToPath(
       new URL(
-        './stages/design/__fixtures__/reading-list.screens.json',
+        './agents/02design/__fixtures__/reading-list.screens.json',
         import.meta.url,
       ),
     );

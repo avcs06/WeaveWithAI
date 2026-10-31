@@ -30,7 +30,7 @@ After this step a run ends Phase 5 with a frozen, consistent spec.
 
 ## Implementation details
 
-### `src/stages/reconcile/procedure.ts`
+### `src/agents/04reconcile/procedure.ts`
 
 `reconcileStage = { name: 'reconcile', produces: ['matrix'], run }` and
 `freezeStage = { name: 'freeze', produces: [], run }`.

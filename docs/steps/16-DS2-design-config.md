@@ -22,7 +22,7 @@ instead of each keeping a copy.
 
 ## Implementation details
 
-### 1. `src/config/design.ts`
+### 1. `src/agents/02design/config.ts`
 
 ```ts
 export const SCREEN_TEMPLATES = [...] as const;   // from the spec
@@ -46,7 +46,7 @@ export const LIMITS = {
 export const DENSITY_SIZES = { compact: 'sm', comfortable: 'md', spacious: 'lg' } as const; // control size hint for page shells
 ```
 
-### 2. `src/config/fonts.ts`
+### 2. `src/agents/02design/01brief/fonts.ts`
 
 ```ts
 export type FontDef = { family: string; importName: string; weights: string[] };

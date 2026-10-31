@@ -26,7 +26,7 @@ can be developed offline.
 1. For each idea with golden flows: `pnpm weave run fixtures/ideas/<idea>.md
    --to design` (the flows stage replays or is skipped as done; use `--run
    <id>` of the Phase 2 run to reuse its folder).
-2. Read every `02-design.md`. Tune `prompt-ia.md` and `prompt-nodes.md` for
+2. Read every `02-design/09-assemble.md`. Tune `prompt-ia.md` and `prompt-nodes.md` for
    what you'd reject: screens that don't serve their steps, sections with no
    purpose, nodes with placeholder text, components used against their
    recipe's "when not to use". Never touch `validate.ts`.
@@ -40,6 +40,6 @@ can be developed offline.
 
 ## Done when
 
-Gate **G2**: every golden idea has `02-brief.json`, `02-theme.json`,
-`02-screens.json` with zero mandatory issues; `02-ds-gaps.json` for the
+Gate **G2**: every golden idea has `02-design/01-brief.json`, `02-design/02-theme.json`,
+`02-design/09-assemble.json` with zero mandatory issues; `02-design/09-ds-gaps.json` for the
 dashboard editor lists at least one new component.

@@ -63,7 +63,7 @@ schedule everyone can read, and never blocks the pipeline.
 
 ## Implementation details
 
-### 1. `src/core/review.ts`
+### 1. `src/runner/review.ts`
 
 ```ts
 export const Blocker = z.object({
@@ -99,7 +99,7 @@ differs. Keep every field required (constrained decoding); an empty
   scenarios to look for and the ones to ignore, in the stage's own words.
   Step 13 writes the first two.
 
-### 3. `src/core/runSpecStage.ts`
+### 3. `src/runner/runSpecStage.ts`
 
 ```ts
 export type SpecStageOptions<T> = {
@@ -151,7 +151,7 @@ catches `StageFailed`; remove the class and its branch.
 `GenerateInput` gets `temperature?: number` (default 0.2, as now); it goes
 into the request and therefore into the replay key.
 
-### 5. `src/core/runSpecStage.test.ts`
+### 5. `src/runner/runSpecStage.test.ts`
 
 With the fake client, scripted per call in order:
 
@@ -182,7 +182,7 @@ exit codes: 1 is for errors only.
 ## Done when
 
 ```sh
-pnpm test -- src/core/runSpecStage.test.ts
+pnpm test -- src/runner/runSpecStage.test.ts
 pnpm test
 pnpm typecheck
 ```

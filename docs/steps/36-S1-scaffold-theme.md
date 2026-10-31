@@ -19,7 +19,7 @@ MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
    into the app, with its origin (code, model, repair). The benchmark's
    "lines by origin" and the ownership rules depend on it.
 3. **Apply the frozen theme by editing code, not by regenerating files**:
-   `src/app/theme.ts` (DS18) sets the twelve primary and twelve base colors
+   `src/agents/02design/02theme/preview/apply.ts` (DS18) sets the twelve primary and twelve base colors
    and the page colors in light and dark, adds the entity color sets, sets
    the radius and focus ring tokens, regenerates the fonts file with the
    chosen Google Fonts and writes the recipe defaults.
@@ -64,7 +64,7 @@ export function appPath(run: Run, ...parts: string[]): string;   // runs/<id>/ap
 
 Every later codegen and model write goes through `writeGenerated`.
 
-### 2. `src/app/scaffold.ts`
+### 2. `src/agents/02design/02theme/preview/scaffold.ts`
 
 ```ts
 export async function scaffoldApp(run: Run, opts: { templateDir: string }): Promise<string>;
@@ -83,7 +83,7 @@ export async function scaffoldApp(run: Run, opts: { templateDir: string }): Prom
    origin) and `MOCK_LATENCY_MS=150`.
 5. Write the ledger with `templateHash`.
 
-### 3. `src/app/theme.ts`
+### 3. `src/agents/02design/02theme/preview/apply.ts`
 
 ```ts
 export function applyTheme(appDir: string, theme: Theme): string[];           // returns the changed files
@@ -109,7 +109,7 @@ With `ts-morph@^28` (add it: `pnpm add ts-morph`):
 - `fonts.ts`: regenerate from a template string: imports
   `{ <ui importName>, <display importName>, JetBrains_Mono } from 'next/font/google'`
   (dedupe when ui equals display), three constants with the weights from
-  `src/config/fonts.ts`, `fontClasses` in the template's order (ui
+  `src/agents/02design/01brief/fonts.ts`, `fontClasses` in the template's order (ui
   className and variable first).
 - `project.saveSync()`; then `pnpm exec prettier --write` on the three files
   in the app (the template ships Prettier config). Record each in the
@@ -122,7 +122,7 @@ throws on it.
 
 ### 4. The `scaffold` stage
 
-`src/app/stage.ts`: `scaffoldStage = { name: 'scaffold', produces: [], run }`:
+`src/agents/02design/02theme/preview/stage.ts`: `scaffoldStage = { name: 'scaffold', produces: [], run }`:
 read `spec.lock.json`, read the theme artifact and check its version
 matches the lock, `scaffoldApp`, `applyTheme`, `validateThemeApplied`, then
 in the app: `pnpm typecheck`, `pnpm verify /` (both through a small

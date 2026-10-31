@@ -79,8 +79,8 @@ export function hasArtifact(run: Run, name: ArtifactName): boolean;
 export function isStale(run: Run, name: ArtifactName): boolean;   // any inputs[x].hash differs from the current hash of x
 ```
 
-File names: `01-scope.json`, `01-flows.json`, `02-brief.json`, `02-theme.json`,
-`02-screens.json`, `03-contract.json`, `04-matrix.json`, through one
+File names: `01-flows/01-scope.json`, `01-flows/04-reconcile.json`, `02-design/01-brief.json`, `02-design/02-theme.json`,
+`02-design/09-assemble.json`, `03-contract.json`, `04-matrix.json`, through one
 `FILE_OF: Record<ArtifactName, string>`. `writeArtifact` sets `version` to
 the previous version plus one (1 when new), `hash = hashOf(data)`, `inputs`
 from the current envelopes of the named inputs, `createdAt` ISO, and updates

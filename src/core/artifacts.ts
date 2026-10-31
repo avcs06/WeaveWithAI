@@ -3,13 +3,17 @@ import { type Run, runPath, updateStage } from './run';
 import { hashOf, writeJsonAtomic } from './utils';
 
 export type ArtifactName =
-  | 'scope'
+  | 'flows-scope'
   | 'flows-catalog'
-  | 'flows-draft'
-  | 'flows'
-  | 'brief'
-  | 'theme'
-  | 'screens'
+  | 'flows-expand'
+  | 'flows-reconcile'
+  | 'design-brief'
+  | 'design-theme'
+  | 'design-architect'
+  | 'design-invent'
+  | 'design-draw'
+  | 'design-frame'
+  | 'design-assemble'
   | 'contract'
   | 'matrix';
 export type ArtifactRef = { version: number; hash: string };
@@ -33,17 +37,26 @@ export type ArtifactMeta = {
   inputs: ArtifactName[];
 };
 
+/** Each artifact's file in the run, in a folder per stage group like the agents' own (01-flows/01-scope.json). */
 export const FILE_OF: Record<ArtifactName, string> = {
-  scope: '01-scope.json',
-  'flows-catalog': '01-flows-catalog.json',
-  'flows-draft': '01-flows-draft.json',
-  flows: '01-flows.json',
-  brief: '02-brief.json',
-  theme: '02-theme.json',
-  screens: '02-screens.json',
+  'flows-scope': '01-flows/01-scope.json',
+  'flows-catalog': '01-flows/02-catalog.json',
+  'flows-expand': '01-flows/03-expand.json',
+  'flows-reconcile': '01-flows/04-reconcile.json',
+  'design-brief': '02-design/01-brief.json',
+  'design-theme': '02-design/02-theme.json',
+  'design-architect': '02-design/03-architect.json',
+  'design-invent': '02-design/06-invent.json',
+  'design-draw': '02-design/07-draw.json',
+  'design-frame': '02-design/08-frame.json',
+  'design-assemble': '02-design/09-assemble.json',
   contract: '03-contract.json',
   matrix: '04-matrix.json',
 };
+
+/** The markdown an artifact is rendered to, beside it. */
+export const markdownOf = (name: ArtifactName): string =>
+  FILE_OF[name].replace(/\.json$/, '.md');
 
 export function hasArtifact(run: Run, name: ArtifactName): boolean {
   return existsSync(runPath(run, FILE_OF[name]));
