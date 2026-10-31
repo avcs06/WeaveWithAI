@@ -63,4 +63,17 @@ describe('contract rules on the reading-list contract and catalog', () => {
     wrong.widgets[1]!.reads = ['createBook'];
     expect(ids(wrong)).toContain('CONTRACT-020');
   });
+
+  it('CONTRACT-020 lets an add form show the record its flow creates without a read, but not an edit form', () => {
+    const form = { ...catalog.widgets.find((w) => w.id === 'W07')!, data: ['Book.title', 'Book.author'] };
+    const widgets = catalog.widgets.map((w) => (w.id === 'W07' ? form : w));
+    const at = (c: Contract) =>
+      validateContract(c, { ...ctx, widgets })
+        .filter((issue) => issue.rule === 'CONTRACT-020')
+        .map((issue) => issue.at);
+    expect(at(contract)).toEqual([]);
+    const edit = structuredClone(contract);
+    op(edit, 'createBook').kind = 'update';
+    expect(at(edit)).toEqual(['W07']);
+  });
 });

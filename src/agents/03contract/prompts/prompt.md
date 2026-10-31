@@ -32,3 +32,4 @@ The contract has one job. Every widget knows where its data comes from. Every st
 - `reads`: the list and get operations that load what it shows. Every noun the widget shows is loaded by one of them.
 - A widget that repeats over a noun reads the list of that noun.
 - A widget that shows one record reads the get of that record, or the list it was picked from.
+- A form that adds a record shows what the user types in. It reads nothing for that record when its flow has the create operation. An edit form shows the current values, so it reads the record.

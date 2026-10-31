@@ -1545,6 +1545,12 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
     mandatory issues for all three. Dashboard 1 round, $0.07; ecommerce 2
     rounds, $0.11; freelancer 2 rounds, $0.13. Round 1 missed only `reads`
     entries (CONTRACT-020, 3 and 4), which the patch round fixed.
+  - All 7 misses were add forms, which show what the user types in: the
+    rule was wrong, and the fix round added reads such as `getOrder` before
+    the order exists. CONTRACT-020 now needs no read for a record that the
+    widget's flow creates; an edit form still reads its record (user). The
+    rerun passed all three in 1 round: dashboard $0.07, ecommerce $0.09,
+    freelancer $0.10.
 
 - [ ] **C5** Renderer (30 min). Depends: C4
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.

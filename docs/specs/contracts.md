@@ -45,7 +45,7 @@ with `ctx = { scope, flows, widgets }`.
 | CONTRACT-010 | mandatory | Every operation serves a step; every step with effects is served by an operation                             |
 | CONTRACT-011 | mandatory | A step's effect is served by an operation of the matching kind on the noun's entity                          |
 | CONTRACT-012 | mandatory | Every field a widget asks for at a step is an input of an operation serving the same flow; sign-up and sign-in fields go to the built-in operations |
-| CONTRACT-020 | mandatory | Every value a widget shows is a field of its noun's entity, and one of the widget's reads loads that entity; a widget that repeats over a noun reads its list; entries name catalog widgets and list or get operations |
+| CONTRACT-020 | mandatory | Every value a widget shows is a field of its noun's entity, and one of the widget's reads loads that entity, unless the widget's flow creates it (an add form); a widget that repeats over a noun reads its list; entries name catalog widgets and list or get operations |
 
 ## Done when
 
