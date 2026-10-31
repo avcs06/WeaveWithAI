@@ -553,7 +553,7 @@ widths the design system fixes (user, 2026-10-30).
 | THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `background` is colors and gradients only: every color parses, and it loads no image (DS35) |
 | THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits the smallest button and its padding |
 | THEME-007 | mandatory | The spacing every page gets from its layout: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages (H-08); the main area and each needed part pad at least their gap (H-06). Only the theme call can change these, so they are checked here and not left to the LAYOUT rules |
-| THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`; `backdrop` darker than the page and the frame |
+| THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`, `divider` also on every color of the page background, since cards draw their borders with it; `backdrop` darker than the page and the frame |
 | THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
 | THEME-011 | mandatory | The logo's weight is one its font ships, and its color reads at 3:1 on `frameBg` and `pageBg` in each mode |
 | THEME-012 | warning   | Every set's `shadow` is its ramp's darkest step: 12 in light mode, 1 in dark |

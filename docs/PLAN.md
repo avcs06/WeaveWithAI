@@ -1357,6 +1357,15 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     a pattern drawn with repeating gradients, and a dark button with a
     bright border.
 
+- [x] **DS47** Card borders show on the whole page background (15 min) (done 2026-11-01). Depends: DS46
+  - Why: in the dashboard run of 2026-11-01 01:07 the cards' borders
+    vanished on the background's teal glow (user). A Card draws its border
+    with the page's `divider`, which THEME-009 checked only on `pageBg` and
+    `frameBg`; on the glow it was 1.09:1.
+  - THEME-009 also holds the divider to 1.1:1 on every color of the page
+    background, with a fix in its message, and the theme prompt says cards
+    draw their borders with the divider.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

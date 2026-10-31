@@ -178,6 +178,13 @@ describe('theme rules', () => {
     expect(at((t) => (t.colors.light!.page.backdrop = '#FFFFFF'))).toEqual([
       'page.light.backdrop',
     ]);
+    // A glow in the background the divider, and so a card's border, vanishes on.
+    expect(
+      at((t) => {
+        const { page } = t.colors.dark!;
+        page.pageBackground = `radial-gradient(circle, ${page.divider} 0%, transparent 60%), ${page.pageBg}`;
+      }),
+    ).toEqual(['page.dark.divider']);
   });
 
   it('THEME-011 wants a weight the logo font ships, and the wordmark readable on the frame and the page', () => {

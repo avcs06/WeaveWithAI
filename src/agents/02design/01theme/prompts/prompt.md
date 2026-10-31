@@ -78,7 +78,7 @@ Code builds a ramp of twelve steps for each set from the brief: the brand's (`th
   - `pageBg`: the page's solid color. It sits behind the background, and disabled controls fade into it. Pick the step closest to the background's main color.
   - `pageFg` and `pageFgMuted`: the text on the page and on the frame.
   - `frameBg`: the background of the header, sidebars and footer. It is a `step` of the frame ramp.
-  - `divider`: the hairline between rows and sections. Quiet, but visible on `pageBg` and `frameBg`.
+  - `divider`: the hairline between rows and sections, and the border of cards. Quiet, but visible on `pageBg`, `frameBg` and every color of the page background.
   - `skeleton`: the placeholder shapes while content loads. Visible on `pageBg`, `frameBg` and the base set's `bg`.
   - `backdrop`: the color laid over the page behind a dialog or drawer. Darker than the page and the frame. Components set its opacity.
 - `logo`: the wordmark's color, a `ramp` (base or theme) and a `step`. It sits on `frameBg`, and on the page under an overlay header, so it reads on both.
@@ -94,7 +94,7 @@ Code checks these contrasts:
 - 4.5:1 for the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit.
 - 3:1 for `border` and `focus` on `bg`, and for the theme's and base's `border` and `focus` on `pageBg` and `frameBg`.
 - 3:1 for the `logo` on `frameBg` and `pageBg`.
-- 1.1:1 for `divider` and `skeleton` on what they sit on, and a `backdrop` darker than the page and the frame.
+- 1.1:1 for `divider` and `skeleton` on what they sit on, the divider on every color of the page background too, and a `backdrop` darker than the page and the frame.
 
 Keep the brand and entity colors clearly apart from the status colors.
 
