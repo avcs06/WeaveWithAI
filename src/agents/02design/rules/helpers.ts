@@ -80,6 +80,12 @@ export const ACTIONS = new Set([
   'destructive-action',
 ]);
 
+/** The slots an instance of a widget or of a new component fills in: its catalog definition's. */
+export const slotsOf = (catalog: Catalog, places: string) =>
+  catalog.widgets.find((w) => w.id === places)?.slots ??
+  catalog.components.find((c) => c.name === places)?.slots ??
+  [];
+
 /** The steps of the subflows that ask the user to confirm, such as confirming a deletion. */
 export const confirmingSteps = (flows: Flows) =>
   flows.subflows

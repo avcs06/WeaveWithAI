@@ -1,7 +1,7 @@
 <!-- User message of an invent call (DS23). Placeholders: component, widgets, vocabulary, look. -->
 # To draw
 
-The new component as the architect declared and described it, with its narrowest and widest width in px.
+The new component as the architect declared and described it, with its narrowest and widest width in px and its slots.
 
 {{component}}
 

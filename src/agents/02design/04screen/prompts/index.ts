@@ -49,7 +49,6 @@ export function screenUserMessage(
           holds: c.purpose,
           ...catalog.components.find((x) => x.name === c.name),
           containsHeading: false,
-          slots: [],
         })),
     ]),
   });

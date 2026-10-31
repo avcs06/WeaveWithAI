@@ -174,6 +174,7 @@ export const catalogCall: Catalog = {
     name,
     minWidthPx,
     maxWidthPx,
+    slots: [],
   })),
   screens: screens.screens.map((screen) => ({
     screen: screen.id,

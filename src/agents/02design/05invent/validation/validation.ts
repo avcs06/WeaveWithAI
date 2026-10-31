@@ -4,6 +4,8 @@ import type { Theme } from '../../01theme/build';
 import { aloneChecks } from '../../06draw/validation/validation';
 import type { ModelNode } from '../../06draw/schema';
 import { componentRule as design041 } from '../../rules/design-041-widths-fit';
+import { componentRule as design044 } from '../../rules/design-044-slots-drawn';
+import type { Processed as Catalog } from '../../03catalog/process';
 import type { DesignContext } from '../../rules/helpers';
 import type { ComponentDesign } from '../schema';
 
@@ -25,7 +27,7 @@ const STACK = {
 export function validateComponent(
   name: string,
   design: ComponentDesign,
-  range: { minWidthPx: number; maxWidthPx: number },
+  range: Pick<Catalog['components'][number], 'minWidthPx' | 'maxWidthPx' | 'slots'>,
   kind: 'app' | 'marketing',
   ctx: DesignContext,
   theme: Theme,
@@ -72,6 +74,7 @@ export function validateComponent(
   };
   return [
     ...runRules([design041], { name, box: design.box, range }),
+    ...runRules([design044], { name, nodes: design.nodes, slots: range.slots }),
     ...aloneChecks(
       name,
       [node, ...design.nodes.map((n) => (n.parent ? n : { ...n, parent: root }))],

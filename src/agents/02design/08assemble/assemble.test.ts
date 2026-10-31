@@ -136,6 +136,34 @@ describe('assembleChain', () => {
     ]);
   });
 
+  it('gives a component placed on its own its catalog slots, with its words and the instances placed in a parts slot', () => {
+    const boarded = changed((c) => {
+      c.catalog.components.find((x) => x.name === 'TitleCover')!.slots.push(
+        { name: 'caption', kind: 'words', holds: 'a caption', minWidthPx: 0, maxWidthPx: 0 },
+        { name: 'body', kind: 'parts', holds: 'what sits under the cover', minWidthPx: 0, maxWidthPx: 0 },
+      );
+      const cover = structuredClone(chain.designs.get('TitleCover')!);
+      const like = cover.nodes[0]!;
+      cover.nodes.push(
+        { ...structuredClone(like), id: 'TitleCover.n90', parent: '', order: 90, what: 'the caption slot', role: 'text', slot: 'caption', text: '', layout: null },
+        { ...structuredClone(like), id: 'TitleCover.n91', parent: '', order: 91, what: 'the body slot', role: 'container', slot: 'body', text: '', layout: cover.layout },
+      );
+      c.designs = new Map([...chain.designs, ['TitleCover', cover]]);
+      const s06 = c.layouts.find((l) => l.screen === 'S06')!;
+      s06.instances.push({ ...structuredClone(s06.instances[1]!), id: 'S06.p3', places: 'TitleCover', order: 3, headingLevel: 0, slots: [{ name: 'caption', text: 'Dune' }] });
+      s06.instances[1]!.in = 'S06.p3/body';
+    });
+    const { screens: out, origin: from } = assembleChain(boarded, theme);
+    const cover = out.nodes.find((n) => n.newComponent === 'TitleCover' && n.parent === '')!;
+    const kids = out.nodes.filter((n) => n.parent === cover.id);
+    expect(kids.map((n) => [n.what, n.text])).toEqual([['the caption slot', 'Dune'], ['the body slot', '']]);
+    const body = kids[1]!;
+    const panel = out.nodes.filter((n) => from.get(n.id)?.startsWith('W09.'));
+    expect(panel.length).toBeGreaterThan(0);
+    expect(panel.every((n) => n.section === cover.section)).toBe(true);
+    expect([...new Set(panel.filter((n) => !from.get(n.parent)?.startsWith('W09.')).map((n) => n.parent))]).toEqual([body.id]);
+  });
+
   it("adds a frame change's nodes and records what each screen adds and removes", () => {
     const framed = changed((c) => {
       const app = c.frames.find((f) => f.screen === 'SH1')!;

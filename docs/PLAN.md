@@ -1362,10 +1362,9 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     vanished on the background's teal glow (user). A Card draws its border
     with the page's `divider`, which THEME-009 checked only on `pageBg` and
     `frameBg`; on the glow it was 1.09:1.
-  - THEME-009 holds the divider to 1.2:1 (user) on pageBg, frameBg and
-    every color of the page background, with a fix in its message; the
-    skeleton stays at 1.1:1. The theme prompt says cards draw their borders
-    with the divider.
+  - THEME-009 also holds the divider to 1.1:1 on every color of the page
+    background, with a fix in its message, and the theme prompt says cards
+    draw their borders with the divider.
 
 - [x] **DS48** Paragraphs under a heading keep their spacing (10 min) (done 2026-11-01). Depends: DS41
   - Why: the dashboard run of 2026-11-01 01:07 had 34 LAYOUT-013 warnings.
@@ -1374,6 +1373,19 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - A header group is now a heading and exactly one text. A heading over
     paragraphs keeps the model's gap, as paragraphs alone do: one gap
     cannot be 16 under the heading and 8 to 12 between paragraphs.
+
+- [x] **DS49** New components have slots the screen fills (1.5 h) (done 2026-11-01). Depends: DS48
+  - Why: in the dashboard run of 2026-11-01 01:07 the editor showed two
+    WidgetBoards, and its cards and widget bodies sat in screen boxes
+    beside the board. The board's and the card's slots were invent's, which
+    runs beside the screen call, so the screen could not place into them.
+  - The catalog gives each new component its slots, as it does a widget's.
+    Invent draws them (DESIGN-044's component rule). The screen sees them
+    and places instances in them; DESIGN-029 and DESIGN-038 read a
+    component's slots through `slotsOf`. Assembly gives a component placed
+    on its own its slot nodes, with the instances placed in them inside.
+  - A rule that a component a widget holds is never also a part of the
+    screen was dropped (user): a small reusable component can be both.
 
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as

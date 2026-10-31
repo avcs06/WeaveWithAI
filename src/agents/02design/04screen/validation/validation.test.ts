@@ -65,6 +65,28 @@ describe('the screen rules', () => {
     expect(at('This removes “{Book.title}”. It cannot be undone.')).toEqual(['S07.p1']);
   });
 
+  it("DESIGN-029 and DESIGN-038 read a new component's slots as they read a widget's", () => {
+    const slotted = structuredClone(catalog);
+    slotted.components.find((c) => c.name === 'TitleCover')!.slots.push(
+      { name: 'caption', kind: 'words', holds: 'a caption', minWidthPx: 0, maxWidthPx: 0 },
+      { name: 'body', kind: 'parts', holds: 'what sits under the cover', minWidthPx: 0, maxWidthPx: 0 },
+    );
+    slotted.screens.find((s) => s.screen === 'S06')!.parts.push('TitleCover');
+    const at = (caption: string) =>
+      check(
+        changed((l) => {
+          const s06 = l.find((s) => s.screen === 'S06')!;
+          s06.instances.push({ ...structuredClone(s06.instances[1]!), id: 'S06.p3', places: 'TitleCover', order: 3, widthPx: 160, headingLevel: 0, slots: caption ? [{ name: 'caption', text: caption }] : [] });
+          s06.instances[1]!.in = 'S06.p3/body';
+        }),
+        slotted,
+      )
+        .filter((i) => i.rule === 'DESIGN-029' || i.rule === 'DESIGN-038')
+        .map((i) => [i.rule, i.at]);
+    expect(at('Dune')).toEqual([]);
+    expect(at('')).toEqual([['DESIGN-038', 'S06.p3']]);
+  });
+
   it.each(Object.keys(cases))('%s fails its case', (rule) => {
     expect(rules(check(changed(cases[rule]!)))).toContain(rule);
   });

@@ -101,7 +101,7 @@ describe('the catalog rules', () => {
     const at = (change: (c: Catalog) => void) =>
       check(changed(change)).map((i) => [i.rule, i.at]);
     expect(at((c) => (c.components = []))).toEqual([['DESIGN-041', 'TitleCover']]);
-    expect(at((c) => c.components.push({ name: 'CoverArt', minWidthPx: 0, maxWidthPx: 0 }))).toEqual([['DESIGN-041', 'CoverArt']]);
+    expect(at((c) => c.components.push({ name: 'CoverArt', minWidthPx: 0, maxWidthPx: 0, slots: [] }))).toEqual([['DESIGN-041', 'CoverArt']]);
     expect(at((c) => (c.components[0]!.maxWidthPx = 120))).toEqual([['DESIGN-041', 'TitleCover']]);
   });
 

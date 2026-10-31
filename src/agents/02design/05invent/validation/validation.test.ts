@@ -23,6 +23,17 @@ describe('an invent call', () => {
     expect(check(cover).filter((i) => i.severity === 'mandatory')).toEqual([]);
   });
 
+  it('DESIGN-044 wants each slot the catalog gives the component drawn as one node naming it', () => {
+    const slotted = { ...range, slots: [{ name: 'body', kind: 'parts' as const, holds: 'what sits under the cover', minWidthPx: 0, maxWidthPx: 0 }] };
+    const at = (design: ComponentDesign) =>
+      check(design, slotted).filter((i) => i.rule === 'DESIGN-044').map((i) => i.at);
+    expect(at(cover)).toEqual(['TitleCover']);
+    const drawn = changed((d) => {
+      d.nodes.push({ ...structuredClone(d.nodes[0]!), id: 'TitleCover.n90', parent: '', order: 90, what: 'the body slot', role: 'container', slot: 'body', text: '', layout: d.layout });
+    });
+    expect(at(drawn)).toEqual([]);
+  });
+
   it("fails DESIGN-001 for a node id that is not the component's", () => {
     expect(rules(check(changed((d) => (d.nodes[0]!.id = 'Cover-1'))))).toContain('DESIGN-001');
   });

@@ -74,13 +74,16 @@ export function makeCatalogSchema(inv: Inventory) {
       .int()
       .describe('Its widest width in px. 0 to fill what it is given'),
   });
-  const ComponentWidths = z.object({
+  const Component = z.object({
     name: z.string(),
     minWidthPx: z.number().int(),
     maxWidthPx: z
       .number()
       .int()
       .describe('Its widest width in px. 0 to fill what it is given'),
+    slots: z
+      .array(Slot)
+      .describe('What each instance of it fills in, as for a widget. [] when an instance fills in nothing'),
   });
   const ScreenParts = z.object({
     screen: z.string(),
@@ -93,7 +96,7 @@ export function makeCatalogSchema(inv: Inventory) {
   });
   const Catalog = z.object({
     widgets: z.array(Widget),
-    components: z.array(ComponentWidths),
+    components: z.array(Component),
     screens: z.array(ScreenParts),
   });
   return { Catalog, Widget };

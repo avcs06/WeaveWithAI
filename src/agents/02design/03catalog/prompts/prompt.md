@@ -61,6 +61,9 @@ Give widths only. Heights follow content.
 - `name`: the new component's name.
 - `minWidthPx`: its narrowest width.
 - `maxWidthPx`: its widest width. 0 to fill what it is given.
+- `slots`: what each instance fills in, given as for a widget. A component that holds other parts on its screen gives them a parts slot, such as the cards of a board or the body of a card. The screen places those parts in it. [] when an instance fills in nothing.
+
+A component whose parts slots the screen fills is a part of that screen, so the screen can place what goes in it.
 
 `screens` has an entry for each screen of the plan. Give each one:
 

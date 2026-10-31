@@ -42,6 +42,7 @@ export async function runInvent(ctx: StageContext, inv: Inventory): Promise<void
         const range = catalog.components.find((c) => c.name === declared.name) ?? {
           minWidthPx: 0,
           maxWidthPx: 0,
+          slots: [],
         };
         const lists = catalog.widgets.some(
           (w) => w.newComponents.includes(declared.name) && (w.kind === 'list' || w.kind === 'cards'),

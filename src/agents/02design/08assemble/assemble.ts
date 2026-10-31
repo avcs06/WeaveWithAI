@@ -108,6 +108,10 @@ export function assembleChain(
       if (!build && designs.has(instance.places)) {
         root = nextId();
         origin.set(root, instance.places);
+        // Its catalog slots, as invent drew them, hold its words and the instances placed in them (DESIGN-044).
+        const slotNodes = (ranges.get(instance.places)?.slots ?? []).flatMap(
+          (slot) => designs.get(instance.places)?.nodes.filter((n) => n.slot === slot.name) ?? [],
+        );
         nodes.push({
           id: root,
           section,
@@ -120,7 +124,7 @@ export function assembleChain(
           look: '',
           overrideReason: '',
           box: boxOf(instance),
-          layout: null,
+          layout: slotNodes.length ? STACK : null,
           typeScale: 'none',
           text: '',
           label: '',
@@ -132,6 +136,12 @@ export function assembleChain(
           states: ['default'],
           navigatesTo: '',
         });
+        for (const from of slotNodes) {
+          const id = nextId();
+          origin.set(id, from.id);
+          nodes.push(designNode(from, { id, section, parent: root }, screen.kind, words));
+          for (const child of slotted(instance.id, from.slot)) place(child, section, id);
+        }
       }
       const ids = new Map<string, string>();
       for (const from of depthFirst(own)) ids.set(from.id, nextId());

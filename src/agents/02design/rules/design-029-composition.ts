@@ -1,6 +1,6 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule, duplicates } from '../../../core/rules';
-import type { CatalogInput, ScreenInput } from './helpers';
+import { type CatalogInput, type ScreenInput, slotsOf } from './helpers';
 
 /**
  * DESIGN-029 · mandatory
@@ -59,7 +59,6 @@ export const screenRule = defineRule<ScreenInput>(
     const issues: Issue[] = [];
     const parts = catalog.screens.find((s) => s.screen === layout.screen)?.parts ?? [];
     const boxes = new Set(layout.boxes.map((b) => b.id));
-    const widgets = new Map(catalog.widgets.map((w) => [w.id, w]));
     for (const part of parts)
       if (!layout.instances.some((i) => i.places === part))
         issues.push(fail(`${part} is a part of ${layout.screen}, but no instance places it. Every part of a screen is placed by an instance. Add an instance to ${layout.screen} with places ${part}.`, part));
@@ -72,7 +71,7 @@ export const screenRule = defineRule<ScreenInput>(
       if (instance.in === '' || boxes.has(instance.in)) continue;
       const [owner, slot] = instance.in.split('/');
       const host = layout.instances.find((i) => i.id === owner);
-      const defined = widgets.get(host?.places ?? '')?.slots.find((s) => s.name === slot);
+      const defined = slotsOf(catalog, host?.places ?? '').find((s) => s.name === slot);
       if (!host || defined?.kind !== 'parts')
         issues.push(fail(`${instance.id} sits in ${instance.in}, which is neither a box of ${layout.screen} nor a parts slot of an instance there. An instance sits at the top, in a box of its screen, or in a parts slot of another instance. Set in of ${instance.id} to "" for the top, a box id such as ${layout.screen}.b1, or an instance id and a parts slot such as ${layout.screen}.p2/body.`, instance.id));
     }

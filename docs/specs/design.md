@@ -410,7 +410,7 @@ such as a field 160 and a card 240. It answers:
   `maxWidthPx` or fill. No heights: heights follow content. A widget that
   serves a step shows all the step needs, so a search, its list and the
   list's empty state are one widget, and a form's actions sit in the form.
-- `components`: one width range for each new component.
+- `components`: one width range for each new component, and its slots as a widget has them: a component that holds other parts on its screen, such as a board's cards or a card's body, gives them a parts slot (user, 2026-11-01).
 - `screens`: for each screen, the widgets and components it is made of, and
   `frameSteps`, the steps its frame serves, such as sign out; only a framed
   page has a frame.
@@ -446,7 +446,9 @@ Medium reasoning, first draft at 0.7, peer and output reviewers. One call
 per new component, the creative expansion: it turns the architect's
 description into a root box, its layout and nodes (`CalendarGrid.n01`)
 inside the component's width range, creative within that description,
-which its peer reviewer checks. A visual no node can express, such as a ring or a timeline
+which its peer reviewer checks. It draws each slot the catalog gives the
+component as one node naming it, so a screen can place instances in it
+(DESIGN-044). A visual no node can express, such as a ring or a timeline
 bar, is a `shape` node. Look only: the component's behavior, props, keyboard
 and ARIA belong to the coding stage.
 
@@ -476,7 +478,9 @@ it.
 Code, no model. Each screen is built from its box tree: every instance
 becomes its widget's or component's nodes, renumbered to the screen in
 reading order with an origin map back to their own ids; slots take the
-instance's words and instances; heading levels become absolute from the
+instance's words and instances; a component placed on its own is one node
+holding its catalog slots, as invent drew them, with the instances placed
+in them; heading levels become absolute from the
 instance's level, and a heading's type size follows its level (app: H1
 title, H2 heading, H3 subheading, H4 body; marketing: H1 display, H2 title,
 H3 heading, H4 subheading); a page's gap and padding come from its layout
@@ -553,7 +557,7 @@ widths the design system fixes (user, 2026-10-30).
 | THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `background` is colors and gradients only: every color parses, and it loads no image (DS35) |
 | THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits the smallest button and its padding |
 | THEME-007 | mandatory | The spacing every page gets from its layout: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages (H-08); the main area and each needed part pad at least their gap (H-06). Only the theme call can change these, so they are checked here and not left to the LAYOUT rules |
-| THEME-009 | mandatory | `divider` at least 1.2:1 on `pageBg`, `frameBg` and every color of the page background, since cards draw their borders with it; `skeleton` at least 1.1:1 on `pageBg`, `frameBg` and the base set's `bg`; `backdrop` darker than the page and the frame |
+| THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`, `divider` also on every color of the page background, since cards draw their borders with it; `backdrop` darker than the page and the frame |
 | THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
 | THEME-011 | mandatory | The logo's weight is one its font ships, and its color reads at 3:1 on `frameBg` and `pageBg` in each mode |
 | THEME-012 | warning   | Every set's `shadow` is its ramp's darkest step: 12 in light mode, 1 in dark |
@@ -606,7 +610,7 @@ widths the design system fixes (user, 2026-10-30).
 | DESIGN-041 | mandatory | A widget's minimum width fits the content width of every screen that uses it, and each slot's range fits inside its widget's; each declared component has one width range, its widest at least its narrowest (catalog); invent's root stays inside it (invent) |
 | DESIGN-042 | mandatory | A `shape` node's box is fixed or fill in both directions, since it has no content to size it (invent, draw) |
 | DESIGN-043 | mandatory | A page has its own route, like `/shelf`; a dialog or drawer has none. A dialog or drawer with more than 6 fields: warning, a longer form is a page (architect) |
-| DESIGN-044 | mandatory | A widget draws each slot of its definition as one node naming it, a words slot with no words of its own and a parts slot with nothing inside, and no other slot; it draws each new component it holds and no other (draw) |
+| DESIGN-044 | mandatory | A widget draws each slot of its definition as one node naming it, a words slot with no words of its own and a parts slot with nothing inside, and no other slot; it draws each new component it holds and no other (draw). A new component's design draws its catalog slots the same way (invent) |
 | DESIGN-045 | mandatory | A step that saves fields is on one screen, the one with its form; the step that opens it may sit on other screens (architect) |
 | DESIGN-046 | mandatory | A widget used on several screens serves only steps every one of them serves; a part that differs, such as a header's add button, is a small widget per screen in a parts slot (catalog) |
 | DESIGN-047 | mandatory | A confirmation's steps sit on a dialog of the page that asks, never on the page (architect) |

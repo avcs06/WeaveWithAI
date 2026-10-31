@@ -94,8 +94,7 @@ Code checks these contrasts:
 - 4.5:1 for the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit.
 - 3:1 for `border` and `focus` on `bg`, and for the theme's and base's `border` and `focus` on `pageBg` and `frameBg`.
 - 3:1 for the `logo` on `frameBg` and `pageBg`.
-- 1.2:1 for `divider` on `pageBg`, `frameBg` and every color of the page background.
-- 1.1:1 for `skeleton` on what it sits on, and a `backdrop` darker than the page and the frame.
+- 1.1:1 for `divider` and `skeleton` on what they sit on, and on every color of the page background, and a `backdrop` darker than the page and the frame.
 
 Keep the brand and entity colors clearly apart from the status colors.
 

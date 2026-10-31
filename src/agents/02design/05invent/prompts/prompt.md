@@ -17,6 +17,14 @@ You draw the component: its root box, how its root arranges its nodes, and its n
   - A visual that no component can show, such as a progress ring or a timeline bar, is a node with role shape. Its `what` says what it draws. Its box is fixed or fill in both directions.
 - The component works at its narrowest and at its widest width. The input gives both.
 
+## Slots
+
+The input gives the component's `slots`: what each instance of it fills in.
+
+- Each slot is one node that names the slot in `slot`.
+- A words slot shows the words each instance writes. Its node has `text` "".
+- A parts slot is a container that holds the instances the screen places in it, such as the cards of a board. Draw nothing inside it, and give it the layout those instances take.
+
 {{nodeGuide}}
 
 ## Design-system components
