@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "artifact": "flows-scope",
+    "version": 1,
+    "hash": "a429d85002f2b5f383eb4bbf624df6d22b788fdae9cd1fb402ed912be770c676",
+    "inputs": {},
+    "stage": "flows-scope",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-30T11:00:51.336Z"
+  },
+  "data": {
+    "app": {
+      "name": "Tidyboards",
+      "summary": "For people who keep little bits of personal info scattered around, Tidyboards gives them tidy personal dashboards. They create a dashboard, add note, counter, checklist, and link-list widgets, then configure, arrange, and resize them. Changes save automatically so the dashboard is ready on every visit.",
+      "audience": "People who want a small personal dashboard for notes, counts, tasks, and links"
+    },
+    "roles": [
+      {
+        "id": "visitor",
+        "name": "Visitor",
+        "description": "Person learning what Tidyboards is; can start sign up from the landing page but has no dashboards",
+        "signedIn": false
+      },
+      {
+        "id": "member",
+        "name": "Member",
+        "description": "Owner of personal dashboards; creates and manages dashboards and all widgets inside them",
+        "signedIn": true
+      }
+    ],
+    "vocabulary": [
+      {
+        "noun": "Dashboard",
+        "description": "Named container for widgets; has name and last-edited time, can be renamed, duplicated, deleted",
+        "belongsTo": "member"
+      },
+      {
+        "noun": "Widget",
+        "description": "Block inside a dashboard; has title, type (note, counter, checklist, linklist), size small/medium/large, position, and type-specific settings and content",
+        "belongsTo": "member"
+      },
+      {
+        "noun": "ChecklistItem",
+        "description": "Single row inside a checklist widget; has text and ticked or unticked state",
+        "belongsTo": "member"
+      },
+      {
+        "noun": "LinkEntry",
+        "description": "Single row inside a link-list widget; has title and web address",
+        "belongsTo": "member"
+      }
+    ],
+    "capabilities": [
+      {
+        "id": "accounts",
+        "needed": true,
+        "note": "Email/password sign up, sign in, sign out for dashboard owners"
+      },
+      {
+        "id": "userOwnedData",
+        "needed": true,
+        "note": "Each user sees and edits only their own dashboards and widgets"
+      },
+      {
+        "id": "crud",
+        "needed": true,
+        "note": "Create, list, view, rename, duplicate, delete dashboards and widgets"
+      },
+      {
+        "id": "roles",
+        "needed": true,
+        "note": "Visitor for landing page plus signed-in member"
+      },
+      {
+        "id": "publicPages",
+        "needed": true,
+        "note": "Public landing page explaining dashboards and how to start"
+      },
+      {
+        "id": "reorder",
+        "needed": true,
+        "note": "Change widget position relative to other widgets"
+      },
+      {
+        "id": "datesDeadlines",
+        "needed": true,
+        "note": "Show last-edited time on dashboard list; no deadlines"
+      }
+    ],
+    "inScope": [
+      "Public landing page that says what personal dashboards are for and how to start",
+      "Sign up, sign in, sign out; each user sees only their own dashboards",
+      "Create, list with last-edited time, rename, duplicate, and delete dashboards",
+      "Editor that saves all dashboard and widget changes automatically",
+      "Add note, counter, checklist, and link-list widgets with a title and type-specific settings",
+      "Rename, reposition relative to other widgets, resize to small/medium/large, and remove widgets",
+      "Use widgets: edit note text; set counter label and increase/decrease value; add and tick checklist items; add titles/addresses and open links"
+    ],
+    "outOfScope": [],
+    "assumptions": [
+      {
+        "id": "A01",
+        "text": "New dashboards start named 'Untitled dashboard' and can be renamed to any non-empty name.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A02",
+        "text": "Duplicating a dashboard copies its name as 'Copy of {name}' plus all widgets, settings, and content.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A03",
+        "text": "Deleting a dashboard permanently removes it and all its widgets, items, and links with no trash or undo.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A04",
+        "text": "Widgets live in a single ordered list per dashboard; reposition means move earlier/later in that order and visual placement is up to design.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A05",
+        "text": "New widgets default to medium size; size can only be small, medium, or large.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A06",
+        "text": "Counter widget has a label and an integer value starting at 0; plus/minus changes it by 1 with no minimum or maximum, negatives allowed.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A07",
+        "text": "Checklist widget holds items with non-empty text and ticked/unticked state; ticking toggles state, adding requires text.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A08",
+        "text": "Link-list entries require a title and a web address starting with http:// or https://; selecting a link opens it in a new tab.",
+        "kind": "data",
+        "affects": []
+      },
+      {
+        "id": "A09",
+        "text": "Editor autosaves every create, edit, reorder, resize, and delete shortly after the change and updates the dashboard last-edited time.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A10",
+        "text": "Dashboards and their widgets are private to the user who created them; there is no sharing or collaboration.",
+        "kind": "permission",
+        "affects": []
+      }
+    ],
+    "questions": []
+  }
+}

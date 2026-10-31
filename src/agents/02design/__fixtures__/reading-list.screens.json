@@ -1,0 +1,4057 @@
+{
+  "navigation": {
+    "items": [
+      {
+        "label": "Shelf",
+        "screen": "S04",
+        "access": "signedIn"
+      },
+      {
+        "label": "Sign in",
+        "screen": "S02",
+        "access": "public"
+      }
+    ]
+  },
+  "screens": [
+    {
+      "id": "S01",
+      "name": "Shelf",
+      "type": "page",
+      "route": "/",
+      "parent": "",
+      "kind": "marketing",
+      "framed": true,
+      "shell": "SH2",
+      "contentWidth": "wide",
+      "layout": {
+        "direction": "column",
+        "gap": "6",
+        "padding": "6",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "public",
+      "roles": [],
+      "purpose": "Say what Shelf is and lead to sign-up or sign-in.",
+      "entry": true,
+      "states": [
+        "default"
+      ],
+      "flowSteps": [
+        "F01.S01",
+        "F02.S01"
+      ]
+    },
+    {
+      "id": "S02",
+      "name": "Sign in",
+      "type": "page",
+      "route": "/sign-in",
+      "parent": "",
+      "kind": "app",
+      "framed": false,
+      "shell": "",
+      "contentWidth": "narrow",
+      "layout": {
+        "direction": "column",
+        "gap": "6",
+        "padding": "6",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "public",
+      "roles": [],
+      "purpose": "Sign in with an email and a password.",
+      "entry": true,
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "error",
+        "denied"
+      ],
+      "flowSteps": [
+        "F02.S02",
+        "F02.A01",
+        "F02.A02"
+      ]
+    },
+    {
+      "id": "S03",
+      "name": "Sign up",
+      "type": "page",
+      "route": "/sign-up",
+      "parent": "",
+      "kind": "app",
+      "framed": false,
+      "shell": "",
+      "contentWidth": "narrow",
+      "layout": {
+        "direction": "column",
+        "gap": "6",
+        "padding": "6",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "public",
+      "roles": [],
+      "purpose": "Sign up with an email and a password.",
+      "entry": true,
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "error",
+        "denied"
+      ],
+      "flowSteps": [
+        "F01.S02",
+        "F01.A01",
+        "F01.A02",
+        "F01.A03"
+      ]
+    },
+    {
+      "id": "S04",
+      "name": "Shelf",
+      "type": "page",
+      "route": "/shelf",
+      "parent": "",
+      "kind": "app",
+      "framed": true,
+      "shell": "SH1",
+      "contentWidth": "wide",
+      "layout": {
+        "direction": "column",
+        "gap": "6",
+        "padding": "6",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "signedIn",
+      "roles": [
+        "reader"
+      ],
+      "purpose": "Show the reader's books and the ways to add, find and open one.",
+      "entry": false,
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error"
+      ],
+      "flowSteps": [
+        "F03.S01",
+        "F04.S01",
+        "F04.S02",
+        "F04.A01",
+        "F04.A02",
+        "F05.S01",
+        "F06.S01"
+      ]
+    },
+    {
+      "id": "S05",
+      "name": "Add a book",
+      "type": "dialog",
+      "route": "",
+      "parent": "S04",
+      "kind": "app",
+      "framed": false,
+      "shell": "",
+      "contentWidth": "medium",
+      "layout": {
+        "direction": "column",
+        "gap": "5",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "signedIn",
+      "roles": [
+        "reader"
+      ],
+      "purpose": "Add a book with a title, an author and a shelf.",
+      "entry": false,
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "error",
+        "success"
+      ],
+      "flowSteps": [
+        "F03.S02",
+        "F03.A01",
+        "F03.A02",
+        "F03.A03"
+      ]
+    },
+    {
+      "id": "S06",
+      "name": "Book",
+      "type": "page",
+      "route": "/books/[bookId]",
+      "parent": "",
+      "kind": "app",
+      "framed": true,
+      "shell": "SH1",
+      "contentWidth": "wide",
+      "layout": {
+        "direction": "row",
+        "gap": "6",
+        "padding": "6",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": true
+      },
+      "access": "signedIn",
+      "roles": [
+        "reader"
+      ],
+      "purpose": "Show one book and offer to delete it.",
+      "entry": false,
+      "states": [
+        "default",
+        "loading",
+        "notFound"
+      ],
+      "flowSteps": [
+        "F05.S01",
+        "F05.S02",
+        "F05.A01"
+      ]
+    },
+    {
+      "id": "S07",
+      "name": "Delete this book?",
+      "type": "dialog",
+      "route": "",
+      "parent": "S06",
+      "kind": "app",
+      "framed": false,
+      "shell": "",
+      "contentWidth": "narrow",
+      "layout": {
+        "direction": "column",
+        "gap": "5",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "access": "signedIn",
+      "roles": [
+        "reader"
+      ],
+      "purpose": "Confirm the deletion of one book.",
+      "entry": false,
+      "states": [
+        "default",
+        "submitting",
+        "error"
+      ],
+      "flowSteps": [
+        "F05.A02",
+        "F05.A03",
+        "STD01.S01",
+        "STD01.A01",
+        "STD01.A02"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "id": "S01.sec1",
+      "screen": "S01",
+      "order": 1,
+      "kind": "hero",
+      "title": "Keep every book you mean to read",
+      "purpose": "Name the product and its promise, then offer the two ways in.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "4",
+        "padding": "12",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "brand",
+      "flowSteps": [
+        "F01.S01",
+        "F02.S01"
+      ]
+    },
+    {
+      "id": "S01.sec2",
+      "screen": "S01",
+      "order": 2,
+      "kind": "feature-grid",
+      "title": "Why readers use Shelf",
+      "purpose": "Three short reasons, each an icon, a title and a sentence.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "5",
+        "padding": "8",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": []
+    },
+    {
+      "id": "S02.sec1",
+      "screen": "S02",
+      "order": 1,
+      "kind": "auth-form",
+      "title": "Sign in",
+      "purpose": "The sign in form.",
+      "box": {
+        "width": "fixed",
+        "widthPx": 400,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "4",
+        "padding": "0",
+        "columns": 0,
+        "align": "stretch",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F02.S02",
+        "F02.A01",
+        "F02.A02"
+      ]
+    },
+    {
+      "id": "S03.sec1",
+      "screen": "S03",
+      "order": 1,
+      "kind": "auth-form",
+      "title": "Sign up",
+      "purpose": "The sign up form.",
+      "box": {
+        "width": "fixed",
+        "widthPx": 400,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "4",
+        "padding": "0",
+        "columns": 0,
+        "align": "stretch",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F01.S02",
+        "F01.A01",
+        "F01.A02",
+        "F01.A03"
+      ]
+    },
+    {
+      "id": "S04.sec1",
+      "screen": "S04",
+      "order": 1,
+      "kind": "page-header",
+      "title": "Your shelf",
+      "purpose": "The page title and the page actions.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "4",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "between",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F03.S01",
+        "F06.S01"
+      ]
+    },
+    {
+      "id": "S04.sec2",
+      "screen": "S04",
+      "order": 2,
+      "kind": "toolbar",
+      "title": "Find a book",
+      "purpose": "Search the list and say how many books it shows.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": true
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F04.S02",
+        "F04.A02"
+      ]
+    },
+    {
+      "id": "S04.sec3",
+      "screen": "S04",
+      "order": 3,
+      "kind": "table",
+      "title": "Books",
+      "purpose": "The books, newest first; a row opens the book.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F04.S01",
+        "F05.S01"
+      ]
+    },
+    {
+      "id": "S04.sec4",
+      "screen": "S04",
+      "order": 4,
+      "kind": "empty-state",
+      "title": "No books yet",
+      "purpose": "What the page shows before the first book.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "8",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F04.A01"
+      ]
+    },
+    {
+      "id": "S05.sec1",
+      "screen": "S05",
+      "order": 1,
+      "kind": "form",
+      "title": "Book",
+      "purpose": "The fields of the book.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "4",
+        "padding": "0",
+        "columns": 0,
+        "align": "stretch",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F03.S02",
+        "F03.A01",
+        "F03.A02"
+      ]
+    },
+    {
+      "id": "S05.sec2",
+      "screen": "S05",
+      "order": 2,
+      "kind": "custom",
+      "title": "Actions",
+      "purpose": "Cancel or save.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "end",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F03.S02",
+        "F03.A03"
+      ]
+    },
+    {
+      "id": "S06.sec1",
+      "screen": "S06",
+      "order": 1,
+      "kind": "detail",
+      "title": "Book",
+      "purpose": "The title, the author and when it was added.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "5",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F05.S01",
+        "F05.S02",
+        "F05.A01"
+      ]
+    },
+    {
+      "id": "S06.sec2",
+      "screen": "S06",
+      "order": 2,
+      "kind": "side-panel",
+      "title": "Shelf",
+      "purpose": "The cover and where the reader is with the book.",
+      "box": {
+        "width": "fixed",
+        "widthPx": 280,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "5",
+        "padding": "6",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F05.S01"
+      ]
+    },
+    {
+      "id": "S07.sec1",
+      "screen": "S07",
+      "order": 1,
+      "kind": "custom",
+      "title": "Confirm",
+      "purpose": "Say what is deleted.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "STD01.S01"
+      ]
+    },
+    {
+      "id": "S07.sec2",
+      "screen": "S07",
+      "order": 2,
+      "kind": "custom",
+      "title": "Actions",
+      "purpose": "Cancel or delete.",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "end",
+        "wrap": false
+      },
+      "surface": "page",
+      "flowSteps": [
+        "F05.A02",
+        "F05.A03"
+      ]
+    }
+  ],
+  "newComponents": [
+    {
+      "name": "TitleCover",
+      "purpose": "Stands in for a cover image: the title and the author set on a colored block, so the detail page has a visual anchor without uploads.",
+      "closestExisting": [
+        "Avatar",
+        "Card"
+      ],
+      "whyNotExisting": "Avatar draws initials in a circle of at most 56 px, and Card is a surface for content; neither sets a title in a 2:3 block.",
+      "composedOf": [
+        "Truncate",
+        "tokens.fontSize.heading",
+        "tokens.color.entity"
+      ],
+      "box": {
+        "width": "fixed",
+        "widthPx": 160,
+        "height": "fixed",
+        "heightPx": 240,
+        "minHeightPx": 0,
+        "padding": "4",
+        "gap": "2"
+      },
+      "parts": [
+        {
+          "name": "title",
+          "description": "The title, up to four lines, then cut with an ellipsis.",
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "content",
+            "heightPx": 0,
+            "minHeightPx": 0,
+            "padding": "0",
+            "gap": "0"
+          }
+        },
+        {
+          "name": "author",
+          "description": "The author on one line at the bottom.",
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "content",
+            "heightPx": 0,
+            "minHeightPx": 0,
+            "padding": "0",
+            "gap": "0"
+          }
+        }
+      ],
+      "layout": "A 160 by 240 block at every width. The title sits at the top and the author at the bottom, both 16 inside the edges and 8 apart at the least.",
+      "behavior": "Static. It shows the title and the author it is given; it has no interaction and no other state.",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The book title."
+        },
+        {
+          "name": "author",
+          "type": "string",
+          "description": "The author; empty hides the line."
+        }
+      ],
+      "states": [
+        "default"
+      ],
+      "keyboard": [],
+      "ariaPattern": "none",
+      "usedOn": [
+        "S06"
+      ]
+    }
+  ],
+  "questions": [],
+  "impossibleSteps": [],
+  "containers": {
+    "app": {
+      "container": "fluid",
+      "maxWidthPx": 0,
+      "align": "center"
+    },
+    "marketing": {
+      "container": "fluid",
+      "maxWidthPx": 0,
+      "align": "center"
+    }
+  },
+  "shells": [
+    {
+      "id": "SH1",
+      "name": "app",
+      "purpose": "The frame of every framed app page, from the theme's app layout.",
+      "regions": [
+        {
+          "id": "SH1.r1",
+          "place": "top",
+          "overlay": false,
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "fixed",
+            "heightPx": 56,
+            "minHeightPx": 0
+          },
+          "layout": {
+            "direction": "row",
+            "gap": "3",
+            "padding": "3",
+            "columns": 0,
+            "align": "center",
+            "justify": "between",
+            "wrap": false
+          },
+          "holds": "start: the wordmark; end: the Shelf link"
+        }
+      ]
+    },
+    {
+      "id": "SH2",
+      "name": "marketing",
+      "purpose": "The frame of every framed marketing page, from the theme's marketing layout.",
+      "regions": [
+        {
+          "id": "SH2.r1",
+          "place": "top",
+          "overlay": true,
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "fixed",
+            "heightPx": 64,
+            "minHeightPx": 0
+          },
+          "layout": {
+            "direction": "row",
+            "gap": "4",
+            "padding": "4",
+            "columns": 0,
+            "align": "center",
+            "justify": "between",
+            "wrap": false
+          },
+          "holds": "start: the wordmark; end: Sign in"
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "S01.n01",
+      "section": "S01.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "the title and the line under it, centred",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "1",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n02",
+      "section": "S01.sec1",
+      "parent": "S01.n01",
+      "order": 1,
+      "what": "the page title as a display heading",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "display",
+      "text": "Keep every book you mean to read",
+      "label": "",
+      "headingLevel": 1,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n03",
+      "section": "S01.sec1",
+      "parent": "S01.n01",
+      "order": 2,
+      "what": "one sentence under the title, at most 560 wide",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 560,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "heading",
+      "text": "Shelf is a quiet reading list. Add a book, keep it on a shelf, and find it again by title or author.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n04",
+      "section": "S01.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "the two ways in, side by side",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "center",
+        "wrap": true
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n05",
+      "section": "S01.sec1",
+      "parent": "S01.n04",
+      "order": 1,
+      "what": "a primary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 104,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign up",
+      "label": "",
+      "headingLevel": 0,
+      "role": "primary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F01.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S03"
+    },
+    {
+      "id": "S01.n06",
+      "section": "S01.sec1",
+      "parent": "S01.n04",
+      "order": 2,
+      "what": "a secondary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 104,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign in",
+      "label": "",
+      "headingLevel": 0,
+      "role": "secondary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F02.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S02"
+    },
+    {
+      "id": "S01.n07",
+      "section": "S01.sec2",
+      "parent": "",
+      "order": 1,
+      "what": "the section heading",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "title",
+      "text": "Made for people who read a lot",
+      "label": "",
+      "headingLevel": 2,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n08",
+      "section": "S01.sec2",
+      "parent": "",
+      "order": 2,
+      "what": "a grid of three feature blocks",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "grid",
+        "gap": "4",
+        "padding": "0",
+        "columns": 3,
+        "align": "stretch",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n09",
+      "section": "S01.sec2",
+      "parent": "S01.n08",
+      "order": 1,
+      "what": "a feature block: an icon and a title, then a sentence",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n10",
+      "section": "S01.sec2",
+      "parent": "S01.n09",
+      "order": 1,
+      "what": "an icon beside the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n11",
+      "section": "S01.sec2",
+      "parent": "S01.n10",
+      "order": 1,
+      "what": "a 20 px line icon",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 20,
+        "height": "fixed",
+        "heightPx": 20,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n12",
+      "section": "S01.sec2",
+      "parent": "S01.n10",
+      "order": 2,
+      "what": "the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Add in seconds",
+      "label": "",
+      "headingLevel": 3,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n13",
+      "section": "S01.sec2",
+      "parent": "S01.n09",
+      "order": 2,
+      "what": "one sentence about the feature",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Type a title and an author. Shelf keeps the form to what a reader needs.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n14",
+      "section": "S01.sec2",
+      "parent": "S01.n08",
+      "order": 2,
+      "what": "a feature block: an icon and a title, then a sentence",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n15",
+      "section": "S01.sec2",
+      "parent": "S01.n14",
+      "order": 1,
+      "what": "an icon beside the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n16",
+      "section": "S01.sec2",
+      "parent": "S01.n15",
+      "order": 1,
+      "what": "a 20 px line icon",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 20,
+        "height": "fixed",
+        "heightPx": 20,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n17",
+      "section": "S01.sec2",
+      "parent": "S01.n15",
+      "order": 2,
+      "what": "the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Know where you are",
+      "label": "",
+      "headingLevel": 3,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n18",
+      "section": "S01.sec2",
+      "parent": "S01.n14",
+      "order": 2,
+      "what": "one sentence about the feature",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Every book sits on a shelf: to read, reading or finished.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n19",
+      "section": "S01.sec2",
+      "parent": "S01.n08",
+      "order": 3,
+      "what": "a feature block: an icon and a title, then a sentence",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n20",
+      "section": "S01.sec2",
+      "parent": "S01.n19",
+      "order": 1,
+      "what": "an icon beside the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n21",
+      "section": "S01.sec2",
+      "parent": "S01.n20",
+      "order": 1,
+      "what": "a 20 px line icon",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 20,
+        "height": "fixed",
+        "heightPx": 20,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n22",
+      "section": "S01.sec2",
+      "parent": "S01.n20",
+      "order": 2,
+      "what": "the feature title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Find it again",
+      "label": "",
+      "headingLevel": 3,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S01.n23",
+      "section": "S01.sec2",
+      "parent": "S01.n19",
+      "order": 2,
+      "what": "one sentence about the feature",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Search by title or author and the list narrows as you type.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n01",
+      "section": "S02.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "the title and one line under it",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "1",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n02",
+      "section": "S02.sec1",
+      "parent": "S02.n01",
+      "order": 1,
+      "what": "the page title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "title",
+      "text": "Sign in",
+      "label": "",
+      "headingLevel": 1,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n03",
+      "section": "S02.sec1",
+      "parent": "S02.n01",
+      "order": 2,
+      "what": "a muted line under the title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Welcome back. Your shelf is where you left it.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n04",
+      "section": "S02.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "an email input, size md",
+      "newComponent": "",
+      "component": "Input",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Email",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD01",
+      "data": [],
+      "flowSteps": [
+        "F02.S02",
+        "F02.A01"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n05",
+      "section": "S02.sec1",
+      "parent": "",
+      "order": 3,
+      "what": "a password input, size md",
+      "newComponent": "",
+      "component": "PasswordInput",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Password",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD02",
+      "data": [],
+      "flowSteps": [
+        "F02.S02",
+        "F02.A01"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n06",
+      "section": "S02.sec1",
+      "parent": "",
+      "order": 6,
+      "what": "an error line under the actions",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "The email and password do not match an account.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F02.A02"
+      ],
+      "states": [
+        "denied",
+        "error"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n07",
+      "section": "S02.sec1",
+      "parent": "",
+      "order": 5,
+      "what": "the submit button and the way to the other form",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S02.n08",
+      "section": "S02.sec1",
+      "parent": "S02.n07",
+      "order": 1,
+      "what": "a primary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 128,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign in",
+      "label": "",
+      "headingLevel": 0,
+      "role": "primary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F02.S02"
+      ],
+      "states": [
+        "default",
+        "submitting"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S02.n09",
+      "section": "S02.sec1",
+      "parent": "S02.n07",
+      "order": 2,
+      "what": "a ghost button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "ghost",
+      "overrideReason": "The way to the other form stays quieter than the submit button.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Create an account",
+      "label": "",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F01.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S03"
+    },
+    {
+      "id": "S03.n01",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "the title and one line under it",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "1",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n02",
+      "section": "S03.sec1",
+      "parent": "S03.n01",
+      "order": 1,
+      "what": "the page title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "title",
+      "text": "Create your account",
+      "label": "",
+      "headingLevel": 1,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n03",
+      "section": "S03.sec1",
+      "parent": "S03.n01",
+      "order": 2,
+      "what": "a muted line under the title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "One list, private to you. It takes a minute.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n04",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "an email input, size md",
+      "newComponent": "",
+      "component": "Input",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Email",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD01",
+      "data": [],
+      "flowSteps": [
+        "F01.S02",
+        "F01.A01"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n05",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 3,
+      "what": "a password input, size md",
+      "newComponent": "",
+      "component": "PasswordInput",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Password",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD02",
+      "data": [],
+      "flowSteps": [
+        "F01.S02",
+        "F01.A01"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n06",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 6,
+      "what": "an error line under the actions",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "The account could not be created. Your entries are still here.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F01.A02",
+        "F01.A03"
+      ],
+      "states": [
+        "error"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n07",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 5,
+      "what": "the submit button and the way to the other form",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S03.n08",
+      "section": "S03.sec1",
+      "parent": "S03.n07",
+      "order": 1,
+      "what": "a primary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 128,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Create account",
+      "label": "",
+      "headingLevel": 0,
+      "role": "primary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F01.S02"
+      ],
+      "states": [
+        "default",
+        "submitting"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S03.n09",
+      "section": "S03.sec1",
+      "parent": "S03.n07",
+      "order": 2,
+      "what": "a ghost button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "ghost",
+      "overrideReason": "The way to the other form stays quieter than the submit button.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign in instead",
+      "label": "",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F02.S01",
+        "F01.A03"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S02"
+    },
+    {
+      "id": "S03.n10",
+      "section": "S03.sec1",
+      "parent": "",
+      "order": 7,
+      "what": "a line saying the email already has an account",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "That email already has an account.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F01.A03"
+      ],
+      "states": [
+        "denied"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n01",
+      "section": "S04.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "the title and one line under it",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "1",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n02",
+      "section": "S04.sec1",
+      "parent": "S04.n01",
+      "order": 1,
+      "what": "the page title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "title",
+      "text": "Your shelf",
+      "label": "",
+      "headingLevel": 1,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n03",
+      "section": "S04.sec1",
+      "parent": "S04.n01",
+      "order": 2,
+      "what": "a muted line under the title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Books you mean to read, are reading and have finished.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n04",
+      "section": "S04.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "the page actions",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n05",
+      "section": "S04.sec1",
+      "parent": "S04.n04",
+      "order": 1,
+      "what": "a ghost button, size sm",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "ghost",
+      "overrideReason": "Signing out sits quietly beside the page action.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign out",
+      "label": "",
+      "headingLevel": 0,
+      "role": "secondary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F06.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S01"
+    },
+    {
+      "id": "S04.n06",
+      "section": "S04.sec1",
+      "parent": "S04.n04",
+      "order": 2,
+      "what": "a primary button, size sm",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "",
+      "overrideReason": "The page header keeps its actions compact, the same size as Sign out.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Add book",
+      "label": "",
+      "headingLevel": 0,
+      "role": "primary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S05"
+    },
+    {
+      "id": "S04.n07",
+      "section": "S04.sec2",
+      "parent": "",
+      "order": 1,
+      "what": "a search input without a visible label, size sm",
+      "newComponent": "",
+      "component": "SearchInput",
+      "size": "sm",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 320,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "Search by title or author",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F04.S02",
+        "F04.A02"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n08",
+      "section": "S04.sec2",
+      "parent": "",
+      "order": 2,
+      "what": "the number of books shown",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "caption",
+      "text": "12 books",
+      "label": "",
+      "headingLevel": 0,
+      "role": "display",
+      "field": "",
+      "data": [
+        "Book.title"
+      ],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n09",
+      "section": "S04.sec3",
+      "parent": "",
+      "order": 1,
+      "what": "a table of books: title, author and shelf; a row opens the book",
+      "newComponent": "",
+      "component": "Table",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "Books on your shelf",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [
+        "Book.title",
+        "Book.author",
+        "Book.shelf"
+      ],
+      "flowSteps": [
+        "F04.S01",
+        "F05.S01"
+      ],
+      "states": [
+        "default",
+        "loading"
+      ],
+      "navigatesTo": "S06"
+    },
+    {
+      "id": "S04.n10",
+      "section": "S04.sec3",
+      "parent": "",
+      "order": 2,
+      "what": "pagination under the table",
+      "newComponent": "",
+      "component": "Pagination",
+      "size": "full",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "Pages of books",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F04.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n11",
+      "section": "S04.sec3",
+      "parent": "",
+      "order": 3,
+      "what": "an error line when the books cannot load",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Your books could not be loaded. Try again in a moment.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "error"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n12",
+      "section": "S04.sec4",
+      "parent": "",
+      "order": 1,
+      "what": "a 40 px line icon of a book",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 40,
+        "height": "fixed",
+        "heightPx": 40,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "empty"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n13",
+      "section": "S04.sec4",
+      "parent": "",
+      "order": 2,
+      "what": "one sentence about the empty shelf",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "No books yet: add the first one you mean to read.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F04.A01"
+      ],
+      "states": [
+        "empty"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S04.n14",
+      "section": "S04.sec4",
+      "parent": "",
+      "order": 3,
+      "what": "a secondary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Add a book",
+      "label": "",
+      "headingLevel": 0,
+      "role": "secondary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.S01"
+      ],
+      "states": [
+        "empty"
+      ],
+      "navigatesTo": "S05"
+    },
+    {
+      "id": "S05.n01",
+      "section": "S05.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "a text input, size md",
+      "newComponent": "",
+      "component": "Input",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Title",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD03",
+      "data": [],
+      "flowSteps": [
+        "F03.S02",
+        "F03.A01"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S05.n02",
+      "section": "S05.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "a text input, size md",
+      "newComponent": "",
+      "component": "Input",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Author",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD04",
+      "data": [],
+      "flowSteps": [
+        "F03.S02"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S05.n03",
+      "section": "S05.sec1",
+      "parent": "",
+      "order": 3,
+      "what": "a select of the three shelves, size md",
+      "newComponent": "",
+      "component": "Select",
+      "size": "md",
+      "look": "outline",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Shelf",
+      "label": "",
+      "headingLevel": 0,
+      "role": "input",
+      "field": "FD05",
+      "data": [],
+      "flowSteps": [
+        "F03.S02"
+      ],
+      "states": [
+        "default",
+        "invalid"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S05.n04",
+      "section": "S05.sec1",
+      "parent": "",
+      "order": 4,
+      "what": "an error line when saving fails",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "The book could not be saved. Your entries are still here.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.A02"
+      ],
+      "states": [
+        "error"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S05.n07",
+      "section": "S05.sec1",
+      "parent": "",
+      "order": 5,
+      "what": "a line confirming the book was added",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Added to your shelf.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.S02"
+      ],
+      "states": [
+        "success"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S05.n05",
+      "section": "S05.sec2",
+      "parent": "",
+      "order": 1,
+      "what": "a secondary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 96,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Cancel",
+      "label": "",
+      "headingLevel": 0,
+      "role": "secondary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.A03"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S05.n06",
+      "section": "S05.sec2",
+      "parent": "",
+      "order": 2,
+      "what": "a primary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Save book",
+      "label": "",
+      "headingLevel": 0,
+      "role": "primary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F03.S02"
+      ],
+      "states": [
+        "default",
+        "submitting"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S06.n01",
+      "section": "S06.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "a secondary button back to the list, size sm",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "",
+      "overrideReason": "The way back is a small step above the title, not a main action.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Return to shelf",
+      "label": "",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S06.n02",
+      "section": "S06.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "the title and the delete action on one line",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "4",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "between",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n03",
+      "section": "S06.sec1",
+      "parent": "S06.n02",
+      "order": 1,
+      "what": "the page title: the book title",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "title",
+      "text": "The Left Hand of Darkness",
+      "label": "",
+      "headingLevel": 1,
+      "role": "heading",
+      "field": "",
+      "data": [
+        "Book.title"
+      ],
+      "flowSteps": [
+        "F05.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n04",
+      "section": "S06.sec1",
+      "parent": "S06.n02",
+      "order": 2,
+      "what": "a danger button, size sm",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "",
+      "overrideReason": "Delete stays small beside the title, so it never competes with reading.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Delete book",
+      "label": "",
+      "headingLevel": 0,
+      "role": "destructive-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.S02"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S07"
+    },
+    {
+      "id": "S06.n05",
+      "section": "S06.sec1",
+      "parent": "",
+      "order": 3,
+      "what": "the book facts, one row each",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "3",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n06",
+      "section": "S06.sec1",
+      "parent": "S06.n05",
+      "order": 1,
+      "what": "an icon beside the author",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n07",
+      "section": "S06.sec1",
+      "parent": "S06.n06",
+      "order": 1,
+      "what": "a 16 px line icon",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 16,
+        "height": "fixed",
+        "heightPx": 16,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n08",
+      "section": "S06.sec1",
+      "parent": "S06.n06",
+      "order": 2,
+      "what": "the author",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Ursula K. Le Guin",
+      "label": "",
+      "headingLevel": 0,
+      "role": "display",
+      "field": "",
+      "data": [
+        "Book.author"
+      ],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n09",
+      "section": "S06.sec1",
+      "parent": "S06.n05",
+      "order": 2,
+      "what": "an icon beside the date it was added",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "row",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "center",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n10",
+      "section": "S06.sec1",
+      "parent": "S06.n09",
+      "order": 1,
+      "what": "a 16 px line icon",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 16,
+        "height": "fixed",
+        "heightPx": 16,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n11",
+      "section": "S06.sec1",
+      "parent": "S06.n09",
+      "order": 2,
+      "what": "the date it was added",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Added on 12 October",
+      "label": "",
+      "headingLevel": 0,
+      "role": "display",
+      "field": "",
+      "data": [
+        "Book.createdAt"
+      ],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n12",
+      "section": "S06.sec1",
+      "parent": "",
+      "order": 4,
+      "what": "a line when the book is gone",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "This book is no longer on your shelf.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.A01"
+      ],
+      "states": [
+        "notFound"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n13",
+      "section": "S06.sec2",
+      "parent": "",
+      "order": 1,
+      "what": "the typographic cover of the book",
+      "newComponent": "TitleCover",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "media",
+      "field": "",
+      "data": [
+        "Book.title",
+        "Book.author"
+      ],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n14",
+      "section": "S06.sec2",
+      "parent": "",
+      "order": 2,
+      "what": "the shelf heading, the tag and a note",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": {
+        "direction": "column",
+        "gap": "2",
+        "padding": "0",
+        "columns": 0,
+        "align": "start",
+        "justify": "start",
+        "wrap": false
+      },
+      "typeScale": "none",
+      "text": "",
+      "label": "",
+      "headingLevel": 0,
+      "role": "container",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n15",
+      "section": "S06.sec2",
+      "parent": "S06.n14",
+      "order": 1,
+      "what": "the panel heading",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "subheading",
+      "text": "Shelf",
+      "label": "",
+      "headingLevel": 2,
+      "role": "heading",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n16",
+      "section": "S06.sec2",
+      "parent": "S06.n14",
+      "order": 2,
+      "what": "a tag with the shelf, size sm",
+      "newComponent": "",
+      "component": "Tag",
+      "size": "sm",
+      "look": "bordered",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Reading",
+      "label": "",
+      "headingLevel": 0,
+      "role": "display",
+      "field": "",
+      "data": [
+        "Book.shelf"
+      ],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n17",
+      "section": "S06.sec2",
+      "parent": "S06.n14",
+      "order": 3,
+      "what": "a muted note",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "caption",
+      "text": "Where you are with this book.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S06.n18",
+      "section": "S06.sec1",
+      "parent": "",
+      "order": 5,
+      "what": "a line in place of the book facts while they load",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "Loading the book.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.S01"
+      ],
+      "states": [
+        "loading"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S07.n01",
+      "section": "S07.sec1",
+      "parent": "",
+      "order": 1,
+      "what": "one sentence naming the book",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "This removes “The Left Hand of Darkness” from your shelf for good.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [
+        "Book.title"
+      ],
+      "flowSteps": [
+        "STD01.S01"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "S07.n02",
+      "section": "S07.sec2",
+      "parent": "",
+      "order": 1,
+      "what": "a secondary button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fixed",
+        "widthPx": 96,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Cancel",
+      "label": "",
+      "headingLevel": 0,
+      "role": "secondary-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.A03",
+        "STD01.A02"
+      ],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S06"
+    },
+    {
+      "id": "S07.n03",
+      "section": "S07.sec2",
+      "parent": "",
+      "order": 2,
+      "what": "a danger button, size md",
+      "newComponent": "",
+      "component": "Button",
+      "size": "md",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Delete book",
+      "label": "",
+      "headingLevel": 0,
+      "role": "destructive-action",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.A02",
+        "STD01.A01"
+      ],
+      "states": [
+        "default",
+        "submitting"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "S07.n04",
+      "section": "S07.sec1",
+      "parent": "",
+      "order": 2,
+      "what": "a line saying the delete failed",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "fill",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "body",
+      "text": "The book could not be deleted. Try again.",
+      "label": "",
+      "headingLevel": 0,
+      "role": "feedback",
+      "field": "",
+      "data": [],
+      "flowSteps": [
+        "F05.A02"
+      ],
+      "states": [
+        "error"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "SH1.n01",
+      "section": "SH1.r1",
+      "parent": "",
+      "order": 1,
+      "what": "the app name as a wordmark",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "heading",
+      "text": "Shelf",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "SH1.n02",
+      "section": "SH1.r1",
+      "parent": "",
+      "order": 2,
+      "what": "a ghost button that navigates, size sm, 72 wide",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "ghost",
+      "overrideReason": "Navigation in the top bar reads as a link, not a call to action.",
+      "box": {
+        "width": "fixed",
+        "widthPx": 72,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Shelf",
+      "label": "",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S04"
+    },
+    {
+      "id": "SH2.n01",
+      "section": "SH2.r1",
+      "parent": "",
+      "order": 1,
+      "what": "the app name as a wordmark",
+      "newComponent": "",
+      "component": "none",
+      "size": "",
+      "look": "",
+      "overrideReason": "",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "heading",
+      "text": "Shelf",
+      "label": "",
+      "headingLevel": 0,
+      "role": "text",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": ""
+    },
+    {
+      "id": "SH2.n02",
+      "section": "SH2.r1",
+      "parent": "",
+      "order": 2,
+      "what": "a ghost button that navigates, size sm",
+      "newComponent": "",
+      "component": "Button",
+      "size": "sm",
+      "look": "ghost",
+      "overrideReason": "Navigation in the top bar reads as a link, not a call to action.",
+      "box": {
+        "width": "content",
+        "widthPx": 0,
+        "height": "content",
+        "heightPx": 0,
+        "minHeightPx": 0,
+        "span": 1
+      },
+      "layout": null,
+      "typeScale": "none",
+      "text": "Sign in",
+      "label": "",
+      "headingLevel": 0,
+      "role": "navigation",
+      "field": "",
+      "data": [],
+      "flowSteps": [],
+      "states": [
+        "default"
+      ],
+      "navigatesTo": "S02"
+    }
+  ]
+}

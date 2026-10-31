@@ -1,0 +1,775 @@
+{
+  "meta": {
+    "artifact": "flows-catalog",
+    "version": 1,
+    "hash": "bf0f6ecd00fd0dc2fece9f8faa9ecfd900b0a48e0a14a03bddb6c7ebc26b4f0f",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "a7c46e5ccf6c1be8315b13667ae367bfa6101fbf96e2c298f9e3912b5cac7a21"
+      }
+    },
+    "stage": "flows-catalog",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-30T11:02:14.751Z"
+  },
+  "data": {
+    "flows": [
+      {
+        "id": "F01",
+        "name": "View landing page and get started",
+        "role": "designer",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Understand what the app does and get started.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "Nothing is stored; after refresh the landing page still shows the same explanation and start options.",
+        "description": "A new visitor arrives on the public landing page that explains Solo Studio for freelance client, project and booking management, then chooses to start as designer or to view booking, and the website guides them to sign up or to the public booking page."
+      },
+      {
+        "id": "F02",
+        "name": "Designer sign up",
+        "role": "designer",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create an account and reach home.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "A designer account exists and the designer is signed in; refresh still shows home.",
+        "description": "A new designer creates an account with email and password from the landing page, and the website creates the isolated workspace, signs them in and lands them on home ready to add the first client."
+      },
+      {
+        "id": "F03",
+        "name": "Designer sign in",
+        "role": "designer",
+        "category": "auth",
+        "authKind": "signIn",
+        "goal": "Sign in to the workspace.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "The designer is signed in; refresh still shows signed-in home.",
+        "description": "A returning designer signs in with email and password, and the website verifies the credentials and shows home with today's sessions, follow-ups and overdue tasks."
+      },
+      {
+        "id": "F04",
+        "name": "Designer sign out",
+        "role": "designer",
+        "category": "auth",
+        "authKind": "signOut",
+        "goal": "Securely leave the workspace.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "The designer is signed out; refresh still shows the landing page.",
+        "description": "A signed-in designer chooses to sign out, and the website ends the session and shows the public landing page."
+      },
+      {
+        "id": "F05",
+        "name": "View home dashboard",
+        "role": "designer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "See what needs attention today.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Nothing is stored; refresh still shows the same today's sessions, follow-ups and overdue tasks.",
+        "description": "A signed-in designer opens home to see today's sessions, follow-ups due this week including overdue, and overdue tasks, and can jump to a session, client note or task from each section."
+      },
+      {
+        "id": "F06",
+        "name": "Add a client",
+        "role": "designer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Remember a new client.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "A new client is saved and still appears in the client list after refresh.",
+        "description": "A signed-in designer adds a client with name, email, optional company and profile and status, and the website saves it and shows it in the client list with its follow-up state."
+      },
+      {
+        "id": "F07",
+        "name": "View client list and edit client",
+        "role": "designer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Find a client and keep details current.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "Client edits are saved and still shown after refresh with correct follow-up sorting.",
+        "description": "A signed-in designer browses the client list sorted overdue follow-ups first, opens a client to see details, notes and projects, and edits name, email, company, profile or status, with the website saving changes and updating the list order."
+      },
+      {
+        "id": "F08",
+        "name": "Delete a client",
+        "role": "designer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Remove a client and all its work.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "The client and its projects, tasks, notes and bookings are gone and stay gone after refresh.",
+        "description": "A signed-in designer deletes a client after confirmation, and the website removes the client together with its projects, tasks, notes and bookings while leaving other sessions in place."
+      },
+      {
+        "id": "F09",
+        "name": "Manage notes and follow-ups",
+        "role": "designer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Track calls and never miss a follow-up.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "Notes and follow-up states are saved and still shown after refresh.",
+        "description": "A signed-in designer opens a client, adds dated notes with optional follow-up dates, edits or deletes notes, and marks a follow-up done or pushes it a week with one click, with the website updating due states and client list order."
+      },
+      {
+        "id": "F10",
+        "name": "Add and view projects",
+        "role": "designer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Organize work per client and see what is open.",
+        "preconditions": [
+          "Signed in.",
+          "At least one client exists."
+        ],
+        "outcome": "New projects are saved with correct open-task counts and still shown after refresh.",
+        "description": "A signed-in designer adds a project under a client with name, description and optional due date, and views all projects with their count of still-open tasks, opening a project to see its tasks."
+      },
+      {
+        "id": "F11",
+        "name": "Edit and delete a project",
+        "role": "designer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Keep projects correct or remove them.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "outcome": "Project edits are saved or the project with its tasks is gone; both persist after refresh.",
+        "description": "A signed-in designer edits a project's name, description or due date, or deletes it after confirmation, with the website saving edits or removing the project and all its tasks."
+      },
+      {
+        "id": "F12",
+        "name": "Manage tasks in a project",
+        "role": "designer",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Track and complete project work quickly.",
+        "preconditions": [
+          "Signed in.",
+          "At least one project exists."
+        ],
+        "outcome": "Tasks and their done states are saved with correct filters and highlights after refresh.",
+        "description": "A signed-in designer opens a project to see its tasks with overdue highlight, adds tasks, searches by title, filters by status and priority, and ticks a task done quickly, with the website updating the list and open counts."
+      },
+      {
+        "id": "F13",
+        "name": "Edit and delete a task",
+        "role": "designer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Correct or remove a task.",
+        "preconditions": [
+          "Signed in.",
+          "At least one task exists."
+        ],
+        "outcome": "Task edits are saved or the task is gone; both persist after refresh.",
+        "description": "A signed-in designer edits a task's title, status, priority or due date, or deletes it after confirmation, with the website saving changes and updating overdue highlight and project counts."
+      },
+      {
+        "id": "F14",
+        "name": "Set availability and session types",
+        "role": "designer",
+        "category": "settings",
+        "authKind": "none",
+        "goal": "Define when and what visitors can book.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Availability and session types are saved and still shown after refresh.",
+        "description": "A signed-in designer sets weekly recurring availability with days and start/end times and creates, edits or deletes session types with duration, display-only price and maximum people, with the website saving them for generating the next two weeks of slots."
+      },
+      {
+        "id": "F15",
+        "name": "View upcoming sessions and cancel a slot",
+        "role": "designer",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Manage upcoming bookings and cancel when needed.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "outcome": "Cancelled slots and their bookings are gone and stay gone after refresh.",
+        "description": "A signed-in designer views upcoming sessions with booking counts and bookers, and cancels a slot after confirmation, with the website removing the slot and cancelling everyone booked on it."
+      },
+      {
+        "id": "F16",
+        "name": "Book a session from public page",
+        "role": "booker",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Book a session without an account.",
+        "preconditions": [
+          "Not signed in."
+        ],
+        "outcome": "A booking and its linked Lead or existing client are saved; the confirmation with cancellation link is shown and the slot shows one fewer open seat after refresh.",
+        "description": "A visitor without an account opens the public booking page, picks a session type with its display-only price, sees open slots for the next two weeks excluding full and past slots, and books with name and email, with the website linking to the matching client or creating a new Lead and showing an on-screen confirmation with a cancellation link."
+      },
+      {
+        "id": "F17",
+        "name": "Cancel a booking via link",
+        "role": "booker",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "Cancel a booking via link without an account.",
+        "preconditions": [
+          "A booking with a valid cancellation link exists."
+        ],
+        "outcome": "The booking is gone and the slot is open again after refresh; the client remains.",
+        "description": "A visitor opens their unique cancellation link, views the booking details, and cancels it, with the website freeing the seat and keeping the client record."
+      }
+    ],
+    "fields": [
+      {
+        "id": "FD01",
+        "label": "Designer email",
+        "meaning": "Email the designer uses to sign up and sign in",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "maya@mayastudio.in"
+      },
+      {
+        "id": "FD02",
+        "label": "Designer password",
+        "meaning": "Secret password protecting the designer's workspace",
+        "type": "password",
+        "required": true,
+        "min": 8,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "calm-studio-42"
+      },
+      {
+        "id": "FD03",
+        "label": "Client name",
+        "meaning": "How the designer refers to the client",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Ananya Rao"
+      },
+      {
+        "id": "FD04",
+        "label": "Client email",
+        "meaning": "Email used to contact the client and to link bookings",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "ananya@craftly.in"
+      },
+      {
+        "id": "FD05",
+        "label": "Client company",
+        "meaning": "Optional company the client belongs to",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Craftly"
+      },
+      {
+        "id": "FD06",
+        "label": "Client profile",
+        "meaning": "Short note about what they do, how met and what they pay",
+        "type": "longText",
+        "required": false,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Runs a D2C skincare brand, met at Design Day, pays per milestone"
+      },
+      {
+        "id": "FD07",
+        "label": "Client status",
+        "meaning": "Where the client is in the pipeline",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Lead",
+          "Active",
+          "Past"
+        ],
+        "optionsFrom": "",
+        "example": "Lead"
+      },
+      {
+        "id": "FD08",
+        "label": "Note text",
+        "meaning": "What was discussed or remembered after a call",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 2000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Call about checkout redesign, wants proposal by Friday"
+      },
+      {
+        "id": "FD09",
+        "label": "Follow-up date",
+        "meaning": "Optional date to follow up on this note",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-06"
+      },
+      {
+        "id": "FD10",
+        "label": "Project name",
+        "meaning": "How the designer refers to the work for a client",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 150,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Craftly checkout redesign"
+      },
+      {
+        "id": "FD11",
+        "label": "Project description",
+        "meaning": "Short summary of what the project covers",
+        "type": "longText",
+        "required": true,
+        "min": null,
+        "max": 1000,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Simplify checkout to 2 steps and improve mobile conversion"
+      },
+      {
+        "id": "FD12",
+        "label": "Project due date",
+        "meaning": "Optional date the project should be finished by",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-12-15"
+      },
+      {
+        "id": "FD13",
+        "label": "Task title",
+        "meaning": "What needs to be done in the project",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 200,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Draft homepage wireframes"
+      },
+      {
+        "id": "FD14",
+        "label": "Task status",
+        "meaning": "Where the task is in its workflow",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "optionsFrom": "",
+        "example": "To do"
+      },
+      {
+        "id": "FD15",
+        "label": "Task priority",
+        "meaning": "How urgent the task is",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "optionsFrom": "",
+        "example": "High"
+      },
+      {
+        "id": "FD16",
+        "label": "Task due date",
+        "meaning": "Optional date the task should be done by, overdue when past and not Done",
+        "type": "date",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "2026-11-10"
+      },
+      {
+        "id": "FD17",
+        "label": "Available days",
+        "meaning": "Which weekdays repeat weekly as bookable",
+        "type": "multiChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "optionsFrom": "",
+        "example": "Monday"
+      },
+      {
+        "id": "FD18",
+        "label": "Available from time",
+        "meaning": "Start of the bookable window on available days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "10:00"
+      },
+      {
+        "id": "FD19",
+        "label": "Available to time",
+        "meaning": "End of the bookable window on available days",
+        "type": "time",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "16:00"
+      },
+      {
+        "id": "FD20",
+        "label": "Session type name",
+        "meaning": "Name of the bookable offering shown to visitors",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Discovery call"
+      },
+      {
+        "id": "FD21",
+        "label": "Session type duration",
+        "meaning": "Length in minutes used to slice availability into slots",
+        "type": "integer",
+        "required": true,
+        "min": 5,
+        "max": 480,
+        "options": [],
+        "optionsFrom": "",
+        "example": "30"
+      },
+      {
+        "id": "FD22",
+        "label": "Session type price display",
+        "meaning": "Display-only price text shown on booking, never charged",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 50,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Free"
+      },
+      {
+        "id": "FD23",
+        "label": "Session type maximum people",
+        "meaning": "How many bookings a slot holds before it is full",
+        "type": "integer",
+        "required": true,
+        "min": 1,
+        "max": 50,
+        "options": [],
+        "optionsFrom": "",
+        "example": "1"
+      },
+      {
+        "id": "FD24",
+        "label": "Booker name",
+        "meaning": "Name of the visitor booking a session",
+        "type": "text",
+        "required": true,
+        "min": null,
+        "max": 120,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Rohan Mehta"
+      },
+      {
+        "id": "FD25",
+        "label": "Booker email",
+        "meaning": "Email of the visitor, used to link to an existing client or create a Lead",
+        "type": "email",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "rohan@startup.in"
+      },
+      {
+        "id": "FD26",
+        "label": "Chosen session type",
+        "meaning": "Which offering the visitor wants to book",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "SessionType",
+        "example": "Discovery call"
+      },
+      {
+        "id": "FD27",
+        "label": "Chosen slot",
+        "meaning": "Which open time slot the visitor books",
+        "type": "singleChoice",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "Session",
+        "example": "2026-11-04 10:00 Discovery call"
+      },
+      {
+        "id": "FD28",
+        "label": "Task search query",
+        "meaning": "Free text to find tasks by title",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 100,
+        "options": [],
+        "optionsFrom": "",
+        "example": "wireframe"
+      },
+      {
+        "id": "FD29",
+        "label": "Task status filter",
+        "meaning": "Show only tasks with this status",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "To do",
+          "In progress",
+          "Done"
+        ],
+        "optionsFrom": "",
+        "example": "In progress"
+      },
+      {
+        "id": "FD30",
+        "label": "Task priority filter",
+        "meaning": "Show only tasks with this priority",
+        "type": "singleChoice",
+        "required": false,
+        "min": null,
+        "max": null,
+        "options": [
+          "All",
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "optionsFrom": "",
+        "example": "High"
+      }
+    ],
+    "forms": [
+      {
+        "id": "FM01",
+        "name": "Designer sign-up form",
+        "fields": [
+          "FD01",
+          "FD02"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Designer sign-in form",
+        "fields": [
+          "FD01",
+          "FD02"
+        ]
+      },
+      {
+        "id": "FM03",
+        "name": "Client form",
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07"
+        ]
+      },
+      {
+        "id": "FM04",
+        "name": "Note form",
+        "fields": [
+          "FD08",
+          "FD09"
+        ]
+      },
+      {
+        "id": "FM05",
+        "name": "Project form",
+        "fields": [
+          "FD10",
+          "FD11",
+          "FD12"
+        ]
+      },
+      {
+        "id": "FM06",
+        "name": "Task form",
+        "fields": [
+          "FD13",
+          "FD14",
+          "FD15",
+          "FD16"
+        ]
+      },
+      {
+        "id": "FM07",
+        "name": "Availability form",
+        "fields": [
+          "FD17",
+          "FD18",
+          "FD19"
+        ]
+      },
+      {
+        "id": "FM08",
+        "name": "Session type form",
+        "fields": [
+          "FD20",
+          "FD21",
+          "FD22",
+          "FD23"
+        ]
+      },
+      {
+        "id": "FM09",
+        "name": "Booking form",
+        "fields": [
+          "FD24",
+          "FD25"
+        ]
+      }
+    ],
+    "subflows": [
+      {
+        "id": "STD01",
+        "name": "Confirm deletion",
+        "steps": [
+          {
+            "id": "STD01.S01",
+            "kind": "system",
+            "userAction": "",
+            "websiteResponse": "The website asks to confirm the deletion and says what else will be removed with it.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": []
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "STD01.A01",
+            "from": "STD01.S01",
+            "kind": "confirm",
+            "condition": "The user confirms.",
+            "websiteResponse": "The website deletes the record and what belongs to it.",
+            "resumesAt": ""
+          },
+          {
+            "id": "STD01.A02",
+            "from": "STD01.S01",
+            "kind": "cancel",
+            "condition": "The user cancels.",
+            "websiteResponse": "Nothing is deleted; the record stays as it was.",
+            "resumesAt": ""
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A14",
+        "text": "Notes can be edited and deleted by the designer; deleting a note removes its follow-up; marking done or pushing a week never deletes the note.",
+        "kind": "behavior",
+        "affects": []
+      },
+      {
+        "id": "A15",
+        "text": "Sessions are not manually created; upcoming sessions are weekly availability sliced into back-to-back slots per session type duration for the next two weeks; the designer manages them only by viewing and cancelling, with each session showing booking count and booker names.",
+        "kind": "behavior",
+        "affects": []
+      }
+    ],
+    "questions": []
+  }
+}

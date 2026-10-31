@@ -1,0 +1,195 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`render > catalog lists every flow with its description and the reusable parts 1`] = `
+"# Shelf: flows catalog
+
+## Flows
+- F01 Sign up (Reader, auth): A new reader creates an account with an email and a password and lands on their empty reading list.
+- F02 Sign in (Reader, auth): A returning reader signs in with their email and password and sees their reading list.
+- F03 Add a book to the reading list (Reader, core): The reader adds a book with its title, author and shelf; the book appears first in the list.
+- F04 Browse and search the shelf (Reader, browse): The reader browses the list, newest first, and narrows it by typing part of a title or author.
+- F05 Delete a book (Reader, manage): The reader picks a book and deletes it after confirming; the list no longer shows it.
+- F06 Sign out (Reader, auth): The reader signs out and sees the landing page.
+
+## Fields
+- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
+- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
+- FD03 Title (required, up to 200 characters), e.g. "The Left Hand of Darkness". How the reader refers to the book
+- FD04 Author (optional, up to 120 characters), e.g. "Ursula K. Le Guin". Who wrote it, to tell books with similar titles apart
+- FD05 Shelf (required, one of: To read, Reading, Finished), e.g. "To read". Where the reader is with the book
+
+## Forms
+- FM01 Book form: FD03, FD04, FD05
+
+## STD01 Confirm deletion (standard subflow)
+
+1. (system) The website asks to confirm the deletion and says what else will be removed with it.
+
+Other paths
+- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
+
+## New assumptions
+- A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.
+"
+`;
+
+exports[`render > flows follow the spec sample: numbered steps, fields with rules, changes, other paths, outcome 1`] = `
+"# Shelf: user flows
+
+## F01 Sign up
+Reader · auth · Goal: Create an account to keep a private reading list.
+Before: Not signed in.
+
+1. The visitor chooses to sign up. The website shows the sign-up form.
+2. The visitor fills in the form and submits it.
+   - Email (required, up to 254 characters), e.g. "ana@example.com"
+   - Password (required, 8 to 128 characters), e.g. "correct-horse-battery"
+   The website creates the account, signs the reader in and shows their start page.
+
+Other paths
+- F01.A01 (from 2, invalid) The email is not an address or the password is shorter than 8 characters: The website marks the field and keeps what was typed. Back to 2.
+- F01.A02 (from 2, failure) Creating the account fails: The website keeps the values and offers to try again. Back to 2.
+- F01.A03 (from 2, conflict) The email already has an account: The website says so and offers to sign in instead. Flow ends.
+
+Outcome: The reader has an account and is signed in; after a refresh they are still signed in.
+
+## F02 Sign in
+Reader · auth · Goal: Get back to the reading list.
+Before: Has an account.; Not signed in.
+
+1. The reader chooses to sign in. The website shows the sign-in form.
+2. The reader enters their email and password and submits.
+   - Email (required, up to 254 characters), e.g. "ana@example.com"
+   - Password (required, 8 to 128 characters), e.g. "correct-horse-battery"
+   The website signs the reader in and takes them to their reading list.
+
+Other paths
+- F02.A01 (from 2, invalid) A field is empty: The website marks the field and keeps what was typed. Back to 2.
+- F02.A02 (from 2, denied) The email and password do not match an account: The website says so and keeps the email typed. Back to 2.
+
+Outcome: The reader is signed in and stays signed in after a refresh.
+
+## F03 Add a book to the reading list
+Reader · core · Goal: Remember a book to read later.
+Before: Signed in.
+
+1. The reader chooses to add a book. The website shows an empty book form.
+2. The reader fills in the book and saves it. (Book form)
+   - Title (required, up to 200 characters), e.g. "The Left Hand of Darkness"
+   - Author (optional, up to 120 characters), e.g. "Ursula K. Le Guin"
+   - Shelf (required, one of: To read, Reading, Finished), e.g. "To read"
+   The website saves the book and shows it first in the reading list.
+   Changes: creates Book.
+
+Other paths
+- F03.A01 (from 2, invalid) The title is empty: The website marks the field and keeps what was typed. Back to 2.
+- F03.A02 (from 2, failure) Saving fails: The website keeps the values and offers to retry. Back to 2.
+- F03.A03 (from 1, cancel) The reader cancels: Nothing is saved; the website shows the reading list as it was. Flow ends.
+
+Outcome: The book is saved and is still there after a refresh.
+
+## F04 Browse and search the shelf
+Reader · browse · Goal: Find a book on the list.
+Before: Signed in.
+
+1. The reader opens their reading list. The website lists the reader's books, newest first, each with its title, author and shelf.
+   Changes: lists Book.
+2. The reader types part of a title or an author. The website narrows the list to the books that match as the reader types.
+   Changes: lists Book.
+
+Other paths
+- F04.A01 (from 1, empty) The reader has no books yet: The website says the list is empty and offers to add a book. Flow ends.
+- F04.A02 (from 2, empty) No book matches: The website says nothing matched and offers to clear the search. Back to 1.
+
+Outcome: Nothing changed; the reader has found the book they were after.
+
+## F05 Delete a book
+Reader · manage · Goal: Remove a book the reader no longer wants on the list.
+Before: Signed in.; At least one book on the list.
+
+1. The reader opens a book from the list. The website shows the book's title, author and shelf.
+   Changes: reads Book.
+2. The reader chooses Delete on the book. Confirm deletion (subflow STD01):
+   1. (system) The website asks to confirm the deletion and says what else will be removed with it.
+
+   Other paths
+   - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+   - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
+   Changes: deletes Book.
+
+Other paths
+- F05.A01 (from 1, notFound) The book was deleted in the meantime: The website says the book is gone and shows the reading list. Flow ends.
+- F05.A02 (from 2, confirm) The reader confirmed the deletion: The website shows the reading list without the book. Flow ends.
+- F05.A03 (from 2, cancel) The reader cancelled: The website shows the book again, unchanged. Flow ends.
+
+Outcome: The book is gone and stays gone after a refresh.
+
+## F06 Sign out
+Reader · auth · Goal: Leave the reading list private on a shared device.
+Before: Signed in.
+
+1. The reader chooses to sign out. The website signs the reader out and shows the public start page.
+
+Outcome: The reader is signed out; a refresh still shows the public start page.
+
+## Fields
+- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
+- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
+- FD03 Title (required, up to 200 characters), e.g. "The Left Hand of Darkness". How the reader refers to the book
+- FD04 Author (optional, up to 120 characters), e.g. "Ursula K. Le Guin". Who wrote it, to tell books with similar titles apart
+- FD05 Shelf (required, one of: To read, Reading, Finished), e.g. "To read". Where the reader is with the book
+
+## Forms
+- FM01 Book form: FD03, FD04, FD05
+
+## STD01 Confirm deletion (standard subflow)
+
+1. (system) The website asks to confirm the deletion and says what else will be removed with it.
+
+Other paths
+- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
+- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
+
+## New assumptions
+- A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.
+"
+`;
+
+exports[`render > scope reads as a short spec page 1`] = `
+"# Shelf: scope
+
+Shelf is a reading list for one reader at a time. You add the books you mean to read, keep each on a shelf that says where you are with it, and find them again by title or author. Nothing else gets in the way.
+
+Audience: People who read a lot and lose track of what they wanted to read next.
+
+## Roles
+- Reader (reader, signs in): Keeps a private reading list.
+
+## Vocabulary
+- Book (owned by Reader): A book the reader wants to read, is reading or has finished.
+- Shelf (owned by Reader): Where a book stands: to read, reading or finished.
+
+## Capabilities
+- accounts: Each reader signs in to see their own list.
+- userOwnedData: Books belong to the reader who added them.
+- crud: Add, browse and delete books.
+- search: Find a book by title or author.
+
+## In scope
+- Sign up and sign in with email and password
+- Add a book with a title, an author and a shelf
+- Browse the list and search it by title or author
+- Delete a book
+
+## Out of scope
+- Cover images: File uploads are not supported in the MVP. Instead: The website shows the title and author as text.
+
+## Assumptions
+- A01 (scope): A reader keeps one list; there are no shared lists.
+- A02 (behavior): A reader fixes a mistake by deleting the Book and adding it again; editing a Book comes after the MVP.
+
+## Questions
+- Q01: Should a reader be able to rate a finished book? Why: A rating adds a field and a place to show it. Default: No; the shelf alone says where the reader is with a book.
+"
+`;

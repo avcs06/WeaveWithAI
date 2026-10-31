@@ -36,11 +36,11 @@ the option marked **(default)** applies. A ticked option overrides the default.
 
 ### D0.1 Repository layout (pick one)
 
-- [ ] **A. One repo: root agent, `template/`, `mcps/design-system/` (default) (Y).** Everything a
+- [ ] **A. One repo: root agent, `template/`, `mcps/frontend/` (default) (Y).** Everything a
       coding agent needs is in one checkout; the template stays a standalone
-      pnpm/Nx workspace that `cp -r` can copy; `mcps/design-system/` is shared by the agent and
+      pnpm/Nx workspace that `cp -r` can copy; `mcps/frontend/` is shared by the agent and
       the template. Cost: two toolchains in one repo, kept apart on purpose.
-      `scripts/migrate-repo.sh` does this and was tested on a copy of the repo.
+      In place since 2026-10-28.
 - [ ] **B. New agent repo, design system as a git submodule at `template/`.** The DS
       repo stays clean and publishable. Submodules add friction to every commit,
       and coding agents handle them poorly.
@@ -67,10 +67,10 @@ Notes:
 ### D0.3 How generated apps get the MCP (pick one)
 
 - [ ] **A. Link and copy (default).** `template/tools/weave-design-system-mcp`
-      is a symlink to `../../mcps/design-system`; `generate.mjs` copies through it, so each app
+      is a symlink to `../../mcps/frontend`; `generate.mjs` copies through it, so each app
       gets a real, self-contained MCP. No template script changes. Tested.
-- [ ] **B. Package dependency.** Template scripts import `weave-design-system-mcp`
-      by name; this repo uses `link:../mcp`, generated apps a published package
+- [ ] **B. Package dependency.** Template scripts import `weave-frontend-mcp`
+      by name; this repo uses `link:../mcps/frontend`, generated apps a published package
       or `file:` path. Cleaner long term; more edits now, and a publish step.
 - [ ] **C. Not shipped.** The orchestrator validates centrally; generated apps
       lose the AI-friendly MCP for future edits.
@@ -162,7 +162,15 @@ Notes:
       Blocking means the answer changes scope, permissions, business rules or
       data. Answers are saved to `input/answers.json` and reused on reruns.
 
-Notes:
+Notes: C. Since 2026-10-29 (F11, user) the asking happens inside the stage
+loop: after every round that produced new output, an interactive stage asks
+the blocking questions not yet answered. Answers ride along with the next fix
+if one happens and never force one; all of them are returned and saved to
+`input/answers.json` with the question as asked, so the next stage and any
+rerun see them as already given. Blocking narrowed 2026-10-29 (FL8, user): a
+question is raised when the answer changes scope, permissions, business rules
+or data; it is blocking only when a wrong default would make the app wrong
+for its users, at most 5 per scope (SCOPE-003).
 
 ### D1.8 Model routing (pick one)
 
@@ -171,7 +179,9 @@ Notes:
 - [ ] **C. B, plus `muse-spark-1.3-contributor` for development runs.** Much
       cheaper; Meta may train on everything sent, including your DS code and recipes.
 
-Notes:
+Notes: user, 2026-10-30: when the backend has no strong model, or its strong
+model is the base model (Modal, Baseten), a strong call goes to the base
+model one reasoning level up: medium to high, high to xhigh, never max.
 
 ### D1.9 Replay cache (pick one)
 
@@ -190,6 +200,111 @@ Notes:
 
 Notes:
 
+### D1.11 Model backends (pick any)
+
+- [x] **A. Meta Model API (default).** `muse-spark-1.3` and `muse-wonder-1.0` as
+      routed by D1.8. Paid from the $150 credits.
+- [x] **B. Muse Glimmer on a Modal Dedicated Endpoint.** Modal runs
+      `meta-models/Muse-Glimmer-30B` (SGLang, one H200, scale to zero) behind
+      an OpenAI-compatible endpoint that supports `json_schema` output. Billed
+      as GPU time, which the $100 Modal credits cover. A run the
+      infrastructure partner can verify for the $10k "Best Build on Meta Open
+      Weight Models" prize. Modal offers Muse Spark Open only as a Shared
+      Endpoint, per token, and its dashboard says plan credits do not apply
+      to Shared Endpoints, so that path is not used.
+- [ ] **C. Meta open-weight models on own hardware.** The same models through a
+      local OpenAI-compatible server (vLLM with a GPU; llama.cpp or Ollama on
+      CPU for a small Glimmer). The development machine shows no GPU in WSL and
+      has 15 GB RAM, so expect CPU speed; best effort.
+- [x] **D. Muse Spark Open on Baseten.** Baseten's Model API
+      (`https://inference.baseten.co/v1`), per token ($1.25 in, $0.15 cached,
+      $4.25 out per 1M), paid from the $100 Baseten credits at up to 2M tokens
+      a minute. The hackathon key may call only
+      `meta-models/muse-spark-open-1026`. Baseten's docs say Spark Open there
+      has no structured output, but F8's smoke test got every construct of
+      the toy schema back valid, so the client needs no second output mode.
+
+One client and one schema bridge serve all three; `LLM_BACKEND` picks the base
+URL, key and model. Structured output (`response_format: json_schema`) is the
+part that differs per server and is checked in F8.
+
+Notes: A and B ticked on the user's instruction, 2026-10-28, to be eligible
+for the open-weights prize. C was ticked by mistake and unticked on
+2026-10-29: the user never meant to host a model; "local" meant the
+generator on this machine calling the Model API, which is A. The same day,
+on the user's instruction: B changed from a self-deployed vLLM app to a
+Modal-managed endpoint (first Spark Open shared, then Glimmer dedicated once
+the credits rule was clear), and D was added after Baseten granted credits.
+
+### D1.12 Reviewer agents in the stage loop (pick one)
+
+- [ ] **A. Validators only.** The loop of D1.5 and D1.6 as built in F6: a
+      model-based review, if any, produces warnings and never blocks.
+- [x] **B. A fixed four-round schedule with reviewer calls (user, 2026-10-29).**
+      Round 1: generate, validate. Round 2: fix the mandatory issues, validate,
+      then two reviewer calls. Round 3: fix the mandatory issues and the
+      blockers, validate, then one reviewer call. Round 4: a final fix,
+      validate, stop. A fix is skipped when there is nothing to fix, but the
+      reviewer calls of that round still run; the stage ends as soon as a
+      review finds nothing on validator-clean output, so a clean first draft
+      costs one generation and two reviews. Whatever remains after round 4
+      is recorded as known issues (mandatory and blockers) and the run
+      continues to the next stage; the stage does not fail. A reviewer gets
+      the generator's full prompt (system and user messages), the JSON it
+      produced, the validator warnings as already known, and the stage's
+      review guide (what to look for, what to ignore); nothing else. It
+      answers through one shared review schema, different from the stage
+      schema, listing major blockers only, which become mandatory issues for
+      the next fix. Reviewers ignore minor, no-impact and low-impact problems,
+      rare edge cases and non-ideal scenarios; each stage's guide says which
+      scenarios count. Reviewers use the default model; the strong-model
+      escalation of D1.8 applies to the generator from round 3.
+
+Notes: B on the user's instruction, 2026-10-29, revised the same day from a
+"gate the stage" version to the fixed schedule. It replaces the AGENTS.md rule
+that model review only produces warnings, D1.6's 3 drafting rounds (now 4 for
+spec stages) and the principle that leftover blockers stop the run. Worst
+case per stage: four generator calls and three reviewer calls. From round 2
+on, validation and review look at the same output, whatever the validators
+found: a heuristic, not a gate (user, 2026-10-29). Round 2's two reviewer
+calls are two personas, not two samples of one: a peer challenges the
+decisions (the product manager for scope and flows, a product designer for
+design), and an output reviewer finds the errors in meaning that validators
+cannot. Round 3's one call is the output reviewer; the peer runs once. Each
+stage has a peer and an output guide (user, 2026-10-30).
+
+### D1.13 Output budget and reasoning effort (pick one)
+
+Meta's models reason before they answer; the reasoning tokens count toward
+`max_tokens` and are billed as output (docs, 2026-10-29). The first flows run
+was cut at 16k tokens, and each reviewer's empty verdict cost about 8k
+reasoning tokens.
+
+- [ ] **A. Per-stage budgets, reviewers at medium effort (user, 2026-10-29).**
+      The generator keeps the model's own reasoning level with a budget per
+      stage (scope 16k, flows 32k, doubled once when the answer is cut, capped
+      at 64k). Reviewers run at `reasoning_effort: medium` with an 8k budget:
+      they return a short list, so most of their tokens are reasoning, and
+      medium keeps the verdict considered without the model-determined cost.
+- [ ] **B. Low effort everywhere.** Cheapest; first drafts of big artifacts
+      lose quality.
+- [x] **C. Your levels (user, 2026-10-30).** Two temperatures: 0.2 for
+      exact values, 0.7 for the calls that set a direction. Scope and the
+      brief run at high effort and draft at 0.7; the IA at high and 0.2,
+      since its structure and new components carry every later call; the
+      flows catalog, expansion and patches, the theme and the nodes at
+      medium and 0.2. Every fix runs at 0.2, since it edits the named issues and
+      nothing else. Reviewers, the peer included, run at medium and 0.2, so
+      their verdicts stay consistent. The budgets stay as in A.
+
+Notes: A ticked by the user on 2026-10-29, raised from the proposed low to
+medium.
+The flows generators also run at medium since the same night: at the
+model's own level the catalog call wrote 27k characters of JSON and was still
+cut at 32k tokens, two thirds of the budget being reasoning. Catalog budget
+32k, batches and patches 16k. C replaced A on 2026-10-30 (user): every
+generator gets a level and a temperature.
+
 ---
 
 ## 2. User flow agent
@@ -202,13 +317,26 @@ Notes:
       vocabulary, capabilities, assumptions and questions; flows build on it.
 - [ ] **C. Catalog, then expand each flow in parallel.** Scales to big apps;
       needs a consistency pass because flows written apart drift on field names.
+- [x] **E. Scope, then three flows stages (user, 2026-10-29).** A catalog
+      stage writes every flow's header and description plus the reusable
+      parts (fields defined once, forms, subflows), assumptions and
+      questions. An expansion stage splits the flow ids into batches, each a
+      stage of its own run in parallel, expanding its flows while reusing the
+      parts by name. A reconciliation stage starts from the assembled draft
+      without a first generation: it validates the whole document with every
+      rule and fixes by patches (flows and parts that change); no reviewers,
+      the batches were reviewed already.
+      Names cannot drift because every reusable part is defined once.
 
 Combine with (pick any):
 
 - [ ] **D. Critic pass.** A reviewer call lists flows a typical user would expect
       but are missing; findings become warnings or a revision round.
 
-Notes:
+Notes: E on the user's instruction, 2026-10-29, after B failed on the
+freelancer workspace: the one-call flows document passed 83k characters and
+was still unfinished at a 64k-token budget, three attempts costing about $1.
+The reviewer calls of D1.12 replace the critic pass D.
 
 ### D2.2 Step granularity (pick one)
 
@@ -226,7 +354,12 @@ Notes:
       limits, options, example.
 - [ ] **B. Minimal (R3).** Name, type, required.
 
-Notes:
+Notes: A, with three changes on 2026-10-29 (FL9): fields are defined once in
+a catalog at the document level with ids FD01, FD02, ... and steps and forms
+refer to them by id; fields carry no technical name, so the contract stage
+chooses names freely from label and meaning (user); and the four limit keys
+become two, `min` and `max`, read as lengths for text types and as values
+for numbers.
 
 ### D2.4 Alternative paths (pick one)
 
@@ -243,8 +376,18 @@ Notes:
       (payments, uploads, email, realtime, maps, external APIs) go to
       out-of-scope with a placeholder behavior.
 - [ ] **B. No boundary.** The flows describe whatever the idea implies.
+- [x] **C. Three modes, no whitelist (user, 2026-10-29).** The app builds
+      whatever the idea needs. The list in `src/agents/01flows/config/capabilities.ts` only
+      names the exceptions: simulated capabilities get their full UI with a
+      placeholder effect written in the list itself (payments: the checkout
+      validates and shows success, nothing is charged; fileUploads: the file
+      is validated and previewed, nothing is stored; emailSending: the
+      website shows the email as sent), and skipped capabilities (realtime,
+      maps, externalIntegrations, multiTenant, i18n) go to out-of-scope with
+      a placeholder as in A. The ids stay an enum in the scope schema.
 
-Notes:
+Notes: C on the user's instruction, 2026-10-29. multiTenant could run on
+mock data but stays skipped to save credits; realtime and maps likewise.
 
 ### D2.6 Data effects on steps (pick one)
 
@@ -268,6 +411,37 @@ Notes:
 
 ---
 
+### D2.8 Standard subflows (pick one)
+
+- [ ] **A. The model writes every subflow.** Each catalog invents its own
+      confirmation; the first drafts kept getting it wrong (FL6).
+- [x] **B. A registry of standard subflows every app has (user, 2026-10-29).**
+      `src/agents/01flows/config/subflows.ts` holds subflows written once and injected into
+      every catalog before validation, so the model refers to them by id and
+      never rewrites them. They keep their own ids, STD01, STD02, ..., so
+      the model's SF01, SF02, ... never collide with them (user,
+      2026-10-29). The registry is tagged by source so design-system
+      subflows can join it under the prefix DS. The first entry, STD01
+      Confirm deletion, is one asking step with two alternatives: confirm
+      deletes the record, cancel leaves it. The deleting step of a flow runs
+      STD01 and carries the delete effect; there is no separate deleting
+      step after it (user, 2026-10-29).
+
+Notes: B on the user's instruction, 2026-10-29. Conventions: the step that
+runs a subflow says in its userAction what triggers it and carries the
+effects the subflow applies to this flow's records; the subflow's steps give
+the website's response; an alternative inside the subflow with `resumesAt: ""` hands back
+to the calling flow, whose own confirm or cancel alternatives from that step
+say what the website shows next, only when it needs to. Without them the
+flow continues after confirm and ends after cancel, denied or notFound.
+FLOW-013 checks the deleting step: a confirm or cancel path of its own, or
+a subflow that has one, and names STD01 when it fails; FLOW-004 lets a
+subflow step carry its trigger and effects. The prompt text describes no standard subflow:
+each registry entry carries a `use` line that goes to the model with its id
+and name, and the validators enforce usage (user, 2026-10-29).
+
+---
+
 ## 3. Design agent
 
 ### D3.1 Component policy (pick one)
@@ -284,7 +458,13 @@ Notes:
       the inventory; a mapping pass picks DS components and turns the rest into
       new ones. Most original look; more reconciliation work.
 
-Notes:
+Notes: B, with the page kind deciding the weight (user, 2026-10-30). Inner
+pages (list, detail, form, dashboard, editor, settings, auth) are design-system
+first. Public pages (landing and other marketing content) are visual first:
+sections are composed from elements and layout boxes on the tokens, and a
+component is used only where it fits, mainly the interactive ones. A component
+is never used because it exists. Section recipes for marketing content are a
+later extension of the design system, not this week's.
 
 ### D3.2 Design representation (pick one)
 
@@ -295,6 +475,12 @@ Notes:
       big outputs.
 - [ ] **C. Screens, then typed sections, then nodes (default).** Sections carry
       intent (hero, form, list, detail), nodes carry components and coverage.
+      Note (user, 2026-10-30): a node carries its box and a prose `what` ("a
+      password input, size md") for the coding stage, plus the closest
+      `component`, `size` and `look` for validation and the skeleton, stripped
+      before coding. A named component forced the wrong one (Input for a
+      PasswordInput) and doubled the validation the MCP already does on the
+      code; the coding stage picks from the prose.
 - [ ] **D. Code first (R2's "use the actual components from the beginning").** The
       agent writes prototype pages in TSX; specs are read from annotations.
       Strongest fidelity, weakest structured validation.
@@ -313,8 +499,26 @@ Notes:
 - [ ] **C. B, seeded by a Muse Image moodboard.** Dominant colors from the image
       seed the palette; the moodboard also serves as hero art.
 - [ ] **D. The user supplies brand colors**; code fills the rest as in B.
+- [x] **E. Two calls, a direction and then the values (user, 2026-10-30).**
+      The brief call picks the direction at high reasoning and a higher
+      temperature (0.7 for its first draft, D1.13 C). The theme call writes
+      every final value at medium reasoning: the colors, the page layouts, and each component's default
+      variants and look. Code checks contrast; failures go back to the theme call.
 
-Notes:
+Notes: the brief's output is small and sets the whole look, so it gets the
+most reasoning and room to be creative; the values need care, not
+creativity. The brief decides audience, personality, voice, density, feel,
+light or dark or both, seed hue and chroma, fonts, radius, focus ring,
+which entities get a color with their hues, imagery and references. The
+theme call writes hex values for the 12 color roles of the brand set and of
+the base set most components use (from the brief's `baseHue` and
+`baseChroma`, user, 2026-10-30) and the page colors (`pageBg`, `pageFg`,
+`pageFgMuted`, `frameBg`) in each mode, a palette per
+colored entity, an app layout and a marketing layout, and the defaults.
+`divider`, `backdrop` and `skeleton` come from the theme call too, made to
+show on the colors it chose (user, 2026-10-30); only the status sets stay
+the template's.
+Phones are out of scope for now.
 
 ### D3.4 Customization policy, your "20% rule" (pick one)
 
@@ -337,9 +541,15 @@ Notes:
 
 - [ ] **A. Layout templates plus section kinds (default).** Templates such as
       app-shell list, detail, form, auth, landing, dashboard, editor, settings.
-- [ ] **B. Free nested containers with layout properties.**
+- [x] **B. Free nested containers with layout properties (user, 2026-10-30).**
 
-Notes:
+Notes: every screen, section and node carries its own layout and box, so a
+template no longer says anything about layout. A screen keeps only its kind:
+`app` (design-system first) or `marketing` (visual first), the split in the
+D3.1 notes. Section kinds stay. The page frame is not fixed either: the theme
+call designs two layouts, one for app pages and one for marketing pages, each
+with a header, a sidebar, an extra sidebar and a footer that are needed or
+not; a page uses its kind's layout or no frame (user, 2026-10-30, D3.3 E).
 
 ### D3.6 Rendering the design (pick any)
 
@@ -518,7 +728,12 @@ Notes:
 
 ---
 
-## 6. Backend agent (Phase 6; decide by Oct 30)
+## 6. Backend agent (parked 2026-10-28)
+
+Parked on the user's instruction: this week has no backend agent. Section 6M
+below replaces it with a mock API inside the generated app. The decisions here
+stay for after the hackathon; a real backend replaces the mock behind the same
+typed client.
 
 ### D6.1 Server framework (pick one)
 
@@ -612,6 +827,64 @@ Notes:
 
 ---
 
+## 6M. Mock data and API (Phase 6, replaces the backend for now)
+
+Added 2026-10-28. The frozen contract is compiled into the generated app by
+code: types, a typed client, hooks, seed data and a mock API. No model calls.
+
+### D6M.1 Mock API shape (pick one)
+
+- [x] **A. Next.js route handlers generated from the contract, backed by a JSON
+      file (default; user, 2026-10-28).** One `route.ts` per path from the
+      contract conventions (`web/app/api/<kebab-plural>/…`), validation with the
+      compiled zod schemas, the real error envelope and status codes. Data lives
+      in `web/mocks/db.json`: a create adds a row to the file. Real HTTP, so the
+      typed client, the e2e tests and the benchmark all exercise the same path a
+      backend will later serve.
+- [ ] **B. In-browser store** (`createStore` from `@packages/utils/state` plus
+      `localStorage`), hooks call it directly. No HTTP, nothing for Lighthouse
+      or Playwright to see on the network; swapping in a backend rewrites the
+      hooks.
+- [ ] **C. Mock Service Worker (MSW)** intercepting `fetch` in the browser.
+      Real-looking requests; data is per tab and gone on reload unless persisted.
+
+Notes:
+
+### D6M.2 Persistence and reset (pick one)
+
+- [x] **A. `web/mocks/seed.json` (pristine, from the contract's seed rows and a
+      demo user) and `web/mocks/db.json` (live) (default; user, 2026-10-28).**
+      `pnpm mock:reset` copies seed over db. The store serializes writes
+      through one promise queue and writes atomically (temp file, rename).
+      `MOCK_DB_PATH` points tests and benchmarks at their own copy.
+- [ ] **B. In-memory only**, reseeded on every server start.
+
+Notes:
+
+### D6M.3 Auth in the mock (pick one)
+
+- [x] **A. Session cookie (default; user, 2026-10-28).** `POST /api/auth/sign-up`,
+      `sign-in`, `sign-out` and `GET /api/auth/me` from the conventions; users
+      in the store with a salted SHA-256 `passwordHash` (a mock, not for
+      production); an httpOnly `weave_session` cookie holding a session id;
+      `owner` access filters by `ownerId`; `role` access checks `user.role`.
+- [ ] **B. No auth**: every request runs as the demo user. Simpler; the auth
+      flows and the denied alternatives can't be tested.
+
+Notes:
+
+### D6M.4 Latency and failure simulation (pick one)
+
+- [x] **A. Configurable (default; user, 2026-10-28).** `MOCK_LATENCY_MS` (150 in
+      `pnpm dev`, 0 under tests and benchmarks) so loading states are visible;
+      a request header `x-mock-fail: <code>` forces that error, which the e2e
+      tests use for the failure alternatives through `page.route`.
+- [ ] **B. None.**
+
+Notes:
+
+---
+
 ## 7. Frontend agent (Phase 7)
 
 ### D7.1 Approach (pick one)
@@ -676,7 +949,7 @@ Notes:
 
 Notes:
 
-### D8.4 Extra backend checks (pick any)
+### D8.4 Extra backend checks (pick any; this week they run against the mock API, S4)
 
 - [ ] **A. Unauthenticated access rejected (default)**
 - [ ] **B. User A can't touch user B's records (default)**
@@ -711,24 +984,28 @@ Notes:
 
 ---
 
-## 10. Git agent
+## 10. Git agent (parked 2026-10-28)
+
+Parked with deployment. The generator commits nothing this week; the user
+commits generated apps by hand if needed.
 
 ### D10.1 What the script does (pick one)
 
-- [ ] **A. Commit only (R3).**
+- [x] **A. Commit only (R3) (user, 2026-10-28: parked, nothing automated this week).**
 - [ ] **B. Commit, push, PR, wait for checks, merge, tag, release (P, Y).**
-- [ ] **C. B up to a passing PR; merge and release on an explicit command (default) (R2).**
+- [ ] **C. B up to a passing PR; merge and release on an explicit command (R2).** Was the default; parked.
 
 Notes:
 
 ---
 
-## 11. Deployment target
+## 11. Deployment target (parked 2026-10-28)
 
 ### D11.1 Where the demo app runs (pick one)
 
-- [ ] **A. Local compose plus one VM with a domain for the demo (default).**
-- [ ] **B. Local only.**
+- [ ] **A. Local compose plus one VM with a domain for the demo.** Was the default; parked.
+- [x] **B. Local only (user, 2026-10-28).** The benchmark's production server
+      (`next build` and `next start`) is the closest thing to a deployment this week.
 - [ ] **C. A platform (Fly.io, Render, Railway).**
 
 Notes:
@@ -739,12 +1016,20 @@ Notes:
 
 ### D12.1 Reference ideas (pick any)
 
-- [ ] **A. Project tracker: development idea, end to end (default)**
-- [ ] **B. Client notes: unseen test, end to end (default)**
-- [ ] **C. Dashboard editor (your widget example): new-component stress test, planning stages (default)**
-- [ ] **D. Appointment booking: business-rule stress test, planning stages (default)**
+- [x] **A. Freelancer workspace: development idea, end to end (user, 2026-10-29).**
+      Project tracker, client notes and appointment booking merged into one
+      brief: clients with notes and follow-ups, projects with tasks, a public
+      booking page. Also the business-rule stress test (slot availability).
+- [x] **B. Dashboard editor (your widget example): new-component stress test, planning stages (user, 2026-10-29).**
+- [x] **C. Ecommerce store: unseen test, then end to end (user, 2026-10-29).**
+      Each planning stage runs it once untuned and records the result; after
+      that it joins tuning so it reaches the second end-to-end run (G8).
 
 Notes:
+
+- 2026-10-29: three ideas, none of them simple. The earlier four (project
+  tracker, client notes, dashboard editor, appointment booking) are replaced
+  by the three above. Descope to fewer ideas only if time runs out.
 
 ### D12.2 What the demo measures (pick any)
 
@@ -754,5 +1039,85 @@ Notes:
 - [ ] **D. Share of code written by generators versus models (default)**
 - [ ] **E. Time, model calls, tokens and cost per run (default)**
 - [ ] **F. Remaining warnings and known gaps, stated plainly (default)**
+- [x] **G. The benchmark table per generated app (user, 2026-10-28).** Every
+      number from section 13, before and after repairs.
+
+Notes:
+
+---
+
+## 13. Benchmark (Phase 8)
+
+Added 2026-10-28 on the user's instruction: after a website is generated, one
+run measures every frontend quality concern and writes one table. Thresholds
+are reported, never looped on by the model; repairs come from the tests.
+
+### D13.1 What is measured (pick any; all ticked by the user, 2026-10-28)
+
+- [x] **A. Performance: Lighthouse 13** through its Node API on Playwright's
+      Chromium, mobile and desktop presets, per route, signed in by cookie.
+      Scores (performance, accessibility, best practices, SEO), LCP, FCP, CLS,
+      TBT, Speed Index, total bytes, unused JavaScript, DOM size.
+- [x] **B. Accessibility: axe-core** (`@axe-core/playwright`, WCAG 2.2 AA tags)
+      per route and state, violations by impact; computed-style contrast and
+      target size from the FE5 collectors.
+- [x] **C. Screen reader:** the accessibility tree per route (Playwright
+      `ariaSnapshot`) scored for unnamed controls, landmarks, heading outline,
+      labelled fields, dialog naming and focus, live regions; plus a virtual
+      screen reader pass (`@guidepup/virtual-screen-reader`) whose spoken
+      phrase log is saved per route.
+- [x] **D. Keyboard navigation:** a Playwright Tab walk per route: reachable
+      controls, visible focus, order against reading order, traps, Escape on
+      dialogs, Enter and Space on controls, skip link.
+- [x] **E. Duplicate implementations:** jscpd clones and duplicated percentage
+      over `web/app`; design-system duplicates: MCP `invalid-alternative`
+      findings (hand-built elements the DS has), new components whose names are
+      within edit distance 2 of a DS component, native controls rendered inside
+      new components, data access outside `entities`, the same component name in
+      two route folders.
+- [x] **F. Code quality:** tsc errors, ESLint findings by rule, MCP validate
+      findings by rule, knip unused files, exports and dependencies, first-load
+      JavaScript per route (gzip) from the build manifests, lines of code by
+      origin (template, codegen, model, repair) from the ledger.
+
+Notes:
+
+### D13.2 Production server for the measurements (pick one)
+
+- [x] **A. `next build` then `next start` (default; user, 2026-10-28).** Next's
+      server gzips responses (`compress: true`), sets ETags and immutable
+      caching for `/_next/static`; the template's `next.config.js` adds security
+      headers. The runner asserts `content-encoding: gzip` before measuring.
+- [ ] **B. A Node reverse proxy with Brotli** (`compression` or a Caddy
+      container in front of `next start`). Better compression numbers; one more
+      process to manage.
+
+Notes:
+
+### D13.3 Thresholds (reported as pass, warn or fail; pick one)
+
+- [x] **A. Defaults (user, 2026-10-28):** Lighthouse performance 90 (desktop)
+      and 80 (mobile), accessibility 100, best practices 90, SEO 90; axe serious
+      and critical 0; contrast failures 0; unnamed controls 0; keyboard
+      reachability 100% and visible focus 100%, no traps; jscpd duplication
+      under 3% and no clone over 30 lines; DS duplicates 0; tsc and MCP errors
+      0; first-load JS under 250 KB gzip per route.
+- [ ] **B. Your numbers:** ___
+
+Notes:
+
+### D13.4 When it runs (pick one)
+
+- [x] **A. After `frontend` and again after `repair` (default; user, 2026-10-28)**,
+      plus `weave bench <runId>` by hand. The second table shows deltas.
+- [ ] **B. Only by hand.**
+
+Notes:
+
+### D13.5 Routes and states measured (pick one)
+
+- [x] **A. Every page screen, signed in as the demo user, default state; the
+      empty state through a second user with no rows (default; user, 2026-10-28).**
+- [ ] **B. Entry pages only.**
 
 Notes:

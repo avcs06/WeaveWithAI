@@ -1,7 +1,7 @@
 # Spec: contracts
 
 Decisions: D4.1 to D4.6 (and D6.4 for auth later). Prompt:
-`src/stages/contracts/prompt.md`.
+`src/agents/03contract/prompts/prompt.md`.
 
 ## What this stage decides
 
@@ -14,7 +14,7 @@ The model decides meaning; code decides wire format (D4.1 D).
   access, inputs, filters, sorting, search, errors, transactions; which flow
   steps each operation serves; which steps need no server; seed rows and
   invalid examples; business rules the flows don't define (`needsRule`).
-- **Code decides (`src/stages/contracts/conventions.ts`):** paths, methods,
+- **Code decides (`src/agents/03contract/conventions.ts`):** paths, methods,
   status codes, error envelope, IDs, timestamps, owner field, pagination,
   date and money formats, the `User` entity and auth operations.
 - **Code derives (`compile.ts`):** database columns (client and server fields),
@@ -39,7 +39,7 @@ are matched to it later, in reconciliation.
 | Update     | `PATCH`; every body field optional                                                                                    |
 | Users      | Built in: `User` with `email` (unique), `name`, `passwordHash` (sensitive), `role`; the contract can add `auth.userFields` |
 
-## Schema (`src/stages/contracts/schema.ts`)
+## Schema (`src/agents/03contract/schema.ts`)
 
 ```ts
 export const FIELD_KINDS = [
@@ -169,7 +169,7 @@ Auth operations are not in `operations`; the conventions add them when
 
 ## Validator rules
 
-`src/stages/contracts/validate.ts`: `validateContract(contract, ctx)` with
+`src/agents/03contract/validate.ts`: `validateContract(contract, ctx)` with
 `ctx = { scope, flows }`. Seed and invalid-example rules use `compile.ts`.
 
 | Rule         | Severity  | Check                                                                                                                       |
@@ -194,7 +194,7 @@ Auth operations are not in `operations`; the conventions add them when
 | CONTRACT-018 | mandatory | An operation with `needsRule` also has a matching question (routed to flows in reconciliation)                              |
 | CONTRACT-019 | mandatory | If any scope role signs in, `auth.enabled` is true and `auth.roles` match the scope's signed-in roles                       |
 
-## Compile (`src/stages/contracts/compile.ts`)
+## Compile (`src/agents/03contract/compile.ts`)
 
 Pure functions from the contract to zod schemas: per entity `createInput`,
 `updateInput` (partial), `view` (output), and per list operation `query` and

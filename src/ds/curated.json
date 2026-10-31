@@ -1,0 +1,53 @@
+{
+  "slots": {
+    "Accordion": ["item title", "item description", "item content"],
+    "Collapsible": ["title", "description", "header action", "content"],
+    "Avatar": ["name", "image"],
+    "Button": ["label", "icon"],
+    "IconButton": ["icon", "tooltip"],
+    "Popover": ["trigger button", "content"],
+    "PopoverButton": ["label", "icon"],
+    "Card": ["content"],
+    "CardGroup": ["cards"],
+    "Checkbox": ["label", "hint"],
+    "CheckboxGroup": ["label", "help text", "error", "checkboxes"],
+    "Chip": ["label", "icon"],
+    "ChipGroup": ["chips"],
+    "Dialog": ["title", "description", "content", "footer actions", "trigger button"],
+    "Dropdown": ["trigger button", "items with label and icon", "groups", "separators"],
+    "FormControl": ["label", "hint", "help text", "error", "control"],
+    "Input": ["label", "placeholder", "hint", "help text", "error", "icon"],
+    "NumberInput": ["label", "placeholder", "hint", "help text", "error", "icon"],
+    "PasswordInput": ["label", "placeholder", "hint", "help text", "error"],
+    "SearchInput": ["label", "placeholder", "hint", "help text", "error"],
+    "Select": ["label", "placeholder", "hint", "help text", "error", "options"],
+    "MultiSelect": ["label", "placeholder", "hint", "help text", "error", "options"],
+    "SelectGroup": ["label", "options"],
+    "SelectOption": ["label"],
+    "Link": ["text"],
+    "Pagination": ["item name", "total"],
+    "Radio": ["label", "hint"],
+    "RadioGroup": ["label", "help text", "error", "radios"],
+    "ScrollArea": ["content"],
+    "FlexScrollArea": ["content"],
+    "Section": ["title", "description", "header action", "content"],
+    "Switch": ["label", "hint"],
+    "Table": ["caption", "columns with title and cell", "rows", "empty message"],
+    "Tabs": ["tabs"],
+    "Tab": ["title", "icon", "panel content"],
+    "Tag": ["label", "icon", "close"],
+    "Textarea": ["label", "placeholder", "hint", "help text", "error"],
+    "Toast": ["title", "description", "status", "action"],
+    "Tooltip": ["content", "trigger"],
+    "Truncate": ["text"]
+  },
+  "extra": [
+    {
+      "name": "Toast",
+      "category": "Toast",
+      "description": "A short message after an action, shown over the page and gone by itself: saved, published, failed. Called from code with `toast()`, not placed on a screen.",
+      "variants": { "status": ["success", "error", "warning", "info"] },
+      "defaults": { "status": "info" }
+    }
+  ]
+}

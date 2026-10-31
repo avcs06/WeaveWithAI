@@ -1,0 +1,3366 @@
+{
+  "components": [
+    {
+      "name": "Truncate",
+      "category": "Truncate",
+      "description": "One line of text that ends in an ellipsis when it doesn't fit, with the\nfull text in a tooltip. For a tooltip of your own, use `tooltip` rather than\nwrapping it in a `Tooltip`.",
+      "variants": {},
+      "slots": [
+        "text"
+      ]
+    },
+    {
+      "name": "Tooltip",
+      "category": "Tooltip",
+      "description": "A short hint on a focusable element that isn't a control, shown on hover\nand keyboard focus. Controls take a `tooltip` prop. Never the only label.",
+      "variants": {
+        "side": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "align": [
+          "center",
+          "start",
+          "end"
+        ]
+      },
+      "slots": [
+        "content",
+        "trigger"
+      ]
+    },
+    {
+      "name": "Textarea",
+      "category": "Textarea",
+      "description": "A multi-line text field: a description, a note, a message. Shows 3 lines by\ndefault; the user can drag it taller. In a form, wire it through\n`Controller`; `delay` saves as the user types. One line of text is an Input.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error"
+      ],
+      "box": {
+        "sm": {
+          "height": 128,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 80,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8,
+          "minHeight": 32
+        },
+        "md": {
+          "height": 136,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 88,
+          "padding": [
+            12,
+            24,
+            12,
+            24
+          ],
+          "gap": 10,
+          "minHeight": 40
+        }
+      }
+    },
+    {
+      "name": "Tag",
+      "category": "Tag",
+      "description": "A short label that only informs: a status, a category, a count, or a\nchosen filter the user removes with its close button (`closable`). A tag\nis never clicked: a toggle is a Chip, an action a Button.",
+      "variants": {
+        "size": [
+          "sm",
+          "xs"
+        ],
+        "variant": [
+          "base",
+          "success",
+          "default",
+          "error",
+          "warning",
+          "info",
+          "accent"
+        ]
+      },
+      "defaults": {
+        "variant": "base",
+        "size": "sm",
+        "bordered": true
+      },
+      "looks": [
+        "bordered",
+        "!bordered"
+      ],
+      "slots": [
+        "label",
+        "icon",
+        "close"
+      ],
+      "box": {
+        "xs": {
+          "height": 24,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 6
+        },
+        "sm": {
+          "height": 32,
+          "padding": [
+            6,
+            10,
+            6,
+            10
+          ],
+          "gap": 8
+        }
+      }
+    },
+    {
+      "name": "Tab",
+      "category": "Tabs",
+      "description": "One tab of a Tabs: `title` and icons in the tab list, children as the\npanel shown while it's active. It renders nothing itself.",
+      "variants": {},
+      "slots": [
+        "title",
+        "icon",
+        "panel content"
+      ]
+    },
+    {
+      "name": "Tabs",
+      "category": "Tabs",
+      "description": "Views of one subject that share a place on the page, one shown at a time:\na session's details, speakers and feedback. Its `Tab` children are the\ntabs, each with its panel. Another page is a Link, not a tab.",
+      "variants": {
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default"
+      },
+      "slots": [
+        "tabs"
+      ],
+      "contains": [
+        "Tab"
+      ],
+      "box": {
+        "list": {
+          "height": 42,
+          "gap": 4
+        },
+        "trigger": {
+          "height": 42,
+          "padding": [
+            14,
+            12,
+            14,
+            12
+          ],
+          "gap": 10
+        },
+        "panel": {
+          "padding": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "Table",
+      "category": "Table",
+      "description": "Rows of records to scan, sort, filter, select and act on. Configure with\n`Table.*` children: a `Table.Column` per column, plus the features needed\n(`Table.Selection`, `Table.Pagination`, …).",
+      "variants": {},
+      "slots": [
+        "caption",
+        "columns with title and cell",
+        "rows",
+        "empty message"
+      ],
+      "contains": [
+        "Table.Column",
+        "Table.Expansion",
+        "Table.Filter",
+        "Table.InfiniteScroll",
+        "Table.Pagination",
+        "Table.Reorder",
+        "Table.Selection",
+        "Table.Sort"
+      ],
+      "box": {
+        "header": {
+          "height": 36
+        },
+        "row": {
+          "height": 37
+        },
+        "header-cell": {
+          "height": 36,
+          "padding": [
+            10,
+            12,
+            10,
+            12
+          ],
+          "gap": 2
+        },
+        "cell": {
+          "height": 37,
+          "padding": [
+            8,
+            6,
+            8,
+            6
+          ]
+        },
+        "pagination": {
+          "padding": [
+            8,
+            6,
+            8,
+            6
+          ],
+          "gap": 12
+        }
+      }
+    },
+    {
+      "name": "Switch",
+      "category": "Switch",
+      "description": "A switch labeled by its children, to its right: a setting that takes effect\nwhen flipped, like notifications. A choice confirmed by a form's submit is a\nCheckbox.",
+      "variants": {
+        "variant": [
+          "base",
+          "default"
+        ],
+        "size": [
+          "sm",
+          "md"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "size": "sm"
+      },
+      "slots": [
+        "label",
+        "hint"
+      ],
+      "box": {
+        "sm": {
+          "height": 24,
+          "gap": 6
+        },
+        "sm/track": {
+          "height": 24,
+          "width": 42,
+          "padding": [
+            3,
+            3,
+            3,
+            3
+          ]
+        },
+        "md": {
+          "height": 32,
+          "gap": 6
+        },
+        "md/track": {
+          "height": 32,
+          "width": 56,
+          "padding": [
+            4,
+            4,
+            4,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "MultiSelect",
+      "category": "Select",
+      "description": "A form field for choosing several values from a list: teams, tracks,\nspeakers. Each chosen value is a removable tag, and the menu stays open\nwhile choosing. One value: Select.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error",
+        "options"
+      ],
+      "contains": [
+        "SelectOption"
+      ],
+      "box": {
+        "sm/box": {
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8,
+          "minHeight": 32
+        },
+        "md/box": {
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10,
+          "minHeight": 40
+        }
+      }
+    },
+    {
+      "name": "Select",
+      "category": "Select",
+      "description": "A form field for choosing one value from a list: a venue, a ticket type, a\nsort order. Its options are `SelectOption` children; typing filters them,\nor `onSearch` asks the server. Several values: MultiSelect.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error",
+        "options"
+      ],
+      "contains": [
+        "SelectGroup",
+        "SelectOption"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "SelectGroup",
+      "category": "Select",
+      "description": "A labelled group of options in a Select's menu: sessions by day, venues by\ncity. Its children are `SelectOption` elements.",
+      "variants": {},
+      "slots": [
+        "label",
+        "options"
+      ],
+      "contains": [
+        "SelectOption"
+      ]
+    },
+    {
+      "name": "SelectOption",
+      "category": "Select",
+      "description": "One option of a Select or MultiSelect. It renders nothing itself: `value`\nand `label` are the option, its children draw its menu row, and other props\nare data passed to `onChange`.",
+      "variants": {},
+      "slots": [
+        "label"
+      ],
+      "box": {
+        "default": {
+          "height": 30,
+          "padding": [
+            8,
+            10,
+            8,
+            10
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "Section",
+      "category": "Section",
+      "description": "A titled part of a page: a heading, an optional muted description, then its\ncontent, with the same sizes and spacing everywhere. A section inside a\nsection gets the next heading level. One that opens and closes is a\nCollapsible, several are an Accordion.",
+      "variants": {
+        "headingAs": [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6"
+        ]
+      },
+      "slots": [
+        "title",
+        "description",
+        "header action",
+        "content"
+      ],
+      "box": {
+        "default": {
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 20
+        },
+        "header": {
+          "height": 52,
+          "gap": 4
+        },
+        "content": {
+          "gap": 16
+        }
+      }
+    },
+    {
+      "name": "FlexScrollArea",
+      "category": "ScrollArea",
+      "description": "A ScrollArea for a flex column, like a panel or dialog body: it takes its\ncontent's height until the column is full, then scrolls.",
+      "variants": {
+        "orientation": [
+          "both",
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "slots": [
+        "content"
+      ]
+    },
+    {
+      "name": "ScrollArea",
+      "category": "ScrollArea",
+      "description": "A box that scrolls its own content, for a box with its own height (`h-*`\nor `max-h-*`). Scrollbars show while the content overflows.",
+      "variants": {
+        "orientation": [
+          "both",
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "slots": [
+        "content"
+      ]
+    },
+    {
+      "name": "Radio",
+      "category": "Radio",
+      "description": "One choice of a RadioGroup, with its label, its children, to its right.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "size": "sm"
+      },
+      "slots": [
+        "label",
+        "hint"
+      ],
+      "box": {
+        "sm/box": {
+          "height": 18,
+          "width": 18,
+          "padding": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "md/box": {
+          "height": 22,
+          "width": 22,
+          "padding": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "RadioGroup",
+      "category": "Radio",
+      "description": "Radios for one choice from a few visible ones, like a ticket type. A form\nfield with label, help text and error; no layout: lay out with `className`.",
+      "variants": {},
+      "slots": [
+        "label",
+        "help text",
+        "error",
+        "radios"
+      ],
+      "contains": [
+        "Radio"
+      ]
+    },
+    {
+      "name": "Popover",
+      "category": "Popover",
+      "description": "A panel of the caller's own content opened from a button: a filter form, a\ndetails card, a quick edit. A non-modal dialog by default: focus moves in on\nopen and back to the trigger on close; Escape, a click outside or tabbing\nout closes it.",
+      "variants": {
+        "align": [
+          "start",
+          "end"
+        ]
+      },
+      "slots": [
+        "trigger button",
+        "content"
+      ],
+      "contains": [
+        "Popover.Button"
+      ],
+      "box": {
+        "default": {
+          "padding": [
+            8,
+            0,
+            8,
+            0
+          ],
+          "gap": 2
+        }
+      }
+    },
+    {
+      "name": "PopoverButton",
+      "category": "Popover",
+      "description": "A Popover's trigger: a base Button with an up-down chevron that shows the\nPopover's disabled or loading state and reason in its own tooltip.",
+      "variants": {
+        "variant": [
+          "base",
+          "default",
+          "danger"
+        ],
+        "size": [
+          "sm",
+          "md"
+        ]
+      },
+      "looks": [
+        "",
+        "ghost",
+        "rounded",
+        "rounded ghost"
+      ],
+      "slots": [
+        "label",
+        "icon"
+      ],
+      "box": {
+        "sm": {
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "Pagination",
+      "category": "Pagination",
+      "description": "Pages of a long list: \"Showing 11 to 20 of 95 items\" on the left, then a\npage-size select and First, Previous, page numbers, Next and Last. A table's\npages are `Table.Pagination`, built on it.",
+      "variants": {
+        "size": [
+          "full",
+          "minimal"
+        ],
+        "content": [
+          "text",
+          "icons"
+        ]
+      },
+      "slots": [
+        "item name",
+        "total"
+      ],
+      "box": {
+        "full": {
+          "height": 32,
+          "gap": 12
+        },
+        "minimal": {
+          "height": 32,
+          "gap": 12
+        }
+      }
+    },
+    {
+      "name": "Link",
+      "category": "Link",
+      "description": "Text that takes the user to another page: another site, an email\n(`mailto:`), a phone number (`tel:`) or a file to download. In the Next\napp, a route of the app is the app's NextLink, built on Link; an action is\na Button.",
+      "variants": {
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "plain": false
+      },
+      "looks": [
+        "",
+        "plain"
+      ],
+      "slots": [
+        "text"
+      ]
+    },
+    {
+      "name": "Input",
+      "category": "Input",
+      "description": "A single-line text field: names, emails, phones, links, titles. In a form,\nwire it through `Controller`; `delay` saves as the user types.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ],
+        "type": [
+          "text",
+          "tel",
+          "url",
+          "email"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error",
+        "icon"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "NumberInput",
+      "category": "Input",
+      "description": "A number field: a price, a count, a capacity. `onChange` gets the number as\nit's typed, or after `delay`; `null` while empty. Arrow keys and\nPageUp/PageDown step it, Home and End go to `min` and `max`, and blur or\nEnter moves it into them.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error",
+        "icon"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "PasswordInput",
+      "category": "Input",
+      "description": "A password field with a button at its end that shows or hides the text.\n`autoComplete` says which: `current-password` to sign in, `new-password` to\nsign up or change it.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "SearchInput",
+      "category": "Input",
+      "description": "A search field: filters a list or searches a source as the user types. Shows\nwhat's typed at once and sends `onChange` after a pause; Enter sends it at\nonce, Escape and the clear button empty it.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "placeholder",
+        "hint",
+        "help text",
+        "error"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "FormControl",
+      "category": "FormControl",
+      "description": "A form field's label, control box, and help text or status message, around a\ncontrol the design system has no component for. Input, NumberInput,\nPasswordInput, SearchInput and Select are built on it: prefer those. With\n`Controller`, `{...field}` is all it needs.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "size": "sm",
+        "border": "outline"
+      },
+      "looks": [
+        "outline",
+        "open"
+      ],
+      "slots": [
+        "label",
+        "hint",
+        "help text",
+        "error",
+        "control"
+      ],
+      "box": {
+        "sm": {
+          "height": 80,
+          "gap": 8
+        },
+        "sm/label-row": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm/box": {
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
+        },
+        "sm/help": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm/message": {
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md": {
+          "height": 88,
+          "gap": 8
+        },
+        "md/label-row": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md/box": {
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
+        },
+        "md/help": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md/message": {
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm+error": {
+          "height": 104,
+          "gap": 8
+        },
+        "sm+error/label-row": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm+error/box": {
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
+        },
+        "sm+error/help": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm+error/message": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md+error": {
+          "height": 112,
+          "gap": 8
+        },
+        "md+error/label-row": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md+error/box": {
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
+        },
+        "md+error/help": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md+error/message": {
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "Dropdown",
+      "category": "Dropdown",
+      "description": "A menu of actions or choices behind a trigger button: row actions, an\naccount menu, sort by, view options. Menu roles, focus and keyboard built in.",
+      "variants": {
+        "align": [
+          "start",
+          "end"
+        ]
+      },
+      "slots": [
+        "trigger button",
+        "items with label and icon",
+        "groups",
+        "separators"
+      ],
+      "contains": [
+        "Dropdown.Button",
+        "Dropdown.Group",
+        "Dropdown.Item",
+        "Dropdown.RadioGroup",
+        "Dropdown.Search",
+        "Dropdown.Separator",
+        "Dropdown.SubMenu"
+      ],
+      "box": {
+        "item": {
+          "height": 30,
+          "padding": [
+            8,
+            10,
+            8,
+            10
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "Dialog",
+      "category": "Dialog",
+      "description": "A task over the page that waits until it's done or dismissed: editing a\nsession, inviting a speaker. Its children are the body, which scrolls\nbetween the title and the footer's actions. A yes-or-no question is\nopenConfirmationDialog.",
+      "variants": {
+        "size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "defaults": {
+        "size": "md"
+      },
+      "slots": [
+        "title",
+        "description",
+        "content",
+        "footer actions",
+        "trigger button"
+      ],
+      "box": {
+        "sm": {
+          "width": 400
+        },
+        "sm/header": {
+          "height": 56,
+          "width": 400,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "sm/body": {
+          "width": 400,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
+        },
+        "sm/footer": {
+          "height": 64,
+          "width": 400,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
+        },
+        "md": {
+          "width": 520
+        },
+        "md/header": {
+          "height": 56,
+          "width": 520,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "md/body": {
+          "width": 520,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
+        },
+        "md/footer": {
+          "height": 64,
+          "width": 520,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
+        },
+        "lg": {
+          "width": 720
+        },
+        "lg/header": {
+          "height": 56,
+          "width": 720,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "lg/body": {
+          "width": 720,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
+        },
+        "lg/footer": {
+          "height": 64,
+          "width": 720,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
+        }
+      }
+    },
+    {
+      "name": "Chip",
+      "category": "Chip",
+      "description": "A compact toggle showing whether it's on: a standalone filter (`active`,\n\"Starred only\") or one choice of a ChipGroup. Read as a checkbox, or a radio\nin a single-choice group. A removable chosen value is a Tag; an action is a\nButton.",
+      "variants": {
+        "size": [
+          "sm",
+          "md"
+        ],
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "selection": "outline",
+        "size": "sm",
+        "rounded": false,
+        "ghost": false
+      },
+      "looks": [
+        "outline",
+        "outline ghost",
+        "outline rounded",
+        "outline rounded ghost",
+        "filled",
+        "filled ghost",
+        "filled rounded",
+        "filled rounded ghost"
+      ],
+      "slots": [
+        "label",
+        "icon"
+      ],
+      "box": {
+        "sm": {
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "ChipGroup",
+      "category": "Chip",
+      "description": "Chips for 2 to about 8 short visible choices: one (`mode=\"single\"`, default,\nlike radios) or any number (`mode=\"multiple\"`, like checkboxes). Named by\n`label`, `aria-label` or `aria-labelledby`. A form field with label, help\ntext and message; in a form, `{...field}` from Controller is all it needs.\nLonger lists are a Select or MultiSelect.",
+      "variants": {
+        "mode": [
+          "multiple",
+          "single"
+        ]
+      },
+      "defaults": {
+        "collapsed": false
+      },
+      "looks": [
+        "",
+        "collapsed"
+      ],
+      "slots": [
+        "chips"
+      ],
+      "contains": [
+        "Chip"
+      ]
+    },
+    {
+      "name": "Checkbox",
+      "category": "Checkbox",
+      "description": "A checkbox labeled by its children, to its right: a yes/no choice like\nconsent or a setting, or one of a CheckboxGroup.",
+      "variants": {
+        "variant": [
+          "base",
+          "default"
+        ],
+        "size": [
+          "sm",
+          "md"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "size": "sm"
+      },
+      "slots": [
+        "label",
+        "hint"
+      ],
+      "box": {
+        "sm": {
+          "height": 18,
+          "gap": 6
+        },
+        "sm/box": {
+          "height": 18,
+          "width": 18,
+          "padding": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        "md": {
+          "height": 22,
+          "gap": 6
+        },
+        "md/box": {
+          "height": 22,
+          "width": 22,
+          "padding": [
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "CheckboxGroup",
+      "category": "Checkbox",
+      "description": "Checkboxes answering one question, with label, help text and error. Its value\nis the checked boxes' values. No layout: lay out with `className`.",
+      "variants": {},
+      "slots": [
+        "label",
+        "help text",
+        "error",
+        "checkboxes"
+      ],
+      "contains": [
+        "Checkbox"
+      ]
+    },
+    {
+      "name": "Card",
+      "category": "Card",
+      "description": "A bordered container with padding and gap, for one item's content or a large\noption in a CardGroup. `onClick` makes the whole card one button; a card with\nits own links or buttons stays static.",
+      "variants": {
+        "variant": [
+          "base",
+          "default"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "selection": "outline",
+        "elevated": false,
+        "ghost": false
+      },
+      "looks": [
+        "outline",
+        "outline ghost",
+        "outline elevated",
+        "outline elevated ghost",
+        "filled",
+        "filled ghost",
+        "filled elevated",
+        "filled elevated ghost"
+      ],
+      "slots": [
+        "content"
+      ],
+      "box": {
+        "default": {
+          "padding": [
+            16,
+            20,
+            16,
+            20
+          ],
+          "gap": 12
+        }
+      }
+    },
+    {
+      "name": "CardGroup",
+      "category": "Card",
+      "description": "Cards for a few large visible choices: one (`mode=\"single\"`, default, like\nradios) or any number (`mode=\"multiple\"`, like checkboxes). A form field with\nlabel, help text and message; in a form, `{...field}` from Controller is all\nit needs.",
+      "variants": {
+        "mode": [
+          "multiple",
+          "single"
+        ]
+      },
+      "slots": [
+        "cards"
+      ],
+      "contains": [
+        "Card"
+      ]
+    },
+    {
+      "name": "Button",
+      "category": "Button",
+      "description": "An action the user takes: submit a form, save, publish, delete, open a\nmenu. `variant=\"default\"` is the main action of a view, `base` a secondary\none, `danger` one that destroys. Navigation is a Link or NextLink, or a\nButton `as` Next.js's Link where it must look like one; an icon alone is an\nIconButton.",
+      "variants": {
+        "size": [
+          "sm",
+          "md",
+          "icon-xs",
+          "icon-sm",
+          "icon-md"
+        ],
+        "variant": [
+          "base",
+          "default",
+          "danger"
+        ]
+      },
+      "defaults": {
+        "variant": "default",
+        "size": "sm",
+        "rounded": false,
+        "ghost": false
+      },
+      "looks": [
+        "",
+        "ghost",
+        "rounded",
+        "rounded ghost"
+      ],
+      "slots": [
+        "label",
+        "icon"
+      ],
+      "box": {
+        "sm": {
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
+        },
+        "md": {
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
+        }
+      }
+    },
+    {
+      "name": "IconButton",
+      "category": "Button",
+      "description": "An action shown as an icon alone, where space is tight or the icon is\nuniversal: settings, close, delete, more. Its `tooltip` shows the name and\nis its accessible name; `aria-label` or `aria-labelledby` gives another.",
+      "variants": {
+        "variant": [
+          "base",
+          "default",
+          "danger"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "xs"
+        ]
+      },
+      "looks": [
+        "",
+        "ghost",
+        "rounded",
+        "rounded ghost"
+      ],
+      "slots": [
+        "icon",
+        "tooltip"
+      ],
+      "box": {
+        "xs": {
+          "height": 24,
+          "width": 24,
+          "padding": [
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        "sm": {
+          "height": 32,
+          "width": 32,
+          "padding": [
+            7,
+            7,
+            7,
+            7
+          ]
+        },
+        "md": {
+          "height": 40,
+          "width": 40,
+          "padding": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "Avatar",
+      "category": "Avatar",
+      "description": "A round picture of a person, or their initials without one. Hidden from\nassistive tech by default, with no tooltip: it usually sits beside the\nvisible name. Pass `aria-hidden={false}` when it stands for the person on\nits own, and it can be focused to show the name in a tooltip.",
+      "variants": {
+        "size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "defaults": {
+        "size": "md"
+      },
+      "slots": [
+        "name",
+        "image"
+      ],
+      "box": {
+        "sm": {
+          "height": 28,
+          "width": 28
+        },
+        "md": {
+          "height": 36,
+          "width": 36
+        },
+        "lg": {
+          "height": 56,
+          "width": 56
+        }
+      }
+    },
+    {
+      "name": "Accordion",
+      "category": "Accordion",
+      "description": "Sections that open and close under their headings: an FAQ, a long form's\noptional parts. Each `Accordion.Item` is one section. One open at a time\n(`mode=\"single\"`, default) or any number (`mode=\"multiple\"`). Arrow keys,\nHome and End move between the headings. One section alone is a\nCollapsible; one that always shows is a Section.",
+      "variants": {
+        "mode": [
+          "multiple",
+          "single"
+        ]
+      },
+      "defaults": {
+        "border": "bordered"
+      },
+      "looks": [
+        "bordered",
+        "open"
+      ],
+      "slots": [
+        "item title",
+        "item description",
+        "item content"
+      ],
+      "contains": [
+        "Accordion.Item"
+      ],
+      "box": {
+        "header": {
+          "height": 66,
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 16
+        },
+        "panel": {
+          "gap": 16
+        }
+      }
+    },
+    {
+      "name": "Collapsible",
+      "category": "Accordion",
+      "description": "One Section whose heading shows and hides its content: details the user\nopens on demand, like advanced settings. Several are an Accordion.",
+      "variants": {},
+      "looks": [
+        "bordered",
+        "open"
+      ],
+      "slots": [
+        "title",
+        "description",
+        "header action",
+        "content"
+      ],
+      "box": {
+        "header": {
+          "height": 66,
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 16
+        }
+      }
+    },
+    {
+      "name": "Toast",
+      "category": "Toast",
+      "description": "A short message after an action, shown over the page and gone by itself: saved, published, failed. Called from code with `toast()`, not placed on a screen.",
+      "variants": {
+        "status": [
+          "success",
+          "error",
+          "warning",
+          "info"
+        ]
+      },
+      "defaults": {
+        "status": "info"
+      },
+      "slots": [
+        "title",
+        "description",
+        "status",
+        "action"
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "name": "fontFamily.display",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.display",
+      "value": "var(--font-display), Georgia, serif"
+    },
+    {
+      "name": "fontFamily.ui",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.ui",
+      "value": "var(--font-ui), system-ui, -apple-system, sans-serif",
+      "className": "font-ui"
+    },
+    {
+      "name": "fontFamily.mono",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.mono",
+      "value": "var(--font-mono), monospace",
+      "className": "font-mono"
+    },
+    {
+      "name": "lineHeight.0",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"0\"]",
+      "value": "0px",
+      "className": "leading-0"
+    },
+    {
+      "name": "lineHeight.3",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"3\"]",
+      "value": "12px",
+      "className": "leading-3"
+    },
+    {
+      "name": "lineHeight.4",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"4\"]",
+      "value": "16px",
+      "className": "leading-4"
+    },
+    {
+      "name": "lineHeight.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"5\"]",
+      "value": "20px",
+      "className": "leading-5"
+    },
+    {
+      "name": "lineHeight.6",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"6\"]",
+      "value": "24px",
+      "className": "leading-6"
+    },
+    {
+      "name": "lineHeight.7",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"7\"]",
+      "value": "28px",
+      "className": "leading-7"
+    },
+    {
+      "name": "lineHeight.8",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"8\"]",
+      "value": "32px",
+      "className": "leading-8"
+    },
+    {
+      "name": "lineHeight.9",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"9\"]",
+      "value": "36px",
+      "className": "leading-9"
+    },
+    {
+      "name": "lineHeight.10",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"10\"]",
+      "value": "40px",
+      "className": "leading-10"
+    },
+    {
+      "name": "lineHeight.11",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"11\"]",
+      "value": "44px",
+      "className": "leading-11"
+    },
+    {
+      "name": "lineHeight.12",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"12\"]",
+      "value": "48px",
+      "className": "leading-12"
+    },
+    {
+      "name": "lineHeight.13",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"13\"]",
+      "value": "52px",
+      "className": "leading-13"
+    },
+    {
+      "name": "lineHeight.14",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"14\"]",
+      "value": "56px",
+      "className": "leading-14"
+    },
+    {
+      "name": "lineHeight.15",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"15\"]",
+      "value": "60px",
+      "className": "leading-15"
+    },
+    {
+      "name": "lineHeight.16",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"16\"]",
+      "value": "64px",
+      "className": "leading-16"
+    },
+    {
+      "name": "lineHeight.3.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"3.5\"]",
+      "value": "14px",
+      "className": "leading-3.5"
+    },
+    {
+      "name": "lineHeight.4.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"4.5\"]",
+      "value": "18px",
+      "className": "leading-4.5"
+    },
+    {
+      "name": "lineHeight.5.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"5.5\"]",
+      "value": "22px",
+      "className": "leading-5.5"
+    },
+    {
+      "name": "lineHeight.6.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"6.5\"]",
+      "value": "26px",
+      "className": "leading-6.5"
+    },
+    {
+      "name": "lineHeight.7.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"7.5\"]",
+      "value": "30px",
+      "className": "leading-7.5"
+    },
+    {
+      "name": "lineHeight.8.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"8.5\"]",
+      "value": "34px",
+      "className": "leading-8.5"
+    },
+    {
+      "name": "lineHeight.9.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"9.5\"]",
+      "value": "38px",
+      "className": "leading-9.5"
+    },
+    {
+      "name": "lineHeight.10.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"10.5\"]",
+      "value": "42px",
+      "className": "leading-10.5"
+    },
+    {
+      "name": "lineHeight.11.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"11.5\"]",
+      "value": "46px",
+      "className": "leading-11.5"
+    },
+    {
+      "name": "lineHeight.display",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.display",
+      "value": "44px",
+      "className": "leading-display"
+    },
+    {
+      "name": "lineHeight.title",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.title",
+      "value": "32px",
+      "className": "leading-title"
+    },
+    {
+      "name": "lineHeight.heading",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.heading",
+      "value": "28px",
+      "className": "leading-heading"
+    },
+    {
+      "name": "lineHeight.subheading",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.subheading",
+      "value": "24px",
+      "className": "leading-subheading"
+    },
+    {
+      "name": "lineHeight.body",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.body",
+      "value": "20px",
+      "className": "leading-body"
+    },
+    {
+      "name": "lineHeight.label",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.label",
+      "value": "16px",
+      "className": "leading-label"
+    },
+    {
+      "name": "lineHeight.caption",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.caption",
+      "value": "18px",
+      "className": "leading-caption"
+    },
+    {
+      "name": "lineHeight.micro",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.micro",
+      "value": "14px",
+      "className": "leading-micro"
+    },
+    {
+      "name": "fontSize.display",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.display",
+      "value": "36px",
+      "className": "text-display"
+    },
+    {
+      "name": "fontSize.title",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.title",
+      "value": "24px",
+      "className": "text-title"
+    },
+    {
+      "name": "fontSize.heading",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.heading",
+      "value": "20px",
+      "className": "text-heading"
+    },
+    {
+      "name": "fontSize.subheading",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.subheading",
+      "value": "16px",
+      "className": "text-subheading"
+    },
+    {
+      "name": "fontSize.body",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.body",
+      "value": "14px",
+      "className": "text-body"
+    },
+    {
+      "name": "fontSize.label",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.label",
+      "value": "13px",
+      "className": "text-label"
+    },
+    {
+      "name": "fontSize.caption",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.caption",
+      "value": "13px",
+      "className": "text-caption"
+    },
+    {
+      "name": "fontSize.micro",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.micro",
+      "value": "11px",
+      "className": "text-micro"
+    },
+    {
+      "name": "iconSize.display",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.display",
+      "value": "40px"
+    },
+    {
+      "name": "iconSize.title",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.title",
+      "value": "28px"
+    },
+    {
+      "name": "iconSize.heading",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.heading",
+      "value": "24px"
+    },
+    {
+      "name": "iconSize.subheading",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.subheading",
+      "value": "18px"
+    },
+    {
+      "name": "iconSize.body",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.body",
+      "value": "16px"
+    },
+    {
+      "name": "iconSize.label",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.label",
+      "value": "14px"
+    },
+    {
+      "name": "iconSize.caption",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.caption",
+      "value": "14px"
+    },
+    {
+      "name": "iconSize.micro",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.micro",
+      "value": "12px"
+    },
+    {
+      "name": "fontWeight.regular",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.regular",
+      "value": "400",
+      "className": "font-regular"
+    },
+    {
+      "name": "fontWeight.medium",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.medium",
+      "value": "500",
+      "className": "font-medium"
+    },
+    {
+      "name": "fontWeight.semibold",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.semibold",
+      "value": "600",
+      "className": "font-semibold"
+    },
+    {
+      "name": "fontWeight.bold",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.bold",
+      "value": "700",
+      "className": "font-bold"
+    },
+    {
+      "name": "fontWeight.display",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.display",
+      "value": "600",
+      "className": "font-semibold"
+    },
+    {
+      "name": "fontWeight.title",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.title",
+      "value": "600",
+      "className": "font-title"
+    },
+    {
+      "name": "fontWeight.heading",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.heading",
+      "value": "600",
+      "className": "font-heading"
+    },
+    {
+      "name": "fontWeight.subheading",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.subheading",
+      "value": "600",
+      "className": "font-subheading"
+    },
+    {
+      "name": "fontWeight.body",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.body",
+      "value": "400",
+      "className": "font-body"
+    },
+    {
+      "name": "fontWeight.label",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.label",
+      "value": "500",
+      "className": "font-label"
+    },
+    {
+      "name": "fontWeight.caption",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.caption",
+      "value": "400",
+      "className": "font-caption"
+    },
+    {
+      "name": "fontWeight.micro",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.micro",
+      "value": "500",
+      "className": "font-micro"
+    },
+    {
+      "name": "zIndex.modal",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.modal",
+      "value": "40",
+      "className": "z-modal"
+    },
+    {
+      "name": "zIndex.popover",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.popover",
+      "value": "50",
+      "className": "z-popover"
+    },
+    {
+      "name": "zIndex.dropdown",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.dropdown",
+      "value": "60",
+      "className": "z-dropdown"
+    },
+    {
+      "name": "zIndex.toast",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.toast",
+      "value": "70",
+      "className": "z-toast"
+    },
+    {
+      "name": "zIndex.tooltip",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.tooltip",
+      "value": "80",
+      "className": "z-tooltip"
+    },
+    {
+      "name": "spacing.0",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0\"]",
+      "value": "0px"
+    },
+    {
+      "name": "spacing.1",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"1\"]",
+      "value": "4px"
+    },
+    {
+      "name": "spacing.2",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"2\"]",
+      "value": "8px"
+    },
+    {
+      "name": "spacing.3",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"3\"]",
+      "value": "12px"
+    },
+    {
+      "name": "spacing.4",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"4\"]",
+      "value": "16px"
+    },
+    {
+      "name": "spacing.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"5\"]",
+      "value": "20px"
+    },
+    {
+      "name": "spacing.6",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"6\"]",
+      "value": "24px"
+    },
+    {
+      "name": "spacing.7",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"7\"]",
+      "value": "28px"
+    },
+    {
+      "name": "spacing.8",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"8\"]",
+      "value": "32px"
+    },
+    {
+      "name": "spacing.9",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"9\"]",
+      "value": "36px"
+    },
+    {
+      "name": "spacing.10",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"10\"]",
+      "value": "40px"
+    },
+    {
+      "name": "spacing.11",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"11\"]",
+      "value": "44px"
+    },
+    {
+      "name": "spacing.12",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"12\"]",
+      "value": "48px"
+    },
+    {
+      "name": "spacing.13",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"13\"]",
+      "value": "52px"
+    },
+    {
+      "name": "spacing.14",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"14\"]",
+      "value": "56px"
+    },
+    {
+      "name": "spacing.15",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"15\"]",
+      "value": "60px"
+    },
+    {
+      "name": "spacing.16",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"16\"]",
+      "value": "64px"
+    },
+    {
+      "name": "spacing.0.25",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.25\"]",
+      "value": "1px"
+    },
+    {
+      "name": "spacing.0.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.5\"]",
+      "value": "2px"
+    },
+    {
+      "name": "spacing.0.75",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.75\"]",
+      "value": "3px"
+    },
+    {
+      "name": "spacing.1.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"1.5\"]",
+      "value": "6px"
+    },
+    {
+      "name": "spacing.2.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"2.5\"]",
+      "value": "10px"
+    },
+    {
+      "name": "spacing.3.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"3.5\"]",
+      "value": "14px"
+    },
+    {
+      "name": "spacing.4.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"4.5\"]",
+      "value": "18px"
+    },
+    {
+      "name": "spacing.5.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"5.5\"]",
+      "value": "22px"
+    },
+    {
+      "name": "spacing.6.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"6.5\"]",
+      "value": "26px"
+    },
+    {
+      "name": "spacing.7.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"7.5\"]",
+      "value": "30px"
+    },
+    {
+      "name": "spacing.8.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"8.5\"]",
+      "value": "34px"
+    },
+    {
+      "name": "spacing.9.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"9.5\"]",
+      "value": "38px"
+    },
+    {
+      "name": "spacing.10.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"10.5\"]",
+      "value": "42px"
+    },
+    {
+      "name": "spacing.11.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"11.5\"]",
+      "value": "46px"
+    },
+    {
+      "name": "radius.0",
+      "group": "radius",
+      "reference": "tokens.radius[\"0\"]",
+      "value": "0px",
+      "className": "rounded-0"
+    },
+    {
+      "name": "radius.1",
+      "group": "radius",
+      "reference": "tokens.radius[\"1\"]",
+      "value": "4px",
+      "className": "rounded-1"
+    },
+    {
+      "name": "radius.2",
+      "group": "radius",
+      "reference": "tokens.radius[\"2\"]",
+      "value": "8px",
+      "className": "rounded-2"
+    },
+    {
+      "name": "radius.3",
+      "group": "radius",
+      "reference": "tokens.radius[\"3\"]",
+      "value": "12px",
+      "className": "rounded-3"
+    },
+    {
+      "name": "radius.4",
+      "group": "radius",
+      "reference": "tokens.radius[\"4\"]",
+      "value": "16px",
+      "className": "rounded-4"
+    },
+    {
+      "name": "radius.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"5\"]",
+      "value": "20px",
+      "className": "rounded-5"
+    },
+    {
+      "name": "radius.6",
+      "group": "radius",
+      "reference": "tokens.radius[\"6\"]",
+      "value": "24px",
+      "className": "rounded-6"
+    },
+    {
+      "name": "radius.7",
+      "group": "radius",
+      "reference": "tokens.radius[\"7\"]",
+      "value": "28px",
+      "className": "rounded-7"
+    },
+    {
+      "name": "radius.8",
+      "group": "radius",
+      "reference": "tokens.radius[\"8\"]",
+      "value": "32px",
+      "className": "rounded-8"
+    },
+    {
+      "name": "radius.9",
+      "group": "radius",
+      "reference": "tokens.radius[\"9\"]",
+      "value": "36px",
+      "className": "rounded-9"
+    },
+    {
+      "name": "radius.10",
+      "group": "radius",
+      "reference": "tokens.radius[\"10\"]",
+      "value": "40px",
+      "className": "rounded-10"
+    },
+    {
+      "name": "radius.11",
+      "group": "radius",
+      "reference": "tokens.radius[\"11\"]",
+      "value": "44px",
+      "className": "rounded-11"
+    },
+    {
+      "name": "radius.12",
+      "group": "radius",
+      "reference": "tokens.radius[\"12\"]",
+      "value": "48px",
+      "className": "rounded-12"
+    },
+    {
+      "name": "radius.13",
+      "group": "radius",
+      "reference": "tokens.radius[\"13\"]",
+      "value": "52px",
+      "className": "rounded-13"
+    },
+    {
+      "name": "radius.14",
+      "group": "radius",
+      "reference": "tokens.radius[\"14\"]",
+      "value": "56px",
+      "className": "rounded-14"
+    },
+    {
+      "name": "radius.15",
+      "group": "radius",
+      "reference": "tokens.radius[\"15\"]",
+      "value": "60px",
+      "className": "rounded-15"
+    },
+    {
+      "name": "radius.16",
+      "group": "radius",
+      "reference": "tokens.radius[\"16\"]",
+      "value": "64px",
+      "className": "rounded-16"
+    },
+    {
+      "name": "radius.0.25",
+      "group": "radius",
+      "reference": "tokens.radius[\"0.25\"]",
+      "value": "1px",
+      "className": "rounded-0.25"
+    },
+    {
+      "name": "radius.0.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"0.5\"]",
+      "value": "2px",
+      "className": "rounded-0.5"
+    },
+    {
+      "name": "radius.1.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"1.5\"]",
+      "value": "6px",
+      "className": "rounded-1.5"
+    },
+    {
+      "name": "radius.2.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"2.5\"]",
+      "value": "10px",
+      "className": "rounded-2.5"
+    },
+    {
+      "name": "radius.3.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"3.5\"]",
+      "value": "14px",
+      "className": "rounded-3.5"
+    },
+    {
+      "name": "radius.4.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"4.5\"]",
+      "value": "18px",
+      "className": "rounded-4.5"
+    },
+    {
+      "name": "radius.5.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"5.5\"]",
+      "value": "22px",
+      "className": "rounded-5.5"
+    },
+    {
+      "name": "radius.6.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"6.5\"]",
+      "value": "26px",
+      "className": "rounded-6.5"
+    },
+    {
+      "name": "radius.7.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"7.5\"]",
+      "value": "30px",
+      "className": "rounded-7.5"
+    },
+    {
+      "name": "radius.8.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"8.5\"]",
+      "value": "34px",
+      "className": "rounded-8.5"
+    },
+    {
+      "name": "radius.9.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"9.5\"]",
+      "value": "38px",
+      "className": "rounded-9.5"
+    },
+    {
+      "name": "radius.10.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"10.5\"]",
+      "value": "42px",
+      "className": "rounded-10.5"
+    },
+    {
+      "name": "radius.11.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"11.5\"]",
+      "value": "46px",
+      "className": "rounded-11.5"
+    },
+    {
+      "name": "radius.full",
+      "group": "radius",
+      "reference": "tokens.radius.full",
+      "value": "9999px",
+      "className": "rounded-full"
+    },
+    {
+      "name": "radius.surface",
+      "group": "radius",
+      "reference": "tokens.radius.surface",
+      "value": "8px",
+      "className": "rounded-surface"
+    },
+    {
+      "name": "radius.control",
+      "group": "radius",
+      "reference": "tokens.radius.control",
+      "value": "6px",
+      "className": "rounded-control"
+    },
+    {
+      "name": "focusRing",
+      "group": "focusRing",
+      "reference": "tokens.focusRing",
+      "value": "halo"
+    },
+    {
+      "name": "color.base.bg",
+      "group": "color",
+      "reference": "tokens.color.base.bg",
+      "value": "var(--weave-color-base-bg)",
+      "className": "bg-base"
+    },
+    {
+      "name": "color.base.fg",
+      "group": "color",
+      "reference": "tokens.color.base.fg",
+      "value": "var(--weave-color-base-fg)",
+      "className": "text-base"
+    },
+    {
+      "name": "color.base.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.base.fgMuted",
+      "value": "var(--weave-color-base-fg-muted)",
+      "className": "text-base-muted"
+    },
+    {
+      "name": "color.base.border",
+      "group": "color",
+      "reference": "tokens.color.base.border",
+      "value": "var(--weave-color-base-border)",
+      "className": "border-base"
+    },
+    {
+      "name": "color.base.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.base.hoverBg",
+      "value": "var(--weave-color-base-hover-bg)",
+      "className": "bg-base-hover"
+    },
+    {
+      "name": "color.base.accentBg",
+      "group": "color",
+      "reference": "tokens.color.base.accentBg",
+      "value": "var(--weave-color-base-accent-bg)",
+      "className": "bg-base-accent"
+    },
+    {
+      "name": "color.base.accentFg",
+      "group": "color",
+      "reference": "tokens.color.base.accentFg",
+      "value": "var(--weave-color-base-accent-fg)",
+      "className": "text-base-accent"
+    },
+    {
+      "name": "color.base.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.base.accentBorder",
+      "value": "var(--weave-color-base-accent-border)",
+      "className": "border-base-accent"
+    },
+    {
+      "name": "color.base.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.base.accentHoverBg",
+      "value": "var(--weave-color-base-accent-hover-bg)",
+      "className": "bg-base-accent-hover"
+    },
+    {
+      "name": "color.base.focus",
+      "group": "color",
+      "reference": "tokens.color.base.focus",
+      "value": "var(--weave-color-base-focus)"
+    },
+    {
+      "name": "color.base.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.base.accentFocus",
+      "value": "var(--weave-color-base-accent-focus)"
+    },
+    {
+      "name": "color.base.shadow",
+      "group": "color",
+      "reference": "tokens.color.base.shadow",
+      "value": "var(--weave-color-base-shadow)"
+    },
+    {
+      "name": "color.surface.pageBg",
+      "group": "color",
+      "reference": "tokens.color.surface.pageBg",
+      "value": "var(--weave-color-surface-page-bg)",
+      "className": "bg-surface-page"
+    },
+    {
+      "name": "color.surface.frameBg",
+      "group": "color",
+      "reference": "tokens.color.surface.frameBg",
+      "value": "var(--weave-color-surface-frame-bg)",
+      "className": "bg-surface-frame"
+    },
+    {
+      "name": "color.surface.pageFg",
+      "group": "color",
+      "reference": "tokens.color.surface.pageFg",
+      "value": "var(--weave-color-surface-page-fg)",
+      "className": "text-surface-page"
+    },
+    {
+      "name": "color.surface.pageFgMuted",
+      "group": "color",
+      "reference": "tokens.color.surface.pageFgMuted",
+      "value": "var(--weave-color-surface-page-fg-muted)",
+      "className": "text-surface-page-muted"
+    },
+    {
+      "name": "color.surface.divider",
+      "group": "color",
+      "reference": "tokens.color.surface.divider",
+      "value": "var(--weave-color-surface-divider)"
+    },
+    {
+      "name": "color.surface.backdrop",
+      "group": "color",
+      "reference": "tokens.color.surface.backdrop",
+      "value": "var(--weave-color-surface-backdrop)"
+    },
+    {
+      "name": "color.surface.skeleton",
+      "group": "color",
+      "reference": "tokens.color.surface.skeleton",
+      "value": "var(--weave-color-surface-skeleton)"
+    },
+    {
+      "name": "color.primary.bg",
+      "group": "color",
+      "reference": "tokens.color.primary.bg",
+      "value": "var(--weave-color-primary-bg)",
+      "className": "bg-primary"
+    },
+    {
+      "name": "color.primary.fg",
+      "group": "color",
+      "reference": "tokens.color.primary.fg",
+      "value": "var(--weave-color-primary-fg)",
+      "className": "text-primary"
+    },
+    {
+      "name": "color.primary.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.primary.fgMuted",
+      "value": "var(--weave-color-primary-fg-muted)",
+      "className": "text-primary-muted"
+    },
+    {
+      "name": "color.primary.border",
+      "group": "color",
+      "reference": "tokens.color.primary.border",
+      "value": "var(--weave-color-primary-border)",
+      "className": "border-primary"
+    },
+    {
+      "name": "color.primary.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.primary.hoverBg",
+      "value": "var(--weave-color-primary-hover-bg)",
+      "className": "bg-primary-hover"
+    },
+    {
+      "name": "color.primary.accentBg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentBg",
+      "value": "var(--weave-color-primary-accent-bg)",
+      "className": "bg-primary-accent"
+    },
+    {
+      "name": "color.primary.accentFg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentFg",
+      "value": "var(--weave-color-primary-accent-fg)",
+      "className": "text-primary-accent"
+    },
+    {
+      "name": "color.primary.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.primary.accentBorder",
+      "value": "var(--weave-color-primary-accent-border)",
+      "className": "border-primary-accent"
+    },
+    {
+      "name": "color.primary.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentHoverBg",
+      "value": "var(--weave-color-primary-accent-hover-bg)",
+      "className": "bg-primary-accent-hover"
+    },
+    {
+      "name": "color.primary.focus",
+      "group": "color",
+      "reference": "tokens.color.primary.focus",
+      "value": "var(--weave-color-primary-focus)"
+    },
+    {
+      "name": "color.primary.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.primary.accentFocus",
+      "value": "var(--weave-color-primary-accent-focus)"
+    },
+    {
+      "name": "color.primary.shadow",
+      "group": "color",
+      "reference": "tokens.color.primary.shadow",
+      "value": "var(--weave-color-primary-shadow)"
+    },
+    {
+      "name": "color.success.bg",
+      "group": "color",
+      "reference": "tokens.color.success.bg",
+      "value": "var(--weave-color-success-bg)",
+      "className": "bg-success"
+    },
+    {
+      "name": "color.success.fg",
+      "group": "color",
+      "reference": "tokens.color.success.fg",
+      "value": "var(--weave-color-success-fg)",
+      "className": "text-success"
+    },
+    {
+      "name": "color.success.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.success.fgMuted",
+      "value": "var(--weave-color-success-fg-muted)",
+      "className": "text-success-muted"
+    },
+    {
+      "name": "color.success.border",
+      "group": "color",
+      "reference": "tokens.color.success.border",
+      "value": "var(--weave-color-success-border)",
+      "className": "border-success"
+    },
+    {
+      "name": "color.success.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.success.hoverBg",
+      "value": "var(--weave-color-success-hover-bg)",
+      "className": "bg-success-hover"
+    },
+    {
+      "name": "color.success.accentBg",
+      "group": "color",
+      "reference": "tokens.color.success.accentBg",
+      "value": "var(--weave-color-success-accent-bg)",
+      "className": "bg-success-accent"
+    },
+    {
+      "name": "color.success.accentFg",
+      "group": "color",
+      "reference": "tokens.color.success.accentFg",
+      "value": "var(--weave-color-success-accent-fg)",
+      "className": "text-success-accent"
+    },
+    {
+      "name": "color.success.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.success.accentBorder",
+      "value": "var(--weave-color-success-accent-border)",
+      "className": "border-success-accent"
+    },
+    {
+      "name": "color.success.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.success.accentHoverBg",
+      "value": "var(--weave-color-success-accent-hover-bg)",
+      "className": "bg-success-accent-hover"
+    },
+    {
+      "name": "color.success.focus",
+      "group": "color",
+      "reference": "tokens.color.success.focus",
+      "value": "var(--weave-color-success-focus)"
+    },
+    {
+      "name": "color.success.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.success.accentFocus",
+      "value": "var(--weave-color-success-accent-focus)"
+    },
+    {
+      "name": "color.success.shadow",
+      "group": "color",
+      "reference": "tokens.color.success.shadow",
+      "value": "var(--weave-color-success-shadow)"
+    },
+    {
+      "name": "color.warning.bg",
+      "group": "color",
+      "reference": "tokens.color.warning.bg",
+      "value": "var(--weave-color-warning-bg)",
+      "className": "bg-warning"
+    },
+    {
+      "name": "color.warning.fg",
+      "group": "color",
+      "reference": "tokens.color.warning.fg",
+      "value": "var(--weave-color-warning-fg)",
+      "className": "text-warning"
+    },
+    {
+      "name": "color.warning.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.warning.fgMuted",
+      "value": "var(--weave-color-warning-fg-muted)",
+      "className": "text-warning-muted"
+    },
+    {
+      "name": "color.warning.border",
+      "group": "color",
+      "reference": "tokens.color.warning.border",
+      "value": "var(--weave-color-warning-border)",
+      "className": "border-warning"
+    },
+    {
+      "name": "color.warning.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.warning.hoverBg",
+      "value": "var(--weave-color-warning-hover-bg)",
+      "className": "bg-warning-hover"
+    },
+    {
+      "name": "color.warning.accentBg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentBg",
+      "value": "var(--weave-color-warning-accent-bg)",
+      "className": "bg-warning-accent"
+    },
+    {
+      "name": "color.warning.accentFg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentFg",
+      "value": "var(--weave-color-warning-accent-fg)",
+      "className": "text-warning-accent"
+    },
+    {
+      "name": "color.warning.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.warning.accentBorder",
+      "value": "var(--weave-color-warning-accent-border)",
+      "className": "border-warning-accent"
+    },
+    {
+      "name": "color.warning.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentHoverBg",
+      "value": "var(--weave-color-warning-accent-hover-bg)",
+      "className": "bg-warning-accent-hover"
+    },
+    {
+      "name": "color.warning.focus",
+      "group": "color",
+      "reference": "tokens.color.warning.focus",
+      "value": "var(--weave-color-warning-focus)"
+    },
+    {
+      "name": "color.warning.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.warning.accentFocus",
+      "value": "var(--weave-color-warning-accent-focus)"
+    },
+    {
+      "name": "color.warning.shadow",
+      "group": "color",
+      "reference": "tokens.color.warning.shadow",
+      "value": "var(--weave-color-warning-shadow)"
+    },
+    {
+      "name": "color.error.bg",
+      "group": "color",
+      "reference": "tokens.color.error.bg",
+      "value": "var(--weave-color-error-bg)",
+      "className": "bg-error"
+    },
+    {
+      "name": "color.error.fg",
+      "group": "color",
+      "reference": "tokens.color.error.fg",
+      "value": "var(--weave-color-error-fg)",
+      "className": "text-error"
+    },
+    {
+      "name": "color.error.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.error.fgMuted",
+      "value": "var(--weave-color-error-fg-muted)",
+      "className": "text-error-muted"
+    },
+    {
+      "name": "color.error.border",
+      "group": "color",
+      "reference": "tokens.color.error.border",
+      "value": "var(--weave-color-error-border)",
+      "className": "border-error"
+    },
+    {
+      "name": "color.error.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.error.hoverBg",
+      "value": "var(--weave-color-error-hover-bg)",
+      "className": "bg-error-hover"
+    },
+    {
+      "name": "color.error.accentBg",
+      "group": "color",
+      "reference": "tokens.color.error.accentBg",
+      "value": "var(--weave-color-error-accent-bg)",
+      "className": "bg-error-accent"
+    },
+    {
+      "name": "color.error.accentFg",
+      "group": "color",
+      "reference": "tokens.color.error.accentFg",
+      "value": "var(--weave-color-error-accent-fg)",
+      "className": "text-error-accent"
+    },
+    {
+      "name": "color.error.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.error.accentBorder",
+      "value": "var(--weave-color-error-accent-border)",
+      "className": "border-error-accent"
+    },
+    {
+      "name": "color.error.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.error.accentHoverBg",
+      "value": "var(--weave-color-error-accent-hover-bg)",
+      "className": "bg-error-accent-hover"
+    },
+    {
+      "name": "color.error.focus",
+      "group": "color",
+      "reference": "tokens.color.error.focus",
+      "value": "var(--weave-color-error-focus)"
+    },
+    {
+      "name": "color.error.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.error.accentFocus",
+      "value": "var(--weave-color-error-accent-focus)"
+    },
+    {
+      "name": "color.error.shadow",
+      "group": "color",
+      "reference": "tokens.color.error.shadow",
+      "value": "var(--weave-color-error-shadow)"
+    },
+    {
+      "name": "color.info.bg",
+      "group": "color",
+      "reference": "tokens.color.info.bg",
+      "value": "var(--weave-color-info-bg)",
+      "className": "bg-info"
+    },
+    {
+      "name": "color.info.fg",
+      "group": "color",
+      "reference": "tokens.color.info.fg",
+      "value": "var(--weave-color-info-fg)",
+      "className": "text-info"
+    },
+    {
+      "name": "color.info.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.info.fgMuted",
+      "value": "var(--weave-color-info-fg-muted)",
+      "className": "text-info-muted"
+    },
+    {
+      "name": "color.info.border",
+      "group": "color",
+      "reference": "tokens.color.info.border",
+      "value": "var(--weave-color-info-border)",
+      "className": "border-info"
+    },
+    {
+      "name": "color.info.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.info.hoverBg",
+      "value": "var(--weave-color-info-hover-bg)",
+      "className": "bg-info-hover"
+    },
+    {
+      "name": "color.info.accentBg",
+      "group": "color",
+      "reference": "tokens.color.info.accentBg",
+      "value": "var(--weave-color-info-accent-bg)",
+      "className": "bg-info-accent"
+    },
+    {
+      "name": "color.info.accentFg",
+      "group": "color",
+      "reference": "tokens.color.info.accentFg",
+      "value": "var(--weave-color-info-accent-fg)",
+      "className": "text-info-accent"
+    },
+    {
+      "name": "color.info.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.info.accentBorder",
+      "value": "var(--weave-color-info-accent-border)",
+      "className": "border-info-accent"
+    },
+    {
+      "name": "color.info.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.info.accentHoverBg",
+      "value": "var(--weave-color-info-accent-hover-bg)",
+      "className": "bg-info-accent-hover"
+    },
+    {
+      "name": "color.info.focus",
+      "group": "color",
+      "reference": "tokens.color.info.focus",
+      "value": "var(--weave-color-info-focus)"
+    },
+    {
+      "name": "color.info.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.info.accentFocus",
+      "value": "var(--weave-color-info-accent-focus)"
+    },
+    {
+      "name": "color.info.shadow",
+      "group": "color",
+      "reference": "tokens.color.info.shadow",
+      "value": "var(--weave-color-info-shadow)"
+    },
+    {
+      "name": "boxShadow.card",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.card",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.control",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.control",
+      "value": "0 1px 2px 0 color-mix(in srgb, var(--weave-color-base-shadow) 5%, transparent)"
+    },
+    {
+      "name": "boxShadow.tooltip",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.tooltip",
+      "value": "0 2px 5px 0 color-mix(in srgb, var(--weave-color-base-shadow) 10%, transparent)"
+    },
+    {
+      "name": "boxShadow.dropdown",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.dropdown",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.popover",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.popover",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.toast",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.toast",
+      "value": "0 6px 16px 0 color-mix(in srgb, var(--weave-color-base-shadow) 10%, transparent)"
+    },
+    {
+      "name": "boxShadow.modal",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.modal",
+      "value": "0 12px 32px 0 color-mix(in srgb, var(--weave-color-base-shadow) 12%, transparent)"
+    },
+    {
+      "name": "controlShadow.primary.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.primary.border",
+      "value": "0 0 0 1px var(--weave-color-primary-border) inset"
+    },
+    {
+      "name": "controlShadow.primary.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.primary.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-primary-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.base.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.base.border",
+      "value": "0 0 0 1px var(--weave-color-base-border) inset"
+    },
+    {
+      "name": "controlShadow.base.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.base.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-base-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.success.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.success.border",
+      "value": "0 0 0 1px var(--weave-color-success-border) inset"
+    },
+    {
+      "name": "controlShadow.success.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.success.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-success-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.warning.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.warning.border",
+      "value": "0 0 0 1px var(--weave-color-warning-border) inset"
+    },
+    {
+      "name": "controlShadow.warning.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.warning.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-warning-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.error.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.error.border",
+      "value": "0 0 0 1px var(--weave-color-error-border) inset"
+    },
+    {
+      "name": "controlShadow.error.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.error.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-error-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.info.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.info.border",
+      "value": "0 0 0 1px var(--weave-color-info-border) inset"
+    },
+    {
+      "name": "controlShadow.info.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.info.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-info-accent-border) inset"
+    }
+  ],
+  "project": {
+    "colors": {
+      "file": "colors.ts",
+      "theme": {
+        "light": {
+          "bg": "#F7EDFE",
+          "fg": "#402060",
+          "fgMuted": "#8145B5",
+          "border": "#BE93E4",
+          "hoverBg": "#F2E2FC",
+          "accentBg": "#8E4EC6",
+          "accentFg": "#FFFFFF",
+          "accentBorder": "#8C4DC3",
+          "accentHoverBg": "#8347B9",
+          "focus": "#8E4EC6",
+          "accentFocus": "#7542A1",
+          "shadow": "#000000"
+        },
+        "dark": {
+          "bg": "#301C3B",
+          "fg": "#ECD9FA",
+          "fgMuted": "#D19DFF",
+          "border": "#8457AA",
+          "hoverBg": "#3D224E",
+          "accentBg": "#8E4EC6",
+          "accentFg": "#FFFFFF",
+          "accentBorder": "#9051C8",
+          "accentHoverBg": "#8347B9",
+          "focus": "#8E4EC6",
+          "accentFocus": "#A573D2",
+          "shadow": "#000000"
+        }
+      },
+      "page": {
+        "light": {
+          "pageBg": "#FFFFFF",
+          "frameBg": "#FAFAFA",
+          "pageFg": "#18181B",
+          "pageFgMuted": "#5C5C64"
+        },
+        "dark": {
+          "pageBg": "#18181B",
+          "frameBg": "#1F1F23",
+          "pageFg": "#FAFAFA",
+          "pageFgMuted": "#ABABB2"
+        }
+      },
+      "entity": []
+    },
+    "focusRing": {
+      "file": "tokens.ts",
+      "value": "halo",
+      "options": [
+        "halo",
+        "offset",
+        "glow"
+      ]
+    },
+    "radius": {
+      "file": "tokens.ts",
+      "surface": "8px",
+      "control": "6px"
+    },
+    "fonts": {
+      "file": "packages/styles/src/fonts.ts",
+      "ui": "Inter",
+      "display": "Fraunces",
+      "mono": "JetBrains_Mono"
+    }
+  }
+}

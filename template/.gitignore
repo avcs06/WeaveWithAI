@@ -53,5 +53,3 @@ out
 .env*
 !.env.example
 .nx/polygraph
-# Local working notes (not published for now)
-/docs/

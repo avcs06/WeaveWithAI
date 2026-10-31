@@ -1,7 +1,7 @@
 # Spec: scope and user flows
 
-Decisions: D2.1 to D2.7. Prompts: `src/stages/flows/prompt-scope.md`,
-`src/stages/flows/prompt-flows.md`.
+Decisions: D2.1 to D2.7. Prompts: `src/agents/01flows/01scope/prompts/prompt.md`,
+`src/agents/01flows/prompts/flows.md`.
 
 ## What this stage decides
 
@@ -21,14 +21,14 @@ It never decides layout, components, colors, endpoints, tables or technology.
 ## Shape (D2.1 B)
 
 ```text
-idea.md ─▶ scope call ─▶ 01-scope.json ─▶ [--interactive: ask blocking questions]
-                                      └─▶ flows call ─▶ 01-flows.json ─▶ 01-flows.md
+idea.md ─▶ scope call ─▶ 01-flows/01-scope.json ─▶ [--interactive: ask blocking questions]
+                                      └─▶ flows call ─▶ 01-flows/04-reconcile.json ─▶ 01-flows/04-reconcile.md
 ```
 
 Both calls go through `runSpecStage` with their own validator. Answers in
 `input/answers.json` (keyed by question ID) are passed to both calls on reruns.
 
-## Capabilities (`src/config/capabilities.ts`)
+## Capabilities (`src/agents/01flows/config/capabilities.ts`)
 
 | Supported (MVP)                                                   | Unsupported: out of scope with a placeholder              |
 | ----------------------------------------------------------------- | --------------------------------------------------------- |
@@ -43,7 +43,7 @@ Both calls go through `runSpecStage` with their own validator. Answers in
 | `tagsCategories`, `datesDeadlines`, `simpleCounts` (totals, counts) |                                                           |
 | `profileSettings`                                                  |                                                           |
 
-## Schema (`src/stages/flows/schema.ts`)
+## Schema (`src/agents/01flows/schema.ts`)
 
 Every field is required; "none" is an empty string, empty array or `null`.
 That keeps constrained decoding predictable. Nesting stays within 8 levels
@@ -168,10 +168,10 @@ export type Flows = z.infer<typeof Flows>;
 
 ## Validator rules
 
-`src/stages/flows/validate.ts` exports `validateScope(scope)` and
+`src/agents/01flows/04reconcile/validation/validation.ts` exports `validateScope(scope)` and
 `validateFlows(flows, scope)`. Each rule is a small function; the file lists
 them in order. Every rule needs a passing and a failing fixture in
-`src/stages/flows/__fixtures__/`.
+`src/agents/01flows/__fixtures__/`.
 
 ### Scope
 
@@ -214,9 +214,9 @@ them in order. Every rule needs a passing and a failing fixture in
 
 Word checks match whole words, case-insensitively except the HTTP verbs.
 
-## Rendering (`src/stages/flows/render.ts`)
+## Rendering (`src/agents/01flows/render.ts`)
 
-`01-flows.md`, for people and for the demo:
+`01-flows/04-reconcile.md`, for people and for the demo:
 
 ```text
 # Shelf: user flows
@@ -243,10 +243,11 @@ Outcome: the book is saved and is still there after a refresh.
 
 ## Done when
 
-- Project tracker, dashboard editor and appointment booking produce scope and
-  flows with zero mandatory issues within 3 rounds each. Client notes is the
-  unseen test: run once without tuning on it, result recorded either way.
-- You read each `01-flows.md` and would accept it as a spec.
+- The freelancer workspace and the dashboard editor produce scope and flows
+  with zero mandatory issues within 3 rounds each. The ecommerce store is the
+  unseen test: run once without tuning on it, result recorded either way, then
+  tuned on until it passes too.
+- You read each `01-flows/04-reconcile.md` and would accept it as a spec.
 - The prompt's format example comes from the reading-list fixture, never from
   a reference idea.
 - A hand-broken flows file (a form without an invalid path, a duplicate field
