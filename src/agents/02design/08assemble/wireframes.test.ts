@@ -20,6 +20,15 @@ describe('renderWireframes', () => {
     expect(html).not.toMatch(/<script|<link|@import|url\(|src=/i);
   });
 
+  it("draws a frame's wordmark as the theme's logo, and still loads nothing", () => {
+    const logo = { family: 'Playfair Display', weight: '600', case: 'upper' as const, letterSpacing: '0.06em', color: '#1F4A4C' };
+    const branded = renderWireframes(solved, screens, 'reading-list', logo);
+    expect(branded).toContain(`font-family="'Playfair Display', system-ui, sans-serif" font-weight="600"`);
+    expect(branded).toContain('letter-spacing="0.06em" fill="#1F4A4C">SHELF</text>');
+    expect(branded).not.toMatch(/<script|<link|@import|url\(|src=/i);
+    expect(html).not.toContain('SHELF</text>');
+  });
+
   it('draws every screen at desktop width, with a hover title per rectangle', () => {
     for (const screen of solved.screens) {
       const start = html.indexOf(`<section class="screen" id="${screen.id}">`);

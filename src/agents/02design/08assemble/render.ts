@@ -254,6 +254,7 @@ export function renderDesign(
     '',
     `- Density ${theme.density}, radius ${theme.radius.surface} surfaces and ${theme.radius.control} controls, focus ring ${theme.focusRing}, imagery ${brief.imagery}.`,
     `- Fonts: ${theme.fonts.ui} for text, ${theme.fonts.display} for headings, ${theme.fonts.mono} for code.`,
+    `- Logo: the name as a wordmark in ${theme.logo.family} ${theme.logo.weight}, ${theme.logo.case}, letter spacing ${theme.logo.letterSpacing}; ${theme.modes.map((mode) => `${theme.logo.colors[mode]} in ${mode}`).join(', ')}.`,
     `- Style ${brief.feel.join(' and ')}, ${brief.colorScheme === 'both' ? 'light and dark' : `${brief.colorScheme} only`}; brand hue ${brief.seedHue}, ${brief.seedChroma}; page background ${theme.colors[theme.modes[0] ?? 'light']?.page.pageBackground}; frame hue ${brief.frameHue}, ${brief.frameChroma}.${brief.references.length ? ` References: ${brief.references.join(', ')}.` : ''}`,
     '- Wireframes of every screen at desktop width: `02-design/08-wireframes.html`.',
     '',

@@ -821,6 +821,16 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       },
     },
   },
+  "logo": {
+    "case": "as written",
+    "colors": {
+      "dark": "#A0CED0",
+      "light": "#1F4A4C",
+    },
+    "family": "Playfair Display",
+    "letterSpacing": "0em",
+    "weight": "600",
+  },
   "modes": [
     "light",
     "dark",

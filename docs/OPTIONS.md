@@ -543,6 +543,8 @@ answer, and each mode writes its own page background, which the prompt lets
 the feel choose freely within colors and gradients: tints, gradients, glows
 or patterns. The prompt asks for colors that set the mood the page should
 put people in. THEME-010 holds the modes and entity sets to the brief.
+The call also sets the logo, the app's name as a wordmark in one of the
+brief's fonts with a color step per mode (user, 2026-11-01).
 Phones are out of scope for now.
 
 ### D3.4 Customization policy, your "20% rule" (pick one)

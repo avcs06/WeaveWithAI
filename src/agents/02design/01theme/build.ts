@@ -42,6 +42,14 @@ export const Theme = z.object({
   radius: z.object({ surface: z.string(), control: z.string() }),
   focusRing: z.enum(['halo', 'offset', 'glow']),
   density: z.enum(['compact', 'comfortable', 'spacious']),
+  /** The wordmark: its family, weight, case, letter spacing in em, and its color in each mode. */
+  logo: z.object({
+    family: z.string(),
+    weight: z.string(),
+    case: z.enum(['as written', 'upper', 'lower']),
+    letterSpacing: z.string(),
+    colors: z.object({ light: z.string().optional(), dark: z.string().optional() }),
+  }),
   layouts: Layouts,
   defaults: z.record(z.string(), z.record(z.string(), z.string())),
   contrast: z.array(
@@ -155,6 +163,14 @@ export function contrastTable(
   ];
 }
 
+/** Letter spacing presets for the wordmark, in em. */
+const LETTER_SPACING: Record<ThemeCall['logo']['letterSpacing'], string> = {
+  tight: '-0.02em',
+  normal: '0em',
+  wide: '0.06em',
+  wider: '0.12em',
+};
+
 /** Radius presets on the design system's scale: surface, then control. */
 const RADIUS: Record<Brief['radius'], [string, string]> = {
   sharp: ['4px', '4px'],
@@ -213,13 +229,28 @@ export function buildTheme(call: ThemeCall): Theme {
   );
   const [surface, control] = RADIUS[brief.radius];
   const defaults: ComponentDefaults = call.defaults;
+  const fonts = chosenFonts(brief);
+  const logoColors = Object.fromEntries(
+    modes.flatMap((mode) => {
+      const values = call.colors.find((c) => c.mode === mode);
+      const ramp = ramps[mode];
+      return values && ramp ? [[mode, ramp[values.logo.ramp][values.logo.step - 1] ?? '']] : [];
+    }),
+  );
   return {
     modes,
     colors,
-    fonts: chosenFonts(brief),
+    fonts,
     radius: { surface, control },
     focusRing: brief.focusRing,
     density: brief.density,
+    logo: {
+      family: fonts[call.logo.font],
+      weight: call.logo.weight,
+      case: call.logo.case,
+      letterSpacing: LETTER_SPACING[call.logo.letterSpacing],
+      colors: logoColors,
+    },
     layouts: call.layouts,
     defaults,
     contrast: contrastTable({ modes, colors }),

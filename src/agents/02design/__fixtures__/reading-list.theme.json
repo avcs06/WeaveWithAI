@@ -81,6 +81,12 @@
     "imagery": "icons",
     "references": []
   },
+  "logo": {
+    "font": "display",
+    "weight": "600",
+    "case": "as written",
+    "letterSpacing": "normal"
+  },
   "colors": [
     {
       "mode": "light",
@@ -139,6 +145,10 @@
           "ramp": "base",
           "step": 4
         }
+      },
+      "logo": {
+        "ramp": "theme",
+        "step": 11
       },
       "entities": [
         {
@@ -217,6 +227,10 @@
           "ramp": "base",
           "step": 5
         }
+      },
+      "logo": {
+        "ramp": "theme",
+        "step": 11
       },
       "entities": [
         {

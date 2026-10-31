@@ -55,6 +55,23 @@ function label(
   return `<text class="${cls}" x="${n(x)}" y="${n(y)}" font-size="${n(fitted)}">${escape(shown)}</text>`;
 }
 
+/** The theme's wordmark as the wireframes draw it, in the theme's first mode's color. */
+export type Wordmark = {
+  family: string;
+  weight: string;
+  case: 'as written' | 'upper' | 'lower';
+  letterSpacing: string;
+  color: string;
+};
+
+/** A frame's wordmark node drawn as the logo; the frame says wordmark in its `what` (07frame prompt). */
+function wordmark(rect: Rect, node: DesignNode, logo: Wordmark, size: number): string {
+  const words = node.text || node.label;
+  const text = logo.case === 'upper' ? words.toUpperCase() : logo.case === 'lower' ? words.toLowerCase() : words;
+  const px = Math.min(rect.height * 0.7, size * 1.3);
+  return `<text x="${n(rect.x)}" y="${n(rect.y + rect.height / 2 + px * 0.35)}" font-family="'${escape(logo.family)}', system-ui, sans-serif" font-weight="${escape(logo.weight)}" font-size="${n(px)}" letter-spacing="${escape(logo.letterSpacing)}" fill="${escape(logo.color)}">${escape(text)}</text>`;
+}
+
 /** Text as one bar per estimated line; headings darker; the short last line centred in a centred block. */
 function textBars(
   rect: Rect,
@@ -97,12 +114,15 @@ function shape(
   viewportWidth: number,
   size: number,
   centred: boolean,
+  logo?: Wordmark,
 ): string {
   const { x, y, width, height } = rect;
   const box = `x="${n(x)}" y="${n(y)}" width="${n(width)}" height="${n(height)}"`;
   const over =
     rect.overflowX || x + width > viewportWidth + 0.5 ? ' overflow' : '';
   const title = tooltip(rect, node);
+  if (logo && node?.id.startsWith('SH') && /wordmark/i.test(node.what))
+    return `<g>${title}<rect class="hit${over}" ${box}/>${wordmark(rect, node, logo, size)}</g>`;
   switch (rect.kind) {
     case 'frame':
       if (rect.depth === 0 || rect.id.endsWith('.content')) return '';
@@ -152,6 +172,7 @@ function svg(
   fold: number,
   nodes: Map<string, DesignNode>,
   layouts: Map<string, NodeLayout | null>,
+  logo?: Wordmark,
 ): string {
   const size = LABEL_PX / SCALE;
   const dialog = solved.type !== 'page';
@@ -172,7 +193,7 @@ function svg(
       const parent = layouts.get(rect.parent);
       const centred =
         parent?.direction === 'column' && parent.align === 'center';
-      return shape(rect, nodes.get(rect.id), solved.width, size, centred);
+      return shape(rect, nodes.get(rect.id), solved.width, size, centred, logo);
     })
     .join('\n');
   const foldLine = `<line class="fold" x1="0" x2="${solved.width}" y1="${fold}" y2="${fold}"/>${label(`fold ${fold}`, solved.width - size * 4.6, fold - size * 0.4, size * 5, size * 0.9, 'fold-label')}`;
@@ -219,11 +240,12 @@ g:hover > rect { stroke-width: 2.5; }
 const swatch = (style: string, text: string) =>
   `<span><i style="${style}"></i>${text}</span>`;
 
-/** The whole file: an index, a legend, then each screen's drawing. */
+/** The whole file: an index, a legend, then each screen's drawing; frames draw their wordmark as the theme's `logo`, in its family when the viewer has it, since the file loads nothing. */
 export function renderWireframes(
   skeleton: Skeleton,
   screens: Screens,
   title: string,
+  logo?: Wordmark,
 ): string {
   const nodes = new Map(screens.nodes.map((node) => [node.id, node]));
   const layouts = new Map<string, NodeLayout | null>([
@@ -247,7 +269,7 @@ export function renderWireframes(
     return `<section class="screen" id="${screen.id}">
 <h2>${screen.id} · ${escape(screen.name)}</h2>
 <p class="meta">${escape(meta)}</p>
-<figure><figcaption>Desktop ${viewport.width} × ${viewport.height}</figcaption>${svg(screen, viewport.height, nodes, layouts)}</figure>${hidden}
+<figure><figcaption>Desktop ${viewport.width} × ${viewport.height}</figcaption>${svg(screen, viewport.height, nodes, layouts, logo)}</figure>${hidden}
 </section>`;
   });
   const index = skeleton.screens

@@ -139,13 +139,19 @@ first and a model favors the top of a list, so the brief names three
 candidates per role, each with a reason, and the first is used (DS26). The
 catalog was made once and is not regenerated.
 
-Then the values:
+Then the logo and the values. The logo is the app's name as a wordmark (user,
+2026-11-01): the app ships no image files and the design system has no icons
+for a mark. Each mode gives it a color step, and THEME-011 checks its weight
+and its 3:1 on the frame and the page. The wireframes draw a frame node whose
+`what` says wordmark in its style, and the design summary names it.
 
 ```ts
-colors: [{ mode, background, theme, base, page, entities }],  // each mode the brief's colorScheme names, once
+logo: { font: 'ui' | 'display' | 'mono', weight, case, letterSpacing },
+colors: [{ mode, background, theme, base, page, logo, entities }],  // each mode the brief's colorScheme names, once
   // background: the mode's page background, one CSS value of colors and gradients
   // theme: StepSet (the 12 roles, the brand's), base: StepSet (the set most components use)
   // page: { pageBg, pageFg, pageFgMuted, frameBg, divider, backdrop, skeleton }, each a ramp step
+  // logo: the wordmark's color, a ramp step
   // entities: [{ noun, steps: StepSet }], one per colored entity
 layouts: { app: PageLayout, marketing: PageLayout },
 defaults: { [Component]: { [variant]: value, look: value } },  // components whose recipe has defaults or looks
@@ -546,6 +552,7 @@ widths the design system fixes (user, 2026-10-30).
 | THEME-007 | mandatory | The spacing every page gets from its layout: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages (H-08); the main area and each needed part pad at least their gap (H-06). Only the theme call can change these, so they are checked here and not left to the LAYOUT rules |
 | THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`; `backdrop` darker than the page and the frame |
 | THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
+| THEME-011 | mandatory | The logo's weight is one its font ships, and its color reads at 3:1 on `frameBg` and `pageBg` in each mode |
 | THEME-008 | mandatory | A default that carries meaning stays the recipe's: a status, a danger or status variant, an icon-only size, a dialog's size. Other variants and every look are the theme's choice |
 
 ### Screens (static)

@@ -18,6 +18,7 @@ import { rule as theme007 } from './rules/theme-007-frame-spacing';
 import { rule as theme008 } from './rules/theme-008-semantic-defaults';
 import { rule as theme009 } from './rules/theme-009-quiet-colors';
 import { rule as theme010 } from './rules/theme-010-modes-entities';
+import { rule as theme011 } from './rules/theme-011-logo';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
@@ -40,6 +41,7 @@ export const themeRules: readonly Rule<ThemeInput>[] = [
   theme007,
   theme008,
   theme009,
+  theme011,
 ];
 
 /** The theme call's answer: the brief against the scope, the colors against the brief, and the theme they build (D3.3 F). */

@@ -97,6 +97,7 @@ describe('theme rules', () => {
     'THEME-007': (t) => (t.layouts.app.main.sectionGap = '4'),
     'THEME-008': (t) => (t.defaults.Button!.size = 'icon-sm'),
     'THEME-009': (t) => (t.colors.light!.page.divider = t.colors.light!.page.pageBg),
+    'THEME-011': (t) => (t.logo.colors.light = t.colors.light!.page.frameBg),
   };
 
   it('pairs each theme rule with one mutation', () => {
@@ -177,6 +178,17 @@ describe('theme rules', () => {
     expect(at((t) => (t.colors.light!.page.backdrop = '#FFFFFF'))).toEqual([
       'page.light.backdrop',
     ]);
+  });
+
+  it('THEME-011 wants a weight the logo font ships, and the wordmark readable on the frame and the page', () => {
+    const at = (change: (t: Theme) => void) => {
+      const copy = structuredClone(theme);
+      change(copy);
+      return validateTheme(copy, inventory).filter((i) => i.rule === 'THEME-011').map((i) => i.at);
+    };
+    expect(theme.logo).toMatchObject({ family: 'Playfair Display', weight: '600', letterSpacing: '0em' });
+    expect(at((t) => (t.logo.family = 'JetBrains Mono') && (t.logo.weight = '900'))).toEqual(['logo.weight']);
+    expect(at((t) => (t.logo.colors.dark = t.colors.dark!.page.pageBg))).toEqual(['logo.dark.frameBg', 'logo.dark.pageBg']);
   });
 
   it('THEME-004 also checks radius values against the scale', () => {

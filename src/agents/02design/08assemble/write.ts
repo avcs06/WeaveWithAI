@@ -27,7 +27,10 @@ export function writeDesignFiles(
   writeJsonAtomic(runPath(run, '02-design/08-skeleton.json'), solved);
   writeFileSync(
     runPath(run, '02-design/08-wireframes.html'),
-    renderWireframes(solved, screens, scope.app.name),
+    renderWireframes(solved, screens, scope.app.name, {
+      ...theme.logo,
+      color: theme.logo.colors[theme.modes[0] ?? 'light'] ?? '',
+    }),
   );
   writeFileSync(
     runPath(run, '02-design/08-assemble.md'),

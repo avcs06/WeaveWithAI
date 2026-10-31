@@ -16,7 +16,7 @@ A shell is the frame of one page kind, made of regions such as a header. Every f
   - Its `text` is the item's label.
   - Signed-in items go in the app frame.
   - Public items go in the marketing frame. When there is no marketing frame, they go in the app frame.
-- A wordmark may link home, under the app's name.
+- A wordmark may link home, under the app's name. Say wordmark in its `what`: the theme sets its font, weight, case, spacing and color.
 - Serve every step the input gives the frame. Put each step on the control that handles it, such as a sign-out action in the account menu.
 - Each page shows its own title. So the frame has no level-1 heading.
 - Text in a region of fixed height stays on one line. Make it a Truncate.

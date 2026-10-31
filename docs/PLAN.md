@@ -1320,6 +1320,18 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     `weave app` read it. The later stages moved down one number, 03architect
     to 02architect through 09assemble to 08assemble, with their artifacts.
 
+- [x] **DS43** The theme designs the logo (1.5 h) (done 2026-11-01). Depends: DS42
+  - Why: the user asked the theme for a logo with its text color and font
+    (2026-11-01), as a wordmark kept in the design artifacts. The app ships
+    no image files and the design system has no icons for a mark.
+  - The call writes `logo`: which of the brief's fonts, the weight, the case
+    and the letter spacing, and each mode a `logo` color step. The theme
+    holds the family, the spacing in em and a hex per mode. THEME-011 checks
+    the weight against the font and 3:1 on the frame and the page.
+  - The frame prompt says to name the wordmark in its `what`; the
+    wireframes draw that node in the logo's style, loading nothing, and the
+    design summary names it.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

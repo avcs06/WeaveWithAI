@@ -37,6 +37,17 @@ Mono fonts:
 
 {{monoFonts}}
 
+## The logo
+
+`logo`: the app's name set as its wordmark, the logo every frame shows. The app ships no image files, so the logo is type alone: choose it for the personality and feel.
+
+- `font`: which of the brief's fonts sets it: `ui`, `display` or `mono`.
+- `weight`: a weight that font ships.
+- `case`: as written, upper or lower.
+- `letterSpacing`: tight, normal, wide or wider.
+
+Each mode's `logo` color is part of its colors, below.
+
 ## Colors
 
 Choose the colors for the mood the page should put people in when they see it, the one the brief's personality and feel name: calm and focused, warm and friendly, bold and electric. The background, the brand and the frame set it first, before anyone reads a word.
@@ -69,11 +80,12 @@ Code builds a ramp of twelve steps for each set from the brief: the brand's (`th
   - `divider`: the hairline between rows and sections. Quiet, but visible on `pageBg` and `frameBg`.
   - `skeleton`: the placeholder shapes while content loads. Visible on `pageBg`, `frameBg` and the base set's `bg`.
   - `backdrop`: the color laid over the page behind a dialog or drawer. Darker than the page and the frame. Components set its opacity.
+- `logo`: the wordmark's color, a `ramp` (base or theme) and a `step`. It sits on `frameBg`, and on the page under an overlay header, so it reads on both.
 - `entities`: a set for each colored entity of the brief: its `noun`, and the same twelve roles as `steps` of its own ramp. [] when no entity is colored.
 
 A border can be any step of its set's ramp. It does not have to be a shade near its background. For example, a black button with a neon border is a valid look: a dark step for `accentBg` and a bright step for `accentBorder`. Pick each border for the look the brief asks for.
 
-Code checks 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` in every set, `pageFg` and `pageFgMuted` on `pageBg`, `frameBg` and every color of the page background, and the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit. It checks 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`. It checks 1.1:1 for `divider` and `skeleton` on what they sit on, and a `backdrop` darker than the page and the frame. The status colors (success, warning, error, info) are fixed, so keep the brand and entity colors clearly apart from them.
+Code checks 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` in every set, `pageFg` and `pageFgMuted` on `pageBg`, `frameBg` and every color of the page background, and the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit. It checks 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`. It checks 3:1 for the `logo` on `frameBg` and `pageBg`, and 1.1:1 for `divider` and `skeleton` on what they sit on, and a `backdrop` darker than the page and the frame. The status colors (success, warning, error, info) are fixed, so keep the brand and entity colors clearly apart from them.
 
 ## Page layouts
 

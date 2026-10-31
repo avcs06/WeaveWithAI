@@ -86,11 +86,21 @@ export const ModeSteps = z.object({
   theme: StepSet,
   base: StepSet,
   page: PageSteps,
+  logo: PageStep.describe("The wordmark's color: on the frame, and on the page under an overlay header"),
   entities: z
     .array(z.object({ noun: z.string(), steps: StepSet }))
     .describe("A set for each colored entity of the brief, by noun. [] when none is colored"),
 });
 export type ModeSteps = z.infer<typeof ModeSteps>;
+
+/** The app's name set as its logo, a wordmark (user, 2026-11-01): the app ships no image files and the design system has no icons for a mark. */
+export const Logo = z.object({
+  font: z.enum(['ui', 'display', 'mono']).describe("Which of the brief's fonts sets it"),
+  weight: z.enum(['400', '500', '600', '700', '800', '900']).describe('A weight its font has'),
+  case: z.enum(['as written', 'upper', 'lower']),
+  letterSpacing: z.enum(['tight', 'normal', 'wide', 'wider']),
+});
+export type Logo = z.infer<typeof Logo>;
 
 /** One mode's colors: the brand set, the base set most components use, the page, and a set per colored entity, by name. */
 export type ModeColors = {
@@ -193,6 +203,7 @@ export type ComponentDefaults = Record<string, Record<string, string>>;
 /** What the theme call returns: the brief first, then the values it becomes. */
 export type ThemeCall = {
   brief: Brief;
+  logo: Logo;
   colors: ModeSteps[];
   layouts: Layouts;
   defaults: ComponentDefaults;
@@ -217,6 +228,7 @@ export function makeThemeSchema(inv: Inventory): z.ZodType<ThemeCall> {
   });
   return z.object({
     brief: Brief,
+    logo: Logo,
     colors: z
       .array(ModeSteps)
       .describe("Each mode the brief's color scheme names, once"),

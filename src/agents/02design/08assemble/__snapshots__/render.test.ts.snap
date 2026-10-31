@@ -7,6 +7,7 @@ Audience: People who read a lot and lose track of what they meant to read next. 
 
 - Density comfortable, radius 8px surfaces and 6px controls, focus ring halo, imagery icons.
 - Fonts: Inter for text, Playfair Display for headings, JetBrains Mono for code.
+- Logo: the name as a wordmark in Playfair Display 600, as written, letter spacing 0em; #1F4A4C in light, #A0CED0 in dark.
 - Style minimal and bookish, light and dark; brand hue 200, muted; page background linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%); frame hue 200, muted.
 - Wireframes of every screen at desktop width: \`02-design/08-wireframes.html\`.
 
