@@ -2,213 +2,188 @@
   "meta": {
     "artifact": "flows-catalog",
     "version": 1,
-    "hash": "33894ac54a630e2c930476a7a259a22c88cc9d7f418e797259049d2ed2e68b42",
+    "hash": "dfe29594c388a3790a4e5a841d80f4955a29563096900d71ed7d1d99fac4b76d",
     "inputs": {
       "scope": {
         "version": 1,
-        "hash": "f35efcc6173484635a0657ff1e9f0250b13af4e886e1773f70134b33f14b9bab"
+        "hash": "2dc4d1b1538f622a47aa63934b1ec252e1338f8c9165edeedd90149d4571f6d5"
       }
     },
     "stage": "flows-catalog",
-    "model": "muse-spark-1.3",
-    "rounds": 2,
-    "createdAt": "2026-10-29T15:37:36.323Z"
+    "model": "muse-wonder-1.0",
+    "rounds": 3,
+    "createdAt": "2026-10-30T12:45:55.562Z"
   },
   "data": {
     "flows": [
       {
         "id": "F01",
         "name": "Discover the studio on the landing page",
-        "role": "visitor",
+        "role": "shopper",
         "category": "browse",
         "authKind": "none",
-        "goal": "Understand what the studio sells and start shopping.",
+        "goal": "Understand what the studio sells and how to order, and start shopping.",
         "preconditions": [
-          "Not signed in."
+          "Not signed in"
         ],
-        "outcome": "No data changes; refresh still shows the same studio intro, featured photos and Start shopping entry.",
-        "description": "A visitor arrives on the public landing page and the website shows what the Jaipur studio sells with featured photos, the studio pickup and courier explainer with Rs 99 shipping and free above Rs 1,500, and a Start shopping entry that leads into the shop; nothing is stored."
+        "outcome": "Nothing is stored; the shopper knows pickup, shipping and pay-later terms and the catalog is one action away after a refresh.",
+        "description": "A visitor arrives on the public landing page and the website explains what Mitti Studio sells in small batches, how guest ordering works without messaging, free Jaipur studio pickup versus Rs.99 courier with free courier over Rs.1,500, and pay-later-by-UPI, then offers a start-shopping entry that leads to the live catalog."
       },
       {
         "id": "F02",
-        "name": "Browse and filter the shop",
-        "role": "visitor",
+        "name": "Browse catalog with live stock",
+        "role": "shopper",
         "category": "browse",
         "authKind": "none",
-        "goal": "Find pieces that are still available.",
-        "preconditions": [],
-        "outcome": "No data changes; refresh still shows the same list with honest remaining counts and Sold out flags.",
-        "description": "A visitor browses the public shop and the website shows each piece with photo, price and honest remaining counts with zero-stock shown as Sold out; the visitor narrows the list by product type and in-stock only and the filtered list persists for browsing."
+        "goal": "Browse live pieces and find what is still available.",
+        "preconditions": [
+          "Not signed in"
+        ],
+        "outcome": "No data is changed; the shopper has seen current products and stock states that persist after a refresh.",
+        "description": "The shopper opens the public catalog and the website shows products with photos, piece type, description, glaze and size options, price and honest live stock with Almost Gone flags and disabled Sold Out variants, and the shopper narrows the list by piece type Mug, Bowl, Planter, Vase and by in-stock versus sold-out."
       },
       {
         "id": "F03",
-        "name": "View product glaze and size availability",
-        "role": "visitor",
-        "category": "browse",
+        "name": "Place a guest pickup or courier order",
+        "role": "shopper",
+        "category": "core",
         "authKind": "none",
-        "goal": "Decide on glaze and size with honest availability.",
+        "goal": "Order chosen pieces as a guest without messaging.",
         "preconditions": [
-          "At least one product exists."
+          "Not signed in",
+          "At least one variant in stock."
         ],
-        "outcome": "No data changes; refresh still shows the same product with the same per-combo availability.",
-        "description": "A visitor opens a product and the website shows its photos, price, description, glaze and size choices with remaining counts per combo where sold-out combos cannot be chosen; the visitor picks a glaze and size to check availability before ordering."
+        "outcome": "An Order is stored as New and Unpaid with items, fulfillment, discount and totals and variant stock is reduced; confirmation and order details remain after a refresh.",
+        "description": "The shopper chooses an in-stock glaze and size variant and quantity, picks free studio pickup or courier, optionally adds one weekend discount code validated against its dates, enters name, phone and courier address when needed, and places the order; the website enforces zero-stock blocking, Rs.99 courier with free courier when the total after discount reaches Rs.1,500 and always-free pickup, decrements stock, and shows a confirmation with pay-by-UPI-later instructions."
       },
       {
         "id": "F04",
-        "name": "Place a pay-later guest order",
-        "role": "visitor",
-        "category": "core",
-        "authKind": "none",
-        "goal": "Order chosen pieces for pickup or courier without signing in.",
+        "name": "Studio owner sign up",
+        "role": "studioOwner",
+        "category": "auth",
+        "authKind": "signUp",
+        "goal": "Create the studio-owner account.",
         "preconditions": [
-          "At least one product with available stock."
+          "Not signed in."
         ],
-        "outcome": "An Order is created with status New and stock is reduced; refresh still shows the pay-later confirmation with totals and UPI instructions.",
-        "description": "A visitor builds a basket of glaze, size and quantity choices, picks Jaipur studio pickup or courier, optionally applies one percent-off code, enters name, phone and courier address only, and places the order as pay-by-UPI-later; the website enforces that quantity cannot exceed what is left, decrements stock on placement, applies Rs 99 courier fee with free above Rs 1,500 after discount and free pickup, and shows a confirmation with totals and UPI instructions."
+        "outcome": "The owner account exists and the owner is signed in; refresh keeps her signed in.",
+        "description": "A new studio owner creates the single shop account with email and password and the website signs her in so she can manage products, orders and discount codes."
       },
       {
         "id": "F05",
-        "name": "Owner sign up",
-        "role": "shopOwner",
+        "name": "Studio owner sign in",
+        "role": "studioOwner",
         "category": "auth",
-        "authKind": "signUp",
-        "goal": "Create the single studio owner account.",
+        "authKind": "signIn",
+        "goal": "Sign in to manage the shop.",
         "preconditions": [
           "Not signed in."
         ],
-        "outcome": "Owner account created and signed in; refresh still shows the signed-in owner workspace.",
-        "description": "A new studio owner creates the single owner account with email and password and the website signs them into the owner workspace with their own products, glazes, orders and codes."
+        "outcome": "The owner is signed in and sees her shop workspace; refresh keeps her signed in.",
+        "description": "The studio owner returns with email and password and the website signs her in to her own products, orders and codes."
       },
       {
         "id": "F06",
-        "name": "Owner sign in",
-        "role": "shopOwner",
+        "name": "Studio owner sign out",
+        "role": "studioOwner",
         "category": "auth",
-        "authKind": "signIn",
-        "goal": "Access the owner workspace.",
+        "authKind": "signOut",
+        "goal": "Leave the shop account safely.",
         "preconditions": [
-          "Owner account exists.",
-          "Not signed in."
+          "Signed in as studio owner."
         ],
-        "outcome": "Owner is signed in; refresh still shows the signed-in workspace.",
-        "description": "A returning owner signs in with email and password and the website opens their private workspace with products, glazes, orders and discount codes."
+        "outcome": "The session is ended; refresh shows public pages and owner pages require sign-in again.",
+        "description": "The signed-in studio owner chooses to sign out and the website ends the session and returns to public pages."
       },
       {
         "id": "F07",
-        "name": "Owner sign out",
-        "role": "shopOwner",
-        "category": "auth",
-        "authKind": "signOut",
-        "goal": "Leave the workspace secure.",
+        "name": "View and fulfill orders",
+        "role": "studioOwner",
+        "category": "manage",
+        "authKind": "none",
+        "goal": "See new orders and move them through packing, dispatch and payment.",
         "preconditions": [
-          "Signed in as shop owner."
+          "Signed in as studio owner."
         ],
-        "outcome": "Owner is signed out; refresh still shows the signed-out state and the public shop remains visible.",
-        "description": "A signed-in owner signs out and the website closes the workspace and returns to the public shop; public browsing is unaffected."
+        "outcome": "Order status and payment state changes are stored and stock is restored on cancel; the updated newest-first list remains after a refresh.",
+        "description": "The signed-in owner opens the order list newest first and the website shows items, fulfillment type, totals, discount used and Unpaid or Paid state with counts, lets her find orders by status, and lets her mark an order Packed then Shipped for courier or Picked Up for pickup, mark UPI Paid after collecting, and Cancel with stock restore."
       },
       {
         "id": "F08",
-        "name": "Track orders and mark packing progress",
-        "role": "shopOwner",
-        "category": "core",
+        "name": "Create a product with variants",
+        "role": "studioOwner",
+        "category": "manage",
         "authKind": "none",
-        "goal": "See newest orders first and move them to Packed then Shipped or Picked up.",
+        "goal": "Add a new piece with its glaze and size options.",
         "preconditions": [
-          "Signed in as shop owner."
+          "Signed in as studio owner."
         ],
-        "outcome": "Order statuses updated to Packed, Shipped or Picked up persist after refresh; list remains new-first with status filter.",
-        "description": "A signed-in owner opens the orders list sorted new-first with placed date, buyer, items, glaze, size, fulfilment, discount and totals including shipping math, filters by New, Packed, Shipped or Picked up, opens an order for detail and marks it Packed then Shipped for courier or Picked up for pickup; the updated statuses stay after refresh."
+        "outcome": "A Product with its Variants is stored and appears in the shopper catalog; it is still there after a refresh.",
+        "description": "The signed-in owner creates a new product listing with name, piece type, description and photos plus one or more glaze and size variants each with price and stock count, and the website validates the photo preview and publishes the listing to the public catalog with live stock."
       },
       {
         "id": "F09",
-        "name": "Add a product",
-        "role": "shopOwner",
+        "name": "Edit a product and its variants",
+        "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
-        "goal": "List a new piece type with photos, price, sizes, glazes and stock.",
+        "goal": "Keep listings, prices and stock counts correct.",
         "preconditions": [
-          "Signed in as shop owner."
+          "Signed in as studio owner.",
+          "At least one product exists."
         ],
-        "outcome": "New Product is created and visible in the public shop; refresh still shows it.",
-        "description": "A signed-in owner creates a product with name, type, description, price, cover photo validated and previewed, sizes, glazes offered and stock per glaze and size combo; the website validates required name, price, photo and at least one stock quantity and the new piece appears in the public shop."
+        "outcome": "Product and Variant changes are stored and the updated listing and stock states remain after a refresh.",
+        "description": "The signed-in owner finds a product in her catalog list, updates its name, description, photos, piece type and its variants glaze, size, price and stock counts, and the website saves the changes and refreshes live stock flags including Almost Gone and Sold Out in the shopper catalog."
       },
       {
         "id": "F10",
-        "name": "Edit product and restock",
-        "role": "shopOwner",
+        "name": "Archive a product",
+        "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
-        "goal": "Keep price, description, sizes, glazes and per-combo stock honest.",
+        "goal": "Remove a piece from sale without losing order history.",
         "preconditions": [
-          "Signed in as shop owner.",
+          "Signed in as studio owner.",
           "At least one product exists."
         ],
-        "outcome": "Product changes are saved and the public shop reflects them after refresh.",
-        "description": "A signed-in owner finds a product in the list by type or stock state, opens it and edits name, type, description, price, photo, sizes, glazes and per-combo stock to keep availability honest; the website saves the changes and the public shop reflects them."
+        "outcome": "The product is archived and absent from the public catalog but past orders are unchanged; the state persists after a refresh.",
+        "description": "The signed-in owner chooses to archive a product she no longer sells and confirms, and the website hides it from the shopper catalog while leaving past orders that contain it unchanged."
       },
       {
         "id": "F11",
-        "name": "Delete a product",
-        "role": "shopOwner",
+        "name": "Manage discount codes",
+        "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
-        "goal": "Remove a piece type no longer sold.",
+        "goal": "Manage weekend Instagram discount codes.",
         "preconditions": [
-          "Signed in as shop owner.",
-          "At least one product exists."
+          "Signed in as studio owner."
         ],
-        "outcome": "Product is removed from the shop and stays gone after refresh; past orders keep their snapshot.",
-        "description": "A signed-in owner removes a product no longer sold after confirming; the website takes it out of the public shop while past orders keep their item snapshot."
+        "outcome": "DiscountCode records are created, updated or deleted; the current list and their validity remain after a refresh.",
+        "description": "The signed-in owner opens the discount-code list and creates, edits and deletes weekend codes with code value, percent off and start and end dates, and the website validates dates and makes valid codes usable once per guest order at checkout."
       },
       {
         "id": "F12",
-        "name": "Manage glazes and spot low stock",
-        "role": "shopOwner",
+        "name": "View low-glaze warnings",
+        "role": "studioOwner",
         "category": "manage",
         "authKind": "none",
-        "goal": "Maintain glaze options and know when a glaze is nearly gone.",
+        "goal": "Know which glazes are nearly gone.",
         "preconditions": [
-          "Signed in as shop owner."
+          "Signed in as studio owner."
         ],
-        "outcome": "Glaze list with low-stock flags persists after refresh and guides the next batch.",
-        "description": "A signed-in owner views all glazes with remaining counts across products where glazes with 5 or fewer pieces left are flagged as nearly gone, and creates, renames or removes glazes to plan the next batch; changes persist and flags update as orders reduce stock."
-      },
-      {
-        "id": "F13",
-        "name": "Manage discount codes",
-        "role": "shopOwner",
-        "category": "manage",
-        "authKind": "none",
-        "goal": "Offer weekend percent-off codes for Instagram.",
-        "preconditions": [
-          "Signed in as shop owner."
-        ],
-        "outcome": "Discount codes with dates and limits persist after refresh and become usable by buyers.",
-        "description": "A signed-in owner creates percent-off weekend codes with code text, start and end dates and optional total-use limit, and edits or deletes codes when plans change; active codes become usable once per order in checkout and the list persists after refresh."
-      },
-      {
-        "id": "F14",
-        "name": "Correct or remove an order",
-        "role": "shopOwner",
-        "category": "manage",
-        "authKind": "none",
-        "goal": "Fix buyer mistakes by editing or deleting an order.",
-        "preconditions": [
-          "Signed in as shop owner.",
-          "At least one order exists."
-        ],
-        "outcome": "Order corrections or removal persist after refresh and stock counts reflect the change.",
-        "description": "A signed-in owner corrects a buyer mistake by editing order contact, address, quantities or status within the honest stock rule, or deletes a mistaken order after confirming with freed stock returned; the corrected list and totals stay after refresh."
+        "outcome": "Nothing is changed; the low-stock list with current counts is still shown after a refresh until stock changes.",
+        "description": "The signed-in owner opens the low-stock view and the website lists variants with 3 or fewer units left with their product, glaze, size and remaining count so she can plan the next batch."
       }
     ],
     "fields": [
       {
         "id": "FD01",
         "label": "Product name",
-        "meaning": "What the piece is called in the shop",
+        "meaning": "How the studio and shoppers refer to the piece listing",
         "type": "text",
         "required": true,
-        "min": null,
+        "min": 1,
         "max": 120,
         "options": [],
         "optionsFrom": "",
@@ -216,165 +191,109 @@
       },
       {
         "id": "FD02",
-        "label": "Product type",
-        "meaning": "Category of piece used for filtering",
+        "label": "Piece type",
+        "meaning": "Grouping of the piece as Mug, Bowl, Planter or Vase",
         "type": "singleChoice",
         "required": true,
         "min": null,
         "max": null,
         "options": [
-          "mug",
-          "bowl",
-          "planter",
-          "vase"
+          "Mug",
+          "Bowl",
+          "Planter",
+          "Vase"
         ],
         "optionsFrom": "",
-        "example": "mug"
+        "example": "Mug"
       },
       {
         "id": "FD03",
         "label": "Product description",
-        "meaning": "Short story and care details that help the buyer decide",
+        "meaning": "What the piece is, how it is made and how it looks",
         "type": "longText",
         "required": false,
         "min": null,
         "max": 1000,
         "options": [],
         "optionsFrom": "",
-        "example": "Wheel-thrown stoneware mug with speckled glaze."
+        "example": "Hand-thrown stoneware mug with speckled glaze, 300 ml."
       },
       {
         "id": "FD04",
-        "label": "Product price",
-        "meaning": "Selling price in rupees before discount and shipping",
-        "type": "money",
-        "required": true,
-        "min": 1,
-        "max": 100000,
-        "options": [],
-        "optionsFrom": "",
-        "example": "650"
-      },
-      {
-        "id": "FD05",
         "label": "Product photo",
-        "meaning": "Cover photo the buyer sees; validated and previewed for the session",
+        "meaning": "Photo of the piece that shoppers see; validated and previewed before saving",
         "type": "url",
         "required": true,
         "min": null,
-        "max": 500,
+        "max": null,
         "options": [],
         "optionsFrom": "",
-        "example": "https://example.com/mug-sage.jpg"
+        "example": "https://mitti.example/photos/mug-speckled.jpg"
+      },
+      {
+        "id": "FD05",
+        "label": "Glaze",
+        "meaning": "Colour/finish option of the variant",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 80,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Sea Green"
       },
       {
         "id": "FD06",
-        "label": "Available sizes",
-        "meaning": "Sizes this product is sold in",
-        "type": "multiChoice",
+        "label": "Size",
+        "meaning": "Size or capacity option of the variant",
+        "type": "text",
         "required": true,
-        "min": null,
-        "max": null,
-        "options": [
-          "Small",
-          "Medium",
-          "Large"
-        ],
+        "min": 1,
+        "max": 40,
+        "options": [],
         "optionsFrom": "",
-        "example": "Medium"
+        "example": "300 ml"
       },
       {
         "id": "FD07",
-        "label": "Glazes offered",
-        "meaning": "Glaze options this product can be ordered in",
-        "type": "multiChoice",
+        "label": "Variant price",
+        "meaning": "Price in rupees for one unit of this glaze-plus-size variant",
+        "type": "money",
         "required": true,
-        "min": null,
+        "min": 1,
         "max": null,
         "options": [],
-        "optionsFrom": "Glaze",
-        "example": "Sage Green"
+        "optionsFrom": "",
+        "example": "  650"
       },
       {
         "id": "FD08",
-        "label": "Stock quantity for glaze and size combo",
-        "meaning": "How many pieces remain for one glaze and size combination",
+        "label": "Variant stock count",
+        "meaning": "How many units of this variant are left and can be sold",
         "type": "integer",
         "required": true,
         "min": 0,
-        "max": 1000,
+        "max": null,
         "options": [],
         "optionsFrom": "",
-        "example": "12"
+        "example": "  12"
       },
       {
         "id": "FD09",
-        "label": "Glaze selection",
-        "meaning": "Glaze the buyer chose for the piece",
-        "type": "singleChoice",
-        "required": true,
-        "min": null,
-        "max": null,
-        "options": [],
-        "optionsFrom": "Glaze",
-        "example": "Sage Green"
-      },
-      {
-        "id": "FD10",
-        "label": "Size selection",
-        "meaning": "Size the buyer chose for the piece",
-        "type": "singleChoice",
-        "required": true,
-        "min": null,
-        "max": null,
-        "options": [
-          "Small",
-          "Medium",
-          "Large"
-        ],
-        "optionsFrom": "",
-        "example": "Medium"
-      },
-      {
-        "id": "FD11",
         "label": "Quantity",
-        "meaning": "How many of the chosen glaze and size the buyer wants",
+        "meaning": "How many units of the chosen variant the shopper wants, limited by live stock",
         "type": "integer",
         "required": true,
         "min": 1,
-        "max": 99,
+        "max": 20,
         "options": [],
         "optionsFrom": "",
-        "example": "2"
+        "example": "  2"
       },
       {
-        "id": "FD12",
-        "label": "Buyer name",
-        "meaning": "Who the order is for and who the owner contacts on UPI",
-        "type": "text",
-        "required": true,
-        "min": null,
-        "max": 100,
-        "options": [],
-        "optionsFrom": "",
-        "example": "Ananya Sharma"
-      },
-      {
-        "id": "FD13",
-        "label": "Buyer phone",
-        "meaning": "Phone number for pickup coordination and UPI collection",
-        "type": "phone",
-        "required": true,
-        "min": null,
-        "max": 15,
-        "options": [],
-        "optionsFrom": "",
-        "example": "9829012345"
-      },
-      {
-        "id": "FD14",
-        "label": "Fulfilment method",
-        "meaning": "Whether the buyer picks up in Jaipur or wants courier delivery",
+        "id": "FD10",
+        "label": "Fulfillment choice",
+        "meaning": "Whether the shopper picks up free at the Jaipur studio or pays for courier",
         "type": "singleChoice",
         "required": true,
         "min": null,
@@ -387,68 +306,80 @@
         "example": "Courier"
       },
       {
-        "id": "FD15",
-        "label": "Delivery address",
-        "meaning": "Where the courier should deliver; only asked for courier orders",
+        "id": "FD11",
+        "label": "Discount code entered",
+        "meaning": "Optional weekend code the shopper types at checkout for percent off",
+        "type": "text",
+        "required": false,
+        "min": null,
+        "max": 20,
+        "options": [],
+        "optionsFrom": "",
+        "example": "WEEKEND10"
+      },
+      {
+        "id": "FD12",
+        "label": "Shopper name",
+        "meaning": "Who the guest order belongs to for packing and contact",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 80,
+        "options": [],
+        "optionsFrom": "",
+        "example": "Ananya Sharma"
+      },
+      {
+        "id": "FD13",
+        "label": "Shopper phone",
+        "meaning": "Phone number to contact the shopper about pickup or courier and UPI collection",
+        "type": "phone",
+        "required": true,
+        "min": null,
+        "max": null,
+        "options": [],
+        "optionsFrom": "",
+        "example": "+91 98290 12345"
+      },
+      {
+        "id": "FD14",
+        "label": "Courier address",
+        "meaning": "Delivery address, required only when fulfillment choice is Courier",
         "type": "longText",
         "required": false,
         "min": null,
         "max": 500,
         "options": [],
         "optionsFrom": "",
-        "example": "B-12 Malviya Nagar Jaipur 302017"
+        "example": "B-14, Malviya Nagar, Jaipur 302017"
+      },
+      {
+        "id": "FD15",
+        "label": "Code value",
+        "meaning": "Short code shared on Instagram that shoppers type at checkout",
+        "type": "text",
+        "required": true,
+        "min": 1,
+        "max": 20,
+        "options": [],
+        "optionsFrom": "",
+        "example": "WEEKEND10"
       },
       {
         "id": "FD16",
-        "label": "Buyer discount code",
-        "meaning": "Weekend code the buyer types to get percent off",
-        "type": "text",
-        "required": false,
-        "min": null,
-        "max": 30,
-        "options": [],
-        "optionsFrom": "",
-        "example": "CLAY10"
-      },
-      {
-        "id": "FD17",
-        "label": "Glaze name",
-        "meaning": "Finish colour option shown to buyers",
-        "type": "text",
-        "required": true,
-        "min": null,
-        "max": 80,
-        "options": [],
-        "optionsFrom": "",
-        "example": "Sage Green"
-      },
-      {
-        "id": "FD18",
-        "label": "Code text",
-        "meaning": "Text buyers type from Instagram to get the discount",
-        "type": "text",
-        "required": true,
-        "min": 3,
-        "max": 30,
-        "options": [],
-        "optionsFrom": "",
-        "example": "CLAYWEEKEND"
-      },
-      {
-        "id": "FD19",
-        "label": "Percent off",
-        "meaning": "How much the code takes off the items total before shipping",
+        "label": "Discount percent",
+        "meaning": "Percent off the items total when the code is valid",
         "type": "percent",
         "required": true,
         "min": 1,
         "max": 90,
         "options": [],
         "optionsFrom": "",
-        "example": "10"
+        "example": "  10"
       },
       {
-        "id": "FD20",
-        "label": "Start date",
+        "id": "FD17",
+        "label": "Discount start date",
         "meaning": "First day the code can be used",
         "type": "date",
         "required": true,
@@ -459,8 +390,8 @@
         "example": "2026-11-01"
       },
       {
-        "id": "FD21",
-        "label": "End date",
+        "id": "FD18",
+        "label": "Discount end date",
         "meaning": "Last day the code can be used",
         "type": "date",
         "required": true,
@@ -471,75 +402,49 @@
         "example": "2026-11-03"
       },
       {
-        "id": "FD22",
-        "label": "Usage limit",
-        "meaning": "How many orders can use the code in total; empty means unlimited",
-        "type": "integer",
-        "required": false,
-        "min": 1,
-        "max": 10000,
-        "options": [],
-        "optionsFrom": "",
-        "example": "50"
-      },
-      {
-        "id": "FD23",
+        "id": "FD19",
         "label": "Owner email",
-        "meaning": "Login for the single studio owner account",
+        "meaning": "Email the studio owner uses to sign in",
         "type": "email",
         "required": true,
         "min": null,
-        "max": 254,
+        "max": null,
         "options": [],
         "optionsFrom": "",
-        "example": "studio@jaipurclay.in"
+        "example": "hello@mittistudio.in"
       },
       {
-        "id": "FD24",
+        "id": "FD20",
         "label": "Owner password",
-        "meaning": "Secret that protects the owner workspace",
+        "meaning": "Secret that protects the owner account",
         "type": "password",
         "required": true,
         "min": 8,
-        "max": 128,
+        "max": null,
         "options": [],
         "optionsFrom": "",
-        "example": "clay-studio-123"
+        "example": "clay&fire123"
       },
       {
-        "id": "FD25",
-        "label": "Product type filter",
-        "meaning": "Narrows the shop to one piece type",
+        "id": "FD21",
+        "label": "Availability filter",
+        "meaning": "Shopper filter to show in-stock pieces versus sold-out pieces",
         "type": "singleChoice",
         "required": false,
         "min": null,
         "max": null,
         "options": [
           "All",
-          "mug",
-          "bowl",
-          "planter",
-          "vase"
+          "In stock",
+          "Sold out"
         ],
         "optionsFrom": "",
-        "example": "mug"
+        "example": "In stock"
       },
       {
-        "id": "FD26",
-        "label": "In-stock only",
-        "meaning": "Hides sold-out pieces when turned on",
-        "type": "boolean",
-        "required": false,
-        "min": null,
-        "max": null,
-        "options": [],
-        "optionsFrom": "",
-        "example": "true"
-      },
-      {
-        "id": "FD27",
+        "id": "FD22",
         "label": "Order status filter",
-        "meaning": "Narrows the owner orders list to one packing status",
+        "meaning": "Owner filter to find orders by New, Packed, Shipped, Picked Up or Cancelled",
         "type": "singleChoice",
         "required": false,
         "min": null,
@@ -549,46 +454,46 @@
           "New",
           "Packed",
           "Shipped",
-          "Picked up"
+          "Picked Up",
+          "Cancelled"
         ],
         "optionsFrom": "",
         "example": "New"
       },
       {
-        "id": "FD28",
-        "label": "Order status",
-        "meaning": "Where the order is in packing and handover",
+        "id": "FD23",
+        "label": "Piece type filter",
+        "meaning": "Shopper filter to show pieces of one piece type or all piece types",
         "type": "singleChoice",
-        "required": true,
+        "required": false,
         "min": null,
         "max": null,
         "options": [
-          "New",
-          "Packed",
-          "Shipped",
-          "Picked up"
+          "All",
+          "Mug",
+          "Bowl",
+          "Planter",
+          "Vase"
         ],
         "optionsFrom": "",
-        "example": "Packed"
+        "example": "Mug"
       }
     ],
     "forms": [
       {
         "id": "FM01",
-        "name": "Owner auth form",
-        "fields": [
-          "FD23",
-          "FD24"
-        ]
-      },
-      {
-        "id": "FM02",
         "name": "Product form",
         "fields": [
           "FD01",
           "FD02",
           "FD03",
-          "FD04",
+          "FD04"
+        ]
+      },
+      {
+        "id": "FM02",
+        "name": "Variant form",
+        "fields": [
           "FD05",
           "FD06",
           "FD07",
@@ -597,24 +502,10 @@
       },
       {
         "id": "FM03",
-        "name": "Discount code form",
+        "name": "Owner auth form",
         "fields": [
-          "FD18",
           "FD19",
-          "FD20",
-          "FD21",
-          "FD22"
-        ]
-      },
-      {
-        "id": "FM04",
-        "name": "Buyer checkout details form",
-        "fields": [
-          "FD12",
-          "FD13",
-          "FD14",
-          "FD15",
-          "FD16"
+          "FD20"
         ]
       }
     ],
@@ -656,53 +547,30 @@
     ],
     "assumptions": [
       {
-        "id": "A11",
-        "text": "Sizes are Small, Medium and Large where applicable; a product offers at least one size and stock is tracked per glaze/size combo.",
+        "id": "A09",
+        "text": "Archived products are hidden from the shopper catalog but past orders keep their product, variant, price and quantity details unchanged.",
         "kind": "data",
-        "affects": [
-          "F03",
-          "F04",
-          "F09",
-          "F10"
-        ]
+        "affects": []
       },
       {
-        "id": "A12",
-        "text": "Product photos are simulated uploads: validated and previewed and kept for the session; MVP shows one cover photo per product and that photo is required to list.",
+        "id": "A10",
+        "text": "Owner order list is newest first; order total is items total minus percent discount plus courier fee per the Rs.99 / free over Rs.1,500 rule.",
         "kind": "behavior",
-        "affects": [
-          "F02",
-          "F03",
-          "F09",
-          "F10"
-        ]
+        "affects": []
       },
       {
-        "id": "A13",
-        "text": "Deleting a product or glaze does not delete past orders; orders keep a snapshot of product name, price, glaze and size.",
+        "id": "A11",
+        "text": "Product photos are validated as images and previewed before saving and kept for the session per file-upload simulation; no external storage is implied.",
         "kind": "behavior",
-        "affects": [
-          "F11",
-          "F12"
-        ]
-      },
-      {
-        "id": "A14",
-        "text": "If the owner deletes an order or lowers its quantity the freed stock returns to the glaze/size count; raising quantity follows the same honest stock rule as checkout.",
-        "kind": "behavior",
-        "affects": [
-          "F04",
-          "F08",
-          "F14"
-        ]
+        "affects": []
       }
     ],
     "questions": [
       {
-        "id": "Q03",
-        "question": "Do pieces use standard Small, Medium and Large sizes or custom dimensions per product?",
-        "whyItMatters": "Decides size options, product form fields and per-combo stock tracking.",
-        "defaultAnswer": "Assume Small, Medium and Large cover all piece types for MVP.",
+        "id": "Q04",
+        "question": "Can one guest order contain multiple different glaze/size variants?",
+        "whyItMatters": "Determines whether checkout supports a basket of items versus a single variant and how totals and stock checks work.",
+        "defaultAnswer": "Yes - one order can contain multiple variants and quantities; stock is checked per variant.",
         "blocking": false
       }
     ]

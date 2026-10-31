@@ -179,7 +179,9 @@ for its users, at most 5 per scope (SCOPE-003).
 - [ ] **C. B, plus `muse-spark-1.3-contributor` for development runs.** Much
       cheaper; Meta may train on everything sent, including your DS code and recipes.
 
-Notes:
+Notes: user, 2026-10-30: when the backend has no strong model, or its strong
+model is the base model (Modal, Baseten), a strong call goes to the base
+model one reasoning level up: medium to high, high to xhigh, never max.
 
 ### D1.9 Replay cache (pick one)
 
@@ -264,7 +266,12 @@ that model review only produces warnings, D1.6's 3 drafting rounds (now 4 for
 spec stages) and the principle that leftover blockers stop the run. Worst
 case per stage: four generator calls and three reviewer calls. From round 2
 on, validation and review look at the same output, whatever the validators
-found: a heuristic, not a gate (user, 2026-10-29).
+found: a heuristic, not a gate (user, 2026-10-29). Round 2's two reviewer
+calls are two personas, not two samples of one: a peer challenges the
+decisions (the product manager for scope and flows, a product designer for
+design), and an output reviewer finds the errors in meaning that validators
+cannot. Round 3's one call is the output reviewer; the peer runs once. Each
+stage has a peer and an output guide (user, 2026-10-30).
 
 ### D1.13 Output budget and reasoning effort (pick one)
 
@@ -273,7 +280,7 @@ Meta's models reason before they answer; the reasoning tokens count toward
 was cut at 16k tokens, and each reviewer's empty verdict cost about 8k
 reasoning tokens.
 
-- [x] **A. Per-stage budgets, reviewers at medium effort (user, 2026-10-29).**
+- [ ] **A. Per-stage budgets, reviewers at medium effort (user, 2026-10-29).**
       The generator keeps the model's own reasoning level with a budget per
       stage (scope 16k, flows 32k, doubled once when the answer is cut, capped
       at 64k). Reviewers run at `reasoning_effort: medium` with an 8k budget:
@@ -281,14 +288,22 @@ reasoning tokens.
       medium keeps the verdict considered without the model-determined cost.
 - [ ] **B. Low effort everywhere.** Cheapest; first drafts of big artifacts
       lose quality.
-- [ ] **C. Your levels:** ___
+- [x] **C. Your levels (user, 2026-10-30).** Two temperatures: 0.2 for
+      exact values, 0.7 for the calls that set a direction. Scope and the
+      brief run at high effort and draft at 0.7; the IA at high and 0.2,
+      since its structure and new components carry every later call; the
+      flows catalog, expansion and patches, the theme and the nodes at
+      medium and 0.2. Every fix runs at 0.2, since it edits the named issues and
+      nothing else. Reviewers, the peer included, run at medium and 0.2, so
+      their verdicts stay consistent. The budgets stay as in A.
 
 Notes: A ticked by the user on 2026-10-29, raised from the proposed low to
 medium.
 The flows generators also run at medium since the same night: at the
 model's own level the catalog call wrote 27k characters of JSON and was still
-cut at 32k tokens, two thirds of the budget being reasoning. Scope keeps the
-model's own level. Catalog budget 32k, batches and patches 16k.
+cut at 32k tokens, two thirds of the budget being reasoning. Catalog budget
+32k, batches and patches 16k. C replaced A on 2026-10-30 (user): every
+generator gets a level and a temperature.
 
 ---
 
@@ -484,8 +499,26 @@ Notes:
 - [ ] **C. B, seeded by a Muse Image moodboard.** Dominant colors from the image
       seed the palette; the moodboard also serves as hero art.
 - [ ] **D. The user supplies brand colors**; code fills the rest as in B.
+- [x] **E. Two calls, a direction and then the values (user, 2026-10-30).**
+      The brief call picks the direction at high reasoning and a higher
+      temperature (0.7 for its first draft, D1.13 C). The theme call writes
+      every final value at medium reasoning: the colors, the page layouts, and each component's default
+      variants and look. Code checks contrast; failures go back to the theme call.
 
-Notes:
+Notes: the brief's output is small and sets the whole look, so it gets the
+most reasoning and room to be creative; the values need care, not
+creativity. The brief decides audience, personality, voice, density, feel,
+light or dark or both, seed hue and chroma, fonts, radius, focus ring,
+which entities get a color with their hues, imagery and references. The
+theme call writes hex values for the 12 color roles of the brand set and of
+the base set most components use (from the brief's `baseHue` and
+`baseChroma`, user, 2026-10-30) and the page colors (`pageBg`, `pageFg`,
+`pageFgMuted`, `frameBg`) in each mode, a palette per
+colored entity, an app layout and a marketing layout, and the defaults.
+`divider`, `backdrop` and `skeleton` come from the theme call too, made to
+show on the colors it chose (user, 2026-10-30); only the status sets stay
+the template's.
+Phones are out of scope for now.
 
 ### D3.4 Customization policy, your "20% rule" (pick one)
 
@@ -508,9 +541,15 @@ Notes:
 
 - [ ] **A. Layout templates plus section kinds (default).** Templates such as
       app-shell list, detail, form, auth, landing, dashboard, editor, settings.
-- [ ] **B. Free nested containers with layout properties.**
+- [x] **B. Free nested containers with layout properties (user, 2026-10-30).**
 
-Notes:
+Notes: every screen, section and node carries its own layout and box, so a
+template no longer says anything about layout. A screen keeps only its kind:
+`app` (design-system first) or `marketing` (visual first), the split in the
+D3.1 notes. Section kinds stay. The page frame is not fixed either: the theme
+call designs two layouts, one for app pages and one for marketing pages, each
+with a header, a sidebar, an extra sidebar and a footer that are needed or
+not; a page uses its kind's layout or no frame (user, 2026-10-30, D3.3 E).
 
 ### D3.6 Rendering the design (pick any)
 

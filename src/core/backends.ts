@@ -7,7 +7,13 @@ export type Backend = {
   apiKey: string;
   model: string;
   strongModel: string;
+  /** How long a 503 counts as a cold start and is retried past the usual attempts. */
+  coldStartMs?: number;
 };
+
+// A scale-to-zero Modal endpoint answered 503 for about 4 minutes while it
+// started (F8); 5 minutes covers that with room.
+const MODAL_COLD_START_MS = 300_000;
 
 export const BACKEND_NAMES: readonly BackendName[] = [
   'meta',
@@ -46,6 +52,7 @@ export function resolveBackend(config: Config, override?: string): Backend {
         apiKey: MODAL_PROXY_TOKEN,
         model: MODAL_MODEL,
         strongModel: MODAL_MODEL,
+        coldStartMs: MODAL_COLD_START_MS,
       };
     }
     case 'baseten': {

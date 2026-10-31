@@ -1,6 +1,7 @@
-// Measures the fixed box dimensions of every case in the Measure story on the
-// running Storybook (:6006) and prints them as JSON: a dimension equal in the
-// short and the long rendering is fixed, anything else is left out.
+// Measures the fixed box dimensions, padding and gap of every case in the
+// Measure story on the running Storybook (:6006) and prints them as JSON: a
+// value equal in the short and the long rendering is fixed, anything else is
+// left out.
 //
 //   node tools/measure-design-system.mjs > boxes.json
 import { pathToFileURL } from 'node:url';
@@ -34,6 +35,30 @@ const readBoxes = (only) => {
       ?.textContent ||
     '';
   const text = (element) => (element.textContent || '').trim();
+  // The inset a design sees: padding summed down the wrappers that hold one
+  // child (a scroll area), and the gap of the innermost flex or grid.
+  const spacing = (element) => {
+    const padding = [0, 0, 0, 0];
+    let gap = 0;
+    for (let at = element; at; ) {
+      const style = getComputedStyle(at);
+      ['Top', 'Right', 'Bottom', 'Left'].forEach((side, i) => {
+        padding[i] += parseFloat(style[`padding${side}`]) || 0;
+      });
+      if (/flex|grid/.test(style.display))
+        gap =
+          parseFloat(
+            /flex/.test(style.display) && style.flexDirection.startsWith('row')
+              ? style.columnGap
+              : style.rowGap,
+          ) || 0;
+      const shown = [...at.children].filter(
+        (child) => getComputedStyle(child).display !== 'none',
+      );
+      at = shown.length === 1 ? shown[0] : null;
+    }
+    return { padding, gap };
+  };
   const portal = (kind, prefix) => {
     if (kind === 'dialog')
       return [...document.querySelectorAll('[role="dialog"]')].find((dialog) =>
@@ -42,6 +67,11 @@ const readBoxes = (only) => {
     if (kind === 'option')
       return [...document.querySelectorAll('[role="option"]')].find((option) =>
         text(option).startsWith(prefix),
+      );
+    // innerText: the scroll area inside carries a <style> whose text would come first.
+    if (kind === 'popover')
+      return [...document.querySelectorAll('[data-slot="popover"]')].find(
+        (popover) => popover.innerText.trim().startsWith(prefix),
       );
     return [...document.querySelectorAll('[role="menu"]')].find((menu) =>
       [...menu.querySelectorAll('[data-slot="item"]')].some((item) =>
@@ -82,7 +112,7 @@ const readBoxes = (only) => {
       : wrapper.firstElementChild;
     const part = (slot) => scope?.querySelector(`[data-slot="${slot}"]`);
     const box = (element) => {
-      const measured = rect(element);
+      const measured = { ...rect(element), ...spacing(element) };
       if (skip === 'width') measured.width = NaN;
       return measured;
     };
@@ -106,7 +136,7 @@ const readBoxes = (only) => {
 
 const same = (a, b) => Math.round(a) === Math.round(b);
 
-/** The dimensions equal in both boxes, rounded; an empty one is nothing fixed; null when none is. */
+/** The dimensions, padding and gap equal in both boxes, rounded; zero is nothing fixed; null when none is. */
 function fixed(short, long) {
   if (!short || !long) return null;
   const box = {};
@@ -114,6 +144,14 @@ function fixed(short, long) {
     box.height = Math.round(short.height);
   if (same(short.width, long.width) && Math.round(short.width))
     box.width = Math.round(short.width);
+  const padding = short.padding?.map(Math.round);
+  if (
+    padding?.some(Boolean) &&
+    padding.every((side, i) => same(side, long.padding[i]))
+  )
+    box.padding = padding;
+  if (same(short.gap, long.gap) && Math.round(short.gap))
+    box.gap = Math.round(short.gap);
   return Object.keys(box).length ? box : null;
 }
 

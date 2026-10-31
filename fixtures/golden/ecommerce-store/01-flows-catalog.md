@@ -1,56 +1,48 @@
-# Jaipur Clay Shop: flows catalog
+# Mitti Studio Shop: flows catalog
 
 ## Flows
-- F01 Discover the studio on the landing page (Visitor, browse): A visitor arrives on the public landing page and the website shows what the Jaipur studio sells with featured photos, the studio pickup and courier explainer with Rs 99 shipping and free above Rs 1,500, and a Start shopping entry that leads into the shop; nothing is stored.
-- F02 Browse and filter the shop (Visitor, browse): A visitor browses the public shop and the website shows each piece with photo, price and honest remaining counts with zero-stock shown as Sold out; the visitor narrows the list by product type and in-stock only and the filtered list persists for browsing.
-- F03 View product glaze and size availability (Visitor, browse): A visitor opens a product and the website shows its photos, price, description, glaze and size choices with remaining counts per combo where sold-out combos cannot be chosen; the visitor picks a glaze and size to check availability before ordering.
-- F04 Place a pay-later guest order (Visitor, core): A visitor builds a basket of glaze, size and quantity choices, picks Jaipur studio pickup or courier, optionally applies one percent-off code, enters name, phone and courier address only, and places the order as pay-by-UPI-later; the website enforces that quantity cannot exceed what is left, decrements stock on placement, applies Rs 99 courier fee with free above Rs 1,500 after discount and free pickup, and shows a confirmation with totals and UPI instructions.
-- F05 Owner sign up (Shop Owner, auth): A new studio owner creates the single owner account with email and password and the website signs them into the owner workspace with their own products, glazes, orders and codes.
-- F06 Owner sign in (Shop Owner, auth): A returning owner signs in with email and password and the website opens their private workspace with products, glazes, orders and discount codes.
-- F07 Owner sign out (Shop Owner, auth): A signed-in owner signs out and the website closes the workspace and returns to the public shop; public browsing is unaffected.
-- F08 Track orders and mark packing progress (Shop Owner, core): A signed-in owner opens the orders list sorted new-first with placed date, buyer, items, glaze, size, fulfilment, discount and totals including shipping math, filters by New, Packed, Shipped or Picked up, opens an order for detail and marks it Packed then Shipped for courier or Picked up for pickup; the updated statuses stay after refresh.
-- F09 Add a product (Shop Owner, manage): A signed-in owner creates a product with name, type, description, price, cover photo validated and previewed, sizes, glazes offered and stock per glaze and size combo; the website validates required name, price, photo and at least one stock quantity and the new piece appears in the public shop.
-- F10 Edit product and restock (Shop Owner, manage): A signed-in owner finds a product in the list by type or stock state, opens it and edits name, type, description, price, photo, sizes, glazes and per-combo stock to keep availability honest; the website saves the changes and the public shop reflects them.
-- F11 Delete a product (Shop Owner, manage): A signed-in owner removes a product no longer sold after confirming; the website takes it out of the public shop while past orders keep their item snapshot.
-- F12 Manage glazes and spot low stock (Shop Owner, manage): A signed-in owner views all glazes with remaining counts across products where glazes with 5 or fewer pieces left are flagged as nearly gone, and creates, renames or removes glazes to plan the next batch; changes persist and flags update as orders reduce stock.
-- F13 Manage discount codes (Shop Owner, manage): A signed-in owner creates percent-off weekend codes with code text, start and end dates and optional total-use limit, and edits or deletes codes when plans change; active codes become usable once per order in checkout and the list persists after refresh.
-- F14 Correct or remove an order (Shop Owner, manage): A signed-in owner corrects a buyer mistake by editing order contact, address, quantities or status within the honest stock rule, or deletes a mistaken order after confirming with freed stock returned; the corrected list and totals stay after refresh.
+- F01 Discover the studio on the landing page (Shopper, browse): A visitor arrives on the public landing page and the website explains what Mitti Studio sells in small batches, how guest ordering works without messaging, free Jaipur studio pickup versus Rs.99 courier with free courier over Rs.1,500, and pay-later-by-UPI, then offers a start-shopping entry that leads to the live catalog.
+- F02 Browse catalog with live stock (Shopper, browse): The shopper opens the public catalog and the website shows products with photos, piece type, description, glaze and size options, price and honest live stock with Almost Gone flags and disabled Sold Out variants, and the shopper narrows the list by piece type Mug, Bowl, Planter, Vase and by in-stock versus sold-out.
+- F03 Place a guest pickup or courier order (Shopper, core): The shopper chooses an in-stock glaze and size variant and quantity, picks free studio pickup or courier, optionally adds one weekend discount code validated against its dates, enters name, phone and courier address when needed, and places the order; the website enforces zero-stock blocking, Rs.99 courier with free courier when the total after discount reaches Rs.1,500 and always-free pickup, decrements stock, and shows a confirmation with pay-by-UPI-later instructions.
+- F04 Studio owner sign up (Studio Owner, auth): A new studio owner creates the single shop account with email and password and the website signs her in so she can manage products, orders and discount codes.
+- F05 Studio owner sign in (Studio Owner, auth): The studio owner returns with email and password and the website signs her in to her own products, orders and codes.
+- F06 Studio owner sign out (Studio Owner, auth): The signed-in studio owner chooses to sign out and the website ends the session and returns to public pages.
+- F07 View and fulfill orders (Studio Owner, manage): The signed-in owner opens the order list newest first and the website shows items, fulfillment type, totals, discount used and Unpaid or Paid state with counts, lets her find orders by status, and lets her mark an order Packed then Shipped for courier or Picked Up for pickup, mark UPI Paid after collecting, and Cancel with stock restore.
+- F08 Create a product with variants (Studio Owner, manage): The signed-in owner creates a new product listing with name, piece type, description and photos plus one or more glaze and size variants each with price and stock count, and the website validates the photo preview and publishes the listing to the public catalog with live stock.
+- F09 Edit a product and its variants (Studio Owner, manage): The signed-in owner finds a product in her catalog list, updates its name, description, photos, piece type and its variants glaze, size, price and stock counts, and the website saves the changes and refreshes live stock flags including Almost Gone and Sold Out in the shopper catalog.
+- F10 Archive a product (Studio Owner, manage): The signed-in owner chooses to archive a product she no longer sells and confirms, and the website hides it from the shopper catalog while leaving past orders that contain it unchanged.
+- F11 Manage discount codes (Studio Owner, manage): The signed-in owner opens the discount-code list and creates, edits and deletes weekend codes with code value, percent off and start and end dates, and the website validates dates and makes valid codes usable once per guest order at checkout.
+- F12 View low-glaze warnings (Studio Owner, manage): The signed-in owner opens the low-stock view and the website lists variants with 3 or fewer units left with their product, glaze, size and remaining count so she can plan the next batch.
 
 ## Fields
-- FD01 Product name (required, up to 120 characters), e.g. "Speckled Chai Mug". What the piece is called in the shop
-- FD02 Product type (required, one of: mug, bowl, planter, vase), e.g. "mug". Category of piece used for filtering
-- FD03 Product description (optional, up to 1000 characters), e.g. "Wheel-thrown stoneware mug with speckled glaze.". Short story and care details that help the buyer decide
-- FD04 Product price (required, 1 to 100000), e.g. "650". Selling price in rupees before discount and shipping
-- FD05 Product photo (required, up to 500 characters), e.g. "https://example.com/mug-sage.jpg". Cover photo the buyer sees; validated and previewed for the session
-- FD06 Available sizes (required, one of: Small, Medium, Large), e.g. "Medium". Sizes this product is sold in
-- FD07 Glazes offered (required, one of the Glaze records), e.g. "Sage Green". Glaze options this product can be ordered in
-- FD08 Stock quantity for glaze and size combo (required, 0 to 1000), e.g. "12". How many pieces remain for one glaze and size combination
-- FD09 Glaze selection (required, one of the Glaze records), e.g. "Sage Green". Glaze the buyer chose for the piece
-- FD10 Size selection (required, one of: Small, Medium, Large), e.g. "Medium". Size the buyer chose for the piece
-- FD11 Quantity (required, 1 to 99), e.g. "2". How many of the chosen glaze and size the buyer wants
-- FD12 Buyer name (required, up to 100 characters), e.g. "Ananya Sharma". Who the order is for and who the owner contacts on UPI
-- FD13 Buyer phone (required, up to 15 characters), e.g. "9829012345". Phone number for pickup coordination and UPI collection
-- FD14 Fulfilment method (required, one of: Studio pickup, Courier), e.g. "Courier". Whether the buyer picks up in Jaipur or wants courier delivery
-- FD15 Delivery address (optional, up to 500 characters), e.g. "B-12 Malviya Nagar Jaipur 302017". Where the courier should deliver; only asked for courier orders
-- FD16 Buyer discount code (optional, up to 30 characters), e.g. "CLAY10". Weekend code the buyer types to get percent off
-- FD17 Glaze name (required, up to 80 characters), e.g. "Sage Green". Finish colour option shown to buyers
-- FD18 Code text (required, 3 to 30 characters), e.g. "CLAYWEEKEND". Text buyers type from Instagram to get the discount
-- FD19 Percent off (required, 1 to 90), e.g. "10". How much the code takes off the items total before shipping
-- FD20 Start date (required), e.g. "2026-11-01". First day the code can be used
-- FD21 End date (required), e.g. "2026-11-03". Last day the code can be used
-- FD22 Usage limit (optional, 1 to 10000), e.g. "50". How many orders can use the code in total; empty means unlimited
-- FD23 Owner email (required, up to 254 characters), e.g. "studio@jaipurclay.in". Login for the single studio owner account
-- FD24 Owner password (required, 8 to 128 characters), e.g. "clay-studio-123". Secret that protects the owner workspace
-- FD25 Product type filter (optional, one of: All, mug, bowl, planter, vase), e.g. "mug". Narrows the shop to one piece type
-- FD26 In-stock only (optional), e.g. "true". Hides sold-out pieces when turned on
-- FD27 Order status filter (optional, one of: All, New, Packed, Shipped, Picked up), e.g. "New". Narrows the owner orders list to one packing status
-- FD28 Order status (required, one of: New, Packed, Shipped, Picked up), e.g. "Packed". Where the order is in packing and handover
+- FD01 Product name (required, 1 to 120 characters), e.g. "Speckled Chai Mug". How the studio and shoppers refer to the piece listing
+- FD02 Piece type (required, one of: Mug, Bowl, Planter, Vase), e.g. "Mug". Grouping of the piece as Mug, Bowl, Planter or Vase
+- FD03 Product description (optional, up to 1000 characters), e.g. "Hand-thrown stoneware mug with speckled glaze, 300 ml.". What the piece is, how it is made and how it looks
+- FD04 Product photo (required), e.g. "https://mitti.example/photos/mug-speckled.jpg". Photo of the piece that shoppers see; validated and previewed before saving
+- FD05 Glaze (required, 1 to 80 characters), e.g. "Sea Green". Colour/finish option of the variant
+- FD06 Size (required, 1 to 40 characters), e.g. "300 ml". Size or capacity option of the variant
+- FD07 Variant price (required, at least 1), e.g. "  650". Price in rupees for one unit of this glaze-plus-size variant
+- FD08 Variant stock count (required, at least 0), e.g. "  12". How many units of this variant are left and can be sold
+- FD09 Quantity (required, 1 to 20), e.g. "  2". How many units of the chosen variant the shopper wants, limited by live stock
+- FD10 Fulfillment choice (required, one of: Studio pickup, Courier), e.g. "Courier". Whether the shopper picks up free at the Jaipur studio or pays for courier
+- FD11 Discount code entered (optional, up to 20 characters), e.g. "WEEKEND10". Optional weekend code the shopper types at checkout for percent off
+- FD12 Shopper name (required, 1 to 80 characters), e.g. "Ananya Sharma". Who the guest order belongs to for packing and contact
+- FD13 Shopper phone (required), e.g. "+91 98290 12345". Phone number to contact the shopper about pickup or courier and UPI collection
+- FD14 Courier address (optional, up to 500 characters), e.g. "B-14, Malviya Nagar, Jaipur 302017". Delivery address, required only when fulfillment choice is Courier
+- FD15 Code value (required, 1 to 20 characters), e.g. "WEEKEND10". Short code shared on Instagram that shoppers type at checkout
+- FD16 Discount percent (required, 1 to 90), e.g. "  10". Percent off the items total when the code is valid
+- FD17 Discount start date (required), e.g. "2026-11-01". First day the code can be used
+- FD18 Discount end date (required), e.g. "2026-11-03". Last day the code can be used
+- FD19 Owner email (required), e.g. "hello@mittistudio.in". Email the studio owner uses to sign in
+- FD20 Owner password (required, at least 8 characters), e.g. "clay&fire123". Secret that protects the owner account
+- FD21 Availability filter (optional, one of: All, In stock, Sold out), e.g. "In stock". Shopper filter to show in-stock pieces versus sold-out pieces
+- FD22 Order status filter (optional, one of: All, New, Packed, Shipped, Picked Up, Cancelled), e.g. "New". Owner filter to find orders by New, Packed, Shipped, Picked Up or Cancelled
+- FD23 Piece type filter (optional, one of: All, Mug, Bowl, Planter, Vase), e.g. "Mug". Shopper filter to show pieces of one piece type or all piece types
 
 ## Forms
-- FM01 Owner auth form: FD23, FD24
-- FM02 Product form: FD01, FD02, FD03, FD04, FD05, FD06, FD07, FD08
-- FM03 Discount code form: FD18, FD19, FD20, FD21, FD22
-- FM04 Buyer checkout details form: FD12, FD13, FD14, FD15, FD16
+- FM01 Product form: FD01, FD02, FD03, FD04
+- FM02 Variant form: FD05, FD06, FD07, FD08
+- FM03 Owner auth form: FD19, FD20
 
 ## STD01 Confirm deletion (standard subflow)
 
@@ -61,10 +53,9 @@ Other paths
 - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
 
 ## New assumptions
-- A11 (data, affects F03, F04, F09, F10): Sizes are Small, Medium and Large where applicable; a product offers at least one size and stock is tracked per glaze/size combo.
-- A12 (behavior, affects F02, F03, F09, F10): Product photos are simulated uploads: validated and previewed and kept for the session; MVP shows one cover photo per product and that photo is required to list.
-- A13 (behavior, affects F11, F12): Deleting a product or glaze does not delete past orders; orders keep a snapshot of product name, price, glaze and size.
-- A14 (behavior, affects F04, F08, F14): If the owner deletes an order or lowers its quantity the freed stock returns to the glaze/size count; raising quantity follows the same honest stock rule as checkout.
+- A09 (data): Archived products are hidden from the shopper catalog but past orders keep their product, variant, price and quantity details unchanged.
+- A10 (behavior): Owner order list is newest first; order total is items total minus percent discount plus courier fee per the Rs.99 / free over Rs.1,500 rule.
+- A11 (behavior): Product photos are validated as images and previewed before saving and kept for the session per file-upload simulation; no external storage is implied.
 
 ## New questions
-- Q03: Do pieces use standard Small, Medium and Large sizes or custom dimensions per product? Why: Decides size options, product form fields and per-combo stock tracking. Default: Assume Small, Medium and Large cover all piece types for MVP.
+- Q04: Can one guest order contain multiple different glaze/size variants? Why: Determines whether checkout supports a basket of items versus a single variant and how totals and stock checks work. Default: Yes - one order can contain multiple variants and quantities; stock is checked per variant.

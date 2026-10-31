@@ -168,7 +168,7 @@ Steps 01 to 08.
     completes; `events.jsonl` names the backend and model per call; the Meta
     API run is unchanged and its tests still pass.
 
-- [ ] **F9** Model client follow-ups (30 min). Depends: F3, F6
+- [x] **F9** Model client follow-ups (30 min) (done 2026-10-30). Depends: F3, F6
   - Found while building F2 and F3; each is a small decision that doesn't
     block Phase 1, so they're parked here instead of being done in those steps.
   - Log a `warning` event when a model has no entry in `PRICES` (`costUsd`
@@ -181,6 +181,7 @@ Steps 01 to 08.
     longer budget, or warm the endpoint before a run. Also: two of three warm
     smoke calls to Glimmer were cut at the 16384-token cap because reasoning
     counts against `max_tokens`; consider a reasoning budget for that backend.
+  - Done 2026-10-30 without the reasoning budget: tuning it needs a Glimmer run.
 
 - [x] **F11** Questions inside the stage loop (30 min) (done 2026-10-29). Depends: F10. Decision D1.7 C
   - Added 2026-10-29 by the user: answer the draft's questions while the
@@ -220,6 +221,37 @@ Steps 01 to 08.
   - Done when: `runSpecStage.test.ts` covers the schedule (calls per round,
     skipped fixes, early end, known issues after round 4, no reviewers without
     a guide); `pnpm test`; `pnpm typecheck`.
+
+- [x] **F12** Peer and output reviewers (60 min) (done 2026-10-30). Depends: F10. Decision D1.12
+  - Why: one guide sampled twice asked each reviewer to both challenge the
+    decisions and find errors in the output (user, 2026-10-30).
+  - Round 2 runs a peer, who challenges the decisions, and an output
+    reviewer, who finds errors in meaning the validators cannot; round 3 runs
+    the output reviewer alone. `runSpecStage` takes `review: { peer, output }`.
+  - Scope, catalog and expansion guides split into `review-<call>-peer.md`
+    (the product manager) and `review-<call>-output.md`. Design gets
+    `review-brief-peer.md` and `review-brief-output.md` for the brief, and
+    `review-screens-peer.md` and `review-screens-output.md` (with H-42, H-53
+    and H-59) for the IA and nodes calls, the peer a product designer; DS3
+    passes `briefReviewGuides()` and DS7 `screensReviewGuides()`. The shells
+    are reviewed with the theme stage.
+  - Done when: `runSpecStage.test.ts` shows the peer and output reviewer in
+    round 2 and the output reviewer alone in round 3; `pnpm test`;
+    `pnpm typecheck`.
+
+- [x] **F13** Reasoning levels and temperatures (30 min) (done 2026-10-30). Depends: F12. Decision D1.13 C, D1.8
+  - Why: scope and the brief set the direction and need room to be creative;
+    the calls after them pick exact values (user, 2026-10-30).
+  - Two temperatures, 0.2 and 0.7. `runSpecStage` takes `temperature` for
+    the first draft; fixes and both reviewers run at 0.2 (user, 2026-10-30).
+    Scope runs at high and drafts at 0.7; catalog, expansion and patches
+    keep medium and 0.2. DS3 and DS7 set the design calls.
+  - A strong call on a backend without its own strong model (Modal, Baseten,
+    or `LLM_MODEL_STRONG` empty) goes to the base model one level up: medium
+    to high, high to xhigh, never max.
+  - Done when: `llm.test.ts` covers both strong routes and the step up;
+    `runSpecStage.test.ts` shows the first draft at the stage's temperature
+    and fixes and reviewers at the default; `pnpm test`; `pnpm typecheck`.
 
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
@@ -331,6 +363,13 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     and checks that a non-empty `optionsFrom` is a vocabulary noun.
   - Done when: `pnpm test`; `pnpm typecheck`.
 
+- [x] **FL13** Golden flows from the new settings (10 min) (done 2026-10-30). Depends: F13, F14
+  - Why: today's runs with scope at high and 0.7 and the peer and output
+    reviewers gave more complete specs and caught real defects (user,
+    2026-10-30: adopt them).
+  - `fixtures/golden/<idea>/` now holds `runs/20261030-1630-<idea>`'s scope,
+    catalog and flows; the README table and note follow.
+
 - [x] **FL6** Reference ideas (60 min) (done 2026-10-29). Depends: FL5, FL9
   - Tuning notes from the freelancer run (2026-10-29), to apply to the prompts
     before the next runs: writers' first drafts skipped the "empty" path on
@@ -392,7 +431,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     boxes, Avatar sizes, Dialog widths and an Accordion trigger height;
     `pnpm test` and the template's lint and typecheck pass.
 
-- [ ] **DS1c** Container paddings and gaps (30 min). Depends: DS1b
+- [x] **DS1c** Container paddings and gaps (30 min) (done 2026-10-30). Depends: DS1b
   - Why: the layout skeleton needs each container's inner padding and gap
     (Card, Section, Dialog body, Table cell), not only its outer box.
   - The measure tool also reads computed padding and gap of every case root
@@ -405,17 +444,117 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     `src/config/fonts.ts`: font allowlists with weights.
   - Done when: `pnpm typecheck`.
 
-- [ ] **DS3** Brief (60 min). Depends: DS1, DS2, FL6
+- [x] **DS3** Brief (60 min) (done 2026-10-30). Depends: DS1, DS2, FL6
   - Brief schema, `prompt-brief.md`, BRIEF rules with tests.
+  - The brief is the direction (D3.3 E, user, 2026-10-30): its output is
+    small and sets the whole look, so it runs at high reasoning and
+    temperature 0.7 (D1.13 C), and the theme call turns it into exact values. Besides
+    audience, personality, voice, density, seed hue and chroma, fonts,
+    radius, focus ring, imagery and references, it decides:
+    - `feel`: 1 or 2 words for the site's style, such as minimal, designer,
+      metro or retro;
+    - `colorScheme`: light, dark or both;
+    - `entities`: every noun in the scope's vocabulary, colored or not, with
+      a hue when colored; at most 3 colored. It replaces `entityColors`.
+    - `pageHue` and `pageChroma`, `frameHue` and `frameChroma`: the page
+      background and the frame around it (user, 2026-10-30); chroma
+      `neutral` is white or grey. The theme call builds `pageBg` and
+      `frameBg` from them.
+  - BRIEF-001 checks the page and frame hues, counts feel words and colored entities; BRIEF-002 checks the
+    entities are the vocabulary's nouns, each once. `shells` leave the brief
+    with BRIEF-003 and BRIEF-004; DS4a frames the pages in the theme call.
+    The brief prompt no longer gets the design system's prose (user,
+    2026-10-30).
   - Done when: golden freelancer workspace produces a brief with zero mandatory issues.
+  - `brief` and `theme` are pipeline stages before `design`, tested with a
+    fake model. The live run on `runs/20261030-1630-freelancer-workspace`
+    (2026-10-30) wrote both in 2 rounds each with 0 known issues and no
+    blockers, for $0.19; THEME-006 caught a 60 tall header that could not
+    hold a button and its padding, and the theme's fix made it 64.
 
-- [ ] **DS4** Theme generator (90 min). Depends: DS3
+- [x] **DS4** Theme generator (90 min) (done 2026-10-30). Depends: DS3
   - `pnpm add culori` (add types if your editor wants them).
   - `src/stages/design/theme.ts`: brief to Theme, OKLCH targets from the spec,
     lightness nudged until contrast passes; entity sets; contrast table.
     THEME-001, 002, 004 with tests (THEME-003 lands with the apply step in S1).
   - Done when: for 12 hues times 3 chroma levels every theme passes THEME-001
     in light and dark (a property-style test).
+  - Built 2026-10-30 ahead of DS3's golden run; the theme's three fonts come
+    from the brief, mono included. `runTheme` comes with the design stage.
+
+- [x] **DS4a** Theme call (4 h) (done 2026-10-30). Depends: DS3, DS4, DS7c
+  - Why: the model picks every final value from the brief in one call: the
+    colors, the page layouts and the component defaults; code checks
+    contrast instead of building the palette (D3.3 E, user, 2026-10-30).
+  - `prompt-theme.md` and `makeThemeSchema(brief, inventory)`: one call at
+    medium reasoning and temperature 0.2, with the brief, the scope and the
+    flows as input.
+  - Colors. For each mode the brief's `colorScheme` names, it writes:
+    - the theme's 12 color roles;
+    - `pageBg`, `pageFg`, `pageFgMuted` and `frameBg`;
+    - the 12 roles for each colored entity, from its hue.
+  - `divider`, `backdrop` and `skeleton` stay the template's for every app.
+  - `theme.ts` loses the palette builder (`buildColorSet`, the lightness and
+    chroma tables); `buildTheme` adds fonts, radius, focus ring and density
+    from the brief, and the contrast table. `runTheme` joins the design stage
+    after `runBrief`, with DS3's run, which writes `stage.ts`.
+  - THEME-001 adds `pageFg` and `pageFgMuted` on `pageBg` and on `frameBg`.
+    A failing pair goes back to the theme call in its fix rounds. THEME-005
+    checks every color is hex; THEME-006 checks the layouts.
+  - DS4's test over 12 hues goes; a theme fixture with one mutation per rule
+    replaces it. The spec's Theme section follows.
+  - Page layouts. The frame is part of the look, so an `app` and a
+    `marketing` layout replace the shells. Each says:
+    - which docks first: the header across the full width, or the sidebars
+      down the full height;
+    - header: needed or not; what it holds at the start, center and end; its
+      height; sticky or scrolling; over the hero or above it;
+    - sidebar: needed or not; left or right; what it holds at the top and the
+      bottom; its width; sticky or scrolling;
+    - extra sidebar: the same fields as the sidebar;
+    - footer: needed or not; what it holds at the start, center and end; its
+      height;
+    - for the header, the sidebars and the footer: padding, gap, and how each
+      sets off from the content: frame background, divider, shadow or none;
+    - main content: fluid or a fixed container with a max width, padding,
+      alignment, the gap between sections, and whether section backgrounds
+      run the full width while their content stays in the container.
+  - Phones are out of scope for now (user, 2026-10-30).
+  - IA: a page's `shell` becomes `framed`: true uses its kind's layout, false
+    has no frame (sign in, errors). Dialogs and drawers are never framed
+    (DESIGN-023). The layout's `main` sets every page's container, padding
+    and section gap; a page's `contentWidth` only narrows its column inside
+    the container (user, 2026-10-30).
+  - `resolve.ts` turns each layout into a shell, SH1 for app and SH2 for
+    marketing, its needed parts as regions in docking order (user,
+    2026-10-30), so the solver, DESIGN-024 and 025, LAYOUT-070 and the nodes
+    calls keep reading shells. The shell id and region box checks are true by
+    construction. The prompts, renderer, fixtures and the spec follow.
+  - Defaults. One choice per component keeps pages consistent: the call
+    picks, for every component in the inventory, a default for each of its
+    variant props and its look, from that component's own values. Nodes
+    leave `size` and `look` "" for the default; code fills the defaults in
+    before the validators, and the coding stage gets them with the nodes.
+    `prompt-nodes.md` says this.
+  - Done when: `pnpm typecheck` and `pnpm test` pass; the theme schema passes
+    `toJsonSchema` within Meta's limits (test); a solver test docks a
+    header-first and a sidebars-first layout with both sidebars and a footer
+    to known rectangles; the reading-list fixture passes every rule with a
+    header over the hero on marketing pages and no frame on sign in; a node
+    with "" gets its component's default (test).
+
+- [x] **DS4b** Theme review guides (20 min) (done 2026-10-30). Depends: DS4a
+  - Found in DS4a: the theme call has no `review-theme-peer.md` and
+    `review-theme-output.md`, so no reviewer calls run on it (D1.12).
+
+- [x] **DS4c** Main content separation (15 min) (done 2026-10-30). Depends: DS4a
+  - Why: the header, sidebars and footer say how they set off from the
+    content, but the content area could not be a bordered or raised panel
+    (user, 2026-10-30).
+  - `main.separation` takes the parts' four values; the prompt, the
+    renderer, the reading-list theme and the spec follow.
+  - Done when: `pnpm typecheck` and `pnpm test` pass, and `02-design.md`
+    shows a main separation other than none.
 
 - [x] **DS5** Screens schemas (45 min) (done 2026-10-30). Depends: DS1, DS2
   - `makeScreensSchema` exactly as in the spec, box model and new-component
@@ -423,12 +562,12 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Done when: built from the fixture inventory, `Ia` and `ScreenNodes` pass
     `toJsonSchema` within Meta's limits (test).
 
-- [ ] **DS6** Design validators (2.5 h). Depends: DS5
+- [x] **DS6** Design validators (2.5 h) (done 2026-10-30). Depends: DS5
   - DESIGN-001 to 022 in `src/stages/design/validate.ts`; a small hand-written
     screens fixture for the reading-list app, one mutation per rule.
   - Done when: each rule has a passing and a failing test.
 
-- [ ] **DS6b** Layout solver and skeleton (2.5 h). Depends: DS5, DS1c
+- [x] **DS6b** Layout solver and skeleton (2.5 h) (done 2026-10-30). Depends: DS5, DS1c
   - Why: design is the product's main strength; a page must be checkable as
     composition before any code exists.
   - `src/stages/design/layout.ts`: from the nodes' boxes, the inventory boxes
@@ -438,7 +577,7 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Done when: the golden freelancer workspace renders every screen as lines
     with no overlap, and a hand-built fixture page solves to known rectangles.
 
-- [ ] **DS6c** Layout rules from the heuristics catalog (3 h). Depends: DS6b
+- [x] **DS6c** Layout rules from the heuristics catalog (3 h) (done 2026-10-30). Depends: DS6b
   - Why: the catalog in `specs/layout-heuristics.md` holds the rules that
     separate composed from generated; the user reviewed it on 2026-10-30 and
     every rule left in it is accepted.
@@ -448,39 +587,407 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Done when: every rule has its tests and is ticked in the catalog, and the
     fixture screens pass the mandatory ones.
 
-- [ ] **DS7** IA and nodes stage (90 min). Depends: DS3, DS4, DS6
-  - `prompt-ia.md`, `prompt-nodes.md` (drafts provided); IA call, then one
-    nodes call per screen with `p-limit(3)`; assemble `02-screens.json`; run
-    whole-artifact rules; rerun only failing screens; write `02-ds-gaps.json`
-    and append to `.weave-cache/ds-gaps.jsonl`.
-  - The prompts carry the gap scale by depth and the catalog's prompt-only
-    rules (H-42, H-53, H-59), which compare words and so are not validators.
-  - Done when: golden freelancer workspace produces screens with zero mandatory issues.
+- [x] **DS7a** Prompts describe the layout fields (15 min) (done 2026-10-30). Depends: DS6b
+  - Found in DS6b: `prompt-ia.md` and `prompt-nodes.md` do not mention the
+    screen `layout`, the section `box`, or that an input with no visible
+    label (`text` "") is drawn as its box alone; the skeleton reads all three.
+  - Done with DS7e's prompt rewrite.
 
-- [ ] **DS8** Renderers (45 min). Depends: DS7
+- [x] **DS7b** Page kind replaces screen templates (45 min) (done 2026-10-30). Depends: DS6c, DS8
+  - Why: the layout fields already carry the layout (D3.5 B); the template
+    only splits inner pages from public ones, and its eight values push pages
+    like pricing or checkout into the wrong one.
+  - Screen `template` becomes `kind: 'app' | 'marketing'`; `SCREEN_TEMPLATES`
+    and `INNER_TEMPLATES` leave `src/config/design.ts`. DESIGN-006, LAYOUT-008
+    and `prompt-ia.md` read `kind`; DESIGN-021 exempts every marketing page,
+    not only the landing page; `02-design.md` and the wireframes show the
+    kind. The spec, the reading-list fixture and the snapshots follow.
+  - Done when: `pnpm typecheck` and the design tests pass, and no
+    `SCREEN_TEMPLATES`, `INNER_TEMPLATES` or `screen.template` is left.
+
+- [x] **DS7c** Shells replace the fixed page frame (2 h) (done 2026-10-30). Depends: DS7b
+  - Why: one top bar 56 tall or one sidebar 240 wide for every app makes every
+    generated site look the same (user, 2026-10-30).
+  - The brief call designs shells: regions docked in order to the top,
+    bottom, left or right, or over the page, with boxes and layouts; each page
+    picks one or none. Shell nodes (`SH1.n01`) fill the regions and show on
+    every page using the shell. `navigation.model` and `FRAME_PX` go. The
+    solver docks the regions; BRIEF-003, BRIEF-004, DESIGN-023 to 025 and
+    LAYOUT-070 (new H-70) check them; DESIGN-001, 003, 008, 010 and 017 count
+    shell nodes. DS7 runs one nodes call per used shell.
+  - Done when: `pnpm typecheck` and `pnpm test` pass, a solver test docks
+    left, top, right and bottom regions to known rectangles, and the
+    reading-list fixture passes every rule with an overlay header on the
+    landing page and no shell on sign in.
+  - Superseded the same day by DS4a: the theme's page layouts make the
+    shells, and BRIEF-003 and BRIEF-004 are gone.
+
+- [x] **DS7d** Validators skip design-system internals (30 min) (done 2026-10-30). Depends: DS7c
+  - Why: the design system's components are stable; validators check what
+    the model composes, not a component's own size or padding (user,
+    2026-10-30).
+  - DESIGN-002 drops its height warning; LAYOUT-014 drops card and dialog
+    padding; LAYOUT-026 drops button width; LAYOUT-066 drops clearance from a
+    card's or dialog's edge. The fixed dialog widths are not checked.
+  - The solver reads dialog widths from the inventory's Dialog sizes;
+    `DIALOG_WIDTH_PX` and `DIALOG_MARGIN_PX` go, and a full dialog is lg.
+  - Done when: `pnpm typecheck` and `pnpm test` pass, and each narrowed rule
+    still fires on its mutation.
+
+- [x] **DS7e** Design flow review (2 h) (done 2026-10-30). Depends: DS7d, F13
+  - Why: a day of decision changes left stale prompts, rules that bad output
+    could pass, and theme values no later call could fix (user, 2026-10-30).
+  - Prompts: `prompt-ia.md` and `prompt-nodes.md` rewritten on the current
+    schemas, with `prompt-ia-input.md` and `prompt-nodes-input.md`; the brief
+    and theme prompts and four review guides lose stale lines.
+  - Rules: THEME-007 (frame spacing), THEME-008 (defaults that carry
+    meaning), DESIGN-026 (an interactive node names a component); THEME-001
+    and 002 check the theme's link colors on the page and the frame;
+    DESIGN-009 also runs on the IA; DESIGN-011 counts node states only;
+    DESIGN-015 keeps H1s out of shells; DESIGN-023 wants a frame for a
+    framed page; DESIGN-025 matches the item's access;
+    `validateScreenNodes` takes the screen the call fills.
+  - The reading-list fixture gains a node for each state its IA lists.
+  - Done when: `pnpm typecheck` and `pnpm test` pass.
+
+- [ ] **DS7** IA and nodes stage (90 min). Depends: DS3, DS4, DS6, DS4a, DS12, DS13
+  - The prompts are written (DS7e); `prompt.ts` adds their builders. Then
+    the IA call, one nodes call per screen and per used shell with
+    `p-limit(3)`, every call at temperature 0.2, the IA at high reasoning
+    and the nodes calls at medium (D1.13 C); each call's nodes get `withDefaults` before
+    `validateScreenNodes`; `resolveScreens` assembles `02-screens.json`;
+    the whole-artifact and layout rules run, and their issues go back to the
+    call that owns the value (DS12); write `02-skeleton.json`,
+    `02-wireframes.html`, `02-design.md` and `02-ds-gaps.json`, and append to
+    `.weave-cache/ds-gaps.jsonl`.
+  - The step file says how: `docs/steps/21-DS7-ia-nodes-stage.md`.
+  - Done when: golden freelancer workspace produces screens with zero mandatory issues.
+  - The IA call starts at the 64k output cap: its output, reasoning included,
+    is estimated at 20 to 30k tokens for a 17-flow app, and a cut first try
+    is billed before the doubling (user, 2026-10-30).
+  - Built 2026-10-30: the IA and nodes prompt builders, `stage-screens.ts`
+    (`runDesign`, registered as `design`), routing (DS12) and the look
+    (DS13), tested with a fake model, a routed rerun included.
+  - First live run, 2026-10-30, `runs/20261030-1630-freelancer-workspace`
+    from the brief: 18 screens, 44 sections, 488 nodes, 2 new components;
+    163 calls, 33 minutes, $12.95 logged ($13.20 billed). The whole-design
+    check found 147 mandatory issues, the routing pass left 87, almost all
+    layout spacing (LAYOUT-001, 066, 015, 031, 065, 009, 035) and 3
+    DESIGN-008. Not done: zero mandatory issues; DS22 first.
+
+- [x] **DS22** Design stage cost and layout feedback (1 h) (done 2026-10-30). Depends: DS7
+  - Found in DS7's first live run ($12.95 for one idea): the strong model
+    ($5.90, rounds 3 and 4 resend the whole conversation), a peer and an
+    output reviewer on every nodes call (about 75 reviewer calls), layout
+    rules seen only after assembly (147 issues found late, fixed in an
+    expensive pass), and an IA rerun that rewrites every screen's text, so
+    any wording drift sends that screen to a fresh nodes call with
+    reviewers. Needs the user's choice of which to change.
+  - Agreed with the user, 2026-10-30, kept until the brainstorm ends:
+    1. Each nodes call runs the LAYOUT rules on its own screen in its frame,
+       inside its rounds. The routing pass no longer reruns the IA.
+    2. (Out of scope: listing fresh nodes calls after an IA rerun.)
+    3. Nodes calls get only the output reviewer; the peer stays on the brief,
+       theme and IA.
+    4. First drafts at the stage's effort, every fix at medium.
+    5. Reruns keep their own report and call files.
+    6. Validators: public pages for roles that never sign in and for signing
+       up and in (DESIGN-018), node states within the screen's, a navigation
+       node has a target, a way back from not found.
+    7. Every prompt audited against its rules and review guides; the missing
+       cases added.
+    8. The strong model writes only the first draft of the scope and the
+       brief, at high effort; every other call and every fix runs on the
+       normal model, fixes at medium (no strong-model fallback). The IA stays
+       on the normal model at high effort. Measure the cost on the next run.
+    9. One more round of validators and the output reviewer (round 4), then
+       the final fix in round 5.
+  - Built inside DS23, 2026-10-30: the runner has five rounds, fixes at
+    medium, `draftModel` for the first draft of the scope and the brief, and
+    no strong model in later rounds; a stage with no peer guide gets the
+    output reviewer alone. Items 1, 3, 5 and 6 are DS23's widget checks,
+    reviewers, `-fix` stages and DESIGN-018, 033, 034 and 035. The cost is
+    measured on DS23's first live run.
+
+- [x] **DS8** Renderers (45 min) (done 2026-10-30). Depends: DS7
   - `02-design.md` as in the spec. Optional: `02-wireframes.html` (D3.6 D).
+  - Built 2026-10-30 on the reading-list fixtures ahead of DS7; the wireframes
+    are DS6b's. The stage writes `02-design.md` once DS7 exists.
   - Done when: you can review any screen from the markdown alone.
 
 - [ ] **DS9** Every golden idea (60 min). Depends: DS8
+  - Found in DS18 (2026-10-30): the freelancer and dashboard themes both
+    gave the brand fill `#6D28D9`, Tailwind's violet-700, from different
+    hues and chromas; tune the theme prompt toward colors made from the
+    brief, not a stock palette.
   - Run design for every golden flow set; the ecommerce store runs once untuned first, recorded; tune prompts; save golden `02-*`.
   - Done when: **G2**, including at least one justified new component for the
     dashboard editor.
+
+- [x] **DS10** Theme defaults reach the app (30 min) (done 2026-10-30). Depends: DS4a
+  - Found in DS7e's review: S1 applies colors, radius, focus ring and fonts
+    but not `defaults`, and FE4 strips `size` and `look`, so the theme's
+    component defaults reach nothing; and `base` resolves to the same look
+    as "" for Button, IconButton, PopoverButton, Link and ChipGroup.
+  - Decided (user, 2026-10-30): the defaults hold for the whole app. S1
+    writes them into each recipe's `defaultVariants`; a node leaves `size`
+    and `look` "" and, when it must differ, says why in `overrideReason`
+    (DESIGN-027); `base` stays as written; FE4 gets `size` and `look` only on
+    a node that overrides. The prompt, the reading-list fixture and its
+    theme (Button `md`) and the spec follow.
+
+- [x] **DS11** LAYOUT-010 and LAYOUT-063 fail honest output (30 min) (done 2026-10-30). Depends: DS6c
+  - Found in DS7e's review: LAYOUT-010 treats a list section's top-level
+    nodes as its rows, so a heading or a pagination beside the list fails it,
+    and it allows only 0 or 8 between rows; LAYOUT-063 asks any dialog with a
+    destructive action to be a confirmation, so an edit drawer with Delete
+    fails. Changing them loosens a rule, so it waits for the user.
+  - Loosened (user, 2026-10-30): LAYOUT-010 finds the repeated items and
+    wants one gap, 8 to 16 between cards and 0 to 12 between rows; LAYOUT-063
+    checks only a dialog whose one job is the destructive action.
+
+- [x] **DS12** Issues go back to the call that owns the value (45 min) (done 2026-10-30). Depends: DS7e
+  - Found in DS7e's review: the whole-artifact and layout rules run after
+    every call has closed its rounds. A theme value, a section's box or
+    layout, and a node each belong to one call, and only that call can fix
+    them. Route each issue by its `at`; give `runSpecStage` seed issues for a
+    `start` document, so a rerun opens with a fix round; an IA fix reruns
+    the nodes of the screens it changed.
+  - Decided (user, 2026-10-30): route to the owner, one pass. `route.ts` reads
+    each issue's rule and `at`: a region is the theme's, a section, screen
+    access, step coverage or reachability the IA's, a node or a page its
+    nodes call's; DESIGN-008 and 010 go to the screens serving the step,
+    DESIGN-024 and 025 to the shells. `runSpecStage` takes `seed` issues for
+    a `start` document; a rerun has no reviewers.
+
+- [x] **DS13** The nodes call sees the look it builds (20 min) (done 2026-10-30). Depends: DS7e
+  - Found in DS7e's review: the nodes prompt says "" takes the theme's
+    defaults and marketing pages compose visually, but the call never sees
+    the defaults, its kind's `main` block, or the brief's feel, personality
+    and imagery. Add them to `prompt-nodes-input.md`.
+  - Decided (user, 2026-10-30): the look summary, a `look` block with the
+    brief's feel, personality and imagery, the theme's defaults and the page
+    kind's `main`.
+
+- [x] **DS14** Brief hues stay apart (30 min) (done 2026-10-30). Depends: DS3
+  - Found in DS7e's review: BRIEF-001 checks ranges only, so two colored
+    entities 8 degrees apart, or a brand hue in the success band, pass. A
+    BRIEF-003 for the distance between hues, and a warning for a hue in a
+    status band unless the idea asks for it.
+  - Built as BRIEF-003, 30 degrees apart; the brief prompt says so.
+
+- [x] **DS15** Fixed-height regions fit their nodes (30 min) (done 2026-10-30). Depends: DS6b
+  - Found in DS7e's review: the solver forces a region to the theme's fixed
+    height without comparing its content, so a 40 tall header with md
+    buttons passes. A LAYOUT rule on fixed-height regions, and a lower bound
+    on `heightPx` in THEME-006.
+  - Built as LAYOUT-071 (new H-71) and a THEME-006 floor: a fixed bar fits
+    at least the smallest button and its padding.
+
+- [x] **DS16** Section surfaces for visual-first pages (45 min) (done 2026-10-30). Depends: DS7e
+  - Found in DS7e's review: a section has no background or tone, so a
+    marketing page can only arrange rectangles. Needs the user's choice: a
+    `surface` on sections checked against the theme's pairs, or tone left to
+    the coding stage and the visual rubric.
+  - Decided (user, 2026-10-30): `surface` on sections, page, frame, brand or
+    accent, each a pair THEME-001 already checks; the IA prompt, the
+    renderer, the fixture and the spec follow.
+
+- [x] **DS17** Review leftovers (20 min) (done 2026-10-30). Depends: DS7e
+  - Found in DS7e's review: FE2 still described the page frame from before
+    the theme's layouts, and the theme call read the whole flows JSON for a
+    frame that needs only what each flow is. FE2 now builds the frame from
+    the shells; the theme call gets each flow's header.
+
+- [x] **DS18** The theme in Storybook (1 h) (done 2026-10-30). Depends: DS3
+  - Why: the theme must be seen on real components before any page is
+    designed (user, 2026-10-30).
+  - `weave app <runId>`: the template copied to the untracked `apps/<app
+    name>` by its own generator and installed (pnpm, once per app);
+    `src/app/theme.ts` writes the run's theme into it (S1's apply: brand,
+    page and entity colors, radius, focus ring, fonts with Storybook's
+    head, and each component's own recipe defaults); one story renders
+    every recipe; Storybook on port 6116, so one on 6006 is left alone,
+    gives `02-theme-light.png` and `02-theme-dark.png` in the run.
+  - A default whose component has no recipe of its own is not applied and
+    is listed, such as IconButton's ghost look, which lives in Button's.
+
+- [ ] **DS23** Widgets: the IA plans, widgets are defined, laid out per screen and built once, code assembles (1 day). Depends: DS7, DS22
+  - Why: the first live design run (DS7) cost $12.95 for one idea and left 87
+    issues found late; the IA wrote structure for every screen and was
+    rerun, the nodes calls redid shared parts per screen, and copy drifted
+    between screens (user, 2026-10-30, after a brainstorm).
+  - Revised 2026-10-31 (user, after a second brainstorm): the IA did too
+    much in one call (screens, widgets, copy and layout), and it cannot
+    place widgets side by side without knowing what fits. The IA now makes
+    the product decisions; widget definitions, layout and building are
+    separate calls, and code assembles.
+  - Every call runs D1.12's five rounds. The effort is the first draft's;
+    every fix runs at medium and 0.2. The calls, in order:
+    1. IA (high, draft at 0.7, peer and output reviewers): the screens with
+       their routes, access, entry and navigation (an item's label is its
+       page's title); the steps and states each screen serves; each screen's
+       blocks in reading order, with a purpose and the steps each serves, and
+       on a marketing page the composition it intends, such as "a
+       full-width band holding three features"; and the new components it
+       declares (name, purpose, closest design-system components, why not).
+       Its rules: every step and alternative on a screen, access both ways,
+       entry pages and dialog parents, at most 8 blocks on a page, and the
+       components' reasons, names and budget.
+    2. Widgets (medium, 0.2, output reviewer): one call for the whole app.
+       It turns blocks into widget definitions, and a block repeated across
+       screens becomes one widget. It writes the copy deck, every visible
+       string once with an id, and each widget's steps, fields, data,
+       states, heading level, width range (a minimum, and a maximum or fill),
+       height (fill or free) and slots. A slot is a box inside a container
+       widget that holds child widgets; anything with a background, such as
+       a band, is a widget. Its rules: every block becomes exactly one
+       widget, the copy deck rules, each screen's steps, fields and states
+       given to its widgets, and one level-1 widget per page with no
+       skipped levels.
+    3. Layout (medium, 0.2, output reviewer): one call per screen, in
+       parallel. It writes the screen's box tree: boxes as a flat list with
+       a parent and an order; each box a direction, a size along its
+       parent's direction (content, fill with a share, or a fixed width) and
+       an align (start, where content follows, by default; stretch for a row
+       of cards); each widget placed by its box and index, with child boxes
+       and widgets sharing one order. The gap between boxes and widgets is
+       the theme's section gap, and 20 in a dialog, so the call picks no
+       spacing. Its rules: at most three levels of boxes, at most one fill
+       among the boxes stacked in a column unless they split by share, a
+       fill height only under a parent of bounded height, each row's widget
+       minimums and gaps within its width (the content width from the
+       theme's layout, in exact numbers), the reading order of the IA's
+       blocks, and every widget of the screen placed once.
+    4. Components (medium, draft at 0.7, output reviewer): one call per
+       declared component. It designs the component in full (box, parts,
+       layout and behavior prose, props, states, keys, ARIA) to fit the
+       narrowest widget that holds it. It sees the design system's
+       component names with one line each, and the spacing, radius, type
+       and color scales, not the full design-system description.
+    5. Widget builds (medium, 0.2, output reviewer): three widgets per call,
+       with a 32k output budget. Each writes nodes with copy ids, picks the
+       design-system components, and records the widget's edge and root
+       layout. A container widget places its slots among its own nodes and
+       never builds the children; a fill widget designs its own scroll
+       region. Inside the call: the node rules on the widget alone, its
+       steps and fields, exactly its states, its heading level, navigation
+       with a target, and the LAYOUT rules solved at the widget's minimum
+       and maximum width.
+    6. Frames (medium, 0.2, output reviewer): one call per used shell fills
+       its header, sidebar and footer, as before (user, 2026-10-31: keep).
+  - Assembly (code, no model): each screen from its box tree. Every child
+    gets its minimum width and the rest goes by share up to each maximum; a
+    row that cannot fit its minimums stacks. Heights follow content, and the
+    parent resolves fill and free: a fill widget in a free box grows with
+    its content, a free widget in a fill box makes the box scroll, and a
+    fill widget in a fill box scrolls its own body. Ids, copy and heading
+    sizes work as before. The whole-design and layout rules then run; an
+    issue inside a widget goes back once to its build call and an issue in
+    a screen's boxes to its layout call, each as a separately named fix; the
+    rest are known issues.
+  - The tree of page boxes, widgets, nodes, slots and child widgets is what
+    the coding stage writes its flex layout from. It is desktop only; the
+    coding stage stacks rows below 640px on phones.
+  - Folded in from DS22: fixes at medium effort; the strong model only for
+    the first draft of the scope and the brief, no fallback; five rounds,
+    the output reviewer again in round 4; reruns keep their own records;
+    the prompts audited against their rules and review guides.
+  - Built 2026-10-30, the first version, with a fake model:
+    `schema-widgets.ts`, `assemble.ts` and `widget-nodes.ts`,
+    `validate-widgets.ts`, `route.ts`, `prompt-screens.ts` with
+    `prompt-ia.md`, `prompt-component.md`, `prompt-widgets.md`,
+    `prompt-frame.md` and the shared `prompt-nodes.md`, and the rewritten
+    `stage-screens.ts`. New rules DESIGN-028 to 035; DESIGN-018 both ways;
+    DESIGN-004 split between the IA and the component call. The
+    reading-list widget design is derived from its screens fixture
+    (`__fixtures__/widgets.ts`) and assembles back with every design and
+    layout rule passing. The revision replaces the IA's schema, prompt and
+    rules, `arrangement` and `area`, the fixed 300 side panel and the page
+    layouts code made; the widget builds, the frame and component calls,
+    the copy deck, the stitching and the routing stay.
+  - Decided while building, still holding: heading levels are real levels;
+    a widget keeps one, now on its definition (DESIGN-030), so its build can
+    size the text under a heading (LAYOUT-031), and code sets a heading's
+    type size from its level. A record's value is a node's `sample`, and
+    copy may hold `{Noun.attribute}` slots. A frame's link to a navigation
+    item says the item's label. A widget's own layout check keeps LAYOUT-070
+    for the first widget of a page only.
+  - Effort and temperature, decided 2026-10-31: high only for the scope, the
+    brief and the IA, the decisions made once for the app; the IA's first
+    draft at 0.7 now that it carries the product decisions and not the
+    mechanical rules; component designs at medium, reversing 2026-10-30's
+    high (user).
+  - Not done: the revision, after the folder restructure the user is
+    proposing (2026-10-31); then the first live run, freelancer workspace
+    from the brief, which also measures what fixes cost with three widgets
+    per call.
+
+- [ ] **DS24** A frame can serve a step (30 min). Depends: DS23
+  - Found building DS23: the IA gives steps to widgets only, so a sign out
+    or an account link drawn in the app frame cannot be the control that
+    serves its step, and the IA has to put one in a widget too. Give the IA
+    the steps each layout's frame serves, and the frame call DESIGN-032.
+
+- [ ] **DS25** Route what the IA plans but widgets draw (30 min). Depends: DS23
+  - Found building DS23: a page or dialog no control opens (DESIGN-017) is
+    recorded as known after assembly, though the widget whose `content`
+    names its opener could fix it. Route it to the widgets on the parent page
+    that name the screen.
+
+- [x] **DS20** Base colors per project (45 min) (done 2026-10-30). Depends: DS18
+  - Why: most components wear the base set (secondary buttons, inputs,
+    cards, tables, menus), so an app that keeps the template's greys looks
+    like every other (user, 2026-10-30).
+  - The brief picks `baseHue` and `baseChroma` (neutral, muted or balanced,
+    never vivid); the theme call writes the base set's twelve roles in each
+    mode; THEME-001 and 002 check it like the brand set, on the page and the
+    frame too; `src/app/theme.ts` writes it into `colors.base`; THEME-003
+    keeps only status, divider, backdrop and skeleton fixed.
+  - The theme prompt says what base is for, and to make every value from
+    the brief's hues, never a stock palette (DS9's `#6D28D9` finding); the
+    theme reviewers look for both.
+
+- [x] **DS21** Divider, backdrop and skeleton from the theme (20 min) (done 2026-10-30). Depends: DS20
+  - Why: they follow no hue of the brief, but a template grey stops showing
+    on a tinted page (user, 2026-10-30).
+  - The theme call writes them with the page colors in each mode; THEME-009
+    wants the divider and skeleton at least 1.1:1 on the page and the frame,
+    the skeleton also on the base set's bg, and the backdrop darker than
+    both. THEME-003 keeps only the status sets fixed.
+
+- [ ] **DS19** Neutral variant defaults (20 min). Depends: DS18
+  - Found in DS18's screenshots: the dashboard and store themes set Button,
+    Card, Checkbox, Tabs and other defaults to the `base` variant, so
+    selections and checks turn neutral black instead of the brand color.
+    THEME-008 lets the theme pick `base`. Needs the user's choice: keep it a
+    free choice, or hold `variant` at the recipe's own default.
+
+- [x] **F14** One retry when an answer is cut (20 min) (done 2026-10-30). Depends: F13
+  - Why: the ecommerce catalog was cut at 65k output tokens on 2026-10-30
+    and the run ended (user, 2026-10-30).
+  - A stage-round call cut at the output limit, after the client's own
+    doubling, is logged and asked once more with the same input; a second
+    cut fails the stage as before. The retry wraps the call, so a fix's
+    messages are never pushed twice.
+  - Each cut answer is kept as `llm/<stage>-r<round>-cut.json` (a second in
+    the round as `-cut-2`), so a runaway can be read (user, 2026-10-30).
 
 ## Phase 4: Contracts (Fri Oct 30, morning)
 
 Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 24 to 29.
 
-- [ ] **C1** Conventions and schema (40 min). Depends: FL1
+- [x] **C1** Conventions and schema (40 min) (done 2026-10-30). Depends: FL1
   - `src/stages/contracts/conventions.ts` (the conventions table as data and
     functions: `pathFor(operation)`, `statusFor(code)`, built-in `User`) and `schema.ts`.
   - Done when: the schema passes `toJsonSchema`; unit tests for `pathFor` and `statusFor`.
 
-- [ ] **C2** Compile (60 min). Depends: C1
+- [x] **C2** Compile (60 min) (done 2026-10-30). Depends: C1
   - `compile.ts`: per entity `createInput`, `updateInput`, `view`; per list operation `query`, `page`.
   - Done when: tests show sensitive fields missing from views, server fields
     missing from inputs, update inputs all optional.
 
-- [ ] **C3** Validators (90 min). Depends: C2
+- [x] **C3** Validators (90 min) (done 2026-10-30). Depends: C2
   - CONTRACT-001 to 019 with fixtures (a hand-written reading-list contract and mutations).
   - Done when: each rule has a passing and a failing test.
 
@@ -537,14 +1044,18 @@ the frozen contract is compiled into types, a typed client, TanStack Query
 hooks, seed data and a mock API of Next.js route handlers backed by a JSON
 file, all inside the generated app, by code and without model calls.
 
-- [ ] **S1** Scaffold and theme apply (90 min). Depends: R6, DS4
+- [ ] **S1** Scaffold and theme apply (90 min). Depends: R6, DS4, DS4a
   - `src/app/scaffold.ts`: copy `template/` to `runs/<id>/app` with
     `generate.mjs`, install, build the MCP. `src/app/theme.ts`: apply
-    `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets),
-    `tokens.ts` (radius, focus ring) and `packages/styles/src/fonts.ts`
+    `02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets,
+    and the four page colors; a light-only or dark-only app pins its mode),
+    `tokens.ts` (radius, focus ring), `packages/styles/src/fonts.ts`
     (the theme's three families, mono included: the brief picks it since
-    2026-10-30, so not a fixed JetBrains Mono);
-    THEME-003 checks base, surface and status sets are untouched.
+    2026-10-30, so not a fixed JetBrains Mono), and each recipe's
+    `defaultVariants` from the theme's `defaults`, a look such as
+    `rounded ghost` as its flags (DS10);
+    THEME-003 checks the status sets are untouched (base, divider, backdrop
+    and skeleton are the theme's since DS20 and DS21).
   - Done when: `pnpm weave run … --to scaffold` on the golden freelancer workspace
     yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
     pass, with the theme's colors in `colors.ts`.
@@ -594,10 +1105,13 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     refused, a failing check fed back, and the loop ending on `done`.
 
 - [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
-  - `src/codegen/pages.ts`: for every page screen a route folder with a
-    `page.tsx` shell (H1, sections with their node manifests as comments,
+  - `src/codegen/pages.ts`: the page frame from `02-screens.json`'s shells,
+    one per kind: their regions docked as the layout says and filled from the
+    shell nodes, the navigation among them, shared by every framed page of
+    the kind. For every page screen a route folder with a `page.tsx` in its
+    kind's frame (H1, sections with their node manifests as comments,
     `data-testid` per node), dialogs and drawers as files beside their page,
-    navigation in `PageHeader`, a sign-in guard for `signedIn` screens.
+    a sign-in guard for `signedIn` screens.
   - Done when: the generated app builds and every route renders its H1;
     `pnpm verify` passes on every route.
 
@@ -612,8 +1126,10 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     using recipes, the entity hooks and the DS, with loading, empty, error,
     invalid and submitting states; `pnpm verify <route>` as the last check.
   - Nodes reach the session and the shell's manifests without `component`,
-    `size` and `look`, which serve validation only; the session picks the
-    component from `what` through the MCP (design spec, 2026-10-30).
+    which serves validation only; the session picks the component from
+    `what` through the MCP (design spec, 2026-10-30). `size` and `look` come
+    only on a node that overrides the theme's defaults, with its
+    `overrideReason`; the recipes already carry the defaults (S1, DS10).
   - Done when: every freelancer-workspace route passes validate, typecheck, lint
     and verify, and the core loop works by hand.
 
@@ -623,6 +1139,9 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     proximity), written as reusable collectors the benchmark reuses.
   - Done when: each rule has a test on a fixture page; the freelancer workspace's
     routes pass the mandatory rules.
+  > Blocked: needs a model run, waiting for the user's go. The collectors,
+  > `runRenderedChecks` and their tests on fixture pages are in (2026-10-30);
+  > the frontend stage and `resolveRouteSamples` come once an app exists.
 
 - [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
   - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence

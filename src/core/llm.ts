@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import OpenAI from 'openai';
@@ -21,6 +22,8 @@ export type ReasoningEffort =
   | 'high'
   | 'xhigh'
   | 'max';
+/** Two modes (user, 2026-10-30): 0.2 for exact values, 0.7 for the calls that set a direction. */
+export type Temperature = 0.2 | 0.7;
 
 export type GenerateInput<T> = {
   stage: string;
@@ -31,8 +34,8 @@ export type GenerateInput<T> = {
   model?: ModelChoice;
   maxTokens?: number;
   /** Default 0.2; part of the replay key. */
-  temperature?: number;
-  /** Omitted by default; part of the replay key. */
+  temperature?: Temperature;
+  /** Omitted by default; part of the replay key. A strong call without a strong model steps it up. */
   reasoningEffort?: ReasoningEffort;
   /** When given, the call is written to `<runDir>/llm/<stage>-r<round>.json`. */
   runDir?: string;
@@ -59,13 +62,14 @@ export class ModelRequestFailed extends Error {
   }
 }
 
-/** Carries what the cut attempts cost and how far the visible JSON got, so a run can account for them. */
+/** Carries what the cut attempts cost and the visible JSON of the last one, so a run can account for them and show what was written. */
 export class ModelOutputTruncated extends Error {
   constructor(
     message: string,
     public model: string,
     public usage: Usage,
     public contentLength: number,
+    public content = '',
   ) {
     super(message);
     this.name = 'ModelOutputTruncated';
@@ -104,10 +108,17 @@ export type Llm = {
 };
 
 const TEMPERATURE = 0.2;
+// D1.8: a backend whose strong model is missing or the base model escalates by effort instead, never to max.
+const STEP_UP: Partial<Record<ReasoningEffort, ReasoningEffort>> = {
+  medium: 'high',
+  high: 'xhigh',
+};
 const DEFAULT_MAX_TOKENS = 8192;
 const MAX_OUTPUT_TOKENS = 65_536;
 const MAX_ATTEMPTS = 5;
 const MAX_BACKOFF_MS = 30_000;
+// A server asking for a longer wait is treated as down; the run fails and says so.
+const MAX_RETRY_AFTER_MS = 60_000;
 const JITTER_MS = 250;
 
 type Request = {
@@ -144,17 +155,21 @@ export function createLlm(deps: LlmDeps): Llm {
     input: GenerateInput<T>,
   ): Promise<GenerateResult<T>> {
     const started = now();
-    const model =
-      input.model === 'strong' ? backend.strongModel : backend.model;
+    const hasStrong =
+      !!backend.strongModel && backend.strongModel !== backend.model;
+    const strong = input.model === 'strong';
+    const model = strong && hasStrong ? backend.strongModel : backend.model;
+    const reasoningEffort =
+      strong && !hasStrong && input.reasoningEffort
+        ? (STEP_UP[input.reasoningEffort] ?? input.reasoningEffort)
+        : input.reasoningEffort;
     const bridged = toJsonSchema(input.schema, input.schemaName);
     const request: Request = {
       backend: backend.name,
       model,
       messages: input.messages,
       temperature: input.temperature ?? TEMPERATURE,
-      ...(input.reasoningEffort
-        ? { reasoningEffort: input.reasoningEffort }
-        : {}),
+      ...(reasoningEffort ? { reasoningEffort } : {}),
       schemaName: input.schemaName,
       schema: bridged.schema,
     };
@@ -162,14 +177,21 @@ export function createLlm(deps: LlmDeps): Llm {
     const replayFile = path.join(replayDir, `${key}.json`);
 
     let record = config.LLM_REPLAY
-      ? await readJson<ReplayRecord>(replayFile)
+      ? await readReplay(replayFile)
       : undefined;
     const replayed = record !== undefined;
     if (!record) {
-      const completed = await requestUntilComplete(
-        request,
-        input.maxTokens ?? DEFAULT_MAX_TOKENS,
-      );
+      let completed: Completed;
+      try {
+        completed = await requestUntilComplete(
+          request,
+          input.maxTokens ?? DEFAULT_MAX_TOKENS,
+        );
+      } catch (error) {
+        if (error instanceof ModelOutputTruncated && input.runDir)
+          writeCut(input, model, error);
+        throw error;
+      }
       record = {
         ...completed,
         request,
@@ -209,6 +231,31 @@ export function createLlm(deps: LlmDeps): Llm {
       );
     }
     return result;
+  }
+
+  /** A cut answer as far as it got, in `<runDir>/llm/<stage>-r<round>-cut.json`, so a runaway can be read; a second cut in the round gets `-cut-2`. */
+  function writeCut(
+    input: GenerateInput<unknown>,
+    model: string,
+    error: ModelOutputTruncated,
+  ): void {
+    const dir = path.join(input.runDir ?? '', 'llm');
+    const name = (n: number) =>
+      path.join(dir, `${input.stage}-r${input.round}-cut${n > 1 ? `-${n}` : ''}.json`);
+    let n = 1;
+    while (existsSync(name(n))) n += 1;
+    writeJsonAtomic(name(n), {
+      request: {
+        backend: backend.name,
+        model,
+        messages: input.messages,
+        schemaName: input.schemaName,
+      },
+      error: error.message,
+      response: error.content,
+      usage: error.usage,
+      costUsd: costUsd(model, error.usage),
+    });
   }
 
   /** One request, plus a single retry with a larger output limit when the answer was cut short. */
@@ -251,6 +298,7 @@ export function createLlm(deps: LlmDeps): Llm {
             request.model,
             cut,
             choice.message.content?.length ?? 0,
+            choice.message.content ?? '',
           );
         }
         limit = larger;
@@ -280,6 +328,7 @@ export function createLlm(deps: LlmDeps): Llm {
   async function requestWithRetries(
     body: OpenAI.ChatCompletionCreateParamsNonStreaming,
   ): Promise<OpenAI.ChatCompletion> {
+    const first = now();
     for (let attempt = 0; ; attempt += 1) {
       try {
         return await getClient().create(body);
@@ -295,15 +344,15 @@ export function createLlm(deps: LlmDeps): Llm {
             `${body.model}: ${error.message}`,
             status,
           );
-        if (attempt + 1 >= MAX_ATTEMPTS) {
+        const coldStart =
+          status === 503 && now() - first < (backend.coldStartMs ?? 0);
+        if (attempt + 1 >= MAX_ATTEMPTS && !coldStart) {
           throw new ModelRequestFailed(
-            `${body.model}: ${error.message} (gave up after ${MAX_ATTEMPTS} attempts)`,
+            `${body.model}: ${error.message} (gave up after ${attempt + 1} attempts)`,
             status,
           );
         }
-        await sleep(
-          retryDelayMs(error.headers?.get('retry-after'), attempt, now()),
-        );
+        await sleep(retryDelayMs(error.headers, attempt, now()));
       }
     }
   }
@@ -311,17 +360,24 @@ export function createLlm(deps: LlmDeps): Llm {
   return { generateStructured };
 }
 
-/** `Retry-After` wins when present (seconds or an HTTP date); otherwise capped exponential backoff with jitter. */
+/**
+ * `retry-after-ms`, then `Retry-After` (seconds or an HTTP date), capped at a
+ * minute; otherwise capped exponential backoff with jitter.
+ */
 function retryDelayMs(
-  retryAfter: string | null | undefined,
+  headers: Headers | undefined,
   attempt: number,
   nowMs: number,
 ): number {
+  const capped = (ms: number) => Math.min(MAX_RETRY_AFTER_MS, Math.max(0, ms));
+  const ms = Number(headers?.get('retry-after-ms') ?? Number.NaN);
+  if (Number.isFinite(ms)) return capped(ms);
+  const retryAfter = headers?.get('retry-after');
   if (retryAfter) {
     const seconds = Number(retryAfter);
-    if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+    if (Number.isFinite(seconds)) return capped(seconds * 1000);
     const at = Date.parse(retryAfter);
-    if (!Number.isNaN(at)) return Math.max(0, at - nowMs);
+    if (!Number.isNaN(at)) return capped(at - nowMs);
   }
   return (
     Math.min(MAX_BACKOFF_MS, 1000 * 2 ** attempt) + Math.random() * JITTER_MS
@@ -352,11 +408,20 @@ function parseContent<T>(schema: z.ZodType<T>, content: string): T {
   return parsed.data;
 }
 
-async function readJson<T>(file: string): Promise<T | undefined> {
+/** A cached answer; a file that is not JSON fails the call instead of paying for it again unseen. */
+async function readReplay(file: string): Promise<ReplayRecord | undefined> {
+  let text: string;
   try {
-    return JSON.parse(await readFile(file, 'utf8')) as T;
+    text = await readFile(file, 'utf8');
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
     throw error;
+  }
+  try {
+    return JSON.parse(text) as ReplayRecord;
+  } catch {
+    throw new Error(
+      `replay file ${file} is not valid JSON; delete it to call the model again`,
+    );
   }
 }

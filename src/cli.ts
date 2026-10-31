@@ -1,12 +1,26 @@
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { applyTheme } from './app/theme';
+import {
+  scaffolded,
+  scaffoldApp,
+  screenshotComponents,
+  writeAllComponentsStory,
+} from './app/preview';
 import {
   type ArtifactName,
   FILE_OF,
   hasArtifact,
   isStale,
+  readArtifact,
 } from './core/artifacts';
 import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
 import { type Config, config as loadConfig } from './core/env';
@@ -25,6 +39,12 @@ import {
   totals,
 } from './core/run';
 import { PIPELINE, type StageContext, stages } from './stages/index';
+import { skeleton } from './stages/design/layout';
+import { makeScreensSchema } from './stages/design/schema';
+import type { Theme } from './stages/design/theme';
+import { renderWireframes } from './stages/design/wireframes';
+import type { Scope } from './stages/flows/schema';
+import { writeJsonAtomic } from './core/utils';
 
 export class UsageError extends Error {}
 
@@ -52,6 +72,8 @@ const USAGE = `usage:
   weave show <runId>
   weave golden <runId> <ideaName> [--stages scope,flows]
   weave ds
+  weave wireframes <screens.json> [--out <dir>]
+  weave app <runId>
   weave bench <runId>`;
 
 export async function runCommand(
@@ -173,11 +195,13 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
       ],
     ];
   };
-  // A stage that ran its work as child stages (flows-expand-1, ...) lists them indented under it.
+  // A stage that ran its work as child stages (flows-expand-1, design-ia, design-widgets-W01-W02-fix; design-nodes-S03 in runs before DS23) lists them indented under it.
   const rows = PIPELINE.flatMap((name) => [
     ...row(name, name),
     ...Object.keys(state.stages)
-      .filter((child) => new RegExp(`^${name}-\\d+$`).test(child))
+      .filter((child) =>
+        new RegExp(`^${name}-(\\d+|ia|(component|widgets|frame|nodes)-[\\w-]+)$`).test(child),
+      )
       .sort()
       .flatMap((child) => row(child, `  ${child}`)),
   ]);
@@ -279,6 +303,72 @@ export async function dsCommand(
   return lines;
 }
 
+/** Solves a screens file into 02-skeleton.json and 02-wireframes.html, by default in runs/wireframes/<file name>/. */
+export async function wireframesCommand(
+  file: string,
+  outDir?: string,
+  deps: InventoryOptions & Pick<CliDeps, 'out' | 'runsDir'> = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const inv = await inventory(deps);
+  const screens = makeScreensSchema(inv).Screens.parse(
+    JSON.parse(readFileSync(file, 'utf8')),
+  );
+  const name = path.basename(file).replace(/\.json$/, '');
+  const dest =
+    outDir ?? path.join(deps.runsDir ?? DEFAULT_RUNS_DIR, 'wireframes', name);
+  mkdirSync(dest, { recursive: true });
+  const solved = skeleton(screens, inv);
+  const files = ['02-skeleton.json', '02-wireframes.html'].map((f) =>
+    path.join(dest, f),
+  );
+  writeJsonAtomic(files[0] as string, solved);
+  writeFileSync(files[1] as string, renderWireframes(solved, screens, name));
+  const rects = solved.screens.reduce((total, s) => total + s.rects.length, 0);
+  const lines = [
+    `${solved.screens.length} screens, ${rects} rectangles`,
+    ...files,
+  ];
+  for (const line of lines) out(line);
+  return lines;
+}
+
+const DEFAULT_APPS_DIR = 'apps';
+
+/**
+ * The run's theme applied to apps/<app name>, made from the template on first
+ * use, and every component screenshotted in each mode into the run.
+ */
+export async function appCommand(
+  runId: string,
+  deps: Pick<CliDeps, 'out' | 'runsDir'> = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const { app } = readArtifact<Scope>(run, 'scope').data;
+  const theme = readArtifact<Theme>(run, 'theme').data;
+  const slug = app.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const appDir = path.join(DEFAULT_APPS_DIR, slug);
+  if (!scaffolded(appDir)) await scaffoldApp(appDir);
+  const { changed, skipped } = applyTheme(appDir, theme);
+  writeAllComponentsStory(appDir);
+  // Only the modes the theme has; the other would show the template's colors.
+  const shots = await screenshotComponents(
+    appDir,
+    Object.fromEntries(
+      theme.modes.map((mode) => [mode, runPath(run, `02-theme-${mode}.png`)]),
+    ),
+  );
+  const lines = [
+    `app ${appDir}`,
+    `changed ${changed.join(', ') || 'nothing'}`,
+    ...skipped.map((reason) => `not applied: ${reason}`),
+    ...shots,
+  ];
+  for (const line of lines) out(line);
+  return lines;
+}
+
 /** Exit codes: 0 ok, 1 error, 2 usage. */
 export async function main(argv: string[]): Promise<number> {
   try {
@@ -294,6 +384,7 @@ export async function main(argv: string[]): Promise<number> {
         replay: { type: 'boolean' },
         backend: { type: 'string' },
         stages: { type: 'string' },
+        out: { type: 'string' },
       },
     });
     const [command, first, second] = positionals;
@@ -318,6 +409,14 @@ export async function main(argv: string[]): Promise<number> {
         return 0;
       case 'ds':
         await dsCommand();
+        return 0;
+      case 'wireframes':
+        if (!first) throw new UsageError('wireframes needs a screens file');
+        await wireframesCommand(first, values.out);
+        return 0;
+      case 'app':
+        if (!first) throw new UsageError('app needs a run id');
+        await appCommand(first);
         return 0;
       case 'bench':
         console.log('bench: added in step B7');

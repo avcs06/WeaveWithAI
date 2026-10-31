@@ -1,71 +1,79 @@
 # 17 · DS3 Brief
 
-Phase 3 · 60 min · Depends: DS1, DS2, FL6 · Decisions: D3.3 B · Spec:
-specs/design.md "Brief", BRIEF rules; draft `src/stages/design/prompt-brief.md`
+Phase 3 · 60 min · Depends: DS1, DS2, FL6 · Decisions: D3.3 E, D1.12,
+D1.13 C · Spec: specs/design.md "Brief", "Theme", BRIEF and THEME rules
 
 ## Goal
 
-The brief call: the model picks direction (personality, density, seed hue,
-fonts, radius, focus ring, entity colors), validated, saved as `02-brief.json`.
+The design stage starts: the brief call picks the direction, the theme call
+turns it into values, and both are saved, `02-brief.json` and
+`02-theme.json`.
+
+## Already built
+
+- `Brief` in `schema.ts`, BRIEF-001 and BRIEF-002 with their fixture and
+  mutations, `prompt-brief.md` and `prompt-brief-input.md`, and
+  `review-brief-peer.md` and `review-brief-output.md`.
+- The theme call (DS4a): `makeThemeSchema`, `prompt-theme.md` and its input,
+  `buildTheme`, THEME-001 to 008, and the theme review guides.
+- `briefSystemPrompt()`, `briefUserMessage(idea, scope)`,
+  `themeSystemPrompt(brief, inv)`, `themeUserMessage(brief, scope, flows)`
+  and the review guide loaders in `prompt.ts`, with tests.
 
 ## What this step does
 
-1. **The brief schema**: the model's design direction (personality, voice,
-   density, a seed hue and chroma level, fonts from the allowlist, radius,
-   focus ring, extra color sets for categories, imagery).
-2. **Two rules** check it (hues in range, set names valid).
-3. **The brief prompt** is filled with the font lists and the design-system
-   summary; the idea and the scope are the input.
-4. **The design stage starts** with this one call and writes `02-brief.json`.
-
-After this step the look of an app is decided by the model as a direction,
-not as hex values.
+1. **`src/stages/design/stage.ts`** with `runBrief(ctx)` and
+   `runTheme(ctx, inv)`.
+2. **Registers `brief` and `theme` as pipeline stages** before `design`, as
+   the flows have their catalog and expand stages: each artifact is checked
+   for staleness on its own, and a rerun of the theme keeps the brief. Step
+   21 registers `design` for the IA and nodes calls.
+3. **Runs the golden freelancer workspace** to a brief and a theme with zero
+   mandatory issues.
 
 ## Implementation details
 
-### 1. `src/stages/design/schema.ts` (first part)
+### `runBrief(ctx)`
 
-The `Brief` schema from the spec, importing `UI_FONTS` and `DISPLAY_FONTS`
-from `src/config/fonts.ts`. `makeScreensSchema` joins this file in step 19.
+`runSpecStage` with:
 
-### 2. `src/stages/design/validate.ts` (first part)
+- `schema: Brief`;
+- `system: briefSystemPrompt()` and `user: briefUserMessage(idea, scope)`;
+- `validate: (brief) => validateBrief(brief, scope)`;
+- `review: briefReviewGuides()`;
+- `reasoningEffort: 'high'` and `temperature: 0.7` (D1.13 C: the first
+  draft at 0.7, fixes and reviewers at 0.2).
 
-`validateBrief(brief: Brief): Issue[]` with BRIEF-001 (hues 0 to 360,
-personality 3 to 5 words, at most 4 entity sets) and BRIEF-002 (entity set
-names camelCase, unique, not `base`, `success`, `warning`, `error`, `info`,
-`primary`, `surface`). Fixture: `__fixtures__/reading-list.brief.json` and
-one mutation per rule in `__fixtures__/mutations.ts` (the file grows with
-the next steps).
+Then `writeArtifact(run, 'brief', brief, { inputs: ['scope'] })`.
 
-### 3. `src/stages/design/prompt.ts` (first part)
+### `runTheme(ctx)`
 
-```ts
-export function briefSystemPrompt(inv: Inventory): string;    // fills uiFonts, displayFonts, dsSummary
-export function briefUserMessage(idea: string, scope: Scope): string;
-```
+`runSpecStage` with:
 
-Review `prompt-brief.md` against the schema: every field named, the hue
-advice kept (avoid red and amber), fonts from the lists only.
+- `schema: makeThemeSchema(brief, inv)`;
+- `system: themeSystemPrompt(brief, inv)` and
+  `user: themeUserMessage(brief, scope, flows)`;
+- `validate: (call) => validateTheme(buildTheme(brief, call), inv)`;
+- `review: themeReviewGuides()`;
+- `reasoningEffort: 'medium'`, temperature left at 0.2.
 
-### 4. Stage
+Then `writeArtifact(run, 'theme', buildTheme(brief, output), { inputs:
+['brief', 'scope', 'flows'] })`.
 
-`src/stages/design/stage.ts` starts here with `runBrief(ctx)`: idea and
-scope in, `runSpecStage` with `Brief`, `writeArtifact(run, 'brief', …,
-{ inputs: ['scope'] })`. Register a `design` stage whose `run` calls
-`runBrief` only for now; steps 18 and 21 extend it.
+### Tests
 
-### 5. Tests
-
-`validate.test.ts` for the two rules; `prompt.test.ts` fills without leftovers.
+`stage.test.ts` with a fake llm scripted from the reading-list brief and
+theme: both artifacts are written, the brief's first call is at high and
+0.7, and the theme's at medium and 0.2.
 
 ## Done when
 
 ```sh
-pnpm weave run fixtures/ideas/freelancer-workspace.md --to design   # a brief with zero mandatory issues
+pnpm weave run fixtures/ideas/freelancer-workspace.md --to design   # a brief and a theme with zero mandatory issues
 pnpm test -- src/stages/design
 ```
 
 ## Watch out
 
-- `seedHue` is a number in degrees; the schema's description must say so or
-  the model answers with a color name.
+- The run needs the user's go (a live model run).
+- The theme call's input carries each flow's header, not its steps.

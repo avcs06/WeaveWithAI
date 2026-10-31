@@ -16,7 +16,7 @@ export type InventoryComponent = {
   defaults?: Defaults;
   /** Every look the `look` prop accepts, the default first. */
   looks?: string[];
-  /** Fixed dimensions in px by size or part: `sm`, `trigger`, `md/header`, `default`. Dynamic ones are absent. */
+  /** Fixed dimensions, padding and gap in px by size or part: `sm`, `trigger`, `md/header`, `default`. Dynamic ones are absent. */
   box?: Record<string, Box>;
   /** The content it shows, by prop: `title`, `label`, `content`, `leftIcon`. */
   slots?: string[];
@@ -24,8 +24,17 @@ export type InventoryComponent = {
   contains?: string[];
 };
 
-/** A minimum height is one the content can grow past. */
-export type Box = { height?: number; width?: number; minHeight?: number };
+/**
+ * A minimum height is one the content can grow past. Padding is the inset to
+ * the content, top, right, bottom, left; gap is between the children.
+ */
+export type Box = {
+  height?: number;
+  width?: number;
+  minHeight?: number;
+  padding?: [number, number, number, number];
+  gap?: number;
+};
 
 export type InventoryToken = {
   /** Dot path, `spacing.4`; the group is the first segment. */

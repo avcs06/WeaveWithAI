@@ -146,14 +146,14 @@ describe('the four stages', () => {
     const calls = inputs.map((input) => input.stage);
     expect(calls).toEqual([
       'scope',
-      'scope-review1',
-      'scope-review2',
+      'scope-review-peer',
+      'scope-review-output',
       'flows-catalog',
-      'flows-catalog-review1',
-      'flows-catalog-review2',
+      'flows-catalog-review-peer',
+      'flows-catalog-review-output',
       'flows-expand-1',
-      'flows-expand-1-review1',
-      'flows-expand-1-review2',
+      'flows-expand-1-review-peer',
+      'flows-expand-1-review-output',
     ]);
     expect(inputs[6]?.messages[1]?.content).toContain(
       'Write the full flows F01, F02, F03, F04, F05, F06',

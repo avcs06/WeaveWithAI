@@ -2,35 +2,35 @@
   "meta": {
     "artifact": "flows",
     "version": 1,
-    "hash": "d41f0579f9b7ea2e1713ea3320c333c314b92ff7459b853c2c59073a48fcf4ca",
+    "hash": "e0fb9e904c9b26bfe3f6d1e29b6cfb5936c8bc9290e26563d1cb57b176187b1b",
     "inputs": {
       "scope": {
         "version": 1,
-        "hash": "b9a02673fe79df4f82ba97cabf65145712801ccb5ecf664c56e4f1f040d1879a"
+        "hash": "a429d85002f2b5f383eb4bbf624df6d22b788fdae9cd1fb402ed912be770c676"
       },
       "flows-catalog": {
         "version": 1,
-        "hash": "1e7a05cefc41ded1e5c46baa19d8a7e1358a1c3143ecbdace05ee7dc04ad503f"
+        "hash": "5ba2c21f80ebc84b28a35a6c4b06c4c4e692f6c54ee7f7f57a91183cc20104eb"
       },
       "flows-draft": {
         "version": 1,
-        "hash": "d41f0579f9b7ea2e1713ea3320c333c314b92ff7459b853c2c59073a48fcf4ca"
+        "hash": "e0fb9e904c9b26bfe3f6d1e29b6cfb5936c8bc9290e26563d1cb57b176187b1b"
       }
     },
     "stage": "flows",
     "model": "muse-spark-1.3",
     "rounds": 1,
-    "createdAt": "2026-10-29T15:37:38.926Z"
+    "createdAt": "2026-10-30T11:04:54.750Z"
   },
   "data": {
     "flows": [
       {
         "id": "F01",
-        "name": "View landing page and get started",
-        "role": "member",
+        "name": "Discover Tidyboards on landing page",
+        "role": "visitor",
         "category": "browse",
         "authKind": "none",
-        "goal": "Understand what personal dashboards are for and start using TidyDash.",
+        "goal": "Understand what Tidyboards does and start using it.",
         "preconditions": [
           "Not signed in."
         ],
@@ -39,7 +39,7 @@
             "id": "F01.S01",
             "kind": "user",
             "userAction": "The visitor opens the landing page.",
-            "websiteResponse": "The website shows what personal dashboards are for with examples of notes, counters, checklists and link lists, how to start by creating a dashboard and adding widgets, and options to sign up or sign in.",
+            "websiteResponse": "The website shows what tidy personal dashboards are for, how creating a dashboard and adding note, counter, checklist and link-list widgets works, with examples, and offers paths to sign up and sign in.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -48,8 +48,8 @@
           {
             "id": "F01.S02",
             "kind": "user",
-            "userAction": "The visitor chooses to sign up or sign in to begin.",
-            "websiteResponse": "The website shows the sign-up or sign-in form to begin.",
+            "userAction": "The visitor chooses to get started.",
+            "websiteResponse": "The website shows the sign-up form to create an account.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -57,15 +57,15 @@
           }
         ],
         "alternatives": [],
-        "outcome": "The visitor understands TidyDash and has a path to sign up or sign in; nothing is stored and refresh shows the same landing page."
+        "outcome": "Visitor understands dashboards and starts sign-up; nothing is stored and a refresh shows the same landing page."
       },
       {
         "id": "F02",
-        "name": "Sign up",
+        "name": "Sign up as member",
         "role": "member",
         "category": "auth",
         "authKind": "signUp",
-        "goal": "Create a new account to own private dashboards.",
+        "goal": "Create an account to own dashboards.",
         "preconditions": [
           "Not signed in."
         ],
@@ -73,8 +73,8 @@
           {
             "id": "F02.S01",
             "kind": "user",
-            "userAction": "The visitor chooses to sign up.",
-            "websiteResponse": "The website shows an empty account credentials form with an option to submit.",
+            "userAction": "The member chooses to sign up.",
+            "websiteResponse": "The website shows an empty sign-up form asking for email and password.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -83,8 +83,8 @@
           {
             "id": "F02.S02",
             "kind": "user",
-            "userAction": "The visitor fills in the credentials and submits.",
-            "websiteResponse": "The website creates the account, signs the member in and shows their dashboard list.",
+            "userAction": "The member fills in email and password and submits.",
+            "websiteResponse": "The website creates the account, signs the member in, and shows the member's dashboard list.",
             "fields": [],
             "form": "FM01",
             "subflow": "",
@@ -101,7 +101,7 @@
             "id": "F02.A01",
             "from": "F02.S02",
             "kind": "invalid",
-            "condition": "The email or password is missing or invalid.",
+            "condition": "The email is badly formed or the password is shorter than required.",
             "websiteResponse": "The website marks what is wrong and keeps what was typed.",
             "resumesAt": "F02.S02"
           },
@@ -110,37 +110,36 @@
             "from": "F02.S02",
             "kind": "failure",
             "condition": "Creating the account fails.",
-            "websiteResponse": "The website keeps the values and offers to retry.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
             "resumesAt": "F02.S02"
           },
           {
             "id": "F02.A03",
             "from": "F02.S02",
             "kind": "empty",
-            "condition": "The new member has no dashboards yet.",
-            "websiteResponse": "The website shows an empty dashboard list with an option to create a dashboard.",
+            "condition": "The member has no dashboards yet.",
+            "websiteResponse": "The website invites the member to create the first dashboard.",
             "resumesAt": ""
           }
         ],
-        "outcome": "A new account is created and the member is signed in; refresh still shows them signed in on their dashboard list."
+        "outcome": "Account exists and member is signed in; a refresh still shows the signed-in dashboard list."
       },
       {
         "id": "F03",
-        "name": "Sign in",
+        "name": "Sign in as member",
         "role": "member",
         "category": "auth",
         "authKind": "signIn",
-        "goal": "Sign back in to access my dashboards.",
+        "goal": "Sign in to access my dashboards.",
         "preconditions": [
-          "Not signed in.",
-          "An account already exists."
+          "Not signed in."
         ],
         "steps": [
           {
             "id": "F03.S01",
             "kind": "user",
-            "userAction": "The returning member chooses to sign in.",
-            "websiteResponse": "The website shows an empty account credentials form with an option to submit.",
+            "userAction": "The member chooses to sign in.",
+            "websiteResponse": "The website shows an empty sign-in form asking for email and password.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -149,8 +148,8 @@
           {
             "id": "F03.S02",
             "kind": "user",
-            "userAction": "The member fills in the credentials and submits.",
-            "websiteResponse": "The website verifies the credentials and shows the member's dashboards with name and last-edited time.",
+            "userAction": "The member fills in email and password and submits.",
+            "websiteResponse": "The website verifies the credentials and shows the member's own dashboard list with names and last-edited times.",
             "fields": [],
             "form": "FM01",
             "subflow": "",
@@ -167,7 +166,7 @@
             "id": "F03.A01",
             "from": "F03.S02",
             "kind": "invalid",
-            "condition": "The email or password is missing or invalid.",
+            "condition": "The email or password is empty or badly formed.",
             "websiteResponse": "The website marks what is wrong and keeps what was typed.",
             "resumesAt": "F03.S02"
           },
@@ -175,20 +174,28 @@
             "id": "F03.A02",
             "from": "F03.S02",
             "kind": "failure",
-            "condition": "Signing in fails.",
-            "websiteResponse": "The website keeps the values and offers to retry.",
+            "condition": "Signing in fails for a system reason.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
             "resumesAt": "F03.S02"
           },
           {
             "id": "F03.A03",
             "from": "F03.S02",
+            "kind": "other",
+            "condition": "The email is unknown or the password does not match.",
+            "websiteResponse": "The website says the credentials do not match, keeps the typed email, and offers to try again.",
+            "resumesAt": "F03.S02"
+          },
+          {
+            "id": "F03.A04",
+            "from": "F03.S02",
             "kind": "empty",
             "condition": "The member has no dashboards yet.",
-            "websiteResponse": "The website shows an empty dashboard list with an option to create a dashboard.",
+            "websiteResponse": "The website invites the member to create the first dashboard.",
             "resumesAt": ""
           }
         ],
-        "outcome": "The member is signed in and sees their dashboard list; refresh keeps them signed in."
+        "outcome": "Member is signed in and sees own dashboards; a refresh still shows the signed-in list."
       },
       {
         "id": "F04",
@@ -196,7 +203,7 @@
         "role": "member",
         "category": "auth",
         "authKind": "signOut",
-        "goal": "End the session so my dashboards stay private.",
+        "goal": "Leave the account safely on this device.",
         "preconditions": [
           "Signed in."
         ],
@@ -205,7 +212,7 @@
             "id": "F04.S01",
             "kind": "user",
             "userAction": "The member chooses to sign out.",
-            "websiteResponse": "The website ends the session and shows the public landing page with options to sign up or sign in.",
+            "websiteResponse": "The website ends the session and shows the public landing page, hiding all private dashboards.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -213,15 +220,15 @@
           }
         ],
         "alternatives": [],
-        "outcome": "The member is signed out; refresh shows the public landing page and dashboards are no longer visible until sign in."
+        "outcome": "Member is signed out; a refresh shows the landing page and no dashboards."
       },
       {
         "id": "F05",
-        "name": "View dashboard list",
+        "name": "Create a dashboard",
         "role": "member",
-        "category": "browse",
+        "category": "core",
         "authKind": "none",
-        "goal": "See all my dashboards and when each was last edited.",
+        "goal": "Start a new dashboard to fill with widgets.",
         "preconditions": [
           "Signed in."
         ],
@@ -230,7 +237,7 @@
             "id": "F05.S01",
             "kind": "user",
             "userAction": "The member opens the dashboard list.",
-            "websiteResponse": "The website shows every dashboard the member owns with its name and last-edited time, most recently edited first, with options to create, open, rename, duplicate or delete.",
+            "websiteResponse": "The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -240,36 +247,12 @@
                 "change": "list"
               }
             ]
-          }
-        ],
-        "alternatives": [
+          },
           {
-            "id": "F05.A01",
-            "from": "F05.S01",
-            "kind": "empty",
-            "condition": "The member has no dashboards yet.",
-            "websiteResponse": "The website shows an empty list with an option to create a dashboard.",
-            "resumesAt": ""
-          }
-        ],
-        "outcome": "No data changes; refresh still shows the same list of the member's dashboards ordered by last edited."
-      },
-      {
-        "id": "F06",
-        "name": "Create dashboard",
-        "role": "member",
-        "category": "core",
-        "authKind": "none",
-        "goal": "Start a new empty dashboard to fill with widgets.",
-        "preconditions": [
-          "Signed in."
-        ],
-        "steps": [
-          {
-            "id": "F06.S01",
+            "id": "F05.S02",
             "kind": "user",
-            "userAction": "The member chooses Create from the dashboard list.",
-            "websiteResponse": "The website creates and saves an empty dashboard named Untitled dashboard with last-edited set to now and opens it in the editor ready for renaming and adding widgets.",
+            "userAction": "The member chooses to create a dashboard.",
+            "websiteResponse": "The website creates a dashboard named Untitled dashboard, sets its last-edited time, and opens it in the editor ready for widgets.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -283,18 +266,140 @@
         ],
         "alternatives": [
           {
-            "id": "F06.A01",
-            "from": "F06.S01",
+            "id": "F05.A01",
+            "from": "F05.S01",
+            "kind": "empty",
+            "condition": "The member has no dashboards yet.",
+            "websiteResponse": "The website invites the member to create the first dashboard.",
+            "resumesAt": "F05.S02"
+          },
+          {
+            "id": "F05.A02",
+            "from": "F05.S02",
             "kind": "failure",
             "condition": "Creating the dashboard fails.",
-            "websiteResponse": "The website keeps the list as it was and offers to retry.",
-            "resumesAt": "F06.S01"
+            "websiteResponse": "The website keeps the list as it was and offers to retry creating.",
+            "resumesAt": "F05.S02"
           }
         ],
-        "outcome": "A new dashboard named Untitled dashboard is saved and appears in the list; refresh still shows it and opening it shows an empty editor."
+        "outcome": "New Untitled dashboard exists and is open in the editor; a refresh still shows it in the list and editor."
+      },
+      {
+        "id": "F06",
+        "name": "View dashboard list",
+        "role": "member",
+        "category": "browse",
+        "authKind": "none",
+        "goal": "Find a dashboard to open.",
+        "preconditions": [
+          "Signed in."
+        ],
+        "steps": [
+          {
+            "id": "F06.S01",
+            "kind": "user",
+            "userAction": "The member opens the dashboard list.",
+            "websiteResponse": "The website shows all of the member's own dashboards with name and last-edited time ordered most-recently-edited first, with a way to open any dashboard.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Dashboard",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F06.A01",
+            "from": "F06.S01",
+            "kind": "empty",
+            "condition": "The member has no dashboards yet.",
+            "websiteResponse": "The website invites the member to create the first dashboard.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Member's own dashboards with last-edited times are visible; a refresh shows the same list."
       },
       {
         "id": "F07",
+        "name": "Open dashboard in editor",
+        "role": "member",
+        "category": "core",
+        "authKind": "none",
+        "goal": "Open a dashboard to view and change it.",
+        "preconditions": [
+          "Signed in.",
+          "At least one dashboard exists."
+        ],
+        "steps": [
+          {
+            "id": "F07.S01",
+            "kind": "user",
+            "userAction": "The member opens the dashboard list.",
+            "websiteResponse": "The website shows the member's dashboards with names and last-edited times.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Dashboard",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F07.S02",
+            "kind": "user",
+            "userAction": "The member selects a dashboard from the list.",
+            "websiteResponse": "The website opens that dashboard in the editor showing its title and all its widgets with their content, ready to view and change with autosave.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Dashboard",
+                "change": "read"
+              },
+              {
+                "noun": "Widget",
+                "change": "list"
+              }
+            ]
+          }
+        ],
+        "alternatives": [
+          {
+            "id": "F07.A01",
+            "from": "F07.S01",
+            "kind": "empty",
+            "condition": "The member has no dashboards.",
+            "websiteResponse": "The website invites the member to create the first dashboard.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F07.A02",
+            "from": "F07.S02",
+            "kind": "notFound",
+            "condition": "The chosen dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F07.A03",
+            "from": "F07.S02",
+            "kind": "empty",
+            "condition": "The dashboard has no widgets yet.",
+            "websiteResponse": "The website shows the dashboard title with no widgets and invites the member to add the first widget.",
+            "resumesAt": ""
+          }
+        ],
+        "outcome": "Chosen dashboard and its widgets are shown in the editor; a refresh shows the same content."
+      },
+      {
+        "id": "F08",
         "name": "Rename dashboard",
         "role": "member",
         "category": "manage",
@@ -306,10 +411,10 @@
         ],
         "steps": [
           {
-            "id": "F07.S01",
+            "id": "F08.S01",
             "kind": "user",
-            "userAction": "The member chooses to rename a dashboard from the list or editor.",
-            "websiteResponse": "The website shows the current dashboard name ready to edit.",
+            "userAction": "The member opens a dashboard to rename it.",
+            "websiteResponse": "The website shows the dashboard with its current name ready to rename.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -321,10 +426,10 @@
             ]
           },
           {
-            "id": "F07.S02",
+            "id": "F08.S02",
             "kind": "user",
-            "userAction": "The member edits the name and saves it.",
-            "websiteResponse": "The website updates the name, sets last-edited to now with a saved indicator, and shows the new name in the list and editor.",
+            "userAction": "The member edits the dashboard name and saves it.",
+            "websiteResponse": "The website saves the new name, updates the last-edited time, and shows the new name in the list and editor.",
             "fields": [
               "FD03"
             ],
@@ -340,49 +445,64 @@
         ],
         "alternatives": [
           {
-            "id": "F07.A01",
-            "from": "F07.S02",
-            "kind": "invalid",
-            "condition": "The name is empty.",
-            "websiteResponse": "The website marks the name as required and keeps what was typed.",
-            "resumesAt": "F07.S02"
+            "id": "F08.A01",
+            "from": "F08.S01",
+            "kind": "notFound",
+            "condition": "The dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
+            "resumesAt": ""
           },
           {
-            "id": "F07.A02",
-            "from": "F07.S02",
+            "id": "F08.A02",
+            "from": "F08.S02",
+            "kind": "invalid",
+            "condition": "The new name is empty.",
+            "websiteResponse": "The website marks the name as needing a value and keeps what was typed.",
+            "resumesAt": "F08.S02"
+          },
+          {
+            "id": "F08.A03",
+            "from": "F08.S02",
             "kind": "failure",
             "condition": "Saving the new name fails.",
             "websiteResponse": "The website keeps the typed name and offers to retry.",
-            "resumesAt": "F07.S02"
-          },
-          {
-            "id": "F07.A03",
-            "from": "F07.S01",
-            "kind": "notFound",
-            "condition": "The dashboard is gone.",
-            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
-            "resumesAt": ""
+            "resumesAt": "F08.S02"
           }
         ],
-        "outcome": "The dashboard's name is updated and its last-edited time is now; refresh shows the new name in the list and editor."
+        "outcome": "Dashboard name is updated and last-edited is refreshed; a refresh shows the new name."
       },
       {
-        "id": "F08",
+        "id": "F09",
         "name": "Duplicate dashboard",
         "role": "member",
         "category": "manage",
         "authKind": "none",
-        "goal": "Make a full copy of a dashboard with all its widgets.",
+        "goal": "Copy a dashboard with its widgets to reuse it.",
         "preconditions": [
           "Signed in.",
           "At least one dashboard exists."
         ],
         "steps": [
           {
-            "id": "F08.S01",
+            "id": "F09.S01",
+            "kind": "user",
+            "userAction": "The member opens the dashboard list.",
+            "websiteResponse": "The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.",
+            "fields": [],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "Dashboard",
+                "change": "list"
+              }
+            ]
+          },
+          {
+            "id": "F09.S02",
             "kind": "user",
             "userAction": "The member chooses Duplicate on a dashboard.",
-            "websiteResponse": "The website creates a full copy named Copy of {name} with copies of all its widgets and contents, sets its last-edited to now, and shows it alongside the original in the list.",
+            "websiteResponse": "The website creates a copy named Copy of {name} with all widgets, settings and content copied, updates its last-edited time, and shows it alongside the original.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -408,26 +528,34 @@
         ],
         "alternatives": [
           {
-            "id": "F08.A01",
-            "from": "F08.S01",
-            "kind": "notFound",
-            "condition": "The dashboard is gone.",
-            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
+            "id": "F09.A01",
+            "from": "F09.S01",
+            "kind": "empty",
+            "condition": "The member has no dashboards.",
+            "websiteResponse": "The website invites the member to create the first dashboard and offers a way to create it.",
             "resumesAt": ""
           },
           {
-            "id": "F08.A02",
-            "from": "F08.S01",
+            "id": "F09.A02",
+            "from": "F09.S02",
+            "kind": "notFound",
+            "condition": "The dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the dashboard is gone and shows the updated list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F09.A03",
+            "from": "F09.S02",
             "kind": "failure",
-            "condition": "Duplicating the dashboard fails.",
-            "websiteResponse": "The website keeps the list as it was and offers to retry.",
-            "resumesAt": "F08.S01"
+            "condition": "Copying fails.",
+            "websiteResponse": "The website keeps the list as it was and offers to retry duplicating.",
+            "resumesAt": "F09.S02"
           }
         ],
-        "outcome": "A copy named Copy of {name} with copies of all widgets is saved; refresh shows both original and copy in the list."
+        "outcome": "Copy with all widgets exists alongside the original; a refresh shows both dashboards."
       },
       {
-        "id": "F09",
+        "id": "F10",
         "name": "Delete dashboard",
         "role": "member",
         "category": "manage",
@@ -439,10 +567,10 @@
         ],
         "steps": [
           {
-            "id": "F09.S01",
+            "id": "F10.S01",
             "kind": "user",
             "userAction": "The member opens the dashboard list.",
-            "websiteResponse": "The website shows all of the member's dashboards with name and last-edited time ordered most recently edited first.",
+            "websiteResponse": "The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -454,7 +582,7 @@
             ]
           },
           {
-            "id": "F09.S02",
+            "id": "F10.S02",
             "kind": "user",
             "userAction": "The member chooses Delete on a dashboard.",
             "websiteResponse": "",
@@ -483,118 +611,43 @@
         ],
         "alternatives": [
           {
-            "id": "F09.A01",
-            "from": "F09.S01",
-            "kind": "empty",
-            "condition": "The member has no dashboards.",
-            "websiteResponse": "The website shows that there are no dashboards yet and offers to create one.",
-            "resumesAt": ""
-          },
-          {
-            "id": "F09.A02",
-            "from": "F09.S02",
-            "kind": "confirm",
-            "condition": "The member confirms the deletion.",
-            "websiteResponse": "The website deletes the dashboard with all its widgets and items and shows the dashboard list without it.",
-            "resumesAt": ""
-          },
-          {
-            "id": "F09.A03",
-            "from": "F09.S02",
-            "kind": "cancel",
-            "condition": "The member cancels the deletion.",
-            "websiteResponse": "Nothing is deleted; the website shows the dashboard list as it was.",
-            "resumesAt": ""
-          },
-          {
-            "id": "F09.A04",
-            "from": "F09.S02",
-            "kind": "notFound",
-            "condition": "The dashboard was already gone.",
-            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
-            "resumesAt": ""
-          }
-        ],
-        "outcome": "The dashboard and all its widgets are permanently gone; refresh still shows the list without it."
-      },
-      {
-        "id": "F10",
-        "name": "Open dashboard in editor",
-        "role": "member",
-        "category": "core",
-        "authKind": "none",
-        "goal": "Open a dashboard to view and change its widgets with automatic saving.",
-        "preconditions": [
-          "Signed in.",
-          "At least one dashboard exists."
-        ],
-        "steps": [
-          {
-            "id": "F10.S01",
-            "kind": "user",
-            "userAction": "The member opens the dashboard list.",
-            "websiteResponse": "The website shows all of the member's dashboards with name and last-edited time ordered most recently edited first.",
-            "fields": [],
-            "form": "",
-            "subflow": "",
-            "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "list"
-              }
-            ]
-          },
-          {
-            "id": "F10.S02",
-            "kind": "user",
-            "userAction": "The member opens a dashboard.",
-            "websiteResponse": "The website shows the editor with the dashboard name, all its widgets in order with titles, sizes and contents, and a saved indicator showing changes save automatically.",
-            "fields": [],
-            "form": "",
-            "subflow": "",
-            "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
-              {
-                "noun": "Widget",
-                "change": "list"
-              }
-            ]
-          }
-        ],
-        "alternatives": [
-          {
             "id": "F10.A01",
             "from": "F10.S01",
             "kind": "empty",
             "condition": "The member has no dashboards.",
-            "websiteResponse": "The website shows that there are no dashboards yet and offers to create one.",
+            "websiteResponse": "The website invites the member to create the first dashboard and offers a way to create it.",
             "resumesAt": ""
           },
           {
             "id": "F10.A02",
             "from": "F10.S02",
-            "kind": "empty",
-            "condition": "The dashboard has no widgets yet.",
-            "websiteResponse": "The website shows the empty editor with the dashboard name, saved indicator and an offer to add a widget.",
+            "kind": "confirm",
+            "condition": "The member confirms the deletion.",
+            "websiteResponse": "The website permanently removes the dashboard with all its widgets, items and links and shows the updated list without it.",
             "resumesAt": ""
           },
           {
             "id": "F10.A03",
             "from": "F10.S02",
+            "kind": "cancel",
+            "condition": "The member cancels the deletion.",
+            "websiteResponse": "Nothing is deleted; the website shows the dashboard list unchanged.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F10.A04",
+            "from": "F10.S02",
             "kind": "notFound",
-            "condition": "The dashboard was deleted in the meantime.",
-            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
+            "condition": "The dashboard was already deleted.",
+            "websiteResponse": "The website says the dashboard is gone and shows the updated list.",
             "resumesAt": ""
           }
         ],
-        "outcome": "No data changes by opening alone; refresh still shows the same dashboard with its saved widgets and a saved indicator."
+        "outcome": "Dashboard and its widgets are gone; a refresh still shows the list without it."
       },
       {
         "id": "F11",
-        "name": "Add widget",
+        "name": "Add widget to dashboard",
         "role": "member",
         "category": "core",
         "authKind": "none",
@@ -608,7 +661,7 @@
             "id": "F11.S01",
             "kind": "user",
             "userAction": "The member chooses to add a widget.",
-            "websiteResponse": "The website shows the widget type choices note, counter, checklist and link list with a title field.",
+            "websiteResponse": "The website shows a creation form with title and widget type choices for note, counter, checklist and link list.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -617,11 +670,11 @@
           {
             "id": "F11.S02",
             "kind": "user",
-            "userAction": "The member picks a widget type, enters a title and saves it.",
-            "websiteResponse": "The website appends the widget at the end in medium size with type defaults, updates last-edited to now and shows the widget ready to configure and use with a saved indicator.",
+            "userAction": "The member fills in the title, picks a widget type and confirms.",
+            "websiteResponse": "The website creates the medium-sized widget with default content, autosaves it, updates the dashboard last-edited time, and shows it ready to use and configure.",
             "fields": [
-              "FD05",
-              "FD04"
+              "FD04",
+              "FD05"
             ],
             "form": "",
             "subflow": "",
@@ -642,7 +695,7 @@
             "id": "F11.A01",
             "from": "F11.S02",
             "kind": "invalid",
-            "condition": "The widget title is empty.",
+            "condition": "The title is empty.",
             "websiteResponse": "The website marks the title field and keeps what was typed.",
             "resumesAt": "F11.S02"
           },
@@ -651,45 +704,49 @@
             "from": "F11.S02",
             "kind": "failure",
             "condition": "Saving fails.",
-            "websiteResponse": "The website keeps the entered values and offers to retry.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
             "resumesAt": "F11.S02"
           },
           {
             "id": "F11.A03",
-            "from": "F11.S02",
+            "from": "F11.S01",
             "kind": "cancel",
-            "condition": "The member cancels adding the widget.",
-            "websiteResponse": "Nothing is saved; the website shows the editor as it was.",
+            "condition": "The member cancels adding a widget.",
+            "websiteResponse": "Nothing is added; the website shows the dashboard as it was.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F11.A04",
+            "from": "F11.S02",
+            "kind": "notFound",
+            "condition": "The dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the dashboard is gone and shows the dashboard list.",
             "resumesAt": ""
           }
         ],
-        "outcome": "A new widget of the chosen type is appended at the end in medium size with defaults and last-edited is now; refresh shows it in place."
+        "outcome": "New widget of the chosen type appears in the dashboard; a refresh shows it with its default content."
       },
       {
         "id": "F12",
-        "name": "Rename, move and resize widget",
+        "name": "Arrange and rename widget",
         "role": "member",
         "category": "manage",
         "authKind": "none",
-        "goal": "Arrange widgets by renaming, reordering and resizing them.",
+        "goal": "Rename, resize and reposition widgets to keep the dashboard tidy.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with at least one widget is open."
+          "A dashboard with at least one widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F12.S01",
             "kind": "user",
-            "userAction": "The member opens the dashboard editor.",
-            "websiteResponse": "The website shows the dashboard name with all its widgets in order with titles, sizes and contents and a saved indicator.",
+            "userAction": "The member views the widgets in the open dashboard.",
+            "websiteResponse": "The website shows the dashboard title with its widgets in order, each with title, size and content.",
             "fields": [],
             "form": "",
             "subflow": "",
             "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
               {
                 "noun": "Widget",
                 "change": "list"
@@ -699,10 +756,11 @@
           {
             "id": "F12.S02",
             "kind": "user",
-            "userAction": "The member edits a widget title and saves it.",
-            "websiteResponse": "The website saves the new title, updates last-edited to now and shows the widget with the new title and a saved indicator.",
+            "userAction": "The member edits a widget title and size and saves.",
+            "websiteResponse": "The website autosaves the new title and size, updates the dashboard last-edited time, and shows the updated widget.",
             "fields": [
-              "FD04"
+              "FD04",
+              "FD06"
             ],
             "form": "",
             "subflow": "",
@@ -721,29 +779,8 @@
             "id": "F12.S03",
             "kind": "user",
             "userAction": "The member moves a widget earlier or later relative to other widgets.",
-            "websiteResponse": "The website saves the new order, updates last-edited to now and shows the widget in its new place; move choices for unavailable directions are disabled.",
+            "websiteResponse": "The website autosaves the new order, updates the dashboard last-edited time, and shows the widgets in the new order.",
             "fields": [],
-            "form": "",
-            "subflow": "",
-            "effects": [
-              {
-                "noun": "Widget",
-                "change": "update"
-              },
-              {
-                "noun": "Dashboard",
-                "change": "update"
-              }
-            ]
-          },
-          {
-            "id": "F12.S04",
-            "kind": "user",
-            "userAction": "The member changes a widget size between small, medium and large.",
-            "websiteResponse": "The website saves the new size, updates last-edited to now and shows the widget with the new size and a saved indicator.",
-            "fields": [
-              "FD06"
-            ],
             "form": "",
             "subflow": "",
             "effects": [
@@ -763,52 +800,44 @@
             "id": "F12.A01",
             "from": "F12.S01",
             "kind": "empty",
-            "condition": "The dashboard has no widgets.",
-            "websiteResponse": "The website shows the empty editor and offers to add a widget.",
+            "condition": "There are no widgets yet.",
+            "websiteResponse": "The website says the dashboard has no widgets yet and offers a way to add one.",
             "resumesAt": ""
           },
           {
             "id": "F12.A02",
             "from": "F12.S02",
             "kind": "invalid",
-            "condition": "The widget title is empty.",
-            "websiteResponse": "The website marks the title field and keeps what was typed.",
+            "condition": "The title is empty.",
+            "websiteResponse": "The website marks the title field and keeps what was typed and the chosen size.",
             "resumesAt": "F12.S02"
           },
           {
             "id": "F12.A03",
             "from": "F12.S02",
             "kind": "failure",
-            "condition": "Saving the title fails.",
-            "websiteResponse": "The website keeps the entered title and offers to retry.",
+            "condition": "Saving the title or size fails.",
+            "websiteResponse": "The website keeps the typed title and chosen size and offers to retry.",
             "resumesAt": "F12.S02"
           },
           {
             "id": "F12.A04",
-            "from": "F12.S04",
-            "kind": "invalid",
-            "condition": "No size is selected.",
-            "websiteResponse": "The website marks the size choice and keeps the widget unchanged.",
-            "resumesAt": "F12.S04"
+            "from": "F12.S03",
+            "kind": "failure",
+            "condition": "Saving the new order fails.",
+            "websiteResponse": "The website keeps the previous order and offers to retry moving.",
+            "resumesAt": "F12.S03"
           },
           {
             "id": "F12.A05",
-            "from": "F12.S04",
-            "kind": "failure",
-            "condition": "Saving the size fails.",
-            "websiteResponse": "The website keeps the previous size and offers to retry.",
-            "resumesAt": "F12.S04"
-          },
-          {
-            "id": "F12.A06",
             "from": "F12.S02",
             "kind": "notFound",
-            "condition": "The widget was removed in the meantime.",
-            "websiteResponse": "The website says the widget is gone and shows the remaining widgets.",
+            "condition": "The widget or dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the widget is gone and shows the dashboard as it is now.",
             "resumesAt": ""
           }
         ],
-        "outcome": "Widget title, order and size are updated and last-edited is now; refresh shows the widget in its new place with new title and size."
+        "outcome": "Widget title, size and order are updated and autosaved; a refresh shows the same arrangement."
       },
       {
         "id": "F13",
@@ -816,25 +845,21 @@
         "role": "member",
         "category": "manage",
         "authKind": "none",
-        "goal": "Permanently remove a widget I no longer need.",
+        "goal": "Remove a widget I no longer need.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with at least one widget is open."
+          "A dashboard with at least one widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F13.S01",
             "kind": "user",
-            "userAction": "The member opens the dashboard editor.",
-            "websiteResponse": "The website shows the dashboard with its widgets in order.",
+            "userAction": "The member views the widgets in the open dashboard.",
+            "websiteResponse": "The website shows the dashboard with its widgets in order, each with title and content.",
             "fields": [],
             "form": "",
             "subflow": "",
             "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
               {
                 "noun": "Widget",
                 "change": "list"
@@ -874,8 +899,8 @@
             "id": "F13.A01",
             "from": "F13.S01",
             "kind": "empty",
-            "condition": "The dashboard has no widgets.",
-            "websiteResponse": "The website shows the empty editor and offers to add a widget.",
+            "condition": "There are no widgets yet.",
+            "websiteResponse": "The website says the dashboard has no widgets yet and offers a way to add one.",
             "resumesAt": ""
           },
           {
@@ -883,7 +908,7 @@
             "from": "F13.S02",
             "kind": "confirm",
             "condition": "The member confirms the removal.",
-            "websiteResponse": "The website deletes the widget with its items, updates last-edited to now and shows the remaining widgets in order.",
+            "websiteResponse": "The website permanently removes the widget with its content, autosaves the dashboard, updates last-edited, and shows the dashboard without it.",
             "resumesAt": ""
           },
           {
@@ -891,19 +916,19 @@
             "from": "F13.S02",
             "kind": "cancel",
             "condition": "The member cancels the removal.",
-            "websiteResponse": "Nothing is deleted; the website shows the dashboard as it was.",
+            "websiteResponse": "Nothing is removed; the website shows the dashboard unchanged.",
             "resumesAt": ""
           },
           {
             "id": "F13.A04",
             "from": "F13.S02",
             "kind": "notFound",
-            "condition": "The widget was already gone.",
-            "websiteResponse": "The website says the widget is gone and shows the dashboard with remaining widgets.",
+            "condition": "The widget was already removed.",
+            "websiteResponse": "The website says the widget is gone and shows the dashboard as it is now.",
             "resumesAt": ""
           }
         ],
-        "outcome": "The widget and its items are permanently gone and last-edited is now; refresh shows the dashboard without it."
+        "outcome": "Widget and its content are gone; a refresh still shows the dashboard without it."
       },
       {
         "id": "F14",
@@ -911,36 +936,17 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
-        "goal": "Keep plain text in a note widget.",
+        "goal": "Capture plain text in a note widget.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with a note widget is open."
+          "A dashboard with a note widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F14.S01",
             "kind": "user",
-            "userAction": "The member opens a dashboard with a note widget.",
-            "websiteResponse": "The website shows the editor with the note widget and its saved text and a saved indicator.",
-            "fields": [],
-            "form": "",
-            "subflow": "",
-            "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
-              {
-                "noun": "Widget",
-                "change": "read"
-              }
-            ]
-          },
-          {
-            "id": "F14.S02",
-            "kind": "user",
-            "userAction": "The member edits the note text.",
-            "websiteResponse": "The website autosaves the text immediately, updates last-edited to now and shows the updated text with a saved indicator.",
+            "userAction": "The member edits the plain text inside a note widget.",
+            "websiteResponse": "The website autosaves the text, updates the dashboard last-edited time, and shows the updated note.",
             "fields": [
               "FD07"
             ],
@@ -961,30 +967,30 @@
         "alternatives": [
           {
             "id": "F14.A01",
-            "from": "F14.S02",
+            "from": "F14.S01",
             "kind": "invalid",
             "condition": "The text is longer than 5000 characters.",
-            "websiteResponse": "The website marks the text and keeps what was typed.",
-            "resumesAt": "F14.S02"
+            "websiteResponse": "The website marks the text as too long and keeps what was typed.",
+            "resumesAt": "F14.S01"
           },
           {
             "id": "F14.A02",
-            "from": "F14.S02",
+            "from": "F14.S01",
             "kind": "failure",
-            "condition": "Autosaving fails.",
+            "condition": "Saving fails.",
             "websiteResponse": "The website keeps the typed text and offers to retry.",
-            "resumesAt": "F14.S02"
+            "resumesAt": "F14.S01"
           },
           {
             "id": "F14.A03",
             "from": "F14.S01",
             "kind": "notFound",
             "condition": "The note widget or dashboard was deleted in the meantime.",
-            "websiteResponse": "The website says it is gone and shows the dashboard list.",
+            "websiteResponse": "The website says the widget is gone and shows the dashboard as it is now.",
             "resumesAt": ""
           }
         ],
-        "outcome": "Note text is saved and last-edited is now; refresh shows the same text in the note widget."
+        "outcome": "Note text is saved automatically; a refresh shows the same text."
       },
       {
         "id": "F15",
@@ -992,36 +998,17 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
-        "goal": "Track a count with a label using increase and decrease.",
+        "goal": "Track a number with a label using a counter.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with a counter widget is open."
+          "A dashboard with a counter widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F15.S01",
             "kind": "user",
-            "userAction": "The member opens a dashboard with a counter widget.",
-            "websiteResponse": "The website shows the editor with the counter widget label and value and a saved indicator.",
-            "fields": [],
-            "form": "",
-            "subflow": "",
-            "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
-              {
-                "noun": "Widget",
-                "change": "read"
-              }
-            ]
-          },
-          {
-            "id": "F15.S02",
-            "kind": "user",
-            "userAction": "The member edits the counter label.",
-            "websiteResponse": "The website autosaves the label, updates last-edited to now and shows the updated label with a saved indicator.",
+            "userAction": "The member sets the counter label and saves.",
+            "websiteResponse": "The website autosaves the label, updates the dashboard last-edited time, and shows the updated label.",
             "fields": [
               "FD08"
             ],
@@ -1039,10 +1026,10 @@
             ]
           },
           {
-            "id": "F15.S03",
+            "id": "F15.S02",
             "kind": "user",
-            "userAction": "The member chooses increase or decrease on the counter.",
-            "websiteResponse": "The website changes the value by one, allows negative values, saves immediately, updates last-edited to now and shows the new number with a saved indicator.",
+            "userAction": "The member presses plus or minus on the counter.",
+            "websiteResponse": "The website changes the value by 1, autosaves it, updates the dashboard last-edited time, and shows the current count.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -1061,38 +1048,38 @@
         "alternatives": [
           {
             "id": "F15.A01",
-            "from": "F15.S02",
+            "from": "F15.S01",
             "kind": "invalid",
-            "condition": "The label is longer than 80 characters.",
+            "condition": "The label is empty.",
             "websiteResponse": "The website marks the label field and keeps what was typed.",
-            "resumesAt": "F15.S02"
+            "resumesAt": "F15.S01"
           },
           {
             "id": "F15.A02",
-            "from": "F15.S02",
+            "from": "F15.S01",
             "kind": "failure",
             "condition": "Saving the label fails.",
             "websiteResponse": "The website keeps the typed label and offers to retry.",
-            "resumesAt": "F15.S02"
+            "resumesAt": "F15.S01"
           },
           {
             "id": "F15.A03",
-            "from": "F15.S01",
-            "kind": "notFound",
-            "condition": "The counter widget or dashboard was deleted in the meantime.",
-            "websiteResponse": "The website says it is gone and shows the dashboard list.",
-            "resumesAt": ""
+            "from": "F15.S02",
+            "kind": "failure",
+            "condition": "Saving the new value fails.",
+            "websiteResponse": "The website keeps the previous count and offers to retry.",
+            "resumesAt": "F15.S02"
           },
           {
             "id": "F15.A04",
-            "from": "F15.S03",
-            "kind": "failure",
-            "condition": "Saving the new value fails.",
-            "websiteResponse": "The website keeps the previous value and offers to retry.",
-            "resumesAt": "F15.S03"
+            "from": "F15.S01",
+            "kind": "notFound",
+            "condition": "The counter widget or dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the widget is gone and shows the dashboard as it is now.",
+            "resumesAt": ""
           }
         ],
-        "outcome": "Counter label and value are saved and last-edited is now; refresh shows the same label and value."
+        "outcome": "Counter label and value are saved; a refresh shows the same label and number."
       },
       {
         "id": "F16",
@@ -1100,29 +1087,21 @@
         "role": "member",
         "category": "core",
         "authKind": "none",
-        "goal": "Track to-dos by adding items and ticking them off.",
+        "goal": "Track tickable tasks in a checklist.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with a checklist widget is open."
+          "A dashboard with a checklist widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F16.S01",
             "kind": "user",
-            "userAction": "The member opens a dashboard with a checklist widget.",
-            "websiteResponse": "The website shows the editor with the checklist widget and its items with ticked states and a saved indicator.",
+            "userAction": "The member views the checklist widget.",
+            "websiteResponse": "The website shows the checklist items with their ticked or unticked states.",
             "fields": [],
             "form": "",
             "subflow": "",
             "effects": [
-              {
-                "noun": "Dashboard",
-                "change": "read"
-              },
-              {
-                "noun": "Widget",
-                "change": "read"
-              },
               {
                 "noun": "ChecklistItem",
                 "change": "list"
@@ -1132,8 +1111,8 @@
           {
             "id": "F16.S02",
             "kind": "user",
-            "userAction": "The member enters item text and adds it to the checklist.",
-            "websiteResponse": "The website saves the new unticked item, updates last-edited to now and shows it with the other items and a saved indicator.",
+            "userAction": "The member adds an item with text to the checklist.",
+            "websiteResponse": "The website autosaves the new item as unticked, updates the dashboard last-edited time, and shows it with the other items.",
             "fields": [
               "FD09"
             ],
@@ -1154,7 +1133,7 @@
             "id": "F16.S03",
             "kind": "user",
             "userAction": "The member ticks or unticks a checklist item.",
-            "websiteResponse": "The website saves the new ticked state immediately, updates last-edited to now and shows the updated tick.",
+            "websiteResponse": "The website toggles the state, autosaves it, updates the dashboard last-edited time, and shows the updated states.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -1162,6 +1141,25 @@
               {
                 "noun": "ChecklistItem",
                 "change": "update"
+              },
+              {
+                "noun": "Dashboard",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F16.S04",
+            "kind": "user",
+            "userAction": "The member chooses Remove on a checklist item.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "ChecklistItem",
+                "change": "delete"
               },
               {
                 "noun": "Dashboard",
@@ -1176,7 +1174,7 @@
             "from": "F16.S01",
             "kind": "empty",
             "condition": "The checklist has no items yet.",
-            "websiteResponse": "The website shows the checklist widget with no items and an offer to add one.",
+            "websiteResponse": "The website says there are no items yet and invites the member to add one.",
             "resumesAt": "F16.S02"
           },
           {
@@ -1184,53 +1182,69 @@
             "from": "F16.S02",
             "kind": "invalid",
             "condition": "The item text is empty.",
-            "websiteResponse": "The website marks the item field and keeps what was typed.",
+            "websiteResponse": "The website marks the item text field and keeps what was typed.",
             "resumesAt": "F16.S02"
           },
           {
             "id": "F16.A03",
             "from": "F16.S02",
             "kind": "failure",
-            "condition": "Saving the item fails.",
+            "condition": "Saving the new item fails.",
             "websiteResponse": "The website keeps the typed text and offers to retry.",
             "resumesAt": "F16.S02"
           },
           {
             "id": "F16.A04",
             "from": "F16.S03",
-            "kind": "notFound",
-            "condition": "The item was already gone.",
-            "websiteResponse": "The website says the item is gone and shows the remaining items.",
-            "resumesAt": ""
+            "kind": "failure",
+            "condition": "Saving the tick change fails.",
+            "websiteResponse": "The website keeps the previous ticked state and offers to retry.",
+            "resumesAt": "F16.S03"
           },
           {
             "id": "F16.A05",
-            "from": "F16.S03",
-            "kind": "failure",
-            "condition": "Saving the tick change fails.",
-            "websiteResponse": "The website keeps the previous tick state and offers to retry.",
-            "resumesAt": "F16.S03"
+            "from": "F16.S04",
+            "kind": "confirm",
+            "condition": "The member confirms the removal.",
+            "websiteResponse": "The website permanently removes the item, autosaves the checklist, updates last-edited, and shows the updated list.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F16.A06",
+            "from": "F16.S04",
+            "kind": "cancel",
+            "condition": "The member cancels the removal.",
+            "websiteResponse": "Nothing is removed; the website shows the checklist unchanged.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F16.A07",
+            "from": "F16.S01",
+            "kind": "notFound",
+            "condition": "The checklist widget or dashboard was deleted in the meantime.",
+            "websiteResponse": "The website says the widget is gone and shows the dashboard as it is now.",
+            "resumesAt": ""
           }
         ],
-        "outcome": "Checklist items and their ticked states are saved and last-edited is now; refresh shows the same items with the same ticks."
+        "outcome": "Checklist items and tick states are saved; a refresh shows the same items and states."
       },
       {
         "id": "F17",
-        "name": "Use link list widget",
+        "name": "Use link-list widget",
         "role": "member",
         "category": "core",
         "authKind": "none",
-        "goal": "Keep titles with web addresses and open them.",
+        "goal": "Keep titles and web addresses handy and open them.",
         "preconditions": [
           "Signed in.",
-          "A dashboard with a link list widget is open."
+          "A dashboard with a link-list widget is open in the editor."
         ],
         "steps": [
           {
             "id": "F17.S01",
             "kind": "user",
-            "userAction": "The member views the link list widget in the open dashboard.",
-            "websiteResponse": "The website shows the widget title and all its saved link entries with their titles and addresses, with a saved indicator and last-edited time for the dashboard.",
+            "userAction": "The member views the link-list widget.",
+            "websiteResponse": "The website shows the widget title and all saved link titles with their addresses, with options to add a link, edit or remove an entry, and open a link.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -1244,8 +1258,8 @@
           {
             "id": "F17.S02",
             "kind": "user",
-            "userAction": "The member enters a link title and web address and saves the new entry.",
-            "websiteResponse": "The website saves the entry, prepending https when the address starts without http(s), shows it with the other entries, and updates last-edited to now with a saved indicator.",
+            "userAction": "The member adds a link title and address and saves it.",
+            "websiteResponse": "The website saves the entry automatically, shows it in the link list, and updates the dashboard last-edited time.",
             "fields": [
               "FD10",
               "FD11"
@@ -1266,8 +1280,30 @@
           {
             "id": "F17.S03",
             "kind": "user",
-            "userAction": "The member chooses a link entry to open.",
-            "websiteResponse": "The website opens its web address in a new tab and keeps the dashboard unchanged.",
+            "userAction": "The member edits a link title or address and saves it.",
+            "websiteResponse": "The website saves the changes automatically, shows the updated entry, and updates the dashboard last-edited time.",
+            "fields": [
+              "FD10",
+              "FD11"
+            ],
+            "form": "",
+            "subflow": "",
+            "effects": [
+              {
+                "noun": "LinkEntry",
+                "change": "update"
+              },
+              {
+                "noun": "Dashboard",
+                "change": "update"
+              }
+            ]
+          },
+          {
+            "id": "F17.S04",
+            "kind": "user",
+            "userAction": "The member selects a link entry to open it.",
+            "websiteResponse": "The website opens the web address in a new tab and keeps the dashboard unchanged.",
             "fields": [],
             "form": "",
             "subflow": "",
@@ -1277,6 +1313,25 @@
                 "change": "read"
               }
             ]
+          },
+          {
+            "id": "F17.S05",
+            "kind": "user",
+            "userAction": "The member chooses to remove a link entry.",
+            "websiteResponse": "",
+            "fields": [],
+            "form": "",
+            "subflow": "STD01",
+            "effects": [
+              {
+                "noun": "LinkEntry",
+                "change": "delete"
+              },
+              {
+                "noun": "Dashboard",
+                "change": "update"
+              }
+            ]
           }
         ],
         "alternatives": [
@@ -1284,15 +1339,15 @@
             "id": "F17.A01",
             "from": "F17.S01",
             "kind": "empty",
-            "condition": "No link entries are saved in the widget yet.",
-            "websiteResponse": "The website shows the link list widget with no entries and invites adding the first title and web address.",
+            "condition": "The link list has no entries yet.",
+            "websiteResponse": "The website shows the widget with no entries and invites the member to add the first link.",
             "resumesAt": "F17.S02"
           },
           {
             "id": "F17.A02",
             "from": "F17.S02",
             "kind": "invalid",
-            "condition": "The title is empty or the web address is missing or not a valid web address.",
+            "condition": "The title is empty or the address does not start with http:// or https://.",
             "websiteResponse": "The website marks what is wrong and keeps what was typed.",
             "resumesAt": "F17.S02"
           },
@@ -1300,27 +1355,51 @@
             "id": "F17.A03",
             "from": "F17.S02",
             "kind": "failure",
-            "condition": "Saving fails.",
+            "condition": "Saving the new entry fails.",
             "websiteResponse": "The website keeps the typed values and offers to retry.",
             "resumesAt": "F17.S02"
           },
           {
             "id": "F17.A04",
             "from": "F17.S03",
-            "kind": "notFound",
-            "condition": "The chosen link entry was removed in the meantime.",
-            "websiteResponse": "The website says the link entry is gone and shows the remaining entries.",
-            "resumesAt": "F17.S01"
+            "kind": "invalid",
+            "condition": "The title is empty or the address does not start with http:// or https://.",
+            "websiteResponse": "The website marks what is wrong and keeps what was typed.",
+            "resumesAt": "F17.S03"
+          },
+          {
+            "id": "F17.A05",
+            "from": "F17.S03",
+            "kind": "failure",
+            "condition": "Saving the edited entry fails.",
+            "websiteResponse": "The website keeps the typed values and offers to retry.",
+            "resumesAt": "F17.S03"
+          },
+          {
+            "id": "F17.A06",
+            "from": "F17.S05",
+            "kind": "confirm",
+            "condition": "The member confirms the removal.",
+            "websiteResponse": "The website shows the link list without the entry and updates the dashboard last-edited time.",
+            "resumesAt": ""
+          },
+          {
+            "id": "F17.A07",
+            "from": "F17.S05",
+            "kind": "cancel",
+            "condition": "The member cancels the removal.",
+            "websiteResponse": "Nothing is removed; the website shows the link list unchanged.",
+            "resumesAt": ""
           }
         ],
-        "outcome": "Link entries are saved and last-edited is now; refresh shows the same entries and choosing one opens its address in a new tab."
+        "outcome": "Link entries are saved and selecting one opens it in a new tab; a refresh shows the same entries."
       }
     ],
     "fields": [
       {
         "id": "FD01",
         "label": "Email",
-        "meaning": "Account identifier used to sign in and own dashboards",
+        "meaning": "Member account address used to sign in and own dashboards",
         "type": "email",
         "required": true,
         "min": null,
@@ -1332,14 +1411,14 @@
       {
         "id": "FD02",
         "label": "Password",
-        "meaning": "Secret that protects the member's dashboards",
+        "meaning": "Secret that proves ownership of the member account",
         "type": "password",
         "required": true,
         "min": 8,
-        "max": null,
+        "max": 128,
         "options": [],
         "optionsFrom": "",
-        "example": "tidy-morning-42"
+        "example": "Sunny-day-42"
       },
       {
         "id": "FD03",
@@ -1351,24 +1430,24 @@
         "max": 100,
         "options": [],
         "optionsFrom": "",
-        "example": "Morning routine"
+        "example": "Morning focus"
       },
       {
         "id": "FD04",
         "label": "Widget title",
-        "meaning": "How the member refers to the widget inside the dashboard",
+        "meaning": "How the member refers to the widget inside its dashboard",
         "type": "text",
         "required": true,
         "min": 1,
-        "max": 80,
+        "max": 100,
         "options": [],
         "optionsFrom": "",
-        "example": "Water intake"
+        "example": "Today's note"
       },
       {
         "id": "FD05",
         "label": "Widget type",
-        "meaning": "What kind of content the widget holds",
+        "meaning": "What kind of content the widget holds and how it can be used",
         "type": "singleChoice",
         "required": true,
         "min": null,
@@ -1385,7 +1464,7 @@
       {
         "id": "FD06",
         "label": "Widget size",
-        "meaning": "How large the widget appears relative to other widgets",
+        "meaning": "How much space the widget takes relative to other widgets",
         "type": "singleChoice",
         "required": true,
         "min": null,
@@ -1401,31 +1480,31 @@
       {
         "id": "FD07",
         "label": "Note text",
-        "meaning": "Plain text kept in a note widget",
+        "meaning": "Plain text kept inside a note widget",
         "type": "longText",
         "required": false,
         "min": null,
         "max": 5000,
         "options": [],
         "optionsFrom": "",
-        "example": "Call dentist on Tuesday"
+        "example": "Call dentist at noon."
       },
       {
         "id": "FD08",
         "label": "Counter label",
         "meaning": "What the counter number counts",
         "type": "text",
-        "required": false,
-        "min": null,
+        "required": true,
+        "min": 1,
         "max": 80,
         "options": [],
         "optionsFrom": "",
-        "example": "Glasses of water"
+        "example": "Cups of water"
       },
       {
         "id": "FD09",
         "label": "Checklist item text",
-        "meaning": "Text of a single to-do inside a checklist widget",
+        "meaning": "One task row inside a checklist widget",
         "type": "text",
         "required": true,
         "min": 1,
@@ -1441,22 +1520,22 @@
         "type": "text",
         "required": true,
         "min": 1,
-        "max": 120,
+        "max": 200,
         "options": [],
         "optionsFrom": "",
-        "example": "Favorite recipe"
+        "example": "Design inspiration"
       },
       {
         "id": "FD11",
         "label": "Link address",
-        "meaning": "Web address that opens in a new tab when chosen",
+        "meaning": "Web address opened when the link entry is selected",
         "type": "url",
         "required": true,
         "min": null,
-        "max": null,
+        "max": 2000,
         "options": [],
         "optionsFrom": "",
-        "example": "https://example.com/recipe"
+        "example": "https://example.com/article"
       }
     ],
     "forms": [
@@ -1466,14 +1545,6 @@
         "fields": [
           "FD01",
           "FD02"
-        ]
-      },
-      {
-        "id": "FM02",
-        "name": "Widget title and size",
-        "fields": [
-          "FD04",
-          "FD06"
         ]
       }
     ],
@@ -1516,19 +1587,21 @@
     "assumptions": [
       {
         "id": "A11",
-        "text": "Dashboards in the list are ordered most recently edited first.",
-        "kind": "behavior",
-        "affects": [
-          "F05"
-        ]
+        "text": "New widgets start titled by type (e.g. 'New note') at medium size with default content: empty note text, counter label empty and value 0, empty checklist and link list.",
+        "kind": "data",
+        "affects": []
       },
       {
         "id": "A12",
-        "text": "Moving a widget beyond the start or end keeps it in place; move controls for unavailable directions are disabled.",
+        "text": "Dashboard list is ordered most-recently-edited first; an empty list invites creating the first dashboard instead of showing a dead end.",
         "kind": "behavior",
-        "affects": [
-          "F12"
-        ]
+        "affects": []
+      },
+      {
+        "id": "A13",
+        "text": "Removing a widget permanently removes its items and links, and removing a checklist item or link entry permanently removes that row, with no trash or undo.",
+        "kind": "behavior",
+        "affects": []
       }
     ],
     "questions": []

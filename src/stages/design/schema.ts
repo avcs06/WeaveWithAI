@@ -2,9 +2,10 @@ import { z } from 'zod';
 import {
   CONTENT_WIDTHS,
   NODE_ROLES,
-  SCREEN_TEMPLATES,
+  SCREEN_KINDS,
   SECTION_KINDS,
   STATES,
+  SURFACES,
 } from '../../config/design';
 import {
   dsNames,
@@ -12,16 +13,94 @@ import {
   spacingKeys,
   typeScaleKeys,
 } from '../../ds/inventory';
+import { DISPLAY_FONTS, MONO_FONTS, UI_FONTS } from '../../config/fonts';
 import { Question } from '../flows/schema';
+import { boxSchemas } from './schema-boxes';
+
+export type { NodeBox, NodeLayout, Region, Shell } from './schema-boxes';
+export { SIZING } from './schema-boxes';
 
 // Every field is required; "none" is "", 0, [], null or `none`. Nesting stays
 // within 8 levels (Meta allows 10). Spacing keys and type sizes are enums from
 // the inventory, so a call cannot use a gap or a text size the design system
 // does not have. A node says what it is in `what`, which the coding stage
-// reads; `component`, `size` and `look` serve the validators and the layout
-// skeleton and are stripped before the coding stage sees the node.
+// reads; `component` serves the validators and the layout skeleton and is
+// stripped before the coding stage sees the node. `size` and `look` are ""
+// for the theme's defaults, which the app applies everywhere; a node that
+// overrides one says why, and only overrides reach the coding stage.
 
-export const SIZING = ['fill', 'content', 'fixed'] as const;
+/** How tinted a surface is; the brand color itself is never neutral. */
+const SURFACE_CHROMA = ['neutral', 'muted', 'balanced', 'vivid'] as const;
+/** How tinted the base set is; it carries most components, so never vivid. */
+const BASE_CHROMA = ['neutral', 'muted', 'balanced'] as const;
+
+/**
+ * The design direction the brief call picks, once per app; the theme call
+ * turns it into exact values.
+ */
+export const Brief = z.object({
+  audience: z.string(),
+  personality: z
+    .array(z.string())
+    .describe('3 to 5 adjectives for the look and feel'),
+  voice: z
+    .string()
+    .describe('Tone of the copy, e.g. "plain, warm, second person"'),
+  density: z.enum(['compact', 'comfortable', 'spacious']),
+  feel: z
+    .array(z.string())
+    .describe('1 or 2 words for the site\'s style, e.g. minimal, retro'),
+  colorScheme: z.enum(['light', 'dark', 'both']),
+  seedHue: z
+    .number()
+    .describe('Brand hue as a number of degrees on the color wheel, 0 to 360'),
+  seedChroma: z.enum(['muted', 'balanced', 'vivid']),
+  pageHue: z
+    .number()
+    .describe('Hue of the page background, OKLCH degrees, 0 to 360'),
+  pageChroma: z
+    .enum(SURFACE_CHROMA)
+    .describe(
+      'neutral is white or grey with no tint, muted a faint tint, balanced and vivid a clear color',
+    ),
+  frameHue: z
+    .number()
+    .describe(
+      'Hue of the header, sidebars and footer, OKLCH degrees, 0 to 360',
+    ),
+  frameChroma: z.enum(SURFACE_CHROMA),
+  baseHue: z
+    .number()
+    .describe(
+      'Hue of the base set most components use (secondary buttons, inputs, cards, tables, menus), OKLCH degrees, 0 to 360',
+    ),
+  baseChroma: z
+    .enum(BASE_CHROMA)
+    .describe('neutral is grey with no tint, muted a faint tint, balanced a clear one'),
+  fonts: z.object({
+    ui: z.enum(UI_FONTS),
+    display: z.enum(DISPLAY_FONTS),
+    mono: z.enum(MONO_FONTS),
+  }),
+  radius: z.enum(['sharp', 'soft', 'round', 'pill']),
+  focusRing: z.enum(['halo', 'offset', 'glow']),
+  entities: z
+    .array(
+      z.object({
+        noun: z.string().describe('A noun from the scope vocabulary'),
+        colored: z
+          .boolean()
+          .describe('True when users must tell its records apart at a glance'),
+        hue: z.number().describe('Degrees, 0 to 360, when colored; 0 if not'),
+      }),
+    )
+    .describe('Every noun of the scope vocabulary once; at most 3 colored'),
+  imagery: z.enum(['none', 'icons', 'illustrations']),
+  references: z
+    .array(z.string())
+    .describe('Style references named in the idea; []'),
+});
+export type Brief = z.infer<typeof Brief>;
 
 /**
  * The screens schema for an inventory: the IA call's shape, one screen's
@@ -29,60 +108,19 @@ export const SIZING = ['fill', 'content', 'fixed'] as const;
  */
 export function makeScreensSchema(inv: Inventory) {
   const names = dsNames(inv);
-  const spacing = spacingKeys(inv);
   const typeScale = typeScaleKeys(inv);
   const sizes = [
     ...new Set(inv.components.flatMap((c) => c.variants.size ?? [])),
   ].sort();
-
-  const Box = z.object({
-    width: z
-      .enum(SIZING)
-      .describe('fill the parent, size to the content, or a fixed px width'),
-    widthPx: z.number().int().describe('Only when width is fixed; 0 otherwise'),
-    height: z
-      .enum(SIZING)
-      .describe(
-        'A design-system component has its height from the inventory: say content',
-      ),
-    heightPx: z.number().int().describe('Only when height is fixed; 0 otherwise'),
-    minHeightPx: z.number().int().describe('0 for none'),
-    span: z
-      .number()
-      .int()
-      .describe('Grid columns this node spans in a grid parent; 1 otherwise'),
-  });
-
-  const Layout = z.object({
-    direction: z.enum(['row', 'column', 'grid']),
-    gap: z
-      .enum(spacing)
-      .describe('A spacing token key between the children: 4 means 16px'),
-    padding: z
-      .enum(spacing)
-      .describe('A spacing token key inside the box, all sides; 0 for none'),
-    columns: z
-      .number()
-      .int()
-      .describe('Grid columns on desktop, 1 to 4; 0 for row and column'),
-    align: z
-      .enum(['start', 'center', 'end', 'stretch'])
-      .describe('Children across the direction'),
-    justify: z
-      .enum(['start', 'center', 'end', 'between'])
-      .describe('Children along the direction'),
-    wrap: z.boolean().describe('A row that wraps when its children do not fit'),
-  });
-
-  /** A new component's root or part: a box with its own padding and gap. */
-  const ComponentBox = Box.omit({ span: true }).extend({
-    padding: z.enum(spacing),
-    gap: z.enum(spacing),
-  });
+  const { Box, Layout, ComponentBox, Shell } = boxSchemas(inv);
 
   const Node = z.object({
-    id: z.string().describe('S03.n07'),
-    section: z.string().describe('S03.sec2'),
+    id: z
+      .string()
+      .describe('S03.n07; a node of a shell region is SH1.n01'),
+    section: z
+      .string()
+      .describe('S03.sec2, or the shell region it sits in, SH1.r1'),
     parent: z
       .string()
       .describe('Parent node ID; "" for a top-level node of the section'),
@@ -102,10 +140,17 @@ export function makeScreensSchema(inv: Inventory) {
       ),
     size: z
       .enum([...sizes, ''])
-      .describe('The component\'s size, when it has sizes; ""'),
+      .describe('"" for the app\'s default; a size of the component only to override it'),
     look: z
       .string()
-      .describe('A look the component lists, e.g. "ghost rounded"; ""'),
+      .describe(
+        '"" for the app\'s default; a look the component lists, e.g. "ghost rounded", or base for the design system\'s plain look, only to override it',
+      ),
+    overrideReason: z
+      .string()
+      .describe(
+        'Why this node sets its own size or look instead of the app\'s defaults; "" when it uses them',
+      ),
     box: Box,
     layout: Layout.nullable().describe(
       'For a container with child nodes; null for a leaf',
@@ -139,11 +184,20 @@ export function makeScreensSchema(inv: Inventory) {
     kind: z.enum(SECTION_KINDS),
     title: z.string(),
     purpose: z.string(),
+    box: Box.describe(
+      'Its size in the screen layout: a main section fills, a side panel is fixed, e.g. 280 wide',
+    ),
     layout: Layout,
+    surface: z
+      .enum(SURFACES)
+      .describe(
+        'Its background: page for most; frame, brand or accent set a band apart on a marketing page',
+      ),
     flowSteps: z.array(z.string()),
   });
 
-  const Screen = z.object({
+  const spacing = spacingKeys(inv);
+  const IaScreen = z.object({
     id: z.string().describe('S01'),
     name: z.string(),
     type: z.enum(['page', 'dialog', 'drawer']),
@@ -155,10 +209,27 @@ export function makeScreensSchema(inv: Inventory) {
     parent: z
       .string()
       .describe('Page that opens this dialog or drawer; "" for pages'),
-    template: z.enum(SCREEN_TEMPLATES),
+    kind: z
+      .enum(SCREEN_KINDS)
+      .describe(
+        'app: a task screen, sign in included; marketing: public content such as a landing or pricing page',
+      ),
+    framed: z
+      .boolean()
+      .describe(
+        "True for a page in its kind's layout, with its header, sidebars and footer; false for a page with no frame, such as sign in, and always for dialogs and drawers",
+      ),
     contentWidth: z
       .enum(CONTENT_WIDTHS)
-      .describe('The content column: narrow 640, medium 960, wide 1280, full'),
+      .describe(
+        "A page's column inside its layout's container: narrow 640, medium 960, wide 1280, full the container; a dialog's or drawer's size",
+      ),
+    layout: Layout.extend({
+      gap: z.enum([...spacing, '']),
+      padding: z.enum([...spacing, '']),
+    }).describe(
+      'How its sections are arranged: a column, or a row or grid for a side panel beside the main content. A page leaves gap and padding "": its layout sets them. A dialog or drawer gives the gap between sections and its padding',
+    ),
     access: z.enum(['public', 'signedIn']),
     roles: z.array(z.string()),
     purpose: z.string(),
@@ -190,7 +261,7 @@ export function makeScreensSchema(inv: Inventory) {
     layout: z
       .string()
       .describe(
-        'How the parts are arranged and sized, in sentences with the numbers, at desktop and on a phone',
+        'How the parts are arranged and sized, in sentences with the numbers',
       ),
     behavior: z
       .string()
@@ -207,12 +278,11 @@ export function makeScreensSchema(inv: Inventory) {
       .describe(
         'WAI-ARIA pattern, e.g. grid, listbox, disclosure; "none" if static',
       ),
-    usedOn: z.array(z.string()).describe('Screen IDs'),
+    usedOn: z.array(z.string()).describe('Screen or shell IDs'),
   });
 
   const Ia = z.object({
     navigation: z.object({
-      model: z.enum(['top-bar', 'sidebar', 'bottom-tabs', 'none']),
       items: z.array(
         z.object({
           label: z.string(),
@@ -221,7 +291,7 @@ export function makeScreensSchema(inv: Inventory) {
         }),
       ),
     }),
-    screens: z.array(Screen),
+    screens: z.array(IaScreen),
     sections: z.array(Section),
     newComponents: z.array(NewComponent),
     questions: z.array(Question).describe('Unclear flows, for reconciliation'),
@@ -230,9 +300,37 @@ export function makeScreensSchema(inv: Inventory) {
     ),
   });
 
-  const ScreenNodes = z.object({ screen: z.string(), nodes: z.array(Node) });
+  const ScreenNodes = z.object({
+    screen: z.string().describe('The screen, or the shell, these nodes fill'),
+    nodes: z.array(Node),
+  });
+  /** A screen as the artifact holds it: its shell, and a page's gap and padding from its layout. */
+  const Screen = IaScreen.extend({ shell: z.string(), layout: Layout });
+  const Container = z.object({
+    container: z.enum(['fluid', 'fixed']),
+    maxWidthPx: z.number().int(),
+    align: z.enum(['start', 'center']),
+  });
+  const Screens = Ia.extend({
+    screens: z.array(Screen),
+    containers: z.object({ app: Container, marketing: Container }),
+    shells: z.array(Shell),
+    nodes: z.array(Node),
+  });
 
-  return { Ia, ScreenNodes, Node, Section, Screen, NewComponent, Box, Layout };
+  return {
+    Ia,
+    ScreenNodes,
+    Screens,
+    Node,
+    Section,
+    IaScreen,
+    Screen,
+    NewComponent,
+    Box,
+    Layout,
+    Shell,
+  };
 }
 
 type Schemas = ReturnType<typeof makeScreensSchema>;
@@ -242,8 +340,10 @@ export type DesignNode = z.infer<Schemas['Node']>;
 export type DesignSection = z.infer<Schemas['Section']>;
 export type DesignScreen = z.infer<Schemas['Screen']>;
 export type NewComponent = z.infer<Schemas['NewComponent']>;
-export type NodeBox = z.infer<Schemas['Box']>;
-export type NodeLayout = z.infer<Schemas['Layout']>;
 
-/** `02-screens.json`: the IA plus every screen's nodes. */
-export type Screens = Ia & { nodes: DesignNode[] };
+/**
+ * `02-screens.json`: the IA with each screen's shell and a page's gap and
+ * padding filled in, the containers and shells made from the theme's
+ * layouts, and the nodes of every screen and shell region.
+ */
+export type Screens = z.infer<Schemas['Screens']>;

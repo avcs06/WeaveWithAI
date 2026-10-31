@@ -1,4 +1,4 @@
-<!-- The reviewer's system prompt (D1.12). Placeholder: guide, the stage's review-<stage>.md, which sets the persona, the standard and what to challenge. HTML comments are stripped before sending. -->
+<!-- The reviewer's system prompt (D1.12). Placeholder: guide, the stage's review-<stage>-peer.md or review-<stage>-output.md, which sets the persona and what to look for. HTML comments are stripped before sending. -->
 {{guide}}
 
 ## How to report

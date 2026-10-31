@@ -58,17 +58,33 @@
       ],
       "box": {
         "sm": {
-          "height": 128
+          "height": 128,
+          "gap": 8
         },
         "sm/box": {
           "height": 80,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8,
           "minHeight": 32
         },
         "md": {
-          "height": 136
+          "height": 136,
+          "gap": 8
         },
         "md/box": {
           "height": 88,
+          "padding": [
+            12,
+            24,
+            12,
+            24
+          ],
+          "gap": 10,
           "minHeight": 40
         }
       }
@@ -108,10 +124,24 @@
       ],
       "box": {
         "xs": {
-          "height": 24
+          "height": 24,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 6
         },
         "sm": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            6,
+            10,
+            6,
+            10
+          ],
+          "gap": 8
         }
       }
     },
@@ -147,10 +177,26 @@
       ],
       "box": {
         "list": {
-          "height": 42
+          "height": 42,
+          "gap": 4
         },
         "trigger": {
-          "height": 42
+          "height": 42,
+          "padding": [
+            14,
+            12,
+            14,
+            12
+          ],
+          "gap": 10
+        },
+        "panel": {
+          "padding": [
+            8,
+            8,
+            8,
+            8
+          ]
         }
       }
     },
@@ -181,6 +227,34 @@
         },
         "row": {
           "height": 37
+        },
+        "header-cell": {
+          "height": 36,
+          "padding": [
+            10,
+            12,
+            10,
+            12
+          ],
+          "gap": 2
+        },
+        "cell": {
+          "height": 37,
+          "padding": [
+            8,
+            6,
+            8,
+            6
+          ]
+        },
+        "pagination": {
+          "padding": [
+            8,
+            6,
+            8,
+            6
+          ],
+          "gap": 12
         }
       }
     },
@@ -208,18 +282,32 @@
       ],
       "box": {
         "sm": {
-          "height": 24
+          "height": 24,
+          "gap": 6
         },
         "sm/track": {
           "height": 24,
-          "width": 42
+          "width": 42,
+          "padding": [
+            3,
+            3,
+            3,
+            3
+          ]
         },
         "md": {
-          "height": 32
+          "height": 32,
+          "gap": 6
         },
         "md/track": {
           "height": 32,
-          "width": 56
+          "width": 56,
+          "padding": [
+            4,
+            4,
+            4,
+            4
+          ]
         }
       }
     },
@@ -254,9 +342,23 @@
       ],
       "box": {
         "sm/box": {
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8,
           "minHeight": 32
         },
         "md/box": {
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10,
           "minHeight": 40
         }
       }
@@ -293,16 +395,32 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -329,7 +447,14 @@
       ],
       "box": {
         "default": {
-          "height": 30
+          "height": 30,
+          "padding": [
+            8,
+            10,
+            8,
+            10
+          ],
+          "gap": 10
         }
       }
     },
@@ -354,8 +479,21 @@
         "content"
       ],
       "box": {
+        "default": {
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 20
+        },
         "header": {
-          "height": 52
+          "height": 52,
+          "gap": 4
+        },
+        "content": {
+          "gap": 16
         }
       }
     },
@@ -414,11 +552,23 @@
       "box": {
         "sm/box": {
           "height": 18,
-          "width": 18
+          "width": 18,
+          "padding": [
+            1,
+            1,
+            1,
+            1
+          ]
         },
         "md/box": {
           "height": 22,
-          "width": 22
+          "width": 22,
+          "padding": [
+            1,
+            1,
+            1,
+            1
+          ]
         }
       }
     },
@@ -453,7 +603,18 @@
       ],
       "contains": [
         "Popover.Button"
-      ]
+      ],
+      "box": {
+        "default": {
+          "padding": [
+            8,
+            0,
+            8,
+            0
+          ],
+          "gap": 2
+        }
+      }
     },
     {
       "name": "PopoverButton",
@@ -482,10 +643,24 @@
       ],
       "box": {
         "sm": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -509,10 +684,12 @@
       ],
       "box": {
         "full": {
-          "height": 32
+          "height": 32,
+          "gap": 12
         },
         "minimal": {
-          "height": 32
+          "height": 32,
+          "gap": 12
         }
       }
     },
@@ -572,16 +749,32 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
         }
       }
     },
@@ -613,16 +806,32 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
         }
       }
     },
@@ -653,16 +862,32 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -693,16 +918,32 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            4,
+            8,
+            4,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            4,
+            12,
+            4,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -738,58 +979,166 @@
       ],
       "box": {
         "sm": {
-          "height": 80
+          "height": 80,
+          "gap": 8
         },
         "sm/label-row": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "sm/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
         },
         "sm/help": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "sm/message": {
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "md": {
-          "height": 88
+          "height": 88,
+          "gap": 8
         },
         "md/label-row": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "md/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
         },
         "md/help": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        "md/message": {
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "sm+error": {
-          "height": 104
+          "height": 104,
+          "gap": 8
         },
         "sm+error/label-row": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "sm+error/box": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            8,
+            16,
+            8,
+            16
+          ],
+          "gap": 8
         },
         "sm+error/help": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "sm+error/message": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "md+error": {
-          "height": 112
+          "height": 112,
+          "gap": 8
         },
         "md+error/label-row": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "md+error/box": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            24,
+            8,
+            24
+          ],
+          "gap": 10
         },
         "md+error/help": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         },
         "md+error/message": {
-          "height": 16
+          "height": 16,
+          "padding": [
+            0,
+            4,
+            0,
+            4
+          ]
         }
       }
     },
@@ -820,7 +1169,14 @@
       ],
       "box": {
         "item": {
-          "height": 30
+          "height": 30,
+          "padding": [
+            8,
+            10,
+            8,
+            10
+          ],
+          "gap": 10
         }
       }
     },
@@ -851,33 +1207,102 @@
         },
         "sm/header": {
           "height": 56,
-          "width": 400
+          "width": 400,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "sm/body": {
+          "width": 400,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
         },
         "sm/footer": {
           "height": 64,
-          "width": 400
+          "width": 400,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
         },
         "md": {
           "width": 520
         },
         "md/header": {
           "height": 56,
-          "width": 520
+          "width": 520,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "md/body": {
+          "width": 520,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
         },
         "md/footer": {
           "height": 64,
-          "width": 520
+          "width": 520,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
         },
         "lg": {
           "width": 720
         },
         "lg/header": {
           "height": 56,
-          "width": 720
+          "width": 720,
+          "padding": [
+            24,
+            24,
+            8,
+            24
+          ],
+          "gap": 16
+        },
+        "lg/body": {
+          "width": 720,
+          "padding": [
+            20,
+            24,
+            24,
+            24
+          ]
         },
         "lg/footer": {
           "height": 64,
-          "width": 720
+          "width": 720,
+          "padding": [
+            8,
+            24,
+            24,
+            24
+          ],
+          "gap": 8
         }
       }
     },
@@ -918,10 +1343,24 @@
       ],
       "box": {
         "sm": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -973,18 +1412,32 @@
       ],
       "box": {
         "sm": {
-          "height": 18
+          "height": 18,
+          "gap": 6
         },
         "sm/box": {
           "height": 18,
-          "width": 18
+          "width": 18,
+          "padding": [
+            2,
+            2,
+            2,
+            2
+          ]
         },
         "md": {
-          "height": 22
+          "height": 22,
+          "gap": 6
         },
         "md/box": {
           "height": 22,
-          "width": 22
+          "width": 22,
+          "padding": [
+            2,
+            2,
+            2,
+            2
+          ]
         }
       }
     },
@@ -1031,7 +1484,18 @@
       ],
       "slots": [
         "content"
-      ]
+      ],
+      "box": {
+        "default": {
+          "padding": [
+            16,
+            20,
+            16,
+            20
+          ],
+          "gap": 12
+        }
+      }
     },
     {
       "name": "CardGroup",
@@ -1086,10 +1550,24 @@
       ],
       "box": {
         "sm": {
-          "height": 32
+          "height": 32,
+          "padding": [
+            6,
+            8,
+            6,
+            8
+          ],
+          "gap": 8
         },
         "md": {
-          "height": 40
+          "height": 40,
+          "padding": [
+            8,
+            12,
+            8,
+            12
+          ],
+          "gap": 10
         }
       }
     },
@@ -1122,15 +1600,33 @@
       "box": {
         "xs": {
           "height": 24,
-          "width": 24
+          "width": 24,
+          "padding": [
+            4,
+            4,
+            4,
+            4
+          ]
         },
         "sm": {
           "height": 32,
-          "width": 32
+          "width": 32,
+          "padding": [
+            7,
+            7,
+            7,
+            7
+          ]
         },
         "md": {
           "height": 40,
-          "width": 40
+          "width": 40,
+          "padding": [
+            8,
+            8,
+            8,
+            8
+          ]
         }
       }
     },
@@ -1194,7 +1690,17 @@
       ],
       "box": {
         "header": {
-          "height": 66
+          "height": 66,
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 16
+        },
+        "panel": {
+          "gap": 16
         }
       }
     },
@@ -1215,7 +1721,14 @@
       ],
       "box": {
         "header": {
-          "height": 66
+          "height": 66,
+          "padding": [
+            20,
+            20,
+            20,
+            20
+          ],
+          "gap": 16
         }
       }
     },

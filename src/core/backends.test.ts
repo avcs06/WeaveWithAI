@@ -40,6 +40,7 @@ describe('resolveBackend', () => {
       apiKey: 'wk-id.ws-secret',
       model: 'hackathon',
       strongModel: 'hackathon',
+      coldStartMs: 300_000,
     });
   });
 

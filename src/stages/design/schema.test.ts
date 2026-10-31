@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { toJsonSchema } from '../../core/schema';
 import { keysOf } from '../../core/utils';
 import type { Inventory } from '../../ds/inventory';
-import { makeScreensSchema } from './schema';
+import { Brief, makeScreensSchema } from './schema';
+import { makeThemeSchema } from './schema-theme';
+import { makeWidgetSchemas } from './schema-widgets';
 
 const inventory = JSON.parse(
   readFileSync(
@@ -12,6 +14,14 @@ const inventory = JSON.parse(
   ),
 ) as Inventory;
 const schemas = makeScreensSchema(inventory);
+const brief = Brief.parse(
+  JSON.parse(
+    readFileSync(
+      new URL('./__fixtures__/reading-list.brief.json', import.meta.url),
+      'utf8',
+    ),
+  ),
+);
 
 const row = {
   direction: 'row',
@@ -32,6 +42,7 @@ const node = (what: string, rest: Record<string, unknown> = {}) => ({
   component: 'none',
   size: '',
   look: '',
+  overrideReason: '',
   layout: null,
   box: {
     width: 'content',
@@ -56,8 +67,14 @@ const node = (what: string, rest: Record<string, unknown> = {}) => ({
 
 describe('screens schemas', () => {
   it.each([
+    ['Brief', Brief],
+    ['Theme', makeThemeSchema(brief, inventory)],
     ['Ia', schemas.Ia],
     ['ScreenNodes', schemas.ScreenNodes],
+    ['Ia (widgets)', makeWidgetSchemas(inventory).Ia],
+    ['ComponentDesign', makeWidgetSchemas(inventory).ComponentDesign],
+    ['WidgetBatch', makeWidgetSchemas(inventory).WidgetBatch],
+    ['FrameBuild', makeWidgetSchemas(inventory).FrameBuild],
   ])('%s converts within the API limits', (name, schema) => {
     const bridged = toJsonSchema(schema, name);
     expect(bridged.stats.depth).toBeLessThanOrEqual(8);

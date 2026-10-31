@@ -3,6 +3,8 @@ import type { Config } from '../core/env';
 import type { Issue } from '../core/issues';
 import type { Llm } from '../core/llm';
 import type { Run } from '../core/run';
+import { designStage } from './design/stage-screens';
+import { briefStage, themeStage } from './design/stage';
 import { catalogStage, expandStage, flowsStage, scopeStage } from './flows/stage';
 
 export type StageContext = {
@@ -27,6 +29,8 @@ export const PIPELINE: string[] = [
   'flows-catalog',
   'flows-expand',
   'flows',
+  'brief',
+  'theme',
   'design',
   'contract',
   'reconcile',
@@ -40,4 +44,12 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
-export const stages: StageDef[] = [scopeStage, catalogStage, expandStage, flowsStage];
+export const stages: StageDef[] = [
+  scopeStage,
+  catalogStage,
+  expandStage,
+  flowsStage,
+  briefStage,
+  themeStage,
+  designStage,
+];

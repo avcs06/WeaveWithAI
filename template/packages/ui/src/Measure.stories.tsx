@@ -63,7 +63,7 @@ type Case = {
   /** false: the root is a wrapper of no interest, only parts count. */
   root?: boolean;
   /** The root renders through a portal: found by its name in the document. */
-  portal?: 'dialog' | 'menu' | 'option';
+  portal?: 'dialog' | 'menu' | 'option' | 'popover';
   /** Parts read again at height 0, for their minimum height. */
   min?: string[];
   /** A wrapper width for both renderings, when the component wraps when narrow. */
@@ -205,12 +205,15 @@ const cases: Case[] = [
     }),
     'FormControl',
   ),
+  // Containers hold two children, so padding and gap are read on the
+  // container and not on a lone child.
   {
     name: 'Card',
     min: ['root'],
     render: (c) => (
       <Card>
         <p>{c.para}</p>
+        <p>{c.text}</p>
       </Card>
     ),
   },
@@ -356,13 +359,27 @@ const cases: Case[] = [
     ),
   },
   {
+    name: 'Accordion',
+    root: false,
+    parts: ['panel'],
+    render: (c) => (
+      <Accordion defaultValue="a">
+        <Accordion.Item value="a" title={c.title}>
+          <p>{c.para}</p>
+          <p>{c.text}</p>
+        </Accordion.Item>
+      </Accordion>
+    ),
+  },
+  {
     name: 'Tabs',
     root: false,
-    parts: ['list', 'trigger'],
+    parts: ['list', 'trigger', 'panel'],
     render: (c) => (
       <Tabs>
         <Tab value="a" title={c.title}>
-          {c.para}
+          <p>{c.para}</p>
+          <p>{c.text}</p>
         </Tab>
         <Tab value="b" title="Second">
           {c.text}
@@ -372,27 +389,51 @@ const cases: Case[] = [
   },
   {
     name: 'Section',
-    root: false,
-    parts: ['header'],
+    parts: ['header', 'content'],
     render: (c) => (
       <Section title={c.title} description={c.text}>
         <p>{c.para}</p>
+        <p>{c.text}</p>
       </Section>
+    ),
+  },
+  {
+    name: 'Popover',
+    portal: 'popover',
+    open: true,
+    render: (c, name, kind) => (
+      <Popover
+        menu={
+          <>
+            <p>{`${name} ${kind}`}</p>
+            {/* Narrow, so the long paragraph wraps and the height reads as dynamic. */}
+            <p style={{ maxWidth: 320 }}>{c.para}</p>
+          </>
+        }
+      >
+        <PopoverButton size="sm">{c.label}</PopoverButton>
+      </Popover>
     ),
   },
   ...sized(
     ['sm', 'md', 'lg'],
     (size) => ({
       portal: 'dialog',
-      parts: ['header', 'footer'],
+      parts: ['header', 'body', 'footer'],
       render: (c, name, kind) => (
         <Dialog
           size={size}
           open
           title={`${name} ${kind}`}
-          footer={() => <Button>{c.label}</Button>}
+          footer={() => (
+            <>
+              <Button variant="base">Cancel</Button>
+              <Button>{c.label}</Button>
+            </>
+          )}
         >
           <p>{c.para}</p>
+          <p>{c.text}</p>
         </Dialog>
       ),
     }),
@@ -422,7 +463,7 @@ const cases: Case[] = [
     name: 'Table',
     root: false,
     skip: 'width',
-    parts: ['header', 'row', 'pagination'],
+    parts: ['header', 'row', 'header-cell', 'cell', 'pagination'],
     render: (c) => (
       <RowTable caption={c.title} data={rows(c)} rowKey={(row) => row.id}>
         <RowTable.Column

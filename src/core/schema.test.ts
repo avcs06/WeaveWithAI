@@ -25,6 +25,10 @@ describe('toJsonSchema', () => {
     expect(() => assertWithinLimits(bridged, { properties: 5 })).toThrow(
       /person has 6 properties/,
     );
+    expect(() => assertWithinLimits(bridged, { enums: 1 })).not.toThrow();
+    expect(() => assertWithinLimits(bridged, { enums: 0 })).toThrow(
+      /person has 1 enums; the limit is 0/,
+    );
   });
 
   it('throws SchemaBridgeError on a recursive schema', () => {

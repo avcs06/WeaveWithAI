@@ -25,6 +25,9 @@ export type Usage = {
   output: number;
 };
 
+/** False for a model missing from the table, whose calls cost 0 here. */
+export const isPriced = (model: string): boolean => model in PRICES;
+
 /** Cost of one call in USD; 0 for a model missing from the table. */
 export function costUsd(model: string, usage: Usage): number {
   const price = PRICES[model];

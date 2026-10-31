@@ -42,9 +42,9 @@ benchmark stage (section 13) reports the frontend's quality in one table.
    model review on rounds 2 and 3 (D1.12); each reconciliation loop gets 2
    rounds, coding repair 2 (D1.6). Issues left after the last round are
    recorded as known issues in the report and the run state; the run goes on.
-6. **Deterministic where possible.** Theme palettes, contract code, test
-   scaffolds, Git and packaging are code. A model is used only where judgement
-   is needed.
+6. **Deterministic where possible.** Contrast checks, the layout skeleton,
+   contract code, test scaffolds, Git and packaging are code. A model is used
+   only where judgement is needed, the theme's colors included (D3.3 E).
 7. **Ownership.** Each stage may change only its own artifacts and folders.
    Implementation stages can never edit acceptance tests or thresholds (R2).
 8. **Resumable.** `--from <stage>` reruns from a checkpoint; recorded model
@@ -60,7 +60,7 @@ src/
   config/
     capabilities.ts      supported and unsupported MVP capabilities
     fonts.ts             font allowlist for themes
-    design.ts            layout templates, section kinds, element allowlist
+    design.ts            screen kinds, section kinds, node roles, states, layout limits
   core/
     llm.ts               the only model client: structured output, retries,
                          usage and cost, replay cache, model routing
@@ -75,13 +75,14 @@ src/
     inventory.ts         design-system inventory from the template, cached
   stages/
     flows/               scope + flows: schema, prompts, validate, render, stage
-    design/              brief, theme (code), screens: same layout
+    design/              brief, theme, IA and nodes calls, resolve, routing, layout solver: same layout
     contracts/           domain + operations: same layout, plus compile.ts
     reconcile/           matrix.ts, patch.ts, procedure.ts, prompts
     tests/               e2e specs generated from the frozen flows, run, evidence
   app/
     scaffold.ts          template copy, install, MCP build
-    theme.ts             02-theme.json applied with ts-morph (THEME-003)
+    theme.ts             02-theme.json written into an app's colors, tokens, fonts and recipes
+    preview.ts           an app from the template, and every component screenshotted in its theme
   codegen/
     ledger.ts            every file written into an app, with its origin
     entities.ts          web/app/entities/<entity>: schemas, client, hooks
@@ -112,6 +113,8 @@ runs/<runId>/
   01-flows-draft.json          the expansion batches assembled, before reconciliation
   01-flows.json  01-flows.md   the flows every later stage reads
   02-brief.json  02-theme.json  02-screens.json  02-design.md
+  02-skeleton.json  02-wireframes.html  02-ds-gaps.json
+  02-theme-light.png  02-theme-dark.png   every component in the theme (weave app)
   03-contract.json  03-contract.md
   04-matrix.json  04-reconcile.md
   spec.lock.json               frozen versions for implementation
@@ -121,6 +124,7 @@ runs/<runId>/
   06-e2e.md                    evidence table and repair requests
   reports/<stage>.json         issues per round
   llm/<stage>-r<round>.json    request and response, for audit and replay
+  llm/<stage>-r<round>-cut.json  an answer cut at the output limit, as far as it got
   events.jsonl                 one line per stage start, round, issue count, tokens, cost
   state.json                   stage status and artifact versions
 ```
@@ -204,8 +208,10 @@ the full corrected JSON (D1.5 default); a fix with nothing pending is skipped,
 but the round's reviewer calls still run. From round 2 on, validators and
 reviewers look at the same output, whatever the validators found: a
 heuristic, not a gate. A reviewer gets the generator's system and user messages, its
-JSON, the warnings as already known and the stage's `review-<stage>.md`
-guide, and answers through the `Review` schema (`src/core/review.ts`,
+JSON, the warnings as already known and one of the stage's two guides:
+`review-<stage>-peer.md`, a peer who challenges the decisions (round 2 only),
+or `review-<stage>-output.md`, which looks for errors in meaning the
+validators cannot catch (rounds 2 and 3). It answers through the `Review` schema (`src/core/review.ts`,
 blockers only); each blocker becomes a mandatory issue with rule `REVIEW`.
 The stage ends as soon as a review finds nothing on validator-clean output,
 so a clean first draft costs one generation and two reviews. After round 4
@@ -233,18 +239,26 @@ does not mistake an old answer for a new question.
   contract) has 128 properties, none has a `$ref`, and only the node `ref`
   union produces `oneOf`.
 - Retries 429 and 5xx with exponential backoff and jitter, honouring
-  `Retry-After`. `finish_reason: 'length'` is a retryable error with a larger
-  `max_tokens` once, then a stage failure.
+  `retry-after-ms` or `Retry-After` up to a minute. A backend with a cold-start
+  budget (Modal, 5 minutes) keeps retrying a 503 past the usual 5 attempts.
+  `finish_reason: 'length'` is a retryable error with a larger `max_tokens`
+  once; the stage round then asks once more (F14), and a second cut is a
+  stage failure. Each cut answer is kept in the run as far as it got.
 - Logs tokens, cached tokens and cost per call to `events.jsonl`, using the
-  prices in docs/README.md.
+  prices in docs/README.md; a live call to a model without a price also logs a
+  `warning` event, since its cost counts as 0.
 - Replay cache: key = sha256(model, messages, schema). With `LLM_REPLAY=true`
   an identical request returns the recorded response without a call. Changing
-  a prompt or schema changes the key, so stale replays can't happen.
+  a prompt or schema changes the key, so stale replays can't happen. A replay
+  file that is not JSON fails the call and names the file to delete.
 - Model routing: `default` uses `LLM_MODEL`; `strong` uses `LLM_MODEL_STRONG`
-  for a round that failed twice (D1.8).
+  for a round that failed twice (D1.8). A backend without its own strong
+  model sends a strong call to the base model one reasoning level up
+  (medium to high, high to xhigh, never max).
 - Output budget: `max_tokens` caps reasoning and visible output together on
   Meta's models, and reasoning is billed as output. Stages pass their own
-  budget (D1.13); reviewer calls run at `reasoning_effort: medium`.
+  budget, reasoning level and first-draft temperature (D1.13); fixes run at
+  0.2, reviewer calls at `reasoning_effort: medium` and 0.2.
 - Backends (D1.11): `LLM_BACKEND` picks the Meta Model API (default), a
   Modal Dedicated Endpoint serving Muse Glimmer, or Baseten's Model API
   serving Muse Spark Open. Same client, same schema bridge; the backend and model are
@@ -270,8 +284,10 @@ the template's own TypeScript tooling and folder). The inventory keeps what
 the design stage needs per component: name, category, one-line description,
 variant values, the recipe's default variants, every look its `look` prop
 accepts (`src/ds/looks.ts`, read from the recipes files), the fixed box
-dimensions by size and part (`template/tools/measure-design-system.mjs`,
-measured in a browser from the `Measure` story on Storybook), what it shows
+dimensions, padding and gap by size and part
+(`template/tools/measure-design-system.mjs`, measured in a browser from the
+`Measure` story on Storybook; padding is the inset to the content, summed
+down wrappers that hold one child), what it shows
 and the pseudo entries the exporter cannot see, like Toast
 (`src/ds/curated.json`, hand-written), and the components that go inside it
 (`src/ds/compose.ts`, from the recipes' JSX). Plus all tokens and the settings
@@ -285,7 +301,7 @@ keyed by a hash of the files under `template/packages/*/src`, `tokens.ts`,
 
 Prompts receive the inventory as prose (`src/ds/prose.ts`): one block per
 component with its facts on short lines, subcomponents indented under the
-one they belong to, about 11 KB for 40 components. Validators receive the
+one they belong to, about 12 KB for 40 components. Validators receive the
 full inventory.
 
 ## Generated app

@@ -73,8 +73,9 @@ describe('inventory fixture', () => {
   });
 
   it('records the fixed box dimensions per size and part', () => {
-    expect(byName.Button?.box?.sm).toEqual({ height: 32 });
-    expect(byName.Button?.box?.md).toEqual({ height: 40 });
+    expect(byName.Button?.box?.sm?.height).toBe(32);
+    expect(byName.Button?.box?.md?.height).toBe(40);
+    expect(byName.Button?.box?.sm?.width).toBeUndefined();
     expect(byName.Avatar?.box?.md).toEqual({ height: 36, width: 36 });
     expect(byName.Dialog?.box?.md).toEqual({ width: 520 });
     expect(byName.FormControl?.box?.['sm/box']?.height).toBe(32);
@@ -82,15 +83,35 @@ describe('inventory fixture', () => {
     expect(byName.FormControl?.box?.['sm+error']?.height).toBeGreaterThan(
       byName.FormControl?.box?.sm?.height ?? 0,
     );
-    expect(byName.Accordion?.box).toEqual({ header: { height: expect.any(Number) } });
+    expect(Object.keys(byName.Accordion?.box ?? {})).toEqual(['header', 'panel']);
+    expect(byName.Accordion?.box?.header?.height).toBeGreaterThan(24);
     expect(byName.Collapsible?.box?.header?.height).toBeGreaterThan(24);
     expect(byName.Pagination?.box?.full).toEqual(byName.Pagination?.box?.minimal);
-    expect(byName.SearchInput?.box?.sm).toEqual({ height: expect.any(Number) });
+    expect(byName.SearchInput?.box?.sm).toEqual({ height: expect.any(Number), gap: 8 });
     expect(byName.Textarea?.box?.['sm/box']).toMatchObject({ minHeight: 32 });
-    expect(byName.MultiSelect?.box?.['sm/box']).toEqual({ minHeight: 32 });
+    expect(byName.MultiSelect?.box?.['sm/box']).toMatchObject({ minHeight: 32 });
+    expect(byName.MultiSelect?.box?.['sm/box']?.height).toBeUndefined();
     expect(byName.SelectOption?.box?.default?.height).toBeGreaterThan(0);
-    expect(byName.Pagination?.box?.full).toEqual({ height: expect.any(Number) });
-    expect(byName.Card?.box).toBeUndefined();
+    expect(byName.Pagination?.box?.full?.height).toEqual(expect.any(Number));
+    expect(byName.Card?.box?.default?.height).toBeUndefined();
+  });
+
+  it('records the padding and gap of controls and containers', () => {
+    const box = (name: string, key = 'default') => byName[name]?.box?.[key];
+    expect(box('Button', 'sm')).toMatchObject({ padding: [6, 8, 6, 8], gap: 8 });
+    expect(box('Button', 'md')).toMatchObject({ padding: [8, 12, 8, 12] });
+    expect(box('Chip', 'sm')).toMatchObject({ padding: [6, 8, 6, 8] });
+    expect(box('Chip', 'md')).toMatchObject({ padding: [8, 12, 8, 12] });
+    expect(box('Card')).toEqual({ padding: [16, 20, 16, 20], gap: 12 });
+    expect(box('Section')).toEqual({ padding: [20, 20, 20, 20], gap: 20 });
+    expect(box('Section', 'content')).toEqual({ gap: 16 });
+    expect(box('Dialog', 'md/body')).toMatchObject({ padding: [20, 24, 24, 24] });
+    expect(box('Tabs', 'panel')).toEqual({ padding: [8, 8, 8, 8] });
+    expect(box('Accordion', 'panel')).toEqual({ gap: 16 });
+    expect(box('Popover')).toMatchObject({ padding: [8, 0, 8, 0] });
+    expect(box('Table', 'cell')?.padding).toHaveLength(4);
+    expect(box('FormControl', 'sm/box')).toMatchObject({ height: 32, padding: [8, 16, 8, 16] });
+    expect(box('FormControl', 'sm')).toMatchObject({ height: 80, gap: 8 });
   });
 
   it('lists spacing and radius keys, numeric ones in order', () => {

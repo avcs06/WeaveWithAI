@@ -2,13 +2,13 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   answersBlock,
-  catalogReviewGuide,
+  catalogReviewGuides,
   catalogUserMessage,
-  expandReviewGuide,
+  expandReviewGuides,
   expandUserMessage,
   flowsSystemPrompt,
   patchUserMessage,
-  scopeReviewGuide,
+  scopeReviewGuides,
   scopeSystemPrompt,
   scopeUserMessage,
 } from './prompt';
@@ -73,16 +73,27 @@ describe('system prompts', () => {
 });
 
 describe('review guides', () => {
-  it('carry the same standard as the prompts and say what to challenge', () => {
-    for (const guide of [
-      scopeReviewGuide(),
-      catalogReviewGuide(),
-      expandReviewGuide(),
-    ]) {
-      expect(guide).not.toContain('{{');
-      expect(guide).not.toContain('<!--');
-      expect(guide).toContain(standard);
-      expect(guide).toContain('Challenge, and report as a blocker');
+  const pairs = [
+    scopeReviewGuides(),
+    catalogReviewGuides(),
+    expandReviewGuides(),
+  ];
+
+  it('the peer carries the same standard as the prompts and says what to challenge', () => {
+    for (const { peer } of pairs) {
+      expect(peer).not.toContain('{{');
+      expect(peer).not.toContain('<!--');
+      expect(peer).toContain(standard);
+      expect(peer).toContain('Challenge, and report as a blocker');
+    }
+  });
+
+  it('the output reviewer looks for errors in meaning, not at the decisions', () => {
+    for (const { output } of pairs) {
+      expect(output).not.toContain('{{');
+      expect(output).not.toContain('<!--');
+      expect(output).not.toContain(standard);
+      expect(output).toContain('no validator can catch');
     }
   });
 });

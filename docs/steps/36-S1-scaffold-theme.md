@@ -19,12 +19,13 @@ MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
    into the app, with its origin (code, model, repair). The benchmark's
    "lines by origin" and the ownership rules depend on it.
 3. **Apply the frozen theme by editing code, not by regenerating files**:
-   with ts-morph, set the twelve primary colors in light and dark, add the
-   entity color sets, set the radius and focus ring tokens, and regenerate
-   the fonts file with the chosen Google Fonts.
-4. **Prove the untouchable sets are untouched**: the neutral, surface and
-   status colors in the app's `colors.ts` must equal the template's
-   (THEME-003); a difference is a bug and stops the stage.
+   `src/app/theme.ts` (DS18) sets the twelve primary and twelve base colors
+   and the page colors in light and dark, adds the entity color sets, sets
+   the radius and focus ring tokens, regenerates the fonts file with the
+   chosen Google Fonts and writes the recipe defaults.
+4. **Prove the untouchable sets are untouched**: the status colors in the
+   app's `colors.ts` must equal the template's (THEME-003); a difference is
+   a bug and stops the stage.
 5. **Register the `scaffold` stage** and run the app's own checks
    (typecheck, MCP check, verify) at the end.
 
@@ -149,7 +150,8 @@ grep -n "accentBg" colors.ts     # the theme's hex values under primary
 
 ## Watch out
 
-- Never edit `base`, `surface` or `status`: THEME-003 exists so a slip here
-  can't ship.
+- Never edit `status`: THEME-003 exists so a slip here can't ship. Base,
+  the page colors, divider, backdrop and skeleton are the theme's (DS20,
+  DS21).
 - `generate.mjs` refuses a non-empty target; a half-done scaffold must be
   deleted before a retry (`rm -rf runs/<id>/app`).

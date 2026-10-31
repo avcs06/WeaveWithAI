@@ -24,13 +24,13 @@ import {
   reconcileCompose,
 } from './compose';
 import {
-  catalogReviewGuide,
+  catalogReviewGuides,
   catalogUserMessage,
-  expandReviewGuide,
+  expandReviewGuides,
   expandUserMessage,
   flowsSystemPrompt,
   patchUserMessage,
-  scopeReviewGuide,
+  scopeReviewGuides,
   scopeSystemPrompt,
   scopeUserMessage,
 } from './prompt';
@@ -48,6 +48,11 @@ const SCOPE_MAX_TOKENS = 16_384;
 const CATALOG_MAX_TOKENS = 32_768;
 // The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON (D1.13).
 const FLOWS_EFFORT = 'medium';
+// Scope sets the app's direction, so it reasons longer and samples more openly than the calls that follow it (D1.13).
+const SCOPE_EFFORT = 'high';
+const SCOPE_TEMPERATURE = 0.7;
+// For the same reason its first draft runs on the strong model (user, 2026-10-30).
+const SCOPE_DRAFT_MODEL = 'strong';
 
 export function readAnswers(run: Run): Answers {
   const file = runPath(run, 'input', 'answers.json');
@@ -148,9 +153,12 @@ async function runScope(ctx: StageContext): Promise<void> {
       system: scopeSystemPrompt(answers),
       user: scopeUserMessage(idea),
       validate: validateScope,
-      review: scopeReviewGuide(),
+      review: scopeReviewGuides(),
       ask: ctx.interactive ? terminalAsk(answers) : undefined,
       maxTokens: SCOPE_MAX_TOKENS,
+      reasoningEffort: SCOPE_EFFORT,
+      temperature: SCOPE_TEMPERATURE,
+      draftModel: SCOPE_DRAFT_MODEL,
     },
     { artifact: 'scope', inputs: [], render: renderScope },
   );
@@ -170,7 +178,7 @@ async function runCatalog(ctx: StageContext): Promise<void> {
       // The standard subflows are part of every catalog, so references to them resolve and they need no rewriting.
       validate: (catalog) =>
         validateCatalog(withStandardSubflows(catalog), scope),
-      review: catalogReviewGuide(),
+      review: catalogReviewGuides(),
       ask: ctx.interactive ? terminalAsk(answers) : undefined,
       maxTokens: CATALOG_MAX_TOKENS,
       reasoningEffort: FLOWS_EFFORT,
@@ -208,7 +216,7 @@ async function runExpand(ctx: StageContext): Promise<void> {
         system,
         user: expandUserMessage(idea, scope, catalog, flowIds),
         validate: (batch) => validateBatch(batch, catalog, scope),
-        review: expandReviewGuide(),
+        review: expandReviewGuides(),
         compose: expandCompose(
           { system, idea, scope, reasoningEffort: FLOWS_EFFORT },
           catalog,

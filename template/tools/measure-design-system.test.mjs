@@ -44,6 +44,23 @@ test('names a part under its case and skips a root marked off', () => {
   });
 });
 
+test('keeps padding and gap equal in both renderings, and only when not zero', () => {
+  const spaced = (width, height, padding, gap) => ({ width, height, padding, gap });
+  const { boxes } = fixedBoxes([
+    reading('Card', 'short', spaced(480, 80, [16, 20, 16, 20], 12)),
+    reading('Card', 'long', spaced(720, 200, [16, 20, 16, 20], 12)),
+    reading('Button/sm', 'short', spaced(60, 32, [6, 8, 6, 8], 8), { icon: spaced(16, 16, [0, 0, 0, 0], 0) }),
+    reading('Button/sm', 'long', spaced(160, 32, [6, 8, 6, 8], 8), { icon: spaced(16, 16, [0, 0, 0, 0], 0) }),
+    reading('Moving', 'short', spaced(480, 80, [8, 8, 8, 8], 4)),
+    reading('Moving', 'long', spaced(720, 200, [12, 8, 8, 8], 6)),
+  ]);
+  assert.deepEqual(boxes, {
+    Card: { padding: [16, 20, 16, 20], gap: 12 },
+    'Button/sm': { height: 32, padding: [6, 8, 6, 8], gap: 8 },
+    'Button/sm/icon': { height: 16, width: 16 },
+  });
+});
+
 test('records a declared minimum height, for a part or the root, unless it is the fixed height', () => {
   const box = (height, width) => ({ width, height });
   const { boxes, errors } = fixedBoxes([

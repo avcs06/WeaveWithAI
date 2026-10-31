@@ -20,17 +20,46 @@ function dims({ height, width, minHeight }: Box): string {
   return text ? `${text}, at least ${minHeight}` : `at least ${minHeight} tall`;
 }
 
+/** Padding as CSS writes it: one value when all sides match, two for block and inline. */
+function spacing({ padding, gap }: Box): string[] {
+  const parts: string[] = [];
+  if (padding) {
+    const [top, right, bottom, left] = padding;
+    const sides =
+      top === bottom && right === left
+        ? top === right
+          ? [top]
+          : [top, right]
+        : padding;
+    parts.push(`padding ${sides.join(' ')}`);
+  }
+  if (gap !== undefined) parts.push(`gap ${gap}`);
+  return parts;
+}
+
+/** A part of a state (`sm+error/box`) equal to the same part without it (`sm/box`). */
+function repeated(box: Record<string, Box>, key: string): boolean {
+  const base = key.replace(/\+[^/]*/, '');
+  return (
+    base !== key &&
+    key.includes('/') &&
+    JSON.stringify(box[base]) === JSON.stringify(box[key])
+  );
+}
+
 /** `sm/box` reads as `sm box`, `sm+error` as `sm with error`, `default` says nothing. */
 function boxes(box: Record<string, Box>): string {
   return Object.entries(box)
+    .filter(([key]) => !repeated(box, key))
     .map(([key, value]) => {
       const label =
         key === 'default'
           ? ''
           : `${key.replace(/\//g, ' ').replace(/\+/g, ' with ')} `;
-      return `${label}${dims(value)}`;
+      const said = [dims(value), ...spacing(value)].filter(Boolean);
+      return `${label}${said.join(', ')}`;
     })
-    .join(', ');
+    .join('; ');
 }
 
 function facts(component: InventoryComponent): string[] {

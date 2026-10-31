@@ -1,0 +1,45 @@
+{
+  "audience": "People who read a lot and lose track of what they meant to read next.",
+  "personality": [
+    "calm",
+    "literary",
+    "quiet",
+    "warm"
+  ],
+  "voice": "plain, warm, second person",
+  "density": "comfortable",
+  "feel": [
+    "minimal",
+    "bookish"
+  ],
+  "colorScheme": "both",
+  "seedHue": 200,
+  "seedChroma": "muted",
+  "pageHue": 200,
+  "pageChroma": "neutral",
+  "frameHue": 200,
+  "frameChroma": "muted",
+  "baseHue": 200,
+  "baseChroma": "muted",
+  "fonts": {
+    "ui": "Inter",
+    "display": "Playfair Display",
+    "mono": "JetBrains Mono"
+  },
+  "radius": "soft",
+  "focusRing": "halo",
+  "entities": [
+    {
+      "noun": "Book",
+      "colored": false,
+      "hue": 0
+    },
+    {
+      "noun": "Shelf",
+      "colored": true,
+      "hue": 230
+    }
+  ],
+  "imagery": "icons",
+  "references": []
+}

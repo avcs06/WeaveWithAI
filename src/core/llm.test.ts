@@ -1,4 +1,10 @@
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import {
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import OpenAI from 'openai';
@@ -181,6 +187,79 @@ describe('generateStructured', () => {
     expect(sleeps).toEqual([0]);
   });
 
+  it('reads retry-after-ms first and caps any server wait at a minute', async () => {
+    const { llm, sleeps } = harness([
+      apiError(429, 'rate limited', {
+        'retry-after-ms': '1500',
+        'retry-after': '9',
+      }),
+      apiError(503, 'busy', { 'retry-after': '3600' }),
+      completion('{"title":"Weave"}'),
+    ]);
+    await llm.generateStructured(input());
+    expect(sleeps).toEqual([1500, 60_000]);
+  });
+
+  it('keeps retrying a 503 on a backend with a cold-start budget, then gives up', async () => {
+    let clock = 0;
+    const script = () =>
+      Array.from({ length: 20 }, () => apiError(503, 'no upstreams available'));
+    const run = (
+      backend: Backend,
+      steps: Array<OpenAI.ChatCompletion | Error>,
+    ) => {
+      const client: ChatClient = {
+        async create() {
+          const next = steps.shift();
+          if (!next || next instanceof Error)
+            throw next ?? new Error('script exhausted');
+          return next;
+        },
+      };
+      return createLlm({
+        config,
+        backend,
+        client,
+        replayDir: tmp(),
+        now: () => clock,
+        sleep: async (ms) => {
+          clock += ms;
+        },
+      }).generateStructured(input());
+    };
+    // Warm after 8 cold answers: more than the usual 5 attempts.
+    clock = 0;
+    const warm = [...script().slice(0, 8), completion('{"title":"Weave"}')];
+    await expect(
+      run({ ...modalBackend, coldStartMs: 300_000 }, warm),
+    ).resolves.toMatchObject({ data: { title: 'Weave' } });
+    clock = 0;
+    await expect(
+      run({ ...modalBackend, coldStartMs: 60_000 }, script()),
+    ).rejects.toThrow(/gave up after \d+ attempts/);
+    expect(clock).toBeGreaterThanOrEqual(60_000);
+    clock = 0;
+    await expect(run(modalBackend, script())).rejects.toThrow(
+      'gave up after 5 attempts',
+    );
+  });
+
+  it('fails loudly on a replay file that is not JSON, naming it', async () => {
+    const replayDir = tmp();
+    const first = harness(
+      [completion('{"title":"Weave"}')],
+      { ...config, LLM_REPLAY: true },
+      { replayDir },
+    );
+    await first.llm.generateStructured(input());
+    const [file] = readdirSync(replayDir);
+    writeFileSync(path.join(replayDir, file!), '{"content": "cut');
+    const second = harness([], { ...config, LLM_REPLAY: true }, { replayDir });
+    await expect(second.llm.generateStructured(input())).rejects.toThrow(
+      `replay file ${path.join(replayDir, file!)} is not valid JSON; delete it to call the model again`,
+    );
+  });
+
   it('retries a truncated answer once with max_tokens doubled, capped at 65536', async () => {
     const doubled = harness([
       completion('{"title":"We', 'length'),
@@ -213,8 +292,37 @@ describe('generateStructured', () => {
       model: 'muse-spark-1.3',
       usage: { input: 200, output: 100 },
       contentLength: 4,
+      content: '{"ti',
     });
     expect(calls).toHaveLength(2);
+  });
+
+  it('keeps each cut answer in the run, a second cut in the round beside the first', async () => {
+    const runDir = tmp();
+    const { llm } = harness([
+      completion('{', 'length'),
+      completion('{"ti', 'length'),
+      completion('{', 'length'),
+      completion('{"tit', 'length'),
+    ]);
+    for (let i = 0; i < 2; i += 1)
+      await llm.generateStructured({ ...input(), runDir }).catch(() => {});
+    const cut = (file: string) =>
+      JSON.parse(readFileSync(path.join(runDir, 'llm', file), 'utf8')) as {
+        response: string;
+        usage: { output: number };
+        request: { model: string };
+      };
+    expect(readdirSync(path.join(runDir, 'llm')).sort()).toEqual([
+      'flows-r1-cut-2.json',
+      'flows-r1-cut.json',
+    ]);
+    expect(cut('flows-r1-cut.json')).toMatchObject({
+      response: '{"ti',
+      usage: { output: 100 },
+      request: { model: 'muse-spark-1.3' },
+    });
+    expect(cut('flows-r1-cut-2.json').response).toBe('{"tit');
   });
 
   it('replays an identical request without a call when LLM_REPLAY is on', async () => {
@@ -312,6 +420,63 @@ describe('reasoning effort', () => {
       (await llm.generateStructured({ ...input(), reasoningEffort: 'low' }))
         .replayed,
     ).toBe(true);
+  });
+});
+
+describe('strong model', () => {
+  const sent = (call: OpenAI.ChatCompletionCreateParamsNonStreaming) => [
+    call.model,
+    (call as { reasoning_effort?: string }).reasoning_effort,
+  ];
+
+  it('uses the strong model at the same effort when the backend has its own', async () => {
+    const { llm, calls } = harness([
+      completion('{"title":"A"}'),
+      completion('{"title":"B"}'),
+    ]);
+
+    await llm.generateStructured({ ...input(), reasoningEffort: 'medium' });
+    await llm.generateStructured({
+      ...input(),
+      model: 'strong',
+      reasoningEffort: 'medium',
+    });
+    expect(calls.map(sent)).toEqual([
+      ['muse-spark-1.3', 'medium'],
+      ['muse-wonder-1.0', 'medium'],
+    ]);
+  });
+
+  it('steps the base model up one effort when the strong model is the base model or missing, never to max', async () => {
+    const { llm, calls } = harness(
+      Array.from({ length: 4 }, () => completion('{"title":"A"}')),
+      config,
+      { backend: modalBackend },
+    );
+    for (const reasoningEffort of ['medium', 'high', 'xhigh'] as const)
+      await llm.generateStructured({
+        ...input(),
+        model: 'strong',
+        reasoningEffort,
+      });
+    await llm.generateStructured({ ...input(), reasoningEffort: 'medium' });
+    expect(calls.map(sent)).toEqual([
+      ['hackathon', 'high'],
+      ['hackathon', 'xhigh'],
+      ['hackathon', 'xhigh'],
+      ['hackathon', 'medium'],
+    ]);
+
+    const missing = harness([completion('{"title":"A"}')], {
+      ...config,
+      LLM_MODEL_STRONG: '',
+    });
+    await missing.llm.generateStructured({
+      ...input(),
+      model: 'strong',
+      reasoningEffort: 'high',
+    });
+    expect(missing.calls.map(sent)).toEqual([['muse-spark-1.3', 'xhigh']]);
   });
 });
 

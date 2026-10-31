@@ -10,6 +10,7 @@ import {
   showCommand,
   UsageError,
   validateCommand,
+  wireframesCommand,
 } from './cli';
 import { readArtifact } from './core/artifacts';
 import type { Config } from './core/env';
@@ -160,6 +161,9 @@ describe('weave run', () => {
       'flows-catalog: no artifact to validate',
       'flows-expand: no artifact to validate',
       'flows: no artifact to validate',
+      'brief: no artifact to validate',
+      'theme: no validators registered',
+      'design: no validators registered',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
   });
@@ -181,5 +185,38 @@ describe('weave ds', () => {
     expect(lines[1]).toMatch(/^prose \d+ bytes$/);
     expect(lines[2]).toMatch(/^box: \d+ components measured$/);
     expect(lines[3]).toMatch(/^project: focus ring halo, .* entity sets$/);
+  });
+});
+
+describe('weave wireframes', () => {
+  it('writes the skeleton and the wireframes for a screens file under runs/wireframes/<name>/', async () => {
+    lines.length = 0;
+    const screens = fileURLToPath(
+      new URL(
+        './stages/design/__fixtures__/reading-list.screens.json',
+        import.meta.url,
+      ),
+    );
+    const printed = await wireframesCommand(screens, undefined, {
+      templateDir: 'template',
+      cacheDir: path.join(runsDir, 'cache'),
+      exporter: printFile(fixture('export.json')),
+      measurer: printFile(fixture('boxes.json')),
+      runsDir,
+      out: deps.out,
+    });
+    const dest = path.join(runsDir, 'wireframes', 'reading-list.screens');
+    expect(printed).toEqual([
+      expect.stringMatching(/^7 screens, \d+ rectangles$/),
+      path.join(dest, '02-skeleton.json'),
+      path.join(dest, '02-wireframes.html'),
+    ]);
+    const solved = JSON.parse(
+      readFileSync(path.join(dest, '02-skeleton.json'), 'utf8'),
+    ) as { screens: unknown[] };
+    expect(solved.screens).toHaveLength(7);
+    expect(
+      readFileSync(path.join(dest, '02-wireframes.html'), 'utf8'),
+    ).toContain('<svg');
   });
 });

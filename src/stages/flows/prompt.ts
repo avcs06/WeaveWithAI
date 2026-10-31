@@ -6,7 +6,11 @@ import {
 } from '../../config/capabilities';
 import { standardSubflowList } from '../../config/subflows';
 import { fillPrompt, loadPrompt, stripComments } from '../../core/prompt';
-import { type Answers, formatAnswers } from '../../core/runSpecStage';
+import {
+  type Answers,
+  formatAnswers,
+  type ReviewGuides,
+} from '../../core/runSpecStage';
 import { pathBeside } from '../../core/utils';
 import { type Catalog, Flows, type Scope } from './schema';
 
@@ -44,18 +48,19 @@ export function flowsSystemPrompt(answers: Answers): string {
   });
 }
 
-export const scopeReviewGuide = (): string =>
-  fillPrompt(load('./review-scope.md'), { productManager: productManager() });
-
-export const catalogReviewGuide = (): string =>
-  fillPrompt(load('./review-flows-catalog.md'), {
+/** A call's two review guides (D1.12): the product manager peer, then the output reviewer. */
+const reviewGuides = (name: string): ReviewGuides => ({
+  peer: fillPrompt(load(`./review-${name}-peer.md`), {
     productManager: productManager(),
-  });
+  }),
+  output: fillPrompt(load(`./review-${name}-output.md`), {}),
+});
 
-export const expandReviewGuide = (): string =>
-  fillPrompt(load('./review-flows-expand.md'), {
-    productManager: productManager(),
-  });
+export const scopeReviewGuides = (): ReviewGuides => reviewGuides('scope');
+export const catalogReviewGuides = (): ReviewGuides =>
+  reviewGuides('flows-catalog');
+export const expandReviewGuides = (): ReviewGuides =>
+  reviewGuides('flows-expand');
 
 /** The "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one fills a form, one runs the standard delete subflow. Never a reference idea's flow. */
 function exampleFlows(): string {

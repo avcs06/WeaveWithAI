@@ -36,7 +36,7 @@ export function toJsonSchema(schema: z.ZodType, name: string): BridgedSchema {
 
 export function assertWithinLimits(
   bridged: BridgedSchema,
-  limits: { properties?: number } = {},
+  limits: { properties?: number; enums?: number } = {},
 ): void {
   const { name, stats } = bridged;
   if (stats.depth > MAX_DEPTH) {
@@ -47,6 +47,11 @@ export function assertWithinLimits(
   if (limits.properties !== undefined && stats.properties > limits.properties) {
     throw new SchemaBridgeError(
       `${name} has ${stats.properties} properties; the limit is ${limits.properties}`,
+    );
+  }
+  if (limits.enums !== undefined && stats.enums > limits.enums) {
+    throw new SchemaBridgeError(
+      `${name} has ${stats.enums} enums; the limit is ${limits.enums}`,
     );
   }
 }

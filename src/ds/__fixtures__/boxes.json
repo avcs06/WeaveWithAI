@@ -1,27 +1,73 @@
 {
   "Button/sm": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      6,
+      8,
+      6,
+      8
+    ],
+    "gap": 8
   },
   "Button/md": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      12,
+      8,
+      12
+    ],
+    "gap": 10
   },
   "IconButton/xs": {
     "height": 24,
-    "width": 24
+    "width": 24,
+    "padding": [
+      4,
+      4,
+      4,
+      4
+    ]
   },
   "IconButton/sm": {
     "height": 32,
-    "width": 32
+    "width": 32,
+    "padding": [
+      7,
+      7,
+      7,
+      7
+    ]
   },
   "IconButton/md": {
     "height": 40,
-    "width": 40
+    "width": 40,
+    "padding": [
+      8,
+      8,
+      8,
+      8
+    ]
   },
   "PopoverButton/sm": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      6,
+      8,
+      6,
+      8
+    ],
+    "gap": 8
   },
   "PopoverButton/md": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      12,
+      8,
+      12
+    ],
+    "gap": 10
   },
   "Avatar/sm": {
     "height": 28,
@@ -36,204 +82,552 @@
     "width": 56
   },
   "Tag/xs": {
-    "height": 24
+    "height": 24,
+    "padding": [
+      4,
+      8,
+      4,
+      8
+    ],
+    "gap": 6
   },
   "Tag/sm": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      6,
+      10,
+      6,
+      10
+    ],
+    "gap": 8
   },
   "Chip/sm": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      6,
+      8,
+      6,
+      8
+    ],
+    "gap": 8
   },
   "Chip/md": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      12,
+      8,
+      12
+    ],
+    "gap": 10
   },
   "Checkbox/sm": {
-    "height": 18
+    "height": 18,
+    "gap": 6
   },
   "Checkbox/sm/box": {
     "height": 18,
-    "width": 18
+    "width": 18,
+    "padding": [
+      2,
+      2,
+      2,
+      2
+    ]
   },
   "Checkbox/md": {
-    "height": 22
+    "height": 22,
+    "gap": 6
   },
   "Checkbox/md/box": {
     "height": 22,
-    "width": 22
+    "width": 22,
+    "padding": [
+      2,
+      2,
+      2,
+      2
+    ]
   },
   "Radio/sm/box": {
     "height": 18,
-    "width": 18
+    "width": 18,
+    "padding": [
+      1,
+      1,
+      1,
+      1
+    ]
   },
   "Radio/md/box": {
     "height": 22,
-    "width": 22
+    "width": 22,
+    "padding": [
+      1,
+      1,
+      1,
+      1
+    ]
   },
   "Switch/sm": {
-    "height": 24
+    "height": 24,
+    "gap": 6
   },
   "Switch/sm/track": {
     "height": 24,
-    "width": 42
+    "width": 42,
+    "padding": [
+      3,
+      3,
+      3,
+      3
+    ]
   },
   "Switch/md": {
-    "height": 32
+    "height": 32,
+    "gap": 6
   },
   "Switch/md/track": {
     "height": 32,
-    "width": 56
+    "width": 56,
+    "padding": [
+      4,
+      4,
+      4,
+      4
+    ]
   },
   "FormControl/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "FormControl/sm/label-row": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      8,
+      16,
+      8,
+      16
+    ],
+    "gap": 8
   },
   "FormControl/sm/help": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
+  },
+  "FormControl/sm/message": {
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "FormControl/md/label-row": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      24,
+      8,
+      24
+    ],
+    "gap": 10
   },
   "FormControl/md/help": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
+  },
+  "FormControl/md/message": {
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/sm+error": {
-    "height": 104
+    "height": 104,
+    "gap": 8
   },
   "FormControl/sm+error/label-row": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/sm+error/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      8,
+      16,
+      8,
+      16
+    ],
+    "gap": 8
   },
   "FormControl/sm+error/help": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/sm+error/message": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/md+error": {
-    "height": 112
+    "height": 112,
+    "gap": 8
   },
   "FormControl/md+error/label-row": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/md+error/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      24,
+      8,
+      24
+    ],
+    "gap": 10
   },
   "FormControl/md+error/help": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
   },
   "FormControl/md+error/message": {
-    "height": 16
+    "height": 16,
+    "padding": [
+      0,
+      4,
+      0,
+      4
+    ]
+  },
+  "Card": {
+    "padding": [
+      16,
+      20,
+      16,
+      20
+    ],
+    "gap": 12
   },
   "Input/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "Input/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      8,
+      16,
+      8,
+      16
+    ],
+    "gap": 8
   },
   "Input/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "Input/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      24,
+      8,
+      24
+    ],
+    "gap": 10
   },
   "NumberInput/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "NumberInput/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      8,
+      16,
+      8,
+      16
+    ],
+    "gap": 8
   },
   "NumberInput/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "NumberInput/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      8,
+      24,
+      8,
+      24
+    ],
+    "gap": 10
   },
   "PasswordInput/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "PasswordInput/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      4,
+      8,
+      4,
+      8
+    ],
+    "gap": 8
   },
   "PasswordInput/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "PasswordInput/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      4,
+      12,
+      4,
+      12
+    ],
+    "gap": 10
   },
   "SearchInput/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "SearchInput/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      4,
+      8,
+      4,
+      8
+    ],
+    "gap": 8
   },
   "SearchInput/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "SearchInput/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      4,
+      12,
+      4,
+      12
+    ],
+    "gap": 10
   },
   "Select/sm": {
-    "height": 80
+    "height": 80,
+    "gap": 8
   },
   "Select/sm/box": {
-    "height": 32
+    "height": 32,
+    "padding": [
+      4,
+      8,
+      4,
+      8
+    ],
+    "gap": 8
   },
   "Select/md": {
-    "height": 88
+    "height": 88,
+    "gap": 8
   },
   "Select/md/box": {
-    "height": 40
+    "height": 40,
+    "padding": [
+      4,
+      12,
+      4,
+      12
+    ],
+    "gap": 10
   },
   "MultiSelect/sm/box": {
+    "padding": [
+      4,
+      8,
+      4,
+      8
+    ],
+    "gap": 8,
     "minHeight": 32
   },
   "MultiSelect/md/box": {
+    "padding": [
+      4,
+      12,
+      4,
+      12
+    ],
+    "gap": 10,
     "minHeight": 40
   },
   "Textarea/sm": {
-    "height": 128
+    "height": 128,
+    "gap": 8
   },
   "Textarea/sm/box": {
     "height": 80,
+    "padding": [
+      8,
+      16,
+      8,
+      16
+    ],
+    "gap": 8,
     "minHeight": 32
   },
   "Textarea/md": {
-    "height": 136
+    "height": 136,
+    "gap": 8
   },
   "Textarea/md/box": {
     "height": 88,
+    "padding": [
+      12,
+      24,
+      12,
+      24
+    ],
+    "gap": 10,
     "minHeight": 40
   },
   "Accordion/header": {
-    "height": 66
+    "height": 66,
+    "padding": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "gap": 16
   },
   "Collapsible/header": {
-    "height": 66
+    "height": 66,
+    "padding": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "gap": 16
+  },
+  "Accordion/panel": {
+    "gap": 16
   },
   "Tabs/list": {
-    "height": 42
+    "height": 42,
+    "gap": 4
   },
   "Tabs/trigger": {
-    "height": 42
+    "height": 42,
+    "padding": [
+      14,
+      12,
+      14,
+      12
+    ],
+    "gap": 10
+  },
+  "Tabs/panel": {
+    "padding": [
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  "Section": {
+    "padding": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "gap": 20
   },
   "Section/header": {
-    "height": 52
+    "height": 52,
+    "gap": 4
+  },
+  "Section/content": {
+    "gap": 16
   },
   "Dropdown/item": {
-    "height": 30
+    "height": 30,
+    "padding": [
+      8,
+      10,
+      8,
+      10
+    ],
+    "gap": 10
   },
   "Table/header": {
     "height": 36
@@ -241,46 +635,161 @@
   "Table/row": {
     "height": 37
   },
+  "Table/header-cell": {
+    "height": 36,
+    "padding": [
+      10,
+      12,
+      10,
+      12
+    ],
+    "gap": 2
+  },
+  "Table/cell": {
+    "height": 37,
+    "padding": [
+      8,
+      6,
+      8,
+      6
+    ]
+  },
+  "Table/pagination": {
+    "padding": [
+      8,
+      6,
+      8,
+      6
+    ],
+    "gap": 12
+  },
   "Pagination/full": {
-    "height": 32
+    "height": 32,
+    "gap": 12
   },
   "Pagination/minimal": {
-    "height": 32
+    "height": 32,
+    "gap": 12
   },
   "SelectOption": {
-    "height": 30
+    "height": 30,
+    "padding": [
+      8,
+      10,
+      8,
+      10
+    ],
+    "gap": 10
+  },
+  "Popover": {
+    "padding": [
+      8,
+      0,
+      8,
+      0
+    ],
+    "gap": 2
   },
   "Dialog/sm": {
     "width": 400
   },
   "Dialog/sm/header": {
     "height": 56,
-    "width": 400
+    "width": 400,
+    "padding": [
+      24,
+      24,
+      8,
+      24
+    ],
+    "gap": 16
+  },
+  "Dialog/sm/body": {
+    "width": 400,
+    "padding": [
+      20,
+      24,
+      24,
+      24
+    ]
   },
   "Dialog/sm/footer": {
     "height": 64,
-    "width": 400
+    "width": 400,
+    "padding": [
+      8,
+      24,
+      24,
+      24
+    ],
+    "gap": 8
   },
   "Dialog/md": {
     "width": 520
   },
   "Dialog/md/header": {
     "height": 56,
-    "width": 520
+    "width": 520,
+    "padding": [
+      24,
+      24,
+      8,
+      24
+    ],
+    "gap": 16
+  },
+  "Dialog/md/body": {
+    "width": 520,
+    "padding": [
+      20,
+      24,
+      24,
+      24
+    ]
   },
   "Dialog/md/footer": {
     "height": 64,
-    "width": 520
+    "width": 520,
+    "padding": [
+      8,
+      24,
+      24,
+      24
+    ],
+    "gap": 8
   },
   "Dialog/lg": {
     "width": 720
   },
   "Dialog/lg/header": {
     "height": 56,
-    "width": 720
+    "width": 720,
+    "padding": [
+      24,
+      24,
+      8,
+      24
+    ],
+    "gap": 16
+  },
+  "Dialog/lg/body": {
+    "width": 720,
+    "padding": [
+      20,
+      24,
+      24,
+      24
+    ]
   },
   "Dialog/lg/footer": {
     "height": 64,
-    "width": 720
+    "width": 720,
+    "padding": [
+      8,
+      24,
+      24,
+      24
+    ],
+    "gap": 8
   }
 }
