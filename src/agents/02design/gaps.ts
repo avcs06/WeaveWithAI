@@ -9,7 +9,8 @@ import type { NodeLayout } from './schema';
 type Kid = Pick<ModelNode, 'id' | 'role' | 'component' | 'what' | 'layout'>;
 
 /**
- * What a column stacks: a title and its description; text alone; the
+ * What a column stacks: a title and its description; paragraphs, alone or
+ * under a heading, which keep their own spacing (H-13); the
  * repeated items of a list, which keep their row rhythm (H-10); two or more
  * groups, which are columns of two or more nodes; content, with at most one
  * group; a header above two or more groups, which no one gap fits; or one node.
@@ -23,9 +24,10 @@ export function stackOf(kids: Kid[], kidsOf: (id: string) => Kid[], lists: boole
   if (kids.length < 2) return 'one';
   const [first, ...rest] = kids;
   const titled = (stack: Kid[]) =>
-    stack.length >= 2 && stack[0]?.role === 'heading' && stack.slice(1).every((k) => k.role === 'text');
+    stack.length === 2 && stack[0]?.role === 'heading' && stack[1]?.role === 'text';
   if (titled(kids)) return 'header';
-  if (kids.every((k) => k.role === 'text')) return 'text';
+  // One gap cannot be 16 under a heading and 8 to 12 between paragraphs, so a heading's paragraphs keep the model's.
+  if (kids.every((k, i) => k.role === 'text' || (i === 0 && k.role === 'heading'))) return 'text';
   if (lists && largestRepeat(kids) >= 2) return 'list';
   const isHeader = (k: Kid | undefined) =>
     k?.role === 'heading' || (k?.layout?.direction === 'column' && titled(kidsOf(k.id)));

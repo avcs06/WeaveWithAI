@@ -77,7 +77,7 @@ Code sets the gap of each column in a widget or a new component, whatever you wr
 - A header and its content, and content to content, such as field to field: 16px.
 - Groups to groups: 24px, in a column that holds two or more groups. A group is a column of two or more nodes, such as one part of a form.
 - So a column holds a header and one node, or content, or groups. To put a header above two or more groups, put the groups in a column of their own under the header.
-- A list's repeated rows or cards and a column of paragraphs keep the gap you give them.
+- A list's repeated rows or cards and a column of paragraphs, with or without a heading above them, keep the gap you give them.
 
 You set every other gap:
 - Buttons side by side: 8px, spacing token key 2. A danger button sits further from the primary button beside it.

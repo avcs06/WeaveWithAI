@@ -69,6 +69,8 @@ describe('withFixedGaps', () => {
     ];
     expect(gaps(mixed).root).toBe('2');
     expect(gaps([node('n01', '', 'text'), node('n02', '', 'text')]).root).toBe('2');
+    // A heading over two paragraphs is no title and description: the paragraphs keep their spacing.
+    expect(gaps([node('n01', '', 'heading'), node('n02', '', 'text'), node('n03', '', 'text')]).root).toBe('2');
     const rows = [
       node('n01', '', 'heading'),
       node('n02', '', 'display', { component: 'ListItem' }),

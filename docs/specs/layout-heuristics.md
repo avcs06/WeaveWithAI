@@ -24,7 +24,8 @@ recorded.
       component, code sets each column's gap: a title to its description 4,
       a header to its content and content to content 16, and 24 between two
       or more groups, a group being a column of two or more nodes. A list's
-      repeated items and paragraphs keep their own (H-10, H-13). Check: a
+      repeated items and paragraphs, under a heading or not, keep their own
+      (H-10, H-13). Check: a
       column holds a header and one node, content, or groups; a header above
       two or more groups puts them in a column of their own. Mandatory.
       Changed 2026-11-01 (user): it replaced "gaps shrink with depth", whose
