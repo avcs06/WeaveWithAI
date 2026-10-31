@@ -9,5 +9,6 @@ Challenge, and report as a blocker only when you would not sign it off:
 - A decision of the standard that the catalog gets wrong or leaves unmade. Estimate the measures from the descriptions.
 - Coverage: a flow the idea or the scope asks for is missing. Examples: the core loop end to end, finding records where a list grows, editing or deleting what can be created, signing out when roles sign in. Also a flow that nothing in the idea implies.
 - Business rules: a rule the idea states that no description or assumption carries.
+- Granularity: a flow that bundles goals a user reaches on their own, such as editing and deleting a record, or using several kinds of item one after another. Each goal is its own flow.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators: ids, counts, name formats, numbering.

@@ -480,6 +480,20 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
   - The schema and the flows prompt say the example is text in quotes, even
     for a number, a date or a yes or no.
 
+- [x] **FL16** One goal a flow, one action a step (20 min) (done 2026-10-31). Depends: FL15
+  - Why: the dashboard run of 2026-10-31 20:15 made 10 flows where the
+    golden has 17. Each of three flows copied one scope item that named
+    several actions ("Rename, duplicate and delete a dashboard"), and
+    nothing checked it. Five dashboard runs gave 10 to 17 flows with the
+    same catalog prompt. The landing step "chooses to sign up or sign in"
+    made DESIGN-028 fail 21 times downstream.
+  - The flows prompt says an item with several actions often needs a flow
+    for each, that an action taken on its own is its own flow, and that a
+    step is one action. The catalog peer review blocks bundled goals, and
+    the expand output review blocks a step with two actions. No validator:
+    the golden's F16 creates, updates and deletes ChecklistItem in one flow,
+    and word matching belongs to the reviewers (FL11).
+
 ## Phase 3: Design (Thu Oct 29)
 
 Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 23.

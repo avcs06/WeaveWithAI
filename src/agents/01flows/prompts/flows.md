@@ -12,15 +12,15 @@ Treat these as decided. A scope question not answered here keeps its default ans
 
 ## What to cover
 
-- Every `inScope` item of the scope, as flows a user can follow end to end.
+- Every `inScope` item of the scope, as flows a user can follow end to end. An item that names several actions often needs a flow for each.
 - For each role: getting in (sign up and sign in) when the role signs in, the core loop, finding records (search or filters where lists can grow), editing, deleting, and signing out. Every role gets at least one flow beyond signing in and out.
 - The landing page: a flow of the role it invites in, with the precondition "Not signed in". It runs from arriving on the page to getting started. A role with `signedIn` false gets its flows like any other.
 - Size: 4 to 24 flows, at most 16 steps each. One complete core loop beats many partial ones.
 
 ## How a flow is written
 
-1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. Flow ids are F01, F02, and so on. `role` is a role id from the scope. `outcome` says what changed and what a refresh still shows. `preconditions` are states that another flow sets up. Auth flows have category "auth" and the matching `authKind`. Every other flow has `authKind` "none". `signedOut` is true when the user is not signed in during the flow: on the landing page, while signing up or signing in, and in every flow of a role that never signs in. Every other flow, signing out included, has `signedOut` false.
-2. Steps are F01.S01, F01.S02, ... numbered without gaps. A user step pairs what the user does (`userAction`) with what the website visibly does in response (`websiteResponse`). A step the system starts on its own (a deadline passes) has kind "system", a `websiteResponse` and an empty `userAction`.
+1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. An action the user takes on its own is its own flow: editing a book and deleting it are two flows. Working with different kinds of item is a flow for each kind, even when they share a page. Flow ids are F01, F02, and so on. `role` is a role id from the scope. `outcome` says what changed and what a refresh still shows. `preconditions` are states that another flow sets up. Auth flows have category "auth" and the matching `authKind`. Every other flow has `authKind` "none". `signedOut` is true when the user is not signed in during the flow: on the landing page, while signing up or signing in, and in every flow of a role that never signs in. Every other flow, signing out included, has `signedOut` false.
+2. Steps are F01.S01, F01.S02, ... numbered without gaps. A user step is one action, and filling in a form and submitting it is one. It pairs what the user does (`userAction`) with what the website visibly does in response (`websiteResponse`). When the user can choose between two actions, the step takes the one this flow's goal needs, and the other starts the flow that has it as its goal: the landing flow says "chooses to sign up", and the sign-in flow starts with "chooses to sign in". A step the system starts on its own (a deadline passes) has kind "system", a `websiteResponse` and an empty `userAction`.
 3. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
    - A label and a business meaning. No technical name: the engineers name the field later from these.
    - A type and `required`.
