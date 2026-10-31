@@ -32,7 +32,11 @@ const leaf = {
 };
 
 export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
-  'LAYOUT-001': edit((s) => (section(s, 'S04.sec2').layout.gap = '8')),
+  // A heading above the book's two groups, the title row stacked as one, in the column that holds them.
+  'LAYOUT-001': edit((s) => {
+    add(s, 'S06.n03', 'S06.n30', { parent: '', order: -1 });
+    node(s, 'S06.n02').layout!.direction = 'column';
+  }),
   'LAYOUT-002': edit((s) => (node(s, 'S06.n17').order = 0)),
   'LAYOUT-003': edit((s) => (node(s, 'S06.n06').layout!.gap = '4')),
   'LAYOUT-004': edit((s) => (node(s, 'S06.n06').layout!.gap = '1')),
@@ -47,7 +51,6 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
     }),
   ),
   'LAYOUT-006': edit((s) => (section(s, 'S06.sec2').layout.gap = '8')),
-  'LAYOUT-009': edit((s) => (section(s, 'S05.sec1').layout.gap = '3')),
   'LAYOUT-010': edit((s) => {
     s.sections.push({
       ...structuredClone(section(s, 'S04.sec2')),

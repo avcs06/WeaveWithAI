@@ -6,6 +6,7 @@ import type { StageContext, StageDef } from '../../stages';
 import type { Processed as Plan } from '../03architect/process';
 import type { Processed as Catalog } from '../04catalog/process';
 import { caller, designInputs, kindOf, PARALLEL } from '../calls';
+import { withFixedGaps } from '../gaps';
 import {
   componentReviewGuides,
   componentSystemPrompt,
@@ -42,6 +43,10 @@ export async function runInvent(ctx: StageContext, inv: Inventory): Promise<void
           minWidthPx: 0,
           maxWidthPx: 0,
         };
+        const lists = catalog.widgets.some(
+          (w) => w.newComponents.includes(declared.name) && (w.kind === 'list' || w.kind === 'cards'),
+        );
+        const fixed = (design: ComponentDesign) => withFixedGaps(design, lists);
         const { output, model } = await call({
           stage: `design-invent-${declared.name}`,
           schema: ComponentDesign,
@@ -49,14 +54,14 @@ export async function runInvent(ctx: StageContext, inv: Inventory): Promise<void
           system: componentSystemPrompt(brief, inv),
           user: componentUserMessage(declared.name, plan, catalog, scope, brief, theme),
           validate: (design) =>
-            validateComponent(declared.name, design, range, kindOf(declared.name, plan, catalog), context, theme),
+            validateComponent(declared.name, fixed(design), range, kindOf(declared.name, plan, catalog), context, theme),
           review: componentReviewGuides(),
           maxTokens: COMPONENT_MAX_TOKENS,
           reasoningEffort: COMPONENT_EFFORT,
           temperature: 0.7,
           patchKeys: DESIGN_KEYS,
         });
-        return { name: declared.name, design: output, model };
+        return { name: declared.name, design: fixed(output), model };
       }),
     ),
   );

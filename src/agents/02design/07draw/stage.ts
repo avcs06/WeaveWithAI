@@ -8,6 +8,7 @@ import type { StageContext, StageDef } from '../../stages';
 import { planAsIa, type Processed as Plan } from '../03architect/process';
 import type { Defined, Processed as Catalog } from '../04catalog/process';
 import { caller, designInputs, kindOf } from '../calls';
+import { withFixedGaps } from '../gaps';
 import {
   widgetReviewGuides,
   widgetsSystemPrompt,
@@ -60,6 +61,7 @@ function drawing(ctx: StageContext, inv: Inventory) {
       seed && previous ? draftOf(previous.output, previous.model) : undefined;
     const widget = widgets.get(id);
     if (!widget) throw new Error(`the catalog has no widget ${id}`);
+    const fixed = (build: Build) => withFixedGaps(build, widget.kind === 'list' || widget.kind === 'cards');
     const { output, model } = await call({
       stage: `design-draw-${id}${start ? '-fix' : ''}`,
       schema: Build,
@@ -67,7 +69,7 @@ function drawing(ctx: StageContext, inv: Inventory) {
       system: widgetsSystemPrompt(brief, inv),
       user: widgetsUserMessage(widget, plan, catalog, flows, scope, brief, theme),
       validate: (build) =>
-        validateDrawn(build, widget, kindOf(id, plan, catalog), newComponents, context, theme),
+        validateDrawn(fixed(build), widget, kindOf(id, plan, catalog), newComponents, context, theme),
       review: start ? undefined : widgetReviewGuides(),
       maxTokens: DRAW_MAX_TOKENS,
       reasoningEffort: DRAW_EFFORT,
@@ -75,7 +77,7 @@ function drawing(ctx: StageContext, inv: Inventory) {
       start,
       seed: start && seed,
     });
-    return { widget: id, output, model };
+    return { widget: id, output: fixed(output), model };
   };
   return { catalog, draw, totals };
 }

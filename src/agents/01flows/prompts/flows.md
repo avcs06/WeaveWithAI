@@ -19,9 +19,20 @@ Treat these as decided. A scope question not answered here keeps its default ans
 
 ## How a flow is written
 
-1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. An action the user takes on its own is its own flow: editing a book and deleting it are two flows. Working with different kinds of item is a flow for each kind, even when they share a page. Flow ids are F01, F02, and so on. `role` is a role id from the scope. `outcome` says what changed and what a refresh still shows. `preconditions` are states that another flow sets up. Auth flows have category "auth" and the matching `authKind`. Every other flow has `authKind` "none". `signedOut` is true when the user is not signed in during the flow: on the landing page, while signing up or signing in, and in every flow of a role that never signs in. Every other flow, signing out included, has `signedOut` false.
-2. Steps are F01.S01, F01.S02, ... numbered without gaps. A user step is one action, and filling in a form and submitting it is one. It pairs what the user does (`userAction`) with what the website visibly does in response (`websiteResponse`). When the user can choose between two actions, the step takes the one this flow's goal needs, and the other starts the flow that has it as its goal: the landing flow says "chooses to sign up", and the sign-in flow starts with "chooses to sign in". A step the system starts on its own (a deadline passes) has kind "system", a `websiteResponse` and an empty `userAction`.
-3. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
+1. A flow is one goal of one role, from where the user starts to an outcome that is still there after a refresh. Editing a book and deleting it are two goals, so two flows. Each kind of item gets its own flow, even when kinds share a page. Small actions on the parts of one record, such as adding, ticking and removing the items of a checklist, can share a flow.
+2. A flow has:
+   - An id: F01, F02, and so on.
+   - `role`: a role id from the scope.
+   - `outcome`: what changed and what a refresh still shows.
+   - `preconditions`: states that another flow sets up.
+   - `authKind`: auth flows have category "auth" and the matching `authKind`. Every other flow has "none".
+   - `signedOut`: true when the user is not signed in during the flow: on the landing page, while signing up or signing in, and in every flow of a role that never signs in. Every other flow, signing out included, has false.
+3. A step is one user action, and filling in a form and submitting it is one. When the user can choose between two actions, the step takes the one this flow's goal needs, and the other starts the flow that has it as its goal: the landing flow says "chooses to sign up", and the sign-in flow starts with "chooses to sign in".
+4. A step has:
+   - An id: F01.S01, F01.S02, ... numbered without gaps.
+   - `userAction`: what the user does, and `websiteResponse`: what the website visibly does in response.
+   - `kind`: "user", or "system" for a step the system starts on its own (a deadline passes). A system step has a `websiteResponse` and an empty `userAction`.
+5. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
    - A label and a business meaning. No technical name: the engineers name the field later from these.
    - A type and `required`.
    - `min` and `max`: lengths for text, values for numbers, `null` when there are none.
@@ -30,15 +41,15 @@ Treat these as decided. A scope question not answered here keeps its default ans
    - A realistic `example`, written as text in quotes even for a number, a date or a yes or no: "60", "2026-11-03", "yes".
 
    A step asks for fields by id in `fields`, or for a whole `form`, and asks for each field once. A form holds the fields one screen asks for, when more than one flow shows that screen. Forms are in `forms` with an id (FM01, ...).
-4. A subflow is a step sequence that flows share, kept in `subflows` with an id (SF01, ...). A step that runs a `subflow` says in `userAction` what triggers it and carries the `effects` the subflow applies to this flow's records. The subflow's steps give the website's response, so the step has no `websiteResponse` and no fields. The subflows every app has are already in `subflows` under their own ids. Run them by id and never rewrite them.
-5. `effects` name the vocabulary nouns a step creates, lists, reads, updates or deletes, spelled exactly as the scope spells them. A step that stores or loads nothing has `[]`. A noun that some step creates is also listed or read by some step. It can also be updated and deleted, unless an assumption names the noun and says why not.
-6. Alternatives (F01.A01, ...) branch `from` a step of the same flow or subflow. Each says what the website shows and where the user goes next: `resumesAt` is a step of the same flow or subflow, or "" when the flow ends. No alternative leaves the user without a next action. These steps need these alternatives:
+6. A subflow is a step sequence that flows share, kept in `subflows` with an id (SF01, ...). A step that runs a `subflow` says in `userAction` what triggers it and carries the `effects` the subflow applies to this flow's records. The subflow's steps give the website's response, so the step has no `websiteResponse` and no fields. The subflows every app has are already in `subflows` under their own ids. Run them by id and never rewrite them.
+7. `effects` name the vocabulary nouns a step creates, lists, reads, updates or deletes, spelled exactly as the scope spells them. A step that stores or loads nothing has `[]`. A noun that some step creates is also listed or read by some step. It can also be updated and deleted, unless an assumption names the noun and says why not.
+8. Alternatives (F01.A01, ...) branch `from` a step of the same flow or subflow. Each says what the website shows and where the user goes next: `resumesAt` is a step of the same flow or subflow, or "" when the flow ends. No alternative leaves the user without a next action. These steps need these alternatives:
    - A step that saves fields: an "invalid" path (the website marks what is wrong and keeps the typed values) and a "failure" path (saving fails, the values are kept, and a retry is offered).
    - A step that lists records: an "empty" path saying what the user sees and can do next.
    - A delete: a "confirm" or "cancel" path, its own or through a subflow that has one.
    - Something a role may not do: a "denied" path.
    - A record that may be gone: a "notFound" path.
-7. New assumptions and questions continue the scope's numbering (a scope ending at A02 and Q01 continues at A03 and Q02) and never reuse an id. Every question has a default answer.
+9. New assumptions and questions continue the scope's numbering (a scope ending at A02 and Q01 continues at A03 and Q02) and never reuse an id. Every question has a default answer.
 
 ## No design or contract details
 

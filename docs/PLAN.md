@@ -1278,6 +1278,21 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     waits for a run that needs it. A second pass needs fix calls named per
     pass, as `-fix` is now reused.
 
+- [x] **DS41** Fixed column gaps set by code (2.5 h) (done 2026-11-01). Depends: DS37
+  - Why: LAYOUT-001 wanted each box's gap smaller than its parent's, so a
+    form's 16 between fields inside a 16 column failed it, and its fixes
+    broke LAYOUT-009 and 011 (dashboard run, 2026-10-31). The user chose
+    fixed values, set by code, with a rule on the shape (2026-11-01).
+  - `02design/gaps.ts` sets each column's gap in a draw build and an invent
+    design, before their checks and in what they write: a title and its
+    description 4, a header and its content or content to content 16, two
+    or more groups 24. A list's repeated items and paragraphs keep the
+    model's gap. LAYOUT-001 now fails a header above two or more groups in
+    one column, which no gap fits. H-09 is part of H-01, and LAYOUT-009 is
+    gone. The node guide says which gaps code sets.
+  - The assemble routing test uses LAYOUT-070, a hero padded under the
+    overlay header, as its issue found only on the assembled page.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

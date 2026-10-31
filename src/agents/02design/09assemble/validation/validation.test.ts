@@ -85,18 +85,6 @@ describe('layout rules on the reading-list fixture', () => {
     expect(at(apart)).toEqual(['S04.sec3']);
   });
 
-  it("LAYOUT-009 spaces a form's stacked fields, and leaves a row of search and filters to the toolbar's gap", () => {
-    const filters = structuredClone(screens);
-    const row = filters.nodes.find((n) => n.id === 'S04.n15')!;
-    row.layout = { ...row.layout!, gap: '2' };
-    filters.nodes.push({ ...structuredClone(filters.nodes.find((n) => n.id === 'S04.n07')!), id: 'S04.n17', order: 2 });
-    filters.nodes.find((n) => n.id === 'S04.n08')!.order = 3;
-    expect(ruleIds(layout(filters))).not.toContain('LAYOUT-009');
-    // The same search and filter stacked in a column, 8 apart, is a form with its fields too close.
-    row.layout = { ...row.layout!, direction: 'column', wrap: false };
-    expect(ruleIds(layout(filters))).toContain('LAYOUT-009');
-  });
-
   it('LAYOUT-026 holds a field to 160, but not a chip, a checkbox or a switch', () => {
     const chips = structuredClone(screens);
     const search = chips.nodes.find((n) => n.id === 'S04.n07')!;

@@ -20,10 +20,15 @@ recorded.
 
 ## A. Spacing hierarchy (proximity)
 
-- [x] **H-01 Gaps shrink with depth.** Section to section is the largest gap,
-      blocks inside a section smaller, items inside a block smaller, label to
-      control the smallest. Check: along every nesting chain in the skeleton,
-      gap(parent) > gap(child). Mandatory.
+- [x] **H-01 Fixed gaps by what a column stacks.** In a widget or a new
+      component, code sets each column's gap: a title to its description 4,
+      a header to its content and content to content 16, and 24 between two
+      or more groups, a group being a column of two or more nodes. A list's
+      repeated items and paragraphs keep their own (H-10, H-13). Check: a
+      column holds a header and one node, content, or groups; a header above
+      two or more groups puts them in a column of their own. Mandatory.
+      Changed 2026-11-01 (user): it replaced "gaps shrink with depth", whose
+      fixes kept breaking H-09 and H-11, and took in H-09.
 - [x] **H-02 A heading belongs to what follows.** Space above a heading is at
       least 1.5 times the space below it. Check: distance to the previous
       sibling against distance to the next, for every heading node. Mandatory.
@@ -44,11 +49,8 @@ recorded.
 - [x] **H-08 Sections neither touch nor float apart.** 24 to 32 between sections on inner pages, up to 48 on public pages;
       more than 64 is too distributed. Check: the theme sets a page's
       section gap, and THEME-007 checks it. Mandatory outside the range.
-- [x] **H-09 Form spacing.** Field to field 16, group to group 24. Check:
-      gaps between a form's stacked fields, and between stacked groups that
-      hold only fields; a row of search and filters is a toolbar. Warning.
-      Changed 2026-10-31 (user): in the dashboard run, fixes broke it again
-      5 times while fixing H-01.
+- [x] **H-09 Form spacing.** Part of H-01 since 2026-11-01 (user): field to
+      field is content to content, group to group is groups.
 - [x] **H-10 Lists and tables keep one row rhythm.** Row heights constant and
       one gap: 0 to 12 between rows, 8 to 16 between cards, never both a
       divider and a gap. Check: the repeated items of a list or cards section

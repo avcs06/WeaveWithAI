@@ -72,12 +72,16 @@ The density is {{density}}.
 
 ### Gaps
 
-- Gaps shrink with depth. Blocks inside a widget sit closer than the widgets on the page. Items inside a block sit closer still.
-- Field to field: 16px, spacing token key 4.
-- Group of fields to group of fields: 24px, spacing token key 6.
+Code sets the gap of each column in a widget or a new component, whatever you write. You choose what each column holds:
+- A title and its description: 4px. Put them in a column of their own.
+- A header and its content, and content to content, such as field to field: 16px.
+- Groups to groups: 24px, in a column that holds two or more groups. A group is a column of two or more nodes, such as one part of a form.
+- So a column holds a header and one node, or content, or groups. To put a header above two or more groups, put the groups in a column of their own under the header.
+- A list's repeated rows or cards and a column of paragraphs keep the gap you give them.
+
+You set every other gap:
 - Buttons side by side: 8px, spacing token key 2. A danger button sits further from the primary button beside it.
 - An icon and its text: 4 to 10px.
-- A title and its description: 4px. Then 12 to 16px to the content.
 - Paragraphs: 8 to 12px apart.
 - A box pads at least as much as the gap inside it.
 - A heading sits closer to what follows it than to what precedes it.

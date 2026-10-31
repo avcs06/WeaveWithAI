@@ -219,26 +219,28 @@ describe('the design stages after the theme', () => {
 
   it('send an issue found on the assembled page back to the call that drew its widget, once, as a named patch fix', async () => {
     const run = prepared('routed');
-    // The books widget spaces its parts 32 apart: fine alone, but wider than the page spaces its widgets (LAYOUT-001).
-    const loose = structuredClone(builds.find((b) => b.widget === 'W06')!);
-    loose.layout.gap = '8';
-    const { llm, inputs } = fakeLlm({ W06: loose });
+    // The hero pads 16: fine alone, but on the landing page its title sits under the overlay header (LAYOUT-070).
+    const tight = structuredClone(builds.find((b) => b.widget === 'W01')!);
+    tight.layout.padding = '4';
+    const { llm, inputs } = fakeLlm({ W01: tight });
     await design(contextFor(run, llm), path.join(root, 'routed-gaps.jsonl'));
 
-    expect(writers(inputs).filter((stage) => stage.endsWith('-fix'))).toEqual(['design-draw-W06-fix']);
-    const fix = inputs.find((i) => i.stage === 'design-draw-W06-fix');
+    expect(writers(inputs).filter((stage) => stage.endsWith('-fix'))).toEqual(['design-draw-W01-fix']);
+    const fix = inputs.find((i) => i.stage === 'design-draw-W01-fix');
     expect(fix?.schemaName).toBe('BuildPatch');
-    expect(fix?.messages.at(-1)?.content).toContain('LAYOUT-001 at W06');
-    expect(fix?.messages.at(-1)?.content).toContain('W06 (as S04.sec2)');
+    expect(fix?.messages.at(-1)?.content).toContain('LAYOUT-070 at W01');
+    expect(fix?.messages.at(-1)?.content).toContain('W01 (as S01.sec1)');
     expect(fix?.messages.at(-2)?.role).toBe('assistant');
     expect(writers(inputs).filter((stage) => stage === 'design-architect')).toHaveLength(1);
     const report = readReport(run, 'design-assemble');
-    expect(report?.rounds[0]?.issues.map((i) => i.rule)).toEqual(['LAYOUT-001']);
+    const mandatory = (round: number) =>
+      [...new Set(report?.rounds[round]?.issues.filter((i) => i.severity === 'mandatory').map((i) => i.rule))];
+    expect(mandatory(0)).toEqual(['LAYOUT-070']);
     expect(report?.rounds[1]?.issues).toEqual([]);
     // The fix is the draw stage's own: a new version of its artifact, which the assembly reads.
     expect(readArtifact(run, 'design-draw').meta.version).toBe(2);
     const { stages } = readState(run);
-    expect(stages['design-draw-W06-fix']).toMatchObject({ status: 'done' });
+    expect(stages['design-draw-W01-fix']).toMatchObject({ status: 'done' });
     expect(stages['design-assemble']).toMatchObject({ known: 0 });
   });
 });
