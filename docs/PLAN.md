@@ -1556,9 +1556,12 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.
   - Done when: renders the golden freelancer-workspace contract.
 
-- [ ] **C6** Every golden idea (40 min). Depends: C5
+- [x] **C6** Every golden idea (40 min) (done 2026-11-01). Depends: C5
   - Save golden `03-contract.json` for each.
   - Done when: **G3**.
+  - Saved from the C7 rerun (user), without C5: the JSON reads fine. G3
+    holds without its old parts: the contract runs beside the screen calls,
+    not beside all of design, and C7 removed seeds.
 
 ## Phase 5: Reconciliation and freeze (Fri Oct 30, afternoon to night)
 

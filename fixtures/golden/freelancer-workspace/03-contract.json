@@ -1,0 +1,1163 @@
+{
+  "meta": {
+    "artifact": "contract",
+    "version": 2,
+    "hash": "e76ceabc2e7322a090b884dfb774a0115fda368f65c1c29abd5495d3db99ab01",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "774a3cfefb7d08e1408c64e076f6463eda56cce015f1e8b6cabcd84bb3daa55d"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "4c82da7091d10c91beb9c29a2f7316ae51b3a94c70a92bc12f4545630c96f5e9"
+      },
+      "design-catalog": {
+        "version": 1,
+        "hash": "1ae2eed2b253e81924db94900707f5dc0607fb383d67611a666debfe895c98b7"
+      }
+    },
+    "stage": "contract",
+    "model": "muse-spark-1.3",
+    "rounds": 1,
+    "createdAt": "2026-10-31T21:11:41.076Z"
+  },
+  "data": {
+    "enums": [
+      {
+        "name": "ClientStatus",
+        "values": [
+          {
+            "key": "lead",
+            "label": "Lead"
+          },
+          {
+            "key": "active",
+            "label": "Active"
+          },
+          {
+            "key": "past",
+            "label": "Past"
+          }
+        ]
+      },
+      {
+        "name": "TaskStatus",
+        "values": [
+          {
+            "key": "to_do",
+            "label": "To do"
+          },
+          {
+            "key": "in_progress",
+            "label": "In progress"
+          },
+          {
+            "key": "done",
+            "label": "Done"
+          }
+        ]
+      },
+      {
+        "name": "TaskPriority",
+        "values": [
+          {
+            "key": "low",
+            "label": "Low"
+          },
+          {
+            "key": "medium",
+            "label": "Medium"
+          },
+          {
+            "key": "high",
+            "label": "High"
+          }
+        ]
+      },
+      {
+        "name": "Weekday",
+        "values": [
+          {
+            "key": "monday",
+            "label": "Monday"
+          },
+          {
+            "key": "tuesday",
+            "label": "Tuesday"
+          },
+          {
+            "key": "wednesday",
+            "label": "Wednesday"
+          },
+          {
+            "key": "thursday",
+            "label": "Thursday"
+          },
+          {
+            "key": "friday",
+            "label": "Friday"
+          },
+          {
+            "key": "saturday",
+            "label": "Saturday"
+          },
+          {
+            "key": "sunday",
+            "label": "Sunday"
+          }
+        ]
+      }
+    ],
+    "entities": [
+      {
+        "name": "Client",
+        "noun": "Client",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "email",
+            "kind": "email",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "company",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "profile",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "status",
+            "kind": "enum",
+            "enum": "ClientStatus",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "followUpDate",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "Note",
+        "noun": "Note",
+        "fields": [
+          {
+            "name": "date",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "text",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "client",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Client",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Project",
+        "noun": "Project",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "description",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "dueDate",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "client",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Client",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Task",
+        "noun": "Task",
+        "fields": [
+          {
+            "name": "title",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "status",
+            "kind": "enum",
+            "enum": "TaskStatus",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "priority",
+            "kind": "enum",
+            "enum": "TaskPriority",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "dueDate",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "project",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Project",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Availability",
+        "noun": "Availability",
+        "fields": [
+          {
+            "name": "days",
+            "kind": "enum",
+            "enum": "Weekday",
+            "ref": "",
+            "list": true,
+            "required": true
+          },
+          {
+            "name": "from",
+            "kind": "time",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "to",
+            "kind": "time",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "SessionType",
+        "noun": "SessionType",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "duration",
+            "kind": "int",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "priceDisplay",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "maxPeople",
+            "kind": "int",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Session",
+        "noun": "Session",
+        "fields": [
+          {
+            "name": "date",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "startTime",
+            "kind": "time",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "sessionType",
+            "kind": "ref",
+            "enum": "",
+            "ref": "SessionType",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Booking",
+        "noun": "Booking",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "email",
+            "kind": "email",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "session",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Session",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "client",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Client",
+            "list": false,
+            "required": true
+          }
+        ]
+      }
+    ],
+    "operations": [
+      {
+        "id": "listClients",
+        "kind": "list",
+        "entity": "Client",
+        "summary": "List clients sorted by follow-up",
+        "inputs": [],
+        "flowSteps": [
+          "F05.S01",
+          "F06.S01",
+          "F07.S01",
+          "F08.S01",
+          "F25.S01"
+        ]
+      },
+      {
+        "id": "getClient",
+        "kind": "get",
+        "entity": "Client",
+        "summary": "Read a client",
+        "inputs": [],
+        "flowSteps": [
+          "F07.S02",
+          "F08.S02",
+          "F09.S01",
+          "F10.S01",
+          "F22.S03",
+          "F25.S02"
+        ]
+      },
+      {
+        "id": "createClient",
+        "kind": "create",
+        "entity": "Client",
+        "summary": "Create a client or Lead from booking",
+        "inputs": [
+          {
+            "field": "FD03",
+            "as": "name"
+          },
+          {
+            "field": "FD04",
+            "as": "email"
+          },
+          {
+            "field": "FD05",
+            "as": "company"
+          },
+          {
+            "field": "FD06",
+            "as": "profile"
+          },
+          {
+            "field": "FD07",
+            "as": "status"
+          },
+          {
+            "field": "FD08",
+            "as": "followUpDate"
+          },
+          {
+            "field": "FD25",
+            "as": "name"
+          },
+          {
+            "field": "FD26",
+            "as": "email"
+          }
+        ],
+        "flowSteps": [
+          "F05.S03",
+          "F22.S03"
+        ]
+      },
+      {
+        "id": "updateClient",
+        "kind": "update",
+        "entity": "Client",
+        "summary": "Update client including follow-up date",
+        "inputs": [
+          {
+            "field": "FD03",
+            "as": "name"
+          },
+          {
+            "field": "FD04",
+            "as": "email"
+          },
+          {
+            "field": "FD05",
+            "as": "company"
+          },
+          {
+            "field": "FD06",
+            "as": "profile"
+          },
+          {
+            "field": "FD07",
+            "as": "status"
+          },
+          {
+            "field": "FD08",
+            "as": "followUpDate"
+          }
+        ],
+        "flowSteps": [
+          "F06.S02",
+          "F06.S03",
+          "F07.S03",
+          "F09.S04"
+        ]
+      },
+      {
+        "id": "deleteClient",
+        "kind": "delete",
+        "entity": "Client",
+        "summary": "Delete a client and its data",
+        "inputs": [],
+        "flowSteps": [
+          "F08.S03"
+        ]
+      },
+      {
+        "id": "listNotes",
+        "kind": "list",
+        "entity": "Note",
+        "summary": "List notes of a client",
+        "inputs": [],
+        "flowSteps": [
+          "F09.S01"
+        ]
+      },
+      {
+        "id": "createNote",
+        "kind": "create",
+        "entity": "Note",
+        "summary": "Add a note under a client",
+        "inputs": [
+          {
+            "field": "FD09",
+            "as": "date"
+          },
+          {
+            "field": "FD10",
+            "as": "text"
+          }
+        ],
+        "flowSteps": [
+          "F09.S03"
+        ]
+      },
+      {
+        "id": "deleteNote",
+        "kind": "delete",
+        "entity": "Note",
+        "summary": "Delete a note",
+        "inputs": [],
+        "flowSteps": [
+          "F08.S03",
+          "F09.S05"
+        ]
+      },
+      {
+        "id": "listProjects",
+        "kind": "list",
+        "entity": "Project",
+        "summary": "List projects",
+        "inputs": [],
+        "flowSteps": [
+          "F10.S01",
+          "F13.S01"
+        ]
+      },
+      {
+        "id": "getProject",
+        "kind": "get",
+        "entity": "Project",
+        "summary": "Read a project",
+        "inputs": [],
+        "flowSteps": [
+          "F11.S01",
+          "F12.S01",
+          "F13.S02",
+          "F14.S01",
+          "F15.S01",
+          "F17.S01"
+        ]
+      },
+      {
+        "id": "createProject",
+        "kind": "create",
+        "entity": "Project",
+        "summary": "Create a project under a client",
+        "inputs": [
+          {
+            "field": "FD11",
+            "as": "name"
+          },
+          {
+            "field": "FD12",
+            "as": "description"
+          },
+          {
+            "field": "FD13",
+            "as": "dueDate"
+          }
+        ],
+        "flowSteps": [
+          "F10.S03"
+        ]
+      },
+      {
+        "id": "updateProject",
+        "kind": "update",
+        "entity": "Project",
+        "summary": "Edit a project",
+        "inputs": [
+          {
+            "field": "FD11",
+            "as": "name"
+          },
+          {
+            "field": "FD12",
+            "as": "description"
+          },
+          {
+            "field": "FD13",
+            "as": "dueDate"
+          }
+        ],
+        "flowSteps": [
+          "F11.S02"
+        ]
+      },
+      {
+        "id": "deleteProject",
+        "kind": "delete",
+        "entity": "Project",
+        "summary": "Delete a project and its tasks",
+        "inputs": [],
+        "flowSteps": [
+          "F08.S03",
+          "F12.S02"
+        ]
+      },
+      {
+        "id": "listTasks",
+        "kind": "list",
+        "entity": "Task",
+        "summary": "List tasks with search and filters",
+        "inputs": [
+          {
+            "field": "FD27",
+            "as": "q"
+          },
+          {
+            "field": "FD30",
+            "as": "status"
+          },
+          {
+            "field": "FD31",
+            "as": "priority"
+          }
+        ],
+        "flowSteps": [
+          "F12.S01",
+          "F13.S01",
+          "F13.S02",
+          "F14.S01",
+          "F14.S02",
+          "F15.S01",
+          "F17.S01",
+          "F25.S01"
+        ]
+      },
+      {
+        "id": "getTask",
+        "kind": "get",
+        "entity": "Task",
+        "summary": "Read a task",
+        "inputs": [],
+        "flowSteps": [
+          "F14.S03",
+          "F16.S01",
+          "F25.S02"
+        ]
+      },
+      {
+        "id": "createTask",
+        "kind": "create",
+        "entity": "Task",
+        "summary": "Add a task to a project",
+        "inputs": [
+          {
+            "field": "FD14",
+            "as": "title"
+          },
+          {
+            "field": "FD15",
+            "as": "status"
+          },
+          {
+            "field": "FD16",
+            "as": "priority"
+          },
+          {
+            "field": "FD17",
+            "as": "dueDate"
+          }
+        ],
+        "flowSteps": [
+          "F15.S03"
+        ]
+      },
+      {
+        "id": "updateTask",
+        "kind": "update",
+        "entity": "Task",
+        "summary": "Edit a task including Done",
+        "inputs": [
+          {
+            "field": "FD14",
+            "as": "title"
+          },
+          {
+            "field": "FD15",
+            "as": "status"
+          },
+          {
+            "field": "FD16",
+            "as": "priority"
+          },
+          {
+            "field": "FD17",
+            "as": "dueDate"
+          }
+        ],
+        "flowSteps": [
+          "F16.S02"
+        ]
+      },
+      {
+        "id": "deleteTask",
+        "kind": "delete",
+        "entity": "Task",
+        "summary": "Delete a task",
+        "inputs": [],
+        "flowSteps": [
+          "F08.S03",
+          "F12.S02",
+          "F17.S02"
+        ]
+      },
+      {
+        "id": "getAvailability",
+        "kind": "get",
+        "entity": "Availability",
+        "summary": "Read weekly availability",
+        "inputs": [],
+        "flowSteps": [
+          "F18.S01"
+        ]
+      },
+      {
+        "id": "updateAvailability",
+        "kind": "update",
+        "entity": "Availability",
+        "summary": "Set weekly availability",
+        "inputs": [
+          {
+            "field": "FD18",
+            "as": "days"
+          },
+          {
+            "field": "FD19",
+            "as": "from"
+          },
+          {
+            "field": "FD20",
+            "as": "to"
+          }
+        ],
+        "flowSteps": [
+          "F18.S02"
+        ]
+      },
+      {
+        "id": "listSessionTypes",
+        "kind": "list",
+        "entity": "SessionType",
+        "summary": "List session types",
+        "inputs": [],
+        "flowSteps": [
+          "F20.S01",
+          "F22.S01"
+        ]
+      },
+      {
+        "id": "getSessionType",
+        "kind": "get",
+        "entity": "SessionType",
+        "summary": "Read a session type",
+        "inputs": [],
+        "flowSteps": [
+          "F20.S02",
+          "F21.S01"
+        ]
+      },
+      {
+        "id": "createSessionType",
+        "kind": "create",
+        "entity": "SessionType",
+        "summary": "Add a session type",
+        "inputs": [
+          {
+            "field": "FD21",
+            "as": "name"
+          },
+          {
+            "field": "FD22",
+            "as": "duration"
+          },
+          {
+            "field": "FD23",
+            "as": "priceDisplay"
+          },
+          {
+            "field": "FD24",
+            "as": "maxPeople"
+          }
+        ],
+        "flowSteps": [
+          "F19.S02"
+        ]
+      },
+      {
+        "id": "updateSessionType",
+        "kind": "update",
+        "entity": "SessionType",
+        "summary": "Edit a session type",
+        "inputs": [
+          {
+            "field": "FD21",
+            "as": "name"
+          },
+          {
+            "field": "FD22",
+            "as": "duration"
+          },
+          {
+            "field": "FD23",
+            "as": "priceDisplay"
+          },
+          {
+            "field": "FD24",
+            "as": "maxPeople"
+          }
+        ],
+        "flowSteps": [
+          "F20.S03"
+        ]
+      },
+      {
+        "id": "deleteSessionType",
+        "kind": "delete",
+        "entity": "SessionType",
+        "summary": "Delete a session type",
+        "inputs": [],
+        "flowSteps": [
+          "F21.S02"
+        ]
+      },
+      {
+        "id": "listSessions",
+        "kind": "list",
+        "entity": "Session",
+        "summary": "List sessions and open slots",
+        "inputs": [
+          {
+            "field": "FD28",
+            "as": "sessionType"
+          }
+        ],
+        "flowSteps": [
+          "F22.S02",
+          "F24.S01",
+          "F25.S01"
+        ]
+      },
+      {
+        "id": "getSession",
+        "kind": "get",
+        "entity": "Session",
+        "summary": "Read a session",
+        "inputs": [],
+        "flowSteps": [
+          "F25.S02"
+        ]
+      },
+      {
+        "id": "createSession",
+        "kind": "create",
+        "entity": "Session",
+        "summary": "Create a session slot from availability",
+        "inputs": [],
+        "flowSteps": [
+          "F22.S03"
+        ]
+      },
+      {
+        "id": "updateSession",
+        "kind": "update",
+        "entity": "Session",
+        "summary": "Update a session when booked",
+        "inputs": [],
+        "flowSteps": [
+          "F22.S03"
+        ]
+      },
+      {
+        "id": "deleteSession",
+        "kind": "delete",
+        "entity": "Session",
+        "summary": "Cancel a session",
+        "inputs": [],
+        "flowSteps": [
+          "F24.S02"
+        ]
+      },
+      {
+        "id": "listBookings",
+        "kind": "list",
+        "entity": "Booking",
+        "summary": "List bookings of sessions",
+        "inputs": [],
+        "flowSteps": [
+          "F24.S01"
+        ]
+      },
+      {
+        "id": "getBooking",
+        "kind": "get",
+        "entity": "Booking",
+        "summary": "Read a booking",
+        "inputs": [],
+        "flowSteps": [
+          "F23.S01"
+        ]
+      },
+      {
+        "id": "createBooking",
+        "kind": "create",
+        "entity": "Booking",
+        "summary": "Book a session slot",
+        "inputs": [
+          {
+            "field": "FD25",
+            "as": "name"
+          },
+          {
+            "field": "FD26",
+            "as": "email"
+          },
+          {
+            "field": "FD29",
+            "as": "session"
+          }
+        ],
+        "flowSteps": [
+          "F22.S03"
+        ]
+      },
+      {
+        "id": "deleteBooking",
+        "kind": "delete",
+        "entity": "Booking",
+        "summary": "Cancel a booking",
+        "inputs": [],
+        "flowSteps": [
+          "F08.S03",
+          "F23.S02",
+          "F24.S02"
+        ]
+      }
+    ],
+    "widgets": [
+      {
+        "widget": "W07",
+        "reads": [
+          "listSessions",
+          "listSessionTypes",
+          "listBookings"
+        ]
+      },
+      {
+        "widget": "W08",
+        "reads": [
+          "listClients"
+        ]
+      },
+      {
+        "widget": "W09",
+        "reads": [
+          "listTasks",
+          "listProjects"
+        ]
+      },
+      {
+        "widget": "W10",
+        "reads": [
+          "listClients"
+        ]
+      },
+      {
+        "widget": "W12",
+        "reads": [
+          "getClient"
+        ]
+      },
+      {
+        "widget": "W13",
+        "reads": [
+          "listProjects"
+        ]
+      },
+      {
+        "widget": "W14",
+        "reads": [
+          "listNotes"
+        ]
+      },
+      {
+        "widget": "W15",
+        "reads": [
+          "listProjects",
+          "listClients"
+        ]
+      },
+      {
+        "widget": "W16",
+        "reads": [
+          "getProject",
+          "getClient"
+        ]
+      },
+      {
+        "widget": "W18",
+        "reads": [
+          "listTasks"
+        ]
+      },
+      {
+        "widget": "W19",
+        "reads": [
+          "listSessions",
+          "listSessionTypes",
+          "listBookings"
+        ]
+      },
+      {
+        "widget": "W20",
+        "reads": [
+          "getAvailability"
+        ]
+      },
+      {
+        "widget": "W21",
+        "reads": [
+          "listSessionTypes"
+        ]
+      },
+      {
+        "widget": "W22",
+        "reads": [
+          "listSessionTypes"
+        ]
+      },
+      {
+        "widget": "W23",
+        "reads": [
+          "listSessions"
+        ]
+      },
+      {
+        "widget": "W24",
+        "reads": []
+      },
+      {
+        "widget": "W25",
+        "reads": [
+          "listSessions"
+        ]
+      },
+      {
+        "widget": "W26",
+        "reads": [
+          "getBooking",
+          "getSession",
+          "getSessionType"
+        ]
+      },
+      {
+        "widget": "W27",
+        "reads": []
+      },
+      {
+        "widget": "W28",
+        "reads": [
+          "getClient"
+        ]
+      },
+      {
+        "widget": "W30",
+        "reads": []
+      },
+      {
+        "widget": "W31",
+        "reads": []
+      },
+      {
+        "widget": "W32",
+        "reads": [
+          "getProject"
+        ]
+      },
+      {
+        "widget": "W33",
+        "reads": [
+          "getTask"
+        ]
+      },
+      {
+        "widget": "W34",
+        "reads": [
+          "getSessionType"
+        ]
+      },
+      {
+        "widget": "W36",
+        "reads": [
+          "getSessionType"
+        ]
+      }
+    ]
+  }
+}

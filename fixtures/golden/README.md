@@ -8,6 +8,7 @@ golden/<idea>/
   01-flows/01-scope.json  01-flows/02-catalog.json  01-flows/04-reconcile.json  (and their .md renderings)
   02-design/01-theme.json  02-design/02-architect.json  02-design/03-catalog.json  02-design/04-screen.json
   02-design/05-invent.json  02-design/06-draw.json  02-design/07-frame.json  02-design/08-assemble.json (and .md)
+  03-contract.json
 ```
 
 Record per idea and stage: rounds used, tokens in and out, cost. Screen,
@@ -29,6 +30,7 @@ and frame.
 | freelancer-workspace | design-draw | 99 | 109 | 1415833 | 426304 | 3.48 | 0 known issues |
 | freelancer-workspace | design-frame | 9 | 7 | 110633 | 31925 | 0.27 | 0 known issues |
 | freelancer-workspace | design-assemble | 2 | 0 | 0 | 0 | 0.00 | 14 known issues |
+| freelancer-workspace | contract | 1 | 1 | 25803 | 16046 | 0.10 | 0 known issues, from the C7 rerun |
 | ecommerce-store | flows-scope | 2 | 4 | 20179 | 18502 | 0.22 | 0 known issues |
 | ecommerce-store | flows-catalog | 2 | 3 | 39381 | 23824 | 0.15 | 0 known issues |
 | ecommerce-store | flows-expand | 6 | 11 | 201497 | 46797 | 0.45 | 0 known issues, 3 batches |
@@ -41,6 +43,7 @@ and frame.
 | ecommerce-store | design-draw | 69 | 86 | 1135335 | 367760 | 2.92 | 0 known issues |
 | ecommerce-store | design-frame | 9 | 9 | 139028 | 44757 | 0.36 | 0 known issues |
 | ecommerce-store | design-assemble | 2 | 0 | 0 | 0 | 0.00 | 10 known issues |
+| ecommerce-store | contract | 1 | 1 | 21077 | 14473 | 0.09 | 0 known issues, from the C7 rerun |
 | dashboard-editor | flows-scope | 2 | 3 | 10741 | 11545 | 0.00 | 0 known issues, replayed from the cache |
 | dashboard-editor | flows-catalog | 3 | 5 | 51214 | 31656 | 0.20 | 0 known issues |
 | dashboard-editor | flows-expand | 5 | 8 | 118506 | 44741 | 0.33 | 0 known issues, 2 batches |
@@ -53,12 +56,15 @@ and frame.
 | dashboard-editor | design-draw | 45 | 52 | 634202 | 204309 | 1.64 | 0 known issues |
 | dashboard-editor | design-frame | 9 | 7 | 89616 | 31764 | 0.25 | 0 known issues |
 | dashboard-editor | design-assemble | 2 | 0 | 0 | 0 | 0.00 | 9 known issues |
+| dashboard-editor | contract | 1 | 1 | 15761 | 11091 | 0.07 | 0 known issues, from the C7 rerun |
 
 Saved 2026-11-01 from runs `20261101-0150-freelancer-workspace`,
 `20261101-0150-ecommerce-store` and `20261101-0107-dashboard-editor` (user),
 through assemble. The flows are these runs' own, so they replace the flows
 saved 2026-10-30 from runs `20261030-1630-<idea>`; the design was made from
 them. The rounds of screen, invent, draw and frame add up their calls' rounds.
+The contracts came later the same night, from a rerun of the contract stage
+on these runs after C7's add-form fix.
 
 ## Earlier sets
 

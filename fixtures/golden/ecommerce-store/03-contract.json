@@ -1,0 +1,1039 @@
+{
+  "meta": {
+    "artifact": "contract",
+    "version": 2,
+    "hash": "4f3a667349fce7730e020a921a4d69c1a95bd68f25350a7d755f7cb5736ecf70",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "241696a484e51255e1e75d75d9094e2be0f060a72a5e4d411f0c307a4f66fd23"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "eb7058a4e2f9420bf4ce853fa9b643b33d73590cbc4c2d5d061b29d42fe96630"
+      },
+      "design-catalog": {
+        "version": 1,
+        "hash": "98c08e9bb25c87ff2fbf66e6c1aa1dce6b21b80d5c81516cef91524bf61519c9"
+      }
+    },
+    "stage": "contract",
+    "model": "muse-spark-1.3",
+    "rounds": 1,
+    "createdAt": "2026-10-31T21:11:35.098Z"
+  },
+  "data": {
+    "enums": [
+      {
+        "name": "PieceType",
+        "values": [
+          {
+            "key": "mug",
+            "label": "Mug"
+          },
+          {
+            "key": "bowl",
+            "label": "Bowl"
+          },
+          {
+            "key": "planter",
+            "label": "Planter"
+          },
+          {
+            "key": "vase",
+            "label": "Vase"
+          }
+        ]
+      },
+      {
+        "name": "Fulfilment",
+        "values": [
+          {
+            "key": "studio_pickup",
+            "label": "Studio Pickup"
+          },
+          {
+            "key": "courier",
+            "label": "Courier"
+          }
+        ]
+      },
+      {
+        "name": "OrderStatus",
+        "values": [
+          {
+            "key": "new",
+            "label": "New"
+          },
+          {
+            "key": "packed",
+            "label": "Packed"
+          },
+          {
+            "key": "shipped",
+            "label": "Shipped"
+          },
+          {
+            "key": "collected",
+            "label": "Collected"
+          },
+          {
+            "key": "cancelled",
+            "label": "Cancelled"
+          }
+        ]
+      },
+      {
+        "name": "PaymentStatus",
+        "values": [
+          {
+            "key": "awaiting_upi_payment",
+            "label": "Awaiting UPI Payment"
+          },
+          {
+            "key": "paid",
+            "label": "Paid"
+          }
+        ]
+      },
+      {
+        "name": "DiscountKind",
+        "values": [
+          {
+            "key": "percentage_off",
+            "label": "Percentage off"
+          },
+          {
+            "key": "fixed_rupees_off",
+            "label": "Fixed rupees off"
+          }
+        ]
+      }
+    ],
+    "entities": [
+      {
+        "name": "Piece",
+        "noun": "Piece",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "type",
+            "kind": "enum",
+            "enum": "PieceType",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "basePrice",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "description",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "photo",
+            "kind": "url",
+            "enum": "",
+            "ref": "",
+            "list": true,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Variant",
+        "noun": "Variant",
+        "fields": [
+          {
+            "name": "glazeName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "sizeName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "stockCount",
+            "kind": "int",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "priceAdjustment",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "piece",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Piece",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "Order",
+        "noun": "Order",
+        "fields": [
+          {
+            "name": "buyerName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "phone",
+            "kind": "phone",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "fulfilment",
+            "kind": "enum",
+            "enum": "Fulfilment",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "deliveryAddress",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "discountCode",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "pieceTotal",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "discountAmount",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "shippingCharge",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "finalTotal",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "status",
+            "kind": "enum",
+            "enum": "OrderStatus",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "paymentStatus",
+            "kind": "enum",
+            "enum": "PaymentStatus",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "placedAt",
+            "kind": "datetime",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "OrderItem",
+        "noun": "OrderItem",
+        "fields": [
+          {
+            "name": "order",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Order",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "piece",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Piece",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "variant",
+            "kind": "ref",
+            "enum": "",
+            "ref": "Variant",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "pieceName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": false
+          },
+          {
+            "name": "glazeName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "sizeName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "quantity",
+            "kind": "int",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "price",
+            "kind": "money",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "DiscountCode",
+        "noun": "DiscountCode",
+        "fields": [
+          {
+            "name": "codeWord",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "kind",
+            "kind": "enum",
+            "enum": "DiscountKind",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "value",
+            "kind": "decimal",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "startDate",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "kind": "date",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "isActive",
+            "kind": "boolean",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      },
+      {
+        "name": "ShopSetting",
+        "noun": "ShopSetting",
+        "fields": [
+          {
+            "name": "shopName",
+            "kind": "string",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "pickupAddress",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          },
+          {
+            "name": "pickupInstructions",
+            "kind": "text",
+            "enum": "",
+            "ref": "",
+            "list": false,
+            "required": true
+          }
+        ]
+      }
+    ],
+    "operations": [
+      {
+        "id": "listPieces",
+        "kind": "list",
+        "entity": "Piece",
+        "summary": "List pieces for shop front, browse and owner catalogue",
+        "inputs": [],
+        "flowSteps": [
+          "F01.S01",
+          "F01.S02",
+          "F02.S01",
+          "F02.S02",
+          "F05.S02",
+          "F08.S01",
+          "F09.S01"
+        ]
+      },
+      {
+        "id": "getPiece",
+        "kind": "get",
+        "entity": "Piece",
+        "summary": "Read one piece detail",
+        "inputs": [],
+        "flowSteps": [
+          "F02.S03",
+          "F03.S01",
+          "F08.S02",
+          "F09.S02"
+        ]
+      },
+      {
+        "id": "createPiece",
+        "kind": "create",
+        "entity": "Piece",
+        "summary": "Create a piece",
+        "inputs": [
+          {
+            "field": "FD06",
+            "as": "name"
+          },
+          {
+            "field": "FD07",
+            "as": "type"
+          },
+          {
+            "field": "FD08",
+            "as": "basePrice"
+          },
+          {
+            "field": "FD09",
+            "as": "description"
+          },
+          {
+            "field": "FD10",
+            "as": "photo"
+          }
+        ],
+        "flowSteps": [
+          "F07.S02"
+        ]
+      },
+      {
+        "id": "updatePiece",
+        "kind": "update",
+        "entity": "Piece",
+        "summary": "Update piece details",
+        "inputs": [
+          {
+            "field": "FD06",
+            "as": "name"
+          },
+          {
+            "field": "FD07",
+            "as": "type"
+          },
+          {
+            "field": "FD08",
+            "as": "basePrice"
+          },
+          {
+            "field": "FD09",
+            "as": "description"
+          },
+          {
+            "field": "FD10",
+            "as": "photo"
+          }
+        ],
+        "flowSteps": [
+          "F08.S03"
+        ]
+      },
+      {
+        "id": "deletePiece",
+        "kind": "delete",
+        "entity": "Piece",
+        "summary": "Delete a piece",
+        "inputs": [],
+        "flowSteps": [
+          "F09.S03"
+        ]
+      },
+      {
+        "id": "listVariants",
+        "kind": "list",
+        "entity": "Variant",
+        "summary": "List variants with stock for a piece and for low-stock overview",
+        "inputs": [],
+        "flowSteps": [
+          "F02.S03",
+          "F03.S01",
+          "F08.S02",
+          "F16.S01"
+        ]
+      },
+      {
+        "id": "getVariant",
+        "kind": "get",
+        "entity": "Variant",
+        "summary": "Read chosen variant for stock check",
+        "inputs": [],
+        "flowSteps": [
+          "F03.S02"
+        ]
+      },
+      {
+        "id": "createVariant",
+        "kind": "create",
+        "entity": "Variant",
+        "summary": "Create glaze and size variants",
+        "inputs": [
+          {
+            "field": "FD11",
+            "as": "glazeName"
+          },
+          {
+            "field": "FD12",
+            "as": "sizeName"
+          },
+          {
+            "field": "FD13",
+            "as": "stockCount"
+          },
+          {
+            "field": "FD14",
+            "as": "priceAdjustment"
+          }
+        ],
+        "flowSteps": [
+          "F07.S03"
+        ]
+      },
+      {
+        "id": "updateVariant",
+        "kind": "update",
+        "entity": "Variant",
+        "summary": "Update variant stock on order, edit and cancellation",
+        "inputs": [
+          {
+            "field": "FD11",
+            "as": "glazeName"
+          },
+          {
+            "field": "FD12",
+            "as": "sizeName"
+          },
+          {
+            "field": "FD13",
+            "as": "stockCount"
+          },
+          {
+            "field": "FD14",
+            "as": "priceAdjustment"
+          }
+        ],
+        "flowSteps": [
+          "F03.S03",
+          "F08.S03",
+          "F15.S04"
+        ]
+      },
+      {
+        "id": "deleteVariant",
+        "kind": "delete",
+        "entity": "Variant",
+        "summary": "Delete variants with their piece",
+        "inputs": [],
+        "flowSteps": [
+          "F09.S03"
+        ]
+      },
+      {
+        "id": "listOrders",
+        "kind": "list",
+        "entity": "Order",
+        "summary": "List orders newest first for owner",
+        "inputs": [],
+        "flowSteps": [
+          "F05.S02",
+          "F12.S01",
+          "F12.S02",
+          "F13.S01",
+          "F14.S01",
+          "F15.S01",
+          "F16.S01"
+        ]
+      },
+      {
+        "id": "getOrder",
+        "kind": "get",
+        "entity": "Order",
+        "summary": "Read one order detail",
+        "inputs": [],
+        "flowSteps": [
+          "F12.S03",
+          "F13.S02",
+          "F14.S02",
+          "F15.S02"
+        ]
+      },
+      {
+        "id": "createOrder",
+        "kind": "create",
+        "entity": "Order",
+        "summary": "Create guest order",
+        "inputs": [
+          {
+            "field": "FD18",
+            "as": "buyerName"
+          },
+          {
+            "field": "FD19",
+            "as": "phone"
+          },
+          {
+            "field": "FD20",
+            "as": "fulfilment"
+          },
+          {
+            "field": "FD21",
+            "as": "deliveryAddress"
+          },
+          {
+            "field": "FD22",
+            "as": "discountCode"
+          }
+        ],
+        "flowSteps": [
+          "F03.S03"
+        ]
+      },
+      {
+        "id": "updateOrder",
+        "kind": "update",
+        "entity": "Order",
+        "summary": "Advance fulfilment, mark Paid or cancel order",
+        "inputs": [],
+        "flowSteps": [
+          "F13.S03",
+          "F14.S03",
+          "F15.S04"
+        ]
+      },
+      {
+        "id": "listOrderItems",
+        "kind": "list",
+        "entity": "OrderItem",
+        "summary": "List items of an order",
+        "inputs": [],
+        "flowSteps": [
+          "F12.S03"
+        ]
+      },
+      {
+        "id": "createOrderItem",
+        "kind": "create",
+        "entity": "OrderItem",
+        "summary": "Create order line for chosen variant",
+        "inputs": [
+          {
+            "field": "FD15",
+            "as": "glazeName"
+          },
+          {
+            "field": "FD16",
+            "as": "sizeName"
+          },
+          {
+            "field": "FD17",
+            "as": "quantity"
+          }
+        ],
+        "flowSteps": [
+          "F03.S03"
+        ]
+      },
+      {
+        "id": "listDiscountCodes",
+        "kind": "list",
+        "entity": "DiscountCode",
+        "summary": "List discount codes",
+        "inputs": [],
+        "flowSteps": [
+          "F11.S01"
+        ]
+      },
+      {
+        "id": "getDiscountCode",
+        "kind": "get",
+        "entity": "DiscountCode",
+        "summary": "Read discount code for validation and detail",
+        "inputs": [],
+        "flowSteps": [
+          "F03.S02",
+          "F11.S02"
+        ]
+      },
+      {
+        "id": "createDiscountCode",
+        "kind": "create",
+        "entity": "DiscountCode",
+        "summary": "Create discount code",
+        "inputs": [
+          {
+            "field": "FD23",
+            "as": "codeWord"
+          },
+          {
+            "field": "FD24",
+            "as": "kind"
+          },
+          {
+            "field": "FD25",
+            "as": "value"
+          },
+          {
+            "field": "FD26",
+            "as": "startDate"
+          },
+          {
+            "field": "FD27",
+            "as": "endDate"
+          },
+          {
+            "field": "FD28",
+            "as": "isActive"
+          }
+        ],
+        "flowSteps": [
+          "F10.S02"
+        ]
+      },
+      {
+        "id": "updateDiscountCode",
+        "kind": "update",
+        "entity": "DiscountCode",
+        "summary": "Update or deactivate discount code",
+        "inputs": [
+          {
+            "field": "FD23",
+            "as": "codeWord"
+          },
+          {
+            "field": "FD24",
+            "as": "kind"
+          },
+          {
+            "field": "FD25",
+            "as": "value"
+          },
+          {
+            "field": "FD26",
+            "as": "startDate"
+          },
+          {
+            "field": "FD27",
+            "as": "endDate"
+          },
+          {
+            "field": "FD28",
+            "as": "isActive"
+          }
+        ],
+        "flowSteps": [
+          "F11.S03"
+        ]
+      },
+      {
+        "id": "getShopSetting",
+        "kind": "get",
+        "entity": "ShopSetting",
+        "summary": "Read shop settings",
+        "inputs": [],
+        "flowSteps": [
+          "F01.S01",
+          "F17.S01"
+        ]
+      },
+      {
+        "id": "updateShopSetting",
+        "kind": "update",
+        "entity": "ShopSetting",
+        "summary": "Update shop settings",
+        "inputs": [
+          {
+            "field": "FD03",
+            "as": "shopName"
+          },
+          {
+            "field": "FD04",
+            "as": "pickupAddress"
+          },
+          {
+            "field": "FD05",
+            "as": "pickupInstructions"
+          }
+        ],
+        "flowSteps": [
+          "F17.S02"
+        ]
+      }
+    ],
+    "widgets": [
+      {
+        "widget": "W01",
+        "reads": [
+          "getShopSetting"
+        ]
+      },
+      {
+        "widget": "W02",
+        "reads": [
+          "listPieces",
+          "listVariants"
+        ]
+      },
+      {
+        "widget": "W03",
+        "reads": [
+          "getShopSetting"
+        ]
+      },
+      {
+        "widget": "W04",
+        "reads": [
+          "getPiece",
+          "listVariants"
+        ]
+      },
+      {
+        "widget": "W05",
+        "reads": [
+          "getVariant",
+          "getDiscountCode"
+        ]
+      },
+      {
+        "widget": "W06",
+        "reads": [
+          "getOrder",
+          "listOrderItems",
+          "getShopSetting"
+        ]
+      },
+      {
+        "widget": "W08",
+        "reads": [
+          "listOrders",
+          "listPieces"
+        ]
+      },
+      {
+        "widget": "W09",
+        "reads": [
+          "listOrders",
+          "listVariants"
+        ]
+      },
+      {
+        "widget": "W10",
+        "reads": [
+          "listVariants",
+          "listPieces"
+        ]
+      },
+      {
+        "widget": "W11",
+        "reads": [
+          "listOrders"
+        ]
+      },
+      {
+        "widget": "W13",
+        "reads": [
+          "listPieces",
+          "listVariants"
+        ]
+      },
+      {
+        "widget": "W14",
+        "reads": [
+          "getPiece"
+        ]
+      },
+      {
+        "widget": "W15",
+        "reads": [
+          "getPiece"
+        ]
+      },
+      {
+        "widget": "W16",
+        "reads": [
+          "listVariants"
+        ]
+      },
+      {
+        "widget": "W17",
+        "reads": [
+          "listOrders"
+        ]
+      },
+      {
+        "widget": "W18",
+        "reads": [
+          "getOrder",
+          "listOrderItems"
+        ]
+      },
+      {
+        "widget": "W20",
+        "reads": [
+          "listDiscountCodes"
+        ]
+      },
+      {
+        "widget": "W21",
+        "reads": []
+      },
+      {
+        "widget": "W22",
+        "reads": []
+      },
+      {
+        "widget": "W23",
+        "reads": [
+          "getPiece"
+        ]
+      },
+      {
+        "widget": "W24",
+        "reads": [
+          "getDiscountCode"
+        ]
+      },
+      {
+        "widget": "W25",
+        "reads": [
+          "getOrder",
+          "getVariant"
+        ]
+      },
+      {
+        "widget": "W26",
+        "reads": [
+          "getShopSetting"
+        ]
+      },
+      {
+        "widget": "W27",
+        "reads": [
+          "getShopSetting"
+        ]
+      }
+    ]
+  }
+}
