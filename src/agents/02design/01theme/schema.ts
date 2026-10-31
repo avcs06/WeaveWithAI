@@ -3,10 +3,10 @@ import { type Inventory, spacingKeys } from '../../../ds/inventory';
 import { Brief, type Status, STATUSES } from './brief';
 
 // The theme call (D3.3 F, user 2026-11-01) sets the direction and every final
-// value at once: the brief, the colors of each mode its color scheme names
-// (brand, base, page and entity sets) as steps of ramps code computes from the
-// brief's hues (DS27), a layout for app pages and one for marketing pages, and
-// each component's default variants and look. The schema is built from the
+// value at once: the brief, the logo, the colors of each mode its color scheme
+// names (brand, base, page, logo, status and entity sets) as steps of ramps
+// code computes from the brief's hues (DS27), a layout for app pages and one
+// for marketing pages, and each component's default variants and look. The schema is built from the
 // inventory, so the call writes only spacing keys and component values that
 // exist; THEME-010 checks the modes and entity sets against the brief the same
 // answer gives.
@@ -104,15 +104,6 @@ export const Logo = z.object({
   letterSpacing: z.enum(['tight', 'normal', 'wide', 'wider']),
 });
 export type Logo = z.infer<typeof Logo>;
-
-/** One mode's colors: the brand set, the base set most components use, the page, and a set per colored entity, by name. */
-export type ModeColors = {
-  theme: ColorSet;
-  base: ColorSet;
-  page: PageColors;
-  entity: Record<string, ColorSet>;
-  status: Record<Status, ColorSet>;
-};
 
 /** The modes the brief's color scheme names. */
 export const modesOf = (brief: Brief): Mode[] =>

@@ -522,9 +522,9 @@ Notes:
       and checks contrast, and failures go back to the same call. One stage,
       one artifact holding the brief and the theme.
 
-Notes: the brief's output is small and sets the whole look, so it gets the
-most reasoning and room to be creative; the values need care, not
-creativity. The brief decides audience, personality, voice, density, feel,
+Notes: under E, the brief got the most reasoning and room to be creative,
+since its small output set the whole look, and the values got care, not
+creativity; F gives the one call high reasoning and a 0.7 draft. The brief decides audience, personality, voice, density, feel,
 light or dark or both, seed hue and chroma, fonts, radius, focus ring,
 which entities get a color with their hues, imagery and references. The
 theme call chooses the values of the 12 color roles of the brand set and of

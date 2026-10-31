@@ -4,7 +4,7 @@ import type { BriefInput } from '../helpers';
 
 /**
  * BRIEF-001 · mandatory
- * The seed, base, page and frame hues and the colored entities' hues are within 0 to 360;
+ * The seed, base and frame hues and the colored entities' hues are within 0 to 360;
  * personality has 3 to 5 words, feel 1 or 2; at most 3 entities are colored.
  * Pass: seedHue 200, four adjectives, one feel word, one colored entity.
  * Fail: seedHue 400.

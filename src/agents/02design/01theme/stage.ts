@@ -44,7 +44,7 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
     schemaName: 'Theme',
     system: themeSystemPrompt(inv),
     user: themeUserMessage(idea, scope, flows),
-    // The rules read the built theme, so a failing contrast pair goes back to this call (D3.3 E).
+    // The rules read the built theme, so a failing contrast pair goes back to this call (D3.3 F).
     validate: (call) => validateTheme(call, scope, inv),
     review: themeReviewGuides(),
     maxTokens: THEME_MAX_TOKENS,

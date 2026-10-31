@@ -109,7 +109,7 @@ describe('the theme stage', () => {
       ['design-theme-review-output', 'default', 'medium', undefined, 8192],
     ]);
     expect(inputs[0]?.messages[1]?.content).toContain('A reading list for one reader.');
-    expect(inputs[0]?.messages[1]?.content).toContain('# Flows (01-flows/04-reconcile.json, what each flow is)');
+    expect(inputs[0]?.messages[1]?.content).toContain('# Flows, what each flow is');
     const { stages } = readState(run);
     expect(stages['design-theme']).toMatchObject({ status: 'done', rounds: 2, known: 0 });
     expect(themeStage.validate?.(run)).toEqual([]);

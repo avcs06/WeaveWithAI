@@ -22,6 +22,7 @@ export const rule = defineRule<ThemeInput>(
       const { pageBackground, ...page } = colors.page;
       const sets: [string, Record<string, string>][] = [
         ['theme', colors.theme],
+        ['base', colors.base],
         ['page', page],
         ...Object.entries(colors.entity),
         ...Object.entries(colors.status),

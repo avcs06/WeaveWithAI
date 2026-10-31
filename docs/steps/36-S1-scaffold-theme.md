@@ -7,7 +7,7 @@ Spec: specs/design.md "Theme" (THEME-003); ARCHITECTURE.md "Generated app"
 
 A generated app folder for the run: the template copied and installed, its
 MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
-`fonts.ts` by code, with the neutral and status sets proven untouched.
+`fonts.ts` by code, with every color proven to be the theme's.
 
 ## What this step does
 
@@ -19,13 +19,13 @@ MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
    into the app, with its origin (code, model, repair). The benchmark's
    "lines by origin" and the ownership rules depend on it.
 3. **Apply the frozen theme by editing code, not by regenerating files**:
-   `src/agents/02design/02theme/preview/apply.ts` (DS18) sets the twelve primary and twelve base colors
-   and the page colors in light and dark, adds the entity color sets, sets
+   `src/agents/02design/01theme/preview/apply.ts` (DS18) sets the twelve primary and twelve base colors,
+   the page colors and the status sets in light and dark, adds the entity color sets, sets
    the radius and focus ring tokens, regenerates the fonts file with the
    chosen Google Fonts and writes the recipe defaults.
-4. **Prove the untouchable sets are untouched**: the status colors in the
-   app's `colors.ts` must equal the template's (THEME-003); a difference is
-   a bug and stops the stage.
+4. **Prove the theme landed**: the brand, base, page, entity and status
+   colors in the app's `colors.ts` equal the theme's (THEME-003); a
+   difference is a bug and stops the stage.
 5. **Register the `scaffold` stage** and run the app's own checks
    (typecheck, MCP check, verify) at the end.
 
@@ -41,8 +41,8 @@ into.
   lockfile and ignore the `server/` folder.
 - `template/colors.ts`: `colors.primary.light` and `.dark` hold the twelve
   roles, each object literal followed by `satisfies ColorSet`;
-  `colors.entity.light` and `.dark` are empty objects; `base`, `surface`,
-  `status` must never change. `tokens.ts`: `radius.surface: '8px'`,
+  `colors.entity.light` and `.dark` are empty objects; `base`, `surface` and
+  `status` hold the template's colors until the theme replaces them. `tokens.ts`: `radius.surface: '8px'`,
   `radius.control: '6px'`, `focusRing: 'halo'`.
   `packages/styles/src/fonts.ts`: three `next/font/google` constants and
   `fontClasses`.
@@ -64,7 +64,7 @@ export function appPath(run: Run, ...parts: string[]): string;   // runs/<id>/ap
 
 Every later codegen and model write goes through `writeGenerated`.
 
-### 2. `src/agents/02design/02theme/preview/scaffold.ts`
+### 2. `src/agents/02design/01theme/preview/scaffold.ts`
 
 ```ts
 export async function scaffoldApp(run: Run, opts: { templateDir: string }): Promise<string>;
@@ -83,7 +83,7 @@ export async function scaffoldApp(run: Run, opts: { templateDir: string }): Prom
    origin) and `MOCK_LATENCY_MS=150`.
 5. Write the ledger with `templateHash`.
 
-### 3. `src/agents/02design/02theme/preview/apply.ts`
+### 3. `src/agents/02design/01theme/preview/apply.ts`
 
 ```ts
 export function applyTheme(appDir: string, theme: Theme): string[];           // returns the changed files
@@ -109,20 +109,20 @@ With `ts-morph@^28` (add it: `pnpm add ts-morph`):
 - `fonts.ts`: regenerate from a template string: imports
   `{ <ui importName>, <display importName>, JetBrains_Mono } from 'next/font/google'`
   (dedupe when ui equals display), three constants with the weights from
-  `src/agents/02design/01brief/fonts.ts`, `fontClasses` in the template's order (ui
+  `src/agents/02design/01theme/fonts.ts`, `fontClasses` in the template's order (ui
   className and variable first).
 - `project.saveSync()`; then `pnpm exec prettier --write` on the three files
   in the app (the template ships Prettier config). Record each in the
   ledger with `modifiedTemplateFile: true`.
 
-`validateThemeApplied`: parse `colors.ts` in both folders and compare
-`getPropertyOrThrow('base' | 'surface' | 'status').getText()`; any
-difference is a mandatory THEME-003 issue. It is a code bug, so the stage
-throws on it.
+`validateThemeApplied`: parse the app's `colors.ts` and compare each set of
+`primary`, `base`, `surface`, `entity` and `status` with the theme's hex;
+any difference is a mandatory THEME-003 issue. It is a code bug, so the
+stage throws on it.
 
 ### 4. The `scaffold` stage
 
-`src/agents/02design/02theme/preview/stage.ts`: `scaffoldStage = { name: 'scaffold', produces: [], run }`:
+`src/agents/02design/01theme/preview/stage.ts`: `scaffoldStage = { name: 'scaffold', produces: [], run }`:
 read `spec.lock.json`, read the theme artifact and check its version
 matches the lock, `scaffoldApp`, `applyTheme`, `validateThemeApplied`, then
 in the app: `pnpm typecheck`, `pnpm verify /` (both through a small
@@ -133,7 +133,7 @@ in the app: `pnpm typecheck`, `pnpm verify /` (both through a small
 
 `theme.test.ts`: copy `template/colors.ts`, `tokens.ts` and
 `packages/styles/src/fonts.ts` into a temp folder; apply the reading-list
-theme (`buildTheme(fixture brief)`); assert with ts-morph that
+theme (`buildTheme` of the reading-list theme call); assert with ts-morph that
 `primary.light.accentBg` equals the theme's hex, an entity set was added,
 `radius.surface` changed, `fonts.ts` imports the brief's fonts;
 `validateThemeApplied(temp, template)` returns no issues; each file
@@ -150,8 +150,8 @@ grep -n "accentBg" colors.ts     # the theme's hex values under primary
 
 ## Watch out
 
-- Never edit `status`: THEME-003 exists so a slip here can't ship. Base,
-  the page colors, divider, backdrop and skeleton are the theme's (DS20,
-  DS21).
+- Every set is the theme's: base, the page colors, divider, backdrop and
+  skeleton (DS20, DS21), and the status sets (DS44). THEME-003 exists so a
+  set that did not land can't ship.
 - `generate.mjs` refuses a non-empty target; a half-done scaffold must be
   deleted before a retry (`rm -rf runs/<id>/app`).

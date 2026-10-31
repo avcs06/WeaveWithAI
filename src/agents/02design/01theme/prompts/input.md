@@ -4,10 +4,14 @@
 
 {{idea}}
 
-# Scope (01-flows/01-scope.json)
+# Scope
 
 {{scope}}
 
-# Flows (01-flows/04-reconcile.json, what each flow is)
+# Flows, what each flow is
 
 {{flows}}
+
+# Your job in this call: the theme
+
+Set the app's look: the brief, the logo, the colors of each mode, the two page layouts and the component defaults. Leave out the screens and what they hold. Later calls design them.

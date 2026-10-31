@@ -131,7 +131,11 @@ runs/<runId>/
 ## Artifact envelope
 
 ```ts
-type ArtifactName = 'scope' | 'flows' | 'brief' | 'theme' | 'screens' | 'contract' | 'matrix';
+type ArtifactName =
+  | 'flows-scope' | 'flows-catalog' | 'flows-expand' | 'flows-reconcile'
+  | 'design-theme' | 'design-architect' | 'design-catalog' | 'design-screen'
+  | 'design-invent' | 'design-draw' | 'design-frame' | 'design-assemble'
+  | 'contract' | 'matrix';
 
 type Envelope<T> = {
   meta: {

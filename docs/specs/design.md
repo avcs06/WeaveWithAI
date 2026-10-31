@@ -3,8 +3,8 @@
 Decisions: D3.1 to D3.11, and DS23 for the chain. Each stage keeps its
 prompts in its folder's `prompts/`: `prompt.md` with its `input.md` user
 message, and its review guides `review-peer.md` and `review-output.md`. Draw
-and frame share the node guide in `06draw/prompts/nodes.md`. The brief, the
-theme, the architect and invent have a peer and an output guide; catalog,
+and frame share the node guide in `06draw/prompts/nodes.md`. The theme, the
+architect and invent have a peer and an output guide; catalog,
 screen, draw and frame have an output guide alone.
 
 ## What this stage decides
@@ -130,7 +130,7 @@ export const Brief = z.object({
 catalog `src/agents/02design/01theme/google-fonts.json` (user, 2026-10-30): the families
 `next/font/google` exports with a latin subset and a Google popularity under
 120, 193, most popular first, each with its weights, whether it is variable,
-Google's category and popularity, a one-line description the brief prompt
+Google's category and popularity, a one-line description the theme prompt
 shows, and its `use`: the one role it suits best, chosen once by hand. Text
 faces with the design system's 400 to 700 weights are ui; faces made for large
 sizes (condensed, wide, heavy, decorative, or named for display) are display;
@@ -195,11 +195,12 @@ call in its fix rounds.
 | colors base      | `colors.ts`                    | `colors.base` in each mode: the 12 color roles            |
 | colors page      | `colors.ts`                    | `pageBackground`, `pageBg`, `frameBg`, `pageFg`, `pageFgMuted`, `divider`, `backdrop`, `skeleton` of `colors.surface` |
 | colors entity    | `colors.ts`                    | `colors.entity.light.<name>` and `.dark.<name>`           |
+| colors status    | `colors.ts`                    | `colors.status` in each mode: success, warning, error, info |
 | radius           | `tokens.ts`                    | `radius.surface`, `radius.control`                        |
 | focusRing        | `tokens.ts`                    | `focusRing`                                               |
 | fonts            | `packages/styles/src/fonts.ts` | the `next/font/google` families behind `--font-ui`, `--font-display` and mono |
 | defaults         | each recipe                    | its `defaultVariants`                                     |
-| layouts, density | used by the screens stage and the coding stage; no file |                                          |
+| layouts, density, logo | used by the later design stages, the wireframes and the coding stage; no file |                  |
 
 Radius presets on the DS scale: sharp = surface 4px, control 4px; soft =
 8px, 6px (today's values); round = 16px, 10px; pill = 16px, `9999px`.
@@ -556,6 +557,7 @@ widths the design system fixes (user, 2026-10-30).
 | THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`; `backdrop` darker than the page and the frame |
 | THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
 | THEME-011 | mandatory | The logo's weight is one its font ships, and its color reads at 3:1 on `frameBg` and `pageBg` in each mode |
+| THEME-012 | warning   | Every set's `shadow` is its ramp's darkest step: 12 in light mode, 1 in dark |
 | THEME-008 | mandatory | A default that carries meaning stays the recipe's: a status, a danger or status variant, an icon-only size, a dialog's size. Other variants and every look are the theme's choice |
 
 ### Screens (static)

@@ -20,6 +20,7 @@ import { rule as theme008 } from './rules/theme-008-semantic-defaults';
 import { rule as theme009 } from './rules/theme-009-quiet-colors';
 import { rule as theme010 } from './rules/theme-010-modes-entities';
 import { rule as theme011 } from './rules/theme-011-logo';
+import { rule as theme012 } from './rules/theme-012-shadow';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
@@ -31,7 +32,7 @@ export const briefRules: readonly Rule<BriefInput>[] = [
   brief007,
 ];
 
-export const callRules: readonly Rule<CallInput>[] = [theme010];
+export const callRules: readonly Rule<CallInput>[] = [theme010, theme012];
 
 /** THEME-003 checks an applied app and comes with S1. */
 export const themeRules: readonly Rule<ThemeInput>[] = [

@@ -106,7 +106,7 @@ describe('theme prompt', () => {
     expect(message).toContain('# Idea\n\nA reading list.');
     expect(message).not.toContain('for us only');
     expect(message).toContain('"name": "Shelf"');
-    expect(message).toContain('# Flows (01-flows/04-reconcile.json, what each flow is)');
+    expect(message).toContain('# Flows, what each flow is');
     expect(message).toContain('"goal": ');
     expect(message).not.toContain('"steps"');
     expect(message).not.toContain('{{');

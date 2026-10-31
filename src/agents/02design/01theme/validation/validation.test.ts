@@ -27,6 +27,16 @@ describe('the theme call', () => {
     expect(at((c) => (c.colors[0]!.entities = []))).toEqual(['colors.light.entities']);
     expect(at((c) => c.colors[1]!.entities.push({ noun: 'Book', steps: c.colors[1]!.entities[0]!.steps }))).toEqual(['colors.dark.entities']);
   });
+
+  it('THEME-012 warns when a set\'s shadow is not its darkest step', () => {
+    const call = structuredClone(themeCall);
+    call.colors[0]!.theme.shadow = 9;
+    expect(
+      validateTheme(call, scope, inventory)
+        .filter((i) => i.rule === 'THEME-012')
+        .map((i) => [i.severity, i.at]),
+    ).toEqual([['warning', 'theme.light.shadow']]);
+  });
 });
 
 describe('brief rules', () => {
