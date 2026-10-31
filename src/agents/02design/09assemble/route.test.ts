@@ -20,6 +20,7 @@ describe('ownersOf', () => {
     expect(owners('LAYOUT-001', 'SH2.n01')).toEqual(['SH2']);
     expect(owners('LAYOUT-001', 'SH1.S04.n01')).toEqual(['SH1']);
     expect(owners('DESIGN-024', 'SH1.r1')).toEqual(['SH1']);
+    expect(owners('LAYOUT-071', 'SH1.r1')).toEqual(['SH1']);
   });
 
   it('sends a step without its control to the widgets serving it, an unused component to the widgets meant to hold it, and an undrawn item to the frames', () => {
@@ -30,7 +31,7 @@ describe('ownersOf', () => {
 
   it('keeps for no call an issue on a screen, a region, the plan or a component placed on its own: those calls are not rerun', () => {
     expect(owners('DESIGN-017', 'S06')).toEqual([]);
-    expect(owners('LAYOUT-071', 'SH1.r1')).toEqual([]);
+    expect(owners('LAYOUT-006', 'SH1.r1')).toEqual([]);
     expect(owners('LAYOUT-028', 'S01')).toEqual([]);
     const own = new Map([...origin, ['S06.n30', 'TitleCover'], ['S06.n31', 'TitleCover.n01']]);
     expect(ownersOf(issue('LAYOUT-046', 'S06.n30'), screens, own)).toEqual([]);

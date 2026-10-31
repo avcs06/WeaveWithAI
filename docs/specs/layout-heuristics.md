@@ -46,7 +46,9 @@ recorded.
       section gap, and THEME-007 checks it. Mandatory outside the range.
 - [x] **H-09 Form spacing.** Field to field 16, group to group 24. Check:
       gaps between a form's stacked fields, and between stacked groups that
-      hold only fields; a row of search and filters is a toolbar. Mandatory.
+      hold only fields; a row of search and filters is a toolbar. Warning.
+      Changed 2026-10-31 (user): in the dashboard run, fixes broke it again
+      5 times while fixing H-01.
 - [x] **H-10 Lists and tables keep one row rhythm.** Row heights constant and
       one gap: 0 to 12 between rows, 8 to 16 between cards, never both a
       divider and a gap. Check: the repeated items of a list or cards section
@@ -57,7 +59,9 @@ recorded.
       DS28): it checks the structure, not estimated heights.
 - [x] **H-11 Button groups.** 8 between buttons; a danger button never
       directly beside the primary without extra space or a divider. Check: gap
-      between action nodes, and the roles of neighbours. Mandatory.
+      between action nodes, and the roles of neighbours. Warning. Changed
+      2026-10-31 (user): in the dashboard run, fixes broke it again 4 times,
+      and the last assemble fix left 3.
 - [x] **H-12 Title and description.** 4 between a title and its
       description, 12 to 16 from the description to the content. Check: gaps
       after heading and text nodes in a header group. Warning.
@@ -200,4 +204,6 @@ recorded.
       left margin, or the control a negative one, so the text edges align and
       the hover fill still has room. Check: in a column, the text edge of a
       ghost control (its x plus padding) against the left edge of sibling text
-      nodes; and the hover fill against H-66 clearance. Mandatory.
+      nodes; and the hover fill against H-66 clearance. Warning. Changed
+      2026-10-31 (user): in the dashboard run, it stayed unfixed through 5
+      rounds of one component; it is polish.

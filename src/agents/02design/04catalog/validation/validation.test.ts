@@ -64,6 +64,17 @@ describe('the catalog rules', () => {
     expect(check(catalogCall, extra).map((i) => [i.rule, i.at])).toEqual([['DESIGN-031', 'S06']]);
   });
 
+  it('DESIGN-030 wants a heading on every page, a page without a title included', () => {
+    const untitled = plan.screens.find((s) => s.type === 'page' && !s.title)!;
+    const issues = check(
+      changed((c) => {
+        const parts = c.screens.find((s) => s.screen === untitled.id)!.parts;
+        for (const w of c.widgets) if (parts.includes(w.id)) w.containsHeading = false;
+      }),
+    );
+    expect(issues.map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-030', untitled.id]);
+  });
+
   it('DESIGN-029 wants well-formed widget ids, every widget on a screen, and only declared components', () => {
     const at = (change: (c: Catalog) => void) =>
       check(changed(change))

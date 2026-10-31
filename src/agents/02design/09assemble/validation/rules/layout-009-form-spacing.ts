@@ -4,16 +4,17 @@ import type { Rect } from '../../skeleton/skeleton';
 import type { LayoutInput } from '../helpers';
 
 /**
- * LAYOUT-009 · mandatory · H-09 Form spacing
+ * LAYOUT-009 · warning · H-09 Form spacing
  * A form's stacked fields: field to field 16, a group of fields to the next
  * group 24. A row of controls, such as a search and filters, is a toolbar and
  * keeps a toolbar's gap; a group holds only fields (user, 2026-10-31).
+ * A warning since fixes kept breaking it while fixing LAYOUT-001 (user, 2026-10-31).
  * Pass: title, author and shelf fields 16 apart.
  * Fail: the same fields 12 apart.
  */
 export const rule = defineRule<LayoutInput>(
   'LAYOUT-009',
-  'mandatory',
+  'warning',
   ({ views }, fail) => {
     const issues: Issue[] = [];
     for (const view of views) {

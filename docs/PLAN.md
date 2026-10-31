@@ -1248,6 +1248,35 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     range. On a page, LAYOUT-008 can fail only when the theme failed, and
     the screen or widget call it routes to cannot change that gap.
 
+- [x] **DS37** Fixes from the dashboard run (45 min) (done 2026-10-31). Depends: DS23
+  - Why: the dashboard run of 2026-10-31 20:15 ended with 11 known issues
+    at assemble, 5 of them sent to no call.
+  - LAYOUT-009, LAYOUT-011 and LAYOUT-067 are warnings (user). Fixes broke
+    009 and 011 again 9 times while fixing LAYOUT-001, and 067 is polish
+    that stayed unfixed through 5 rounds.
+  - The catalog's DESIGN-030 also wants a heading on a page without a
+    title. The editor page had none, so the screen stage failed DESIGN-030
+    in all 5 rounds, and DESIGN-015 stayed known at assemble.
+  - Assemble sends LAYOUT-071 on a region to its frame, which can draw
+    smaller nodes; the message names that fix first.
+
+- [ ] **DS38** Confirmation words at the screen stage (45 min). Depends: DS37
+  - Found in DS37: LAYOUT-063 fails on a confirmation's words, which the
+    screen call writes into the instance's slots. Assemble never reruns the
+    screen stage, so its 2 issues stay known. The check belongs where the
+    words are written.
+
+- [ ] **DS39** Assemble's second fix pass (45 min). Depends: DS37
+  - Found in DS37: issues a fix brings in at assemble get no round. With
+    LAYOUT-011 a warning, the dashboard run would have had none, so this
+    waits for a run that needs it. A second pass needs fix calls named per
+    pass, as `-fix` is now reused.
+
+- [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
+  - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
+    DESIGN-008 had. Routed to several widgets, each fix call picks a
+    wording on its own, so they may still differ.
+
 - [ ] **DS29** Fallback: design ends at invent (1 h). Depends: F15
   - Why: the MVP backup (user, 2026-10-31). Pick it up only if the design
     chain committed with F15 can't run cleanly on the freelancer idea after

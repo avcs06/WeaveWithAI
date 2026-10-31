@@ -34,7 +34,7 @@ export const rule = defineRule<LayoutInput>(
       if (out.length)
         issues.push(
           fail(
-            `${region.id} has a fixed height of ${box.height}px with layout padding ${box.padding[0]}px, which leaves ${box.height - box.padding[0] - box.padding[2]}px of height for its nodes. ${new Intl.ListFormat('en-GB').format(out.map((kid) => `${kid.id} is ${kid.height}px tall`))}, and ${out.length > 1 ? 'they reach' : 'it reaches'} outside that padding. A region of fixed height holds every node inside its padding. Set the box heightPx of ${region.id} to at least ${Math.max(...out.map((kid) => kid.height)) + box.padding[0] + box.padding[2]}, make its layout padding smaller, or make those nodes smaller.`,
+            `${region.id} has a fixed height of ${box.height}px with layout padding ${box.padding[0]}px, which leaves ${box.height - box.padding[0] - box.padding[2]}px of height for its nodes. ${new Intl.ListFormat('en-GB').format(out.map((kid) => `${kid.id} is ${kid.height}px tall`))}, and ${out.length > 1 ? 'they reach' : 'it reaches'} outside that padding. A region of fixed height holds every node inside its padding. Make those nodes smaller, such as a smaller size of their component. Otherwise the theme sets the box heightPx of ${region.id} to at least ${Math.max(...out.map((kid) => kid.height)) + box.padding[0] + box.padding[2]}, or a smaller layout padding.`,
             region.id,
           ),
         );

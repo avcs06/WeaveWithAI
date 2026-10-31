@@ -33,7 +33,7 @@ You see every screen at once. Define a part that several screens share once.
 - `states`: each state it shows beyond the ones its steps require. [] when there is none.
   - Every state of a screen is a state of one of its widgets.
 - `containsHeading`: true when the widget has a heading at its top. The screen gives that heading its level.
-  - A page with a title shows it in one of its widgets. That widget has a heading and a `title` words slot.
+  - Every page has one widget with a heading, for the page's level-1 heading. On a page with a title, that widget also has a `title` words slot that shows it. On a page without one, the heading says what the page shows, such as the name of the record it opens.
 - `repeat`: the noun whose records its items repeat over, such as Book for a list of books. "" otherwise.
 - `newComponents`: the names of the new components it holds inside it.
 - `slots`: what each instance of the widget fills in. An instance is one placement of the widget on a screen. Give each slot:

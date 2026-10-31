@@ -3,14 +3,15 @@ import { defineRule } from '../../../../../core/rules';
 import { isButton, type LayoutInput } from '../helpers';
 
 /**
- * LAYOUT-011 · mandatory · H-11 Button groups
+ * LAYOUT-011 · warning · H-11 Button groups
  * Buttons side by side are 8 apart; a danger button beside the primary needs more.
+ * A warning since fixes kept bringing it back, and the last assemble fix left three (user, 2026-10-31).
  * Pass: Cancel and Save 8 apart.
  * Fail: Cancel and Save 12 apart.
  */
 export const rule = defineRule<LayoutInput>(
   'LAYOUT-011',
-  'mandatory',
+  'warning',
   ({ views }, fail) => {
     const issues: Issue[] = [];
     for (const view of views)

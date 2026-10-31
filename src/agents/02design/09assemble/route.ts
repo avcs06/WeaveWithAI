@@ -5,7 +5,8 @@ import { screenOf } from '../rules/helpers';
 // Where an issue found on the assembled design goes back to (DS23): the draw
 // call that built the node or widget it names, or the frame call of the shell
 // it sits in. The plan, the layouts and the components are never rerun, and a
-// region's box is the theme's, so an issue on those is recorded as known.
+// region's box is the theme's, so an issue on those is recorded as known,
+// unless the frame can fix it through what it puts in the region.
 
 const NODE = /^(S\d{2}|SH\d+)(\.S\d{2})?\.n\d+$/;
 const SECTION = /^S\d{2}\.sec\d+$/;
@@ -39,7 +40,9 @@ export function ownersOf(
   if (NODE.test(at)) return owned((origin.get(at) ?? at).split('.')[0]);
   if (SECTION.test(at))
     return owned(screens.placements.find((p) => p.id === at)?.widget);
-  if (REGION.test(at) && issue.rule === 'DESIGN-024') return [screenOf(at)];
+  // The frame fills a region (DESIGN-024) and sizes the nodes in it (LAYOUT-071).
+  if (REGION.test(at) && (issue.rule === 'DESIGN-024' || issue.rule === 'LAYOUT-071'))
+    return [screenOf(at)];
   return [];
 }
 

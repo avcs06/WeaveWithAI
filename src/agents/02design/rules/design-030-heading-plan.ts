@@ -85,18 +85,26 @@ export const widgetRule = defineRule<WidgetInput>(
   },
 );
 
-/** In the catalog: a page with a title has a part that can show it, a widget with a heading and a `title` words slot. */
+/**
+ * In the catalog: every page has a part with a heading for its level 1, and a
+ * page with a title shows it there, in a `title` words slot. Untitled pages
+ * were left out until the dashboard run's editor had no heading to give level
+ * 1 in five screen rounds (user, 2026-10-31).
+ */
 export const catalogRule = defineRule<CatalogInput>(
   'DESIGN-030',
   'mandatory',
   ({ catalog, plan }, fail) =>
     plan.screens
-      .filter((screen) => screen.type === 'page' && screen.title)
+      .filter((screen) => screen.type === 'page')
       .flatMap((screen) => {
         const parts = catalog.screens.find((s) => s.screen === screen.id)?.parts ?? [];
-        const shows = catalog.widgets.some(
-          (w) => parts.includes(w.id) && w.containsHeading && w.slots.some((s) => s.name === 'title' && s.kind === 'words'),
-        );
+        const headed = catalog.widgets.filter((w) => parts.includes(w.id) && w.containsHeading);
+        if (!screen.title)
+          return headed.length
+            ? []
+            : [fail(`${screen.id} is a page, and a page has exactly one level-1 heading, but none of its widgets contains a heading. Give the widget at the top of ${screen.id} a heading that says what the page shows, such as the name of the record it opens, and set its containsHeading to true.`, screen.id)];
+        const shows = headed.some((w) => w.slots.some((s) => s.name === 'title' && s.kind === 'words'));
         return shows
           ? []
           : [fail(`${screen.id} has the title "${screen.title}", but none of its widgets has both a heading and a title words slot to show it. The page's title shows in one of its widgets. Give the widget at the top of ${screen.id} a heading and a words slot named title.`, screen.id)];
