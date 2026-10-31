@@ -9,7 +9,8 @@ import { ACTIONS, type ScreensInput } from './helpers';
  * node showing a record's value, whose words differ by record, and not a
  * subflow's step, which each flow words for its own record), a
  * frame's link to a navigation item's page says the item's label, and a page
- * with a navigation item has that label as its level-1 heading.
+ * with a navigation item has that label as its level-1 heading. A frame's
+ * wordmark is the logo, so it says the app's name wherever it links (DS45).
  * Pass: "Add book" on every control of F03.S01; the Shelf item and its H1 both "Your shelf".
  * Fail: "Add book" on the shelf and "New book" in the empty state, both serving F03.S01.
  */
@@ -19,6 +20,15 @@ export const rule = defineRule<ScreensInput>(
   ({ screens, ctx }, fail) => {
     const issues: Issue[] = [];
     const shells = new Set(screens.shells.flatMap((s) => s.regions.map((r) => r.id)));
+    const wordmark = (n: (typeof screens.nodes)[number]) => shells.has(n.section) && /wordmark/i.test(n.what);
+    const app = ctx.scope.app.name;
+    for (const node of screens.nodes.filter((n) => wordmark(n) && n.text !== app))
+      issues.push(
+        fail(
+          `${node.id} is the wordmark, and it says "${node.text}". The wordmark is the app's logo, so it says the app's name. Give ${node.id} the text "${app}".`,
+          node.id,
+        ),
+      );
     const subflow = new Set(
       ctx.flows.subflows.flatMap((s) => [...s.steps, ...s.alternatives].map((x) => x.id)),
     );
@@ -38,7 +48,7 @@ export const rule = defineRule<ScreensInput>(
     for (const item of screens.navigation.items) {
       if (!item.label) continue;
       for (const node of screens.nodes.filter(
-        (n) => shells.has(n.section) && n.role === 'navigation' && n.navigatesTo === item.screen,
+        (n) => shells.has(n.section) && !wordmark(n) && n.role === 'navigation' && n.navigatesTo === item.screen,
       ))
         if (node.text !== item.label)
           issues.push(

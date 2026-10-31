@@ -83,6 +83,16 @@ describe('design rules on the reading-list fixture', () => {
     expect(design(copy).map((i) => [i.rule, i.at])).toContainEqual(['DESIGN-028', 'F03.S01']);
   });
 
+  it("DESIGN-028 keeps a frame's wordmark to the app's name, even when it links to a page with a navigation item", () => {
+    const copy = structuredClone(screens);
+    const item = copy.navigation.items.find((i) => i.label)!;
+    const mark = copy.nodes.find((n) => n.id === 'SH1.n01')!;
+    Object.assign(mark, { role: 'navigation', navigatesTo: item.screen });
+    expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
+    mark.text = item.label;
+    expect(design(copy).filter((i) => i.rule === 'DESIGN-028').map((i) => i.at)).toEqual(['SH1.n01']);
+  });
+
   it('pairs each design rule with exactly one mutation; DESIGN-007 is dropped', () => {
     expect(Object.keys(designMutations).sort()).toEqual(designIds);
     expect(designIds).not.toContain('DESIGN-007');
