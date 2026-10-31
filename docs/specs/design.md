@@ -172,8 +172,7 @@ turns the steps into hex, so the theme keeps its shape (DS27).
 
 The prompt asks for colors that set the mood the page should put people in.
 Each mode writes its own page background, one CSS value of colors and
-gradients that the feel chooses freely: a tint, a gradient, glows or a
-pattern (DS35; user, 2026-11-01). `pageBg` stays a solid step: the color
+gradients that the feel chooses freely: a tint, a gradient or a pattern (DS35; user, 2026-11-01). `pageBg` stays a solid step: the color
 under the background and the one disabled states fade into. THEME-005 keeps
 the background to colors and gradients, and THEME-001 checks page text on
 every color in it. THEME-010 holds the modes to the brief's `colorScheme`

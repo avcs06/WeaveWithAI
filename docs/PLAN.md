@@ -1350,6 +1350,13 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - DESIGN-028 now asks a frame's wordmark, a shell node whose `what` says
     wordmark, to say the app's name, and its frame-link check passes it by.
 
+- [x] **DS46** The theme prompt holds no idea's words (5 min) (done 2026-11-01). Depends: DS42
+  - Why: its examples came from the dashboard idea (a faint grid, glows, a
+    neon border, "electric"), which could pull every app toward that look
+    (user, 2026-11-01). The examples are neutral now: a tint, a gradient or
+    a pattern drawn with repeating gradients, and a dark button with a
+    bright border.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

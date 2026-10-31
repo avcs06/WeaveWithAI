@@ -51,7 +51,7 @@ Each mode's `logo` color is part of its colors, below.
 
 ## Colors
 
-Choose the colors for the mood the page should put people in when they see it, the one the brief's personality and feel name: calm and focused, warm and friendly, bold and electric. The background, the brand and the frame set it first, before anyone reads a word.
+Choose the colors for the mood the page should put people in when they see it, the one the brief's personality and feel name: calm and focused, warm and friendly, bold and energetic. The background, the brand and the frame set it first, before anyone reads a word.
 
 Code builds a ramp of twelve steps for each set from the brief: the brand's (`theme`) from `seedHue` and `seedChroma`, the `base` from `baseHue` and `baseChroma`, the frame's from `frameHue` and `frameChroma`, each colored entity's from its hue, and each status's from its hue in `statusHues`. Step 1 is the lightest in light mode and the darkest in dark mode, and step 12 is the other end, so a step plays the same part in both modes: backgrounds take low steps and text high ones. For each role, pick the step of its set's ramp that suits it.
 
@@ -61,7 +61,7 @@ Code builds a ramp of twelve steps for each set from the brief: the brand's (`th
 
 - `mode`: light or dark.
 - `background`: the page background, as one CSS background value.
-  - It is not limited to one flat color. Choose whatever the feel needs: a calm tint, a soft or bold gradient, layered radial glows, or a pattern such as a faint grid drawn with repeating gradients.
+  - It is not limited to one flat color. Choose whatever the feel needs: a calm tint, a soft or bold gradient, or a pattern drawn with repeating gradients.
   - Use colors and gradients only. The app ships no image files.
   - Page text sits on every color in it, so keep each of them readable under `pageFg`.
   - In an app with both modes, each mode has its own: the same idea in that mode's colors.
@@ -85,7 +85,7 @@ Code builds a ramp of twelve steps for each set from the brief: the brand's (`th
 - `status`: a set for each of `success`, `warning`, `error` and `info`, with the same twelve roles, from its own ramp. Toasts, alerts, badges and field errors wear them, so each reads as its meaning and sits well in this theme's mood.
 - `entities`: a set for each colored entity of the brief: its `noun`, and the same twelve roles as `steps` of its own ramp. [] when no entity is colored.
 
-A border can be any step of its set's ramp. It does not have to be a shade near its background. For example, a black button with a neon border is a valid look: a dark step for `accentBg` and a bright step for `accentBorder`. Pick each border for the look the brief asks for.
+A border can be any step of its set's ramp. It does not have to be a shade near its background. For example, a dark button with a bright border is a valid look: a dark step for `accentBg` and a bright step for `accentBorder`. Pick each border for the look the brief asks for.
 
 Code checks these contrasts:
 

@@ -542,8 +542,8 @@ ramp for each hue and chroma the brief names, the theme call assigns each
 color role to a step, and code turns the steps into hex.
 One call since 2026-11-01 (user, F): the brief is the first part of its
 answer, and each mode writes its own page background, which the prompt lets
-the feel choose freely within colors and gradients: tints, gradients, glows
-or patterns. The prompt asks for colors that set the mood the page should
+the feel choose freely within colors and gradients: tints, gradients or
+patterns. The prompt asks for colors that set the mood the page should
 put people in. THEME-010 holds the modes and entity sets to the brief.
 The call also sets the logo, the app's name as a wordmark in one of the
 brief's fonts with a color step per mode (user, 2026-11-01).
