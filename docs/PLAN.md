@@ -1342,6 +1342,12 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
     mode picks a `status` set per status. The THEME rules check them like
     every set, and `weave app` writes them into `colors.ts`.
 
+- [ ] **DS45** DESIGN-028 leaves the wordmark to the app's name (15 min). Depends: DS43
+  - Found reconciling the theme: in the dashboard run DESIGN-028 made the
+    header wordmark SH1.n01 say "Dashboards", the label of the page it
+    links to. The wireframes draw a wordmark's own text as the logo, so it
+    must stay the app's name.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

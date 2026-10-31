@@ -14,7 +14,7 @@ import type { ThemeInput } from '../helpers';
 /**
  * THEME-001 · mandatory
  * 4.5:1 for fg and fgMuted on bg, fg on hoverBg, accentFg on accentBg and
- * accentHoverBg, for the theme, base and every entity set; for pageFg and
+ * accentHoverBg, for the theme, base, every entity and every status set; for pageFg and
  * pageFgMuted on pageBg and frameBg; and for the theme's and base's fg on
  * pageBg and frameBg, where a link draws it; and for pageFg and pageFgMuted
  * on every color of the page background (DS35); in every mode the theme has.

@@ -20,9 +20,10 @@ import {
 } from './schema';
 
 // The theme (DS4a, D3.3 F): the theme call picks every color as a step of a
-// ramp (DS27), the page layouts and the component defaults; code turns the
-// steps into hex and adds the brief's fonts, radius, focus ring and density
-// and the contrast table the THEME rules check.
+// ramp (DS27), the logo, the page layouts and the component defaults; code
+// turns the steps into hex and adds the brief's fonts, radius, focus ring and
+// density, the logo's family and spacing, and the contrast table the THEME
+// rules check.
 
 export type { ColorSet, Mode } from './schema';
 
@@ -112,7 +113,7 @@ export const isHex = (value: string) => /^#[0-9A-F]{6}$/i.test(value);
 export const ratio = (a: string, b: string) =>
   isHex(a) && isHex(b) ? wcagContrast(a, b) : Number.NaN;
 
-/** Each mode's theme, base and entity sets, by name. */
+/** Each mode's theme, base, entity and status sets, by name. */
 export function colorSets(
   theme: Pick<Theme, 'modes' | 'colors'>,
 ): { name: string; mode: Mode; colors: ColorSet }[] {

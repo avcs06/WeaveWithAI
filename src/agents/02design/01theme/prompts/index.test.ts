@@ -73,7 +73,7 @@ describe('theme prompt', () => {
   it('says how code makes a ramp and which steps read on which, since no ramp exists yet', () => {
     expect(prompt).toContain("Step n of a ramp is the OKLCH color of lightness L(n), chroma C times share(n), and the ramp's hue.");
     expect(prompt).toContain('- C by chroma: neutral 0, muted 0.06, balanced 0.12, vivid 0.17.');
-    expect(prompt).toContain('- On step 1: text steps 9 to 12; borders and focus steps 8 to 12.');
+    expect(prompt).toContain('- On step 1: text (4.5:1) steps 9 to 12; borders, focus and the logo (3:1) steps 8 to 12.');
     expect(prompt.match(/^- On step \d+: /gm)).toHaveLength(24);
   });
 

@@ -1,7 +1,6 @@
 import { clampChroma, formatHex, wcagContrast } from 'culori';
 import { type Status, STATUSES } from './brief';
-import type { Brief } from './schema';
-import { entitySets, type Mode, modesOf } from './schema';
+import { type Brief, entitySets, type Mode, modesOf } from './schema';
 
 // The theme call picks colors from ramps code computes from the brief's hues
 // (DS27, D3.3 F notes): a model cannot work out contrast, and writing hex it
@@ -43,7 +42,7 @@ export type Ramps = Partial<Record<Mode, ModeRamps>>;
 /** A status ramp's chroma: the brand's, at least balanced, so a quiet brand keeps statuses that read as their meaning (user, 2026-10-31). */
 const statusChroma = (brief: Brief): ChromaLevel => (brief.seedChroma === 'vivid' ? 'vivid' : 'balanced');
 
-/** The ramps of every hue and chroma the brief names, in each of its modes. Entities take the brand's chroma. */
+/** The ramps of every hue and chroma the brief names, in each of its modes. Entities take the brand's chroma, statuses at least balanced. */
 export function rampsOf(brief: Brief): Ramps {
   return Object.fromEntries(
     modesOf(brief).map((mode) => [
@@ -90,10 +89,11 @@ export function stepGuide(): string {
   const table = (mode: Mode) => {
     // Each step's lightest and darkest luminance, over every hue and chroma.
     const luminance = (hex: string) => (wcagContrast(hex, '#000000') - 1) * 0.05;
+    const ramps = (Object.keys(CHROMA) as ChromaLevel[]).flatMap((level) =>
+      Array.from({ length: 72 }, (_, h) => ramp(h * 5, level, mode).map(luminance)),
+    );
     const span = LIGHTNESS[mode].map((_, i) => {
-      const ys = Object.keys(CHROMA).flatMap((level) =>
-        Array.from({ length: 72 }, (_, h) => luminance(ramp(h * 5, level as ChromaLevel, mode)[i] ?? '#000000')),
-      );
+      const ys = ramps.map((r) => r[i] ?? 0);
       return { low: Math.min(...ys), high: Math.max(...ys) };
     });
     const worst = (a: number, b: number) => {
@@ -103,7 +103,7 @@ export function stepGuide(): string {
     return span
       .map((_, bg) => {
         const reads = (min: number) => span.map((__, fg) => fg).filter((fg) => fg !== bg && worst(fg, bg) >= min).map((fg) => fg + 1);
-        return `- On step ${bg + 1}: text ${ranges(reads(4.5))}; borders and focus ${ranges(reads(3))}.`;
+        return `- On step ${bg + 1}: text (4.5:1) ${ranges(reads(4.5))}; borders, focus and the logo (3:1) ${ranges(reads(3))}.`;
       })
       .join('\n');
   };
