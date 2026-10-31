@@ -49,7 +49,20 @@ const cases: Record<string, (l: ScreenLayout[]) => void> = {
 
 describe('the screen rules', () => {
   it('pairs each rule with one case', () => {
-    expect([...Object.keys(cases), 'DESIGN-038'].sort()).toEqual(screenRules.map((r) => r.id).sort());
+    expect([...Object.keys(cases), 'DESIGN-038', 'DESIGN-048'].sort()).toEqual(screenRules.map((r) => r.id).sort());
+  });
+
+  it("DESIGN-048 wants each words slot of a confirmation one sentence, and the record named beside its title", () => {
+    // The delete-book dialog's text becomes a words slot that its instance fills.
+    const slotted = structuredClone(catalog);
+    slotted.widgets.find((w) => w.id === 'W10')!.slots.push({ name: 'description', kind: 'words', holds: 'what is destroyed', minWidthPx: 160, maxWidthPx: 0 });
+    const at = (words: string) =>
+      check(changed((l) => instance(l, 'S07.p1').slots.push({ name: 'description', text: words })), slotted)
+        .filter((i) => i.rule === 'DESIGN-048')
+        .map((i) => i.at);
+    expect(at('This removes “{Book.title}” from your shelf for good.')).toEqual([]);
+    expect(at('This removes the book for good.')).toEqual(['S07.p1']);
+    expect(at('This removes “{Book.title}”. It cannot be undone.')).toEqual(['S07.p1']);
   });
 
   it.each(Object.keys(cases))('%s fails its case', (rule) => {

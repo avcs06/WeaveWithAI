@@ -35,6 +35,9 @@ export function ownersOf(
     // A navigation item is drawn by a frame; which one shows to its users is not known from the item alone.
     case 'DESIGN-025':
       return [...new Set(screens.screens.map((s) => s.shell).filter(Boolean))];
+    // A confirmation's text nodes and buttons: the widgets placed on the dialog draw them.
+    case 'LAYOUT-063':
+      return [...new Set(screens.placements.filter((p) => p.screen === at).map((p) => p.widget))];
   }
   // A node is its call's: the widget or shell its written id starts with.
   if (NODE.test(at)) return owned((origin.get(at) ?? at).split('.')[0]);

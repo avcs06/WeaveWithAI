@@ -27,6 +27,7 @@ describe('ownersOf', () => {
     expect(owners('DESIGN-008', 'F03.S01')).toEqual(['W05', 'W06']);
     expect(owners('DESIGN-003', 'TitleCover')).toEqual(['W09']);
     expect(owners('DESIGN-025', 'S04')).toEqual(['SH2', 'SH1']);
+    expect(owners('LAYOUT-063', 'S07')).toEqual(['W10', 'W11']);
   });
 
   it('keeps for no call an issue on a screen, a region, the plan or a component placed on its own: those calls are not rerun', () => {

@@ -27,7 +27,20 @@ describe('the reading-list widgets', () => {
 
 describe('a draw call', () => {
   it('pairs each widget rule with a test', () => {
-    expect(widgetRules.map((r) => r.id)).toEqual(['DESIGN-030', 'DESIGN-032', 'DESIGN-033', 'DESIGN-044']);
+    expect(widgetRules.map((r) => r.id)).toEqual(['DESIGN-030', 'DESIGN-032', 'DESIGN-033', 'DESIGN-044', 'DESIGN-048']);
+  });
+
+  it("fails DESIGN-048 when a confirmation's own text says two sentences or names no record, and leaves other text alone", () => {
+    const confirm = build('W10');
+    const text = confirm.nodes.find((n) => n.role === 'text')!;
+    const at = (b: Build) => check(b).filter((i) => i.rule === 'DESIGN-048').map((i) => i.at);
+    expect(at(confirm)).toEqual([]);
+    text.sample = 'This removes the book from your shelf. It cannot be undone.';
+    text.data = [];
+    expect(at(confirm)).toEqual([text.id, 'W10']);
+    const welcome = build('W03');
+    welcome.nodes.find((n) => n.id === 'W03.n03')!.text = 'Welcome back. Your shelf is waiting.';
+    expect(at(welcome)).toEqual([]);
   });
 
   it("fails DESIGN-030 when the top heading is not level 1, or a widget without one has a heading", () => {

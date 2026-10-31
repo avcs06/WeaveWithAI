@@ -1,5 +1,5 @@
 import { defineRule } from '../../../core/rules';
-import type { PlanInput } from './helpers';
+import { confirmingSteps, type PlanInput } from './helpers';
 
 /**
  * DESIGN-047 · mandatory
@@ -13,9 +13,7 @@ export const rule = defineRule<PlanInput>(
   'DESIGN-047',
   'mandatory',
   ({ plan, ctx }, fail) => {
-    const confirming = ctx.flows.subflows
-      .filter((s) => s.alternatives.some((a) => a.kind === 'confirm'))
-      .flatMap((s) => s.steps.map((step) => step.id));
+    const confirming = confirmingSteps(ctx.flows);
     return plan.screens
       .filter((screen) => screen.type === 'page')
       .flatMap((screen) => {

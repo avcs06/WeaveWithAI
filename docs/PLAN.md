@@ -1266,11 +1266,20 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - Assemble sends LAYOUT-071 on a region to its frame, which can draw
     smaller nodes; the message names that fix first.
 
-- [ ] **DS38** Confirmation words at the screen stage (45 min). Depends: DS37
+- [x] **DS38** Confirmation words where they are written (1.5 h) (done 2026-11-01). Depends: DS37
   - Found in DS37: LAYOUT-063 fails on a confirmation's words, which the
     screen call writes into the instance's slots. Assemble never reruns the
     screen stage, so its 2 issues stay known. The check belongs where the
     words are written.
+  - Built 2026-11-01 (user chose each part to its writer): DESIGN-048
+    checks the words. The screen call's slot words on a confirmation are one
+    sentence each, and a slot beside the title names the record; a widget
+    that serves a confirmation's step keeps its own text, or its sample, to
+    one sentence that names the record. The screen prompt says so.
+  - LAYOUT-063 keeps one text node and two buttons, since a dialog can be
+    two widgets, as the reading list's is, and only assembly shows them
+    together. It goes back to the widgets placed on the dialog.
+    `confirmingSteps` serves DESIGN-047 and 048.
 
 - [ ] **DS39** Assemble's second fix pass (45 min). Depends: DS37
   - Found in DS37: issues a fix brings in at assemble get no round. With

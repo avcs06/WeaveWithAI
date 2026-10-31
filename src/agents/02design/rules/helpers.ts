@@ -80,6 +80,12 @@ export const ACTIONS = new Set([
   'destructive-action',
 ]);
 
+/** The steps of the subflows that ask the user to confirm, such as confirming a deletion. */
+export const confirmingSteps = (flows: Flows) =>
+  flows.subflows
+    .filter((s) => s.alternatives.some((a) => a.kind === 'confirm'))
+    .flatMap((s) => s.steps.map((step) => step.id));
+
 /** The screen an id belongs to: `S03` of `S03.sec2` or `S03.n07`; the shell `SH1` of `SH1.n01`. */
 export const screenOf = (id: string) => id.split('.')[0] ?? '';
 

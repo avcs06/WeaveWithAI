@@ -8,6 +8,7 @@ import { screenRule as design030 } from '../../rules/design-030-heading-plan';
 import { rule as design037 } from '../../rules/design-037-rows-fit';
 import { rule as design038 } from '../../rules/design-038-slot-fills';
 import { rule as design039 } from '../../rules/design-039-fill-instances';
+import { screenRule as design048 } from '../../rules/design-048-confirmation-words';
 import type { DesignContext, ScreenInput } from '../../rules/helpers';
 import type { ScreenLayouts } from '../schema';
 
@@ -21,6 +22,7 @@ export const screenRules: readonly Rule<ScreenInput>[] = [
   design037,
   design038,
   design039,
+  design048,
 ];
 
 export function validateLayouts(

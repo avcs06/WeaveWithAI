@@ -166,11 +166,8 @@ export const layoutMutations: Record<string, (screens: Screens) => Screens> = {
     node(s, 'S04.n05').order = 2;
     node(s, 'S04.n06').order = 1;
   }),
-  'LAYOUT-063': edit(
-    (s) =>
-      (node(s, 'S07.n01').text =
-        'This removes “The Left Hand of Darkness” from your shelf. It cannot be undone.'),
-  ),
+  // A third button on the delete-book dialog.
+  'LAYOUT-063': edit((s) => add(s, 'S07.n02', 'S07.n04', { order: 9, text: 'Keep it' })),
   // The load error above the search row.
   'LAYOUT-065': edit((s) => (node(s, 'S04.n11').order = 0)),
   'LAYOUT-066': edit((s) => (node(s, 'S05.n08').layout!.gap = '1')),

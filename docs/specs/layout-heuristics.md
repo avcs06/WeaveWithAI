@@ -181,7 +181,10 @@ recorded.
       the nodes and texts of a confirmation, a dialog or drawer whose one job
       is a destructive action (no inputs, no primary action). Mandatory.
       Loosened 2026-10-30 (user): an edit drawer with a Delete button is not a
-      confirmation.
+      confirmation. Changed 2026-11-01 (user): the words are DESIGN-048's,
+      checked by the screen call for slot words and by the draw call for a
+      widget's own text; this check keeps one text node and two buttons, and
+      goes back to the widgets on the dialog.
 
 ## K. States without layout shift
 

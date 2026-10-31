@@ -50,4 +50,5 @@ Every row fits. The minimum widths of what a row holds, plus the gaps between th
   - A dialog or drawer starts at level 2, because its name is its title.
 - `slots`: the words for each words slot of its widget. Give words for those slots only.
   - Write the words in this voice: {{voice}}.
+  - On a confirmation, a dialog that asks before something is destroyed, each slot is one sentence. One slot beside the title names what is destroyed, with the record's value in quotes as “{Noun.attribute}”, such as This removes “{Book.title}” for good.
   - The `title` of the level-1 instance is the page's title, word for word.

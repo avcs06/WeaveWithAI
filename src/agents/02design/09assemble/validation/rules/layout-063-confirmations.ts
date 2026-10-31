@@ -1,19 +1,16 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule } from '../../../../../core/rules';
-import {
-  ACTIONS,
-  isButton,
-  type LayoutInput,
-  sentences,
-} from '../helpers';
+import { ACTIONS, isButton, type LayoutInput } from '../helpers';
 
 /**
  * LAYOUT-063 · mandatory · H-63 Confirmations
  * A confirmation, a dialog or drawer whose one job is a destructive action (no
- * inputs, no primary action), says one sentence that names what is destroyed,
- * and offers two buttons. An edit drawer with a Delete button is not one.
+ * inputs, no primary action), has one text node and two buttons. An edit
+ * drawer with a Delete button is not one. Its words moved to DESIGN-048,
+ * where the screen and draw calls write them (user, 2026-11-01); the shape
+ * stays here, since a dialog's widgets come together only on assembly.
  * Pass: "This removes “The Left Hand of Darkness” from your shelf for good.", Cancel, Delete book.
- * Fail: the same with a second sentence.
+ * Fail: the same with a third button.
  */
 export const rule = defineRule<LayoutInput>(
   'LAYOUT-063',
@@ -36,25 +33,10 @@ export const rule = defineRule<LayoutInput>(
       const buttons = nodes.filter(
         (node) => isButton(node) || ACTIONS.has(node.role),
       );
-      const text = texts[0];
-      const names = Boolean(
-        text && (text.data.length || /[“"«]/.test(text.text)),
-      );
       const problems = [
-        texts.length === 1 && text && sentences(text.text) === 1
+        texts.length === 1
           ? []
-          : [
-              texts.length === 1 && text
-                ? `a text of ${sentences(text.text)} sentences`
-                : `${texts.length} text nodes`,
-              `Give ${screen.id} exactly one text node, of one sentence.`,
-            ],
-        names
-          ? []
-          : [
-              'a text that does not name what is destroyed',
-              "Name what is destroyed in that sentence. Show the record's value through its data, as Noun.attribute, or put the record's name in quotes.",
-            ],
+          : [`${texts.length} text nodes`, `Give ${screen.id} exactly one text node.`],
         buttons.length === 2
           ? []
           : [`${buttons.length} buttons`, `Give ${screen.id} exactly two buttons.`],
@@ -62,7 +44,7 @@ export const rule = defineRule<LayoutInput>(
       if (problems.length)
         issues.push(
           fail(
-            `${screen.id} is a confirmation, a ${screen.type} whose one job is a destructive action. It has ${new Intl.ListFormat('en-GB').format(problems.map(([wrong]) => wrong ?? ''))}. A confirmation says one sentence that names what is destroyed, and offers two buttons. ${problems.map(([, fix]) => fix).join(' ')}`,
+            `${screen.id} is a confirmation, a ${screen.type} whose one job is a destructive action. It has ${new Intl.ListFormat('en-GB').format(problems.map(([wrong]) => wrong ?? ''))}. A confirmation shows one sentence in one text node, and offers two buttons. ${problems.map(([, fix]) => fix).join(' ')}`,
             screen.id,
           ),
         );

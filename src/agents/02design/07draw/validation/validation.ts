@@ -12,6 +12,7 @@ import { widgetRule as design032 } from '../../rules/design-032-widget-serves';
 import { widgetRule as design033 } from '../../rules/design-033-widget-states';
 import { rule as design042 } from '../../rules/design-042-shape-box';
 import { rule as design044 } from '../../rules/design-044-slots-drawn';
+import { widgetRule as design048 } from '../../rules/design-048-confirmation-words';
 import type { DesignContext, WidgetInput } from '../../rules/helpers';
 import type { NewComponent } from '../../schema';
 import { nodeRules } from '../../rules/index';
@@ -21,7 +22,7 @@ import type { Build, ModelNode } from '../schema';
 // alone, and the layout rules inside it, solved at its narrowest and widest.
 
 /** Rules on one widget's build against its definition. */
-export const widgetRules: readonly Rule<WidgetInput>[] = [design030, design032, design033, design044];
+export const widgetRules: readonly Rule<WidgetInput>[] = [design030, design032, design033, design044, design048];
 
 /** The node rules that hold for a widget alone; a screen's states and headings are DESIGN-033's and 030's there. */
 export const widgetNodeRules = nodeRules.filter(

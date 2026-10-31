@@ -596,6 +596,7 @@ widths the design system fixes (user, 2026-10-30).
 | DESIGN-045 | mandatory | A step that saves fields is on one screen, the one with its form; the step that opens it may sit on other screens (architect) |
 | DESIGN-046 | mandatory | A widget used on several screens serves only steps every one of them serves; a part that differs, such as a header's add button, is a small widget per screen in a parts slot (catalog) |
 | DESIGN-047 | mandatory | A confirmation's steps sit on a dialog of the page that asks, never on the page (architect) |
+| DESIGN-048 | mandatory | A confirmation's words are one sentence each and name what is destroyed: its instances' slot words (screen), a widget's own text when it serves a confirmation (draw) |
 
 ### Rendered checks (Phase 7, on prototype pages)
 
