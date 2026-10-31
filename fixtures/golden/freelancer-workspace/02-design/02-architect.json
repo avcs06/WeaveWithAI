@@ -1,0 +1,840 @@
+{
+  "meta": {
+    "artifact": "design-architect",
+    "version": 1,
+    "hash": "457e687fa3918c8ee215e5be1e9e495d13cd1c9f587f725e47c489ffc75ab02e",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "774a3cfefb7d08e1408c64e076f6463eda56cce015f1e8b6cabcd84bb3daa55d"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "4c82da7091d10c91beb9c29a2f7316ae51b3a94c70a92bc12f4545630c96f5e9"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "519eca1cd5e817ba34ab74d64a6b3ef8014262345d4be2b9921ef397f1e92576"
+      }
+    },
+    "stage": "design-architect",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-31T20:29:57.233Z"
+  },
+  "data": {
+    "screens": [
+      {
+        "id": "S01",
+        "name": "Landing",
+        "type": "page",
+        "route": "/",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "full",
+        "title": "StudioDesk",
+        "purpose": "Explain StudioDesk and invite the designer to sign up or sign in and link to public booking.",
+        "entry": true,
+        "flowSteps": [
+          "F01.S01",
+          "F01.S02",
+          "F04.S01",
+          "F01.A01",
+          "F01.A02"
+        ],
+        "states": [],
+        "composition": "A hero band with headline that StudioDesk is one calm workspace for clients, projects and bookings, plus Sign up, Sign in and Book a session actions. Then three calm feature bands for clients with follow-ups, projects with tasks, and public booking. A closing call-to-action band invites the designer to start.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S02",
+        "name": "Sign up",
+        "type": "page",
+        "route": "/signup",
+        "parent": "",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "Sign up",
+        "purpose": "Create a designer account and reach the home screen.",
+        "entry": true,
+        "flowSteps": [
+          "F02.S01",
+          "F02.S02",
+          "F02.A01",
+          "F02.A02",
+          "F02.A03"
+        ],
+        "states": [],
+        "composition": "A centered narrow card with the title, warm helper copy, email and password fields, and a Create account action. Below the form a link offers to sign in instead, and field errors appear inline.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S03",
+        "name": "Sign in",
+        "type": "page",
+        "route": "/signin",
+        "parent": "",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "Sign in",
+        "purpose": "Sign the designer back into her workspace.",
+        "entry": true,
+        "flowSteps": [
+          "F03.S01",
+          "F03.S02",
+          "F03.A01",
+          "F03.A02",
+          "F03.A03"
+        ],
+        "states": [],
+        "composition": "A centered narrow card with the title, warm helper copy, email and password fields, and a Sign in action. Below the form a link offers to sign up instead, and field errors appear inline.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S04",
+        "name": "Home",
+        "type": "page",
+        "route": "/home",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Home",
+        "purpose": "Start the day knowing today's sessions, due follow-ups, and overdue tasks.",
+        "entry": true,
+        "flowSteps": [
+          "F25.S01",
+          "F25.S02",
+          "F25.A01",
+          "F25.A02"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A greeting header with today's date. Then three sections: Today's sessions with seats booked versus maximum, Follow-ups due this week with overdue styling, and Overdue tasks with project and due date. Each row links to its session, client, or project task.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S05",
+        "name": "Clients",
+        "type": "page",
+        "route": "/clients",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Clients",
+        "purpose": "See all clients in follow-up order and act on follow-ups in one click.",
+        "entry": false,
+        "flowSteps": [
+          "F05.S01",
+          "F05.S02",
+          "F06.S01",
+          "F06.S02",
+          "F06.S03",
+          "F07.S01",
+          "F07.S02",
+          "F08.S01",
+          "F08.S02",
+          "F08.A02",
+          "F09.S01",
+          "F10.S01",
+          "F05.A01",
+          "F05.A02",
+          "F06.A01",
+          "F06.A02",
+          "F06.A03",
+          "F07.A01",
+          "F07.A02",
+          "F08.A01",
+          "F09.A01",
+          "F09.A02",
+          "F10.A01",
+          "F10.A02"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A header with the title and an Add client button. Then the sorted client list with overdue follow-ups first, each row showing name, company, status tag, and follow-up date with overdue highlight plus Done and Push a week actions. Selecting a row opens the client.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S06",
+        "name": "Client detail",
+        "type": "page",
+        "route": "/clients/[clientId]",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "View and manage one client's details, projects, notes, and follow-up date.",
+        "entry": false,
+        "flowSteps": [
+          "F08.S03",
+          "F09.S02",
+          "F09.S04",
+          "F09.S05",
+          "F10.S02",
+          "F08.A03",
+          "F08.A04",
+          "F09.A05",
+          "F09.A06",
+          "F09.A07",
+          "F09.A08",
+          "F10.A05"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "composition": "A client header showing name, status tag, email, company, profile, and an inline follow-up date editor, with Edit and Delete actions. Then a Projects section with its list and Add project button. Then a Notes section newest first with Add note button and Delete per note.",
+        "frame": "the header shows a back link to Clients; the sidebar highlights Clients",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S07",
+        "name": "Projects",
+        "type": "page",
+        "route": "/projects",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Projects",
+        "purpose": "See all projects with how much work is still open on each.",
+        "entry": false,
+        "flowSteps": [
+          "F11.S01",
+          "F12.S01",
+          "F13.S01",
+          "F13.S02",
+          "F14.S01",
+          "F15.S01",
+          "F17.S01",
+          "F11.A01",
+          "F12.A01",
+          "F12.A04",
+          "F13.A01",
+          "F13.A02",
+          "F13.A03",
+          "F14.A01",
+          "F14.A02",
+          "F15.A01",
+          "F15.A02",
+          "F17.A01",
+          "F17.A02"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A header with the title and a hint that projects are added under a client. Then every project as rows showing its client, due date, and open task count badge. Selecting a row opens the project.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S08",
+        "name": "Project detail",
+        "type": "page",
+        "route": "/projects/[projectId]",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "",
+        "purpose": "View, find, and manage one project's tasks.",
+        "entry": false,
+        "flowSteps": [
+          "F12.S02",
+          "F14.S02",
+          "F14.S03",
+          "F15.S02",
+          "F16.S01",
+          "F17.S02",
+          "F12.A02",
+          "F12.A03",
+          "F14.A03",
+          "F14.A04",
+          "F15.A03",
+          "F16.A01",
+          "F17.A03",
+          "F17.A04"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A project header with name, description, due date, client link, and open count, plus Edit and Delete actions. Then a tasks toolbar with search by title and status and priority filters. Then the task list with quick Done tick, priority and status tags, overdue highlighting, and per-task delete.",
+        "frame": "the header shows a back link to Projects; the sidebar highlights Projects",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S09",
+        "name": "Sessions",
+        "type": "page",
+        "route": "/sessions",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Sessions",
+        "purpose": "Run upcoming sessions and cancel a slot when needed.",
+        "entry": false,
+        "flowSteps": [
+          "F24.S01",
+          "F24.S02",
+          "F24.A01",
+          "F24.A02",
+          "F24.A03",
+          "F24.A04"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A header with the title and a hint toward booking settings. Then upcoming sessions grouped by date, each showing session type, time, seats booked versus maximum, and who booked it. Each session has a Cancel slot action.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S10",
+        "name": "Booking settings",
+        "type": "page",
+        "route": "/settings/bookings",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "medium",
+        "title": "Booking settings",
+        "purpose": "Set weekly availability and define session types.",
+        "entry": false,
+        "flowSteps": [
+          "F18.S01",
+          "F18.S02",
+          "F19.S01",
+          "F20.S01",
+          "F20.S02",
+          "F21.S01",
+          "F21.S02",
+          "F18.A01",
+          "F18.A02",
+          "F18.A03",
+          "F19.A01",
+          "F20.A01",
+          "F20.A02",
+          "F21.A01",
+          "F21.A02",
+          "F21.A03"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A Weekly availability section with day choices, from and to times, Save, and a preview of slots it will generate for the next two weeks. Then a Session types section listing duration, price display, and maximum people with Add, Edit, and Delete actions.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S11",
+        "name": "Book a session",
+        "type": "page",
+        "route": "/book",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "medium",
+        "title": "Book a session",
+        "purpose": "Let a booker pick a session type and open slot and book with name and email.",
+        "entry": true,
+        "flowSteps": [
+          "F22.S01",
+          "F22.S02",
+          "F22.S03",
+          "F22.A01",
+          "F22.A02",
+          "F22.A03",
+          "F22.A04",
+          "F22.A05"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "An intro with what is offered, timezone note, and price-as-information note. Then selectable session type cards with duration, price display, and seats. Then open slots for the next two weeks with full marked, plus name and email fields and a Book action. After booking a confirmation panel shows the cancellation link.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "booker"
+        ]
+      },
+      {
+        "id": "S12",
+        "name": "Manage booking",
+        "type": "page",
+        "route": "/bookings/[token]",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Let a booker view and cancel their own booking via its link.",
+        "entry": true,
+        "flowSteps": [
+          "F23.S01",
+          "F23.S02",
+          "F23.A01",
+          "F23.A02",
+          "F23.A03"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "composition": "A focused card showing the booking's session type, date and start time, and booker name, with its current status. A Cancel booking button asks for confirmation, then shows a cancelled confirmation with the freed seat note.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "booker"
+        ]
+      },
+      {
+        "id": "S13",
+        "name": "Add client",
+        "type": "dialog",
+        "route": "",
+        "parent": "S05",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "Create a new client from the client list.",
+        "entry": false,
+        "flowSteps": [
+          "F05.S03",
+          "F05.A03",
+          "F05.A04"
+        ],
+        "states": [],
+        "composition": "A dialog with the client form for name, email, company, profile, status, and follow-up date. Footer has Save and Cancel; validation keeps typed values and marks what is wrong.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S14",
+        "name": "Edit client",
+        "type": "dialog",
+        "route": "",
+        "parent": "S06",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "Update the open client's details and follow-up date.",
+        "entry": false,
+        "flowSteps": [
+          "F07.S03",
+          "F07.A03",
+          "F07.A04",
+          "F07.A05"
+        ],
+        "states": [],
+        "composition": "A dialog with the client form prefilled with name, email, company, profile, status, and follow-up date. Footer has Save and Cancel; validation keeps typed values.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S15",
+        "name": "Delete client confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S06",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm deleting the client and its contents or a mistaken note.",
+        "entry": false,
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "states": [],
+        "composition": "A small confirm dialog that names the client or note to remove and says its projects, tasks, and notes will also be removed for a client. Footer has Delete and Keep actions with Delete emphasized as danger.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer",
+          "booker"
+        ]
+      },
+      {
+        "id": "S16",
+        "name": "Add note",
+        "type": "dialog",
+        "route": "",
+        "parent": "S06",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Jot a dated note under the open client.",
+        "entry": false,
+        "flowSteps": [
+          "F09.S03",
+          "F09.A03",
+          "F09.A04"
+        ],
+        "states": [],
+        "composition": "A small dialog with note date and text fields. Footer has Save note and Cancel; validation keeps typed values and marks a missing date or empty text.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S17",
+        "name": "Add project",
+        "type": "dialog",
+        "route": "",
+        "parent": "S06",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Start a new project under the open client.",
+        "entry": false,
+        "flowSteps": [
+          "F10.S03",
+          "F10.A03",
+          "F10.A04"
+        ],
+        "states": [],
+        "composition": "A small dialog with project name, description, and optional due date. Footer has Save and Cancel; an empty name is marked and typed values are kept.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S18",
+        "name": "Edit project",
+        "type": "dialog",
+        "route": "",
+        "parent": "S08",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Update the open project's details.",
+        "entry": false,
+        "flowSteps": [
+          "F11.S02",
+          "F11.A02",
+          "F11.A03"
+        ],
+        "states": [],
+        "composition": "A small dialog with the project form prefilled with name, description, and due date. Footer has Save and Cancel; an empty name is marked and typed values are kept.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S19",
+        "name": "Task form",
+        "type": "dialog",
+        "route": "",
+        "parent": "S08",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Add or edit a task in the open project.",
+        "entry": false,
+        "flowSteps": [
+          "F15.S03",
+          "F16.S02",
+          "F15.A04",
+          "F15.A05",
+          "F16.A02",
+          "F16.A03"
+        ],
+        "states": [],
+        "composition": "A small dialog with task title, status, priority, and optional due date, including quick Done and move-back choices. Footer has Save and Cancel; an empty title is marked and typed values are kept.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S20",
+        "name": "Delete project confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S08",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm deleting the project and its tasks or a single task.",
+        "entry": false,
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "states": [],
+        "composition": "A small confirm dialog that names the project or task to remove and says a project's tasks will also be removed. Footer has Delete and Keep actions with Delete emphasized as danger.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer",
+          "booker"
+        ]
+      },
+      {
+        "id": "S21",
+        "name": "Session type form",
+        "type": "dialog",
+        "route": "",
+        "parent": "S10",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Add or edit a bookable session type.",
+        "entry": false,
+        "flowSteps": [
+          "F19.S02",
+          "F20.S03",
+          "F19.A02",
+          "F19.A03",
+          "F20.A03",
+          "F20.A04"
+        ],
+        "states": [],
+        "composition": "A small dialog with session type name, duration in minutes, price display as information only, and maximum people. Footer has Save and Cancel; missing or out-of-range values are marked and kept.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer"
+        ]
+      },
+      {
+        "id": "S22",
+        "name": "Delete session type confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S10",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm stopping a session type.",
+        "entry": false,
+        "flowSteps": [
+          "STD01.S01",
+          "F21.A02",
+          "F21.A03",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "states": [],
+        "composition": "A small confirm dialog that names the session type to stop offering and says bookers can no longer pick it. Footer has Delete and Keep actions with Delete emphasized as danger.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer",
+          "booker"
+        ]
+      },
+      {
+        "id": "S23",
+        "name": "Cancel session confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S09",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm cancelling an upcoming session and its bookings.",
+        "entry": false,
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "states": [],
+        "composition": "A small confirm dialog that names the session date, time, and type and says everyone booked on it will be cancelled. Footer has Cancel slot and Keep actions with cancel emphasized as danger.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer",
+          "booker"
+        ]
+      },
+      {
+        "id": "S24",
+        "name": "Cancel booking confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S12",
+        "kind": "marketing",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm the booker wants to cancel their own booking.",
+        "entry": false,
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "states": [],
+        "composition": "A small confirm dialog that restates the booking's session type, date, and time and says its seat will become available again. Footer has Yes cancel and Keep actions in plain warm wording.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "designer",
+          "booker"
+        ]
+      }
+    ],
+    "navigation": [
+      {
+        "screen": "S04",
+        "slot": "sidebar.top",
+        "label": "Home",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S05",
+        "slot": "sidebar.top",
+        "label": "Clients",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S07",
+        "slot": "sidebar.top",
+        "label": "Projects",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S09",
+        "slot": "sidebar.top",
+        "label": "Sessions",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S10",
+        "slot": "sidebar.top",
+        "label": "Booking settings",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S11",
+        "slot": "header.end",
+        "label": "Book a session",
+        "access": "public"
+      }
+    ],
+    "alternativesElsewhere": [],
+    "newComponents": [
+      {
+        "name": "SlotPicker",
+        "purpose": "Let a booker pick one open session slot grouped by day with full states visible.",
+        "closestExisting": [
+          "RadioGroup",
+          "ChipGroup",
+          "Card"
+        ],
+        "whyNotExisting": "RadioGroup and ChipGroup lack date grouping, two-week range structure, and full-versus-open slot states with seat counts.",
+        "description": "A date-grouped grid for the next two weeks that shows each day as a heading with its time slots as selectable pills in Figtree, soft radius, comfortable density. Open slots are selectable, full slots are muted and marked Full with a Tag, past slots are omitted. It stands out as the primary booking control on the public page, calm and scannable like the slot grids of a booking app."
+      },
+      {
+        "name": "TimeInput",
+        "purpose": "Enter and validate a time of day for weekly availability windows.",
+        "closestExisting": [
+          "Input",
+          "FormControl"
+        ],
+        "whyNotExisting": "Input supports only text, tel, url and email types and has no time parsing, validation, or time affordance.",
+        "description": "A single time-of-day field showing HH:MM with a clock icon, soft radius, Figtree text, halo focus, and inline error like other inputs. Used in pairs for Available from and Available to in the availability form, calm and compact like the time fields of a calendar settings form."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "Do the different session types share one availability calendar, so a booked discovery call or design review blocks an overlapping workshop slot, and vice versa?",
+        "whyItMatters": "It changes which slots show as open or full on the public booking page and in upcoming sessions.",
+        "defaultAnswer": "Yes. Booking any session type blocks that time for the other session types, except that additional bookers can still join the same Figma workshop session until it reaches 8 people.",
+        "blocking": true
+      },
+      {
+        "id": "Q02",
+        "question": "Which time zone should bookers see slot times in?",
+        "whyItMatters": "It determines the timezone note and slot labels shown on the public booking page.",
+        "defaultAnswer": "The designer's own local time zone is used and shown on the booking page, with no time zone conversion for bookers.",
+        "blocking": false
+      }
+    ],
+    "impossibleSteps": []
+  }
+}

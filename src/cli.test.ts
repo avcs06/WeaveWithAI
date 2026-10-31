@@ -179,12 +179,12 @@ describe('weave run', () => {
       'design-theme: no artifact to validate',
       'design-architect: no validators registered',
       'design-catalog: no validators registered',
+      'contract: no validators registered',
       'design-screen: no validators registered',
       'design-invent: no validators registered',
       'design-draw: no validators registered',
       'design-frame: no validators registered',
       'design-assemble: no validators registered',
-      'contract: no validators registered',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
   });

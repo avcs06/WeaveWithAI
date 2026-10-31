@@ -1,0 +1,1539 @@
+{
+  "meta": {
+    "artifact": "design-invent",
+    "version": 1,
+    "hash": "d94fb918a61e95880ae14619797b54e4958f66c0819a146f41bcd8a207f3bd9d",
+    "inputs": {
+      "design-architect": {
+        "version": 1,
+        "hash": "2672c9befccb92243f1da726dea8c4c63ccde4a6066a3b7aafb4f43faca907a5"
+      },
+      "design-catalog": {
+        "version": 1,
+        "hash": "98c08e9bb25c87ff2fbf66e6c1aa1dce6b21b80d5c81516cef91524bf61519c9"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "62fc443161f6a56121607e98db2bceb719b45962de4f591a9fedfc2bbb0598fa"
+      },
+      "flows-scope": {
+        "version": 1,
+        "hash": "241696a484e51255e1e75d75d9094e2be0f060a72a5e4d411f0c307a4f66fd23"
+      }
+    },
+    "stage": "design-invent",
+    "model": "muse-spark-1.3",
+    "rounds": 7,
+    "createdAt": "2026-10-31T20:29:49.924Z"
+  },
+  "data": {
+    "components": [
+      {
+        "name": "PieceGallery",
+        "design": {
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "content",
+            "heightPx": 0,
+            "minHeightPx": 0,
+            "padding": "0",
+            "gap": "4"
+          },
+          "layout": {
+            "direction": "column",
+            "gap": "4",
+            "padding": "0",
+            "columns": 0,
+            "align": "stretch",
+            "justify": "start",
+            "wrap": false
+          },
+          "nodes": [
+            {
+              "id": "PieceGallery.n01",
+              "parent": "",
+              "order": 0,
+              "what": "large preview photo of the piece",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "fixed",
+                "heightPx": 360,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [
+                "Piece.photos"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PieceGallery.n02",
+              "parent": "",
+              "order": 1,
+              "what": "row of small thumbnails",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "row",
+                "gap": "2",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": true
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PieceGallery.n03",
+              "parent": "PieceGallery.n02",
+              "order": 0,
+              "what": "selected thumbnail photo of the piece",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 64,
+                "height": "fixed",
+                "heightPx": 64,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [
+                "Piece.photos"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PieceGallery.n04",
+              "parent": "PieceGallery.n02",
+              "order": 1,
+              "what": "thumbnail photo of the piece",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 64,
+                "height": "fixed",
+                "heightPx": 64,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [
+                "Piece.photos"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PieceGallery.n05",
+              "parent": "PieceGallery.n02",
+              "order": 2,
+              "what": "thumbnail photo of the piece",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 64,
+                "height": "fixed",
+                "heightPx": 64,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [
+                "Piece.photos"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PieceGallery.n06",
+              "parent": "PieceGallery.n02",
+              "order": 3,
+              "what": "thumbnail photo of the piece",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 64,
+                "height": "fixed",
+                "heightPx": 64,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [
+                "Piece.photos"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "name": "VariantPicker",
+        "design": {
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "content",
+            "heightPx": 0,
+            "minHeightPx": 0,
+            "padding": "0",
+            "gap": "2"
+          },
+          "layout": {
+            "direction": "column",
+            "gap": "4",
+            "padding": "0",
+            "columns": 0,
+            "align": "stretch",
+            "justify": "start",
+            "wrap": false
+          },
+          "nodes": [
+            {
+              "id": "VariantPicker.n01",
+              "parent": "",
+              "order": 0,
+              "what": "the group label",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "label",
+              "text": "Choose glaze and size",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n02",
+              "parent": "",
+              "order": 1,
+              "what": "single-choice group of variant rows",
+              "newComponent": "",
+              "component": "CardGroup",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "4",
+                "padding": "0",
+                "columns": 0,
+                "align": "stretch",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "Choose glaze and size",
+              "headingLevel": 0,
+              "role": "input",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n03",
+              "parent": "VariantPicker.n02",
+              "order": 0,
+              "what": "selectable in-stock variant row",
+              "newComponent": "",
+              "component": "Card",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "row",
+                "gap": "2",
+                "padding": "0",
+                "columns": 0,
+                "align": "center",
+                "justify": "between",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "Oat glaze, Medium, Rs 1,200, 8 left",
+              "headingLevel": 0,
+              "role": "input",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n04",
+              "parent": "VariantPicker.n02",
+              "order": 1,
+              "what": "selectable nearly-gone variant row with warning",
+              "newComponent": "",
+              "component": "Card",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "row",
+                "gap": "2",
+                "padding": "0",
+                "columns": 0,
+                "align": "center",
+                "justify": "between",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "Charcoal glaze, Small, Rs 950, 2 left",
+              "headingLevel": 0,
+              "role": "input",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n05",
+              "parent": "VariantPicker.n02",
+              "order": 2,
+              "what": "disabled sold-out variant row",
+              "newComponent": "",
+              "component": "Card",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "row",
+                "gap": "2",
+                "padding": "0",
+                "columns": 0,
+                "align": "center",
+                "justify": "between",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "Indigo glaze, Large, Rs 1,400, Sold out",
+              "headingLevel": 0,
+              "role": "input",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n06",
+              "parent": "VariantPicker.n03",
+              "order": 0,
+              "what": "variant name and price column",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "1",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n08",
+              "parent": "VariantPicker.n06",
+              "order": 0,
+              "what": "the variant glaze and size",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "body",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.glaze",
+                "Variant.size"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "Oat glaze · Medium",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n09",
+              "parent": "VariantPicker.n06",
+              "order": 1,
+              "what": "price with stock count",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.price",
+                "Variant.stock"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "₹1,200 · 8 left",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n10",
+              "parent": "VariantPicker.n04",
+              "order": 0,
+              "what": "variant name and price column",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "1",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n11",
+              "parent": "VariantPicker.n04",
+              "order": 1,
+              "what": "warm low-stock warning tag",
+              "newComponent": "",
+              "component": "Tag",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "feedback",
+              "field": "",
+              "data": [
+                "Variant.stock"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "Only 2 left",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n12",
+              "parent": "VariantPicker.n10",
+              "order": 0,
+              "what": "the variant glaze and size",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "body",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.glaze",
+                "Variant.size"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "Charcoal glaze · Small",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n13",
+              "parent": "VariantPicker.n10",
+              "order": 1,
+              "what": "price with stock count",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.price",
+                "Variant.stock"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "₹950 · 2 left",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n14",
+              "parent": "VariantPicker.n05",
+              "order": 0,
+              "what": "variant name and price column",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "1",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n15",
+              "parent": "VariantPicker.n05",
+              "order": 1,
+              "what": "clear sold-out tag",
+              "newComponent": "",
+              "component": "Tag",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "Sold out",
+              "label": "",
+              "headingLevel": 0,
+              "role": "display",
+              "field": "",
+              "data": [
+                "Variant.stock"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n16",
+              "parent": "VariantPicker.n14",
+              "order": 0,
+              "what": "the variant glaze and size",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "body",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.glaze",
+                "Variant.size"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "Indigo glaze · Large",
+              "slot": ""
+            },
+            {
+              "id": "VariantPicker.n17",
+              "parent": "VariantPicker.n14",
+              "order": 1,
+              "what": "price with stock count",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [
+                "Variant.price",
+                "Variant.stock"
+              ],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "₹1,400 · Sold out",
+              "slot": ""
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "name": "PhotoUploader",
+        "design": {
+          "box": {
+            "width": "fill",
+            "widthPx": 0,
+            "height": "content",
+            "heightPx": 0,
+            "minHeightPx": 0,
+            "padding": "0",
+            "gap": "4"
+          },
+          "layout": {
+            "direction": "column",
+            "gap": "6",
+            "padding": "0",
+            "columns": 0,
+            "align": "stretch",
+            "justify": "start",
+            "wrap": false
+          },
+          "nodes": [
+            {
+              "id": "PhotoUploader.n01",
+              "parent": "",
+              "order": 1,
+              "what": "a label group with title and hint",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "1",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n02",
+              "parent": "PhotoUploader.n01",
+              "order": 2,
+              "what": "the uploader label",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "label",
+              "text": "Piece photos",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n03",
+              "parent": "PhotoUploader.n01",
+              "order": 3,
+              "what": "the file hint",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "JPG or PNG, up to 5 MB each.",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n04",
+              "parent": "",
+              "order": 4,
+              "what": "a dashed upload dropzone box",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 120,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "4",
+                "padding": "4",
+                "columns": 0,
+                "align": "stretch",
+                "justify": "center",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n05",
+              "parent": "PhotoUploader.n04",
+              "order": 5,
+              "what": "an upload icon",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 32,
+                "height": "fixed",
+                "heightPx": 32,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n06",
+              "parent": "PhotoUploader.n04",
+              "order": 6,
+              "what": "the drag instruction",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "body",
+              "text": "Drag photos here or browse files.",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n07",
+              "parent": "PhotoUploader.n04",
+              "order": 7,
+              "what": "a browse files button",
+              "newComponent": "",
+              "component": "Button",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "Browse files",
+              "label": "",
+              "headingLevel": 0,
+              "role": "secondary-action",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n08",
+              "parent": "",
+              "order": 17,
+              "what": "a file validation message",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "“mug-glaze.tiff” did not upload. Use JPG or PNG under 5 MB.",
+              "label": "",
+              "headingLevel": 0,
+              "role": "feedback",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "error"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n09",
+              "parent": "",
+              "order": 9,
+              "what": "a row of photo previews",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "row",
+                "gap": "2",
+                "padding": "0",
+                "columns": 0,
+                "align": "start",
+                "justify": "start",
+                "wrap": true
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n10",
+              "parent": "PhotoUploader.n09",
+              "order": 10,
+              "what": "a first photo preview with remove control",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "4",
+                "padding": "0",
+                "columns": 0,
+                "align": "center",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n11",
+              "parent": "PhotoUploader.n10",
+              "order": 11,
+              "what": "a square preview photo of a speckled mug",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 80,
+                "height": "fixed",
+                "heightPx": 80,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n12",
+              "parent": "PhotoUploader.n10",
+              "order": 12,
+              "what": "a remove first photo button",
+              "newComponent": "",
+              "component": "IconButton",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "Remove first photo",
+              "headingLevel": 0,
+              "role": "secondary-action",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n13",
+              "parent": "PhotoUploader.n09",
+              "order": 13,
+              "what": "a second photo preview with remove control",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": {
+                "direction": "column",
+                "gap": "4",
+                "padding": "0",
+                "columns": 0,
+                "align": "center",
+                "justify": "start",
+                "wrap": false
+              },
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "container",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n14",
+              "parent": "PhotoUploader.n13",
+              "order": 14,
+              "what": "a square preview photo of a glazed bowl",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fixed",
+                "widthPx": 80,
+                "height": "fixed",
+                "heightPx": 80,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "",
+              "headingLevel": 0,
+              "role": "media",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n15",
+              "parent": "PhotoUploader.n13",
+              "order": 15,
+              "what": "a remove second photo button",
+              "newComponent": "",
+              "component": "IconButton",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "content",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "none",
+              "text": "",
+              "label": "Remove second photo",
+              "headingLevel": 0,
+              "role": "secondary-action",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            },
+            {
+              "id": "PhotoUploader.n16",
+              "parent": "",
+              "order": 16,
+              "what": "the session persistence note",
+              "newComponent": "",
+              "component": "none",
+              "size": "",
+              "look": "",
+              "overrideReason": "",
+              "box": {
+                "width": "fill",
+                "widthPx": 0,
+                "height": "content",
+                "heightPx": 0,
+                "minHeightPx": 0,
+                "span": 1
+              },
+              "layout": null,
+              "typeScale": "caption",
+              "text": "Photos stay for this session.",
+              "label": "",
+              "headingLevel": 0,
+              "role": "text",
+              "field": "",
+              "data": [],
+              "flowSteps": [],
+              "states": [
+                "default"
+              ],
+              "navigatesTo": "",
+              "sample": "",
+              "slot": ""
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      }
+    ]
+  }
+}

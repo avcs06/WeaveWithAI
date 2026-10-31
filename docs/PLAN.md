@@ -298,6 +298,11 @@ Steps 01 to 08.
     `round:validated` with the failed rule ids, and `review:start`. A
     reviewer's `llm:call` carries its reviewer and blocker count.
 
+- [ ] **F19** `weave golden` counts the calls of side-by-side stages (15 min). Depends: DS32
+  - Why: it sums a stage's calls up to the next stage that starts, so
+    screen, invent, draw and frame, which start together, show 0 calls and
+    $0; the 2026-11-01 golden table summed them from the events by hand.
+
 ## Phase 2: Scope and flows (Oct 28, night to Oct 29, 01:30)
 
 Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
@@ -1387,6 +1392,31 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - A rule that a component a widget holds is never also a part of the
     screen was dropped (user): a small reusable component can be both.
 
+- [ ] **DS50** A step that goes on to another screen links there (60 min). Depends: DS49
+  - Why: in the ecommerce run of 2026-11-01 01:50 no control opens S04
+    Order confirmation or S11 Order detail, so an owner cannot open an
+    order and a checkout never reaches its confirmation. Severe (user).
+  - Step file: `docs/steps/65-DS50-step-links.md`. Ready, not run yet.
+
+- [ ] **DS51** The wordmark is a leaf (10 min). Depends: DS45
+  - Why: in the freelancer run of 2026-11-01 01:50 boxes whose `what`
+    mentions the wordmark matched as the wordmark, so the wireframes drew
+    the logo over the sidebar's navigation.
+  - Step file: `docs/steps/66-DS51-wordmark-leaf.md`. Ready, not run yet.
+
+- [ ] **DS52** Step wording is a warning (10 min). Depends: DS51
+  - Why: DESIGN-028's step wording made 24 of the 33 known issues of the
+    three runs of 2026-11-01, mostly controls in error states or tagged
+    with a step they do not do (user: a noisy check becomes a warning).
+  - Step file: `docs/steps/67-DS52-step-wording-warning.md`. Ready, not
+    run yet.
+
+- [ ] **DS53** A fixed-height region fits what the frame puts in it (65 min). Depends: DS42
+  - Why: LAYOUT-071 stayed known in all three runs of 2026-11-01: THEME-006
+    sizes a fixed bar for the smallest button while frames place the
+    default size, and the frame never checks its regions in its own rounds.
+  - Step file: `docs/steps/68-DS53-fixed-region-fit.md`. Ready, not run yet.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a
@@ -1511,6 +1541,10 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
     and frame, so `--to contract` stops before the screen calls.
   - Done when: `pnpm typecheck`; `pnpm test`. The first live run waits for
     the user's go.
+  - First live run 2026-11-01, on the new golden sets (user): zero
+    mandatory issues for all three. Dashboard 1 round, $0.07; ecommerce 2
+    rounds, $0.11; freelancer 2 rounds, $0.13. Round 1 missed only `reads`
+    entries (CONTRACT-020, 3 and 4), which the patch round fixed.
 
 - [ ] **C5** Renderer (30 min). Depends: C4
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.

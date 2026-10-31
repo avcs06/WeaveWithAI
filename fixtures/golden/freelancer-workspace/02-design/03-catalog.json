@@ -1,0 +1,2099 @@
+{
+  "meta": {
+    "artifact": "design-catalog",
+    "version": 1,
+    "hash": "1ae2eed2b253e81924db94900707f5dc0607fb383d67611a666debfe895c98b7",
+    "inputs": {
+      "design-architect": {
+        "version": 1,
+        "hash": "457e687fa3918c8ee215e5be1e9e495d13cd1c9f587f725e47c489ffc75ab02e"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "519eca1cd5e817ba34ab74d64a6b3ef8014262345d4be2b9921ef397f1e92576"
+      },
+      "flows-scope": {
+        "version": 1,
+        "hash": "774a3cfefb7d08e1408c64e076f6463eda56cce015f1e8b6cabcd84bb3daa55d"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "4c82da7091d10c91beb9c29a2f7316ae51b3a94c70a92bc12f4545630c96f5e9"
+      }
+    },
+    "stage": "design-catalog",
+    "model": "muse-spark-1.3",
+    "rounds": 5,
+    "createdAt": "2026-10-31T20:34:41.096Z"
+  },
+  "data": {
+    "widgets": [
+      {
+        "id": "W01",
+        "name": "sharedPageHeader",
+        "kind": "page-header",
+        "holds": "Shows the page title with helper description and an optional action button on the right.",
+        "flowSteps": [],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title, different per page",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          },
+          {
+            "name": "description",
+            "kind": "words",
+            "holds": "Helper copy under the title, different per page",
+            "minWidthPx": 240,
+            "maxWidthPx": 0
+          },
+          {
+            "name": "actions",
+            "kind": "parts",
+            "holds": "Action button for the page, such as Add client",
+            "minWidthPx": 80,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "title",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "description",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 280
+      },
+      {
+        "id": "W02",
+        "name": "landingHero",
+        "kind": "hero",
+        "holds": "Headline that StudioDesk is one calm workspace for clients, projects and bookings with Sign up and Sign in actions.",
+        "flowSteps": [
+          "F01.S01",
+          "F01.S02",
+          "F01.A01",
+          "F04.S01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title StudioDesk",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          },
+          {
+            "name": "subtitle",
+            "kind": "words",
+            "holds": "Supporting line under the headline",
+            "minWidthPx": 240,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "headline",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "subcopy",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W03",
+        "name": "landingFeatures",
+        "kind": "feature-grid",
+        "holds": "Three calm feature bands for clients with follow-ups, projects with tasks, and public booking.",
+        "flowSteps": [],
+        "data": [],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "featureCard",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W04",
+        "name": "landingCta",
+        "kind": "cta",
+        "holds": "Closing call-to-action band inviting the designer to start with a Start action plus a Book a session action.",
+        "flowSteps": [
+          "F01.A02"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W05",
+        "name": "signupForm",
+        "kind": "auth-form",
+        "holds": "Centered card with title, helper copy, email and password fields, Create account action and a Sign in instead link with inline errors.",
+        "flowSteps": [
+          "F02.S01",
+          "F02.S02",
+          "F02.A01",
+          "F02.A02",
+          "F02.A03"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Sign up",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "title",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "helper",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W06",
+        "name": "signinForm",
+        "kind": "auth-form",
+        "holds": "Centered card with title, helper copy, email and password fields, Sign in action and a Sign up instead link with inline errors.",
+        "flowSteps": [
+          "F03.S01",
+          "F03.S02",
+          "F03.A01",
+          "F03.A02",
+          "F03.A03"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Sign in",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "title",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "helper",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W07",
+        "name": "homeTodaySessions",
+        "kind": "list",
+        "holds": "Today's sessions section showing session type, time and seats booked versus maximum; each row links to its session.",
+        "flowSteps": [
+          "F25.S01",
+          "F25.S02",
+          "F25.A01",
+          "F25.A02"
+        ],
+        "data": [
+          "Session.date",
+          "Session.startTime",
+          "SessionType.name",
+          "Booking.name"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "Session",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "sessionTitle",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "time",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "seats",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 296
+      },
+      {
+        "id": "W08",
+        "name": "homeFollowups",
+        "kind": "list",
+        "holds": "Follow-ups due this week section with overdue styling; each row links to its client.",
+        "flowSteps": [
+          "F25.S01",
+          "F25.S02",
+          "F25.A01",
+          "F25.A02"
+        ],
+        "data": [
+          "Client.name",
+          "Client.followUpDate"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "Client",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "clientName",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "followupDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 296
+      },
+      {
+        "id": "W09",
+        "name": "homeOverdueTasks",
+        "kind": "list",
+        "holds": "Overdue tasks section showing task, project and due date; each row links to its project task.",
+        "flowSteps": [
+          "F25.S01",
+          "F25.S02",
+          "F25.A01",
+          "F25.A02"
+        ],
+        "data": [
+          "Task.title",
+          "Task.dueDate",
+          "Project.name"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "Task",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "taskTitle",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "project",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "dueDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 280
+      },
+      {
+        "id": "W10",
+        "name": "clientsList",
+        "kind": "list",
+        "holds": "Sorted client list with overdue first showing name, company, status tag and follow-up date with Done and Push a week actions; selecting a row opens the client.",
+        "flowSteps": [
+          "F05.S01",
+          "F05.S02",
+          "F06.S01",
+          "F06.S02",
+          "F06.S03",
+          "F07.S01",
+          "F07.S02",
+          "F08.S01",
+          "F08.S02",
+          "F08.A02",
+          "F09.S01",
+          "F10.S01",
+          "F05.A01",
+          "F05.A02",
+          "F06.A01",
+          "F06.A02",
+          "F06.A03",
+          "F07.A01",
+          "F07.A02",
+          "F08.A01",
+          "F09.A01",
+          "F09.A02",
+          "F10.A01",
+          "F10.A02"
+        ],
+        "data": [
+          "Client.name",
+          "Client.company",
+          "Client.status",
+          "Client.followUpDate"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "Client",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "name",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "company",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "status",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "followup",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "rowActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 352
+      },
+      {
+        "id": "W11",
+        "name": "addClientButton",
+        "kind": "custom",
+        "holds": "Add client button that opens the client form dialog.",
+        "flowSteps": [
+          "F05.S02",
+          "F05.A01"
+        ],
+        "data": [],
+        "states": [
+          "empty"
+        ],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "addButton",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "0"
+        },
+        "maxWidthPx": 240,
+        "fields": [],
+        "minWidthPx": 80
+      },
+      {
+        "id": "W12",
+        "name": "clientDetailHeader",
+        "kind": "detail",
+        "holds": "Client header showing name, status tag, email, company, profile and inline follow-up date editor with Edit and Delete actions.",
+        "flowSteps": [
+          "F08.S03",
+          "F09.S04",
+          "F08.A03",
+          "F08.A04",
+          "F09.A05",
+          "F09.A06"
+        ],
+        "data": [
+          "Client.name",
+          "Client.status",
+          "Client.email",
+          "Client.company",
+          "Client.profile",
+          "Client.followUpDate"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "name",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "status",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "details",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "followupEditor",
+              "minWidthPx": 160,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [
+          "FD08"
+        ],
+        "minWidthPx": 352
+      },
+      {
+        "id": "W13",
+        "name": "clientProjects",
+        "kind": "list",
+        "holds": "Projects section listing the client's projects with Add project button; selecting a row opens the project.",
+        "flowSteps": [
+          "F10.S02",
+          "F10.A05"
+        ],
+        "data": [
+          "Project.name",
+          "Project.dueDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "Project",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "projectName",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "dueDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "addAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 384
+      },
+      {
+        "id": "W14",
+        "name": "clientNotes",
+        "kind": "list",
+        "holds": "Notes section newest first with Add note button and Delete per note.",
+        "flowSteps": [
+          "F09.S02",
+          "F09.S05",
+          "F09.A07",
+          "F09.A08"
+        ],
+        "data": [
+          "Note.date",
+          "Note.text"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "Note",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "noteDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "noteText",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 1,
+              "name": "deleteAction",
+              "minWidthPx": 32,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W15",
+        "name": "projectsTable",
+        "kind": "table",
+        "holds": "Every project as rows showing its client, due date and open task count badge; selecting a row opens the project.",
+        "flowSteps": [
+          "F11.S01",
+          "F12.S01",
+          "F13.S01",
+          "F13.S02",
+          "F14.S01",
+          "F15.S01",
+          "F17.S01",
+          "F11.A01",
+          "F12.A01",
+          "F12.A04",
+          "F13.A01",
+          "F13.A02",
+          "F13.A03",
+          "F14.A01",
+          "F14.A02",
+          "F15.A01",
+          "F15.A02",
+          "F17.A01",
+          "F17.A02"
+        ],
+        "data": [
+          "Project.name",
+          "Project.dueDate",
+          "Client.name"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "Project",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "project",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "client",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "dueDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "openCount",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 456
+      },
+      {
+        "id": "W16",
+        "name": "projectDetailHeader",
+        "kind": "detail",
+        "holds": "Project header with name, description, due date, client link and open count plus Edit and Delete actions.",
+        "flowSteps": [
+          "F12.S02",
+          "F12.A02",
+          "F12.A03"
+        ],
+        "data": [
+          "Project.name",
+          "Project.description",
+          "Project.dueDate",
+          "Client.name"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "name",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "description",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "meta",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [],
+        "minWidthPx": 280
+      },
+      {
+        "id": "W17",
+        "name": "taskFilters",
+        "kind": "filters",
+        "holds": "Tasks toolbar with search by title, status and priority filters and Add task action.",
+        "flowSteps": [
+          "F14.S02",
+          "F14.A03"
+        ],
+        "data": [],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "search",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "filters",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "addAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD27",
+          "FD30",
+          "FD31"
+        ],
+        "minWidthPx": 448
+      },
+      {
+        "id": "W18",
+        "name": "taskList",
+        "kind": "list",
+        "holds": "Task list with quick Done tick, priority and status tags, overdue highlighting and per-task delete; selecting a row opens the task.",
+        "flowSteps": [
+          "F14.S02",
+          "F14.S03",
+          "F15.S02",
+          "F16.S01",
+          "F17.S02",
+          "F14.A03",
+          "F14.A04",
+          "F15.A03",
+          "F16.A01",
+          "F17.A03",
+          "F17.A04"
+        ],
+        "data": [
+          "Task.title",
+          "Task.status",
+          "Task.priority",
+          "Task.dueDate"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "Task",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "doneTick",
+              "minWidthPx": 20,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "title",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "tags",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "dueDate",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "delete",
+              "minWidthPx": 32,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD27",
+          "FD30",
+          "FD31"
+        ],
+        "minWidthPx": 332
+      },
+      {
+        "id": "W19",
+        "name": "sessionsList",
+        "kind": "list",
+        "holds": "Upcoming sessions grouped by date showing session type, time, seats booked versus maximum and who booked it with Cancel slot action per session.",
+        "flowSteps": [
+          "F24.S01",
+          "F24.S02",
+          "F24.A01",
+          "F24.A02",
+          "F24.A03",
+          "F24.A04"
+        ],
+        "data": [
+          "Session.date",
+          "Session.startTime",
+          "SessionType.name",
+          "Booking.name"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "Session",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "dateGroup",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "session",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "seats",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 3,
+              "name": "bookers",
+              "minWidthPx": 80,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "cancelAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 352
+      },
+      {
+        "id": "W20",
+        "name": "availabilitySettings",
+        "kind": "settings-group",
+        "holds": "Weekly availability section with day choices, Available from and Available to time fields, Save action and preview of slots for the next two weeks.",
+        "flowSteps": [
+          "F18.S01",
+          "F18.S02",
+          "F18.A01",
+          "F18.A02",
+          "F18.A03"
+        ],
+        "data": [
+          "Availability.days",
+          "Availability.from",
+          "Availability.to"
+        ],
+        "states": [
+          "empty"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [
+          "TimeInput"
+        ],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "days",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "timeFields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "save",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "preview",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [
+          "FD18",
+          "FD19",
+          "FD20"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W21",
+        "name": "sessionTypesList",
+        "kind": "list",
+        "holds": "Session types section listing duration, price display and maximum people with Add, Edit and Delete actions.",
+        "flowSteps": [
+          "F19.S01",
+          "F20.S01",
+          "F20.S02",
+          "F21.S01",
+          "F21.S02",
+          "F19.A01",
+          "F20.A01",
+          "F20.A02",
+          "F21.A01",
+          "F21.A02",
+          "F21.A03"
+        ],
+        "data": [
+          "SessionType.name",
+          "SessionType.duration",
+          "SessionType.priceDisplay",
+          "SessionType.maxPeople"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "SessionType",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "typeName",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "meta",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "rowActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 352
+      },
+      {
+        "id": "W22",
+        "name": "bookingSessionCards",
+        "kind": "cards",
+        "holds": "Selectable session type cards showing duration, price display and seats; picking a card shows its slots.",
+        "flowSteps": [
+          "F22.S01",
+          "F22.A01"
+        ],
+        "data": [
+          "SessionType.name",
+          "SessionType.duration",
+          "SessionType.priceDisplay",
+          "SessionType.maxPeople"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "SessionType",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "card",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W23",
+        "name": "bookingSlotPicker",
+        "kind": "custom",
+        "holds": "Date-grouped open slots for the next two weeks with full marked; the booker picks one open slot.",
+        "flowSteps": [
+          "F22.S02",
+          "F22.A02",
+          "F22.A05"
+        ],
+        "data": [
+          "Session.date",
+          "Session.startTime"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "Session",
+        "newComponents": [
+          "SlotPicker"
+        ],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "slotGrid",
+              "minWidthPx": 240,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD28"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W24",
+        "name": "bookingForm",
+        "kind": "form",
+        "holds": "Booking form with name and email fields and Book action with inline errors.",
+        "flowSteps": [
+          "F22.S03",
+          "F22.A03",
+          "F22.A04"
+        ],
+        "data": [
+          "Booking.name",
+          "Booking.email"
+        ],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD29",
+          "FD25",
+          "FD26"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W25",
+        "name": "bookingConfirmation",
+        "kind": "detail",
+        "holds": "Confirmation panel showing the booking is saved with its cancellation link.",
+        "flowSteps": [
+          "F22.S03"
+        ],
+        "data": [
+          "Booking.name",
+          "Session.date",
+          "Session.startTime"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "link",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [
+          "FD29",
+          "FD25",
+          "FD26"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W26",
+        "name": "manageBookingCard",
+        "kind": "detail",
+        "holds": "Focused card showing session type, date and start time and booker name with status and Cancel booking button.",
+        "flowSteps": [
+          "F23.S01",
+          "F23.S02",
+          "F23.A01",
+          "F23.A02",
+          "F23.A03"
+        ],
+        "data": [
+          "SessionType.name",
+          "Session.date",
+          "Session.startTime",
+          "Booking.name"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "summary",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 1,
+              "name": "status",
+              "minWidthPx": 64,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "cancelAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [],
+        "minWidthPx": 264
+      },
+      {
+        "id": "W27",
+        "name": "clientFormAdd",
+        "kind": "form",
+        "holds": "Client form dialog for name, email, company, profile, status and follow-up date with Save and Cancel actions and inline validation.",
+        "flowSteps": [
+          "F05.S03",
+          "F05.A03",
+          "F05.A04"
+        ],
+        "data": [
+          "Client.name",
+          "Client.email",
+          "Client.company",
+          "Client.profile",
+          "Client.status",
+          "Client.followUpDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 472,
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07",
+          "FD08"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W28",
+        "name": "clientFormEdit",
+        "kind": "form",
+        "holds": "Prefilled client form dialog for name, email, company, profile, status and follow-up date with Save and Cancel and inline validation.",
+        "flowSteps": [
+          "F07.S03",
+          "F07.A03",
+          "F07.A04",
+          "F07.A05"
+        ],
+        "data": [
+          "Client.name",
+          "Client.email",
+          "Client.company",
+          "Client.profile",
+          "Client.status",
+          "Client.followUpDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 472,
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05",
+          "FD06",
+          "FD07",
+          "FD08"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W29",
+        "name": "deleteConfirmGeneric",
+        "kind": "custom",
+        "holds": "Small confirm dialog naming the item to remove and what else goes with it with Delete and Keep actions, Delete emphasized as danger.",
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Title naming the client, note, project, task, session or booking to remove",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          },
+          {
+            "name": "message",
+            "kind": "words",
+            "holds": "Consequence copy such as projects, tasks and notes will also be removed",
+            "minWidthPx": 240,
+            "maxWidthPx": 0
+          },
+          {
+            "name": "context",
+            "kind": "parts",
+            "holds": "Screen-specific delete details, such as the session type stop-offering note",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "message",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "context",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W30",
+        "name": "noteForm",
+        "kind": "form",
+        "holds": "Small dialog with note date and text fields with Save note and Cancel and inline validation.",
+        "flowSteps": [
+          "F09.S03",
+          "F09.A03",
+          "F09.A04"
+        ],
+        "data": [
+          "Note.date",
+          "Note.text"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [
+          "FD09",
+          "FD10"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W31",
+        "name": "projectFormAdd",
+        "kind": "form",
+        "holds": "Small dialog with project name, description and optional due date with Save and Cancel and inline validation.",
+        "flowSteps": [
+          "F10.S03",
+          "F10.A03",
+          "F10.A04"
+        ],
+        "data": [
+          "Project.name",
+          "Project.description",
+          "Project.dueDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W32",
+        "name": "projectFormEdit",
+        "kind": "form",
+        "holds": "Small prefilled project form with name, description and due date with Save and Cancel and inline validation.",
+        "flowSteps": [
+          "F11.S02",
+          "F11.A02",
+          "F11.A03"
+        ],
+        "data": [
+          "Project.name",
+          "Project.description",
+          "Project.dueDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W33",
+        "name": "taskForm",
+        "kind": "form",
+        "holds": "Small task dialog with title, status, priority and optional due date including quick Done choice with Save and Cancel and inline validation.",
+        "flowSteps": [
+          "F15.S03",
+          "F16.S02",
+          "F15.A04",
+          "F15.A05",
+          "F16.A02",
+          "F16.A03"
+        ],
+        "data": [
+          "Task.title",
+          "Task.status",
+          "Task.priority",
+          "Task.dueDate"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [
+          "FD14",
+          "FD15",
+          "FD16",
+          "FD17"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W34",
+        "name": "sessionTypeForm",
+        "kind": "form",
+        "holds": "Small session type dialog with name, duration, price display and maximum people with Save and Cancel and inline validation.",
+        "flowSteps": [
+          "F19.S02",
+          "F20.S03",
+          "F19.A02",
+          "F19.A03",
+          "F20.A03",
+          "F20.A04"
+        ],
+        "data": [
+          "SessionType.name",
+          "SessionType.duration",
+          "SessionType.priceDisplay",
+          "SessionType.maxPeople"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "fields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "footerActions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [
+          "FD21",
+          "FD22",
+          "FD23",
+          "FD24"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W36",
+        "name": "sessionTypeDeleteNote",
+        "kind": "custom",
+        "holds": "Names the session type to stop offering and says bookers can no longer pick it.",
+        "flowSteps": [
+          "F21.A02",
+          "F21.A03"
+        ],
+        "data": [
+          "SessionType.name"
+        ],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "detail",
+              "minWidthPx": 160,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "0"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 160
+      }
+    ],
+    "components": [
+      {
+        "name": "SlotPicker",
+        "minWidthPx": 480,
+        "maxWidthPx": 0,
+        "slots": []
+      },
+      {
+        "name": "TimeInput",
+        "minWidthPx": 160,
+        "maxWidthPx": 240,
+        "slots": []
+      }
+    ],
+    "screens": [
+      {
+        "screen": "S01",
+        "parts": [
+          "W02",
+          "W03",
+          "W04"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S02",
+        "parts": [
+          "W05"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S03",
+        "parts": [
+          "W06"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S04",
+        "parts": [
+          "W01",
+          "W07",
+          "W08",
+          "W09"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S05",
+        "parts": [
+          "W01",
+          "W11",
+          "W10"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S06",
+        "parts": [
+          "W12",
+          "W13",
+          "W14"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S07",
+        "parts": [
+          "W01",
+          "W15"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S08",
+        "parts": [
+          "W16",
+          "W17",
+          "W18"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S09",
+        "parts": [
+          "W01",
+          "W19"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S10",
+        "parts": [
+          "W01",
+          "W20",
+          "W21"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S11",
+        "parts": [
+          "W01",
+          "W22",
+          "W23",
+          "W24",
+          "W25"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S12",
+        "parts": [
+          "W26"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S13",
+        "parts": [
+          "W27"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S14",
+        "parts": [
+          "W28"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S15",
+        "parts": [
+          "W29"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S16",
+        "parts": [
+          "W30"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S17",
+        "parts": [
+          "W31"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S18",
+        "parts": [
+          "W32"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S19",
+        "parts": [
+          "W33"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S20",
+        "parts": [
+          "W29"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S21",
+        "parts": [
+          "W34"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S22",
+        "parts": [
+          "W29",
+          "W36"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S23",
+        "parts": [
+          "W29"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S24",
+        "parts": [
+          "W29"
+        ],
+        "frameSteps": []
+      }
+    ]
+  }
+}

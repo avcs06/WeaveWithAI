@@ -1,0 +1,905 @@
+{
+  "meta": {
+    "artifact": "design-theme",
+    "version": 1,
+    "hash": "519eca1cd5e817ba34ab74d64a6b3ef8014262345d4be2b9921ef397f1e92576",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "774a3cfefb7d08e1408c64e076f6463eda56cce015f1e8b6cabcd84bb3daa55d"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "4c82da7091d10c91beb9c29a2f7316ae51b3a94c70a92bc12f4545630c96f5e9"
+      }
+    },
+    "stage": "design-theme",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-31T20:28:17.065Z"
+  },
+  "data": {
+    "brief": {
+      "audience": "A solo freelance UX designer managing her own clients, projects and bookings daily, plus occasional bookers who book a session without an account.",
+      "personality": [
+        "calm",
+        "warm",
+        "focused",
+        "personal",
+        "organized"
+      ],
+      "voice": "Plain, warm and concise: short everyday words, gentle prompts, and no salesy or corporate jargon.",
+      "density": "comfortable",
+      "feel": [
+        "warm",
+        "minimal"
+      ],
+      "colorScheme": "light",
+      "seedHue": 294,
+      "seedChroma": "balanced",
+      "frameHue": 294,
+      "frameChroma": "balanced",
+      "baseHue": 294,
+      "baseChroma": "muted",
+      "statusHues": {
+        "success": 164,
+        "warning": 84,
+        "error": 29,
+        "info": 246
+      },
+      "fonts": {
+        "ui": [
+          {
+            "family": "Figtree",
+            "reason": "Friendly, clear geometric sans close to Gilroy; warm enough for a personal studio tool while staying calm and highly legible for daily lists and forms."
+          },
+          {
+            "family": "Inter",
+            "reason": "Screen-tuned and neutral, ideal for dense task and client data if a more Linear-like feel were wanted."
+          },
+          {
+            "family": "Manrope",
+            "reason": "Modern geometric-grotesque with semi-condensed forms, clean for compact navigation, tables and booking slots."
+          }
+        ],
+        "display": [
+          {
+            "family": "Fraunces",
+            "reason": "A soft, expressive old-style serif that gives the solo studio warmth and a crafted, designerly character in headings."
+          },
+          {
+            "family": "DM Serif Display",
+            "reason": "Refined and editorial at large sizes, a calmer and more restrained alternative for studio headings."
+          },
+          {
+            "family": "Montserrat",
+            "reason": "Confident, urban geometric sans that would feel closer to a conventional SaaS product if a sans heading were preferred."
+          }
+        ],
+        "mono": [
+          {
+            "family": "JetBrains Mono",
+            "reason": "Tall, clear letterforms keep times, prices, counts and cancellation references easy to scan and align."
+          },
+          {
+            "family": "IBM Plex Mono",
+            "reason": "Engineered and neutral, it pairs well with structured dates, durations and figures."
+          },
+          {
+            "family": "DM Mono",
+            "reason": "Clean geometric monospace that feels lighter and friendlier for short codes and numeric details."
+          }
+        ]
+      },
+      "radius": "soft",
+      "focusRing": "halo",
+      "entities": [
+        {
+          "noun": "Client",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "Note",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "Project",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "Task",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "Availability",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "SessionType",
+          "colored": true,
+          "hue": 195
+        },
+        {
+          "noun": "Session",
+          "colored": false,
+          "hue": 0
+        },
+        {
+          "noun": "Booking",
+          "colored": false,
+          "hue": 0
+        }
+      ],
+      "imagery": "icons",
+      "references": [
+        "Linear"
+      ]
+    },
+    "theme": {
+      "modes": [
+        "light"
+      ],
+      "colors": {
+        "light": {
+          "theme": {
+            "bg": "#FAF9FF",
+            "fg": "#463670",
+            "fgMuted": "#5D4894",
+            "border": "#6E59A7",
+            "hoverBg": "#F2EFFF",
+            "accentBg": "#6E59A7",
+            "accentFg": "#FAF9FF",
+            "accentBorder": "#6E59A7",
+            "accentHoverBg": "#5D4894",
+            "focus": "#6E59A7",
+            "accentFocus": "#463670",
+            "shadow": "#1F1636"
+          },
+          "base": {
+            "bg": "#FAF9FF",
+            "fg": "#443D5A",
+            "fgMuted": "#5A5277",
+            "border": "#6B6289",
+            "hoverBg": "#F2F0FB",
+            "accentBg": "#443D5A",
+            "accentFg": "#FAF9FF",
+            "accentBorder": "#443D5A",
+            "accentHoverBg": "#1E1A2A",
+            "focus": "#6B6289",
+            "accentFocus": "#6B6289",
+            "shadow": "#1E1A2A"
+          },
+          "page": {
+            "pageBg": "#FAF9FF",
+            "pageFg": "#443D5A",
+            "pageFgMuted": "#5A5277",
+            "frameBg": "#F2EFFF",
+            "divider": "#DBD8EB",
+            "backdrop": "#1E1A2A",
+            "skeleton": "#DBD8EB",
+            "pageBackground": "linear-gradient(180deg, oklch(0.96 0.03 294) 0%, oklch(0.985 0.009 294) 320px, oklch(0.985 0.009 294) 100%)"
+          },
+          "entity": {
+            "sessionType": {
+              "bg": "#EDFEFE",
+              "fg": "#004D4D",
+              "fgMuted": "#006566",
+              "border": "#007879",
+              "hoverBg": "#DCF9F8",
+              "accentBg": "#007879",
+              "accentFg": "#EDFEFE",
+              "accentBorder": "#007879",
+              "accentHoverBg": "#006566",
+              "focus": "#007879",
+              "accentFocus": "#004D4D",
+              "shadow": "#002223"
+            }
+          },
+          "status": {
+            "success": {
+              "bg": "#F0FEF7",
+              "fg": "#004F37",
+              "fgMuted": "#006949",
+              "border": "#007C57",
+              "hoverBg": "#E0F9EC",
+              "accentBg": "#007C57",
+              "accentFg": "#F0FEF7",
+              "accentBorder": "#007C57",
+              "accentHoverBg": "#006949",
+              "focus": "#007C57",
+              "accentFocus": "#004F37",
+              "shadow": "#002417"
+            },
+            "warning": {
+              "bg": "#FFFAEF",
+              "fg": "#563E00",
+              "fgMuted": "#715200",
+              "border": "#866200",
+              "hoverBg": "#FBF1DC",
+              "accentBg": "#866200",
+              "accentFg": "#FFFAEF",
+              "accentBorder": "#866200",
+              "accentHoverBg": "#715200",
+              "focus": "#866200",
+              "accentFocus": "#563E00",
+              "shadow": "#271B00"
+            },
+            "error": {
+              "bg": "#FFF8F7",
+              "fg": "#6C2A23",
+              "fgMuted": "#8F382E",
+              "border": "#A34A3F",
+              "hoverBg": "#FFEDEA",
+              "accentBg": "#A34A3F",
+              "accentFg": "#FFF8F7",
+              "accentBorder": "#A34A3F",
+              "accentHoverBg": "#8F382E",
+              "focus": "#A34A3F",
+              "accentFocus": "#6C2A23",
+              "shadow": "#34100B"
+            },
+            "info": {
+              "bg": "#F6FBFF",
+              "fg": "#034572",
+              "fgMuted": "#005C95",
+              "border": "#1D6EA9",
+              "hoverBg": "#E7F4FF",
+              "accentBg": "#1D6EA9",
+              "accentFg": "#F6FBFF",
+              "accentBorder": "#1D6EA9",
+              "accentHoverBg": "#005C95",
+              "focus": "#1D6EA9",
+              "accentFocus": "#034572",
+              "shadow": "#001F37"
+            }
+          }
+        }
+      },
+      "fonts": {
+        "ui": "Figtree",
+        "display": "Fraunces",
+        "mono": "JetBrains Mono"
+      },
+      "radius": {
+        "surface": "8px",
+        "control": "6px"
+      },
+      "focusRing": "halo",
+      "density": "comfortable",
+      "logo": {
+        "family": "Fraunces",
+        "weight": "600",
+        "case": "as written",
+        "letterSpacing": "-0.02em",
+        "colors": {
+          "light": "#5D4894"
+        }
+      },
+      "layouts": {
+        "app": {
+          "docksFirst": "sidebars",
+          "header": {
+            "needed": true,
+            "start": "Current page title",
+            "center": "Search clients and tasks",
+            "end": "Public booking link, account menu",
+            "heightPx": 64,
+            "padding": "4",
+            "gap": "3",
+            "separation": "divider",
+            "sticky": true,
+            "overlay": false
+          },
+          "sidebar": {
+            "needed": true,
+            "side": "left",
+            "top": "StudioDesk wordmark and main navigation: Home, Clients, Projects, Sessions, Booking settings",
+            "bottom": "Designer account and sign out",
+            "widthPx": 248,
+            "sticky": true,
+            "padding": "4",
+            "gap": "3",
+            "separation": "divider"
+          },
+          "extraSidebar": {
+            "needed": false,
+            "side": "right",
+            "top": "",
+            "bottom": "",
+            "widthPx": 0,
+            "sticky": false,
+            "padding": "0",
+            "gap": "0",
+            "separation": "none"
+          },
+          "footer": {
+            "needed": false,
+            "start": "",
+            "center": "",
+            "end": "",
+            "heightPx": 0,
+            "padding": "0",
+            "gap": "0",
+            "separation": "none"
+          },
+          "main": {
+            "container": "fluid",
+            "maxWidthPx": 0,
+            "padding": "6",
+            "align": "start",
+            "sectionGap": "6",
+            "fullBleed": false,
+            "separation": "none"
+          }
+        },
+        "marketing": {
+          "docksFirst": "header",
+          "header": {
+            "needed": true,
+            "start": "StudioDesk wordmark",
+            "center": "Overview, How booking works",
+            "end": "Sign in, Sign up, Book a session",
+            "heightPx": 64,
+            "padding": "4",
+            "gap": "4",
+            "separation": "none",
+            "sticky": true,
+            "overlay": true
+          },
+          "sidebar": {
+            "needed": false,
+            "side": "left",
+            "top": "",
+            "bottom": "",
+            "widthPx": 0,
+            "sticky": false,
+            "padding": "0",
+            "gap": "0",
+            "separation": "none"
+          },
+          "extraSidebar": {
+            "needed": false,
+            "side": "right",
+            "top": "",
+            "bottom": "",
+            "widthPx": 0,
+            "sticky": false,
+            "padding": "0",
+            "gap": "0",
+            "separation": "none"
+          },
+          "footer": {
+            "needed": true,
+            "start": "StudioDesk wordmark and short tagline",
+            "center": "Overview and booking links",
+            "end": "Sign in",
+            "heightPx": 0,
+            "padding": "6",
+            "gap": "4",
+            "separation": "divider"
+          },
+          "main": {
+            "container": "fixed",
+            "maxWidthPx": 1120,
+            "padding": "8",
+            "align": "center",
+            "sectionGap": "8",
+            "fullBleed": true,
+            "separation": "none"
+          }
+        }
+      },
+      "defaults": {
+        "Textarea": {
+          "look": "outline"
+        },
+        "Tag": {
+          "variant": "base",
+          "size": "sm",
+          "look": "bordered"
+        },
+        "Tabs": {
+          "variant": "default"
+        },
+        "Switch": {
+          "variant": "default",
+          "size": "sm"
+        },
+        "MultiSelect": {
+          "look": "outline"
+        },
+        "Select": {
+          "look": "outline"
+        },
+        "Radio": {
+          "variant": "default",
+          "size": "sm"
+        },
+        "PopoverButton": {
+          "look": "rounded ghost"
+        },
+        "Link": {
+          "variant": "default",
+          "look": "plain"
+        },
+        "Input": {
+          "look": "outline"
+        },
+        "NumberInput": {
+          "look": "outline"
+        },
+        "PasswordInput": {
+          "look": "outline"
+        },
+        "SearchInput": {
+          "look": "outline"
+        },
+        "FormControl": {
+          "variant": "default",
+          "size": "md",
+          "look": "outline"
+        },
+        "Dialog": {
+          "size": "md"
+        },
+        "Chip": {
+          "variant": "default",
+          "size": "sm",
+          "look": "outline rounded"
+        },
+        "ChipGroup": {
+          "look": "collapsed"
+        },
+        "Checkbox": {
+          "variant": "default",
+          "size": "md"
+        },
+        "Card": {
+          "variant": "default",
+          "look": "outline"
+        },
+        "Button": {
+          "variant": "default",
+          "size": "md",
+          "look": "rounded"
+        },
+        "IconButton": {
+          "look": "rounded ghost"
+        },
+        "Avatar": {
+          "size": "md"
+        },
+        "Accordion": {
+          "look": "bordered"
+        },
+        "Collapsible": {
+          "look": "bordered"
+        },
+        "Toast": {
+          "status": "info"
+        }
+      },
+      "contrast": [
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "pageFg on pageBg",
+          "ratio": 9.73
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "pageFgMuted on pageBg",
+          "ratio": 6.9
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "pageFg on frameBg",
+          "ratio": 9.01
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "pageFgMuted on frameBg",
+          "ratio": 6.38
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "divider on pageBg",
+          "ratio": 1.33
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "divider on frameBg",
+          "ratio": 1.23
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "skeleton on pageBg",
+          "ratio": 1.33
+        },
+        {
+          "set": "page",
+          "mode": "light",
+          "pair": "skeleton on frameBg",
+          "ratio": 1.23
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "fg on pageBg",
+          "ratio": 9.92
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "fg on frameBg",
+          "ratio": 9.18
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "border on pageBg",
+          "ratio": 5.5
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "focus on pageBg",
+          "ratio": 5.5
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "border on frameBg",
+          "ratio": 5.09
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "focus on frameBg",
+          "ratio": 5.09
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "fg on pageBg",
+          "ratio": 9.73
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "fg on frameBg",
+          "ratio": 9.01
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "border on pageBg",
+          "ratio": 5.37
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "focus on pageBg",
+          "ratio": 5.37
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "border on frameBg",
+          "ratio": 4.97
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "focus on frameBg",
+          "ratio": 4.97
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.92
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 7.11
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 9.18
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.5
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 7.11
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.5
+        },
+        {
+          "set": "theme",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.5
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.73
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 6.9
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 9.04
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 9.73
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 16.22
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.37
+        },
+        {
+          "set": "base",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.37
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.32
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 6.62
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 8.74
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.1
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 6.62
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.1
+        },
+        {
+          "set": "sessionType",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.1
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.3
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 6.49
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 8.71
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.03
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 6.49
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.03
+        },
+        {
+          "set": "success",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.03
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.68
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 6.93
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 8.98
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.36
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 6.93
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.36
+        },
+        {
+          "set": "warning",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.36
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 10.05
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 7.22
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 9.31
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.55
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 7.22
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.55
+        },
+        {
+          "set": "error",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.55
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "fg on bg",
+          "ratio": 9.61
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "fgMuted on bg",
+          "ratio": 6.8
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "fg on hoverBg",
+          "ratio": 8.95
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "accentFg on accentBg",
+          "ratio": 5.23
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "accentFg on accentHoverBg",
+          "ratio": 6.8
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "border on bg",
+          "ratio": 5.23
+        },
+        {
+          "set": "info",
+          "mode": "light",
+          "pair": "focus on bg",
+          "ratio": 5.23
+        }
+      ]
+    }
+  }
+}

@@ -1,59 +1,65 @@
-# Mitti Studio Shop: scope
+# Jaipur Studio Ceramics Shop: scope
 
-For a Jaipur ceramicist selling small batches of mugs, bowls, planters and vases through DMs and forms. She oversells glazes, loses track of payments, and spends evenings answering availability questions. Shoppers browse live stock, pick glaze and size, and place a pickup or courier order with a discount code and pay-by-UPI-later, while she sees new orders, marks them packed and shipped, and gets low-glaze warnings.
+A small online shop for a Jaipur ceramics maker who sells mugs, bowls, planters and vases in batches of ten or twenty. Buyers browse what is actually in stock, choose a glaze and size, and place an order for studio pickup in Jaipur or courier delivery, paying the maker later by UPI. The maker signs in to manage pieces and stock, create discount codes, see new orders, track who has paid, and mark orders packed, shipped or collected.
 
-Audience: Buyers of handmade ceramics and the Jaipur studio owner
+Audience: A solo ceramic maker in Jaipur selling small-batch pieces, and buyers in Jaipur and elsewhere in India who want to buy those pieces without messaging on Instagram.
 
 ## Roles
-- Shopper (shopper, no sign-in): Person who browses the catalog and places an order without ever signing in.
-- Studio Owner (studioOwner, signs in): Ceramicist who manages products, stock, discount codes and orders.
+- Shop Owner (shopOwner, signs in): The ceramic maker. Signs in to manage pieces, glaze and size variants and stock, create discount codes, maintain the studio pickup details, and work through orders: mark UPI payment received, packed, shipped or collected, or cancel an order. This is the role the app exists to serve.
+- Buyer (buyer, no sign-in): A person buying ceramics. Never signs in. Browses the public shop, sees honest stock per glaze and size, chooses studio pickup or courier, optionally uses a discount code, and places an order, paying the maker later by UPI.
 
 ## Vocabulary
-- Product (owned by Studio Owner): A sellable piece listing such as a mug or planter with photos, description, piece type and its glaze/size options.
-- Variant (owned by Studio Owner): A buyable glaze-plus-size option of a product with its own price and stock count.
-- Order (owned by Studio Owner): A guest purchase with items, fulfillment choice, discount, totals, order status and UPI payment state.
-- DiscountCode (owned by Studio Owner): A weekend code with percent off and a validity window shared on Instagram.
+- Piece (owned by Shop Owner): One ceramic design for sale, such as a mug, shown with photos so buyers can judge it without messaging the maker.
+- Variant (owned by Shop Owner): One purchasable combination of glaze and size for a piece, with its own price adjustment if any and its own stock count. Stock, sold-out and nearly-gone states are tracked per Variant.
+- Order (owned by Shop Owner): A buyer's placed order, received by the shop owner. Fields: buyer name, phone, fulfilment (Studio Pickup or Courier), delivery address for courier orders, discount code used, piece total, discount amount, shipping charge, final total, placed date and time. Order status: New, Packed, Shipped, Collected, Cancelled. Payment status: Awaiting UPI Payment, Paid.
+- OrderItem (owned by Shop Owner): One line of an order: the piece, its chosen glaze and size, quantity ordered and the price at the time of ordering. Quantity cannot exceed the variant stock at the time the order is placed.
+- DiscountCode (owned by Shop Owner): A code word the owner shares, for example on Instagram for a weekend, that buyers enter at checkout. Fields: code word, discount value, start date, end date, and active or deactivated state.
+- ShopSetting (owned by Shop Owner): The owner's shop details shown to buyers: shop name, studio pickup address and pickup instructions.
 
 ## Capabilities
-- accounts: Studio owner signs up/signs in/out to manage shop; shoppers need no account.
-- userOwnedData: Owner sees only her products, orders and codes; shoppers see the public catalog.
-- crud: Owner creates/edits/archives products, variants, codes and updates orders; shoppers create orders.
-- filterSort: Filter catalog by piece type and by in-stock versus sold-out.
-- roles: Two roles: guest shopper and signed-in studio owner.
-- publicPages: Public landing page plus public catalog and ordering; owner pages require sign-in.
-- statusWorkflow: Order New-Packed-Shipped/Picked Up-Cancelled plus Unpaid/Paid; variant In Stock/Almost Gone/Sold Out.
-- tagsCategories: Piece types Mug, Bowl, Planter, Vase for grouping.
-- datesDeadlines: Discount-code start/end dates and order placed dates.
-- simpleCounts: Live per-variant stock counts, low-stock counts, order counts and totals with shipping and discount.
-- fileUploads (simulated): Product photos validated and previewed in UI; kept for session per simulation placeholder.
+- accounts: Only the shop owner signs up and signs in with email and password to manage the shop; buyers order without an account.
+- userOwnedData: The signed-in shop owner sees and manages only their own pieces, variants, discount codes and orders.
+- crud: The owner can list, view, create, edit and delete pieces, glaze and size variants and discount codes, and can view and update orders. Deleting a piece removes it and its variants from the public shop but does not delete past orders that contain it.
+- filterSort: Buyers can filter the public shop by piece type (Mug, Bowl, Planter, Vase) and by availability, and sort by price; the owner can filter orders by status and payment status.
+- roles: Two roles only: the signed-in shop owner and the guest buyer who never signs in.
+- publicPages: A public landing page that is also the shop front, plus public read-only piece pages showing photos, price, glaze and size options and honest remaining stock.
+- statusWorkflow: Order status moves New to Packed, then Packed to Shipped for courier orders or Packed to Collected for pickup orders; the owner may move a New or Packed order to Cancelled. Payment status moves separately from Awaiting UPI Payment to Paid when the owner confirms UPI collection.
+- tagsCategories: Each piece has one type used as its category: Mug, Bowl, Planter or Vase.
+- datesDeadlines: Orders record the date and time placed; discount codes have a start and end date so a weekend code expires automatically.
+- simpleCounts: The shop shows pieces remaining per variant and sold-out state; the owner sees counts of new orders, orders awaiting payment, and variants that are nearly gone, plus order totals including discount and shipping.
+- profileSettings: The owner maintains the shop name, studio pickup address and pickup instructions shown to buyers.
+- fileUploads (simulated): Simulated: the owner can add piece photos through a full upload UI; each file is validated and previewed and kept for the session, and nothing is stored.
 
 ## In scope
-- Public landing page saying what the studio sells, how ordering works, pickup in Jaipur versus Rs.99 courier with free courier over Rs.1,500, and pay-later-by-UPI, with a start-shopping entry.
-- Browse catalog with photos, piece type, description, glaze and size options, price, and honest live stock including Almost Gone flag and Sold Out disabled.
-- Guest ordering without messaging: choose glaze/size variant and quantity, choose free studio pickup or courier, add one weekend discount code, enter name/phone/address, and place order with confirmation.
-- Business rules enforced: zero-stock variants cannot be ordered; courier is Rs.99 and free when total after discount reaches Rs.1,500; pickup is always free; no online payment is taken.
-- Owner order list showing newest first with items, fulfillment type, totals, discount used, and payment state, with actions to mark Packed, Shipped or Picked Up, mark UPI Paid, and Cancel with stock restore.
-- Owner catalog management for products and glaze/size variants with photos, prices and stock counts, including archive.
-- Owner discount-code management with code, percent off, and start/end dates.
-- Low-glaze warning list showing variants with 3 or fewer left so the next batch can be planned.
+- A public landing page that is the shop front: it says this is the Jaipur studio's own shop for small-batch mugs, bowls, planters and vases, shows the pieces for sale, and invites buyers to browse and order without messaging the maker. The shop owner signs in from this page.
+- Buyers browse pieces with photos doing the talking: each piece shows its type (Mug, Bowl, Planter or Vase), price, description, available glazes and sizes, how many are left per glaze and size, and a clear sold-out state when none are left. A variant with 0 left cannot be ordered.
+- A buyer chooses a piece, a glaze and a size, and a quantity no greater than the stock remaining for that variant, then places an order without creating an account. A new buyer can go from the landing page to a visible order confirmation in five steps or fewer, and the confirmation is still there after a refresh.
+- At checkout the buyer chooses Studio Pickup (Jaipur only, always free) or Courier. Courier costs ₹99, and nothing above ₹1,500: courier orders with a total above ₹1,500 after discount get free shipping. The buyer sees the piece total, discount, shipping and final total before confirming.
+- No online payment is taken. Placing an order creates it with payment status Awaiting UPI Payment, and the confirmation tells the buyer the maker will collect payment by UPI later. Stock is reduced as soon as the order is placed so the shop stays honest about what is left and a glaze cannot be oversold.
+- Buyers can enter one discount code per order at checkout. A valid code reduces the order total; an invalid, expired or deactivated code is rejected with a message and the buyer can continue without it.
+- The shop owner signs in and manages the catalogue: create, edit and delete pieces, set each piece's type, price, description and photos, and set its glaze and size variants with a stock count for each variant (typically a batch of ten or twenty).
+- The shop owner creates and deactivates discount codes with a code word, a discount value, and start and end dates, for example for a weekend promotion shared on Instagram.
+- The shop owner sees a list of orders, newest first, with buyer name and phone, pickup or courier choice and address where relevant, items with glaze and size, totals, order status and payment status. The owner marks an order Paid when UPI payment is collected, and moves orders from New to Packed, then to Shipped for courier orders or Collected for pickup orders; the owner can cancel a New or Packed order, which returns its stock.
+- The shop owner sees which glaze and size variants are nearly gone (2 or fewer left) and which are sold out, so they can plan the next batch, and sees simple counts of new orders and orders still awaiting UPI payment.
+- Business rules: there is one shop owner and one shop; buyers never sign in; a piece is available only while at least one of its variants has stock; an order cannot exceed the stock of the chosen variant; deleting a piece removes it and its variants from the public shop but never deletes past orders.
 
 ## Out of scope
-- Online payments and automatic UPI collection: Owner explicitly does not want online payments yet. Instead: Checkout shows pay-by-UPI-later instructions as text and owner marks the order Paid manually after collecting.
-- Courier booking, shipping labels and live tracking: Small-batch manual dispatch; no courier integration implied. Instead: Owner ships via her own courier and only updates the order status to Shipped; buyer sees status text.
-- Instagram DM or Google Form ordering and chat: Goal is to replace DMs and forms, not integrate them. Instead: Site shows studio contact and pickup address as text; all orders go through the shop order form.
-- Batch production planning beyond low-stock warnings: Idea asks only to know when a glaze is nearly gone. Instead: Owner uses live stock and Almost Gone counts to plan the next batch manually.
+- Online payments, including in-app UPI collection and card payments: The maker explicitly does not want to set up online payments yet and collects by UPI later. Instead: Checkout completes without payment, the order is marked Awaiting UPI Payment, the confirmation says the maker will collect by UPI later, and the owner marks it Paid once collected outside the app.
+- Buyer accounts and buyer order history: The idea asks buyers to order without messaging the maker and never asks buyers to sign in; guest checkout keeps ordering to as few steps and fields as possible. Instead: Buyers order as guests and get an on-screen order confirmation that remains visible after a refresh in the same session; questions about an order go to the maker using the phone number given at checkout.
+- Courier booking, courier tracking and shipping labels: The idea only requires a courier option with a flat ₹99 charge and free shipping above ₹1,500, not a courier service connection. Instead: The delivery address is shown as text on the order, the owner arranges the courier outside the app, and marks the order Shipped by hand.
+- Instagram integration, including posting discount codes or importing Instagram enquiries: The idea mentions Instagram only as where codes are announced and as the old sales channel being replaced. Instead: The owner creates a discount code in the shop and posts the same code word on Instagram by hand; buyers type it in at checkout.
 
 ## Assumptions
-- A01 (permission): One studio-owner account manages the shop; shoppers never sign in and order as guests.
-- A02 (behavior): Stock is tracked per glaze-plus-size variant and decremented when an order is placed; a cancelled order restores stock.
-- A03 (behavior): A variant with zero stock shows as Sold Out and cannot be ordered; a variant with 3 or fewer left shows as Almost Gone.
-- A04 (behavior): Fulfillment is the shopper's choice: free studio pickup in Jaipur or courier at Rs.99, with free courier when the total after discount is Rs.1,500 or more.
-- A05 (behavior): Discount codes give percent off, one code per order, valid only within start and end dates; invalid or expired codes are rejected with a message.
-- A06 (behavior): Order flow is New to Packed to Shipped for courier or Picked Up for pickup, plus Cancelled; payment is tracked separately as Unpaid or Paid and marked manually by the owner after UPI collection.
-- A07 (data): Guest checkout asks only for name, phone, fulfillment choice, and courier address when needed; no account or payment fields.
-- A08 (data): A product has name, piece type, description, photos, and variants each with glaze, size, price and stock; deleting a product archives it and leaves past orders unchanged.
+- A01 (behavior, affects stock accuracy, overselling): Placing an order immediately reduces the stock of the chosen glaze and size variant, so the public shop never promises stock that has already been ordered. If the shop owner cancels an order, its stock is returned to the variant.
+- A02 (behavior, affects low stock, batch planning): A glaze and size variant counts as nearly gone when 2 or fewer pieces remain, and as sold out when 0 remain. The owner can plan the next batch from a low-stock list using this default threshold.
+- A03 (behavior, affects shipping charge, order total): The ₹99 courier charge and free shipping above ₹1,500 are calculated on the order total after any discount is applied. Studio pickup is always free. Courier orders at or below ₹1,500 pay ₹99; courier orders above ₹1,500 pay no shipping.
+- A04 (behavior, affects order placement, buyer contact): A buyer does not create an account. To place an order the buyer must give a name, phone number, and, for courier orders only, a delivery address; pickup orders do not require a delivery address. The buyer sees the order confirmation on screen and it remains visible after a refresh in the same session.
+- A05 (behavior, affects order fulfilment, pickup): The studio pickup address and pickup instructions are shown as text on the shop and on the order confirmation. Courier orders are marked Shipped when the maker hands them to a courier arranged outside the app.
+- A06 (behavior, affects discount codes): A buyer can use at most one discount code per order. A code stops working after its end date or when the owner deactivates it, and an invalid, expired or deactivated code is rejected at checkout with a message and a way to continue without it.
+- A07 (behavior, affects order changes, cancellations): Buyers cannot cancel or edit an order themselves in the MVP. Only the shop owner can cancel an order, which returns its stock and keeps the order visible in the owner's order list as Cancelled.
 
 ## Questions
-- Q01 (blocking): Can shoppers order as guests without creating an account? Why: Requiring accounts would add steps before first success and change permissions and order data. Default: Yes - guest checkout with name and phone, no buyer accounts.
-- Q02: Should weekend discount codes be percent-off with an expiry window? Why: Determines DiscountCode fields and how order totals are calculated. Default: Yes - percent-off codes with start/end dates, one per order.
-- Q03: Should anyone be able to choose studio pickup, or only Jaipur buyers? Why: Determines whether fulfillment choice needs any location check or stays self-selected. Default: Anyone can choose pickup; studio address is shown at checkout.
+- Q01 (blocking): Should a discount code take a percentage off the order or a fixed ₹ amount off? Why: It changes the DiscountCode data, the checkout calculation and the shipping threshold check. Default: The owner chooses per code between a percentage off and a fixed ₹ amount off, with one code allowed per order.
+- Q02: Is free shipping based on the order total after discount, and does exactly ₹1,500 qualify? Why: It changes the order total buyers see and the amount the maker collects by UPI. Default: Free shipping applies when the courier order total after discount is above ₹1,500; at exactly ₹1,500 the ₹99 charge still applies.
+- Q03: How many pieces left should count as nearly gone for planning the next batch? Why: It changes the low-stock list the owner relies on, but a default of 2 is safe for batches of ten or twenty. Default: Nearly gone means 2 or fewer pieces left for that glaze and size variant.
+- Q04: Should pickup be restricted to buyers in Jaipur, and are pickup times scheduled in the app? Why: Restricting pickup or adding time slots would change checkout fields and order data; the default keeps checkout short. Default: Studio pickup is offered to every buyer at checkout, with the studio address and pickup instructions shown as text; the buyer arranges the pickup time with the maker by phone.

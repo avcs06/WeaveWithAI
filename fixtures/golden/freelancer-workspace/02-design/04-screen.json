@@ -1,0 +1,1291 @@
+{
+  "meta": {
+    "artifact": "design-screen",
+    "version": 1,
+    "hash": "e49d14d9cd6313572deed959ccf91c2158351fa05ab804245931e7631d51cdde",
+    "inputs": {
+      "design-architect": {
+        "version": 1,
+        "hash": "457e687fa3918c8ee215e5be1e9e495d13cd1c9f587f725e47c489ffc75ab02e"
+      },
+      "design-catalog": {
+        "version": 1,
+        "hash": "1ae2eed2b253e81924db94900707f5dc0607fb383d67611a666debfe895c98b7"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "519eca1cd5e817ba34ab74d64a6b3ef8014262345d4be2b9921ef397f1e92576"
+      }
+    },
+    "stage": "design-screen",
+    "model": "muse-spark-1.3",
+    "rounds": 24,
+    "createdAt": "2026-10-31T20:35:35.693Z"
+  },
+  "data": {
+    "calls": [
+      {
+        "key": "S01",
+        "ids": [
+          "S01"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S01",
+              "boxes": [
+                {
+                  "id": "S01.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S01.p1",
+                  "places": "W02",
+                  "in": "S01.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "brand",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "StudioDesk"
+                    },
+                    {
+                      "name": "subtitle",
+                      "text": "One calm place for clients, projects and bookings."
+                    }
+                  ]
+                },
+                {
+                  "id": "S01.p2",
+                  "places": "W03",
+                  "in": "S01.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                },
+                {
+                  "id": "S01.p3",
+                  "places": "W04",
+                  "in": "S01.b1",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "accent",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S02",
+        "ids": [
+          "S02"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S02",
+              "boxes": [
+                {
+                  "id": "S02.b1",
+                  "parent": "",
+                  "order": 1,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "center"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S02.p1",
+                  "places": "W05",
+                  "in": "S02.b1",
+                  "order": 1,
+                  "size": "content",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Sign up"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S03",
+        "ids": [
+          "S03"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S03",
+              "boxes": [
+                {
+                  "id": "S03.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "center"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S03.p1",
+                  "places": "W06",
+                  "in": "S03.b1",
+                  "order": 0,
+                  "size": "content",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Sign in"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S04",
+        "ids": [
+          "S04"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S04",
+              "boxes": [
+                {
+                  "id": "S04.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                },
+                {
+                  "id": "S04.b2",
+                  "parent": "S04.b1",
+                  "order": 1,
+                  "direction": "row",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "stretch"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S04.p1",
+                  "places": "W01",
+                  "in": "S04.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Home"
+                    },
+                    {
+                      "name": "description",
+                      "text": "Saturday, October 31 — here is your day at a glance."
+                    }
+                  ]
+                },
+                {
+                  "id": "S04.p2",
+                  "places": "W07",
+                  "in": "S04.b2",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                },
+                {
+                  "id": "S04.p3",
+                  "places": "W08",
+                  "in": "S04.b2",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                },
+                {
+                  "id": "S04.p4",
+                  "places": "W09",
+                  "in": "S04.b2",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S05",
+        "ids": [
+          "S05",
+          "S13"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S05",
+              "boxes": [
+                {
+                  "id": "S05.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S05.p1",
+                  "places": "W01",
+                  "in": "S05.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Clients"
+                    },
+                    {
+                      "name": "description",
+                      "text": "See who needs a follow-up and keep in touch."
+                    }
+                  ]
+                },
+                {
+                  "id": "S05.p2",
+                  "places": "W11",
+                  "in": "S05.p1/actions",
+                  "order": 0,
+                  "size": "content",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                },
+                {
+                  "id": "S05.p3",
+                  "places": "W10",
+                  "in": "S05.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S13",
+              "boxes": [
+                {
+                  "id": "S13.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S13.p1",
+                  "places": "W27",
+                  "in": "S13.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S06",
+        "ids": [
+          "S06",
+          "S14",
+          "S15",
+          "S16",
+          "S17"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S06",
+              "boxes": [
+                {
+                  "id": "S06.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S06.p1",
+                  "places": "W12",
+                  "in": "S06.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": []
+                },
+                {
+                  "id": "S06.p2",
+                  "places": "W13",
+                  "in": "S06.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                },
+                {
+                  "id": "S06.p3",
+                  "places": "W14",
+                  "in": "S06.b1",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S14",
+              "boxes": [
+                {
+                  "id": "S14.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S14.p1",
+                  "places": "W28",
+                  "in": "S14.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S15",
+              "boxes": [
+                {
+                  "id": "S15.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S15.p1",
+                  "places": "W29",
+                  "in": "S15.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Delete this client?"
+                    },
+                    {
+                      "name": "message",
+                      "text": "This removes “{Client.name}” for good, along with its projects, tasks and notes."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "screen": "S16",
+              "boxes": [
+                {
+                  "id": "S16.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S16.p1",
+                  "places": "W30",
+                  "in": "S16.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S17",
+              "boxes": [
+                {
+                  "id": "S17.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S17.p1",
+                  "places": "W31",
+                  "in": "S17.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S07",
+        "ids": [
+          "S07"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S07",
+              "boxes": [
+                {
+                  "id": "S07.b1",
+                  "parent": "",
+                  "order": 1,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S07.p1",
+                  "places": "W01",
+                  "in": "S07.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Projects"
+                    },
+                    {
+                      "name": "description",
+                      "text": "Projects live under a client. Open a client to add one."
+                    }
+                  ]
+                },
+                {
+                  "id": "S07.p2",
+                  "places": "W15",
+                  "in": "S07.b1",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S08",
+        "ids": [
+          "S08",
+          "S18",
+          "S19",
+          "S20"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S08",
+              "boxes": [
+                {
+                  "id": "S08.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S08.p1",
+                  "places": "W16",
+                  "in": "S08.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": []
+                },
+                {
+                  "id": "S08.p2",
+                  "places": "W17",
+                  "in": "S08.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                },
+                {
+                  "id": "S08.p3",
+                  "places": "W18",
+                  "in": "S08.b1",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S18",
+              "boxes": [
+                {
+                  "id": "S18.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S18.p1",
+                  "places": "W32",
+                  "in": "S18.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "fill",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S19",
+              "boxes": [
+                {
+                  "id": "S19.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S19.p1",
+                  "places": "W33",
+                  "in": "S19.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "fill",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S20",
+              "boxes": [
+                {
+                  "id": "S20.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S20.p1",
+                  "places": "W29",
+                  "in": "S20.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "fill",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Delete this project?"
+                    },
+                    {
+                      "name": "message",
+                      "text": "This removes “{Project.name}” for good, along with its tasks."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S09",
+        "ids": [
+          "S09",
+          "S23"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S09",
+              "boxes": [
+                {
+                  "id": "S09.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S09.p1",
+                  "places": "W01",
+                  "in": "S09.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Sessions"
+                    },
+                    {
+                      "name": "description",
+                      "text": "See what is coming up and tweak booking settings any time."
+                    }
+                  ]
+                },
+                {
+                  "id": "S09.p2",
+                  "places": "W19",
+                  "in": "S09.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S23",
+              "boxes": [
+                {
+                  "id": "S23.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S23.p1",
+                  "places": "W29",
+                  "in": "S23.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Cancel Morning Flow on Tuesday?"
+                    },
+                    {
+                      "name": "message",
+                      "text": "This cancels “{Session.scheduledAt}” and everyone booked on it."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S10",
+        "ids": [
+          "S10",
+          "S21",
+          "S22"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S10",
+              "boxes": [
+                {
+                  "id": "S10.b1",
+                  "parent": "",
+                  "order": 1,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S10.p1",
+                  "places": "W01",
+                  "in": "S10.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Booking settings"
+                    },
+                    {
+                      "name": "description",
+                      "text": "Choose when you are open and what folks can book."
+                    }
+                  ]
+                },
+                {
+                  "id": "S10.p2",
+                  "places": "W20",
+                  "in": "S10.b1",
+                  "order": 2,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                },
+                {
+                  "id": "S10.p3",
+                  "places": "W21",
+                  "in": "S10.b1",
+                  "order": 3,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S21",
+              "boxes": [
+                {
+                  "id": "S21.b1",
+                  "parent": "",
+                  "order": 1,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S21.p1",
+                  "places": "W34",
+                  "in": "S21.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S22",
+              "boxes": [
+                {
+                  "id": "S22.b1",
+                  "parent": "",
+                  "order": 1,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S22.p1",
+                  "places": "W29",
+                  "in": "S22.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Stop offering “{Session type.name}”?"
+                    },
+                    {
+                      "name": "message",
+                      "text": "Bookers can no longer pick this session type."
+                    }
+                  ]
+                },
+                {
+                  "id": "S22.p2",
+                  "places": "W36",
+                  "in": "S22.p1/context",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S11",
+        "ids": [
+          "S11"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S11",
+              "boxes": [
+                {
+                  "id": "S11.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                },
+                {
+                  "id": "S11.b2",
+                  "parent": "S11.b1",
+                  "order": 2,
+                  "direction": "row",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S11.p1",
+                  "places": "W01",
+                  "in": "S11.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "brand",
+                  "headingLevel": 1,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Book a session"
+                    },
+                    {
+                      "name": "description",
+                      "text": "Choose a friendly one-to-one session. Times are shown in your timezone, and prices are only to help you choose."
+                    }
+                  ]
+                },
+                {
+                  "id": "S11.p2",
+                  "places": "W22",
+                  "in": "S11.b1",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                },
+                {
+                  "id": "S11.p3",
+                  "places": "W23",
+                  "in": "S11.b2",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 2,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": []
+                },
+                {
+                  "id": "S11.p4",
+                  "places": "W24",
+                  "in": "S11.b2",
+                  "order": 1,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 0,
+                  "slots": []
+                },
+                {
+                  "id": "S11.p5",
+                  "places": "W25",
+                  "in": "S11.b1",
+                  "order": 3,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "frame",
+                  "headingLevel": 2,
+                  "slots": []
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      },
+      {
+        "key": "S12",
+        "ids": [
+          "S12",
+          "S24"
+        ],
+        "output": {
+          "screens": [
+            {
+              "screen": "S12",
+              "boxes": [
+                {
+                  "id": "S12.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S12.p1",
+                  "places": "W26",
+                  "in": "S12.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 1,
+                  "slots": []
+                }
+              ]
+            },
+            {
+              "screen": "S24",
+              "boxes": [
+                {
+                  "id": "S24.b1",
+                  "parent": "",
+                  "order": 0,
+                  "direction": "column",
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "align": "start"
+                }
+              ],
+              "instances": [
+                {
+                  "id": "S24.p1",
+                  "places": "W29",
+                  "in": "S24.b1",
+                  "order": 0,
+                  "size": "fill",
+                  "share": 1,
+                  "widthPx": 0,
+                  "height": "free",
+                  "surface": "page",
+                  "headingLevel": 2,
+                  "slots": [
+                    {
+                      "name": "title",
+                      "text": "Cancel this booking?"
+                    },
+                    {
+                      "name": "message",
+                      "text": "This cancels “{Booking.sessionType}” on {Booking.date} at {Booking.startTime} and frees the seat again."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "model": "muse-spark-1.3"
+      }
+    ]
+  }
+}

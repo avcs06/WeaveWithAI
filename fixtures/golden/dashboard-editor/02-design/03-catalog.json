@@ -1,0 +1,1142 @@
+{
+  "meta": {
+    "artifact": "design-catalog",
+    "version": 1,
+    "hash": "65592a92751854e9b8c1f9f21848aef085cfe7f2a78056a5b285a7e933d87751",
+    "inputs": {
+      "design-architect": {
+        "version": 1,
+        "hash": "e50f738ef028793515e4b0fab548a728f02a751a2185120e34a0a998e3fd9966"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "f35223d0c6761597b13cd388851e71e34d65f9c0ac7d26af5a73d965e8a2f880"
+      },
+      "flows-scope": {
+        "version": 1,
+        "hash": "1106272f4958a984256897cbd3412d5519bbe18b775692e7d774cac64a8a0d4c"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "2677cfd1dada486f2826a59006d05b74a13f71e97f9498fcaefa218dbd360a8d"
+      }
+    },
+    "stage": "design-catalog",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-31T19:44:27.691Z"
+  },
+  "data": {
+    "widgets": [
+      {
+        "id": "W01",
+        "name": "Landing hero",
+        "kind": "hero",
+        "holds": "Shows headline about building personal dashboards with notes, counters, checklists and link lists, one line of subcopy, and Sign up and Sign in actions over a faint neon grid.",
+        "flowSteps": [
+          "F01.S01",
+          "F01.S02",
+          "F02.S01",
+          "F03.S01",
+          "F01.A01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title NeonBoard",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "headline",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "subcopy",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "sign-up action",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "sign-in action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W02",
+        "name": "Widget types strip",
+        "kind": "feature-grid",
+        "holds": "Shows four widget-type features with icons for note, counter, checklist and link list and what each is for.",
+        "flowSteps": [
+          "F01.S01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "note feature",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "counter feature",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "checklist feature",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "link list feature",
+              "minWidthPx": 240,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 1008
+      },
+      {
+        "id": "W03",
+        "name": "How it works band",
+        "kind": "feature-grid",
+        "holds": "Shows console-style how-it-works steps for create a dashboard, add a widget, and autosave.",
+        "flowSteps": [
+          "F01.S01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "create step",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "add widget step",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "autosave step",
+              "minWidthPx": 240,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 760
+      },
+      {
+        "id": "W04",
+        "name": "Closing call to action",
+        "kind": "cta",
+        "holds": "Invites the visitor to create a dashboard with a Create account action.",
+        "flowSteps": [
+          "F01.S02",
+          "F02.S01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "invitation text",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "create account action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W05",
+        "name": "Sign up form",
+        "kind": "auth-form",
+        "holds": "Shows email and password fields with Create account submit and a link to sign in, keeps typed values on inline errors and on failure with retry.",
+        "flowSteps": [
+          "F02.S02",
+          "F02.A01",
+          "F02.A02",
+          "F02.A03"
+        ],
+        "data": [],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Create account",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "email field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "password field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "create account submit",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "sign-in link",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W06",
+        "name": "Sign in form",
+        "kind": "auth-form",
+        "holds": "Shows email and password fields with Sign in submit and a link to sign up, keeps typed values on inline errors and on failure with retry.",
+        "flowSteps": [
+          "F03.S02",
+          "F03.A01",
+          "F03.A02",
+          "F03.A03"
+        ],
+        "data": [],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Sign in",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "email field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "password field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "sign-in submit",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "sign-up link",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W07",
+        "name": "Dashboards header",
+        "kind": "page-header",
+        "holds": "Shows the Dashboards title with dashboard count and a Create button that creates an Untitled dashboard.",
+        "flowSteps": [
+          "F05.S01",
+          "F06.S01",
+          "F15.S01",
+          "F16.S01"
+        ],
+        "data": [
+          "Dashboard.name"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Dashboards",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "title",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "dashboard count",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "Create button",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 360
+      },
+      {
+        "id": "W08",
+        "name": "Dashboard cards",
+        "kind": "cards",
+        "holds": "Shows cards for the member dashboards most-recently-edited first with name, last-edited time, open, Duplicate and Delete actions, and empty and error states with Create as next action.",
+        "flowSteps": [
+          "F05.S01",
+          "F05.A01",
+          "F06.S01",
+          "F06.S02",
+          "F06.A01",
+          "F06.A02",
+          "F06.A03",
+          "F15.S01",
+          "F15.S02",
+          "F15.A01",
+          "F15.A02",
+          "F15.A03",
+          "F16.S01",
+          "F16.S02",
+          "F16.A01",
+          "F16.A02",
+          "F16.A03",
+          "F16.A04"
+        ],
+        "data": [
+          "Dashboard.name",
+          "Dashboard.lastEdited"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound",
+          "denied"
+        ],
+        "containsHeading": false,
+        "repeat": "Dashboard",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "dashboard name",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "last-edited time",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 3,
+              "name": "duplicate action",
+              "minWidthPx": 32,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "delete action",
+              "minWidthPx": 32,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W09",
+        "name": "Editor header",
+        "kind": "page-header",
+        "holds": "Shows inline-editable dashboard name with last-edited time and an Add widget button.",
+        "flowSteps": [
+          "F05.S01",
+          "F05.A01",
+          "F06.S01",
+          "F06.A01",
+          "F07.S01",
+          "F08.S01",
+          "F09.S01",
+          "F10.S01",
+          "F11.S01",
+          "F12.S01",
+          "F13.S01",
+          "F14.S01",
+          "F14.S02",
+          "F14.A01",
+          "F14.A02",
+          "F14.A03",
+          "F15.S01",
+          "F15.A01",
+          "F16.S01",
+          "F16.A01"
+        ],
+        "data": [
+          "Dashboard.name",
+          "Dashboard.lastEdited"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "dashboard name edit",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "last-edited time",
+              "minWidthPx": 96,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "Add widget button",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD03"
+        ],
+        "minWidthPx": 392
+      },
+      {
+        "id": "W10",
+        "name": "Widget board canvas",
+        "kind": "editor-canvas",
+        "holds": "Shows the WidgetBoard canvas with faint grid holding WidgetCards in relative order with small, medium and large sizes, move and resize controls, and empty state offering adding a widget.",
+        "flowSteps": [
+          "F06.S02",
+          "F06.A02",
+          "F06.A03",
+          "F08.S01",
+          "F08.A01",
+          "F08.A02",
+          "F08.A03",
+          "F12.S01",
+          "F12.S02",
+          "F12.S03",
+          "F12.A01",
+          "F12.A02",
+          "F12.A03",
+          "F12.A04",
+          "F12.A05",
+          "F13.S01",
+          "F13.S02",
+          "F13.A01",
+          "F13.A02",
+          "F13.A03",
+          "F14.S01",
+          "F14.A01"
+        ],
+        "data": [
+          "Widget.title",
+          "Widget.size"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound",
+          "denied"
+        ],
+        "containsHeading": false,
+        "repeat": "Widget",
+        "newComponents": [
+          "WidgetBoard",
+          "WidgetCard"
+        ],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "widget card",
+              "minWidthPx": 240,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD06"
+        ],
+        "minWidthPx": 264
+      },
+      {
+        "id": "W11",
+        "name": "Note widget body",
+        "kind": "custom",
+        "holds": "Shows a note widget body with editable title and plain note text up to 5000 characters, autosaved with validation and retry.",
+        "flowSteps": [
+          "F08.S01",
+          "F08.S02",
+          "F08.S03",
+          "F08.A01",
+          "F08.A02",
+          "F08.A03",
+          "F08.A04",
+          "F08.A05",
+          "F08.A06",
+          "F08.A07"
+        ],
+        "data": [
+          "Widget.title",
+          "Widget.text"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound",
+          "denied"
+        ],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "widget title edit",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "note text edit",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD05",
+          "FD07"
+        ],
+        "minWidthPx": 264
+      },
+      {
+        "id": "W12",
+        "name": "Counter widget body",
+        "kind": "custom",
+        "holds": "Shows a counter widget body with editable title and label and number with Increase and Decrease controls that change by 1, autosaved with retry.",
+        "flowSteps": [
+          "F09.S01",
+          "F09.S02",
+          "F09.S03",
+          "F09.A01",
+          "F09.A02",
+          "F09.A03",
+          "F09.A04"
+        ],
+        "data": [
+          "Widget.title",
+          "Widget.label",
+          "Widget.number"
+        ],
+        "states": [
+          "notFound",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "widget title edit",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "counter label edit",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "counter number",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "decrease control",
+              "minWidthPx": 32,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "increase control",
+              "minWidthPx": 32,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD05",
+          "FD08"
+        ],
+        "minWidthPx": 184
+      },
+      {
+        "id": "W13",
+        "name": "Checklist widget body",
+        "kind": "custom",
+        "holds": "Shows a checklist widget body with editable title, tickable items, and an item text field with Add action, autosaved with validation and retry.",
+        "flowSteps": [
+          "F10.S01",
+          "F10.S02",
+          "F10.S03",
+          "F10.S04",
+          "F10.A01",
+          "F10.A02",
+          "F10.A03",
+          "F10.A04",
+          "F10.A05",
+          "F10.A06",
+          "F10.A07"
+        ],
+        "data": [
+          "Widget.title",
+          "ChecklistItem.text",
+          "ChecklistItem.ticked"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "ChecklistItem",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "widget title edit",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "item tick checkbox",
+              "minWidthPx": 20,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "item text",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 3,
+              "name": "new item text field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "add item action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD05",
+          "FD10"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W14",
+        "name": "Link list widget body",
+        "kind": "custom",
+        "holds": "Shows a link list widget body with editable title, entries with titles and web addresses that open on choose, and title plus address fields with Add action, autosaved with validation and retry.",
+        "flowSteps": [
+          "F11.S01",
+          "F11.S02",
+          "F11.S03",
+          "F11.S04",
+          "F11.A01",
+          "F11.A02",
+          "F11.A03",
+          "F11.A04",
+          "F11.A05",
+          "F11.A06",
+          "F11.A07"
+        ],
+        "data": [
+          "Widget.title",
+          "LinkItem.title",
+          "LinkItem.url"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": false,
+        "repeat": "LinkItem",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "widget title edit",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "link title",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "open link action",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "link title field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "web address field",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 5,
+              "name": "add link action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "2",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD05",
+          "FD11",
+          "FD12"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W15",
+        "name": "Add widget dialog",
+        "kind": "form",
+        "holds": "Shows selectable type options for note, counter, checklist and link list with Cancel and Add actions, marks missing type as required and offers retry on failure.",
+        "flowSteps": [
+          "F07.S02",
+          "F07.A01",
+          "F07.A02",
+          "F07.A03"
+        ],
+        "data": [
+          "Widget.type"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "note type option",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "counter type option",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "checklist type option",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "link list type option",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "Cancel action",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "Add action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 472,
+        "fields": [
+          "FD04"
+        ],
+        "minWidthPx": 324
+      },
+      {
+        "id": "W16",
+        "name": "Remove widget confirm",
+        "kind": "custom",
+        "holds": "Names the widget to remove, says its checklist items or links go with it, and offers Cancel and permanent Remove actions.",
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "data": [
+          "Widget.title"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "confirmation text",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "Cancel action",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "Remove action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W17",
+        "name": "Delete dashboard confirm",
+        "kind": "custom",
+        "holds": "Names the dashboard to delete, says all of its widgets go with it, and offers Cancel and permanent Delete actions.",
+        "flowSteps": [
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02"
+        ],
+        "data": [
+          "Dashboard.name"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "confirmation text",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "Cancel action",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "Delete action",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "4"
+        },
+        "maxWidthPx": 352,
+        "fields": [],
+        "minWidthPx": 272
+      }
+    ],
+    "components": [
+      {
+        "name": "WidgetBoard",
+        "minWidthPx": 640,
+        "maxWidthPx": 0
+      },
+      {
+        "name": "WidgetCard",
+        "minWidthPx": 240,
+        "maxWidthPx": 0
+      }
+    ],
+    "screens": [
+      {
+        "screen": "S01",
+        "parts": [
+          "W01",
+          "W02",
+          "W03",
+          "W04"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S02",
+        "parts": [
+          "W05"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S03",
+        "parts": [
+          "W06"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S04",
+        "parts": [
+          "W07",
+          "W08"
+        ],
+        "frameSteps": [
+          "F04.S01"
+        ]
+      },
+      {
+        "screen": "S05",
+        "parts": [
+          "W09",
+          "W10",
+          "W11",
+          "W12",
+          "W13",
+          "W14",
+          "WidgetBoard",
+          "WidgetCard"
+        ],
+        "frameSteps": [
+          "F04.S01"
+        ]
+      },
+      {
+        "screen": "S06",
+        "parts": [
+          "W15"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S07",
+        "parts": [
+          "W16"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S08",
+        "parts": [
+          "W17"
+        ],
+        "frameSteps": []
+      }
+    ]
+  }
+}

@@ -2,52 +2,46 @@
   "meta": {
     "artifact": "flows-scope",
     "version": 1,
-    "hash": "a429d85002f2b5f383eb4bbf624df6d22b788fdae9cd1fb402ed912be770c676",
+    "hash": "1106272f4958a984256897cbd3412d5519bbe18b775692e7d774cac64a8a0d4c",
     "inputs": {},
     "stage": "flows-scope",
-    "model": "muse-spark-1.3",
+    "model": "muse-wonder-1.0",
     "rounds": 2,
-    "createdAt": "2026-10-30T11:00:51.336Z"
+    "createdAt": "2026-10-31T19:37:14.916Z"
   },
   "data": {
     "app": {
-      "name": "Tidyboards",
-      "summary": "For people who keep little bits of personal info scattered around, Tidyboards gives them tidy personal dashboards. They create a dashboard, add note, counter, checklist, and link-list widgets, then configure, arrange, and resize them. Changes save automatically so the dashboard is ready on every visit.",
-      "audience": "People who want a small personal dashboard for notes, counts, tasks, and links"
+      "name": "NeonBoard",
+      "summary": "NeonBoard is for individuals who want a personal dashboard that gathers notes, counters, checklists, and useful links in one place. A member creates a dashboard, lands directly in its editor, adds and configures widgets, and arranges them by position and size. Every change is saved automatically, and all of the member's dashboards are listed by when they were last edited.",
+      "audience": "Individuals who want to build and use their own personal dashboards."
     },
     "roles": [
       {
-        "id": "visitor",
-        "name": "Visitor",
-        "description": "Person learning what Tidyboards is; can start sign up from the landing page but has no dashboards",
-        "signedIn": false
-      },
-      {
         "id": "member",
         "name": "Member",
-        "description": "Owner of personal dashboards; creates and manages dashboards and all widgets inside them",
+        "description": "A person who signs in to create, edit, arrange, and revisit their own personal dashboards and widgets.",
         "signedIn": true
       }
     ],
     "vocabulary": [
       {
         "noun": "Dashboard",
-        "description": "Named container for widgets; has name and last-edited time, can be renamed, duplicated, deleted",
+        "description": "One personal dashboard owned by a member, containing an ordered set of widgets.",
         "belongsTo": "member"
       },
       {
         "noun": "Widget",
-        "description": "Block inside a dashboard; has title, type (note, counter, checklist, linklist), size small/medium/large, position, and type-specific settings and content",
+        "description": "One block on a dashboard. Its type is note, counter, checklist, or link list, and it has a title, a relative position, a size of small, medium, or large, and settings for its type: plain text for a note, a number and label for a counter, checklist items for a checklist, and titles with web addresses for a link list.",
         "belongsTo": "member"
       },
       {
         "noun": "ChecklistItem",
-        "description": "Single row inside a checklist widget; has text and ticked or unticked state",
+        "description": "One item inside a checklist widget, with text and a ticked or unticked state.",
         "belongsTo": "member"
       },
       {
-        "noun": "LinkEntry",
-        "description": "Single row inside a link-list widget; has title and web address",
+        "noun": "LinkItem",
+        "description": "One entry inside a link list widget, with a title and a web address.",
         "belongsTo": "member"
       }
     ],
@@ -55,111 +49,123 @@
       {
         "id": "accounts",
         "needed": true,
-        "note": "Email/password sign up, sign in, sign out for dashboard owners"
+        "note": "Email and password sign up, sign in, and sign out, so a member's saved dashboards are protected and available after a refresh."
       },
       {
         "id": "userOwnedData",
         "needed": true,
-        "note": "Each user sees and edits only their own dashboards and widgets"
+        "note": "Each member sees and can change only their own dashboards and the widgets inside them."
       },
       {
         "id": "crud",
         "needed": true,
-        "note": "Create, list, view, rename, duplicate, delete dashboards and widgets"
-      },
-      {
-        "id": "roles",
-        "needed": true,
-        "note": "Visitor for landing page plus signed-in member"
-      },
-      {
-        "id": "publicPages",
-        "needed": true,
-        "note": "Public landing page explaining dashboards and how to start"
+        "note": "Create, view, edit, rename, duplicate, and delete dashboards; add, configure, rename, resize, and remove widgets; add and edit checklist items and links."
       },
       {
         "id": "reorder",
         "needed": true,
-        "note": "Change widget position relative to other widgets"
+        "note": "Members can change a widget's position relative to the other widgets on the same dashboard."
+      },
+      {
+        "id": "publicPages",
+        "needed": true,
+        "note": "A public landing page explains NeonBoard and invites visitors to sign up or sign in; dashboards themselves are not public."
       },
       {
         "id": "datesDeadlines",
         "needed": true,
-        "note": "Show last-edited time on dashboard list; no deadlines"
+        "note": "Each dashboard records and displays when it was last edited; there are no deadlines."
+      },
+      {
+        "id": "roles",
+        "needed": true,
+        "note": "One signed-in member role is enough; there are no other roles."
       }
     ],
     "inScope": [
-      "Public landing page that says what personal dashboards are for and how to start",
-      "Sign up, sign in, sign out; each user sees only their own dashboards",
-      "Create, list with last-edited time, rename, duplicate, and delete dashboards",
-      "Editor that saves all dashboard and widget changes automatically",
-      "Add note, counter, checklist, and link-list widgets with a title and type-specific settings",
-      "Rename, reposition relative to other widgets, resize to small/medium/large, and remove widgets",
-      "Use widgets: edit note text; set counter label and increase/decrease value; add and tick checklist items; add titles/addresses and open links"
+      "A public landing page that says NeonBoard is for building personal dashboards with notes, counters, checklists, and link lists, and invites the visitor to sign up or sign in to create a dashboard.",
+      "A member can click Create to start a new dashboard and land directly in its editor.",
+      "In the editor, a member can add a note widget with plain text, a counter widget with a number and a label that they can increase or decrease, a checklist widget with items they can tick off and add to, and a link list widget with titles and web addresses.",
+      "After adding a widget, a member can configure its title and the settings for its type: the note text, the counter label and number, the checklist items, or the link titles and web addresses. Links can be opened from the widget.",
+      "A member can rename a widget, change its position relative to the other widgets, resize it between small, medium, and large, and remove it.",
+      "Dashboards have a name and can be renamed, duplicated, and deleted. Deleting a dashboard also deletes all of its widgets.",
+      "A list shows all of a member's dashboards with when each was last edited; a member with no dashboards is offered Create as the next action, and an empty dashboard offers adding a widget as the next action.",
+      "The editor saves changes automatically, so work is still there after a refresh and no manual save step is needed.",
+      "Dashboards are private: a member sees only their own dashboards, and there are no shared or public dashboards.",
+      "The interface uses a dark, glowing, futuristic screen-like look with neon-lit controls and figures and a faint grid behind the widgets, while keeping every widget easy to read and use."
     ],
     "outOfScope": [],
     "assumptions": [
       {
         "id": "A01",
-        "text": "New dashboards start named 'Untitled dashboard' and can be renamed to any non-empty name.",
-        "kind": "data",
-        "affects": []
+        "text": "A signed-in member is required before creating a dashboard because dashboards are personal, automatically saved, and shown again after a refresh. First success takes five steps: open the landing page, choose to sign up, submit email and password, click Create, and choose a widget type; the new widget then appears saved in the editor. The only required inputs before that first success are email and password.",
+        "kind": "behavior",
+        "affects": [
+          "firstSuccess",
+          "businessRules"
+        ]
       },
       {
         "id": "A02",
-        "text": "Duplicating a dashboard copies its name as 'Copy of {name}' plus all widgets, settings, and content.",
+        "text": "Clicking Create makes a dashboard with the default name 'Untitled dashboard' and opens its editor immediately; the member can rename it later, so naming is not required before first success.",
         "kind": "behavior",
-        "affects": []
+        "affects": [
+          "data",
+          "businessRules"
+        ]
       },
       {
         "id": "A03",
-        "text": "Deleting a dashboard permanently removes it and all its widgets, items, and links with no trash or undo.",
+        "text": "Adding a widget creates it with a default title based on its type and sensible empty or zero settings, so it is visible and saved before the member configures it. A widget's default size is medium.",
         "kind": "behavior",
-        "affects": []
+        "affects": [
+          "data",
+          "businessRules"
+        ]
       },
       {
         "id": "A04",
-        "text": "Widgets live in a single ordered list per dashboard; reposition means move earlier/later in that order and visual placement is up to design.",
+        "text": "Widget position is a single relative order among the widgets on one dashboard. Moving a widget changes that order, and removing a widget leaves the remaining widgets in their existing relative order. How the ordered widgets are laid out on screen is left to design.",
         "kind": "behavior",
-        "affects": []
+        "affects": [
+          "businessRules"
+        ]
       },
       {
         "id": "A05",
-        "text": "New widgets default to medium size; size can only be small, medium, or large.",
+        "text": "A counter starts at 0 and each increase or decrease changes its number by 1. Checklist items start unticked, and ticking can be undone by unticking. Checklist item text is required to add an item; a link requires both a title and a web address.",
         "kind": "behavior",
-        "affects": []
+        "affects": [
+          "businessRules",
+          "data"
+        ]
       },
       {
         "id": "A06",
-        "text": "Counter widget has a label and an integer value starting at 0; plus/minus changes it by 1 with no minimum or maximum, negatives allowed.",
-        "kind": "data",
-        "affects": []
+        "text": "Duplicating a dashboard copies all of its widgets, titles, type settings, relative positions, and sizes into a new dashboard named with ' copy' added to the original name. Deleting a dashboard permanently deletes that dashboard and all of its widgets; deleting a widget permanently removes only that widget. There is no recovery after deletion.",
+        "kind": "behavior",
+        "affects": [
+          "businessRules"
+        ]
       },
       {
         "id": "A07",
-        "text": "Checklist widget holds items with non-empty text and ticked/unticked state; ticking toggles state, adding requires text.",
-        "kind": "data",
-        "affects": []
-      },
-      {
-        "id": "A08",
-        "text": "Link-list entries require a title and a web address starting with http:// or https://; selecting a link opens it in a new tab.",
-        "kind": "data",
-        "affects": []
-      },
-      {
-        "id": "A09",
-        "text": "Editor autosaves every create, edit, reorder, resize, and delete shortly after the change and updates the dashboard last-edited time.",
+        "text": "Last edited is updated whenever the dashboard or any of its widgets, checklist items, counters, or links change, including renaming, reordering, and resizing; merely opening a dashboard does not update it. The editor is also the usable dashboard, so there is no separate view-only mode.",
         "kind": "behavior",
-        "affects": []
-      },
-      {
-        "id": "A10",
-        "text": "Dashboards and their widgets are private to the user who created them; there is no sharing or collaboration.",
-        "kind": "permission",
-        "affects": []
+        "affects": [
+          "businessRules",
+          "data"
+        ]
       }
     ],
-    "questions": []
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "Should a counter widget's number have a minimum, maximum, or step other than changing by 1 with no limits?",
+        "whyItMatters": "The answer changes the counter widget's business rules and what values a member can save.",
+        "defaultAnswer": "The counter has no minimum or maximum and can be decreased below zero, changing by 1 each time.",
+        "blocking": false
+      }
+    ]
   }
 }

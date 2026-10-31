@@ -88,10 +88,10 @@ export const stages: StageDef[] = [
   themeStage,
   architectStage,
   designCatalogStage,
+  contractStage,
   screenStage,
   inventStage,
   drawStage,
   frameStage,
   assembleStage,
-  contractStage,
 ];

@@ -1,0 +1,668 @@
+{
+  "meta": {
+    "artifact": "design-architect",
+    "version": 1,
+    "hash": "2672c9befccb92243f1da726dea8c4c63ccde4a6066a3b7aafb4f43faca907a5",
+    "inputs": {
+      "flows-scope": {
+        "version": 1,
+        "hash": "241696a484e51255e1e75d75d9094e2be0f060a72a5e4d411f0c307a4f66fd23"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "eb7058a4e2f9420bf4ce853fa9b643b33d73590cbc4c2d5d061b29d42fe96630"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "62fc443161f6a56121607e98db2bceb719b45962de4f591a9fedfc2bbb0598fa"
+      }
+    },
+    "stage": "design-architect",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-31T20:26:51.689Z"
+  },
+  "data": {
+    "screens": [
+      {
+        "id": "S01",
+        "name": "Shop front",
+        "type": "page",
+        "route": "/",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Jaipur Studio Ceramics",
+        "purpose": "Let guest buyers understand the studio shop and browse available pieces.",
+        "entry": true,
+        "flowSteps": [
+          "F01.S01",
+          "F01.S02",
+          "F02.S01",
+          "F02.S02",
+          "F01.A01",
+          "F01.A02",
+          "F02.A01",
+          "F02.A02"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "A full-width hero band with the shop name, small-batch story, how to order without messaging, and pickup and courier notes. Then a filter and sort bar for type, availability and price above a photo grid of pieces with price and availability tags. The footer repeats pickup address and instructions.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "buyer"
+        ]
+      },
+      {
+        "id": "S02",
+        "name": "Piece detail",
+        "type": "page",
+        "route": "/pieces/[pieceId]",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "",
+        "purpose": "Let a buyer judge a piece and see honest per-variant stock.",
+        "entry": true,
+        "flowSteps": [
+          "F02.S03",
+          "F03.S01",
+          "F02.A03",
+          "F02.A04",
+          "F03.A01",
+          "F03.A07"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A gallery of photos on one side and piece details on the other with type tag, price, description and per-variant stock. A variant picker shows how many are left per glaze and size with sold-out disabled and nearly-gone flagged, plus quantity and a button to checkout. A sold-out piece shows a clear sold-out state with a link back to the shop.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "buyer"
+        ]
+      },
+      {
+        "id": "S03",
+        "name": "Checkout",
+        "type": "page",
+        "route": "/pieces/[pieceId]/checkout",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "narrow",
+        "title": "Checkout",
+        "purpose": "Collect guest details and show honest totals before confirming.",
+        "entry": false,
+        "flowSteps": [
+          "F03.S02",
+          "F03.A02",
+          "F03.A03",
+          "F03.A04"
+        ],
+        "states": [],
+        "composition": "A single-column form for glaze, size, quantity, name, phone, fulfilment choice with conditional delivery address, and optional discount code with apply and message. A sticky order summary card shows piece total, discount, shipping of 99 rupees or free above 1500 after discount and free pickup, and final total. A submit button goes to review on the confirmation page.",
+        "frame": "the header shows a back link to the piece",
+        "access": "public",
+        "roles": [
+          "buyer"
+        ]
+      },
+      {
+        "id": "S04",
+        "name": "Order confirmation",
+        "type": "page",
+        "route": "/orders/[orderId]",
+        "parent": "",
+        "kind": "marketing",
+        "framed": true,
+        "contentWidth": "medium",
+        "title": "Order confirmed",
+        "purpose": "Review the order before creation and keep a visible confirmation afterwards.",
+        "entry": false,
+        "flowSteps": [
+          "F03.S03",
+          "F03.A05",
+          "F03.A06"
+        ],
+        "states": [
+          "error",
+          "notFound"
+        ],
+        "composition": "A review section showing items with glaze and size, buyer and fulfilment details, and totals with a confirm order button. After confirming it becomes a receipt with the same details plus pickup address and instructions for pickup orders and a note that the maker will collect by UPI later. The receipt stays visible after a refresh in the same session.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "buyer"
+        ]
+      },
+      {
+        "id": "S05",
+        "name": "Owner sign up",
+        "type": "page",
+        "route": "/owner/signup",
+        "parent": "",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "Create owner account",
+        "purpose": "Create the single shop owner account.",
+        "entry": true,
+        "flowSteps": [
+          "F04.S01",
+          "F04.S02",
+          "F04.A01",
+          "F04.A02",
+          "F04.A03",
+          "F04.A04"
+        ],
+        "states": [],
+        "composition": "A centered card with email and password fields, inline errors that keep typed values, and a create account action. A secondary link offers sign in instead when an owner account already exists, and a cancel link returns to the shop front.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S06",
+        "name": "Owner sign in",
+        "type": "page",
+        "route": "/owner/signin",
+        "parent": "",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "Owner sign in",
+        "purpose": "Sign the shop owner in to manage the shop.",
+        "entry": true,
+        "flowSteps": [
+          "F05.S01",
+          "F05.S02",
+          "F05.A01",
+          "F05.A02",
+          "F05.A03",
+          "F05.A04"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "A centered card with email and password fields, inline errors that keep typed values, and a sign in action. A link offers sign up when no account exists yet, and the page returns to the public shop on cancel.",
+        "frame": "",
+        "access": "public",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S07",
+        "name": "Dashboard",
+        "type": "page",
+        "route": "/owner",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Overview",
+        "purpose": "Show what needs packing, payment and remaking next.",
+        "entry": true,
+        "flowSteps": [
+          "F06.S01",
+          "F16.S01",
+          "F16.A01"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "Count cards on top for new orders, orders awaiting UPI payment, nearly-gone and sold-out variants. Then a low-stock table of variants with 2 or fewer left and sold-out with 0 left linking to pieces. Then a preview of newest orders linking to the full order list.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S08",
+        "name": "Catalogue",
+        "type": "page",
+        "route": "/owner/pieces",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Pieces",
+        "purpose": "Manage designs and see their availability.",
+        "entry": false,
+        "flowSteps": [
+          "F07.S01",
+          "F08.S01",
+          "F09.S01",
+          "F07.A05",
+          "F08.A01",
+          "F09.A01"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "A header with the title and an Add piece button that opens the create dialog. Then pieces as cards or table rows with photo, type tag, base price and stock summary. Each row links to the owner piece detail for editing.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S09",
+        "name": "Owner piece detail",
+        "type": "page",
+        "route": "/owner/pieces/[pieceId]",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "",
+        "purpose": "View and edit a piece and its variant stock.",
+        "entry": false,
+        "flowSteps": [
+          "F08.S02",
+          "F08.S03",
+          "F09.S02",
+          "F08.A02",
+          "F08.A03",
+          "F08.A04",
+          "F08.A05",
+          "F08.A06",
+          "F09.A02"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "composition": "A header with a back link to the catalogue, the piece name, and a delete action. Then an editable section for name, type, price, description and photos with save. Then a variant table with glaze, size, stock and price adjustment plus an add-variant action.",
+        "frame": "the header shows a back link to the catalogue",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S10",
+        "name": "Orders list",
+        "type": "page",
+        "route": "/owner/orders",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Orders",
+        "purpose": "See new orders and track who has paid.",
+        "entry": false,
+        "flowSteps": [
+          "F12.S01",
+          "F12.S02",
+          "F13.S01",
+          "F14.S01",
+          "F15.S01",
+          "F12.A01",
+          "F12.A02",
+          "F13.A01",
+          "F14.A01",
+          "F15.A01"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "A header with filters for order status and payment status above a table newest first. Each row shows buyer name and phone, pickup or courier choice, totals and status tags. Pagination and empty states with clear-filters complete the list.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S11",
+        "name": "Order detail",
+        "type": "page",
+        "route": "/owner/orders/[orderId]",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "Work through payment, packing, handover or cancellation for one order.",
+        "entry": false,
+        "flowSteps": [
+          "F12.S03",
+          "F13.S02",
+          "F13.S03",
+          "F14.S02",
+          "F14.S03",
+          "F15.S02",
+          "F15.S03",
+          "F12.A03",
+          "F12.A04",
+          "F13.A02",
+          "F13.A03",
+          "F13.A04",
+          "F14.A02",
+          "F14.A03",
+          "F14.A04",
+          "F15.A02",
+          "F15.A03"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound",
+          "denied"
+        ],
+        "composition": "Buyer, phone and placed date and time on top with order and payment status tags. A fulfilment block shows pickup details or courier address, then items with glaze, size, quantity and price, then a totals breakdown. Action buttons offer only the allowed next status plus Mark Paid and Cancel.",
+        "frame": "the header shows a back link to the orders list",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S12",
+        "name": "Discount codes list",
+        "type": "page",
+        "route": "/owner/discounts",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "wide",
+        "title": "Discount codes",
+        "purpose": "Control time-limited promotions buyers enter at checkout.",
+        "entry": false,
+        "flowSteps": [
+          "F10.S01",
+          "F11.S01",
+          "F11.A01"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "composition": "A header with the title and a New code button that opens the discount dialog. Then a table of codes with code word, kind and value, start and end dates and active state. Each row has an edit action that reopens the same dialog populated.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S13",
+        "name": "Add piece",
+        "type": "dialog",
+        "route": "",
+        "parent": "S08",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "Create a new piece with photos.",
+        "entry": false,
+        "flowSteps": [
+          "F07.S02",
+          "F07.A01",
+          "F07.A02"
+        ],
+        "states": [],
+        "composition": "A form with name, type, base price, description and a photo uploader that validates and previews each file and keeps it for the session. Footer actions save the piece and offer a way to add variants next, or cancel with nothing saved.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S14",
+        "name": "Variant editor",
+        "type": "dialog",
+        "route": "",
+        "parent": "S09",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Add glaze and size variants with stock to a piece.",
+        "entry": false,
+        "flowSteps": [
+          "F07.S03",
+          "F07.A03",
+          "F07.A04"
+        ],
+        "states": [],
+        "composition": "A compact form for glaze name, size name, stock count and optional price adjustment. Footer actions save the variant and allow adding another, or close. Errors keep typed values.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S15",
+        "name": "Delete piece confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S09",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm removal of a piece and its variants.",
+        "entry": false,
+        "flowSteps": [
+          "F09.S03",
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02",
+          "F09.A03",
+          "F09.A04"
+        ],
+        "states": [],
+        "composition": "A short confirmation naming the piece and saying its variants leave the public shop while past orders stay unchanged. Footer actions confirm deletion or keep the piece unchanged.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S16",
+        "name": "Discount code editor",
+        "type": "dialog",
+        "route": "",
+        "parent": "S12",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "medium",
+        "title": "",
+        "purpose": "Create or update a discount code and its active state.",
+        "entry": false,
+        "flowSteps": [
+          "F10.S02",
+          "F11.S02",
+          "F11.S03",
+          "F10.A01",
+          "F10.A02",
+          "F10.A03",
+          "F11.A02",
+          "F11.A03",
+          "F11.A04",
+          "F11.A05"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "composition": "A form with code word, kind selector for percentage or fixed rupees, value, start and end dates and an active switch when editing. It opens empty for creation and populated for editing. Footer actions save or cancel with nothing changed.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S17",
+        "name": "Cancel order confirm",
+        "type": "dialog",
+        "route": "",
+        "parent": "S11",
+        "kind": "app",
+        "framed": false,
+        "contentWidth": "narrow",
+        "title": "",
+        "purpose": "Confirm cancellation and stock return.",
+        "entry": false,
+        "flowSteps": [
+          "F15.S04",
+          "F15.A04",
+          "F15.A05"
+        ],
+        "states": [
+          "error"
+        ],
+        "composition": "A short confirmation saying the order will be marked Cancelled and its quantities returned to variant stock. Footer actions confirm cancellation or keep the order as it was.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      },
+      {
+        "id": "S18",
+        "name": "Shop settings",
+        "type": "page",
+        "route": "/owner/settings",
+        "parent": "",
+        "kind": "app",
+        "framed": true,
+        "contentWidth": "narrow",
+        "title": "Shop settings",
+        "purpose": "Keep shop identity and pickup details correct for buyers.",
+        "entry": false,
+        "flowSteps": [
+          "F17.S01",
+          "F17.S02",
+          "F17.A01",
+          "F17.A02"
+        ],
+        "states": [],
+        "composition": "A narrow form card for shop name, studio pickup address and pickup instructions with validation that keeps typed values. A live preview beneath shows exactly how buyers will see the details on the shop and confirmation.",
+        "frame": "",
+        "access": "signedIn",
+        "roles": [
+          "shopOwner"
+        ]
+      }
+    ],
+    "navigation": [
+      {
+        "screen": "S01",
+        "slot": "header.start",
+        "label": "Jaipur Studio Ceramics",
+        "access": "public"
+      },
+      {
+        "screen": "S06",
+        "slot": "header.end",
+        "label": "Owner sign in",
+        "access": "public"
+      },
+      {
+        "screen": "S08",
+        "slot": "sidebar.top",
+        "label": "Pieces",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S10",
+        "slot": "sidebar.top",
+        "label": "Orders",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S12",
+        "slot": "sidebar.top",
+        "label": "Discount codes",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S07",
+        "slot": "sidebar.bottom",
+        "label": "Overview",
+        "access": "signedIn"
+      },
+      {
+        "screen": "S18",
+        "slot": "sidebar.bottom",
+        "label": "Shop settings",
+        "access": "signedIn"
+      }
+    ],
+    "alternativesElsewhere": [],
+    "newComponents": [
+      {
+        "name": "PieceGallery",
+        "purpose": "Show a piece's photos so buyers can judge it without messaging the maker.",
+        "closestExisting": [
+          "Card",
+          "ScrollArea"
+        ],
+        "whyNotExisting": "Card shows one container and ScrollArea scrolls, neither gives a large preview with thumbnail switching for multiple photos.",
+        "description": "A warm gallery showing one large photo with a row of small thumbnails beneath it. It is for judging handmade shape and glaze without messaging the maker. It sits quietly on the page in soft radius with comfortable spacing, using the muted earth palette. Like the photo carousel of a craft marketplace product page."
+      },
+      {
+        "name": "VariantPicker",
+        "purpose": "Let buyers choose one in-stock glaze and size variant with honest stock.",
+        "closestExisting": [
+          "Select",
+          "RadioGroup",
+          "ChipGroup"
+        ],
+        "whyNotExisting": "Select, RadioGroup and ChipGroup handle single-dimension choices but cannot bind glaze plus size plus stock count plus price adjustment plus disabled sold-out in one control.",
+        "description": "A picker listing each glaze and size combination as a selectable row showing its price including adjustment and how many are left. It is for choosing an orderable variant honestly. Sold-out rows are disabled with a clear sold-out tag, nearly-gone rows carry a warm warning tag, all in soft radius and Lato. Like an airline seat picker that disables taken seats."
+      },
+      {
+        "name": "PhotoUploader",
+        "purpose": "Let the owner add piece photos with validation and preview kept for the session.",
+        "closestExisting": [
+          "Input",
+          "FormControl"
+        ],
+        "whyNotExisting": "Input handles text and url and FormControl wraps labels, neither validates files nor shows image previews.",
+        "description": "A calm upload box with drag and browse affordance, file validation messages, and a row of previews that persist for the session. It is for adding piece photos during creation. It uses soft radius, muted borders and comfortable density. Like the avatar uploader of a profile settings page but for multiple product photos."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "Can a guest order contain several different pieces or variants at once, or one glaze-size line per order?",
+        "whyItMatters": "It changes checkout fields, totals, stock reduction and whether a cart is needed; the flows show a single glaze, size and quantity per checkout.",
+        "defaultAnswer": "One order contains one variant line only: one piece with one chosen glaze, one size and a quantity. Totals, discount and shipping are calculated for that line.",
+        "blocking": true
+      },
+      {
+        "id": "Q02",
+        "question": "What limits apply to discount values for percentage-off versus fixed-rupees-off codes?",
+        "whyItMatters": "It changes validation on the discount form and the checkout total buyers see and pay by UPI.",
+        "defaultAnswer": "Percent is 1 to 90 percent and fixed is 1 to 5000 rupees, never reducing the piece total below zero; shipping free logic uses the total after discount.",
+        "blocking": false
+      }
+    ],
+    "impossibleSteps": []
+  }
+}

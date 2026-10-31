@@ -1,340 +1,326 @@
-# Tidyboards: user flows
+# NeonBoard: user flows
 
-## F01 Discover Tidyboards on landing page
-Visitor · browse · Goal: Understand what Tidyboards does and start using it.
+## F01 Visit landing page
+Member · onboarding · Goal: Understand what NeonBoard is for and get started.
 Before: Not signed in.
 
-1. The visitor opens the landing page. The website shows what tidy personal dashboards are for, how creating a dashboard and adding note, counter, checklist and link-list widgets works, with examples, and offers paths to sign up and sign in.
-2. The visitor chooses to get started. The website shows the sign-up form to create an account.
+1. The visitor opens the NeonBoard landing page. The website shows that NeonBoard is for building personal dashboards with notes, counters, checklists and link lists, and invites the visitor to sign up or sign in to create a dashboard.
+2. The visitor chooses to sign up. The website shows the sign-up form.
 
-Outcome: Visitor understands dashboards and starts sign-up; nothing is stored and a refresh shows the same landing page.
+Other paths
+- F01.A01 (from 1, other) The visitor chooses to sign in instead: The website shows the sign-in form. Flow ends.
 
-## F02 Sign up as member
-Member · auth · Goal: Create an account to own dashboards.
+Outcome: Nothing is changed; the visitor knows how to sign up or sign in.
+
+## F02 Sign up
+Member · auth · Goal: Create an account and be signed in.
 Before: Not signed in.
 
-1. The member chooses to sign up. The website shows an empty sign-up form asking for email and password.
-2. The member fills in email and password and submits. (Account credentials)
-   - Email (required, up to 254 characters), e.g. "sam@example.com"
-   - Password (required, 8 to 128 characters), e.g. "Sunny-day-42"
-   The website creates the account, signs the member in, and shows the member's dashboard list.
+1. The visitor chooses to sign up. The website shows an empty account form.
+2. The visitor fills in the account form and submits it. (Account form)
+   - Email (required, up to 254 characters), e.g. "member@example.com"
+   - Password (required, 8 to 128 characters), e.g. "secret123"
+   The website creates the account, signs the member in, and shows the dashboard list.
    Changes: lists Dashboard.
 
 Other paths
-- F02.A01 (from 2, invalid) The email is badly formed or the password is shorter than required: The website marks what is wrong and keeps what was typed. Back to 2.
+- F02.A01 (from 2, invalid) The email or password is missing or invalid: The website marks what is wrong and keeps what was typed. Back to 2.
 - F02.A02 (from 2, failure) Creating the account fails: The website keeps the typed values and offers to retry. Back to 2.
-- F02.A03 (from 2, empty) The member has no dashboards yet: The website invites the member to create the first dashboard. Flow ends.
+- F02.A03 (from 2, empty) The new member has no dashboards yet: The website shows an empty dashboard list and offers Create as the next action. Flow ends.
 
-Outcome: Account exists and member is signed in; a refresh still shows the signed-in dashboard list.
+Outcome: The account is created and the member is signed in; it stays that way after a refresh.
 
-## F03 Sign in as member
-Member · auth · Goal: Sign in to access my dashboards.
-Before: Not signed in.
+## F03 Sign in
+Member · auth · Goal: Sign in to reach my dashboards.
+Before: Not signed in.; Already has an account.
 
-1. The member chooses to sign in. The website shows an empty sign-in form asking for email and password.
-2. The member fills in email and password and submits. (Account credentials)
-   - Email (required, up to 254 characters), e.g. "sam@example.com"
-   - Password (required, 8 to 128 characters), e.g. "Sunny-day-42"
-   The website verifies the credentials and shows the member's own dashboard list with names and last-edited times.
+1. The visitor chooses to sign in. The website shows an empty account form.
+2. The visitor fills in the account form and submits it. (Account form)
+   - Email (required, up to 254 characters), e.g. "member@example.com"
+   - Password (required, 8 to 128 characters), e.g. "secret123"
+   The website signs the member in and shows the dashboard list with when each dashboard was last edited.
    Changes: lists Dashboard.
 
 Other paths
-- F03.A01 (from 2, invalid) The email or password is empty or badly formed: The website marks what is wrong and keeps what was typed. Back to 2.
-- F03.A02 (from 2, failure) Signing in fails for a system reason: The website keeps the typed values and offers to retry. Back to 2.
-- F03.A03 (from 2, other) The email is unknown or the password does not match: The website says the credentials do not match, keeps the typed email, and offers to try again. Back to 2.
-- F03.A04 (from 2, empty) The member has no dashboards yet: The website invites the member to create the first dashboard. Flow ends.
+- F03.A01 (from 2, invalid) The email or password is missing or invalid: The website marks what is wrong and keeps what was typed. Back to 2.
+- F03.A02 (from 2, failure) Signing in fails: The website keeps the typed values and offers to retry. Back to 2.
+- F03.A03 (from 2, empty) The member has no dashboards yet: The website shows an empty dashboard list and offers Create as the next action. Flow ends.
 
-Outcome: Member is signed in and sees own dashboards; a refresh still shows the signed-in list.
+Outcome: The member is signed in and stays signed in after a refresh.
 
 ## F04 Sign out
-Member · auth · Goal: Leave the account safely on this device.
+Member · auth · Goal: Leave the account protected.
 Before: Signed in.
 
-1. The member chooses to sign out. The website ends the session and shows the public landing page, hiding all private dashboards.
+1. The member chooses to sign out. The website ends the session and shows the public landing page.
 
-Outcome: Member is signed out; a refresh shows the landing page and no dashboards.
+Outcome: The member is signed out and stays signed out after a refresh.
 
 ## F05 Create a dashboard
-Member · core · Goal: Start a new dashboard to fill with widgets.
+Member · core · Goal: Start a new dashboard and land in its editor.
 Before: Signed in.
 
-1. The member opens the dashboard list. The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.
-   Changes: lists Dashboard.
-2. The member chooses to create a dashboard. The website creates a dashboard named Untitled dashboard, sets its last-edited time, and opens it in the editor ready for widgets.
+1. The member chooses Create. The website creates a dashboard named Untitled dashboard, saves it automatically, and opens its empty editor offering adding a widget as the next action.
    Changes: creates Dashboard.
 
 Other paths
-- F05.A01 (from 1, empty) The member has no dashboards yet: The website invites the member to create the first dashboard. Back to 2.
-- F05.A02 (from 2, failure) Creating the dashboard fails: The website keeps the list as it was and offers to retry creating. Back to 2.
+- F05.A01 (from 1, failure) Creating the dashboard fails: The website keeps the dashboard list as it was and offers to retry Create. Back to 1.
 
-Outcome: New Untitled dashboard exists and is open in the editor; a refresh still shows it in the list and editor.
+Outcome: A new dashboard named Untitled dashboard exists and its empty editor is shown; it is still there after a refresh.
 
 ## F06 View dashboard list
-Member · browse · Goal: Find a dashboard to open.
+Member · browse · Goal: Find and reopen one of my dashboards.
 Before: Signed in.
 
-1. The member opens the dashboard list. The website shows all of the member's own dashboards with name and last-edited time ordered most-recently-edited first, with a way to open any dashboard.
+1. The member opens the dashboard list. The website shows all of the member's own dashboards ordered by when each was last edited, most recently edited first, with that time.
    Changes: lists Dashboard.
-
-Other paths
-- F06.A01 (from 1, empty) The member has no dashboards yet: The website invites the member to create the first dashboard. Flow ends.
-
-Outcome: Member's own dashboards with last-edited times are visible; a refresh shows the same list.
-
-## F07 Open dashboard in editor
-Member · core · Goal: Open a dashboard to view and change it.
-Before: Signed in.; At least one dashboard exists.
-
-1. The member opens the dashboard list. The website shows the member's dashboards with names and last-edited times.
-   Changes: lists Dashboard.
-2. The member selects a dashboard from the list. The website opens that dashboard in the editor showing its title and all its widgets with their content, ready to view and change with autosave.
+2. The member chooses one dashboard from the list. The website opens that dashboard in the editor and shows its widgets.
    Changes: reads Dashboard, lists Widget.
 
 Other paths
-- F07.A01 (from 1, empty) The member has no dashboards: The website invites the member to create the first dashboard. Flow ends.
-- F07.A02 (from 2, notFound) The chosen dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
-- F07.A03 (from 2, empty) The dashboard has no widgets yet: The website shows the dashboard title with no widgets and invites the member to add the first widget. Flow ends.
+- F06.A01 (from 1, empty) The member has no dashboards yet: The website shows that there are no dashboards yet and offers Create as the next action. Flow ends.
+- F06.A02 (from 2, notFound) The chosen dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F06.A03 (from 2, empty) The opened dashboard has no widgets yet: The website shows the empty dashboard editor and offers adding a widget as the next action. Flow ends.
 
-Outcome: Chosen dashboard and its widgets are shown in the editor; a refresh shows the same content.
+Outcome: No data is changed; the chosen dashboard is open in the editor and is still open after a refresh.
 
-## F08 Rename dashboard
-Member · manage · Goal: Give a dashboard a meaningful name.
-Before: Signed in.; At least one dashboard exists.
+## F07 Add a widget
+Member · core · Goal: Add a note, counter, checklist or link list widget to the dashboard.
+Before: Signed in.; At least one dashboard, opened in the editor.
 
-1. The member opens a dashboard to rename it. The website shows the dashboard with its current name ready to rename.
-   Changes: reads Dashboard.
-2. The member edits the dashboard name and saves it.
-   - Dashboard name (required, 1 to 100 characters), e.g. "Morning focus"
-   The website saves the new name, updates the last-edited time, and shows the new name in the list and editor.
-   Changes: updates Dashboard.
-
-Other paths
-- F08.A01 (from 1, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
-- F08.A02 (from 2, invalid) The new name is empty: The website marks the name as needing a value and keeps what was typed. Back to 2.
-- F08.A03 (from 2, failure) Saving the new name fails: The website keeps the typed name and offers to retry. Back to 2.
-
-Outcome: Dashboard name is updated and last-edited is refreshed; a refresh shows the new name.
-
-## F09 Duplicate dashboard
-Member · manage · Goal: Copy a dashboard with its widgets to reuse it.
-Before: Signed in.; At least one dashboard exists.
-
-1. The member opens the dashboard list. The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.
-   Changes: lists Dashboard.
-2. The member chooses Duplicate on a dashboard. The website creates a copy named Copy of {name} with all widgets, settings and content copied, updates its last-edited time, and shows it alongside the original.
-   Changes: creates Dashboard, creates Widget, creates ChecklistItem, creates LinkEntry.
-
-Other paths
-- F09.A01 (from 1, empty) The member has no dashboards: The website invites the member to create the first dashboard and offers a way to create it. Flow ends.
-- F09.A02 (from 2, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the updated list. Flow ends.
-- F09.A03 (from 2, failure) Copying fails: The website keeps the list as it was and offers to retry duplicating. Back to 2.
-
-Outcome: Copy with all widgets exists alongside the original; a refresh shows both dashboards.
-
-## F10 Delete dashboard
-Member · manage · Goal: Permanently remove a dashboard I no longer need.
-Before: Signed in.; At least one dashboard exists.
-
-1. The member opens the dashboard list. The website shows the member's own dashboards with name and last-edited time ordered most-recently-edited first.
-   Changes: lists Dashboard.
-2. The member chooses Delete on a dashboard. Confirm deletion (subflow STD01):
-   1. (system) The website asks to confirm the deletion and says what else will be removed with it.
-
-   Other paths
-   - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
-   - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
-   Changes: deletes Dashboard, deletes Widget, deletes ChecklistItem, deletes LinkEntry.
-
-Other paths
-- F10.A01 (from 1, empty) The member has no dashboards: The website invites the member to create the first dashboard and offers a way to create it. Flow ends.
-- F10.A02 (from 2, confirm) The member confirms the deletion: The website permanently removes the dashboard with all its widgets, items and links and shows the updated list without it. Flow ends.
-- F10.A03 (from 2, cancel) The member cancels the deletion: Nothing is deleted; the website shows the dashboard list unchanged. Flow ends.
-- F10.A04 (from 2, notFound) The dashboard was already deleted: The website says the dashboard is gone and shows the updated list. Flow ends.
-
-Outcome: Dashboard and its widgets are gone; a refresh still shows the list without it.
-
-## F11 Add widget to dashboard
-Member · core · Goal: Add a note, counter, checklist or link-list widget to a dashboard.
-Before: Signed in.; A dashboard is open in the editor.
-
-1. The member chooses to add a widget. The website shows a creation form with title and widget type choices for note, counter, checklist and link list.
-2. The member fills in the title, picks a widget type and confirms.
-   - Widget title (required, 1 to 100 characters), e.g. "Today's note"
-   - Widget type (required, one of: note, counter, checklist, link list), e.g. "checklist"
-   The website creates the medium-sized widget with default content, autosaves it, updates the dashboard last-edited time, and shows it ready to use and configure.
+1. The member chooses to add a widget. The website shows the widget type choices of note, counter, checklist and link list.
+2. The member chooses a widget type.
+   - Widget type (required, one of: note, counter, checklist, link list), e.g. "note"
+   The website creates the widget with a default title based on its type, medium size and empty or zero settings at the end of the dashboard order, saves it automatically, and shows it on the dashboard with an updated last-edited time.
    Changes: creates Widget, updates Dashboard.
 
 Other paths
-- F11.A01 (from 2, invalid) The title is empty: The website marks the title field and keeps what was typed. Back to 2.
-- F11.A02 (from 2, failure) Saving fails: The website keeps the typed values and offers to retry. Back to 2.
-- F11.A03 (from 1, cancel) The member cancels adding a widget: Nothing is added; the website shows the dashboard as it was. Flow ends.
-- F11.A04 (from 2, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F07.A01 (from 2, invalid) No widget type is chosen: The website marks that a type must be chosen and keeps the type choices shown. Back to 2.
+- F07.A02 (from 2, failure) Creating the widget fails: The website keeps the type choice and offers to retry. Back to 2.
+- F07.A03 (from 2, cancel) The member cancels adding a widget: Nothing is added; the website shows the dashboard as it was. Flow ends.
 
-Outcome: New widget of the chosen type appears in the dashboard; a refresh shows it with its default content.
+Outcome: A new widget of the chosen type is on the dashboard and is still there after a refresh.
 
-## F12 Arrange and rename widget
-Member · manage · Goal: Rename, resize and reposition widgets to keep the dashboard tidy.
-Before: Signed in.; A dashboard with at least one widget is open in the editor.
+## F08 Use a note widget
+Member · core · Goal: Keep plain text in a note widget.
+Before: Signed in.; A dashboard with a note widget.
 
-1. The member views the widgets in the open dashboard. The website shows the dashboard title with its widgets in order, each with title, size and content.
-   Changes: lists Widget.
-2. The member edits a widget title and size and saves.
-   - Widget title (required, 1 to 100 characters), e.g. "Today's note"
-   - Widget size (required, one of: small, medium, large), e.g. "medium"
-   The website autosaves the new title and size, updates the dashboard last-edited time, and shows the updated widget.
+1. The member opens the dashboard in the editor. The website shows the dashboard with its widgets including the note widget with its title and plain text.
+   Changes: reads Dashboard, lists Widget.
+2. The member edits the note widget title.
+   - Widget title (required, 1 to 100 characters), e.g. "Ideas"
+   The website saves the new title automatically and shows the updated title with an updated last-edited time.
    Changes: updates Widget, updates Dashboard.
-3. The member moves a widget earlier or later relative to other widgets. The website autosaves the new order, updates the dashboard last-edited time, and shows the widgets in the new order.
-   Changes: updates Widget, updates Dashboard.
-
-Other paths
-- F12.A01 (from 1, empty) There are no widgets yet: The website says the dashboard has no widgets yet and offers a way to add one. Flow ends.
-- F12.A02 (from 2, invalid) The title is empty: The website marks the title field and keeps what was typed and the chosen size. Back to 2.
-- F12.A03 (from 2, failure) Saving the title or size fails: The website keeps the typed title and chosen size and offers to retry. Back to 2.
-- F12.A04 (from 3, failure) Saving the new order fails: The website keeps the previous order and offers to retry moving. Back to 3.
-- F12.A05 (from 2, notFound) The widget or dashboard was deleted in the meantime: The website says the widget is gone and shows the dashboard as it is now. Flow ends.
-
-Outcome: Widget title, size and order are updated and autosaved; a refresh shows the same arrangement.
-
-## F13 Remove widget
-Member · manage · Goal: Remove a widget I no longer need.
-Before: Signed in.; A dashboard with at least one widget is open in the editor.
-
-1. The member views the widgets in the open dashboard. The website shows the dashboard with its widgets in order, each with title and content.
-   Changes: lists Widget.
-2. The member chooses Remove on a widget. Confirm deletion (subflow STD01):
-   1. (system) The website asks to confirm the deletion and says what else will be removed with it.
-
-   Other paths
-   - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
-   - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
-   Changes: deletes Widget, deletes ChecklistItem, deletes LinkEntry, updates Dashboard.
-
-Other paths
-- F13.A01 (from 1, empty) There are no widgets yet: The website says the dashboard has no widgets yet and offers a way to add one. Flow ends.
-- F13.A02 (from 2, confirm) The member confirms the removal: The website permanently removes the widget with its content, autosaves the dashboard, updates last-edited, and shows the dashboard without it. Flow ends.
-- F13.A03 (from 2, cancel) The member cancels the removal: Nothing is removed; the website shows the dashboard unchanged. Flow ends.
-- F13.A04 (from 2, notFound) The widget was already removed: The website says the widget is gone and shows the dashboard as it is now. Flow ends.
-
-Outcome: Widget and its content are gone; a refresh still shows the dashboard without it.
-
-## F14 Use note widget
-Member · core · Goal: Capture plain text in a note widget.
-Before: Signed in.; A dashboard with a note widget is open in the editor.
-
-1. The member edits the plain text inside a note widget.
-   - Note text (optional, up to 5000 characters), e.g. "Call dentist at noon."
-   The website autosaves the text, updates the dashboard last-edited time, and shows the updated note.
+3. The member edits the note text.
+   - Note text (optional, up to 5000 characters), e.g. "Call the dentist on Tuesday"
+   The website saves the new text automatically and shows the updated note.
    Changes: updates Widget, updates Dashboard.
 
 Other paths
-- F14.A01 (from 1, invalid) The text is longer than 5000 characters: The website marks the text as too long and keeps what was typed. Back to 1.
-- F14.A02 (from 1, failure) Saving fails: The website keeps the typed text and offers to retry. Back to 1.
-- F14.A03 (from 1, notFound) The note widget or dashboard was deleted in the meantime: The website says the widget is gone and shows the dashboard as it is now. Flow ends.
+- F08.A01 (from 1, empty) The dashboard has no widgets: The website shows the empty dashboard editor and offers adding a widget as the next action. Flow ends.
+- F08.A02 (from 1, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F08.A03 (from 1, denied) The dashboard belongs to another member: The website does not show the dashboard and shows the member's own dashboard list. Flow ends.
+- F08.A04 (from 2, invalid) The widget title is empty: The website marks the title and keeps what was typed. Back to 2.
+- F08.A05 (from 2, failure) Saving the new title fails: The website keeps the typed title and offers to retry. Back to 2.
+- F08.A06 (from 3, invalid) The note text is longer than 5000 characters: The website marks the text and keeps what was typed. Back to 3.
+- F08.A07 (from 3, failure) Saving the new text fails: The website keeps the typed text and offers to retry. Back to 3.
 
-Outcome: Note text is saved automatically; a refresh shows the same text.
+Outcome: The note title and text are updated and are still there after a refresh.
 
-## F15 Use counter widget
-Member · core · Goal: Track a number with a label using a counter.
-Before: Signed in.; A dashboard with a counter widget is open in the editor.
+## F09 Use a counter widget
+Member · core · Goal: Track a number with a counter widget.
+Before: Signed in.; A dashboard with a counter widget.
 
-1. The member sets the counter label and saves.
-   - Counter label (required, 1 to 80 characters), e.g. "Cups of water"
-   The website autosaves the label, updates the dashboard last-edited time, and shows the updated label.
-   Changes: updates Widget, updates Dashboard.
-2. The member presses plus or minus on the counter. The website changes the value by 1, autosaves it, updates the dashboard last-edited time, and shows the current count.
-   Changes: updates Widget, updates Dashboard.
+1. The member opens a dashboard with a counter widget in the editor. The website shows the dashboard name and its widgets in order; the counter widget shows its title, label and number with controls to increase and decrease.
+   Changes: reads Dashboard, reads Widget.
+2. The member edits the counter title and label.
+   - Widget title (required, 1 to 100 characters), e.g. "Ideas"
+   - Counter label (optional, up to 100 characters), e.g. "Glasses of water"
+   The website saves each change automatically, shows the updated title and label, and updates when the dashboard was last edited.
+   Changes: updates Widget.
+3. The member increases or decreases the counter number. The website changes the number by 1, saves it automatically, shows the updated number, and updates when the dashboard was last edited.
+   Changes: updates Widget.
 
 Other paths
-- F15.A01 (from 1, invalid) The label is empty: The website marks the label field and keeps what was typed. Back to 1.
-- F15.A02 (from 1, failure) Saving the label fails: The website keeps the typed label and offers to retry. Back to 1.
-- F15.A03 (from 2, failure) Saving the new value fails: The website keeps the previous count and offers to retry. Back to 2.
-- F15.A04 (from 1, notFound) The counter widget or dashboard was deleted in the meantime: The website says the widget is gone and shows the dashboard as it is now. Flow ends.
+- F09.A01 (from 1, notFound) The dashboard or its counter widget was deleted in the meantime: The website says the dashboard or widget is gone and shows the dashboard list. Flow ends.
+- F09.A02 (from 2, invalid) The title is empty: The website marks the title as required and keeps what was typed. Back to 2.
+- F09.A03 (from 2, failure) Saving the title or label fails: The website keeps the typed values and offers to retry. Back to 2.
+- F09.A04 (from 3, failure) Saving the new number fails: The website keeps the previous number and offers to retry. Back to 3.
 
-Outcome: Counter label and value are saved; a refresh shows the same label and number.
+Outcome: The counter title, label and number are updated and are still there after a refresh.
 
-## F16 Use checklist widget
-Member · core · Goal: Track tickable tasks in a checklist.
-Before: Signed in.; A dashboard with a checklist widget is open in the editor.
+## F10 Use a checklist widget
+Member · core · Goal: Track tasks in a checklist widget.
+Before: Signed in.; A dashboard with a checklist widget.
 
-1. The member views the checklist widget. The website shows the checklist items with their ticked or unticked states.
-   Changes: lists ChecklistItem.
-2. The member adds an item with text to the checklist.
+1. The member opens a dashboard with a checklist widget in the editor. The website shows the dashboard name and its widgets in order; the checklist widget shows its title and its items with ticked or unticked states.
+   Changes: reads Dashboard, reads Widget, lists ChecklistItem.
+2. The member edits the checklist title.
+   - Widget title (required, 1 to 100 characters), e.g. "Ideas"
+   The website saves the new title automatically, shows the updated title, and updates when the dashboard was last edited.
+   Changes: updates Widget.
+3. The member adds a new checklist item with text.
    - Checklist item text (required, 1 to 200 characters), e.g. "Buy milk"
-   The website autosaves the new item as unticked, updates the dashboard last-edited time, and shows it with the other items.
-   Changes: creates ChecklistItem, updates Dashboard.
-3. The member ticks or unticks a checklist item. The website toggles the state, autosaves it, updates the dashboard last-edited time, and shows the updated states.
-   Changes: updates ChecklistItem, updates Dashboard.
-4. The member chooses Remove on a checklist item. Confirm deletion (subflow STD01):
+   The website saves the item as unticked automatically, shows it at the end of the checklist, and updates when the dashboard was last edited.
+   Changes: creates ChecklistItem.
+4. The member ticks or unticks a checklist item. The website saves the new ticked state automatically, shows the updated state, and updates when the dashboard was last edited.
+   Changes: updates ChecklistItem.
+
+Other paths
+- F10.A01 (from 1, empty) The checklist widget has no items yet: The website shows the checklist widget with no items and offers adding an item as the next action. Back to 3.
+- F10.A02 (from 1, notFound) The dashboard or its checklist widget was deleted in the meantime: The website says the dashboard or widget is gone and shows the dashboard list. Flow ends.
+- F10.A03 (from 2, invalid) The title is empty: The website marks the title as required and keeps what was typed. Back to 2.
+- F10.A04 (from 2, failure) Saving the title fails: The website keeps the typed value and offers to retry. Back to 2.
+- F10.A05 (from 3, invalid) The item text is empty: The website marks the item text as required and keeps what was typed. Back to 3.
+- F10.A06 (from 3, failure) Saving the new item fails: The website keeps the typed value and offers to retry. Back to 3.
+- F10.A07 (from 4, failure) Saving the ticked state fails: The website keeps the previous ticked state and offers to retry. Back to 4.
+
+Outcome: The checklist title, items and ticked states are updated and are still there after a refresh.
+
+## F11 Use a link list widget
+Member · core · Goal: Keep and open useful links in a link list widget.
+Before: Signed in.; A dashboard with a link list widget.
+
+1. The member opens a dashboard with a link list widget in the editor. The website shows the dashboard name and its widgets in order; the link list widget shows its title and its entries with titles and web addresses.
+   Changes: reads Dashboard, reads Widget, lists LinkItem.
+2. The member edits the link list title.
+   - Widget title (required, 1 to 100 characters), e.g. "Ideas"
+   The website saves the new title automatically, shows the updated title, and updates when the dashboard was last edited.
+   Changes: updates Widget.
+3. The member adds a link entry with a title and a web address.
+   - Link title (required, 1 to 150 characters), e.g. "Neon design inspiration"
+   - Link web address (required, up to 2000 characters), e.g. "https://example.com"
+   The website saves the entry automatically, shows it in the link list, and updates when the dashboard was last edited.
+   Changes: creates LinkItem.
+4. The member chooses a link in the widget. The website opens the link web address for the member and keeps the link list unchanged.
+   Changes: reads LinkItem.
+
+Other paths
+- F11.A01 (from 1, empty) The link list widget has no entries yet: The website shows the link list widget with no entries and offers adding a link as the next action. Back to 3.
+- F11.A02 (from 1, notFound) The dashboard or its link list widget was deleted in the meantime: The website says the dashboard or widget is gone and shows the dashboard list. Flow ends.
+- F11.A03 (from 2, invalid) The title is empty: The website marks the title as required and keeps what was typed. Back to 2.
+- F11.A04 (from 2, failure) Saving the title fails: The website keeps the typed value and offers to retry. Back to 2.
+- F11.A05 (from 3, invalid) The link title is empty or the web address is missing or not a valid web address: The website marks what is wrong and keeps what was typed. Back to 3.
+- F11.A06 (from 3, failure) Saving the new link fails: The website keeps the typed values and offers to retry. Back to 3.
+- F11.A07 (from 4, notFound) The chosen link was removed in the meantime: The website says the link is gone and shows the updated link list. Back to 1.
+
+Outcome: The link list title and entries are updated and are still there after a refresh; choosing a link opens its address.
+
+## F12 Move and resize a widget
+Member · manage · Goal: Arrange widgets by position and size.
+Before: Signed in.; A dashboard with at least one widget.
+
+1. The member opens the dashboard in the editor. The website shows the dashboard name and its widgets in their relative order with their sizes.
+   Changes: reads Dashboard, lists Widget.
+2. The member changes a widget position relative to the other widgets. The website saves the new order automatically, shows the widgets rearranged, and updates when the dashboard was last edited.
+   Changes: updates Widget.
+3. The member resizes the widget between small, medium and large.
+   - Widget size (required, one of: small, medium, large), e.g. "medium"
+   The website saves the new size automatically, shows the widget with its new size, and updates when the dashboard was last edited.
+   Changes: updates Widget.
+
+Other paths
+- F12.A01 (from 1, empty) There are no widgets on the dashboard: The website shows the empty dashboard and offers adding a widget as the next action. Flow ends.
+- F12.A02 (from 1, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F12.A03 (from 2, failure) Saving the new position fails: The website keeps the previous order and offers to retry. Back to 2.
+- F12.A04 (from 3, invalid) No valid size was chosen: The website marks the size as required and keeps the current size. Back to 3.
+- F12.A05 (from 3, failure) Saving the new size fails: The website keeps the previous size and offers to retry. Back to 3.
+
+Outcome: The widget order and size are updated and are still there after a refresh.
+
+## F13 Remove a widget
+Member · manage · Goal: Remove a widget I no longer want.
+Before: Signed in.; A dashboard with at least one widget.
+
+1. The member opens the dashboard in the editor. The website shows the dashboard name and its widgets in order.
+   Changes: reads Dashboard, reads Widget.
+2. The member chooses to remove the widget. Confirm deletion (subflow STD01):
    1. (system) The website asks to confirm the deletion and says what else will be removed with it.
 
    Other paths
    - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
    - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
-   Changes: deletes ChecklistItem, updates Dashboard.
+   Changes: deletes Widget, deletes ChecklistItem, deletes LinkItem.
 
 Other paths
-- F16.A01 (from 1, empty) The checklist has no items yet: The website says there are no items yet and invites the member to add one. Back to 2.
-- F16.A02 (from 2, invalid) The item text is empty: The website marks the item text field and keeps what was typed. Back to 2.
-- F16.A03 (from 2, failure) Saving the new item fails: The website keeps the typed text and offers to retry. Back to 2.
-- F16.A04 (from 3, failure) Saving the tick change fails: The website keeps the previous ticked state and offers to retry. Back to 3.
-- F16.A05 (from 4, confirm) The member confirms the removal: The website permanently removes the item, autosaves the checklist, updates last-edited, and shows the updated list. Flow ends.
-- F16.A06 (from 4, cancel) The member cancels the removal: Nothing is removed; the website shows the checklist unchanged. Flow ends.
-- F16.A07 (from 1, notFound) The checklist widget or dashboard was deleted in the meantime: The website says the widget is gone and shows the dashboard as it is now. Flow ends.
+- F13.A01 (from 1, notFound) The dashboard or widget was deleted in the meantime: The website says the dashboard or widget is gone and shows the dashboard list. Flow ends.
+- F13.A02 (from 2, confirm) The member confirmed the removal: The website shows the dashboard without the removed widget and with the remaining widgets in their existing order. Flow ends.
+- F13.A03 (from 2, cancel) The member cancelled: Nothing is removed; the website shows the dashboard with the widget unchanged. Flow ends.
 
-Outcome: Checklist items and tick states are saved; a refresh shows the same items and states.
+Outcome: The widget is gone and stays gone after a refresh; other widgets keep their order.
 
-## F17 Use link-list widget
-Member · core · Goal: Keep titles and web addresses handy and open them.
-Before: Signed in.; A dashboard with a link-list widget is open in the editor.
+## F14 Rename a dashboard
+Member · manage · Goal: Give a dashboard a meaningful name.
+Before: Signed in.; At least one dashboard.
 
-1. The member views the link-list widget. The website shows the widget title and all saved link titles with their addresses, with options to add a link, edit or remove an entry, and open a link.
-   Changes: lists LinkEntry.
-2. The member adds a link title and address and saves it.
-   - Link title (required, 1 to 200 characters), e.g. "Design inspiration"
-   - Link address (required, up to 2000 characters), e.g. "https://example.com/article"
-   The website saves the entry automatically, shows it in the link list, and updates the dashboard last-edited time.
-   Changes: creates LinkEntry, updates Dashboard.
-3. The member edits a link title or address and saves it.
-   - Link title (required, 1 to 200 characters), e.g. "Design inspiration"
-   - Link address (required, up to 2000 characters), e.g. "https://example.com/article"
-   The website saves the changes automatically, shows the updated entry, and updates the dashboard last-edited time.
-   Changes: updates LinkEntry, updates Dashboard.
-4. The member selects a link entry to open it. The website opens the web address in a new tab and keeps the dashboard unchanged.
-   Changes: reads LinkEntry.
-5. The member chooses to remove a link entry. Confirm deletion (subflow STD01):
+1. The member opens the dashboard in the editor. The website shows the dashboard name and its widgets.
+   Changes: reads Dashboard.
+2. The member renames the dashboard.
+   - Dashboard name (required, 1 to 100 characters), e.g. "Morning focus"
+   The website saves the new name automatically, shows it in the editor and in the dashboard list, and updates when the dashboard was last edited.
+   Changes: updates Dashboard.
+
+Other paths
+- F14.A01 (from 1, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F14.A02 (from 2, invalid) The new name is empty: The website marks the name as required and keeps what was typed. Back to 2.
+- F14.A03 (from 2, failure) Saving the new name fails: The website keeps the typed value and offers to retry. Back to 2.
+
+Outcome: The dashboard has its new name and it is still there after a refresh.
+
+## F15 Duplicate a dashboard
+Member · manage · Goal: Copy a dashboard to reuse its setup.
+Before: Signed in.; At least one dashboard.
+
+1. The member opens the dashboard list. The website shows all of the member's own dashboards ordered by when each was last edited with that time.
+   Changes: lists Dashboard.
+2. The member chooses to duplicate a dashboard. The website creates a new dashboard named with copy added to the original name with copies of all widgets, titles, type settings, positions and sizes, and shows it in the list and in the editor.
+   Changes: creates Dashboard, creates Widget, creates ChecklistItem, creates LinkItem.
+
+Other paths
+- F15.A01 (from 1, empty) There are no dashboards yet: The website shows no dashboards and offers Create as the next action. Flow ends.
+- F15.A02 (from 2, notFound) The dashboard was deleted in the meantime: The website says the dashboard is gone and shows the dashboard list. Flow ends.
+- F15.A03 (from 2, failure) Duplicating fails: The website keeps the dashboard list unchanged and offers to retry. Back to 2.
+
+Outcome: A new dashboard copy exists alongside the original and both are still there after a refresh.
+
+## F16 Delete a dashboard
+Member · manage · Goal: Delete a dashboard I no longer want.
+Before: Signed in.; At least one dashboard.
+
+1. The member opens the dashboard list. The website shows all of the member's own dashboards ordered by when each was last edited with that time.
+   Changes: lists Dashboard.
+2. The member chooses to delete a dashboard. Confirm deletion (subflow STD01):
    1. (system) The website asks to confirm the deletion and says what else will be removed with it.
 
    Other paths
    - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
    - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
-   Changes: deletes LinkEntry, updates Dashboard.
+   Changes: deletes Dashboard, deletes Widget, deletes ChecklistItem, deletes LinkItem.
 
 Other paths
-- F17.A01 (from 1, empty) The link list has no entries yet: The website shows the widget with no entries and invites the member to add the first link. Back to 2.
-- F17.A02 (from 2, invalid) The title is empty or the address does not start with http:// or https://: The website marks what is wrong and keeps what was typed. Back to 2.
-- F17.A03 (from 2, failure) Saving the new entry fails: The website keeps the typed values and offers to retry. Back to 2.
-- F17.A04 (from 3, invalid) The title is empty or the address does not start with http:// or https://: The website marks what is wrong and keeps what was typed. Back to 3.
-- F17.A05 (from 3, failure) Saving the edited entry fails: The website keeps the typed values and offers to retry. Back to 3.
-- F17.A06 (from 5, confirm) The member confirms the removal: The website shows the link list without the entry and updates the dashboard last-edited time. Flow ends.
-- F17.A07 (from 5, cancel) The member cancels the removal: Nothing is removed; the website shows the link list unchanged. Flow ends.
+- F16.A01 (from 1, empty) There are no dashboards: The website shows no dashboards and offers Create as the next action. Flow ends.
+- F16.A02 (from 2, confirm) The member confirmed the deletion: The website shows the dashboard list without the deleted dashboard and its widgets. Flow ends.
+- F16.A03 (from 2, cancel) The member cancelled: Nothing is deleted; the website shows the dashboard list unchanged. Flow ends.
+- F16.A04 (from 2, notFound) The dashboard was already deleted: The website says the dashboard is gone and shows the dashboard list. Flow ends.
 
-Outcome: Link entries are saved and selecting one opens it in a new tab; a refresh shows the same entries.
+Outcome: The dashboard and its widgets are gone and stay gone after a refresh.
 
 ## Fields
-- FD01 Email (required, up to 254 characters), e.g. "sam@example.com". Member account address used to sign in and own dashboards
-- FD02 Password (required, 8 to 128 characters), e.g. "Sunny-day-42". Secret that proves ownership of the member account
+- FD01 Email (required, up to 254 characters), e.g. "member@example.com". The member's sign-in address
+- FD02 Password (required, 8 to 128 characters), e.g. "secret123". Secret that proves ownership of the account
 - FD03 Dashboard name (required, 1 to 100 characters), e.g. "Morning focus". How the member refers to the dashboard in the list and editor
-- FD04 Widget title (required, 1 to 100 characters), e.g. "Today's note". How the member refers to the widget inside its dashboard
-- FD05 Widget type (required, one of: note, counter, checklist, link list), e.g. "checklist". What kind of content the widget holds and how it can be used
-- FD06 Widget size (required, one of: small, medium, large), e.g. "medium". How much space the widget takes relative to other widgets
-- FD07 Note text (optional, up to 5000 characters), e.g. "Call dentist at noon.". Plain text kept inside a note widget
-- FD08 Counter label (required, 1 to 80 characters), e.g. "Cups of water". What the counter number counts
-- FD09 Checklist item text (required, 1 to 200 characters), e.g. "Buy milk". One task row inside a checklist widget
-- FD10 Link title (required, 1 to 200 characters), e.g. "Design inspiration". How the member refers to a saved web address
-- FD11 Link address (required, up to 2000 characters), e.g. "https://example.com/article". Web address opened when the link entry is selected
+- FD04 Widget type (required, one of: note, counter, checklist, link list), e.g. "note". Which kind of widget to add to the dashboard
+- FD05 Widget title (required, 1 to 100 characters), e.g. "Ideas". How the member refers to the widget on the dashboard
+- FD06 Widget size (required, one of: small, medium, large), e.g. "medium". How large the widget appears among the other widgets
+- FD07 Note text (optional, up to 5000 characters), e.g. "Call the dentist on Tuesday". Plain text kept in a note widget
+- FD08 Counter label (optional, up to 100 characters), e.g. "Glasses of water". What the counter number counts
+- FD09 Counter number (required), e.g. "3". Current count kept in a counter widget
+- FD10 Checklist item text (required, 1 to 200 characters), e.g. "Buy milk". Text of one item inside a checklist widget
+- FD11 Link title (required, 1 to 150 characters), e.g. "Neon design inspiration". Readable name shown for a web address in a link list widget
+- FD12 Link web address (required, up to 2000 characters), e.g. "https://example.com". Web address opened when the member chooses the link
 
 ## Forms
-- FM01 Account credentials: FD01, FD02
+- FM01 Account form: FD01, FD02
 
 ## STD01 Confirm deletion (standard subflow)
 
@@ -345,6 +331,5 @@ Other paths
 - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
 
 ## New assumptions
-- A11 (data): New widgets start titled by type (e.g. 'New note') at medium size with default content: empty note text, counter label empty and value 0, empty checklist and link list.
-- A12 (behavior): Dashboard list is ordered most-recently-edited first; an empty list invites creating the first dashboard instead of showing a dead end.
-- A13 (behavior): Removing a widget permanently removes its items and links, and removing a checklist item or link entry permanently removes that row, with no trash or undo.
+- A08 (behavior): The dashboard list is ordered by last edited, most recently edited first, so the member can find recent work without search or filters.
+- A09 (data): Dashboard name and widget title are required and cannot be saved empty; Create uses 'Untitled dashboard' and adding a widget uses a default title based on its type, and clearing a name in the editor is rejected.

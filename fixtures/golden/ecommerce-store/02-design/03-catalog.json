@@ -1,0 +1,1807 @@
+{
+  "meta": {
+    "artifact": "design-catalog",
+    "version": 1,
+    "hash": "98c08e9bb25c87ff2fbf66e6c1aa1dce6b21b80d5c81516cef91524bf61519c9",
+    "inputs": {
+      "design-architect": {
+        "version": 1,
+        "hash": "2672c9befccb92243f1da726dea8c4c63ccde4a6066a3b7aafb4f43faca907a5"
+      },
+      "design-theme": {
+        "version": 1,
+        "hash": "62fc443161f6a56121607e98db2bceb719b45962de4f591a9fedfc2bbb0598fa"
+      },
+      "flows-scope": {
+        "version": 1,
+        "hash": "241696a484e51255e1e75d75d9094e2be0f060a72a5e4d411f0c307a4f66fd23"
+      },
+      "flows-reconcile": {
+        "version": 1,
+        "hash": "eb7058a4e2f9420bf4ce853fa9b643b33d73590cbc4c2d5d061b29d42fe96630"
+      }
+    },
+    "stage": "design-catalog",
+    "model": "muse-spark-1.3",
+    "rounds": 2,
+    "createdAt": "2026-10-31T20:28:35.527Z"
+  },
+  "data": {
+    "widgets": [
+      {
+        "id": "W01",
+        "name": "Shop front hero",
+        "kind": "hero",
+        "holds": "Shows the shop name heading, small-batch story and how to order without messaging plus pickup and courier notes.",
+        "flowSteps": [
+          "F01.S01"
+        ],
+        "data": [
+          "ShopSetting.shopName",
+          "ShopSetting.pickupAddress",
+          "ShopSetting.pickupInstructions"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title showing the shop name",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "story",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "browseAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W02",
+        "name": "Shop pieces grid",
+        "kind": "cards",
+        "holds": "Provides type, availability and price-sort filters above a photo grid of pieces with price and availability tags and empty-state with clear-filters.",
+        "flowSteps": [
+          "F01.S02",
+          "F02.S01",
+          "F02.S02",
+          "F01.A01",
+          "F01.A02",
+          "F02.A01",
+          "F02.A02"
+        ],
+        "data": [
+          "Piece.name",
+          "Piece.type",
+          "Piece.basePrice",
+          "Variant.stockCount"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "Piece",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "typeFilter",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "availabilityFilter",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "sort",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "pieceCard",
+              "minWidthPx": 240,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 544
+      },
+      {
+        "id": "W03",
+        "name": "Shop footer",
+        "kind": "footer",
+        "holds": "Repeats the studio pickup address and pickup instructions for buyers.",
+        "flowSteps": [],
+        "data": [
+          "ShopSetting.pickupAddress",
+          "ShopSetting.pickupInstructions"
+        ],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "address",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 1,
+              "name": "instructions",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 528
+      },
+      {
+        "id": "W04",
+        "name": "Piece purchase detail",
+        "kind": "detail",
+        "holds": "Shows gallery photos, type tag, price, description and per-variant stock with variant picker, quantity selector and checkout button, plus sold-out state with link back to shop.",
+        "flowSteps": [
+          "F02.S03",
+          "F03.S01",
+          "F02.A03",
+          "F02.A04",
+          "F03.A01",
+          "F03.A07"
+        ],
+        "data": [
+          "Piece.name",
+          "Piece.type",
+          "Piece.basePrice",
+          "Piece.description",
+          "Piece.photo",
+          "Variant.glazeName",
+          "Variant.sizeName",
+          "Variant.stockCount",
+          "Variant.priceAdjustment"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [
+          "PieceGallery",
+          "VariantPicker"
+        ],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "gallery",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "details",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "variantPicker",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "quantity",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "checkoutAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [],
+        "minWidthPx": 448
+      },
+      {
+        "id": "W05",
+        "name": "Checkout form",
+        "kind": "form",
+        "holds": "Collects glaze, size, quantity, name, phone, fulfilment choice with conditional delivery address and optional discount code with Apply, shows piece total, discount, shipping and final total with inline errors and a submit button to review.",
+        "flowSteps": [
+          "F03.S02",
+          "F03.A02",
+          "F03.A03",
+          "F03.A04"
+        ],
+        "data": [
+          "Variant.glazeName",
+          "Variant.sizeName",
+          "Variant.stockCount",
+          "Order.buyerName",
+          "Order.phone",
+          "Order.fulfilment",
+          "Order.deliveryAddress",
+          "Order.pieceTotal",
+          "Order.discountAmount",
+          "Order.shippingCharge",
+          "Order.finalTotal",
+          "DiscountCode.codeWord"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Checkout",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "variantFields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "buyerFields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "fulfilmentFields",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "discountField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 5,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD15",
+          "FD16",
+          "FD17",
+          "FD18",
+          "FD19",
+          "FD20",
+          "FD21",
+          "FD22"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W06",
+        "name": "Order review receipt",
+        "kind": "detail",
+        "holds": "Shows review of items with glaze and size, buyer and fulfilment details and totals with Confirm order button, then becomes a receipt with pickup address and UPI-later note.",
+        "flowSteps": [
+          "F03.S03",
+          "F03.A05",
+          "F03.A06"
+        ],
+        "data": [
+          "Order.buyerName",
+          "Order.phone",
+          "Order.fulfilment",
+          "Order.deliveryAddress",
+          "Order.pieceTotal",
+          "Order.discountAmount",
+          "Order.shippingCharge",
+          "Order.finalTotal",
+          "Order.status",
+          "Order.paymentStatus",
+          "OrderItem.quantity",
+          "OrderItem.price",
+          "ShopSetting.pickupAddress",
+          "ShopSetting.pickupInstructions"
+        ],
+        "states": [
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Order confirmed",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "items",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "totals",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 4,
+              "name": "confirmAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W07",
+        "name": "Owner signup form",
+        "kind": "auth-form",
+        "holds": "Shows centered card with email and password fields, inline errors, Create account button plus Sign in instead and Cancel to shop links.",
+        "flowSteps": [
+          "F04.S01",
+          "F04.S02",
+          "F04.A01",
+          "F04.A02",
+          "F04.A03",
+          "F04.A04"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Create owner account",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "emailField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "passwordField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W08",
+        "name": "Owner signin form",
+        "kind": "auth-form",
+        "holds": "Shows centered card with email and password fields, inline errors, Sign in button plus Sign up and Cancel to shop links.",
+        "flowSteps": [
+          "F05.S01",
+          "F05.S02",
+          "F05.A01",
+          "F05.A02",
+          "F05.A03",
+          "F05.A04"
+        ],
+        "data": [
+          "Order.status",
+          "Piece.name"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Owner sign in",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "emailField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "passwordField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "submit",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 480,
+        "fields": [
+          "FD01",
+          "FD02"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W09",
+        "name": "Dashboard stats",
+        "kind": "stats",
+        "holds": "Shows count cards for new orders, orders awaiting UPI payment, nearly-gone and sold-out variants with links to orders and catalogue.",
+        "flowSteps": [
+          "F16.S01",
+          "F16.A01"
+        ],
+        "data": [
+          "Order.status",
+          "Order.paymentStatus",
+          "Variant.stockCount"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Overview",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "newOrdersCount",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "awaitingPaymentCount",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "lowStockCount",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "soldOutCount",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 400
+      },
+      {
+        "id": "W10",
+        "name": "Low-stock variants table",
+        "kind": "table",
+        "holds": "Lists variants with 2 or fewer left and sold-out with 0 left linking to their pieces for remaking.",
+        "flowSteps": [
+          "F16.S01",
+          "F16.A01"
+        ],
+        "data": [
+          "Variant.glazeName",
+          "Variant.sizeName",
+          "Variant.stockCount",
+          "Piece.name"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "Variant",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "variantRow",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "stockTag",
+              "minWidthPx": 64,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W11",
+        "name": "Recent orders preview",
+        "kind": "list",
+        "holds": "Previews newest orders with buyer, totals and status tags linking to the full order list.",
+        "flowSteps": [
+          "F16.S01",
+          "F16.A01"
+        ],
+        "data": [
+          "Order.buyerName",
+          "Order.status",
+          "Order.paymentStatus",
+          "Order.finalTotal"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "Order",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "orderRow",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "statusTag",
+              "minWidthPx": 64,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W12",
+        "name": "Catalogue header",
+        "kind": "page-header",
+        "holds": "Shows the Pieces heading with an Add piece button that opens the create dialog.",
+        "flowSteps": [
+          "F07.S01",
+          "F07.A05"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Pieces",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "addAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 288
+      },
+      {
+        "id": "W13",
+        "name": "Catalogue pieces grid",
+        "kind": "cards",
+        "holds": "Shows pieces as cards with photo, type tag, base price and stock summary, each linking to owner piece detail, with empty-state to add first piece.",
+        "flowSteps": [
+          "F08.S01",
+          "F09.S01",
+          "F08.A01",
+          "F09.A01"
+        ],
+        "data": [
+          "Piece.name",
+          "Piece.type",
+          "Piece.basePrice",
+          "Piece.photo",
+          "Variant.stockCount"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "Piece",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "pieceCard",
+              "minWidthPx": 240,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "stockTag",
+              "minWidthPx": 64,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 352
+      },
+      {
+        "id": "W14",
+        "name": "Owner piece header",
+        "kind": "page-header",
+        "holds": "Shows back link to catalogue, piece name heading and Delete action for the piece.",
+        "flowSteps": [
+          "F08.S02",
+          "F09.S02",
+          "F08.A02",
+          "F09.A02"
+        ],
+        "data": [
+          "Piece.name"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "backLink",
+              "minWidthPx": 32,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "deleteAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 336
+      },
+      {
+        "id": "W15",
+        "name": "Piece edit form",
+        "kind": "form",
+        "holds": "Provides editable fields for name, type, price, description and photos with Save and Cancel that keep typed values on errors.",
+        "flowSteps": [
+          "F08.S03",
+          "F08.A03",
+          "F08.A04",
+          "F08.A05"
+        ],
+        "data": [
+          "Piece.name",
+          "Piece.type",
+          "Piece.basePrice",
+          "Piece.description",
+          "Piece.photo"
+        ],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "nameField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "typeField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "priceField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "descriptionField",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 4,
+              "name": "saveAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13",
+          "FD14",
+          "FD06",
+          "FD07",
+          "FD08",
+          "FD09",
+          "FD10"
+        ],
+        "minWidthPx": 368
+      },
+      {
+        "id": "W16",
+        "name": "Piece variants table",
+        "kind": "table",
+        "holds": "Lists glaze, size, stock and price adjustment rows with an Add variant action and empty-state inviting to add variants.",
+        "flowSteps": [
+          "F08.S02",
+          "F08.S03",
+          "F08.A03",
+          "F08.A04",
+          "F08.A05",
+          "F08.A06"
+        ],
+        "data": [
+          "Variant.glazeName",
+          "Variant.sizeName",
+          "Variant.stockCount",
+          "Variant.priceAdjustment"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "Variant",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "variantRow",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "stockField",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "addAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13",
+          "FD14",
+          "FD06",
+          "FD07",
+          "FD08",
+          "FD09",
+          "FD10"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W17",
+        "name": "Orders table",
+        "kind": "table",
+        "holds": "Provides order-status and payment-status filters above a newest-first table with buyer, fulfilment, totals and status tags, pagination and clear-filters empty-state.",
+        "flowSteps": [
+          "F12.S01",
+          "F12.S02",
+          "F13.S01",
+          "F14.S01",
+          "F15.S01",
+          "F12.A01",
+          "F12.A02",
+          "F13.A01",
+          "F14.A01",
+          "F15.A01"
+        ],
+        "data": [
+          "Order.buyerName",
+          "Order.phone",
+          "Order.fulfilment",
+          "Order.finalTotal",
+          "Order.status",
+          "Order.paymentStatus"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "Order",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Orders",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "statusFilter",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "paymentFilter",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "orderRow",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 2,
+              "name": "statusTag",
+              "minWidthPx": 64,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 368
+      },
+      {
+        "id": "W18",
+        "name": "Order detail",
+        "kind": "detail",
+        "holds": "Shows buyer, phone, placed date and time with status tags, fulfilment block, items with glaze size quantity price and totals, with only allowed next-status plus Mark Paid and Cancel actions.",
+        "flowSteps": [
+          "F12.S03",
+          "F13.S02",
+          "F13.S03",
+          "F14.S02",
+          "F14.S03",
+          "F15.S02",
+          "F15.S03",
+          "F12.A03",
+          "F12.A04",
+          "F13.A02",
+          "F13.A03",
+          "F13.A04",
+          "F14.A02",
+          "F14.A03",
+          "F14.A04",
+          "F15.A02",
+          "F15.A03"
+        ],
+        "data": [
+          "Order.buyerName",
+          "Order.phone",
+          "Order.fulfilment",
+          "Order.deliveryAddress",
+          "Order.pieceTotal",
+          "Order.discountAmount",
+          "Order.shippingCharge",
+          "Order.finalTotal",
+          "Order.status",
+          "Order.paymentStatus",
+          "Order.placedAt",
+          "OrderItem.quantity",
+          "OrderItem.price"
+        ],
+        "states": [
+          "empty",
+          "error",
+          "notFound",
+          "denied"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "buyerBlock",
+              "minWidthPx": 160,
+              "text": "wrap"
+            },
+            {
+              "row": 1,
+              "name": "statusTags",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "items",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "actions",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W19",
+        "name": "Discount header",
+        "kind": "page-header",
+        "holds": "Shows the Discount codes heading with a New code button that opens the discount dialog.",
+        "flowSteps": [
+          "F10.S01"
+        ],
+        "data": [],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Discount codes",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "heading",
+              "minWidthPx": 160,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "newAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 288
+      },
+      {
+        "id": "W20",
+        "name": "Discount codes table",
+        "kind": "table",
+        "holds": "Lists codes with code word, kind and value, start and end dates and active state, each row with an Edit action, plus empty-state to create first code.",
+        "flowSteps": [
+          "F11.S01",
+          "F11.A01"
+        ],
+        "data": [
+          "DiscountCode.codeWord",
+          "DiscountCode.kind",
+          "DiscountCode.value",
+          "DiscountCode.startDate",
+          "DiscountCode.endDate",
+          "DiscountCode.isActive"
+        ],
+        "states": [
+          "empty",
+          "error"
+        ],
+        "containsHeading": false,
+        "repeat": "DiscountCode",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "codeWord",
+              "minWidthPx": 80,
+              "text": "ellipsis"
+            },
+            {
+              "row": 1,
+              "name": "valueTag",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "dates",
+              "minWidthPx": 96,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "editAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 400
+      },
+      {
+        "id": "W21",
+        "name": "Add piece form",
+        "kind": "form",
+        "holds": "Provides name, type, base price, description and photo uploader with validation and preview kept for session, with Save and Add-variants-next plus Cancel actions.",
+        "flowSteps": [
+          "F07.S02",
+          "F07.A01",
+          "F07.A02"
+        ],
+        "data": [
+          "Piece.name",
+          "Piece.type",
+          "Piece.basePrice",
+          "Piece.description",
+          "Piece.photo"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [
+          "PhotoUploader"
+        ],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "nameField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "typeField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "photoUpload",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "saveAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD06",
+          "FD07",
+          "FD08",
+          "FD09",
+          "FD10"
+        ],
+        "minWidthPx": 192
+      },
+      {
+        "id": "W22",
+        "name": "Variant form",
+        "kind": "form",
+        "holds": "Provides compact fields for glaze name, size name, stock count and optional price adjustment with Save and Add-another plus Close actions keeping typed values on errors.",
+        "flowSteps": [
+          "F07.S03",
+          "F07.A03",
+          "F07.A04"
+        ],
+        "data": [
+          "Variant.glazeName",
+          "Variant.sizeName",
+          "Variant.stockCount",
+          "Variant.priceAdjustment"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "glazeField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "sizeField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "stockField",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 4,
+              "name": "saveAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "3"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD11",
+          "FD12",
+          "FD13",
+          "FD14"
+        ],
+        "minWidthPx": 184
+      },
+      {
+        "id": "W23",
+        "name": "Delete piece confirm",
+        "kind": "custom",
+        "holds": "Asks to confirm removal naming the piece and saying variants leave the shop while past orders stay, with Confirm deletion and Keep actions.",
+        "flowSteps": [
+          "F09.S03",
+          "STD01.S01",
+          "STD01.A01",
+          "STD01.A02",
+          "F09.A03",
+          "F09.A04"
+        ],
+        "data": [
+          "Piece.name"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "message",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "confirmAction",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "cancelAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 264
+      },
+      {
+        "id": "W24",
+        "name": "Discount code form",
+        "kind": "form",
+        "holds": "Provides code word, kind selector for percentage or fixed rupees, value, start and end dates and active switch when editing, with Save and Cancel actions.",
+        "flowSteps": [
+          "F10.S02",
+          "F11.S02",
+          "F11.S03",
+          "F10.A01",
+          "F10.A02",
+          "F10.A03",
+          "F11.A02",
+          "F11.A03",
+          "F11.A04",
+          "F11.A05"
+        ],
+        "data": [
+          "DiscountCode.codeWord",
+          "DiscountCode.kind",
+          "DiscountCode.value",
+          "DiscountCode.startDate",
+          "DiscountCode.endDate",
+          "DiscountCode.isActive"
+        ],
+        "states": [
+          "notFound"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "codeField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 1,
+              "name": "kindField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "valueField",
+              "minWidthPx": 64,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "dateFields",
+              "minWidthPx": 96,
+              "text": "none"
+            },
+            {
+              "row": 3,
+              "name": "saveAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD23",
+          "FD24",
+          "FD25",
+          "FD26",
+          "FD27",
+          "FD28"
+        ],
+        "minWidthPx": 368
+      },
+      {
+        "id": "W25",
+        "name": "Cancel order confirm",
+        "kind": "custom",
+        "holds": "Asks to confirm cancellation saying quantities return to variant stock, with Confirm cancellation and Keep order actions.",
+        "flowSteps": [
+          "F15.S04",
+          "F15.A04",
+          "F15.A05"
+        ],
+        "data": [
+          "Order.status",
+          "Variant.stockCount"
+        ],
+        "states": [
+          "error"
+        ],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "message",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 2,
+              "name": "confirmAction",
+              "minWidthPx": 80,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "cancelAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "3",
+          "padding": "3"
+        },
+        "maxWidthPx": 0,
+        "fields": [],
+        "minWidthPx": 264
+      },
+      {
+        "id": "W26",
+        "name": "Shop settings form",
+        "kind": "form",
+        "holds": "Provides narrow fields for shop name, studio pickup address and pickup instructions with Save that keeps typed values on validation errors.",
+        "flowSteps": [
+          "F17.S01",
+          "F17.S02",
+          "F17.A01",
+          "F17.A02"
+        ],
+        "data": [
+          "ShopSetting.shopName",
+          "ShopSetting.pickupAddress",
+          "ShopSetting.pickupInstructions"
+        ],
+        "states": [],
+        "containsHeading": true,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [
+          {
+            "name": "title",
+            "kind": "words",
+            "holds": "Page title Shop settings",
+            "minWidthPx": 160,
+            "maxWidthPx": 0
+          }
+        ],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "shopNameField",
+              "minWidthPx": 160,
+              "text": "none"
+            },
+            {
+              "row": 2,
+              "name": "addressField",
+              "minWidthPx": 240,
+              "text": "wrap"
+            },
+            {
+              "row": 3,
+              "name": "saveAction",
+              "minWidthPx": 80,
+              "text": "none"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 640,
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05"
+        ],
+        "minWidthPx": 272
+      },
+      {
+        "id": "W27",
+        "name": "Shop preview",
+        "kind": "detail",
+        "holds": "Shows live preview of exactly how buyers will see shop name, pickup address and instructions.",
+        "flowSteps": [
+          "F17.S01",
+          "F17.S02"
+        ],
+        "data": [
+          "ShopSetting.shopName",
+          "ShopSetting.pickupAddress",
+          "ShopSetting.pickupInstructions"
+        ],
+        "states": [],
+        "containsHeading": false,
+        "repeat": "",
+        "newComponents": [],
+        "slots": [],
+        "layout": {
+          "parts": [
+            {
+              "row": 1,
+              "name": "preview",
+              "minWidthPx": 240,
+              "text": "wrap"
+            }
+          ],
+          "gap": "4",
+          "padding": "4"
+        },
+        "maxWidthPx": 960,
+        "fields": [
+          "FD03",
+          "FD04",
+          "FD05"
+        ],
+        "minWidthPx": 272
+      }
+    ],
+    "components": [
+      {
+        "name": "PieceGallery",
+        "minWidthPx": 320,
+        "maxWidthPx": 0,
+        "slots": []
+      },
+      {
+        "name": "VariantPicker",
+        "minWidthPx": 240,
+        "maxWidthPx": 0,
+        "slots": []
+      },
+      {
+        "name": "PhotoUploader",
+        "minWidthPx": 240,
+        "maxWidthPx": 0,
+        "slots": []
+      }
+    ],
+    "screens": [
+      {
+        "screen": "S01",
+        "parts": [
+          "W01",
+          "W02",
+          "W03"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S02",
+        "parts": [
+          "W04"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S03",
+        "parts": [
+          "W05"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S04",
+        "parts": [
+          "W06"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S05",
+        "parts": [
+          "W07"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S06",
+        "parts": [
+          "W08"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S07",
+        "parts": [
+          "W09",
+          "W10",
+          "W11"
+        ],
+        "frameSteps": [
+          "F06.S01"
+        ]
+      },
+      {
+        "screen": "S08",
+        "parts": [
+          "W12",
+          "W13"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S09",
+        "parts": [
+          "W14",
+          "W15",
+          "W16"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S10",
+        "parts": [
+          "W17"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S11",
+        "parts": [
+          "W18"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S12",
+        "parts": [
+          "W19",
+          "W20"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S13",
+        "parts": [
+          "W21"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S14",
+        "parts": [
+          "W22"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S15",
+        "parts": [
+          "W23"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S16",
+        "parts": [
+          "W24"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S17",
+        "parts": [
+          "W25"
+        ],
+        "frameSteps": []
+      },
+      {
+        "screen": "S18",
+        "parts": [
+          "W26",
+          "W27"
+        ],
+        "frameSteps": []
+      }
+    ]
+  }
+}
