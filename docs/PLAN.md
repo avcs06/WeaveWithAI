@@ -1485,11 +1485,32 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
   - CONTRACT-001 to 019 with fixtures (a hand-written reading-list contract and mutations).
   - Done when: each rule has a passing and a failing test.
 
-- [ ] **C4** Prompt and stage, in parallel with design (40 min). Depends: C3, DS7
+- [x] **C4** Prompt and stage, in parallel with design (40 min) (folded into C7, 2026-11-01). Depends: C3, DS7
   - `prompt.ts` fills `src/agents/03contract/prompts/prompt.md` (draft provided);
     `weave run` runs design and contracts with `Promise.all` after flows, both
     recording the same flows version.
   - Done when: golden freelancer workspace produces a contract with zero mandatory issues.
+
+- [x] **C7** The contract covers every widget (1.5 h) (done 2026-11-01). Depends: C3, DS23
+  - Why: the contract is the shortest stage, and its only check for the MVP
+    is that every UX element is covered: no widget without a source for its
+    data, no step without the operation it calls (user, 2026-11-01).
+    Backend feasibility is out of scope.
+  - The stashed C1 to C3 code moved to `src/agents/03contract/` in the stage
+    layout. The contract now holds entities with plain fields, enums,
+    operations with the flow fields they take, and the operations that load
+    each widget (`widgets`).
+  - Removed: `compile.ts`, `conventions.ts`, seed rows, invalid examples,
+    auth settings, access, errors, lifecycles, transactions, open business
+    rules, and CONTRACT-005, 006, 008, 009 and 013 to 019.
+  - CONTRACT-007 checks inputs; CONTRACT-012 checks that every field a widget
+    asks for goes to an operation of its flow; CONTRACT-020 checks that every
+    value a widget shows is a field and is loaded by one of its reads.
+  - The stage reads the scope, the flows and the design catalog's widgets.
+    It runs after `design-catalog`, side by side with screen, invent, draw
+    and frame, so `--to contract` stops before the screen calls.
+  - Done when: `pnpm typecheck`; `pnpm test`. The first live run waits for
+    the user's go.
 
 - [ ] **C5** Renderer (30 min). Depends: C4
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.
@@ -1502,6 +1523,12 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
 ## Phase 5: Reconciliation and freeze (Fri Oct 30, afternoon to night)
 
 Spec: [specs/reconciliation.md](specs/reconciliation.md). Decisions: D5.1 to D5.5. Steps 30 to 35.
+
+- [ ] **R0** Rescope reconciliation after C7 (30 min). Depends: C7
+  - Why: C7 checks widget coverage inside the contract stage and dropped
+    `localSteps`, `needsRule` and the conventions that `specs/reconciliation.md`
+    and `04reconcile/prompts/patch-contract.md` still read; R1 to R6 need a
+    new scope before they start.
 
 - [ ] **R1** Coverage matrix (60 min). Depends: C6, DS9
   - `src/agents/04reconcile/matrix.ts`: `buildMatrix`, data resolution as in the spec.

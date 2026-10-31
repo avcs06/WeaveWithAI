@@ -10,9 +10,9 @@ the artifacts it was made from.
 ```text
 idea.md (+ answers.json)
   └─ scope ─ flows-catalog ─ flows-expand (batches) ─ flows (reconcile)   Phase 2   D2.1 E
-        ├─ design: theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
-        └─ contracts                                Phase 4   specs/contracts.md
-              (design and contracts run in parallel from the same flows version)
+        └─ design: theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
+              └─ contract, beside screen, invent, draw and frame   Phase 4   specs/contracts.md
+                    (it reads the flows and the catalog's widgets)
   └─ reconcile ─ freeze (spec.lock.json)            Phase 5   specs/reconciliation.md
   └─ scaffold app from template/ ─ apply theme      Phase 6   steps 36, 37
         └─ codegen from the contract: types, client, hooks, seed, mock API, API tests
@@ -81,7 +81,7 @@ src/
     stages.ts            the pipeline and its stage registry
     01flows/             scope, catalog, expand, reconcile
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame, assemble
-    03contract/          domain + operations, plus compile.ts
+    03contract/          the records and operations behind every widget
     04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   codegen/               planned: ledger, entities, mock API, API tests, page shells
@@ -112,7 +112,7 @@ runs/<runId>/
   02-design/08-assemble.json  02-design/08-assemble.md
   02-design/08-skeleton.json  02-design/08-wireframes.html  02-design/08-ds-gaps.json
   02-design/01-theme-light.png  02-design/01-theme-dark.png   every component in the theme (weave app)
-  03-contract.json  03-contract.md
+  03-contract.json             the records and operations behind every widget
   04-matrix.json  04-reconcile.md
   spec.lock.json               frozen versions for implementation
   app/                         the generated app (a template copy plus generated code)

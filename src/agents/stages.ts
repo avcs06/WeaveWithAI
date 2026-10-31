@@ -19,6 +19,7 @@ import {
   screenStage,
   themeStage,
 } from './02design/stages';
+import { contractStage } from './03contract/stage';
 
 export type StageContext = {
   run: Run;
@@ -45,12 +46,12 @@ export const PIPELINE: string[] = [
   'design-theme',
   'design-architect',
   'design-catalog',
+  'contract',
   'design-screen',
   'design-invent',
   'design-draw',
   'design-frame',
   'design-assemble',
-  'contract',
   'reconcile',
   'freeze',
   'scaffold',
@@ -62,9 +63,9 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
-/** Stages that read nothing of each other's, so they run side by side: after the catalog, the layouts, components, widgets and frames (DS32). */
+/** Stages that read nothing of each other's, so they run side by side: after the catalog, the contract, layouts, components, widgets and frames (DS32, C7). */
 export const SIDE_BY_SIDE: string[][] = [
-  ['design-screen', 'design-invent', 'design-draw', 'design-frame'],
+  ['contract', 'design-screen', 'design-invent', 'design-draw', 'design-frame'],
 ];
 
 /** `order` in runs of stages that start together: each side-by-side group as one batch, every other stage alone. */
@@ -92,4 +93,5 @@ export const stages: StageDef[] = [
   drawStage,
   frameStage,
   assembleStage,
+  contractStage,
 ];

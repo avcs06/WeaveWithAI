@@ -26,7 +26,8 @@ src/
     01flows/             scope, catalog, expand, reconcile; the flow shapes and rules they share
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame,
                          assemble; the shapes, config and DESIGN rules they share
-    03contract/ 04reconcile/   prompts of later stages, not built yet
+    03contract/          the contract: the records and operations behind every widget
+    04reconcile/         prompts of a later stage, not built yet
 ```
 
 Each stage is a folder `<NN><name>` in its group, and a full pipeline stage
