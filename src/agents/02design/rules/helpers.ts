@@ -3,12 +3,12 @@ import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows, Step } from '../../01flows/schema';
 import type { DesignNode, Ia, Screens } from '../schema';
 import type { Shell } from '../schema-boxes';
-import type { ComponentDefaults, Layouts } from '../02theme/schema';
-import type { Processed as Plan, Planned } from '../03architect/process';
-import type { Defined, Processed as Catalog } from '../04catalog/process';
-import type { ScreenLayout } from '../05screen/schema';
-import type { Build, ModelNode } from '../07draw/schema';
-import type { FrameBuild } from '../08frame/schema';
+import type { ComponentDefaults, Layouts } from '../01theme/schema';
+import type { Processed as Plan, Planned } from '../02architect/process';
+import type { Defined, Processed as Catalog } from '../03catalog/process';
+import type { ScreenLayout } from '../04screen/schema';
+import type { Build, ModelNode } from '../06draw/schema';
+import type { FrameBuild } from '../07frame/schema';
 
 // What the design rules (DESIGN-0NN, specs/design.md) read: the IA alone, one
 // screen's or shell's nodes, or the whole screens artifact, with the flows,

@@ -10,7 +10,7 @@ the artifacts it was made from.
 ```text
 idea.md (+ answers.json)
   └─ scope ─ flows-catalog ─ flows-expand (batches) ─ flows (reconcile)   Phase 2   D2.1 E
-        ├─ design: brief ─ theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
+        ├─ design: theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
         └─ contracts                                Phase 4   specs/contracts.md
               (design and contracts run in parallel from the same flows version)
   └─ reconcile ─ freeze (spec.lock.json)            Phase 5   specs/reconciliation.md
@@ -44,7 +44,7 @@ benchmark stage (section 13) reports the frontend's quality in one table.
    recorded as known issues in the report and the run state; the run goes on.
 6. **Deterministic where possible.** Contrast checks, the layout skeleton,
    contract code, test scaffolds, Git and packaging are code. A model is used
-   only where judgement is needed, the theme's colors included (D3.3 E),
+   only where judgement is needed, the theme's colors included (D3.3 F),
    picked from ramps code computes (DS27).
 7. **Ownership.** Each stage may change only its own artifacts and folders.
    Implementation stages can never edit acceptance tests or thresholds (R2).
@@ -80,7 +80,7 @@ src/
   agents/
     stages.ts            the pipeline and its stage registry
     01flows/             scope, catalog, expand, reconcile
-    02design/            brief, theme, architect, catalog, screen, invent, draw, frame, assemble
+    02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame, assemble
     03contract/          domain + operations, plus compile.ts
     04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
@@ -106,12 +106,12 @@ runs/<runId>/
   01-flows/02-catalog.json  01-flows/02-catalog.md   every flow's header and description, the reusable fields, forms, subflows
   01-flows/03-expand.json          the expansion batches assembled, before reconciliation
   01-flows/04-reconcile.json  01-flows/04-reconcile.md   the flows every later stage reads
-  02-design/01-brief.json  02-design/02-theme.json
-  02-design/03-architect.json  02-design/04-catalog.json  02-design/05-screen.json   the plan, the widgets, the layouts
-  02-design/06-invent.json  02-design/07-draw.json  02-design/08-frame.json       the components, widgets and frames drawn
-  02-design/09-assemble.json  02-design/09-assemble.md
-  02-design/09-skeleton.json  02-design/09-wireframes.html  02-design/09-ds-gaps.json
-  02-design/02-theme-light.png  02-design/02-theme-dark.png   every component in the theme (weave app)
+  02-design/01-theme.json                                                       the brief and the theme
+  02-design/02-architect.json  02-design/03-catalog.json  02-design/04-screen.json   the plan, the widgets, the layouts
+  02-design/05-invent.json  02-design/06-draw.json  02-design/07-frame.json       the components, widgets and frames drawn
+  02-design/08-assemble.json  02-design/08-assemble.md
+  02-design/08-skeleton.json  02-design/08-wireframes.html  02-design/08-ds-gaps.json
+  02-design/01-theme-light.png  02-design/01-theme-dark.png   every component in the theme (weave app)
   03-contract.json  03-contract.md
   04-matrix.json  04-reconcile.md
   spec.lock.json               frozen versions for implementation
@@ -209,7 +209,7 @@ and blockers) and the answers given since the last generation, asking for
 a patch: the items that changed and the new ones, each complete, and the ids
 to remove (D1.5 C, F16). The runner merges the patch into the current
 document, and validators and reviewers see the merged one. A stage with no
-keyed arrays, such as the brief, gets the full corrected JSON. A fix with
+keyed arrays, such as the theme, gets the full corrected JSON. A fix with
 nothing pending is skipped,
 but the round's reviewer calls still run. From round 2 on, validators and
 reviewers look at the same output, whatever the validators found: a

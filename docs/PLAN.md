@@ -1302,6 +1302,24 @@ Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 
   - The assemble routing test uses LAYOUT-070, a hero padded under the
     overlay header, as its issue found only on the assembled page.
 
+- [x] **DS42** The brief and the theme in one call (4 h) (done 2026-11-01). Depends: DS35, DS41
+  - Why: the user merged them (2026-11-01, D3.3 F), so one call picks the
+    hues, chromas and steps together, and the brief's two review calls go.
+  - `01theme` holds the stage: the brief's schema (`brief.ts`, without
+    `pageBackground`), its fonts and its rules beside the theme's. The call
+    answers the brief first, then `colors` as a list of modes, each with its
+    own `background` and its entity sets by noun, then the layouts and the
+    defaults. It runs on the strong model at high, drafting at 0.7, 32k.
+  - The prompt says how code makes a ramp and which steps read on which in
+    every hue (`stepGuide`, the worst case over all hues and chromas), asks
+    for the mood the page should put people in, and lets the feel choose
+    the background freely within colors and gradients (user).
+  - THEME-010 holds the modes and entity sets to the brief; BRIEF-006 went,
+    since THEME-005 checks each mode's background. One artifact,
+    `02-design/01-theme.json`, holds `{ brief, theme }`; `designInputs` and
+    `weave app` read it. The later stages moved down one number, 03architect
+    to 02architect through 09assemble to 08assemble, with their artifacts.
+
 - [ ] **DS40** DESIGN-028 on a step goes to the widgets serving it (15 min). Depends: DS37
   - Found in DS37: DESIGN-028 at a step id (F01.S02) has no owner, as
     DESIGN-008 had. Routed to several widgets, each fix call picks a

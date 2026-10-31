@@ -3,7 +3,7 @@
 Decisions: D3.1 to D3.11, and DS23 for the chain. Each stage keeps its
 prompts in its folder's `prompts/`: `prompt.md` with its `input.md` user
 message, and its review guides `review-peer.md` and `review-output.md`. Draw
-and frame share the node guide in `07draw/prompts/nodes.md`. The brief, the
+and frame share the node guide in `06draw/prompts/nodes.md`. The brief, the
 theme, the architect and invent have a peer and an output guide; catalog,
 screen, draw and frame have an output guide alone.
 
@@ -32,22 +32,21 @@ the new-component budget (DESIGN-006) counts inner pages only.
 ## Shape
 
 ```text
-idea + scope ─▶ brief (direction: audience, look, hues, fonts) ─▶ 02-design/01-brief.json
-brief + scope + flows ─▶ theme (color steps, page layouts, component defaults) ─▶ 02-design/02-theme.json
-scope + flows + brief + theme ─▶ architect (screens, navigation, steps, composition, new components) ─▶ 02-design/03-architect.json
-architect ─▶ catalog (widget definitions, component widths, the parts of each screen) ─▶ 02-design/04-catalog.json
+idea + scope + flows ─▶ theme (the brief, then color steps, page layouts, component defaults) ─▶ 02-design/01-theme.json
+scope + flows + theme ─▶ architect (screens, navigation, steps, composition, new components) ─▶ 02-design/02-architect.json
+architect ─▶ catalog (widget definitions, component widths, the parts of each screen) ─▶ 02-design/03-catalog.json
 catalog ─▶ screen, one call per page (box tree, instances, slot content)    ┐
         ─▶ invent, one call per new component (layout and nodes)            │ in parallel
         ─▶ draw, one call per widget (layout and nodes)                     │
         ─▶ frame, one call per used shell (layout and nodes)                ┘
-   ─▶ assemble in code ─▶ 02-design/09-assemble.json ─▶ skeleton, whole-design and LAYOUT rules
-   ─▶ one fix through the owning draw or frame stage ─▶ 02-design/09-assemble.md, 02-design/09-wireframes.html, 02-design/09-ds-gaps.json
-Phase 7: prototype pages from 02-design/09-assemble.json ─▶ rendered checks ─▶ visual rubric
+   ─▶ assemble in code ─▶ 02-design/08-assemble.json ─▶ skeleton, whole-design and LAYOUT rules
+   ─▶ one fix through the owning draw or frame stage ─▶ 02-design/08-assemble.md, 02-design/08-wireframes.html, 02-design/08-ds-gaps.json
+Phase 7: prototype pages from 02-design/08-assemble.json ─▶ rendered checks ─▶ visual rubric
 ```
 
 Each call runs the stage loop of D1.12 with its own validators and review
 guides, and a fix returns a patch (F16). Each step is a pipeline stage of its
-own, in `src/agents/02design/`: `design-brief`, `design-theme`,
+own, in `src/agents/02design/`: `design-theme`,
 `design-architect`, `design-catalog`, `design-screen`, `design-invent`,
 `design-draw`, `design-frame` and `design-assemble` (code). Each writes its
 artifact to `02-design/NN-name.json` in the run. Screen, invent, draw and
@@ -79,15 +78,21 @@ screen, draw and frame run at medium and 0.2; every fix runs at medium and
 - Token keys from the inventory: spacing keys (`0`, `0.25`, `0.5` ... `16`),
   radius keys, font sizes.
 
-## Brief (`src/agents/02design/schema.ts`)
+## Theme: one call, the brief and its values (D3.3 F)
 
-The brief is the one call that decides the app's direction once: who uses it,
-how it feels, its brand hue, fonts and shapes (D3.3 E). It runs at high
-reasoning and drafts at temperature 0.7 (fixes at 0.2); its output is small and sets the whole look.
-Its prompt gets the idea, the scope and the font lists, not the design
-system, and a table of 12 named hues with their OKLCH degrees, which code
-fills with culori from one reference color per name (DS26). The theme call
-turns it into exact values and frames the pages.
+The theme call decides the app's direction and writes every final value in
+one answer (user, 2026-11-01). It runs at high reasoning on the strong model
+and drafts at temperature 0.7 (fixes at 0.2), with a 32k budget. Its prompt
+(`01theme/prompts/prompt.md`) gets the idea, the scope, what each flow is
+(id, name, role, category, auth kind and goal; the frame needs no steps), the
+font lists, a table of 12 named hues with their OKLCH degrees, which code
+fills with culori from one reference color per name (DS26), how code makes a
+ramp, and the design system as prose. `makeThemeSchema(inventory)` in
+`01theme/schema.ts` is built from the inventory, so the call writes spacing
+keys the design system has and each component's own values.
+
+The answer starts with the brief, the direction the later stages read
+(`01theme/brief.ts`):
 
 ```ts
 export const Brief = z.object({
@@ -99,7 +104,6 @@ export const Brief = z.object({
   colorScheme: z.enum(['light', 'dark', 'both']),
   seedHue: z.number().describe('Brand hue, 0 to 360 degrees'),
   seedChroma: z.enum(['muted', 'balanced', 'vivid']),
-  pageBackground: z.string(), // one CSS background value, a color or gradients, for the first mode (DS35)
   frameHue: z.number(),      // the header's, sidebars' and footer's
   frameChroma: z.enum(['neutral', 'muted', 'balanced', 'vivid']),
   baseHue: z.number(),       // the base set most components use (secondary buttons, inputs, cards, tables, menus)
@@ -121,8 +125,8 @@ export const Brief = z.object({
 });
 ```
 
-`UI_FONTS`, `DISPLAY_FONTS` and `MONO_FONTS` in `src/agents/02design/01brief/fonts.ts` come from the
-catalog `src/agents/02design/01brief/google-fonts.json` (user, 2026-10-30): the families
+`UI_FONTS`, `DISPLAY_FONTS` and `MONO_FONTS` in `src/agents/02design/01theme/fonts.ts` come from the
+catalog `src/agents/02design/01theme/google-fonts.json` (user, 2026-10-30): the families
 `next/font/google` exports with a latin subset and a Google popularity under
 120, 193, most popular first, each with its weights, whether it is variable,
 Google's category and popularity, a one-line description the brief prompt
@@ -135,48 +139,47 @@ first and a model favors the top of a list, so the brief names three
 candidates per role, each with a reason, and the first is used (DS26). The
 catalog was made once and is not regenerated.
 
-## Theme: the theme call (D3.3 E)
-
-The theme call turns the brief into every final value, at medium reasoning
-and temperature 0.2: `prompt-theme.md`, with the design system as prose, and
-`makeThemeSchema(brief, inventory)` in `schema-theme.ts`. Its input is the
-brief, the scope and what each flow is (id, name, role, category, auth kind
-and goal; the frame needs no steps). The schema is built from the brief and the
-inventory, so the call writes exactly the brief's modes, a set per colored
-entity, spacing keys the design system has, and each component's own values.
-
-Code builds a 12-step OKLCH ramp, in each mode, for each hue and chroma the
-brief names: the brand, the base set, the frame and each colored entity.
-The prompt shows each step's lightness and its contrast on white and on
-black. The call assigns each color role to a step of its set's ramp; the
-page's colors take steps from the base or the brand ramp. `buildTheme` turns
-the steps into hex, so the theme artifact keeps its shape (DS27, user,
-2026-10-31).
-
-The page's background is CSS, a color or gradients, so it can be more than a
-tint (DS35, user 2026-10-31). The brief writes it for its first mode, and the
-theme writes the other mode's when the app has both. `pageBg` stays a solid
-step: the color under the background and the one disabled states fade into.
-BRIEF-006 and THEME-005 keep the background to colors and gradients, and
-THEME-001 checks page text on every color in it.
+Then the values:
 
 ```ts
-colors: { light?, dark? },  // the modes the brief's colorScheme names, each role a ramp step; each mode:
-  // theme: ColorSet (the 12 roles, the brand's), base: ColorSet (the set most components use),
-  // page: { pageBg, pageFg, pageFgMuted, frameBg, divider, backdrop, skeleton }, plus the dark mode's
-  //   `background` when the app has both; the built page also has `pageBackground` (CSS)
-  // entity: { [noun in camelCase]: ColorSet }, one per colored entity
+colors: [{ mode, background, theme, base, page, entities }],  // each mode the brief's colorScheme names, once
+  // background: the mode's page background, one CSS value of colors and gradients
+  // theme: StepSet (the 12 roles, the brand's), base: StepSet (the set most components use)
+  // page: { pageBg, pageFg, pageFgMuted, frameBg, divider, backdrop, skeleton }, each a ramp step
+  // entities: [{ noun, steps: StepSet }], one per colored entity
 layouts: { app: PageLayout, marketing: PageLayout },
 defaults: { [Component]: { [variant]: value, look: value } },  // components whose recipe has defaults or looks
 ```
 
+Code builds a 12-step OKLCH ramp, in each mode, for each hue and chroma the
+brief names: the brand, the base set, the frame and each colored entity. No
+ramp exists before the answer gives its hues, so the prompt says how code
+makes one: each step's lightness, each chroma's strength and each step's
+share of it. For each step in each mode it also lists the steps that reach
+4.5:1 and 3:1 on it. Contrast follows lightness, so it takes the worst case
+over every hue and chroma, which holds for any two ramps (`stepGuide` in
+`ramps.ts`). The call assigns each color role to a step of its set's ramp;
+the page's colors take steps from the base or the brand ramp. `buildTheme`
+turns the steps into hex, so the theme keeps its shape (DS27).
+
+The prompt asks for colors that set the mood the page should put people in.
+Each mode writes its own page background, one CSS value of colors and
+gradients that the feel chooses freely: a tint, a gradient, glows or a
+pattern (DS35; user, 2026-11-01). `pageBg` stays a solid step: the color
+under the background and the one disabled states fade into. THEME-005 keeps
+the background to colors and gradients, and THEME-001 checks page text on
+every color in it. THEME-010 holds the modes to the brief's `colorScheme`
+and the entity sets to its colored nouns, which the schema cannot, since
+both come in one answer.
+
 The page also gets `divider`, `backdrop` and `skeleton`, which follow no hue
 of the brief; THEME-009 checks they show on the colors chosen (user,
 2026-10-30). Only the status sets stay the template's for every app.
-`buildTheme(brief, call)` in `theme.ts` makes `02-design/02-theme.json`: the call's
-values with hex in capitals, the brief's fonts, radius, focus ring and
-density, and a contrast table of every pair the THEME rules check. A failing
-pair goes back to the theme call in its fix rounds.
+`themed(call)` in `build.ts` makes `02-design/01-theme.json`: the brief, and
+the theme, which is the call's values with hex in capitals, the brief's
+fonts, radius, focus ring and density, and a contrast table of every pair
+the THEME rules check. A failing pair, or a brief rule, goes back to the
+call in its fix rounds.
 
 | Theme            | Template file                  | What changes                                              |
 | ---------------- | ------------------------------ | --------------------------------------------------------- |
@@ -269,7 +272,7 @@ instances: each box lays its children in a row or a column, and each child
 takes a size along it (its content, a share of what is left, or a fixed
 width), so a side panel can be fixed 280 wide beside a main area that fills.
 
-The solver (`src/agents/02design/09assemble/skeleton/skeleton.ts`) works at
+The solver (`src/agents/02design/08assemble/skeleton/skeleton.ts`) works at
 1280 by 800; the MVP has no phone layout. A page's shell regions dock first,
 sized by their boxes and their nodes; the content takes the space left. The
 content column is centred and never wider than the viewport less the page
@@ -286,8 +289,8 @@ label is the whole field, label and help line included; without one it is
 its box. A wrapping row wraps, and a row that does not fit is marked
 `overflowX`, not fixed. The skeleton shows the default state; nodes shown
 only in other states are listed beside it. `pnpm weave wireframes
-<screens.json>` writes `02-design/09-skeleton.json` and
-`02-design/09-wireframes.html`.
+<screens.json>` writes `02-design/08-skeleton.json` and
+`02-design/08-wireframes.html`.
 
 ```ts
 const Box = z.object({
@@ -338,7 +341,7 @@ const Node = z.object({
 ```
 
 A frame's nodes are `SH1.n01`, in its regions, and show on every page that
-uses the shell. `02-design/09-assemble.json` holds the assembled screens:
+uses the shell. `02-design/08-assemble.json` holds the assembled screens:
 each screen with its `shell`, its boxes and instances, and a page's gap and
 padding filled in; the two layouts' containers; the shells; every node,
 renumbered to its screen with an origin map back to its widget, component or
@@ -349,7 +352,7 @@ frame; the copy deck code built; and the definitions they came from.
 The calls in order, with what each reads and answers. A processing step in
 code runs on each answer before its rules (user, 2026-10-31).
 
-### Architect (`03architect`)
+### Architect (`02architect`)
 
 High reasoning, first draft at 0.7, peer and output reviewers. The creative
 call: it plans no blocks and no layout. It reads the scope, the flows, the
@@ -381,7 +384,7 @@ flows (`signedOut`, FL14; a subflow's step by the flows that call it), adds
 its required states (a step that lists records: empty and error), and puts every
 other alternative on each screen serving its step.
 
-### Catalog (`04catalog`)
+### Catalog (`03catalog`)
 
 Medium reasoning, 0.2, output reviewer. One call for the whole app, which
 sees every screen, so a widget that screens share is defined once. It reads
@@ -408,7 +411,7 @@ Its processing step fills each widget's `fields` and required `states` from
 its steps, and adds up its `minWidthPx` from the coarse layout: its parts,
 gaps and padding.
 
-### Screen (`05screen`)
+### Screen (`04screen`)
 
 Medium reasoning, 0.2, output reviewer. One call per page with the dialogs
 and drawers it opens, in parallel. It reads their composition, their parts
@@ -429,7 +432,7 @@ The gap between boxes and instances is the theme's section gap, and 20 in a
 dialog, so the call picks no spacing. Its output reviewer compares the box
 tree with the screen's composition prose.
 
-### Invent (`06invent`)
+### Invent (`05invent`)
 
 Medium reasoning, first draft at 0.7, peer and output reviewers. One call
 per new component, the creative expansion: it turns the architect's
@@ -439,7 +442,7 @@ which its peer reviewer checks. A visual no node can express, such as a ring or 
 bar, is a `shape` node. Look only: the component's behavior, props, keyboard
 and ARIA belong to the coding stage.
 
-### Draw (`07draw`)
+### Draw (`06draw`)
 
 Medium reasoning, 0.2, output reviewer. One widget per call, six calls at a
 time; a fix sends only the nodes that change. With the
@@ -452,7 +455,7 @@ instance. The widget's top heading takes its level from the instance, the
 levels below it are relative to it, and the text right under it is sized
 relative to it.
 
-### Frame (`08frame`)
+### Frame (`07frame`)
 
 Medium reasoning, 0.2, output reviewer. One call per used shell, with the
 node guide: it expands the theme's frame into nodes in its regions, draws
@@ -460,7 +463,7 @@ each navigation item its pages need and each screen's frame changes, and
 serves the steps catalog gave the frame, which count on every page that uses
 it.
 
-### Assemble (`09assemble`)
+### Assemble (`08assemble`)
 
 Code, no model. Each screen is built from its box tree: every instance
 becomes its widget's or component's nodes, renumbered to the screen in
@@ -492,7 +495,7 @@ to the coding agent.
   conventions in `template/packages/ui/AGENTS.md`: types file, `.css.ts` using
   tokens, `data-slot` on parts, `data-*` for states, disabled reasons, a test
   with axe. Phase 7 builds them.
-- `02-design/09-ds-gaps.json` lists each new component with purpose, closest DS
+- `02-design/08-ds-gaps.json` lists each new component with purpose, closest DS
   components and screens; `.weave-cache/ds-gaps.jsonl` accumulates them across
   runs, so the components asked for most become your DS backlog.
 
@@ -534,15 +537,15 @@ widths the design system fixes (user, 2026-10-30).
 | BRIEF-002 | mandatory | `entities` are the scope vocabulary's nouns, each once, no other                                 |
 | BRIEF-003 | mandatory | Colored entities at least 30 degrees from each other and from `seedHue`; a brand or entity hue in a status band (0 to 45, 65 to 100, 135 to 180) is a warning |
 | BRIEF-005 | mandatory | Each font role lists three different families from its list (DS26)                               |
-| BRIEF-006 | mandatory | `pageBackground` is one CSS background value of colors and gradients: every color parses, and it loads no image (DS35) |
 | THEME-001 | mandatory | 4.5:1 for `fg` and `fgMuted` on `bg`, `fg` on `hoverBg`, `accentFg` on `accentBg` and `accentHoverBg` for the theme, base and every entity set; `pageFg` and `pageFgMuted` on `pageBg` and `frameBg`; and the theme's and base's `fg` on `pageBg` and `frameBg`, where a link draws it; in every mode; and `pageFg` and `pageFgMuted` on every color of the page background (DS35) |
 | THEME-002 | warning   | 3:1 for `border` and `focus` on `bg`, and the theme's and base's `border` and `focus` on `pageBg` and `frameBg`, a link's underline and focus ring |
 | THEME-003 | mandatory | When applied to an app: the status sets in `colors.ts` are unchanged; the brand, base, page (divider, backdrop and skeleton included) and entity colors are the theme's (user, 2026-10-30) |
 | THEME-004 | mandatory | Fonts in the Google catalog with a latin subset; radius values on the DS radius scale; focus ring is halo, offset or glow |
-| THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `pageBackground` is colors and gradients only |
+| THEME-005 | mandatory | Every color is `#RRGGBB`, and each mode's `background` is colors and gradients only: every color parses, and it loads no image (DS35) |
 | THEME-006 | mandatory | A needed header, sidebar or footer holds something; a needed sidebar has a width; the sidebars sit on different sides; a fixed container has a width; a fixed-height header or footer fits the smallest button and its padding |
 | THEME-007 | mandatory | The spacing every page gets from its layout: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages (H-08); the main area and each needed part pad at least their gap (H-06). Only the theme call can change these, so they are checked here and not left to the LAYOUT rules |
 | THEME-009 | mandatory | `divider` and `skeleton` at least 1.1:1 on `pageBg` and `frameBg`, `skeleton` also on the base set's `bg`; `backdrop` darker than the page and the frame |
+| THEME-010 | mandatory | The colors hold each mode the brief's `colorScheme` names, once, and no other; each mode a set for each colored entity, once, and no other (D3.3 F) |
 | THEME-008 | mandatory | A default that carries meaning stays the recipe's: a status, a danger or status variant, an icon-only size, a dialog's size. Other variants and every look are the theme's choice |
 
 ### Screens (static)
@@ -628,12 +631,12 @@ tuning target, not a gate.
 
 ## Rendering
 
-- `02-design/09-assemble.md`: theme swatches with contrast ratios, fonts, the shells with
+- `02-design/08-assemble.md`: theme swatches with contrast ratios, fonts, the shells with
   their regions and nodes, navigation, then
   per screen: route, purpose, states, instances with their nodes as an indented
   list (`[Button default] Create project → S04 (F03.S01)`), and the new
   components with their reasons.
-- `02-design/09-wireframes.html` (D3.6 D, built in DS6b): one self-contained file drawing
+- `02-design/08-wireframes.html` (D3.6 D, built in DS6b): one self-contained file drawing
   each screen's skeleton at desktop width as lines. For review and the demo.
 
 ## Done when

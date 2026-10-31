@@ -7,7 +7,6 @@ export type ArtifactName =
   | 'flows-catalog'
   | 'flows-expand'
   | 'flows-reconcile'
-  | 'design-brief'
   | 'design-theme'
   | 'design-architect'
   | 'design-catalog'
@@ -45,15 +44,14 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'flows-catalog': '01-flows/02-catalog.json',
   'flows-expand': '01-flows/03-expand.json',
   'flows-reconcile': '01-flows/04-reconcile.json',
-  'design-brief': '02-design/01-brief.json',
-  'design-theme': '02-design/02-theme.json',
-  'design-architect': '02-design/03-architect.json',
-  'design-catalog': '02-design/04-catalog.json',
-  'design-screen': '02-design/05-screen.json',
-  'design-invent': '02-design/06-invent.json',
-  'design-draw': '02-design/07-draw.json',
-  'design-frame': '02-design/08-frame.json',
-  'design-assemble': '02-design/09-assemble.json',
+  'design-theme': '02-design/01-theme.json',
+  'design-architect': '02-design/02-architect.json',
+  'design-catalog': '02-design/03-catalog.json',
+  'design-screen': '02-design/04-screen.json',
+  'design-invent': '02-design/05-invent.json',
+  'design-draw': '02-design/06-draw.json',
+  'design-frame': '02-design/07-frame.json',
+  'design-assemble': '02-design/08-assemble.json',
   contract: '03-contract.json',
   matrix: '04-matrix.json',
 };

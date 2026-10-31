@@ -8,13 +8,13 @@ import {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { applyTheme } from './agents/02design/02theme/preview/apply';
+import { applyTheme } from './agents/02design/01theme/preview/apply';
 import {
   scaffolded,
   scaffoldApp,
   screenshotComponents,
   writeAllComponentsStory,
-} from './agents/02design/02theme/preview/storybook';
+} from './agents/02design/01theme/preview/storybook';
 import {
   type ArtifactName,
   FILE_OF,
@@ -41,10 +41,10 @@ import {
 } from './core/run';
 import { runLog } from './core/log';
 import { PIPELINE, type StageContext, type StageDef, stageBatches, stages } from './agents/stages';
-import { skeleton } from './agents/02design/09assemble/skeleton/skeleton';
+import { skeleton } from './agents/02design/08assemble/skeleton/skeleton';
 import { makeScreensSchema } from './agents/02design/schema';
-import type { Theme } from './agents/02design/02theme/build';
-import { renderWireframes } from './agents/02design/09assemble/wireframes';
+import type { Themed } from './agents/02design/01theme/build';
+import { renderWireframes } from './agents/02design/08assemble/wireframes';
 import type { Scope } from './agents/01flows/01scope/schema';
 import { writeJsonAtomic } from './core/utils';
 
@@ -325,7 +325,7 @@ export async function wireframesCommand(
 ): Promise<string[]> {
   const out = deps.out ?? console.log;
   const inv = await inventory(deps);
-  // A run's 09-assemble.json is an artifact envelope; a bare screens file is its data.
+  // A run's 08-assemble.json is an artifact envelope; a bare screens file is its data.
   const raw = JSON.parse(readFileSync(file, 'utf8')) as { data?: unknown; meta?: unknown };
   const screens = makeScreensSchema(inv).Screens.parse(raw.meta && raw.data ? raw.data : raw);
   const name = path.basename(file).replace(/\.json$/, '');
@@ -360,7 +360,7 @@ export async function appCommand(
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
   const { app } = readArtifact<Scope>(run, 'flows-scope').data;
-  const theme = readArtifact<Theme>(run, 'design-theme').data;
+  const { theme } = readArtifact<Themed>(run, 'design-theme').data;
   const slug = app.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const appDir = path.join(DEFAULT_APPS_DIR, slug);
   if (!scaffolded(appDir)) await scaffoldApp(appDir);
@@ -370,7 +370,7 @@ export async function appCommand(
   const shots = await screenshotComponents(
     appDir,
     Object.fromEntries(
-      theme.modes.map((mode) => [mode, runPath(run, `02-design/02-theme-${mode}.png`)]),
+      theme.modes.map((mode) => [mode, runPath(run, `02-design/01-theme-${mode}.png`)]),
     ),
   );
   const lines = [

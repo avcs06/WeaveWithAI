@@ -1,0 +1,378 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderDesign > renders the reading-list design 1`] = `
+"# Shelf: design
+
+Audience: People who read a lot and lose track of what they meant to read next. Feels calm, literary, quiet, warm; copy is plain, warm, second person.
+
+- Density comfortable, radius 8px surfaces and 6px controls, focus ring halo, imagery icons.
+- Fonts: Inter for text, Playfair Display for headings, JetBrains Mono for code.
+- Style minimal and bookish, light and dark; brand hue 200, muted; page background linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%); frame hue 200, muted.
+- Wireframes of every screen at desktop width: \`02-design/08-wireframes.html\`.
+
+## Palette
+
+### page, light
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| pageBg | \`#F4FCFC\` |  |
+| pageFg | \`#092122\` | 16.11:1 on pageBg, 15:1 on frameBg |
+| pageFgMuted | \`#1F4A4C\` | 9.42:1 on pageBg, 8.77:1 on frameBg |
+| frameBg | \`#E7F5F6\` |  |
+| divider | \`#B6D5D6\` | 1.5:1 on pageBg, 1.39:1 on frameBg |
+| backdrop | \`#092122\` |  |
+| skeleton | \`#C7E1E2\` | 1.32:1 on pageBg, 1.23:1 on frameBg |
+| pageBackground | \`linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%)\` |  |
+
+### page, dark
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| pageBg | \`#0E1819\` |  |
+| pageFg | \`#D8F5F6\` | 15.74:1 on pageBg, 13.83:1 on frameBg |
+| pageFgMuted | \`#A0CED0\` | 10.52:1 on pageBg, 9.24:1 on frameBg |
+| frameBg | \`#152526\` |  |
+| divider | \`#2A484A\` | 1.83:1 on pageBg, 1.6:1 on frameBg |
+| backdrop | \`#0B1111\` |  |
+| skeleton | \`#203B3C\` | 1.51:1 on pageBg, 1.32:1 on frameBg |
+| pageBackground | \`linear-gradient(180deg, #1B1A18 0%, #22201C 100%)\` |  |
+
+### theme, light
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#E7F5F6\` |  |
+| fg | \`#092122\` | 16.11:1 on pageBg, 15:1 on frameBg, 15:1 on bg, 13.71:1 on hoverBg |
+| fgMuted | \`#1F4A4C\` | 8.77:1 on bg |
+| border | \`#619092\` | 3.41:1 on pageBg, 3.18:1 on frameBg, 3.18:1 on bg |
+| hoverBg | \`#D9ECED\` |  |
+| accentBg | \`#3B7477\` |  |
+| accentFg | \`#F4FCFC\` | 5.11:1 on accentBg, 6.67:1 on accentHoverBg |
+| accentBorder | \`#286265\` |  |
+| accentHoverBg | \`#286265\` |  |
+| focus | \`#3B7477\` | 5.11:1 on pageBg, 4.76:1 on frameBg, 4.76:1 on bg |
+| accentFocus | \`#286265\` |  |
+| shadow | \`#092122\` |  |
+
+### theme, dark
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#0E1819\` |  |
+| fg | \`#D8F5F6\` | 15.74:1 on pageBg, 13.83:1 on frameBg, 15.74:1 on bg, 13.83:1 on hoverBg |
+| fgMuted | \`#A0CED0\` | 10.52:1 on bg |
+| border | \`#49787A\` | 3.65:1 on pageBg, 3.21:1 on frameBg, 3.65:1 on bg |
+| hoverBg | \`#152526\` |  |
+| accentBg | \`#659EA1\` |  |
+| accentFg | \`#0B1111\` | 6.31:1 on accentBg, 7.57:1 on accentHoverBg |
+| accentBorder | \`#74ADB0\` |  |
+| accentHoverBg | \`#74ADB0\` |  |
+| focus | \`#659EA1\` | 5.98:1 on pageBg, 5.25:1 on frameBg, 5.98:1 on bg |
+| accentFocus | \`#74ADB0\` |  |
+| shadow | \`#0B1111\` |  |
+
+### base, light
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#E7F5F6\` |  |
+| fg | \`#092122\` | 16.11:1 on pageBg, 15:1 on frameBg, 15:1 on bg, 13.71:1 on hoverBg |
+| fgMuted | \`#1F4A4C\` | 8.77:1 on bg |
+| border | \`#619092\` | 3.41:1 on pageBg, 3.18:1 on frameBg, 3.18:1 on bg |
+| hoverBg | \`#D9ECED\` |  |
+| accentBg | \`#3B7477\` |  |
+| accentFg | \`#F4FCFC\` | 5.11:1 on accentBg, 6.67:1 on accentHoverBg |
+| accentBorder | \`#286265\` |  |
+| accentHoverBg | \`#286265\` |  |
+| focus | \`#3B7477\` | 5.11:1 on pageBg, 4.76:1 on frameBg, 4.76:1 on bg |
+| accentFocus | \`#286265\` |  |
+| shadow | \`#092122\` |  |
+
+### base, dark
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#0E1819\` |  |
+| fg | \`#D8F5F6\` | 15.74:1 on pageBg, 13.83:1 on frameBg, 15.74:1 on bg, 13.83:1 on hoverBg |
+| fgMuted | \`#A0CED0\` | 10.52:1 on bg |
+| border | \`#49787A\` | 3.65:1 on pageBg, 3.21:1 on frameBg, 3.65:1 on bg |
+| hoverBg | \`#152526\` |  |
+| accentBg | \`#659EA1\` |  |
+| accentFg | \`#0B1111\` | 6.31:1 on accentBg, 7.57:1 on accentHoverBg |
+| accentBorder | \`#74ADB0\` |  |
+| accentHoverBg | \`#74ADB0\` |  |
+| focus | \`#659EA1\` | 5.98:1 on pageBg, 5.25:1 on frameBg, 5.98:1 on bg |
+| accentFocus | \`#74ADB0\` |  |
+| shadow | \`#0B1111\` |  |
+
+Entity set shelf: Where a book stands: to read, reading or finished.
+
+### shelf, light
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#E8F4FA\` |  |
+| fg | \`#0D2028\` | 14.95:1 on bg, 13.68:1 on hoverBg |
+| fgMuted | \`#254757\` | 8.86:1 on bg |
+| border | \`#668C9F\` | 3.22:1 on bg |
+| hoverBg | \`#DAEBF3\` |  |
+| accentBg | \`#437085\` |  |
+| accentFg | \`#F4FBFF\` | 5.16:1 on accentBg, 6.74:1 on accentHoverBg |
+| accentBorder | \`#315E73\` |  |
+| accentHoverBg | \`#315E73\` |  |
+| focus | \`#437085\` | 4.81:1 on bg |
+| accentFocus | \`#315E73\` |  |
+| shadow | \`#0D2028\` |  |
+
+### shelf, dark
+
+| Role | Hex | Contrast |
+| ---- | --- | -------- |
+| bg | \`#0F171C\` |  |
+| fg | \`#DBF3FF\` | 15.76:1 on bg, 13.82:1 on hoverBg |
+| fgMuted | \`#A5CBDE\` | 10.52:1 on bg |
+| border | \`#4F7587\` | 3.64:1 on bg |
+| hoverBg | \`#17242A\` |  |
+| accentBg | \`#6C9AB0\` |  |
+| accentFg | \`#0B1013\` | 6.27:1 on accentBg, 7.54:1 on accentHoverBg |
+| accentBorder | \`#7BA9C0\` |  |
+| accentHoverBg | \`#7BA9C0\` |  |
+| focus | \`#6C9AB0\` | 5.94:1 on bg |
+| accentFocus | \`#7BA9C0\` |  |
+| shadow | \`#0B1013\` |  |
+
+## Layouts, shells and navigation
+
+- app: header first; container fluid center, padding 6, section gap 6; header sticky, divider.
+- marketing: header first; container fluid center, padding 6, section gap 6, full-bleed sections; header scrolls, over the hero, none.
+
+Component defaults: Textarea look outline; Tag variant base, size sm, look bordered; Tabs variant default; Switch variant default, size sm; MultiSelect look outline; Select look outline; Radio variant default, size sm; PopoverButton look ""; Link variant default, look ""; Input look outline; NumberInput look outline; PasswordInput look outline; SearchInput look outline; FormControl variant default, size sm, look outline; Dialog size md; Chip variant default, size sm, look outline; ChipGroup look ""; Checkbox variant default, size sm; Card variant default, look outline; Button variant default, size md, look ""; IconButton look ""; Avatar size md; Accordion look bordered; Collapsible look bordered; Toast status info.
+
+Navigation: Your shelf → S04 (signedIn), Sign in → S02 (public).
+
+### SH1 app
+
+The frame of every framed app page, from the theme's app layout. Frames S04, S06.
+
+- SH1.r1 top, 56 tall, row gap 3 padding 3 align center justify between: start: the wordmark; end: the Shelf link
+  - [Truncate] Shelf \`SH1.n01\`
+  - [Button sm ghost · navigation] Your shelf → S04 (72 wide; over the defaults: Navigation in the top bar reads as a link, not a call to action.) \`SH1.n02\`
+
+### SH2 marketing
+
+The frame of every framed marketing page, from the theme's marketing layout. Frames S01.
+
+- SH2.r1 top, over the page, 64 tall, row gap 4 padding 4 align center justify between: start: the wordmark; end: Sign in
+  - [Truncate] Shelf \`SH2.n01\`
+  - [Button sm ghost · navigation] Sign in → S02 (over the defaults: Navigation in the top bar reads as a link, not a call to action.) \`SH2.n02\`
+
+## S01 Shelf
+
+/ · marketing screen · shell SH2 · wide width · public · entry
+
+Say what Shelf is and lead to sign-up or sign-in.
+
+States: default. Serves: F01.S01, F02.S01. Sections: column gap 6 padding 6 align stretch.
+
+### S01.sec1 Keep every book you mean to read (hero, column gap 4 padding 12 align center, on the brand surface)
+
+Name the product and its promise, then offer the two ways in.
+
+- [container · column gap 1 align center] the title and the line under it, centred \`S01.n01\`
+  - [h1 display] Keep every book you mean to read \`S01.n02\`
+  - [text heading] Shelf is a quiet reading list. Add a book, keep it on a shelf, and find it again by title or author. (560 wide) \`S01.n03\`
+- [container · row gap 2 align center justify center wraps] the two ways in, side by side \`S01.n04\`
+  - [Button md · primary-action] Sign up → S03 (F01.S01) (104 wide) \`S01.n05\`
+  - [Button md · secondary-action] Sign in → S02 (F02.S01) (104 wide) \`S01.n06\`
+
+### S01.sec2 Why readers use Shelf (feature-grid, column gap 5 padding 8)
+
+Three short reasons, each an icon, a title and a sentence.
+
+- [h2 title] Made for people who read a lot \`S01.n07\`
+- [container · grid 3 columns gap 4 align stretch] a grid of three feature blocks (fills) \`S01.n08\`
+  - [container · column gap 3] a feature block: an icon and a title, then a sentence (fills) \`S01.n09\`
+    - [container · row gap 2 align center] an icon beside the feature title (fills) \`S01.n10\`
+      - [media] a 20 px line icon (20 wide, 20 tall) \`S01.n11\`
+      - [h3 subheading] Add in seconds (fills) \`S01.n12\`
+    - [text body] Type a title and an author. Shelf keeps the form to what a reader needs. (fills) \`S01.n13\`
+  - [container · column gap 3] a feature block: an icon and a title, then a sentence (fills) \`S01.n14\`
+    - [container · row gap 2 align center] an icon beside the feature title (fills) \`S01.n15\`
+      - [media] a 20 px line icon (20 wide, 20 tall) \`S01.n16\`
+      - [h3 subheading] Know where you are (fills) \`S01.n17\`
+    - [text body] Every book sits on a shelf: to read, reading or finished. (fills) \`S01.n18\`
+  - [container · column gap 3] a feature block: an icon and a title, then a sentence (fills) \`S01.n19\`
+    - [container · row gap 2 align center] an icon beside the feature title (fills) \`S01.n20\`
+      - [media] a 20 px line icon (20 wide, 20 tall) \`S01.n21\`
+      - [h3 subheading] Find it again (fills) \`S01.n22\`
+    - [text body] Search by title or author and the list narrows as you type. (fills) \`S01.n23\`
+
+## S02 Sign in
+
+/sign-in · app screen · shell none · narrow width · public · entry
+
+Sign in with an email and a password.
+
+States: default. Serves: F02.S02, F02.A01, F02.A02. Sections: column gap 6 padding 6 align stretch.
+Box S02.b1: column gap 6 align center, fills.
+
+### S02.sec1 Sign in (auth-form, column gap 4 align stretch, 400 wide, in S02.b1)
+
+The sign in form.
+
+- [container · column gap 1] the title and one line under it (fills) \`S02.n01\`
+  - [h1 title] Sign in \`S02.n02\`
+  - [text subheading] Welcome back. Your shelf is where you left it. (fills) \`S02.n03\`
+- [Input md outline · input] Email (F02.S02, F02.A01) (fills; field FD01) \`S02.n04\`
+- [PasswordInput md outline · input] Password (F02.S02, F02.A01) (fills; field FD02) \`S02.n05\`
+- [container · row gap 2 align center] the submit button and the way to the other form \`S02.n07\`
+  - [Button md · primary-action] Sign in → S04 (F02.S02, F02.A02) (128 wide) \`S02.n08\`
+  - [Button md ghost · navigation] Sign up → S03 (F01.S01) (over the defaults: The way to the other form stays quieter than the submit button.) \`S02.n09\`
+
+## S03 Sign up
+
+/sign-up · app screen · shell none · narrow width · public · entry
+
+Sign up with an email and a password.
+
+States: default. Serves: F01.S02, F01.A01, F01.A02, F01.A03. Sections: column gap 6 padding 6 align stretch.
+Box S03.b1: column gap 6 align center, fills.
+
+### S03.sec1 Sign up (auth-form, column gap 4 align stretch, 400 wide, in S03.b1)
+
+The sign up form.
+
+- [container · column gap 1] the title and one line under it (fills) \`S03.n01\`
+  - [h1 title] Create your account \`S03.n02\`
+  - [text subheading] One list, private to you. It takes a minute. (fills) \`S03.n03\`
+- [Input md outline · input] Email (F01.S02, F01.A01) (fills; field FD01) \`S03.n04\`
+- [PasswordInput md outline · input] Password (F01.S02, F01.A01) (fills; field FD02) \`S03.n05\`
+- [container · row gap 2 align center] the submit button and the way to the other form \`S03.n07\`
+  - [Button md · primary-action] Create account → S04 (F01.S02, F01.A02) (128 wide) \`S03.n08\`
+  - [Button md ghost · navigation] Sign in → S02 (F02.S01, F01.A03) (over the defaults: The way to the other form stays quieter than the submit button.) \`S03.n09\`
+
+## S04 Shelf
+
+/shelf · app screen · shell SH1 · wide width · signed in (reader)
+
+Show the reader's books and the ways to add, find and open one.
+
+States: default, empty, error. Serves: F03.S01, F04.S01, F04.S02, F04.A01, F04.A02, F05.S01, F06.S01. Sections: column gap 6 padding 6 align stretch.
+
+### S04.sec1 Your shelf (page-header, row gap 4 align center justify between)
+
+The page title and the page actions.
+
+- [container · column gap 1] the title and one line under it (fills) \`S04.n01\`
+  - [h1 title] Your shelf \`S04.n02\`
+  - [text subheading] Books you mean to read, are reading and have finished. (fills) \`S04.n03\`
+- [container · row gap 2 align center] the page actions \`S04.n04\`
+  - [Button sm ghost · secondary-action] Sign out → S01 (F06.S01) (over the defaults: Signing out sits quietly beside the page action.) \`S04.n05\`
+  - [Button sm · primary-action] Add book → S05 (F03.S01) (over the defaults: The page header keeps its actions compact, the same size as Sign out.) \`S04.n06\`
+
+### S04.sec2 Books (table, column gap 4 align stretch)
+
+The reader's books, newest first, with a search by title or author, and what shows while they load, when none match and when there are none yet.
+
+- [container · row gap 3 align center wraps] the search and the count of books (fills) \`S04.n15\`
+  - [SearchInput sm outline · input] "Search by title or author" (F04.S02, F04.A02) (320 wide) \`S04.n07\`
+  - [display caption] 12 books (data Book.title) \`S04.n08\`
+- [Table · navigation] "Books on your shelf" → S06 (F04.S01, F05.S01) (fills; data Book.title, Book.author, Book.shelf) \`S04.n09\`
+- [Pagination full · navigation] "Pages of books" (F04.S01) (fills) \`S04.n10\`
+- [feedback body] Your books could not be loaded. Try again in a moment. (fills; states error) \`S04.n11\`
+- [container · column gap 3 padding 8 align center] the empty state: an icon, a sentence and the add action, centred (fills; states empty) \`S04.n16\`
+  - [media] a 40 px line icon of a book (40 wide, 40 tall; states empty) \`S04.n12\`
+  - [text body] No books yet: add the first one you mean to read. (F04.A01) (states empty) \`S04.n13\`
+  - [Button md · secondary-action] Add book → S05 (F03.S01) (states empty) \`S04.n14\`
+
+## S06 Book
+
+/books/[bookId] · app screen · shell SH1 · wide width · signed in (reader)
+
+Show one book and offer to delete it.
+
+States: default, notFound. Serves: F05.S01, F05.S02, F05.A01. Sections: column gap 6 padding 6 align stretch.
+Box S06.b1: row gap 6, fills.
+
+### S06.sec1 Book (detail, column gap 5, in S06.b1)
+
+The title, the author and when it was added.
+
+- [Button sm · navigation] Return to shelf → S04 (over the defaults: The way back is a small step above the title, not a main action.) \`S06.n01\`
+- [container · row gap 4 align center justify between] the title and the delete action on one line (fills) \`S06.n02\`
+  - [h1 title] The Left Hand of Darkness (F05.S01) (fills; data Book.title) \`S06.n03\`
+  - [Button sm · destructive-action] Delete book → S07 (F05.S02) (over the defaults: Delete stays small beside the title, so it never competes with reading.) \`S06.n04\`
+- [container · column gap 3] the book facts, one row each (fills) \`S06.n05\`
+  - [container · row gap 2 align center] an icon beside the author (fills) \`S06.n06\`
+    - [media] a 16 px line icon (16 wide, 16 tall) \`S06.n07\`
+    - [display body] Ursula K. Le Guin (fills; data Book.author) \`S06.n08\`
+  - [container · row gap 2 align center] an icon beside the date it was added (fills) \`S06.n09\`
+    - [media] a 16 px line icon (16 wide, 16 tall) \`S06.n10\`
+    - [display body] Added on 12 October (fills; data Book.createdAt) \`S06.n11\`
+- [feedback body] This book is no longer on your shelf. (F05.A01) (fills; states notFound) \`S06.n12\`
+
+### S06.sec2 Shelf (side-panel, column gap 5 padding 6, 280 wide, in S06.b1)
+
+The cover and where the reader is with the book.
+
+- [new TitleCover · media] the typographic cover of the book (data Book.title, Book.author) \`S06.n13\`
+- [container · column gap 2] the shelf heading, the tag and a note (fills) \`S06.n14\`
+  - [h2 subheading] Shelf \`S06.n15\`
+  - [Tag sm bordered · display] Reading (data Book.shelf) \`S06.n16\`
+  - [text caption] Where you are with this book. (fills) \`S06.n17\`
+
+## S05 Add a book
+
+dialog of S04 · app screen · medium width · signed in (reader)
+
+Add a book with a title, an author and a shelf.
+
+States: default. Serves: F03.S02, F03.A01, F03.A02, F03.A03. Sections: column gap 5 align stretch.
+
+### S05.sec1 Book (form, column gap 4 align stretch)
+
+The fields of the book.
+
+- [Input md outline · input] Title (F03.S02, F03.A01) (fills; field FD03) \`S05.n01\`
+- [Input md outline · input] Author (F03.S02) (fills; field FD04) \`S05.n02\`
+- [Select md outline · input] Shelf (F03.S02) (field FD05) \`S05.n03\`
+- [container · row gap 2 align center justify end] the actions, at the end (fills) \`S05.n08\`
+  - [Button md · secondary-action] Cancel → S04 (F03.A03) (96 wide) \`S05.n05\`
+  - [Button md · primary-action] Save book → S04 (F03.S02, F03.A02) \`S05.n06\`
+
+## S07 Delete this book?
+
+dialog of S06 · app screen · narrow width · signed in (reader)
+
+Confirm the deletion of one book.
+
+States: default. Serves: F05.A02, F05.A03, STD01.S01, STD01.A01, STD01.A02. Sections: column gap 5 align stretch.
+
+### S07.sec1 Confirm (custom, column gap 2)
+
+Say what is deleted.
+
+- [text body] This removes “The Left Hand of Darkness” from your shelf for good. (STD01.S01) (fills; data Book.title) \`S07.n01\`
+
+### S07.sec2 Actions (custom, row gap 2 align center justify end)
+
+Cancel or delete.
+
+- [Button md · secondary-action] Cancel → S06 (F05.A03, STD01.A02) (96 wide) \`S07.n02\`
+- [Button md · destructive-action] Delete book → S04 (F05.A02, STD01.A01) \`S07.n03\`
+
+## New components
+
+### TitleCover
+
+Stands in for a cover image: the title and the author set on a colored block, so the detail page has a visual anchor without uploads.
+
+- Closest existing: Avatar, Card. Why not: Avatar draws initials in a circle of at most 56 px, and Card is a surface for content; neither sets a title in a 2:3 block.
+- Look: A 160 by 240 block in the entity color that stands in for a cover: the title at the top in the heading size, up to four lines, and the author on one line at the bottom. Quiet and bookish, like a cloth binding; it is the visual anchor of the detail page, not a call to action.
+- Width: 160 to 160. Box: 160 wide, 240 tall, padding 4, gap 2; column gap 2 padding 4 align stretch justify between.
+  - [text] the book title, up to four lines: {Book.title} \`TitleCover.n01\`
+  - [Truncate] the author on one line: {Book.author} \`TitleCover.n02\`
+- Used on: S06.
+"
+`;

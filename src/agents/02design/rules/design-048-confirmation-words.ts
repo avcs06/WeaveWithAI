@@ -1,7 +1,7 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import type { ModelNode } from '../07draw/schema';
-import { sentences } from '../09assemble/validation/helpers';
+import type { ModelNode } from '../06draw/schema';
+import { sentences } from '../08assemble/validation/helpers';
 import { confirmingSteps, type ScreenInput, type WidgetInput } from './helpers';
 
 /**

@@ -24,8 +24,8 @@ src/
   agents/
     stages.ts            the pipeline order
     01flows/             scope, catalog, expand, reconcile; the flow shapes and rules they share
-    02design/            brief, theme, architect, invent, draw, frame, assemble; the shapes,
-                         config and DESIGN rules they share
+    02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame,
+                         assemble; the shapes, config and DESIGN rules they share
     03contract/ 04reconcile/   prompts of later stages, not built yet
 ```
 
@@ -45,7 +45,7 @@ validation/    validation.ts (the rule list), helpers.ts, rules/ (one file per r
 Tests sit beside what they test. Code that several stages of a group share
 sits in the group folder, never in a stage of its own: `02design/schema.ts`,
 `02design/config.ts`, `02design/rules/`. Assembly code lives only in
-`02design/09assemble`; other stages import what they need from it.
+`02design/08assemble`; other stages import what they need from it.
 
 ## How to work
 

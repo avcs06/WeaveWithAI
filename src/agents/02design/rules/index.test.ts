@@ -4,7 +4,7 @@ import { designMutations, handBroken } from '../__fixtures__/mutations';
 import type { Inventory } from '../../../ds/inventory';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
-import type { Theme } from '../02theme/build';
+import type { Theme } from '../01theme/build';
 import { makeScreensSchema, type Screens } from '../schema';
 import type { DesignContext } from './helpers';
 import {

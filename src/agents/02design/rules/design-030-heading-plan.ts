@@ -1,6 +1,6 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import { depthFirst } from '../09assemble/nodes';
+import { depthFirst } from '../08assemble/nodes';
 import type { CatalogInput, ScreenInput, WidgetInput } from './helpers';
 
 /**

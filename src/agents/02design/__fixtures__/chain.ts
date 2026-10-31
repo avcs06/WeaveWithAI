@@ -2,22 +2,21 @@ import { readFileSync } from 'node:fs';
 import type { Inventory } from '../../../ds/inventory';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
-import { Brief } from '../01brief/schema';
-import { buildTheme } from '../02theme/build';
-import { makeThemeSchema } from '../02theme/schema';
-import { layoutShells } from '../02theme/shells';
-import { processPlan } from '../03architect/process';
-import type { Plan } from '../03architect/schema';
-import { WIDGET_WIDTHS } from '../04catalog/boxes';
-import { processCatalog } from '../04catalog/process';
-import type { Catalog } from '../04catalog/schema';
-import type { ScreenLayout } from '../05screen/schema';
-import type { ComponentDesign } from '../06invent/schema';
-import type { Build, ModelNode } from '../07draw/schema';
-import type { FrameBuild } from '../08frame/schema';
-import type { Chain } from '../09assemble/assemble';
-import { depthFirst } from '../09assemble/nodes';
-import { sizes } from '../09assemble/skeleton/boxes';
+import { buildTheme } from '../01theme/build';
+import { makeThemeSchema } from '../01theme/schema';
+import { layoutShells } from '../01theme/shells';
+import { processPlan } from '../02architect/process';
+import type { Plan } from '../02architect/schema';
+import { WIDGET_WIDTHS } from '../03catalog/boxes';
+import { processCatalog } from '../03catalog/process';
+import type { Catalog } from '../03catalog/schema';
+import type { ScreenLayout } from '../04screen/schema';
+import type { ComponentDesign } from '../05invent/schema';
+import type { Build, ModelNode } from '../06draw/schema';
+import type { FrameBuild } from '../07frame/schema';
+import type { Chain } from '../08assemble/assemble';
+import { depthFirst } from '../08assemble/nodes';
+import { sizes } from '../08assemble/skeleton/boxes';
 import { type DesignContext, requiredStates } from '../rules/helpers';
 import { type DesignNode, makeScreensSchema, type Screens } from '../schema';
 
@@ -35,11 +34,10 @@ export const screens = makeScreensSchema(inventory).Screens.parse(
 ) as Screens;
 export const flows = read('../../01flows/__fixtures__/reading-list.flows.json') as Flows;
 export const scope = read('../../01flows/__fixtures__/reading-list.scope.json') as Scope;
-export const brief = Brief.parse(read('./reading-list.brief.json'));
-export const theme = buildTheme(
-  brief,
-  makeThemeSchema(brief, inventory).parse(read('./reading-list.theme.json')),
-);
+/** The reading-list theme call: the brief, and the values the theme is built from. */
+export const themeCall = makeThemeSchema(inventory).parse(read('./reading-list.theme.json'));
+export const brief = themeCall.brief;
+export const theme = buildTheme(themeCall);
 export const ctx: DesignContext = {
   scope,
   flows,

@@ -1,6 +1,90 @@
 {
-  "colors": {
-    "light": {
+  "brief": {
+    "audience": "People who read a lot and lose track of what they meant to read next.",
+    "personality": [
+      "calm",
+      "literary",
+      "quiet",
+      "warm"
+    ],
+    "voice": "plain, warm, second person",
+    "density": "comfortable",
+    "feel": [
+      "minimal",
+      "bookish"
+    ],
+    "colorScheme": "both",
+    "seedHue": 200,
+    "seedChroma": "muted",
+    "frameHue": 200,
+    "frameChroma": "muted",
+    "baseHue": 200,
+    "baseChroma": "muted",
+    "fonts": {
+      "ui": [
+        {
+          "family": "Inter",
+          "reason": "Plain and legible at small sizes, for a calm list read often."
+        },
+        {
+          "family": "Open Sans",
+          "reason": "Friendly and open, a close second for long titles."
+        },
+        {
+          "family": "Roboto",
+          "reason": "Neutral and compact, but colder than the brief wants."
+        }
+      ],
+      "display": [
+        {
+          "family": "Playfair Display",
+          "reason": "A bookish serif for page titles, warm against the plain text."
+        },
+        {
+          "family": "Montserrat",
+          "reason": "Clean and confident, but less literary."
+        },
+        {
+          "family": "Oswald",
+          "reason": "Condensed and strong, louder than a quiet reading app."
+        }
+      ],
+      "mono": [
+        {
+          "family": "JetBrains Mono",
+          "reason": "Clear digits for page counts and dates."
+        },
+        {
+          "family": "IBM Plex Mono",
+          "reason": "Softer shapes, a good second."
+        },
+        {
+          "family": "Roboto Mono",
+          "reason": "Plain, with less character."
+        }
+      ]
+    },
+    "radius": "soft",
+    "focusRing": "halo",
+    "entities": [
+      {
+        "noun": "Book",
+        "colored": false,
+        "hue": 0
+      },
+      {
+        "noun": "Shelf",
+        "colored": true,
+        "hue": 230
+      }
+    ],
+    "imagery": "icons",
+    "references": []
+  },
+  "colors": [
+    {
+      "mode": "light",
+      "background": "linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%)",
       "theme": {
         "bg": 2,
         "hoverBg": 3,
@@ -56,24 +140,29 @@
           "step": 4
         }
       },
-      "entity": {
-        "shelf": {
-          "bg": 2,
-          "hoverBg": 3,
-          "fg": 12,
-          "fgMuted": 11,
-          "border": 8,
-          "accentBg": 9,
-          "accentHoverBg": 10,
-          "accentBorder": 10,
-          "accentFg": 1,
-          "focus": 9,
-          "accentFocus": 10,
-          "shadow": 12
+      "entities": [
+        {
+          "noun": "Shelf",
+          "steps": {
+            "bg": 2,
+            "hoverBg": 3,
+            "fg": 12,
+            "fgMuted": 11,
+            "border": 8,
+            "accentBg": 9,
+            "accentHoverBg": 10,
+            "accentBorder": 10,
+            "accentFg": 1,
+            "focus": 9,
+            "accentFocus": 10,
+            "shadow": 12
+          }
         }
-      }
+      ]
     },
-    "dark": {
+    {
+      "mode": "dark",
+      "background": "linear-gradient(180deg, #1B1A18 0%, #22201C 100%)",
       "theme": {
         "bg": 2,
         "hoverBg": 3,
@@ -127,27 +216,29 @@
         "skeleton": {
           "ramp": "base",
           "step": 5
-        },
-        "background": "linear-gradient(180deg, #1B1A18 0%, #22201C 100%)"
-      },
-      "entity": {
-        "shelf": {
-          "bg": 2,
-          "hoverBg": 3,
-          "fg": 12,
-          "fgMuted": 11,
-          "border": 8,
-          "accentBg": 9,
-          "accentHoverBg": 10,
-          "accentBorder": 10,
-          "accentFg": 1,
-          "focus": 9,
-          "accentFocus": 10,
-          "shadow": 1
         }
-      }
+      },
+      "entities": [
+        {
+          "noun": "Shelf",
+          "steps": {
+            "bg": 2,
+            "hoverBg": 3,
+            "fg": 12,
+            "fgMuted": 11,
+            "border": 8,
+            "accentBg": 9,
+            "accentHoverBg": 10,
+            "accentBorder": 10,
+            "accentFg": 1,
+            "focus": 9,
+            "accentFocus": 10,
+            "shadow": 1
+          }
+        }
+      ]
     }
-  },
+  ],
   "layouts": {
     "app": {
       "docksFirst": "header",

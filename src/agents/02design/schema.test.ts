@@ -3,16 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { toJsonSchema } from '../../core/schema';
 import { keysOf } from '../../core/utils';
 import type { Inventory } from '../../ds/inventory';
-import { Brief } from './01brief/schema';
 import { makeScreensSchema } from './schema';
-import { makeThemeSchema } from './02theme/schema';
+import { makeThemeSchema } from './01theme/schema';
 import { patchSchema } from '../../runner/patch';
-import { makeArchitectSchema, PLAN_KEYS } from './03architect/schema';
-import { CATALOG_KEYS, makeCatalogSchema } from './04catalog/schema';
-import { SCREEN_KEYS, ScreenLayouts } from './05screen/schema';
-import { DESIGN_KEYS, makeInventSchemas } from './06invent/schema';
-import { BUILD_KEYS, makeDrawSchemas } from './07draw/schema';
-import { FRAME_KEYS, makeFrameSchemas } from './08frame/schema';
+import { makeArchitectSchema, PLAN_KEYS } from './02architect/schema';
+import { CATALOG_KEYS, makeCatalogSchema } from './03catalog/schema';
+import { SCREEN_KEYS, ScreenLayouts } from './04screen/schema';
+import { DESIGN_KEYS, makeInventSchemas } from './05invent/schema';
+import { BUILD_KEYS, makeDrawSchemas } from './06draw/schema';
+import { FRAME_KEYS, makeFrameSchemas } from './07frame/schema';
 
 const inventory = JSON.parse(
   readFileSync(
@@ -21,14 +20,6 @@ const inventory = JSON.parse(
   ),
 ) as Inventory;
 const schemas = makeScreensSchema(inventory);
-const brief = Brief.parse(
-  JSON.parse(
-    readFileSync(
-      new URL('./__fixtures__/reading-list.brief.json', import.meta.url),
-      'utf8',
-    ),
-  ),
-);
 
 const row = {
   direction: 'row',
@@ -74,8 +65,7 @@ const node = (what: string, rest: Record<string, unknown> = {}) => ({
 
 describe('screens schemas', () => {
   it.each([
-    ['Brief', Brief],
-    ['Theme', makeThemeSchema(brief, inventory)],
+    ['Theme', makeThemeSchema(inventory)],
     ['Ia', schemas.Ia],
     ['ScreenNodes', schemas.ScreenNodes],
     ...(

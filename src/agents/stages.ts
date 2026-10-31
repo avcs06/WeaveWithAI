@@ -12,7 +12,6 @@ import {
 import {
   architectStage,
   assembleStage,
-  briefStage,
   designCatalogStage,
   drawStage,
   frameStage,
@@ -43,7 +42,6 @@ export const PIPELINE: string[] = [
   'flows-catalog',
   'flows-expand',
   'flows-reconcile',
-  'design-brief',
   'design-theme',
   'design-architect',
   'design-catalog',
@@ -86,7 +84,6 @@ export const stages: StageDef[] = [
   catalogStage,
   expandStage,
   reconcileStage,
-  briefStage,
   themeStage,
   architectStage,
   designCatalogStage,

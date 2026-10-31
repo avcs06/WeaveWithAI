@@ -1,4 +1,4 @@
-import type { ModelNode } from './07draw/schema';
+import type { ModelNode } from './06draw/schema';
 import type { NodeLayout } from './schema';
 
 // Code sets the gap of each column a widget or a new component stacks (H-01,

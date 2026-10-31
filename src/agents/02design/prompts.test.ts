@@ -1,16 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { briefReviewGuides } from './01brief/prompts/index';
-import { themeReviewGuides } from './02theme/prompts/index';
-import { planReviewGuides } from './03architect/prompts/index';
-import { catalogReviewGuides } from './04catalog/prompts/index';
-import { screenReviewGuides } from './05screen/prompts/index';
-import { componentReviewGuides } from './06invent/prompts/index';
-import { widgetReviewGuides } from './07draw/prompts/index';
-import { frameReviewGuides } from './08frame/prompts/index';
+import { themeReviewGuides } from './01theme/prompts/index';
+import { planReviewGuides } from './02architect/prompts/index';
+import { catalogReviewGuides } from './03catalog/prompts/index';
+import { screenReviewGuides } from './04screen/prompts/index';
+import { componentReviewGuides } from './05invent/prompts/index';
+import { widgetReviewGuides } from './06draw/prompts/index';
+import { frameReviewGuides } from './07frame/prompts/index';
 
 describe('design review guides', () => {
   const guides = {
-    brief: briefReviewGuides(),
     theme: themeReviewGuides(),
     architect: planReviewGuides(),
     catalog: catalogReviewGuides(),
@@ -31,11 +29,11 @@ describe('design review guides', () => {
     }
   });
 
-  it('give the peer to the creative calls alone: the brief, the theme, the architect and invent', () => {
+  it('give the peer to the creative calls alone: the theme, the architect and invent', () => {
     expect(
       Object.entries(guides)
         .filter(([, g]) => g.peer)
         .map(([stage]) => stage),
-    ).toEqual(['brief', 'theme', 'architect', 'invent']);
+    ).toEqual(['theme', 'architect', 'invent']);
   });
 });

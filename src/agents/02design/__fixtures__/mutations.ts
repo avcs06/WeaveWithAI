@@ -1,4 +1,4 @@
-import type { Brief } from '../01brief/schema';
+import type { Brief } from '../01theme/schema';
 import type { DesignNode, Screens } from '../schema';
 
 /** Each mutation copies the reading-list screens and breaks one design rule. */
@@ -112,5 +112,4 @@ export const briefMutations: Record<string, (brief: Brief) => Brief> = {
   'BRIEF-002': briefEdit((b) => (b.entities = b.entities.slice(0, 1))),
   'BRIEF-003': briefEdit((b) => (b.entities[1]!.hue = 210)),
   'BRIEF-005': briefEdit((b) => (b.fonts.ui = b.fonts.ui.slice(0, 1))),
-  'BRIEF-006': briefEdit((b) => (b.pageBackground = 'url(paper.png)')),
 };

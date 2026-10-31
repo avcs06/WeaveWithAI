@@ -303,7 +303,7 @@ export type NewComponent = z.infer<Schemas['NewComponent']>;
 export type DesignBox = z.infer<Schemas['ScreenBox']>;
 
 /**
- * `02-design/09-assemble.json`: the IA with each screen's shell and a page's gap and
+ * `02-design/08-assemble.json`: the IA with each screen's shell and a page's gap and
  * padding filled in, the containers and shells made from the theme's
  * layouts, and the nodes of every screen and shell region.
  */

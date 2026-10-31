@@ -308,6 +308,8 @@ model's own level the catalog call wrote 27k characters of JSON and was still
 cut at 32k tokens, two thirds of the budget being reasoning. Catalog budget
 32k, batches and patches 16k. C replaced A on 2026-10-30 (user): every
 generator gets a level and a temperature.
+Since 2026-11-01 (user, D3.3 F) the brief and the theme are one call, at high
+effort, drafting at 0.7 on the strong model, with a 32k budget.
 
 ---
 
@@ -507,11 +509,18 @@ Notes:
 - [ ] **C. B, seeded by a Muse Image moodboard.** Dominant colors from the image
       seed the palette; the moodboard also serves as hero art.
 - [ ] **D. The user supplies brand colors**; code fills the rest as in B.
-- [x] **E. Two calls, a direction and then the values (user, 2026-10-30).**
+- [ ] **E. Two calls, a direction and then the values (user, 2026-10-30).**
       The brief call picks the direction at high reasoning and a higher
       temperature (0.7 for its first draft, D1.13 C). The theme call writes
       every final value at medium reasoning: the colors, the page layouts, and each component's default
       variants and look. Code checks contrast; failures go back to the theme call.
+- [x] **F. One call, the direction and the values (user, 2026-11-01).** The
+      theme call writes the brief first, then every final value, at high
+      reasoning, its draft at 0.7 on the strong model. No ramp exists before
+      the hues do, so the prompt says how code makes a ramp and which steps
+      read on which in every hue; code builds the ramps from the answer's hues
+      and checks contrast, and failures go back to the same call. One stage,
+      one artifact holding the brief and the theme.
 
 Notes: the brief's output is small and sets the whole look, so it gets the
 most reasoning and room to be creative; the values need care, not
@@ -529,6 +538,11 @@ the template's.
 Colors from ramps (user, 2026-10-31, DS27): code builds a 12-step OKLCH
 ramp for each hue and chroma the brief names, the theme call assigns each
 color role to a step, and code turns the steps into hex.
+One call since 2026-11-01 (user, F): the brief is the first part of its
+answer, and each mode writes its own page background, which the prompt lets
+the feel choose freely within colors and gradients: tints, gradients, glows
+or patterns. The prompt asks for colors that set the mood the page should
+put people in. THEME-010 holds the modes and entity sets to the brief.
 Phones are out of scope for now.
 
 ### D3.4 Customization policy, your "20% rule" (pick one)

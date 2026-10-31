@@ -1,6 +1,6 @@
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import { SHELL_IDS } from '../02theme/shells';
+import { SHELL_IDS } from '../01theme/shells';
 import type { IaInput } from './helpers';
 
 /**

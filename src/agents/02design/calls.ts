@@ -6,11 +6,10 @@ import { runSpecStage, type SpecStageOptions } from '../../runner/runSpecStage';
 import type { Scope } from '../01flows/01scope/schema';
 import type { Flows } from '../01flows/schema';
 import type { StageContext } from '../stages';
-import type { Brief } from './01brief/schema';
-import type { Theme } from './02theme/build';
-import type { Processed as Plan } from './03architect/process';
-import type { Processed as Catalog } from './04catalog/process';
-import { layoutShells } from './02theme/shells';
+import type { Themed } from './01theme/build';
+import type { Processed as Plan } from './02architect/process';
+import type { Processed as Catalog } from './03catalog/process';
+import { layoutShells } from './01theme/shells';
 import type { DesignContext } from './rules/helpers';
 
 // What the design stages after the theme share: the artifacts every one of
@@ -23,8 +22,7 @@ export const PARALLEL = 3;
 export function designInputs(run: Run, inv: Inventory) {
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
   const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
-  const brief = readArtifact<Brief>(run, 'design-brief').data;
-  const theme = readArtifact<Theme>(run, 'design-theme').data;
+  const { brief, theme } = readArtifact<Themed>(run, 'design-theme').data;
   const shells = layoutShells(theme.layouts);
   const context: DesignContext = {
     scope,

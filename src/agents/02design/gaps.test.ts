@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ModelNode } from './07draw/schema';
+import type { ModelNode } from './06draw/schema';
 import { withFixedGaps } from './gaps';
 import type { NodeLayout } from './schema';
 
