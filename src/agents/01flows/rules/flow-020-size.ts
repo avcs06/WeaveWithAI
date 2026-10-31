@@ -1,16 +1,16 @@
 /**
  * FLOW-020 · warning
- * 4 to 24 flows, and at most 16 steps in any flow.
+ * 4 to 20 flows, and at most 12 steps in any flow (user, 2026-11-01: was 24 and 16).
  * Pass: 6 flows of 2 to 5 steps each
- * Fail: 3 flows · a flow with 17 steps
+ * Fail: 3 flows · a flow with 13 steps
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
 import type { FlowInput } from './helpers';
 
 const MIN_FLOWS = 4;
-const MAX_FLOWS = 24;
-const MAX_STEPS = 16;
+const MAX_FLOWS = 20;
+const MAX_STEPS = 12;
 
 export const rule = defineRule<FlowInput>(
   'FLOW-020',

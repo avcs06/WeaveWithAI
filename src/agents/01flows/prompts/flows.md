@@ -15,7 +15,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
 - Every `inScope` item of the scope, as flows a user can follow end to end. An item that names several actions often needs a flow for each.
 - For each role: getting in (sign up and sign in) when the role signs in, the core loop, finding records (search or filters where lists can grow), editing, deleting, and signing out. Every role gets at least one flow beyond signing in and out.
 - The landing page: a flow of the role it invites in, with the precondition "Not signed in". It runs from arriving on the page to getting started. A role with `signedIn` false gets its flows like any other.
-- Size: 4 to 24 flows, at most 16 steps each. One complete core loop beats many partial ones.
+- Size: 4 to 20 flows, at most 12 steps each. One complete core loop beats many partial ones.
 
 ## How a flow is written
 

@@ -494,6 +494,12 @@ Spec: [specs/flows.md](specs/flows.md). Decisions: D2.1 to D2.7. Steps 09 to 14.
     the golden's F16 creates, updates and deletes ChecklistItem in one flow,
     and word matching belongs to the reviewers (FL11).
 
+- [x] **FL17** Up to 20 flows, 12 steps a flow (5 min) (done 2026-11-01). Depends: FL16
+  - Why: the user set the caps (2026-11-01): 20 flows, from 24 in code and
+    15 in the spec, and 12 steps a flow, from 16 in code. FLOW-020, the
+    flows prompt and the spec's row agree. Every golden set fits: at most
+    17 flows and 7 steps.
+
 ## Phase 3: Design (Thu Oct 29)
 
 Spec: [specs/design.md](specs/design.md). Decisions: D3.1 to D3.11. Steps 15 to 23.

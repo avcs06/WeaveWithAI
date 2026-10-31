@@ -81,7 +81,7 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
   'FLOW-019': edit((f) => (flow(f, 'F03').outcome = '')),
   'FLOW-020': edit((f) => {
     const only = step(f, 'F06', 0);
-    flow(f, 'F06').steps = Array.from({ length: 17 }, (_, i) => ({
+    flow(f, 'F06').steps = Array.from({ length: 13 }, (_, i) => ({
       ...only,
       id: `F06.S${String(i + 1).padStart(2, '0')}`,
     }));

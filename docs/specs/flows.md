@@ -208,7 +208,7 @@ them in order. Every rule needs a passing and a failing fixture in
 | FLOW-017 | mandatory | No technology words in steps or alternatives: endpoint, API, HTTP, REST, GraphQL, SQL, database, JSON, and upper-case GET, POST, PUT, PATCH, DELETE |
 | FLOW-018 | warning   | No layout words: left, right, top, bottom, sidebar, navbar, modal, dialog, popup, dropdown, drawer, tab, tooltip, toast, hamburger, pixel |
 | FLOW-019 | mandatory | `outcome` is non-empty on every flow                                                                                          |
-| FLOW-020 | warning   | 4 to 15 flows; at most 12 steps per flow                                                                                      |
+| FLOW-020 | warning   | 4 to 20 flows; at most 12 steps per flow                                                                                      |
 | FLOW-021 | warning   | Every field has `meaning` and `example`                                                                                       |
 | FLOW-022 | warning   | Steps that mention payment, upload, attach, send email, notify, live, chat or map are covered by an out-of-scope entry or assumption |
 | FLOW-023 | mandatory | New assumption and question IDs continue the scope's numbering without clashes                                                |
