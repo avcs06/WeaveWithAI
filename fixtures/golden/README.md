@@ -8,7 +8,7 @@ golden/<idea>/
   01-flows/01-scope.json  01-flows/02-catalog.json  01-flows/04-reconcile.json  (and their .md renderings)
   02-design/01-theme.json  02-design/02-architect.json  02-design/03-catalog.json  02-design/04-screen.json
   02-design/05-invent.json  02-design/06-draw.json  02-design/07-frame.json  02-design/08-assemble.json (and .md)
-  03-contract.json
+  03-contract.json  03-contract.md
 ```
 
 Record per idea and stage: rounds used, tokens in and out, cost. Screen,

@@ -1,10 +1,13 @@
-import { readArtifact, writeArtifact } from '../../core/artifacts';
+import { writeFileSync } from 'node:fs';
+import { markdownOf, readArtifact, writeArtifact } from '../../core/artifacts';
+import { runPath } from '../../core/run';
 import { runSpecStage } from '../../runner/runSpecStage';
 import type { Scope } from '../01flows/01scope/schema';
 import type { Flows } from '../01flows/schema';
 import type { Processed as Catalog } from '../02design/03catalog/process';
 import type { StageDef } from '../stages';
 import { contractSystemPrompt, contractUserMessage } from './prompts/index';
+import { renderContract } from './render';
 import { CONTRACT_KEYS, Contract } from './schema';
 import { validateContract } from './validation/validation';
 
@@ -38,5 +41,6 @@ export const contractStage: StageDef = {
       rounds: result.rounds,
       inputs: ['flows-scope', 'flows-reconcile', 'design-catalog'],
     });
+    writeFileSync(runPath(run, markdownOf('contract')), renderContract(result.output, { scope, flows, widgets }));
   },
 };

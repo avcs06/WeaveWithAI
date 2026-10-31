@@ -1552,9 +1552,15 @@ Spec: [specs/contracts.md](specs/contracts.md). Decisions: D4.1 to D4.6. Steps 2
     rerun passed all three in 1 round: dashboard $0.07, ecommerce $0.09,
     freelancer $0.10.
 
-- [ ] **C5** Renderer (30 min). Depends: C4
+- [x] **C5** Renderer (30 min) (done 2026-11-01). Depends: C4
   - `03-contract.md` with paths from the conventions. Optional: `03-openapi.json`.
   - Done when: renders the golden freelancer-workspace contract.
+  - Built after C7 (user): no paths, since C7 removed the conventions, and
+    no OpenAPI file. `render.ts` lists the entities, enums and operations,
+    then every catalog widget with what covers it: what it shows and the
+    reads that load it, where each field it asks for goes, and what each of
+    its steps calls. The stage writes it beside `03-contract.json`; the
+    three golden sets have it.
 
 - [x] **C6** Every golden idea (40 min) (done 2026-11-01). Depends: C5
   - Save golden `03-contract.json` for each.

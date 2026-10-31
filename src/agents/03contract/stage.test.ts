@@ -66,6 +66,7 @@ describe('the contract stage', () => {
       ['contract', 'medium', 32_768],
     ]);
     expect(inputs[0]?.messages.at(-1)?.content).toContain('# Widgets');
+    expect(readFileSync(path.join(run.dir, '03-contract.md'), 'utf8')).toContain('## Widgets');
     expect(readState(run).stages.contract).toMatchObject({ status: 'done', known: 0 });
   });
 });
