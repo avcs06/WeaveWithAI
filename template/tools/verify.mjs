@@ -118,15 +118,31 @@ function validates(files) {
   return status === 0;
 }
 
-const isUp = (url) =>
+/** The server's status for `url`: 0 while nothing answers. */
+const status = (url) =>
   fetch(url).then(
-    () => true,
-    () => false,
+    (response) => response.status,
+    () => 0,
   );
+const wait = () => new Promise((resolve) => setTimeout(resolve, 500));
+
+/**
+ * Waits until the dev server answers `url` with something other than a 5xx:
+ * its first compile of a route can answer 500 while it writes its manifests,
+ * and a page opened then fails for nothing. A 5xx that lasts is the app's own,
+ * so after 30 s of it the checks go on and report it.
+ */
+async function warmUp(url) {
+  for (let waited = 0; (await status(url)) >= 500 && waited < 30_000; waited += 500)
+    await wait();
+}
 
 /** Uses the running dev server, or starts one and returns a stop function. */
-async function ensureAppServer() {
-  if (await isUp(appUrl)) return () => undefined;
+async function ensureAppServer(firstUrl) {
+  if (await status(appUrl)) {
+    await warmUp(firstUrl);
+    return () => undefined;
+  }
   console.log(`Starting the dev server on ${appUrl}…`);
   const server = spawn('pnpm', ['dev'], {
     cwd: root,
@@ -134,13 +150,14 @@ async function ensureAppServer() {
     stdio: 'ignore',
   });
   const stop = () => process.kill(-server.pid);
-  for (let waited = 0; !(await isUp(appUrl)); waited += 500) {
+  for (let waited = 0; !(await status(appUrl)); waited += 500) {
     if (waited > 120_000) {
       stop();
       throw new Error('The dev server did not start within 2 minutes.');
     }
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await wait();
   }
+  await warmUp(firstUrl);
   return stop;
 }
 
@@ -264,7 +281,7 @@ try {
   const targets = recipes
     ? await recipeTargets()
     : args.map((route) => ({ name: route, url: new URL(route, appUrl).href }));
-  if (!recipes) stop = await ensureAppServer();
+  if (!recipes) stop = await ensureAppServer(targets[0].url);
 
   mkdirSync(screenshots, { recursive: true });
   const browser = await chromium.launch().catch((error) => {

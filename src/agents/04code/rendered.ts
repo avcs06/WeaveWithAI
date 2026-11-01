@@ -38,5 +38,6 @@ export function routeSample(
 
 /** The checks on `routes`, with the app's dev server up for them. */
 export function renderedOn(run: Run, appDir: string, routes: RouteSample[], theme: Theme): () => Promise<Issue[]> {
-  return () => withDevServer(appDir, async () => (await runRenderedChecks({ run, routes, theme: themeColors(theme) })).issues);
+  return () =>
+    withDevServer(appDir, async () => (await runRenderedChecks({ run, routes, theme: themeColors(theme) })).issues, routes[0]?.url);
 }
