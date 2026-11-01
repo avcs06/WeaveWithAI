@@ -39,8 +39,9 @@ function knownIssues(run: Run): KnownIssue[] {
     .filter((file) => file.endsWith('.json') && !file.startsWith('code-'))
     .sort()
     .flatMap((file) => {
-      const report = JSON.parse(readFileSync(runPath(run, 'reports', file), 'utf8')) as Report;
-      const last = report.rounds.at(-1)?.issues ?? [];
+      // The browser checks' own `rendered.json` is a list of routes, with no rounds.
+      const report = JSON.parse(readFileSync(runPath(run, 'reports', file), 'utf8')) as Partial<Report>;
+      const last = report.rounds?.at(-1)?.issues ?? [];
       return last.filter((issue) => issue.severity === 'mandatory').map((issue) => ({ ...issue, stage: file.slice(0, -5) }));
     });
 }

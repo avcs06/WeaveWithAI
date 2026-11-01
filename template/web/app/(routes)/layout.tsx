@@ -2,7 +2,6 @@ import { Providers } from '@app/shared/providers';
 import { UIRoot } from '@packages/ui/Root';
 
 import { PageErrorBoundary } from '../components/PageErrorBoundary';
-import { PageLayout } from '../components/PageLayout';
 
 export default function RootLayout({
   children,
@@ -12,9 +11,8 @@ export default function RootLayout({
   return (
     <UIRoot>
       <PageErrorBoundary>
-        <Providers>
-          <PageLayout>{children}</PageLayout>
-        </Providers>
+        {/* Each route group's layout frames its own pages; the root adds no frame of its own. */}
+        <Providers>{children}</Providers>
       </PageErrorBoundary>
     </UIRoot>
   );

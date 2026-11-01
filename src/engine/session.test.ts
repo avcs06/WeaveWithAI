@@ -167,6 +167,12 @@ describe('museArgs and readUsage', () => {
     expect(meta).not.toContain('--session-id');
   });
 
+  it("reads the subscription's allowance after the run, and none on a key", () => {
+    const usage = (payload: unknown) => readUsage(JSON.stringify({ payload_type: 'run.usage', payload }));
+    expect(usage({ models: [], allowance: { weekly: { used_percent: 31 }, window: { used_percent: 6 } } }).allowance).toEqual({ week: 31, window: 6 });
+    expect(usage({ models: [] }).allowance).toBeUndefined();
+  });
+
   it('reads a failed run as not completed, with its message', () => {
     const usage = readUsage('{"payload_type":"run.terminal.failed","payload":{"reason":"API error 401"}}\nnot json\n');
     expect(usage).toMatchObject({ completed: false, summary: 'API error 401', calls: 0 });

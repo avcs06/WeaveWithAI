@@ -18,6 +18,8 @@ export type MuseUsage = {
   childrenIncluded: boolean;
   /** Side agents Muse started: reminders and subagents, which the totals may leave out. */
   children: number;
+  /** How much of the subscription is used after the run, in percent of the week and of the current window; none on a key. */
+  allowance?: { week: number; window: number };
 };
 
 /** The `muse exec` arguments for a backend; the key goes on stdin, except on the subscription, which Muse reads from its login. */
@@ -75,6 +77,9 @@ export function readUsage(jsonl: string): MuseUsage {
     const task = (payload as { event?: { kind?: string; task_kind?: string } }).event;
     if (task?.kind === 'proposed' && task.task_kind && !/^(model|tool)\./.test(task.task_kind)) usage.children += 1;
     if (event.payload_type === 'run.usage' && payload.children_included === false) usage.childrenIncluded = false;
+    const allowance = (payload as { allowance?: { weekly?: { used_percent?: number }; window?: { used_percent?: number } } }).allowance;
+    if (event.payload_type === 'run.usage' && allowance)
+      usage.allowance = { week: Number(allowance.weekly?.used_percent ?? 0), window: Number(allowance.window?.used_percent ?? 0) };
     if (event.payload_type === 'run.usage')
       for (const m of (payload.models ?? []) as Record<string, unknown>[]) {
         usage.model = String(m.model ?? usage.model);

@@ -55,6 +55,11 @@ function setup(id: string, failing?: string) {
 describe('the scaffold stage', () => {
   it('themes the app, pins its one mode, records the files and runs the checks in order', async () => {
     const { run, ctx, ran, check } = setup('ok');
+    // A stage's report gives the agent its known issues; the browser checks' list beside it has none.
+    mkdirSync(runPath(run, 'reports'), { recursive: true });
+    writeFileSync(runPath(run, 'reports', 'rendered.json'), '[{ "route": "/", "findings": [] }]\n');
+    const issue = { rule: 'DESIGN-050', severity: 'mandatory', message: 'WidgetCard.n08 shows Widget.note.', at: 'WidgetCard.n08' };
+    writeFileSync(runPath(run, 'reports', 'design-assemble.json'), JSON.stringify({ stage: 'design-assemble', rounds: [{ round: 1, issues: [issue] }] }));
     await runScaffold(ctx, { scaffold: fakeScaffold, check });
 
     const app = (file: string) => readFileSync(runPath(run, 'app', file), 'utf8');
@@ -75,6 +80,7 @@ describe('the scaffold stage', () => {
     expect(patch).not.toContain('diff --git a/.weave/');
     const events = readFileSync(runPath(run, 'events.jsonl'), 'utf8');
     expect(events).toContain('"type":"stage:patch"');
+    expect(JSON.parse(app('.weave/01-scaffold/issues.json')).known.map((i: { rule: string }) => i.rule)).toContain('DESIGN-050');
     expect(app('.weave/01-scaffold/guidelines.md')).toContain('make your own call');
     expect(app('.weave/01-scaffold/guidelines.md')).not.toMatch(/\{\{|<!--/);
     expect(existsSync(runPath(run, 'app', '.weave/05-pages/S04/page.json'))).toBe(true);

@@ -22,6 +22,8 @@ describe('the code stages on the golden freelancer workspace', () => {
   it("frames: each shell's layout in a route group named after it, and every frame node's test id", () => {
     const [frames] = framesSpecs(design);
     expect(frames?.writes).toEqual(['web/app/(routes)/(app)/', 'web/app/(routes)/(marketing)/', 'web/app/components/**', 'web/app/entities/**']);
+    // No route renders a frame yet, so frames get no browser checks; the pages check them in place.
+    expect(frames?.route).toBeUndefined();
     expect(frames?.expect?.testIds).toContain('SH1.n01');
   });
 

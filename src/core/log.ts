@@ -104,6 +104,12 @@ const count = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 const tokens = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
 
+/** A subscription call's use, as the allowance stood after it: `subscription, week 31%, window 6%`. */
+function subscription(allowance: unknown): string {
+  const used = allowance as { week?: number; window?: number } | undefined;
+  return used ? `subscription, week ${used.week}%, window ${used.window}%` : 'subscription';
+}
+
 /** A call's model, tokens, cost and time. */
 function stats(event: Event): string {
   const n = (key: string) => Number(event[key] ?? 0);
@@ -111,7 +117,7 @@ function stats(event: Event): string {
     String(event.model),
     `${tokens(n('input'))} in${n('cachedInput') ? ` (${tokens(n('cachedInput'))} cached)` : ''}`,
     `${tokens(n('output'))} out`,
-    event.billing === 'subscription' ? 'subscription' : `$${n('costUsd').toFixed(4)}`,
+    event.billing === 'subscription' ? subscription(event.allowance) : `$${n('costUsd').toFixed(4)}`,
     ...(event.durationMs === undefined ? [] : [`${(n('durationMs') / 1000).toFixed(1)}s`]),
     ...(event.replayed ? ['replayed'] : []),
   ].join(', ');

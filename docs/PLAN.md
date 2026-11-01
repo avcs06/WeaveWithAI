@@ -1814,6 +1814,14 @@ coding agent writes no tests.
     by hand; the numbers in `fixtures/golden/README.md`.
   - Step file: `docs/steps/79-CD10-golden-apps.md`.
   - Done when: **G5** and **G6**.
+  - Fixes found on the dashboard run (2026-11-01): pnpm 10.20.0 in the
+    image; the Muse subscription, with its allowance in the log; a restarted
+    code stage starts clean; one commit per session and one patch per stage;
+    typed entity colors; DESIGN-050; `passesHtmlAttributes`; folder write
+    rules; the app's title; no dev overlay in the browser checks; findings
+    named by test id; fix sessions continue their Muse session; no browser
+    checks for frames, since no route renders a frame yet; the starter
+    `PageLayout` moved out of the root layout.
 
 ### Replaced by the code stages (2026-11-01)
 

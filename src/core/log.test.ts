@@ -69,6 +69,15 @@ describe('the run log', () => {
   });
 });
 
+describe('a coding session on the subscription', () => {
+  it('shows the allowance after it in place of a price', () => {
+    const { durationMs: _, ...used } = call;
+    const session = { type: 'llm:call', stage: 'session:frames', ...used, costUsd: 0, billing: 'subscription' };
+    expect(logged([{ ...session, allowance: { week: 31, window: 6 } }]).at(-1)).toContain('950 out, subscription, week 31%, window 6%');
+    expect(logged([session]).at(-1)).toContain('950 out, subscription');
+  });
+});
+
 describe('a step committed in the app', () => {
   it('names its patch file under its stage', () => {
     const lines: string[] = [];

@@ -207,7 +207,7 @@ export async function runSession(
     cachedInput: usage.cached,
     output: usage.output,
     costUsd: cost,
-    ...(subscription ? { billing: 'subscription' } : {}),
+    ...(subscription ? { billing: 'subscription', allowance: usage.allowance } : {}),
   });
 
   git(appDir, 'add', '-A');

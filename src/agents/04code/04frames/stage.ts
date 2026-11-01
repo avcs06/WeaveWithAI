@@ -1,12 +1,9 @@
 import { readArtifact } from '../../../core/artifacts';
-import { runPath } from '../../../core/run';
 import { loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
 import { nodeWords } from '../../../engine/conformance';
-import type { Themed } from '../../02design/01theme/build';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { StageContext, StageDef } from '../../stages';
-import { renderedOn, routeSample } from '../rendered';
 import { ENTITIES, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-frames';
@@ -23,8 +20,7 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
       folders: ['01-scaffold', '02-contract', '03-shared', '04-frames'],
       // The shell folders' own files, a layout's styles included; the route folders inside are the pages'.
       writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/`), 'web/app/components/**', ENTITIES],
-      // No page sits in a shell yet, so the browser checks run on the starter route; the pages check the frames in place.
-      route: '/',
+      // No page sits in a shell yet, so no route renders a frame: the pages check the frames in place, in the browser.
       expect: {
         folder: 'web/app',
         testIds: shellNodes.map((n) => n.id),
@@ -37,10 +33,7 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
 
 async function runFrames(ctx: StageContext): Promise<void> {
   const design = readArtifact<WidgetScreens>(ctx.run, 'design-assemble').data;
-  const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
-  const appDir = runPath(ctx.run, 'app');
-  const rendered = renderedOn(ctx.run, appDir, [routeSample('/', 'frames', false)], theme);
-  await runUnits(ctx, STAGE, framesSpecs(design).map((spec) => ({ ...spec, rendered })));
+  await runUnits(ctx, STAGE, framesSpecs(design));
 }
 
 export const framesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runFrames(ctx) };
