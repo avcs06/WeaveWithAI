@@ -25,7 +25,8 @@ export function git(appDir: string, ...args: string[]): string {
   return execaSync('git', ['-c', 'user.name=weave', '-c', 'user.email=weave@local', ...args], { cwd: appDir }).stdout;
 }
 
-export function prepareApp(appDir: string): void {
+/** The agent's config and a commit of everything so far, which every session's diff starts from. */
+export function prepareApp(appDir: string, message = 'weave: agent setup'): void {
   const at = (...parts: string[]) => path.join(appDir, ...parts);
   mkdirSync(at('.muse'), { recursive: true });
   mkdirSync(at('.weave', 'hooks'), { recursive: true });
@@ -34,5 +35,5 @@ export function prepareApp(appDir: string): void {
   copyFileSync(pathBeside(import.meta.url, './hooks/validate-edit.mjs'), at('.weave', 'hooks', 'validate-edit.mjs'));
   if (!existsSync(at('.git'))) git(appDir, 'init', '-q');
   git(appDir, 'add', '-A');
-  git(appDir, 'commit', '-q', '--allow-empty', '-m', 'weave: agent setup');
+  git(appDir, 'commit', '-q', '--allow-empty', '-m', message);
 }

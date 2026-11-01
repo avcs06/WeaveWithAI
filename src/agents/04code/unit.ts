@@ -14,6 +14,12 @@ import type { StageContext } from '../stages';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
 
+/** Code wrote the entity layer; a session may change it only for a blocker, as the guidelines say. */
+export const ENTITIES = 'web/app/entities/**';
+
+/** What no session should read: the design system's and the tools' code, and the token and Tailwind files the MCP answers for. */
+export const READS_DENIED = ['packages/**', 'tools/**', 'tokens.ts', 'colors.ts', 'tailwind.preset.cjs', 'web/tailwind.config.js'];
+
 /** The two output reviewers of every coding unit (user, 2026-11-01). */
 export function codeReviewGuides(): Record<string, string> {
   return { code: load('review-code.md'), adherence: load('review-adherence.md') };
@@ -48,6 +54,7 @@ export async function runUnit(
   const own = spec.folders.at(-1) ?? '';
   const unit: Unit = {
     ...spec,
+    reads: spec.reads ?? { deny: READS_DENIED },
     fixTask: (pending) =>
       fillPrompt(load('fix-task.md'), {
         folders: spec.folders.map((f) => `\`.weave/${f}/\``).join(', '),

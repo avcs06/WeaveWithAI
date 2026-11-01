@@ -16,11 +16,20 @@ const RULE_OF: Record<string, string> = {
 const issue = (rule: string, message: string, at?: string): Issue =>
   at === undefined ? { rule, severity: 'mandatory', message } : { rule, severity: 'mandatory', message, at };
 
-/** A failed session check, a write outside the session's paths, or a session that never finished, each as a mandatory issue. */
-export function checkIssues(result: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits'>): Issue[] {
+/** A failed session check, a write outside the session's paths, or a session that never finished, each a mandatory issue; a read the guidelines rule out, a warning. */
+export function checkIssues(
+  result: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits'> & Partial<Pick<SessionResult, 'readsOutside'>>,
+): Issue[] {
   const issues: Issue[] = result.protectedHits.map((file) =>
     issue('CODE-004', `${file} is outside this session's paths, or a test. Undo the change to it.`, file),
   );
+  for (const file of result.readsOutside ?? [])
+    issues.push({
+      rule: 'CODE-010',
+      severity: 'warning',
+      message: `The session read ${file}, which its guidelines keep it from: ask the MCP, or read only what the task uses.`,
+      at: file,
+    });
   for (const check of result.checks.filter((c) => !c.ok)) {
     if (check.name !== 'design') {
       const rule = RULE_OF[check.name] ?? 'CODE-001';

@@ -54,7 +54,7 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (ctx.config.MUSE_DOCKER === true) await ensureAgentImage();
   // Before the baseline commit, so every session's diff starts with its inputs in place.
   writeWeave(appDir, weaveFolders(readCodeInputs(run)));
-  prepareApp(appDir);
+  prepareApp(appDir, 'code-scaffold: theme, .weave inputs and agent config');
 
   const check = deps.check ?? appCheck;
   for (const [name, args] of CHECKS) {

@@ -6,7 +6,7 @@ import type { SessionDeps } from '../../../engine/session';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { StageContext, StageDef } from '../../stages';
 import { sharedUnits } from '../01scaffold/weave';
-import { runUnits, type UnitSpec } from '../unit';
+import { ENTITIES, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-shared';
 
@@ -20,7 +20,7 @@ export function sharedSpecs(design: WidgetScreens): UnitSpec[] {
       stage: STAGE,
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
       folders: ['01-scaffold', '02-contract', '03-shared'],
-      writes: ['web/app/components/**', 'web/app/blocks/**'],
+      writes: ['web/app/components/**', 'web/app/blocks/**', ENTITIES],
       // A shared dialog is one screen, so its node ids are the same wherever it opens; a shared widget's come from each page.
       expect: {
         folder: 'web/app/blocks',

@@ -12,7 +12,7 @@ import type { StageContext, StageDef } from '../../stages';
 import { seedId } from '../02contract/codegen';
 import { sharedUnits } from '../01scaffold/weave';
 import { renderedOn, routeSample } from '../rendered';
-import { runUnits, type UnitSpec } from '../unit';
+import { ENTITIES, READS_DENIED, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
 
@@ -52,9 +52,21 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
       task: fillPrompt(task, { screen: page.id, name: page.name, route: page.route, folder, url }),
       folders: ['01-scaffold', '02-contract', '04-frames', '05-pages', `05-pages/${page.id}`],
       // The root page replaces the template's starter page.
-      writes: [`${folder}/page.tsx`, `${folder}/components/**`, ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : [])],
+      writes: [`${folder}/page.tsx`, `${folder}/components/**`, ENTITIES, ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : [])],
       route: url,
       expect: { ...expect, folder, testIds: expect.testIds.filter((id) => !sharedIds.has(id)) },
+      // No other page shapes this one: other routes and their .weave folders are measured as reads it should not make.
+      reads: {
+        deny: [...READS_DENIED, 'web/app/(routes)/**', '.weave/05-pages/**'],
+        allow: [
+          `${folder}/**`,
+          'web/app/(routes)/layout.tsx',
+          ...design.shells.filter((s) => s.id === page.shell).map((s) => `web/app/(routes)/(${s.name})/layout.tsx`),
+          ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : []),
+          '.weave/05-pages/guidelines.md',
+          `.weave/05-pages/${page.id}/**`,
+        ],
+      },
     };
   });
 }

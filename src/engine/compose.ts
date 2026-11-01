@@ -5,7 +5,7 @@ import type { Compose, Draft, Round } from '../runner/runSpecStage';
 import type { StageContext } from '../agents/stages';
 import { checkIssues } from './checks';
 import type { ScreenExpect } from './conformance';
-import { protectedOf, runSession, type SessionDeps, type SessionResult } from './session';
+import { protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
 // A coding unit on the stage runner (CD5): its draft and its fixes are Muse
@@ -25,8 +25,10 @@ export type Unit = {
   task: string;
   /** The fix session's task for the pending issues. */
   fixTask: (pending: Issue[]) => string;
-  /** The globs the unit may write. */
+  /** The paths the unit may write: a file, or `folder/**`. */
   writes: string[];
+  /** The paths its guidelines keep it from reading, measured after the session. */
+  reads?: ReadRules;
   route?: string;
   expect?: ScreenExpect;
   /** The rendered checks on the unit's routes, once its app builds. */
@@ -34,7 +36,7 @@ export type Unit = {
 };
 
 export type UnitResult = {
-  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed'>;
+  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed' | 'readsOutside'>;
   rendered: Issue[];
   diff: string;
 };
@@ -61,7 +63,7 @@ export function sessionCompose(
     const result = await runSession(
       ctx,
       appDir,
-      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes },
+      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads },
       deps,
     );
     // Rendered checks only mean something on a route that loads.
@@ -71,9 +73,9 @@ export function sessionCompose(
     // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
     const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
     const protectedHits = protectedOf(touched, unit);
-    const { status, summary, checks, changed } = result;
+    const { status, summary, checks, changed, readsOutside } = result;
     return {
-      data: { session: { status, summary, checks, protectedHits, changed }, rendered, diff },
+      data: { session: { status, summary, checks, protectedHits, changed, readsOutside }, rendered, diff },
       raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
       model: resolveBackend(ctx.config, ctx.backend).model,
     };

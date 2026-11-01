@@ -5,11 +5,11 @@
   one folder each.
 - Each widget, form and dialog in `widgets/` and `dialogs/` is used on two or
   more screens. It goes in `web/app/blocks/<Name>/`, one folder each, named
-  by what it is (`PageHeader`, `DeleteConfirm`), not by its id.
+  by what it is, never by its widget id.
 - A block takes what differs per screen as props: its words, its data, the
   screen it opens, and the `data-testid` of each of its elements. Each
   placement in a widget's file shows the ids and words one screen gives it.
-- Pages and frames import these and cannot change them, so build every state
-  and variant the placements show.
+- Other code imports these and cannot change them, so build every state and
+  variant the placements show.
 - Write only in `web/app/components/` and `web/app/blocks/`.
 - These have no route yet: skip `pnpm verify`.

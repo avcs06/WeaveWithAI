@@ -3,11 +3,13 @@
 ## Workflow
 
 1. For each component you use, call `get_recipe`, pick the case that fits
-   (each says when to use it) and adapt it. Recipes are the supported usage;
-   don't read the component's source.
-2. Search or list to find what exists and the real token names. Never invent
-   a color, spacing value or component prop, and never hand-build an element
-   the system already has a component for.
+   (each says when to use it) and adapt it, and `get_component` for its
+   props, their types and defaults. Recipes are the supported usage; don't
+   read the component's source.
+2. Search or list to find what exists and the real token names, with the
+   class that applies each. Never invent a color, spacing value or component
+   prop, never read the token or Tailwind files, and never hand-build an
+   element the system already has a component for.
 3. For a whole page, put its data in `web/app/entities/<name>` and build the
    page in its route folder, `web/app/(routes)/<path>/`: `page.tsx` with its
    page-only components and controllers beside it. Move a piece to `blocks`

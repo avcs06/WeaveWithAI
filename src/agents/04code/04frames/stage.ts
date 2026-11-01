@@ -7,7 +7,7 @@ import type { Themed } from '../../02design/01theme/build';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { StageContext, StageDef } from '../../stages';
 import { renderedOn, routeSample } from '../rendered';
-import { runUnits, type UnitSpec } from '../unit';
+import { ENTITIES, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-frames';
 
@@ -20,7 +20,7 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
       stage: STAGE,
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
       folders: ['01-scaffold', '02-contract', '03-shared', '04-frames'],
-      writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/layout.tsx`), 'web/app/components/**'],
+      writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/layout.tsx`), 'web/app/components/**', ENTITIES],
       // No page sits in a shell yet, so the browser checks run on the starter route; the pages check the frames in place.
       route: '/',
       expect: {

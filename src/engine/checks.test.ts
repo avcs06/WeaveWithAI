@@ -30,3 +30,10 @@ describe('checks as issues', () => {
     expect(checkIssues({ ...passing, status: 'timeout', summary: '' }).map((i) => i.rule)).toEqual(['CODE-009']);
   });
 });
+
+describe('reads the guidelines rule out', () => {
+  it('are warnings, so they never start a fix session', () => {
+    const issues = checkIssues({ ...passing, readsOutside: ['packages/ui/src/Dialog/Dialog.tsx'] });
+    expect(issues).toEqual([expect.objectContaining({ rule: 'CODE-010', severity: 'warning', at: 'packages/ui/src/Dialog/Dialog.tsx' })]);
+  });
+});

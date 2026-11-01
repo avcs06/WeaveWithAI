@@ -19,6 +19,7 @@ const inputs: CodeInputs = {
     { rule: 'DESIGN-028', severity: 'mandatory', message: 'wording', at: 'Q99', stage: 'design-assemble' },
   ],
   guidelines: { '01-scaffold': 'Rules for every session.' },
+  recipes: '# State and hook recipes\n\n- `createStore`: one shared store.',
 };
 const files = weaveFolders(inputs);
 const read = (file: string) => JSON.parse(files.get(file) ?? 'null');
@@ -28,6 +29,7 @@ describe('the .weave folders', () => {
     for (const file of ['01-scaffold/scope.json', '01-scaffold/routes.json', '04-frames/navigation.json', '05-pages/S04/page.json'])
       expect(files.has(file), file).toBe(true);
     expect(files.get('01-scaffold/guidelines.md')).toBe('Rules for every session.');
+    expect(files.get('01-scaffold/recipes.md')).toContain('`createStore`');
     expect(read('01-scaffold/issues.json').questions).toEqual(inputs.questions);
   });
 

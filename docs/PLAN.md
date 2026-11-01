@@ -1686,6 +1686,12 @@ coding agent writes no tests.
     run's tree: 12 page folders of 25 to 68 KB, 2 shared widgets, the shared
     dialog S17, 2 shells. A shared widget's words and test ids differ per
     page, so a block takes them as props.
+  - Reading costs (user, 2026-11-01; FE8 read DS sources, tokens.ts and
+    tools/ instead of asking the MCP): the guidelines' Reading section,
+    `recipes.md` (an index of packages/recipes, about 1.5k tokens, in place of
+    reading the folder), slices first with 01-scaffold's big files looked up
+    on demand, and pages reading only what they use. The MCP gained
+    `get_component` (props, types, defaults, looks).
 
 - [x] **CD3** The agent in Docker (2 h) (done 2026-11-01). Depends: CD1
   - Why: headless Muse Code runs shell commands with no approval prompt
@@ -1745,6 +1751,14 @@ coding agent writes no tests.
     tests: write paths are judged over the unit's whole diff, since a fix
     that leaves a bad file alone has not undone it; a session that changes
     nothing no longer fails its commit.
+  - Reads can't be blocked, so they are measured: the hook logs every tool
+    call to `.weave/tools.log` and validates only what the agent wrote; a
+    read the unit's rules keep it from is a CODE-010 warning. Path rules are
+    literal (`folder/**` or a file), since `path.matchesGlob` read
+    `[clientId]` as a character class and failed every dynamic route's page
+    on its own files.
+  - Each step is a commit in the app for review (user, 2026-11-01): the
+    template copy, then `code-scaffold`, `code-contract`, and each session.
 
 - [x] **CD6** Code reviewers (1 h) (done 2026-11-01). Depends: CD5
   - `src/agents/04code/prompts/`: `review-code.md` (quality, readability,

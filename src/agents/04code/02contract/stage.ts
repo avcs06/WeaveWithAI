@@ -81,7 +81,7 @@ export async function runContractCode(ctx: StageContext, deps: ContractDeps = {}
     }
   }
   git(appDir, 'add', '-A');
-  git(appDir, 'commit', '-q', '--allow-empty', '-m', 'weave: entities from the contract');
+  git(appDir, 'commit', '-q', '--allow-empty', '-m', 'code-contract: entities from the contract');
   updateStage(run, STAGE, { status: 'done' });
   appendEvent(run, { type: 'stage:done', stage: STAGE });
 }

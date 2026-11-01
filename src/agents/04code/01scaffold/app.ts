@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
+import { git } from '../../../engine/setup';
 import type { Theme } from '../../02design/01theme/build';
 
 /** The template copied into `appDir` by its own generator, then installed; the MCP is built by `setupMcp`. */
@@ -44,6 +45,10 @@ export async function ensureApp(
   await copy(appDir);
   mkdirSync(path.join(appDir, '.weave'), { recursive: true });
   writeFileSync(path.join(appDir, MARKER), `${JSON.stringify({ madeAt: new Date().toISOString() }, null, 2)}\n`);
+  // The template as copied is the first commit, so every step after it is a diff to review.
+  git(appDir, 'init', '-q');
+  git(appDir, 'add', '-A');
+  git(appDir, 'commit', '-q', '-m', 'template: a fresh copy');
   return { made: true, movedAside };
 }
 

@@ -65,6 +65,7 @@ export const good = style({ color: vars.color.accent });
 | `search_tokens`     | Ranked token search across names, groups, references and values — for when you know what you want but not what this system calls it.                                                                                                                  |
 | `search_components` | Ranked component search across names, descriptions, categories, prop names and declared invalid alternatives (`DropdownMenu` finds the component that supersedes `dropdown-menu`).                                                                    |
 | `get_recipe`        | Working examples of a component as the project uses it: one per distinct case, with when to use it. A name with no recipe of its own (a hook, a provider) returns the recipe that imports it from the workspace. An unknown name returns the recipes. |
+| `get_component`     | A component's props: type, required, default (the theme's, from its recipe styles), allowed values of a variant-like prop, the styles its `look` takes, and what it replaces. With `get_recipe`, it saves reading the component's source. |
 | `validate`          | Check a JSX/TSX snippet or a style file's content. Unparseable input comes back as a finding.                                                                                                                                                         |
 
 ### What `validate` checks

@@ -13,7 +13,7 @@ const contract = golden('03-contract.json') as Contract;
 
 describe('the code stages on the golden freelancer workspace', () => {
   it('shared: one session writing components and blocks, none when nothing is shared', () => {
-    expect(sharedSpecs(design)).toMatchObject([{ id: 'shared', writes: ['web/app/components/**', 'web/app/blocks/**'] }]);
+    expect(sharedSpecs(design)).toMatchObject([{ id: 'shared', writes: ['web/app/components/**', 'web/app/blocks/**', 'web/app/entities/**'] }]);
     expect(sharedSpecs(design)[0]?.expect?.testIds).toContain('S17.n01');
     const bare = { ...design, newComponents: [], placements: design.placements.slice(0, 1), nodes: [] };
     expect(sharedSpecs(bare)).toEqual([]);
@@ -21,7 +21,7 @@ describe('the code stages on the golden freelancer workspace', () => {
 
   it("frames: each shell's layout in a route group named after it, and every frame node's test id", () => {
     const [frames] = framesSpecs(design);
-    expect(frames?.writes).toEqual(['web/app/(routes)/(app)/layout.tsx', 'web/app/(routes)/(marketing)/layout.tsx', 'web/app/components/**']);
+    expect(frames?.writes).toEqual(['web/app/(routes)/(app)/layout.tsx', 'web/app/(routes)/(marketing)/layout.tsx', 'web/app/components/**', 'web/app/entities/**']);
     expect(frames?.expect?.testIds).toContain('SH1.n01');
   });
 
@@ -30,13 +30,17 @@ describe('the code stages on the golden freelancer workspace', () => {
     expect(specs.slice(0, 2).map((s) => s.id)).toEqual(['page-S04', 'page-S05']);
     expect(specs).toHaveLength(12);
     const s06 = specs.find((s) => s.id === 'page-S06')!;
-    expect(s06.writes).toEqual(['web/app/(routes)/(app)/clients/[clientId]/page.tsx', 'web/app/(routes)/(app)/clients/[clientId]/components/**']);
+    expect(s06.writes).toEqual(['web/app/(routes)/(app)/clients/[clientId]/page.tsx', 'web/app/(routes)/(app)/clients/[clientId]/components/**', 'web/app/entities/**']);
     expect(s06.route).toBe('/clients/client-1');
     expect(s06.expect?.testIds).toContain('S06.n01');
     // S17 opens from S06 and S07, so blocks/ holds it and S06 is not asked for its ids.
     expect(s06.expect?.testIds.some((id) => id.startsWith('S17.'))).toBe(false);
     expect(s06.expect?.testIds.some((id) => id.startsWith('S14.'))).toBe(true);
     expect(specs.find((s) => s.id === 'page-S01')?.writes).toContain('web/app/(routes)/page.tsx');
+    expect(s06.reads?.deny).toEqual(expect.arrayContaining(['packages/**', 'web/app/(routes)/**', '.weave/05-pages/**']));
+    expect(s06.reads?.allow).toEqual(
+      expect.arrayContaining(['web/app/(routes)/(app)/clients/[clientId]/**', 'web/app/(routes)/(app)/layout.tsx', '.weave/05-pages/S06/**']),
+    );
   });
 
   it('opens a route param on its entity, or on demo', () => {

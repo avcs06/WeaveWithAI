@@ -1,7 +1,8 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, globSync, readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { readArtifact } from '../../../core/artifacts';
 import type { Report } from '../../../core/issues';
-import { loadPrompt } from '../../../core/prompt';
+import { fillPrompt, loadPrompt } from '../../../core/prompt';
 import { type Run, runPath } from '../../../core/run';
 import { pathBeside } from '../../../core/utils';
 import type { Scope } from '../../01flows/01scope/schema';
@@ -44,6 +45,25 @@ function knownIssues(run: Run): KnownIssue[] {
     });
 }
 
+/** The first paragraph of a recipe's leading comment: what it is and when it fits. */
+function recipeLine(file: string): string {
+  const doc = readFileSync(file, 'utf8').match(/^\/\*\*([\s\S]*?)\*\//)?.[1] ?? '';
+  const lines = doc.split('\n').map((line) => line.replace(/^\s*\* ?/, '').trimEnd());
+  const first = lines.join('\n').trim().split(/\n\s*\n/)[0] ?? '';
+  return first.replace(/\s+/g, ' ').trim();
+}
+
+/** `.weave/01-scaffold/recipes.md`: every recipe of the app's packages/recipes by name, with what it is for. */
+export function recipeIndex(appDir: string): string {
+  const files = globSync('packages/recipes/src/**/*.recipe.tsx', { cwd: appDir }).sort();
+  const lines = files.map((file) => {
+    const name = path.basename(file, '.recipe.tsx');
+    // Most headers open with their own name; the index already gives it.
+    return `- \`${name}\`: ${recipeLine(path.join(appDir, file)).replace(new RegExp(`^${name}: `), '')}`;
+  });
+  return fillPrompt(loadPrompt(pathBeside(import.meta.url, './prompts/recipes.md')), { recipes: lines.join('\n') || 'None.' });
+}
+
 /** The run's artifacts, answers and known issues, as the .weave folders need them. */
 export function readCodeInputs(run: Run): CodeInputs {
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
@@ -61,5 +81,6 @@ export function readCodeInputs(run: Run): CodeInputs {
     questions: [...asked('scope', scope.questions), ...asked('flows', flows.questions), ...asked('design', design.questions)],
     known: knownIssues(run),
     guidelines: guidelines(),
+    recipes: recipeIndex(runPath(run, 'app')),
   };
 }

@@ -1,16 +1,19 @@
-<!-- Guidelines of the contract's folder (CD4), written to .weave/02-contract/guidelines.md. No placeholders. -->
+<!-- Guidelines of the contract's folder (CD4), written to .weave/02-contract/guidelines.md. No placeholders, and no idea's own names: entities.md carries those. -->
 # The entity layer
 
 Code wrote `web/app/entities/` from the contract. `entities.md` beside this
-file lists every entity, its fields and its operations.
+file lists every entity, its fields, and the function or hook for each
+operation. Use those names; never guess one.
 
-- Import an entity through its folder: `@app/entities/client`.
-- Read through the hooks: `useListClients()` and `useGetClient(id)` return
-  `{ data, loading, error, retry }`. Show the loading, error and empty states
-  from them.
-- Write through the functions named after the operations: `createClient`,
-  `updateClient`, `deleteClient`. They are async and can fail: show the
-  failure the flow describes, and keep what the user typed.
+- Import an entity through its folder: `@app/entities/<entity>`, as
+  `entities.md` gives it.
+- Read through the hook of a list or get operation: `use` and the
+  operation's id. It returns `{ data, loading, error, retry }`. Show the
+  loading, error and empty states from it.
+- Write through the function named after a create, update or delete
+  operation: its id as is. It is async and can fail: show the failure the
+  flow describes, and keep what the user typed.
 - Sign up, sign in and sign out through `@app/entities/auth`; any email
   works. `useCurrentUser()` is the signed-in user, or null.
-- Never change anything in `web/app/entities/`.
+- Never change anything in `web/app/entities/`, unless a blocker needs it;
+  then name the blocker in your summary.

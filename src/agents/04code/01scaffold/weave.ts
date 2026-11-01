@@ -25,6 +25,8 @@ export type CodeInputs = {
   known: KnownIssue[];
   /** A folder name ('01-scaffold') to its guidelines, for the stages that have them. */
   guidelines: Record<string, string>;
+  /** The recipe index of packages/recipes, filled. */
+  recipes: string;
 };
 
 export const SCAFFOLD = '01-scaffold';
@@ -136,6 +138,7 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
   put(`${SCAFFOLD}/flows.json`, flows);
   put(`${SCAFFOLD}/theme.json`, themed);
   put(`${SCAFFOLD}/contract.json`, contract);
+  put(`${SCAFFOLD}/recipes.md`, inputs.recipes);
   put(
     `${SCAFFOLD}/routes.json`,
     design.screens.map(({ id, name, type, route, parent, access }) => ({ id, name, type, route, parent, access })),

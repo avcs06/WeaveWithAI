@@ -91,6 +91,14 @@ describe('a coding unit', () => {
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
   });
 
+  it("warns about a read its guidelines rule out, from the hook's tool log", async () => {
+    const { ctx, spec, deps } = setup('reads', false, () => false);
+    const log = `${JSON.stringify({ tool: 'bash', command: 'cat packages/ui/src/Dialog/Dialog.tsx' })}\n`;
+    const result = await withWrites({ ...page, '.weave/tools.log': log }, () => runUnit(ctx, spec, deps));
+    expect(result.known).toEqual([]);
+    expect(result.warnings.map((i) => [i.rule, i.at])).toContainEqual(['CODE-010', 'packages/ui/src/Dialog/Dialog.tsx']);
+  });
+
   it('fails a write outside the unit paths with CODE-004', async () => {
     const { ctx, spec, deps } = setup('outside', false, () => false);
     const writes = { ...page, 'web/app/blocks/Header/Header.tsx': 'export {};\n' };

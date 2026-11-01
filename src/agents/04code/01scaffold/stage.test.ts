@@ -7,6 +7,7 @@ import type { Config } from '../../../core/env';
 import type { Llm } from '../../../core/llm';
 import { createRun, readState, runPath } from '../../../core/run';
 import type { Check } from '../../../engine/session';
+import { git } from '../../../engine/setup';
 import type { StageContext } from '../../stages';
 import { runScaffold } from './stage';
 
@@ -62,6 +63,9 @@ describe('the scaffold stage', () => {
     const ledger = JSON.parse(app('.weave/ledger.json'));
     expect(ledger).toContainEqual({ path: 'colors.ts', status: 'M', origin: 'code', stage: 'code-scaffold' });
     expect(existsSync(runPath(run, 'app', '.git'))).toBe(true);
+    // The template copy, then the scaffold's own changes, each a commit to review.
+    expect(git(runPath(run, 'app'), 'log', '--format=%s')).toBe('code-scaffold: theme, .weave inputs and agent config\ntemplate: a fresh copy');
+    expect(git(runPath(run, 'app'), 'diff', '--name-only', 'HEAD~1', 'HEAD')).toContain('colors.ts');
     expect(app('.weave/01-scaffold/guidelines.md')).toContain('make your own call');
     expect(app('.weave/01-scaffold/guidelines.md')).not.toMatch(/\{\{|<!--/);
     expect(existsSync(runPath(run, 'app', '.weave/05-pages/S04/page.json'))).toBe(true);
