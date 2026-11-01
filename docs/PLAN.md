@@ -1753,26 +1753,38 @@ coding agent writes no tests.
     `unit.ts` runs a unit with both. The reviewers read the guidelines and
     the task, the unit's own folder, the diff and the agent's summary.
 
-- [ ] **CD7** Shared (1 h). Depends: CD4, CD6
+- [x] **CD7** Shared (1 h) (done 2026-11-01). Depends: CD4, CD6
   - `src/agents/04code/03shared/`: one session for the new components, then
     the shared widgets, in `components/` and `blocks/`; skipped when
     nothing is shared.
   - Step file: `docs/steps/76-CD7-shared.md`.
   - Done when: `pnpm test` with a fake `muse`.
+  - Done 2026-11-01: `sharedSpecs` and `runShared`; the unit runs through
+    `runUnit`, whose fake-`muse` tests cover the rounds. No real session yet.
 
-- [ ] **CD8** Frames (1 h). Depends: CD7
+- [x] **CD8** Frames (1 h) (done 2026-11-01). Depends: CD7
   - `src/agents/04code/04frames/`: one session for every shell's layout,
     the navigation, the frame changes and the sign-in guard; checks on `/`
     and one route per shell.
   - Step file: `docs/steps/77-CD8-frames.md`.
   - Done when: `pnpm test` with a fake `muse`.
+  - Done 2026-11-01: one unit writing `(routes)/(<shell name>)/layout.tsx`
+    and `components/`, every frame node's test id checked. No page sits in a
+    shell yet, so the browser checks run on the starter route `/`; the
+    pages check the frames in place.
 
-- [ ] **CD9** Pages (1.5 h). Depends: CD8
+- [x] **CD9** Pages (1.5 h) (done 2026-11-01). Depends: CD8
   - `src/agents/04code/05pages/`: one session per page with its dialogs and
     single-use widgets, in the navigation's order, every check on its
     route; `next build` after the last page.
   - Step file: `docs/steps/78-CD9-pages.md`.
   - Done when: `pnpm test` with a fake `muse`.
+  - Done 2026-11-01: one unit per page, the navigation's first; each writes
+    `page.tsx` and `components/` in its shell's route group; a `[xId]` param
+    opens on entity X's first seed row; the root page replaces the starter
+    page; `next build` once after the last page (CODE-008, known when it
+    fails). The builders are tested on the golden set; the stage itself has
+    not run against a real app.
 
 - [ ] **CD10** Golden apps end to end (1.5 h). Depends: CD9
   - The dashboard editor first (about $8 to $12), then the freelancer

@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { formatIssues } from '../../core/issues';
 import { fillPrompt, loadPrompt } from '../../core/prompt';
-import { runPath } from '../../core/run';
+import { appendEvent, runPath, updateStage } from '../../core/run';
 import { pathBeside } from '../../core/utils';
 import { CODE_SCHEDULE, sessionCompose, type Unit, type UnitResult, UnitResultSchema, unitIssues } from '../../engine/compose';
 import type { SessionDeps } from '../../engine/session';
@@ -69,4 +69,19 @@ export async function runUnit(
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(ctx, appDir, unit, deps),
   });
+}
+
+/** A code stage's units, one after another: they share the app's git tree and its dev server port. */
+export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[], deps: SessionDeps = {}): Promise<void> {
+  appendEvent(ctx.run, { type: 'stage:start', stage });
+  updateStage(ctx.run, stage, { status: 'running' });
+  let known = 0;
+  let rounds = 0;
+  for (const spec of specs) {
+    const result = await runUnit(ctx, spec, deps);
+    known += result.known.length;
+    rounds = Math.max(rounds, result.rounds);
+  }
+  updateStage(ctx.run, stage, { status: 'done', known, rounds, batches: specs.length });
+  appendEvent(ctx.run, { type: 'stage:done', stage, known, rounds });
 }
