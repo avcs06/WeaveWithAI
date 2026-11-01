@@ -33,6 +33,7 @@ const config: Config = {
   LLM_BACKEND: 'meta',
   BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
   MUSE_BIN: 'muse',
+  MUSE_DOCKER: false,
 };
 const modalBackend: Backend = {
   name: 'modal',

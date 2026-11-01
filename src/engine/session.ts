@@ -6,6 +6,7 @@ import { costUsd } from '../core/prices';
 import { appendEvent, runPath } from '../core/run';
 import type { StageContext } from '../agents/stages';
 import { checkScreen, type ScreenExpect } from './conformance';
+import { dockerArgs, ensureAgentImage, museDir } from './docker';
 import { appendLedger } from './ledger';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
@@ -85,8 +86,13 @@ export async function runSession(
   git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: inputs for ${session.id}`);
 
   appendEvent(run, { type: 'session:start', stage: `session:${session.id}`, backend: backend.name, model: backend.model });
-  const [bin = 'muse', ...pre] = deps.bin ?? [ctx.config.MUSE_BIN];
-  const args = museArgs(backend, { promptFile, maxSteps: session.maxSteps ?? 60, effort: 'medium' });
+  // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
+  const inContainer = !deps.bin && ctx.config.MUSE_DOCKER === true;
+  const command = deps.bin ?? (inContainer
+    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN))]
+    : [ctx.config.MUSE_BIN]);
+  const [bin = 'muse', ...pre] = command;
+  const args = museArgs(backend, { promptFile, maxSteps: session.maxSteps ?? 60, effort: 'medium', inContainer });
   const exec = await execa(bin, [...pre, ...args], {
     cwd: appDir,
     input: backend.apiKey,

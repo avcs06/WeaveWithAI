@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { readArtifact } from '../../../core/artifacts';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
+import { ensureAgentImage } from '../../../engine/docker';
 import { appendLedger } from '../../../engine/ledger';
 import { appCheck, type Check } from '../../../engine/session';
 import { prepareApp } from '../../../engine/setup';
@@ -54,6 +55,7 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (issues.length) fail(issues.map((issue) => issue.message).join('\n'));
 
   appendLedger(appDir, changed.map((file) => ({ path: file, status: 'M', origin: 'code', stage: STAGE })));
+  if (ctx.config.MUSE_DOCKER === true) await ensureAgentImage();
   // Before the baseline commit, so every session's diff starts with its inputs in place.
   writeWeave(appDir, weaveFolders(readCodeInputs(run)));
   prepareApp(appDir);

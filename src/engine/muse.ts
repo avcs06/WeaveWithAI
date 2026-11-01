@@ -19,7 +19,7 @@ export type MuseUsage = {
 /** The `muse exec` arguments for a backend; the key goes on stdin. */
 export function museArgs(
   backend: Backend,
-  opts: { promptFile: string; maxSteps: number; effort: string },
+  opts: { promptFile: string; maxSteps: number; effort: string; inContainer?: boolean },
 ): string[] {
   const args = [
     'exec',
@@ -39,6 +39,8 @@ export function museArgs(
     '--prompt-file',
     opts.promptFile,
   ];
+  // The container is the sandbox, and Muse's own needs bubblewrap, which the image lacks.
+  if (opts.inContainer) args.push('--disable-sandbox');
   // Muse Code keeps the key back from a bare --base-url off the Meta API.
   if (backend.name !== 'meta')
     args.push('-c', `endpoint_transport=${JSON.stringify({ base_url: backend.baseURL, auth: 'bearer' })}`);

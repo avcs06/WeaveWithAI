@@ -1682,7 +1682,7 @@ coding agent writes no tests.
     dialog S17, 2 shells. A shared widget's words and test ids differ per
     page, so a block takes them as props.
 
-- [ ] **CD3** The agent in Docker (2 h). Depends: CD1
+- [x] **CD3** The agent in Docker (2 h) (done 2026-11-01). Depends: CD1
   - Why: headless Muse Code runs shell commands with no approval prompt
     (user, 2026-11-01). The container is the sandbox; Muse's own needs
     bubblewrap, which is not installed here.
@@ -1694,6 +1694,13 @@ coding agent writes no tests.
   - Step file: `docs/steps/72-CD3-agent-docker.md`.
   - Done when: `pnpm test`; `docker build` passes; a fake `muse` in the
     container edits the app and leaves the files the user's.
+  - Done 2026-11-01: `docker/agent.Dockerfile` (Node 24, the host's major,
+    and Chromium; 3.4 GB), tagged by its hash and built by the scaffold when
+    missing. Muse Code is mounted read-only from the host install
+    (`~/.local/bin`, a 415 MB binary) instead of fetched in the image. A fake
+    `muse` in the container got the key on stdin and wrote a file the user
+    owns. `MUSE_DOCKER=true` by default. The real session waits for the
+    user's go.
 
 - [x] **CD4** Contract code (2 h) (done 2026-11-01). Depends: CD2, C7
   - `src/agents/04code/02contract/`: the `code-contract` stage writes

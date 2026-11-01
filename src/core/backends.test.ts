@@ -12,6 +12,7 @@ const config: Config = {
   LLM_BACKEND: 'meta',
   BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
   MUSE_BIN: 'muse',
+  MUSE_DOCKER: false,
 };
 const modal = {
   MODAL_BASE_URL: 'https://acme--ep-hackathon-server.us-west.modal.direct/v1',

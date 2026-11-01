@@ -28,8 +28,14 @@ import { pathBeside } from '../core/utils';
 export type Answer = { question: string; answer: string };
 export type Answers = Record<string, Answer>;
 
-/** A stage's review guides (D1.12): the peer challenges the decisions, the output reviewer finds what the validators cannot. Without a peer guide only the output reviewer runs. */
-export type ReviewGuides = { peer?: string; output: string };
+/**
+ * A stage's review guides (D1.12): the peer challenges the decisions, the output reviewer finds what the validators cannot.
+ * Without a peer guide only the output reviewer runs. Named output guides are several output reviewers, one call each (code units, CD5).
+ */
+export type ReviewGuides = { peer?: string; output: string | Record<string, string> };
+
+/** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
+export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
 
 /** What a stage produces in a round: the typed document, the text the reviewers read, and which model wrote it. */
 export type Draft<T> = { data: T; raw: string; model: string };
@@ -64,6 +70,12 @@ export type SpecStageOptions<T> = {
   validate: (output: T) => Issue[];
   /** The stage's review guides. Without them no reviewer calls run. */
   review?: ReviewGuides;
+  /** The rounds; default D1.12's five. */
+  schedule?: Round[];
+  /** The reviewers' user message, with the placeholders system, user, output and known; default prompt-review-input.md. */
+  reviewInput?: string;
+  /** Reviewers see every issue as known, mandatory ones too, not only the warnings. */
+  reviewersSeeAll?: boolean;
   /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
   ask?: (output: T) => Promise<Answers>;
   /** Output budget for the writer's calls, reasoning included (D1.13); the client doubles it once when the answer is cut. */
@@ -98,7 +110,7 @@ export type SpecStageResult<T> = {
 
 // D1.12 (five rounds, user, 2026-10-30): a fix runs only when something is pending; from round 2 on reviewers look at the output whatever the validators found.
 // The peer challenges the decisions once, in round 2; the output reviewer checks round 2 and the two fixes after it; round 5 is the final fix.
-const SCHEDULE: { fix: boolean; reviewers: (keyof ReviewGuides)[] }[] = [
+const SCHEDULE: Round[] = [
   { fix: false, reviewers: [] },
   { fix: true, reviewers: ['peer', 'output'] },
   { fix: true, reviewers: ['output'] },
@@ -187,7 +199,7 @@ export async function runSpecStage<T>(
   let pending: Issue[] = [];
   let blockers: Issue[] = [];
   let rounds = 1;
-  for (const [index, step] of SCHEDULE.entries()) {
+  for (const [index, step] of (o.schedule ?? SCHEDULE).entries()) {
     const round = index + 1;
     rounds = round;
     const hasPendingIssues = pending.length > 0;
@@ -222,7 +234,7 @@ export async function runSpecStage<T>(
         round,
         reviewers,
         last.draft.raw,
-        warnings,
+        o.reviewersSeeAll ? last.issues : warnings,
       );
     } else if (produced) {
       // The final fix addressed these; nobody checked the result.
@@ -419,16 +431,21 @@ async function review<T>(
   warnings: Issue[],
 ) {
   const known = warnings.length > 0 ? formatIssues(warnings) : 'None.';
-  const user = fillPrompt(reviewInput, {
+  const user = fillPrompt(o.reviewInput ?? reviewInput, {
     system: o.system,
     user: o.user,
     output,
     known,
   });
+  // A named output guide is a reviewer of its own: `<stage>-review-<name>`.
+  const calls = reviewers.flatMap((reviewer): [string, string][] => {
+    const guide = guides[reviewer];
+    return typeof guide === 'object' ? Object.entries(guide) : [[reviewer, guide ?? '']];
+  });
   const reviews = await Promise.all(
-    reviewers.map(async (reviewer) => {
+    calls.map(async ([reviewer, guide]) => {
       const stage = `${o.stage}-review-${reviewer}`;
-      const system = fillPrompt(reviewPrompt, { guide: guides[reviewer] ?? '' });
+      const system = fillPrompt(reviewPrompt, { guide });
       appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
       const result = await o.llm.generateStructured({
         stage,
