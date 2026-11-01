@@ -68,3 +68,12 @@ describe('the run log', () => {
     ).toBe('    scope round 1 answer did not match the schema (muse, 12.3k in (8.0k cached), 950 out, $0.0123)');
   });
 });
+
+describe('a step committed in the app', () => {
+  it('names its patch file under its stage', () => {
+    const lines: string[] = [];
+    const log = runLog(['code-scaffold', 'code-pages'], (line) => lines.push(line));
+    log.event({ ts: '', type: 'stage:patch', stage: 'code-pages-S04', file: 'runs/x/patches/003-weave-page-S04.patch' });
+    expect(lines).toEqual(['code', '  pages', '    pages-S04 patch runs/x/patches/003-weave-page-S04.patch']);
+  });
+});

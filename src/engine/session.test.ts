@@ -79,7 +79,8 @@ describe('runSession', () => {
     expect(readFileSync(path.join(appDir, '.weave/screens/S04.json'), 'utf8')).toContain('"S04"');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
     expect(totals(run).calls).toBe(3);
-    expect(readEvents(run).map((e) => e.type)).toEqual(['session:start', 'llm:call', 'session:end']);
+    // The inputs commit and the session's commit are each a patch in the run.
+    expect(readEvents(run).map((e) => e.type)).toEqual(['stage:patch', 'session:start', 'llm:call', 'stage:patch', 'session:end']);
   });
 
   it('fails a session whose diff touches a test or a protected path', async () => {

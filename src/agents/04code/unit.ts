@@ -5,7 +5,9 @@ import { fillPrompt, loadPrompt } from '../../core/prompt';
 import { appendEvent, runPath, updateStage } from '../../core/run';
 import { pathBeside } from '../../core/utils';
 import { CODE_SCHEDULE, sessionCompose, type Unit, type UnitResult, UnitResultSchema, unitIssues } from '../../engine/compose';
+import { savePatch } from '../../engine/patches';
 import type { SessionDeps } from '../../engine/session';
+import { git } from '../../engine/setup';
 import { runSpecStage, type SpecStageResult } from '../../runner/runSpecStage';
 import type { StageContext } from '../stages';
 
@@ -61,7 +63,7 @@ export async function runUnit(
         issues: formatIssues(pending),
       }),
   };
-  return runSpecStage({
+  const result = await runSpecStage({
     run: ctx.run,
     llm: ctx.llm,
     stage: spec.stage,
@@ -76,6 +78,13 @@ export async function runUnit(
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(ctx, appDir, unit, deps),
   });
+  // A unit whose last session failed leaves its work uncommitted: commit it under this unit, never the next one.
+  git(appDir, 'add', '-A');
+  if (git(appDir, 'diff', '--cached', '--name-only').trim()) {
+    git(appDir, 'commit', '-q', '-m', `weave: ${spec.id} (${result.known.length} known issues left)`);
+    savePatch(ctx.run, appDir, spec.stage);
+  }
+  return result;
 }
 
 /** A code stage's units, one after another: they share the app's git tree and its dev server port. */

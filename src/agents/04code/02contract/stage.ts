@@ -3,6 +3,7 @@ import path from 'node:path';
 import { hasArtifact, isStale, readArtifact, writeArtifact } from '../../../core/artifacts';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { appendLedger } from '../../../engine/ledger';
+import { savePatch } from '../../../engine/patches';
 import { appCheck, type Check } from '../../../engine/session';
 import { git } from '../../../engine/setup';
 import { runSpecStage } from '../../../runner/runSpecStage';
@@ -82,6 +83,7 @@ export async function runContractCode(ctx: StageContext, deps: ContractDeps = {}
   }
   git(appDir, 'add', '-A');
   git(appDir, 'commit', '-q', '--allow-empty', '-m', 'code-contract: entities from the contract');
+  savePatch(run, appDir, STAGE);
   updateStage(run, STAGE, { status: 'done' });
   appendEvent(run, { type: 'stage:done', stage: STAGE });
 }

@@ -87,6 +87,8 @@ export function runLog(
           return line(event.stage, `${count(n('count'), 'answer')} given`);
         case 'warning':
           return line(event.stage, `warning: ${String(event.message)}`);
+        case 'stage:patch':
+          return line(event.stage, `patch ${String(event.file)}`);
       }
     },
   };

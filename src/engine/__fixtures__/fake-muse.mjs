@@ -5,9 +5,10 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const key = readFileSync(0, 'utf8');
+// FAKE_VARY makes each run's files differ, as a real fix session's would.
 for (const [file, content] of Object.entries(JSON.parse(process.env.FAKE_WRITES ?? '{}'))) {
   mkdirSync(path.dirname(file), { recursive: true });
-  writeFileSync(file, content);
+  writeFileSync(file, process.env.FAKE_VARY ? `${content}// ${process.hrtime.bigint()}\n` : content);
 }
 const event = (payload_type, payload) => console.log(JSON.stringify({ payload_type, payload }));
 event('tool.result', { correlation_facts: { tool_name: 'write_file', outcome: 'success' } });

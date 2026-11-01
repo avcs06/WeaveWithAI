@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -86,9 +86,16 @@ describe('a coding unit', () => {
 
   it('records what is left after round 3 as known, and returns', async () => {
     const { ctx, spec, deps } = setup('known', false, (name) => name === 'typecheck');
-    const result = await withWrites(page, () => runUnit(ctx, spec, deps));
+    process.env.FAKE_VARY = '1';
+    const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
     expect(result.rounds).toBe(3);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
+    // What the failing sessions left is committed under this unit, and each step is a patch.
+    const appDir = runPath(ctx.run, 'app');
+    expect(git(appDir, 'status', '--porcelain')).toBe('');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('weave: page-S04 (1 known issues left)');
+    const patches = readdirSync(runPath(ctx.run, 'patches'));
+    expect(patches.at(-1)).toMatch(/weave-page-S04-1-known-issues-left\.patch$/);
   });
 
   it("warns about a read its guidelines rule out, from the hook's tool log", async () => {

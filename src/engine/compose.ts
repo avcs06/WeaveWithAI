@@ -22,6 +22,8 @@ export const CODE_SCHEDULE: Round[] = [
 export type Unit = {
   /** 'shared', 'frames', 'page-S04': the session ids and the runner's stage name end with it. */
   id: string;
+  /** The run's stage of the unit, such as `code-pages-S04`. */
+  stage?: string;
   task: string;
   /** The fix session's task for the pending issues. */
   fixTask: (pending: Issue[]) => string;
@@ -63,7 +65,7 @@ export function sessionCompose(
     const result = await runSession(
       ctx,
       appDir,
-      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads },
+      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads, stage: unit.stage },
       deps,
     );
     // Rendered checks only mean something on a route that loads.

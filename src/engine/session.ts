@@ -8,6 +8,7 @@ import type { StageContext } from '../agents/stages';
 import { checkScreen, type ScreenExpect } from './conformance';
 import { dockerArgs, ensureAgentImage, museDir } from './docker';
 import { appendLedger } from './ledger';
+import { savePatch } from './patches';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
@@ -33,6 +34,8 @@ export type Session = {
   writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
   reads?: ReadRules;
+  /** The run's stage the session belongs to, for its patch lines in the log. */
+  stage?: string;
   maxSteps?: number;
   timeoutMs?: number;
 };
@@ -135,6 +138,7 @@ export async function runSession(
   writeFileSync(at(promptFile), `${session.task}\n`);
   git(appDir, 'add', '-A');
   git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: inputs for ${session.id}`);
+  savePatch(run, appDir, session.stage ?? `session:${session.id}`);
 
   appendEvent(run, { type: 'session:start', stage: `session:${session.id}`, backend: backend.name, model: backend.model });
   // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
@@ -209,6 +213,7 @@ export async function runSession(
   if (status === 'done') {
     git(appDir, 'add', '-A');
     git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: ${session.id}`);
+    savePatch(run, appDir, session.stage ?? `session:${session.id}`);
   }
 
   const result: SessionResult = {
