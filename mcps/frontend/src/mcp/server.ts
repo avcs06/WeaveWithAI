@@ -169,7 +169,7 @@ export function createServer(system: DesignSystem): McpServer {
           .optional()
           .describe(
             'Path of the file the code belongs in, relative to the workspace root or absolute. ' +
-              "Files under the config's design-system folders skip the rules for app code. A component's own folder " +
+              "Files under the config's design-system folders are not checked. A component's own folder " +
               '(not its recipe) may use what it supersedes. A .ts file is parsed without JSX.',
           ),
       }),

@@ -2138,6 +2138,11 @@ Backend (OPTIONS.md section 6, Track B), packaging and deployment (sections
 10 and 11). The mock API keeps the contract's HTTP shape, so a real backend
 replaces it behind the same typed client.
 
+The design system's own MCP rules (user, 2026-11-01): for the coding agent the
+MCP checks nothing in `packages/`, and four rules wait in
+`mcps/frontend/design-system-rules/`. They come back for design-system work,
+kept away from the coding agent; how is open.
+
 ## If a day slips, cut in this order
 
 The benchmark is the proof of the project: nothing in Phase 8 is cut, and

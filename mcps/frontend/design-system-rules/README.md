@@ -1,7 +1,10 @@
 # Design-system rules
 
 Rules for writing the design system itself, moved out of the server on
-2026-11-01 (user): generated apps do not follow them. They are not compiled
+2026-11-01 (user): generated apps do not follow them. For now the server
+checks nothing under `designSystemFolders` either. Both are temporary: these
+rules come back when the design system is worked on again, kept away from the
+coding agent. They are not compiled
 or run. To use one again, move it back under `src/model/adapters/` at the
 same path, list it in its adapter's registry, and restore what it reads.
 

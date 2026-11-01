@@ -384,9 +384,10 @@ recipe keeps them working. Recipe files are never read as components.
 
 Style-defining code is always checked as vanilla-extract and `className` as Tailwind. The host
 workspace passes its Tailwind rules (`tailwind` on the config given to `createDesignSystem`).
-Design-system code skips the rules for app code: the class-list limits, the form rules and
-`non-default-variant`. It is every file under `designSystemFolders` (here `packages`), or, when
-that is unset, under a `components` glob's folder.
+Design-system code is not checked at all, recipes included: every file under
+`designSystemFolders` (here `packages`), or, when that is unset, under a `components` glob's
+folder. Its components and recipes are still read. This is temporary, so the coding agent never
+meets rules written for building the design system; those come back when it is worked on.
 The rules for writing the design system itself (layout in Tailwind only, no layout properties in
 vanilla-extract, Tailwind where a class matches exactly, no bare `flex`) are kept in
 [`design-system-rules/`](design-system-rules/), outside the server.

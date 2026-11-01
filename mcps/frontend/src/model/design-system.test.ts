@@ -422,10 +422,23 @@ describe('recipes', () => {
 
 describe('validate — recipes are app code', () => {
   it('flags what a component supersedes in its recipe, though its own file may use it', () => {
+    // Outside the design-system folders, as for web/app/components in the template.
+    const web = createDesignSystem({ ...config, designSystemFolders: ['packages'] });
     const rules = (filename: string) =>
-      system.validate('<button>Save</button>', filename).findings.map((f) => f.rule);
+      web.validate('<button>Save</button>', filename).findings.map((f) => f.rule);
     expect(rules('components/Button.recipe.tsx')).toContain('invalid-alternative');
     expect(rules('components/Button.tsx')).not.toContain('invalid-alternative');
+  });
+});
+
+describe('validate — design-system folders', () => {
+  it('checks nothing in them, recipes included, and still reads their components', () => {
+    const bad = '<div style={{ padding: "7px" }}><button className="hover:underline">Save</button></div>';
+    expect(system.validate(bad, 'components/Stack.tsx')).toEqual({ ok: true, findings: [] });
+    expect(system.validate(bad, 'components/Button.recipe.tsx')).toEqual({ ok: true, findings: [] });
+    expect(system.validate(bad, 'app/page.tsx').ok).toBe(false);
+    expect(system.component('Button')).toBeDefined();
+    expect(system.recipe('Button')).toBeDefined();
   });
 });
 

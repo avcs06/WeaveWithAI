@@ -29,9 +29,9 @@ const ConfigSchema = z.object({
    */
   importExceptions: z.array(z.string().min(1)).optional(),
   /**
-   * Folders holding the design system's own code, which skips the rules for
-   * app code (class-list limits, form rules, non-default variants). Default:
-   * every `components` glob's folder.
+   * Folders holding the design system's own code, which `validate` does not
+   * check at all, recipes included. Components and recipes in them are still
+   * read. Default: every `components` glob's folder.
    */
   designSystemFolders: z.array(z.string().min(1)).optional(),
 });
