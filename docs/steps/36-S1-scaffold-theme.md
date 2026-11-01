@@ -1,12 +1,12 @@
 # 36 · S1 Scaffold and theme apply
 
-Phase 6 · 90 min · Depends: R6, DS4 · Decisions: D0.3 A, D3.3 B, D3.4 B ·
+Phase 6 · 90 min · Depends: DS4 · Decisions: D0.3 A, D3.3 B, D3.4 B ·
 Spec: specs/design.md "Theme" (THEME-003); ARCHITECTURE.md "Generated app"
 
 ## Goal
 
 A generated app folder for the run: the template copied and installed, its
-MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
+MCP built, and the run's theme written into `colors.ts`, `tokens.ts` and
 `fonts.ts` by code, with every color proven to be the theme's.
 
 ## What this step does
@@ -18,7 +18,7 @@ MCP built, and the frozen theme written into `colors.ts`, `tokens.ts` and
 2. **Start the ledger**: a file that records every file the generator writes
    into the app, with its origin (code, model, repair). The benchmark's
    "lines by origin" and the ownership rules depend on it.
-3. **Apply the frozen theme by editing code, not by regenerating files**:
+3. **Apply the theme by editing code, not by regenerating files**:
    `src/agents/02design/01theme/preview/apply.ts` (DS18) sets the twelve primary and twelve base colors,
    the page colors and the status sets in light and dark, adds the entity color sets, sets
    the radius and focus ring tokens, regenerates the fonts file with the
@@ -123,8 +123,7 @@ stage throws on it.
 ### 4. The `scaffold` stage
 
 `src/agents/02design/01theme/preview/stage.ts`: `scaffoldStage = { name: 'scaffold', produces: [], run }`:
-read `spec.lock.json`, read the theme artifact and check its version
-matches the lock, `scaffoldApp`, `applyTheme`, `validateThemeApplied`, then
+read the theme artifact, `scaffoldApp`, `applyTheme`, `validateThemeApplied`, then
 in the app: `pnpm typecheck`, `pnpm verify /` (both through a small
 `runAppCheck(run, name, args)` helper in `src/engine/tools.ts` that logs
 `check:run`; step 41 builds on it). `state.stages.scaffold = done`.

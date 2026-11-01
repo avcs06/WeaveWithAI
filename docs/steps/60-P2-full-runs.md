@@ -29,8 +29,8 @@ After this step gate G8 is met and the submission has its numbers.
    `runs/<id>/MANUAL-EDITS.md` with the file, the change and why; it
    counts against D12.2 A.
 3. Modal: `pnpm weave run fixtures/ideas/freelancer-workspace.md --backend modal`
-   as far as credits and time allow (at least through `freeze`; the whole
-   run if it fits). Keep its run id: the submission names it.
+   as far as credits and time allow (at least through `design-assemble`;
+   the whole run if it fits). Keep its run id: the submission names it.
 4. `pnpm weave show <id> --html` for each; read the dashboards.
 5. `fixtures/golden/README.md` gets a final table per run: stages, rounds,
    tokens, cost, wall time, e2e pass count, repairs, the benchmark summary

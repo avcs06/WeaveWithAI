@@ -13,12 +13,11 @@ idea.md (+ answers.json)
         └─ design: theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
               └─ contract, beside screen, invent, draw and frame   Phase 4   specs/contracts.md
                     (it reads the flows and the catalog's widgets)
-  └─ reconcile ─ freeze (spec.lock.json)            Phase 5   specs/reconciliation.md
   └─ scaffold app from template/ ─ apply theme      Phase 6   steps 36, 37
         └─ codegen from the contract: types, client, hooks, seed, mock API, API tests
   └─ frontend: page shells (code) ─ new components ─ pages (model sessions)   Phase 7
   └─ benchmark: build, serve, Lighthouse, axe, screen reader, keyboard, code  Phase 8
-  └─ tests from frozen flows ─ run ─ evidence ─ repair (bounded) ─ benchmark again   Phase 9
+  └─ tests from the flows ─ run ─ evidence ─ repair (bounded) ─ benchmark again   Phase 9
 ```
 
 Every phase is planned as tasks in `PLAN.md`, with one step file per task in
@@ -32,16 +31,16 @@ benchmark stage (section 13) reports the frontend's quality in one table.
    writes files. No stage sees another stage's chat.
 2. **Stable IDs everywhere.** Flows `F03`, steps `F03.S02`, alternatives
    `F03.A01`, screens `S04`, sections `S04.sec2`, nodes `S04.n07`, entities
-   `Project`, operations `createProject`. Reconciliation, test generation and
-   repair requests all point at IDs.
+   `Project`, operations `createProject`. Test generation and repair requests
+   point at IDs.
 3. **Versioned inputs.** Every artifact records the version and hash of each
    input. When an input changes, everything downstream is stale and reruns.
 4. **Mandatory versus warning.** A stage is done when it has zero mandatory
    issues, not when it is perfect. Warnings are reported, never looped on.
 5. **Bounded loops.** Spec stages run a fixed five-round schedule with
-   model review on rounds 2 to 4 (D1.12); each reconciliation loop gets 2
-   rounds, coding repair 2 (D1.6). Issues left after the last round are
-   recorded as known issues in the report and the run state; the run goes on.
+   model review on rounds 2 to 4 (D1.12); coding repair gets 2 rounds
+   (D1.6). Issues left after the last round are recorded as known issues in
+   the report and the run state; the run goes on.
 6. **Deterministic where possible.** Contrast checks, the layout skeleton,
    contract code, test scaffolds, Git and packaging are code. A model is used
    only where judgement is needed, the theme's colors included (D3.3 F),
@@ -82,7 +81,6 @@ src/
     01flows/             scope, catalog, expand, reconcile
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame, assemble
     03contract/          the records and operations behind every widget
-    04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   codegen/               planned: ledger, entities, mock API, API tests, page shells
   engine/                the Muse Code runner: app config, `muse exec`, usage, the gate after the run
@@ -113,8 +111,6 @@ runs/<runId>/
   02-design/08-skeleton.json  02-design/08-wireframes.html  02-design/08-ds-gaps.json
   02-design/01-theme-light.png  02-design/01-theme-dark.png   every component in the theme (weave app)
   03-contract.json             the records and operations behind every widget
-  04-matrix.json  04-reconcile.md
-  spec.lock.json               frozen versions for implementation
   app/                         the generated app (a template copy plus generated code)
   app.ledger.json              every generated file with its origin and step
   benchmark/                   raw tool output; benchmark.json and 05-benchmark.md beside it
@@ -165,7 +161,6 @@ type Issue = {
   severity: 'mandatory' | 'warning';
   message: string; // says what is wrong and what would fix it
   at?: string; // an ID ('F03.S02') or a JSON path
-  owner?: 'flows' | 'design' | 'contract'; // used by reconciliation routing
 };
 ```
 
@@ -341,7 +336,7 @@ runs/<runId>/app/
   web/app/components/PageHeader.tsx                       navigation from the IA (FE2)
   web/app/(routes)/<route>/page.tsx                       shell by code (FE2), filled by the model (FE4)
   web/app/(routes)/<route>/<Dialog>.tsx                   dialogs and drawers of that page
-  web/e2e/<flow>.spec.ts  playwright.config.ts            tests from the frozen flows (T1)
+  web/e2e/<flow>.spec.ts  playwright.config.ts            tests from the flows (T1)
 ```
 
 Imports keep the template's direction: shared → entities → components →

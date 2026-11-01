@@ -16,7 +16,7 @@ app building in production mode and the first numbers recorded.
 4. **Record the numbers** in the golden README.
 
 After this step gate G5 is met: a themed app with a working mock API comes
-out of a frozen spec by code alone.
+out of the spec stages' artifacts by code alone.
 
 ## Implementation details
 
@@ -33,6 +33,6 @@ out of a frozen spec by code alone.
 
 ## Done when
 
-Gate **G5**: the freelancer workspace scaffolds and themes from the frozen spec;
+Gate **G5**: the freelancer workspace scaffolds with its theme applied;
 `web/app/entities/*` and `web/app/api/**` exist from the contract; the
 contract tests pass against the mock; `pnpm build` succeeds.

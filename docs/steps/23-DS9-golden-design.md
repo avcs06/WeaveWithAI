@@ -19,8 +19,8 @@ ecommerce store's first run, golden `02-*` saved. Gate G2.
 4. **The unseen idea runs once, untuned.** Save the accepted artifacts, fill
    the README table.
 
-After this step gate G2 is met and the contract and reconciliation stages
-can be developed offline.
+After this step gate G2 is met and the contract stage can be developed
+offline.
 
 ## Implementation details
 

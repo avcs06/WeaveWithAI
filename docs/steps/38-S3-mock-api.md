@@ -5,7 +5,7 @@ Spec: specs/contracts.md "Conventions"; ARCHITECTURE.md "Generated app"
 
 ## Goal
 
-A working API inside the generated app, generated from the frozen
+A working API inside the generated app, generated from the
 contract: every operation as a Next.js route handler with real validation,
 access rules, pagination, errors and status codes, reading and writing one
 JSON file. A create adds a row to `web/mocks/db.json`.

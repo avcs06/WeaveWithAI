@@ -52,8 +52,6 @@ export const PIPELINE: string[] = [
   'design-draw',
   'design-frame',
   'design-assemble',
-  'reconcile',
-  'freeze',
   'scaffold',
   'codegen',
   'apitest',

@@ -5,7 +5,7 @@ specs/contracts.md "Compile"; ARCHITECTURE.md "Generated app"
 
 ## Goal
 
-`web/app/entities/<entity>/` for every entity in the frozen contract, by
+`web/app/entities/<entity>/` for every entity in the contract, by
 code: zod schemas and types, a typed client on the template's `Server`
 helper, TanStack Query hooks, and the auth entity with session hooks.
 
@@ -14,7 +14,7 @@ helper, TanStack Query hooks, and the auth entity with session hooks.
 1. **Two small template changes**: add `zod` as a dependency of apps, and
    teach the template's `Server` helper to read the API error envelope so
    forms can show field errors from a 400.
-2. **For every entity in the frozen contract, generate a folder** under
+2. **For every entity in the contract, generate a folder** under
    `web/app/entities/`: the schemas and types (from the step 25 table, so
    they match the validators), a typed client with one function per
    operation on the contract's paths, TanStack Query hooks (lists, details,

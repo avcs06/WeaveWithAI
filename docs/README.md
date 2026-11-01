@@ -10,7 +10,6 @@ Read in this order when you start a session:
    - [specs/flows.md](specs/flows.md): scope and user flows
    - [specs/design.md](specs/design.md): design brief, theme, screens, new components
    - [specs/contracts.md](specs/contracts.md): domain model and operations
-   - [specs/reconciliation.md](specs/reconciliation.md): coverage matrix, routing, freeze
 4. [OPTIONS.md](OPTIONS.md): every implementation choice, with the one in use.
    The user ticks; you read. Unticked means the **(default)** applies.
 5. [steps/README.md](steps/README.md): one step file per task, in execution

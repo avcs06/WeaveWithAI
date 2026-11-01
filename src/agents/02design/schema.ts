@@ -227,7 +227,7 @@ export function makeScreensSchema(inv: Inventory) {
     newComponents: z.array(NewComponent),
     questions: z
       .array(Question)
-      .describe('Questions about flows that are unclear, for reconciliation'),
+      .describe('Questions about flows that are unclear'),
     impossibleSteps: z.array(
       z.object({ step: z.string(), reason: z.string() }),
     ),

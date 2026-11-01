@@ -24,7 +24,7 @@ After this step gate G9 is met.
 - 0:00 The idea file for the freelancer workspace, one sentence on Weave.
 - 0:20 `pnpm weave run …`: the stage lines scrolling; cut to `01-flows/04-reconcile.md`.
 - 0:45 `02-design/08-assemble.md` (or the wireframes) and the theme swatches.
-- 1:05 `03-contract.md`, then the coverage matrix with a mismatch fixed.
+- 1:05 `03-contract.md`: what covers each widget.
 - 1:25 The generated app in the browser: sign in, create a project, add
   a task; `web/mocks/db.json` gaining the row.
 - 1:50 `05-benchmark.md`: the per-route table, the duplicates section,

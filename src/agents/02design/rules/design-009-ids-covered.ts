@@ -8,7 +8,7 @@ import { type IaInput, type ScreensInput, stepIds } from './helpers';
  * Every step and alternative id appears on at least one screen or node. The
  * architect's plan lists each on a screen, so a gap fails before any later call.
  * A step the architect reports in `impossibleSteps`, and the alternatives
- * branching from it, are left to the reconcile stage.
+ * branching from it, are left out; the design markdown lists them.
  * Pass: F05.A01 on the book page.
  * Fail: F05.A01 nowhere.
  */

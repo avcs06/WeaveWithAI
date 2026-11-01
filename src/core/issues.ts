@@ -3,13 +3,11 @@ import { type Run, runPath } from './run';
 import { writeJsonAtomic } from './utils';
 
 export type Severity = 'mandatory' | 'warning';
-export type Owner = 'flows' | 'design' | 'contract';
 export type Issue = {
   rule: string;
   severity: Severity;
   message: string;
   at?: string;
-  owner?: Owner;
 };
 export type Report = { rounds: { round: number; issues: Issue[] }[] };
 

@@ -29,7 +29,6 @@ src/
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame,
                          assemble; the shapes, config and DESIGN rules they share
     03contract/          the contract: the records and operations behind every widget
-    04reconcile/         prompts of a later stage, not built yet
 ```
 
 Each stage is a folder `<NN><name>` in its group, and a full pipeline stage
@@ -117,7 +116,7 @@ restructure) stay as they are.
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
 - Generated apps have no backend and no deployment this week (pivot
-  2026-10-28): the frozen contract becomes a mock API inside the app
+  2026-10-28): the contract becomes a mock API inside the app
   (OPTIONS.md 6M), and a benchmark stage (section 13) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session may read and edit anything in the app; the

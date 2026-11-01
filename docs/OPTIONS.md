@@ -19,7 +19,7 @@ the option marked **(default)** applies. A ticked option overrides the default.
 | Design restyling       | restyle if over 20% different       | tokens only                    | tokens, then scoped variants      | tokens only                   | tokens, then `look` variants (D3.4); 20% rule is C      |
 | Design format          | not set                             | flat node list                 | screen/state spec + previews      | pages, sections               | screens, sections, nodes (D3.2)                         |
 | Contract format        | not set                             | resource DSL                   | operations + rich semantics       | OpenAPI-like + DB tables      | domain model + operations, HTTP by convention (D4.1)    |
-| Reconciliation         | two loops                           | coverage matrix, two loops     | ordered procedure, freeze         | one code differ               | one differ, run in R2's order, then freeze (D5.1)       |
+| Reconciliation         | two loops                           | coverage matrix, two loops     | ordered procedure, freeze         | one code differ               | dropped 2026-11-01 (section 5)                          |
 | Validation error code  | not set                             | 400                            | not set                           | 422                           | 400, Fastify's default (D4.3)                           |
 | Database               | SQL                                 | Postgres + Drizzle             | Postgres + Drizzle                | SQLite                        | Postgres + Drizzle (D6.3)                               |
 | Auth                   | utilities                           | own sessions                   | Better Auth                       | JWT cookie                    | Better Auth after a spike, own sessions fallback (D6.4) |
@@ -702,14 +702,19 @@ Notes:
 
 ### D4.6 Semantic reviewer (pick one)
 
-- [ ] **A. Off (default).** Screen-data coverage is checked by code in reconciliation.
+- [ ] **A. Off (default).** Screen-data coverage is checked by code in the contract stage (C7).
 - [ ] **B. On, warnings only:** "does each operation give the flow what it needs?"
 
 Notes:
 
 ---
 
-## 5. Reconciliation
+## 5. Reconciliation (dropped 2026-11-01)
+
+Dropped on the user's instruction: no reconciliation stage and no freeze.
+The contract stage checks that every widget has the records and operations
+it needs (C7), and later stages read the flows, design and contract as their
+stages wrote them. The decisions below stay as a record.
 
 ### D5.1 Structure (pick one)
 
@@ -862,7 +867,7 @@ Notes:
 
 ## 6M. Mock data and API (Phase 6, replaces the backend for now)
 
-Added 2026-10-28. The frozen contract is compiled into the generated app by
+Added 2026-10-28. The contract is compiled into the generated app by
 code: types, a typed client, hooks, seed data and a mock API. No model calls.
 
 ### D6M.1 Mock API shape (pick one)
@@ -959,7 +964,7 @@ Notes:
 
 ### D8.1 When acceptance tests are made (pick one)
 
-- [ ] **A. From the frozen flows, before implementation (default) (R2).** Tests
+- [ ] **A. From the flows, before implementation (default) (R2).** Tests
       can't drift toward whatever got built.
 - [ ] **B. After implementation.**
 

@@ -56,12 +56,6 @@ spec's table.
 | 27  | C4   | Contract prompt and stage                       | 4     | 40 min  | [27-C4-contract-stage.md](27-C4-contract-stage.md) |
 | 28  | C5   | Contract renderer                               | 4     | 30 min  | [28-C5-contract-renderer.md](28-C5-contract-renderer.md) |
 | 29  | C6   | Contracts for every golden idea                 | 4     | 40 min  | [29-C6-golden-contracts.md](29-C6-golden-contracts.md) |
-| 30  | R1   | Coverage matrix                                 | 5     | 60 min  | [30-R1-matrix.md](30-R1-matrix.md) |
-| 31  | R2   | Mismatch rules                                  | 5     | 60 min  | [31-R2-mismatch-rules.md](31-R2-mismatch-rules.md) |
-| 32  | R3   | Patches                                         | 5     | 60 min  | [32-R3-patches.md](32-R3-patches.md) |
-| 33  | R4   | Patch prompts                                   | 5     | 40 min  | [33-R4-patch-prompts.md](33-R4-patch-prompts.md) |
-| 34  | R5   | Procedure, freeze, report                       | 5     | 60 min  | [34-R5-procedure-freeze.md](34-R5-procedure-freeze.md) |
-| 35  | R6   | Seeded defects and every golden idea            | 5     | 60 min  | [35-R6-seeded-defects.md](35-R6-seeded-defects.md) |
 | 36  | S1   | Scaffold and theme apply                        | 6     | 90 min  | [36-S1-scaffold-theme.md](36-S1-scaffold-theme.md) |
 | 37  | S2   | Contract codegen: types, client, hooks          | 6     | 90 min  | [37-S2-entities-codegen.md](37-S2-entities-codegen.md) |
 | 38  | S3   | Mock API: route handlers and JSON store         | 6     | 2.5 h   | [38-S3-mock-api.md](38-S3-mock-api.md) |
@@ -81,7 +75,7 @@ spec's table.
 | 52  | B5   | Keyboard navigation                             | 8     | 60 min  | [52-B5-keyboard.md](52-B5-keyboard.md) |
 | 53  | B6   | Code quality and duplicates                     | 8     | 90 min  | [53-B6-code-quality.md](53-B6-code-quality.md) |
 | 54  | B7   | Benchmark table and CLI                         | 8     | 60 min  | [54-B7-benchmark-report.md](54-B7-benchmark-report.md) |
-| 55  | T1   | Playwright tests from the frozen flows          | 9     | 2 h     | [55-T1-e2e-generation.md](55-T1-e2e-generation.md) |
+| 55  | T1   | Playwright tests from the flows                 | 9     | 2 h     | [55-T1-e2e-generation.md](55-T1-e2e-generation.md) |
 | 56  | T2   | Run, evidence, repair requests                  | 9     | 60 min  | [56-T2-evidence-repair-requests.md](56-T2-evidence-repair-requests.md) |
 | 57  | T3   | Bounded repair                                  | 9     | 90 min  | [57-T3-bounded-repair.md](57-T3-bounded-repair.md) |
 | 58  | T4   | Golden freelancer workspace e2e green                | 9     | 45 min  | [58-T4-golden-e2e.md](58-T4-golden-e2e.md) |

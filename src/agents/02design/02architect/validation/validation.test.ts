@@ -61,7 +61,7 @@ describe('the architect rules', () => {
     expect(rules(check(changed(cases[rule]!)))).toContain(rule);
   });
 
-  it('DESIGN-009 leaves a step reported impossible, and its alternatives, to the reconcile stage', () => {
+  it('DESIGN-009 leaves out a step reported impossible, and its alternatives', () => {
     const reported = changed((p) => {
       const dialog = screen(p, 'S05');
       dialog.flowSteps = dialog.flowSteps.filter((id) => id !== 'F03.S02');
