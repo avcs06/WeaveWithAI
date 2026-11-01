@@ -1695,7 +1695,7 @@ coding agent writes no tests.
   - Done when: `pnpm test`; `docker build` passes; a fake `muse` in the
     container edits the app and leaves the files the user's.
 
-- [ ] **CD4** Contract code (2 h). Depends: CD2, C7
+- [x] **CD4** Contract code (2 h) (done 2026-11-01). Depends: CD2, C7
   - `src/agents/04code/02contract/`: the `code-contract` stage writes
     `web/app/entities/<entity>/` by code: zod types, a
     `createPersistentStore` store, one function per operation named by its
@@ -1707,6 +1707,12 @@ coding agent writes no tests.
   - Step file: `docs/steps/73-CD4-contract-code.md`.
   - Done when: `pnpm test` with a snapshot of the golden freelancer
     contract's output; the generated layer typechecks and lints.
+  - Done 2026-11-01: `codegen.ts`, the seed call and SEED-001, the
+    `code-contract` artifact, `.weave/02-contract/`. Plain TypeScript types,
+    no zod: the template has none. Sign-in lives in `entities/auth/`, since
+    the freelancer contract has a `Session` entity. Written into the
+    freelancer app with stand-in seed rows: MCP validate, typecheck and lint
+    pass. The live seed call (about $0.05) waits for the user's go.
 
 - [ ] **CD5** Code rounds in the stage runner (2.5 h). Depends: CD2, FE1
   - `runSpecStage` learns a schedule per stage, output reviewers as a list

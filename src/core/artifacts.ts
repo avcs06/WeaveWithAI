@@ -16,7 +16,7 @@ export type ArtifactName =
   | 'design-frame'
   | 'design-assemble'
   | 'contract'
-  | 'matrix';
+  | 'code-contract';
 export type ArtifactRef = { version: number; hash: string };
 export type Envelope<T> = {
   meta: {
@@ -53,7 +53,7 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'design-frame': '02-design/07-frame.json',
   'design-assemble': '02-design/08-assemble.json',
   contract: '03-contract.json',
-  matrix: '04-matrix.json',
+  'code-contract': '04-code/02-contract.json',
 };
 
 /** The markdown an artifact is rendered to, beside it. */

@@ -1,0 +1,273 @@
+import type { Contract, Entity, EntityField, Operation } from '../../03contract/schema';
+import type { SeedRows } from './schema';
+
+// The contract as the app's entity layer (CD4), written by code: one folder per
+// entity under web/app/entities/ with its types, seed rows, a persistent store
+// and one function per operation, plus sign-in (auth) and the mock helpers.
+
+const lower = (name: string) => `${name.charAt(0).toLowerCase()}${name.slice(1)}`;
+const upper = (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+export const entityFolder = (entity: string) => `web/app/entities/${lower(entity)}`;
+/** A seed row's id, so refs between seed rows can name it before the app runs. */
+export const seedId = (entity: string, row: number) => `${lower(entity)}-${row}`;
+
+const SCALAR: Record<EntityField['kind'], string> = {
+  string: 'string',
+  text: 'string',
+  email: 'string',
+  url: 'string',
+  phone: 'string',
+  int: 'number',
+  decimal: 'number',
+  money: 'number',
+  percent: 'number',
+  boolean: 'boolean',
+  date: 'string',
+  time: 'string',
+  datetime: 'string',
+  enum: 'string',
+  ref: 'string',
+};
+
+function fieldType(field: EntityField): string {
+  const one = field.kind === 'enum' ? field.enum : SCALAR[field.kind];
+  return field.list ? `${one}[]` : one;
+}
+
+function enumsModule(contract: Contract): string {
+  const blocks = contract.enums.map((e) => {
+    const options = e.values.map((v) => `  { key: '${v.key}', label: ${JSON.stringify(v.label)} },`).join('\n');
+    return `export const ${e.name}Options = [\n${options}\n] as const;\n\nexport type ${e.name} = (typeof ${e.name}Options)[number]['key'];`;
+  });
+  return `${blocks.join('\n\n')}\n`;
+}
+
+function typesModule(entity: Entity, contract: Contract): string {
+  const enums = [...new Set(entity.fields.filter((f) => f.kind === 'enum').map((f) => f.enum))];
+  const known = new Set(contract.enums.map((e) => e.name));
+  const missing = enums.filter((name) => !known.has(name));
+  if (missing.length) throw new Error(`${entity.name} uses enums the contract does not define: ${missing.join(', ')}`);
+  const imports = enums.length ? `import type { ${enums.sort().join(', ')} } from '../enums';\n\n` : '';
+  const fields = entity.fields.map((f) => `  ${f.name}${f.required ? '' : '?'}: ${fieldType(f)};`).join('\n');
+  return `${imports}export type ${entity.name} = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+${fields}
+};
+
+/** What a create takes: everything but the fields the store sets. */
+export type ${entity.name}Input = Omit<${entity.name}, 'id' | 'createdAt' | 'updatedAt'>;
+`;
+}
+
+function seedModule(entity: Entity, rows: SeedRows[string]): string {
+  const stamp = '2026-01-01T09:00:00.000Z';
+  const records = rows.map((row, i) => {
+    const values = Object.fromEntries(
+      entity.fields.flatMap((f) => {
+        const value = row[f.name];
+        if (value === undefined || value === null || value === '') return [];
+        if (f.kind !== 'ref') return [[f.name, value]];
+        const toId = (n: unknown) => seedId(f.ref, Number(n));
+        return [[f.name, Array.isArray(value) ? value.map(toId) : toId(value)]];
+      }),
+    );
+    return { id: seedId(entity.name, i + 1), createdAt: stamp, updatedAt: stamp, ...values };
+  });
+  return `import type { ${entity.name} } from './types';
+
+export const ${lower(entity.name)}Seed: ${entity.name}[] = ${JSON.stringify(records, null, 2)};
+`;
+}
+
+function storeModule(entity: Entity): string {
+  const name = entity.name;
+  return `import { createPersistentStore } from '@packages/utils/state';
+
+import { ${lower(name)}Seed } from './seed';
+
+import type { ${name} } from './types';
+
+type ${name}State = { records: ${name}[] };
+
+/** Every ${name}, saved in the browser so a reload keeps what the user changed. */
+export const use${name}Store = createPersistentStore<${name}State>(
+  () => ({ records: ${lower(name)}Seed }),
+  'weave:${lower(name)}',
+);
+`;
+}
+
+function operationCode(op: Operation, entity: string): string {
+  const store = `use${entity}Store`;
+  switch (op.kind) {
+    case 'list':
+      return `export async function ${op.id}(): Promise<${entity}[]> {
+  await mockCall('${op.id}');
+  return ${store}.getState().records;
+}
+
+export function use${upper(op.id)}(): Read<${entity}[]> {
+  return useRead('${op.id}', ${store}('records'));
+}`;
+    case 'get':
+      return `export async function ${op.id}(id: string): Promise<${entity} | undefined> {
+  await mockCall('${op.id}');
+  return ${store}.getState().records.find((record) => record.id === id);
+}
+
+export function use${upper(op.id)}(id: string): Read<${entity} | undefined> {
+  return useRead('${op.id}', ${store}(({ records }) => records.find((record) => record.id === id)));
+}`;
+    case 'create':
+      return `export async function ${op.id}(input: ${entity}Input): Promise<${entity}> {
+  await mockCall('${op.id}');
+  const now = new Date().toISOString();
+  const record: ${entity} = { ...input, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
+  ${store}.setState(({ records }) => ({ records: [...records, record] }));
+  return record;
+}`;
+    case 'update':
+      return `export async function ${op.id}(id: string, changes: Partial<${entity}Input>): Promise<${entity}> {
+  await mockCall('${op.id}');
+  const current = ${store}.getState().records.find((record) => record.id === id);
+  if (!current) throw new Error('${entity} not found');
+  const record: ${entity} = { ...current, ...changes, updatedAt: new Date().toISOString() };
+  ${store}.setState(({ records }) => ({ records: records.map((r) => (r.id === id ? record : r)) }));
+  return record;
+}`;
+    case 'delete':
+      return `export async function ${op.id}(id: string): Promise<void> {
+  await mockCall('${op.id}');
+  ${store}.setState(({ records }) => ({ records: records.filter((record) => record.id !== id) }));
+}`;
+    case 'action':
+      throw new Error(`${op.id}: the code stages write list, get, create, update and delete only`);
+  }
+}
+
+function operationsModule(entity: Entity, operations: Operation[]): string {
+  const reads = operations.some((op) => op.kind === 'list' || op.kind === 'get');
+  const types = operations.some((op) => op.kind === 'create' || op.kind === 'update')
+    ? `${entity.name}, ${entity.name}Input`
+    : entity.name;
+  return `import { mockCall${reads ? ', type Read, useRead' : ''} } from '../mock';
+
+import { use${entity.name}Store } from './store';
+
+import type { ${types} } from './types';
+
+${operations.map((op) => operationCode(op, entity.name)).join('\n\n')}
+`;
+}
+
+const MOCK = `import { useEffect, useState } from 'react';
+
+// No backend yet: every operation waits NEXT_PUBLIC_MOCK_LATENCY_MS, and fails
+// when localStorage 'weave:fail' names it, so loading and error states show.
+
+const LATENCY = Number(process.env.NEXT_PUBLIC_MOCK_LATENCY_MS ?? 0);
+
+function failing(operation: string): boolean {
+  try {
+    return localStorage.getItem('weave:fail') === operation;
+  } catch {
+    return false;
+  }
+}
+
+export async function mockCall(operation: string): Promise<void> {
+  if (LATENCY > 0) await new Promise((resolve) => setTimeout(resolve, LATENCY));
+  if (failing(operation)) throw new Error(\`\${operation} failed\`);
+}
+
+/** A read as a page renders it: the data, while it loads, its error, and a retry. */
+export type Read<T> = { data: T; loading: boolean; error: Error | null; retry: () => void };
+
+export function useRead<T>(operation: string, data: T): Read<T> {
+  const [attempt, setAttempt] = useState(0);
+  const [status, setStatus] = useState<{ loading: boolean; error: Error | null }>({
+    loading: LATENCY > 0,
+    error: null,
+  });
+  useEffect(() => {
+    let live = true;
+    mockCall(operation).then(
+      () => live && setStatus({ loading: false, error: null }),
+      (error: Error) => live && setStatus({ loading: false, error }),
+    );
+    return () => {
+      live = false;
+    };
+  }, [operation, attempt]);
+  const retry = () => {
+    setStatus({ loading: LATENCY > 0, error: null });
+    setAttempt((n) => n + 1);
+  };
+  return { data, ...status, retry };
+}
+`;
+
+const AUTH = `import { createPersistentStore } from '@packages/utils/state';
+
+import { mockCall } from '../mock';
+
+// Sign up and sign in take any email: there is no backend yet.
+
+export type User = { email: string };
+
+type AuthState = { user: User | null };
+
+const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), 'weave:auth');
+
+export async function signUp(email: string): Promise<User> {
+  await mockCall('signUp');
+  useAuthStore.setState({ user: { email } });
+  return { email };
+}
+
+export async function signIn(email: string): Promise<User> {
+  await mockCall('signIn');
+  useAuthStore.setState({ user: { email } });
+  return { email };
+}
+
+export function signOut(): void {
+  useAuthStore.setState({ user: null });
+}
+
+/** The signed-in user, or null for a visitor. */
+export function useCurrentUser(): User | null {
+  return useAuthStore('user');
+}
+`;
+
+/** The entity's folder exports, named one by one as the template's lint asks. */
+function barrel(entity: Entity, operations: Operation[]): string {
+  const names = operations.flatMap((op) =>
+    op.kind === 'list' || op.kind === 'get' ? [op.id, `use${upper(op.id)}`] : [op.id],
+  );
+  const types = `export type { ${entity.name}, ${entity.name}Input } from './types';\n`;
+  return names.length ? `${types}export { ${names.join(', ')} } from './operations';\n` : types;
+}
+
+/** Every file of the entity layer, by path in the app. Pure. */
+export function entityFiles(contract: Contract, seed: SeedRows): Map<string, string> {
+  const reserved = contract.entities.filter((e) => ['Auth', 'Mock', 'Enums'].includes(e.name));
+  if (reserved.length) throw new Error(`entity names ${reserved.map((e) => e.name).join(', ')} clash with the generated auth, mock and enums folders`);
+  const files = new Map<string, string>();
+  files.set('web/app/entities/mock/index.ts', MOCK);
+  files.set('web/app/entities/auth/index.ts', AUTH);
+  if (contract.enums.length) files.set('web/app/entities/enums/index.ts', enumsModule(contract));
+  for (const entity of contract.entities) {
+    const folder = entityFolder(entity.name);
+    const operations = contract.operations.filter((op) => op.entity === entity.name);
+    files.set(`${folder}/types.ts`, typesModule(entity, contract));
+    files.set(`${folder}/seed.ts`, seedModule(entity, seed[entity.name] ?? []));
+    files.set(`${folder}/store.ts`, storeModule(entity));
+    if (operations.length) files.set(`${folder}/operations.ts`, operationsModule(entity, operations));
+    files.set(`${folder}/index.ts`, barrel(entity, operations));
+  }
+  return files;
+}

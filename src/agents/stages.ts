@@ -21,6 +21,7 @@ import {
 } from './02design/stages';
 import { contractStage } from './03contract/stage';
 import { scaffoldStage } from './04code/01scaffold/stage';
+import { contractCodeStage } from './04code/02contract/stage';
 
 export type StageContext = {
   run: Run;
@@ -95,4 +96,5 @@ export const stages: StageDef[] = [
   frameStage,
   assembleStage,
   scaffoldStage,
+  contractCodeStage,
 ];
