@@ -114,7 +114,7 @@ describe('runSession', () => {
     expect(result.checks.find((c) => c.name === 'typecheck')?.ok).toBe(false);
   });
 
-  it('fails a session that reinstalls the packages, and puts them back from the lockfile', async () => {
+  it('fails a session that reinstalls the packages, and puts them back from the lockfile before the checks', async () => {
     const { appDir, ctx } = setup('install');
     mkdirSync(path.join(appDir, 'node_modules'), { recursive: true });
     writeFileSync(path.join(appDir, 'node_modules/.modules.yaml'), 'packageManager: pnpm@10.20.0\n');
@@ -128,7 +128,8 @@ describe('runSession', () => {
     );
     expect(result.status).toBe('checks');
     expect(result.checks.find((c) => c.name === 'install')?.ok).toBe(false);
-    expect(ran.at(-1)).toBe('restore: env CI=true pnpm install --frozen-lockfile --prefer-offline');
+    expect(ran[0]).toBe('restore: env CI=true pnpm install --frozen-lockfile --prefer-offline');
+    expect(ran.slice(1).map((line) => line.split(':')[0])).toEqual(['validate', 'typecheck', 'lint', 'verify']);
   });
 
   it('fails a session whose page misses a node of its design', async () => {

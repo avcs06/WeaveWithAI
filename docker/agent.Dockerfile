@@ -3,9 +3,10 @@
 FROM node:24-bookworm
 
 # The app is installed on the host with pnpm 10.20.0; another major refuses its
-# node_modules, and the agent then tries to reinstall it (2026-11-01).
-RUN corepack enable && corepack prepare pnpm@10.20.0 --activate
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+# node_modules and reinstalls them on the next `pnpm <script>`. npm, not
+# corepack: corepack keeps its pinned version in root's home, and the session's
+# user, with HOME=/tmp, would download the latest.
+RUN npm install -g pnpm@10.20.0
 
 # The Chromium of the template's playwright-core, for `pnpm verify` inside a session.
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright

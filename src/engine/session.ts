@@ -211,15 +211,16 @@ export async function runSession(
   const runCheck = deps.runCheck ?? appCheck;
   const sources = changes.filter((c) => c.status !== 'D' && /\.tsx?$/.test(c.path)).map((c) => c.path);
   const checks: Check[] = [];
+  // Restored first, so the checks below judge the code and not a broken install.
+  if (installState(appDir) !== installedBefore) {
+    checks.push({ name: 'install', ok: false, output: 'The session changed node_modules. Never install, add or remove a package; the runner reinstalled them from the lockfile.' });
+    await runCheck(appDir, 'restore', ['env', 'CI=true', 'pnpm', 'install', '--frozen-lockfile', '--prefer-offline']);
+  }
   if (sources.length) checks.push(await runCheck(appDir, 'validate', ['node', 'tools/validate-files.mjs', ...sources]));
   checks.push(await runCheck(appDir, 'typecheck', ['pnpm', 'typecheck']));
   checks.push(await runCheck(appDir, 'lint', ['pnpm', 'nx', 'lint', 'web']));
   if (session.route) checks.push(await runCheck(appDir, 'verify', ['pnpm', 'verify', session.route]));
   if (session.expect) checks.push(checkScreen(appDir, session.expect));
-  if (installState(appDir) !== installedBefore) {
-    checks.push({ name: 'install', ok: false, output: 'The session changed node_modules. Never install, add or remove a package; the runner reinstalled them from the lockfile.' });
-    await runCheck(appDir, 'restore', ['env', 'CI=true', 'pnpm', 'install', '--frozen-lockfile', '--prefer-offline']);
-  }
 
   const status: SessionResult['status'] = exec.timedOut
     ? 'timeout'
