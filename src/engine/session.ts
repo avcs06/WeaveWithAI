@@ -29,6 +29,8 @@ export type Session = {
   expect?: ScreenExpect;
   /** More globs the diff must not touch; tests and `PROTECTED` always are. */
   protect?: string[];
+  /** The only globs the diff may touch, when given (CD5): each code stage writes its own folders. */
+  writes?: string[];
   maxSteps?: number;
   timeoutMs?: number;
 };
@@ -56,6 +58,15 @@ const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
 const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**'];
 const OURS = new Set(['.weave/hook.log', '.weave/ledger.json']);
 const MAX_OUTPUT_LINES = 200;
+
+/** The changed files a session may not touch: tests, `PROTECTED`, its own protect globs, and anything outside its write paths. */
+export function protectedOf(changed: string[], session: Pick<Session, 'protect' | 'writes'>): string[] {
+  const outside = (file: string) => session.writes !== undefined && !session.writes.some((glob) => path.matchesGlob(file, glob));
+  return changed.filter(
+    (file) =>
+      TESTS.test(file) || [...PROTECTED, ...(session.protect ?? [])].some((glob) => path.matchesGlob(file, glob)) || outside(file),
+  );
+}
 
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
   const [cmd = 'pnpm', ...rest] = args;
@@ -125,9 +136,7 @@ export async function runSession(
     })
     .filter((change) => !OURS.has(change.path));
   const changed = changes.map((change) => change.path);
-  const protectedHits = changed.filter(
-    (file) => TESTS.test(file) || [...PROTECTED, ...(session.protect ?? [])].some((glob) => path.matchesGlob(file, glob)),
-  );
+  const protectedHits = protectedOf(changed, session);
 
   const runCheck = deps.runCheck ?? appCheck;
   const sources = changes.filter((c) => c.status !== 'D' && /\.tsx?$/.test(c.path)).map((c) => c.path);
@@ -151,7 +160,7 @@ export async function runSession(
   appendLedger(appDir, changes.map((change) => ({ ...change, origin: 'model', session: session.id })));
   if (status === 'done') {
     git(appDir, 'add', '-A');
-    git(appDir, 'commit', '-q', '-m', `weave: ${session.id}`);
+    git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: ${session.id}`);
   }
 
   const result: SessionResult = {

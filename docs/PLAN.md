@@ -1721,7 +1721,7 @@ coding agent writes no tests.
     freelancer app with stand-in seed rows: MCP validate, typecheck and lint
     pass. The live seed call (about $0.05) waits for the user's go.
 
-- [ ] **CD5** Code rounds in the stage runner (2.5 h). Depends: CD2, FE1
+- [x] **CD5** Code rounds in the stage runner (2.5 h) (done 2026-11-01). Depends: CD2, FE1
   - `runSpecStage` learns a schedule per stage, output reviewers as a list
     and a review input template; the spec stages keep D1.12's schedule. A
     session `Compose` in `src/engine/` makes drafts and fixes Muse Code
@@ -1732,14 +1732,26 @@ coding agent writes no tests.
   - Done when: `pnpm test` with a fake `muse`: a unit failing typecheck in
     round 1 is fixed in round 2 with the reviewers' blockers; a unit still
     failing after round 3 is known and the run goes on.
+  - Done 2026-11-01: the runner takes `schedule`, named output reviewers,
+    `reviewInput` and `reviewersSeeAll`; spec stages run as before (their
+    32 tests unchanged). `src/engine/compose.ts`, `checks.ts` (CODE-001 to
+    008, and CODE-009 for a session that never finished) and `server.ts`
+    (one dev server for verify and the rendered checks). Found by the
+    tests: write paths are judged over the unit's whole diff, since a fix
+    that leaves a bad file alone has not undone it; a session that changes
+    nothing no longer fails its commit.
 
-- [ ] **CD6** Code reviewers (1 h). Depends: CD5
+- [x] **CD6** Code reviewers (1 h) (done 2026-11-01). Depends: CD5
   - `src/agents/04code/prompts/`: `review-code.md` (quality, readability,
     organization) and `review-adherence.md` (design, theme and behavior),
     with an input that carries the diff, the unit's `.weave/` files, the
     agent's summary and the failed checks.
   - Step file: `docs/steps/75-CD6-code-reviewers.md`.
   - Done when: `pnpm test`: both guides fill; a blocker reaches the fix.
+  - Done 2026-11-01: `review-code.md`, `review-adherence.md`,
+    `review-input.md` and `fix-task.md` in `src/agents/04code/prompts/`;
+    `unit.ts` runs a unit with both. The reviewers read the guidelines and
+    the task, the unit's own folder, the diff and the agent's summary.
 
 - [ ] **CD7** Shared (1 h). Depends: CD4, CD6
   - `src/agents/04code/03shared/`: one session for the new components, then
