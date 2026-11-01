@@ -5,6 +5,7 @@ import { resolveBackend } from '../core/backends';
 import { costUsd } from '../core/prices';
 import { appendEvent, runPath } from '../core/run';
 import type { StageContext } from '../agents/stages';
+import { checkScreen, type ScreenExpect } from './conformance';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
@@ -22,6 +23,8 @@ export type Session = {
   inputs: Record<string, unknown>;
   /** The route `pnpm verify` checks. */
   route?: string;
+  /** What the screen's route folder must name, from its design and the contract. */
+  expect?: ScreenExpect;
   /** More globs the diff must not touch; tests and `PROTECTED` always are. */
   protect?: string[];
   maxSteps?: number;
@@ -126,6 +129,7 @@ export async function runSession(
   checks.push(await runCheck(appDir, 'typecheck', ['pnpm', 'typecheck']));
   checks.push(await runCheck(appDir, 'lint', ['pnpm', 'nx', 'lint', 'web']));
   if (session.route) checks.push(await runCheck(appDir, 'verify', ['pnpm', 'verify', session.route]));
+  if (session.expect) checks.push(checkScreen(appDir, session.expect));
 
   const status: SessionResult['status'] = exec.timedOut
     ? 'timeout'

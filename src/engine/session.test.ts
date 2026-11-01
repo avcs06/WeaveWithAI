@@ -101,6 +101,16 @@ describe('runSession', () => {
     expect(result.status).toBe('checks');
     expect(result.checks.find((c) => c.name === 'typecheck')?.ok).toBe(false);
   });
+
+  it('fails a session whose page misses a node of its design', async () => {
+    const { appDir, ctx } = setup('design');
+    const expectations = { folder: 'web/app/(routes)/books', testIds: ['S04.n01', 'S04.n02'], operations: ['listBooks'] };
+    const result = await withWrites({ [page]: '<h1 data-testid="S04.n01" />; listBooks();\n' }, () =>
+      runSession(ctx, appDir, { ...session, expect: expectations }, { bin: fake, runCheck: checks() }),
+    );
+    expect(result.status).toBe('checks');
+    expect(result.checks.at(-1)).toEqual({ name: 'design', ok: false, output: 'No element has data-testid "S04.n02".' });
+  });
 });
 
 describe('museArgs and readUsage', () => {

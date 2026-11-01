@@ -1761,6 +1761,16 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     step file decides.
   - Done when: each tool has a test with one passing and one failing page,
     and the FE8 screen task calls them during its run.
+  - Built 2026-11-01 overnight, without the MCP: `src/engine/conformance.ts`
+    derives what a screen's route folder must name (every node's
+    `data-testid` for the page and its dialogs, the operations its widgets
+    read) and checks it; the session gate runs it as the `design` check.
+    It passes the FE8 page and fails a page missing a node. Not every
+    operation of the screen's steps is required: a step's effect may run
+    inside another (duplicating a dashboard copies its widgets).
+  > Blocked: where the MCP server lives is the user's call (the SDK is only
+  > in `mcps/frontend`); the rendered checks on a live route join the gate
+  > with `resolveRouteSamples`.
 
 - [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
   - `src/codegen/pages.ts`: the page frame from `02-design/08-assemble.json`'s shells,
