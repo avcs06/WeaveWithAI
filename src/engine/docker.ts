@@ -57,6 +57,8 @@ export function dockerArgs(image: string, appDir: string, muse: string, mounts: 
     'run', '--rm', '-i',
     '--user', user,
     '-e', 'HOME=/tmp',
+    // The agent's lint runs need no Nx daemon; one would only slow each command down.
+    '-e', 'NX_DAEMON=false',
     '-v', `${path.resolve(appDir)}:/app`,
     '-v', `${muse}:/opt/muse:ro`,
     ...(login ? ['-v', `${login}:/tmp/.config/muse`] : []),

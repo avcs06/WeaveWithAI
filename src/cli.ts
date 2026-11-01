@@ -386,6 +386,9 @@ export async function appCommand(
 
 /** Exit codes: 0 ok, 1 error, 2 usage. */
 export async function main(argv: string[]): Promise<number> {
+  // Every app command the run starts, Nx included, inherits this: an Nx daemon outlives the run, holds memory, and
+  // writes into an app's folder after the scaffold moves it aside.
+  process.env.NX_DAEMON ??= 'false';
   try {
     const { positionals, values } = parseArgs({
       args: argv,

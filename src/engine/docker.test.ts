@@ -26,6 +26,7 @@ describe('the agent container', () => {
     expect(args).toContain(`${process.getuid?.()}:${process.getgid?.()}`);
     expect(args).toContain(`${path.resolve('runs/x/app')}:/app`);
     expect(args).toContain('/home/u/.local/bin:/opt/muse:ro');
+    expect(args.join(' ')).toContain('-e NX_DAEMON=false');
     expect(args.slice(-2)).toEqual(['weave-agent:abc', '/opt/muse/muse']);
     expect(args.join(' ')).not.toContain('.config/muse');
   });

@@ -1824,7 +1824,12 @@ coding agent writes no tests.
     `PageLayout` moved out of the root layout; checks at the desktop width
     only; checks signed in on pages behind sign-in; `useCurrentUser()` is
     `undefined` until the saved session is read; pages that open each other
-    built in one session, wave by wave, after the pages they open.
+    built in one session, wave by wave, after the pages they open; the dev
+    server warmed up before the first page load; the keyboard walk swallows
+    clicks, so no button leaves its route; a check that breaks is a warning;
+    CODE-006 takes a list as loading its gets; design-system elements carry
+    `data-ds` and the browser checks skip them, contrast aside; motion frozen
+    while checking; no Nx daemon left behind by a run.
 
 - [ ] **CD11** Phones in the code stages (4 h, plus a 1 h rerun). Depends: CD10
   - Paused (user, 2026-11-01). The MVP is desktop only (OPTIONS.md, user,
