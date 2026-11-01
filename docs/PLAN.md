@@ -38,8 +38,8 @@ saying why, never extra work in the current step.
 | G2   | Oct 29, night | Every golden idea produces brief, theme and screens with zero mandatory issues; gap report works |
 | G3   | Oct 30, 13:00 | Every golden idea produces a contract, in parallel with design; seeds validate                 |
 | G4   | Oct 30, night | Dropped 2026-11-01 with reconciliation (Phase 5)                                               |
-| G5   | Oct 31        | Freelancer workspace scaffolded with its theme applied; typed client, hooks and mock API generated from the contract; contract tests pass against the mock; the app builds |
-| G6   | Nov 1         | Freelancer workspace works end to end by hand on the mock API: pages from the screens, new components built, hooks wired, rendered checks pass |
+| G5   | Oct 31        | Freelancer workspace scaffolded with its theme, its `.weave/` folders and its entity layer from the contract; the app builds |
+| G6   | Nov 1         | Dashboard editor and freelancer workspace built by the code stages: every route passes its checks or records its known issues; every flow works by hand |
 | G7   | Nov 2         | Benchmark table generated for the freelancer workspace; e2e tests generated from the flows pass after bounded repairs |
 | G8   | Nov 3         | Two ideas generated end to end without manual edits (or every edit logged); both benchmarked; one run on Muse Spark Open through Modal; run dashboard works |
 | G9   | Nov 4         | Demo video recorded, README has real numbers and separates hackathon work from the design system, submitted |
@@ -1597,14 +1597,153 @@ patch prompts are deleted; OPTIONS.md section 5 stays as a record.
 - [x] **R5** Procedure, freeze, report (60 min) (dropped 2026-11-01). Depends: R2, R4
 - [x] **R6** Seeded defects and every golden idea (60 min) (dropped 2026-11-01). Depends: R5
 
-## Phase 6: Scaffold, theme and mock API (Sat Oct 31)
+## Phase 6: Code (Nov 1 to Nov 2)
 
-Decisions: D6M.1 to D6M.4, D7.2, D9.1. Steps 36 to 40. Replaces the backend:
-the contract is compiled into types, a typed client, TanStack Query
-hooks, seed data and a mock API of Next.js route handlers backed by a JSON
-file, all inside the generated app, by code and without model calls.
+Decisions: D9.1 A, D6M.1 B, D6M.3 C, D6M.4 A, D7.1 B, D7.2 C, D7.4, D1.6,
+D1.12 notes. Steps 70 to 79. The user replaced the first Phases 6 and 7 on
+2026-11-01: one stage group, `src/agents/04code/`, builds the app, and the
+coding agent writes no tests.
 
-- [ ] **S1** Scaffold and theme apply (90 min). Depends: DS4, DS4a
+| # | Stage | Who | What |
+| --- | --- | --- | --- |
+| 1 | `code-scaffold` | code | The template in `runs/<id>/app`, the theme applied, the MCP built, the agent config and its container, a git baseline, and `.weave/`: one numbered folder per stage with its guidelines and inputs |
+| 2 | `code-contract` | code, one structured call | The entity layer from the contract: types, a persistent store, one function per operation, seed rows, a sign-in session |
+| 3 | `code-shared` | one Muse Code session | The new components, then the widgets placed on two or more screens |
+| 4 | `code-frames` | one session | The shells, the navigation and the frame changes; after shared, since a frame may use a shared piece |
+| 5 | `code-pages` | one session per page | The page, its dialogs and its single-use widgets |
+
+- Sessions run one after another: they share one app folder, one git tree
+  and `pnpm verify`'s port 3001.
+- Each session unit runs on `runSpecStage`. Round 1: the session, the
+  checks, both reviewers. Round 2: a fix session for every failed check and
+  blocker, the checks, both reviewers. Round 3: a final fix session and the
+  checks. What is left is known, and the run goes on.
+- Checks, without the agent: MCP validate on every changed file, typecheck,
+  lint, the session's write paths, every design node's `data-testid`, every
+  operation the unit's widgets read; on a route, `pnpm verify` and the
+  rendered checks DESIGN-R-001 to 009 (axe, contrast, the keyboard walk and
+  target sizes among them). `next build` runs once after the last page.
+- Two reviewers read each unit's diff. One checks code quality, readability
+  and clean organization, the product's selling point. The other checks
+  adherence to the design, the theme and the behavior the flows and the
+  contract describe. Neither repeats the checks. Code-written stages have
+  no reviewers; the generator's tests cover them.
+- The design may hold errors: the agent makes its own call, builds what the
+  flow needs and lists the call in its summary. It gets the questions,
+  answers and known issues of earlier stages and rounds, ranks them, and
+  fixes only blockers.
+- Rough cost from FE8: about $20 to $28 for the freelancer workspace and $8
+  to $12 for the dashboard editor.
+
+- [ ] **CD1** App and theme (1.5 h). Depends: DS4a, FE8
+  - `src/agents/04code/01scaffold/`: the `code-scaffold` stage copies
+    `template/` into `runs/<id>/app`, installs it, builds the MCP and
+    applies the theme with `applyTheme` (moved here from the theme
+    preview). A light-only or dark-only theme pins its mode. THEME-003
+    proves the applied colors. `prepareApp` (FE1) writes the agent config
+    and the git baseline. `PIPELINE` gets `code-scaffold` to `code-pages`
+    in place of `scaffold`, `codegen`, `apitest` and `frontend`.
+  - Step file: `docs/steps/70-CD1-app-and-theme.md`.
+  - Done when: `pnpm test`; the stage on `20261101-0150-freelancer-workspace`
+    gives an app whose `pnpm typecheck`, `pnpm mcp:check` and
+    `pnpm verify /` pass with the theme's colors.
+
+- [ ] **CD2** The `.weave` folders (2 h). Depends: CD1
+  - Why: each stage sees its own inputs and the earlier stages', and each
+    folder carries its guidelines (user, 2026-11-01).
+  - The scaffold writes `.weave/01-scaffold/` (guidelines for every
+    session, scope, flows, theme, contract, routes, questions with answers
+    and known issues no unit owns), `02-contract/`, `03-shared/` (each new
+    component's and shared widget's design), `04-frames/` (shells,
+    navigation, frame changes) and `05-pages/<screen>/` (the page and its
+    dialogs, their nodes, the steps they serve, the operations their
+    widgets read, the known issues that touch them).
+  - The app-wide guidelines replace `src/engine/guidelines.md` (FE9). They
+    add: the design may hold errors, so make your own call and list it;
+    rank the questions and known issues first and fix only blockers; end
+    with a summary of priorities, calls, files and what was not built.
+  - Step file: `docs/steps/71-CD2-weave-folders.md`.
+  - Done when: `pnpm test` on the golden freelancer set: every folder is
+    written, and each page's slice holds its nodes and no other page's.
+
+- [ ] **CD3** The agent in Docker (2 h). Depends: CD1
+  - Why: headless Muse Code runs shell commands with no approval prompt
+    (user, 2026-11-01). The container is the sandbox; Muse's own needs
+    bubblewrap, which is not installed here.
+  - `docker/agent.Dockerfile` (Node 22, pnpm, git, Chromium, the Muse
+    launcher), built by the scaffold when missing. `runSession` runs
+    `muse exec` in it with the app mounted, the user's uid and the key on
+    stdin. `MUSE_DOCKER=0` runs it on the host as now.
+  - Cut first if time runs short: sessions work on the host.
+  - Step file: `docs/steps/72-CD3-agent-docker.md`.
+  - Done when: `pnpm test`; `docker build` passes; a fake `muse` in the
+    container edits the app and leaves the files the user's.
+
+- [ ] **CD4** Contract code (2 h). Depends: CD2, C7
+  - `src/agents/04code/02contract/`: the `code-contract` stage writes
+    `web/app/entities/<entity>/` by code: zod types, a
+    `createPersistentStore` store, one function per operation named by its
+    id (the C7 contracts have only list, get, create, update and delete),
+    hooks for reads, seed rows from one structured call. `entities/session/`
+    signs up and in with any email. Latency and a fail switch serve the
+    loading states and T1's failure alternatives.
+  - Answers S6: no route handlers, no API tests (D6M.1 B, user, 2026-11-01).
+  - Step file: `docs/steps/73-CD4-contract-code.md`.
+  - Done when: `pnpm test` with a snapshot of the golden freelancer
+    contract's output; the generated layer typechecks and lints.
+
+- [ ] **CD5** Code rounds in the stage runner (2.5 h). Depends: CD2, FE1
+  - `runSpecStage` learns a schedule per stage, output reviewers as a list
+    and a review input template; the spec stages keep D1.12's schedule. A
+    session `Compose` in `src/engine/` makes drafts and fixes Muse Code
+    sessions. The checks become issues CODE-001 to 008; the rendered checks
+    keep their DESIGN-R ids. Each session gets write paths; anything else
+    fails CODE-004. One runner per unit, as draw has one per widget.
+  - Step file: `docs/steps/74-CD5-code-rounds.md`.
+  - Done when: `pnpm test` with a fake `muse`: a unit failing typecheck in
+    round 1 is fixed in round 2 with the reviewers' blockers; a unit still
+    failing after round 3 is known and the run goes on.
+
+- [ ] **CD6** Code reviewers (1 h). Depends: CD5
+  - `src/agents/04code/prompts/`: `review-code.md` (quality, readability,
+    organization) and `review-adherence.md` (design, theme and behavior),
+    with an input that carries the diff, the unit's `.weave/` files, the
+    agent's summary and the failed checks.
+  - Step file: `docs/steps/75-CD6-code-reviewers.md`.
+  - Done when: `pnpm test`: both guides fill; a blocker reaches the fix.
+
+- [ ] **CD7** Shared (1 h). Depends: CD4, CD6
+  - `src/agents/04code/03shared/`: one session for the new components, then
+    the shared widgets, in `components/` and `blocks/`; skipped when
+    nothing is shared.
+  - Step file: `docs/steps/76-CD7-shared.md`.
+  - Done when: `pnpm test` with a fake `muse`.
+
+- [ ] **CD8** Frames (1 h). Depends: CD7
+  - `src/agents/04code/04frames/`: one session for every shell's layout,
+    the navigation, the frame changes and the sign-in guard; checks on `/`
+    and one route per shell.
+  - Step file: `docs/steps/77-CD8-frames.md`.
+  - Done when: `pnpm test` with a fake `muse`.
+
+- [ ] **CD9** Pages (1.5 h). Depends: CD8
+  - `src/agents/04code/05pages/`: one session per page with its dialogs and
+    single-use widgets, in the navigation's order, every check on its
+    route; `next build` after the last page.
+  - Step file: `docs/steps/78-CD9-pages.md`.
+  - Done when: `pnpm test` with a fake `muse`.
+
+- [ ] **CD10** Golden apps end to end (1.5 h). Depends: CD9
+  - The dashboard editor first (about $8 to $12), then the freelancer
+    workspace (about $20 to $28), each on the user's go; every flow walked
+    by hand; the numbers in `fixtures/golden/README.md`.
+  - Step file: `docs/steps/79-CD10-golden-apps.md`.
+  - Done when: **G5** and **G6**.
+
+### Replaced by the code stages (2026-11-01)
+
+- [x] **S1** Scaffold and theme apply (90 min) (folded into CD1, 2026-11-01). Depends: DS4, DS4a
+  - Folded into CD1 and CD2 (2026-11-01). The notes below are history.
   - `src/agents/02design/02theme/preview/scaffold.ts`: copy `template/` to `runs/<id>/app` with
     `generate.mjs`, install, build the MCP. `src/agents/02design/02theme/preview/apply.ts`: apply
     `02-design/02-theme.json` with `ts-morph` to `colors.ts` (primary and entity sets,
@@ -1620,12 +1759,14 @@ file, all inside the generated app, by code and without model calls.
     yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
     pass, with the theme's colors in `colors.ts`.
 
-- [ ] **S6** Rescope S2 to S4 after C7 (30 min). Depends: C7
+- [x] **S6** Rescope S2 to S4 after C7 (30 min) (folded into CD4, 2026-11-01). Depends: C7
+  - Folded into CD4 (2026-11-01): the entity layer by code, with no route handlers (D6M.1 B). The notes below are history.
   - Why: S2 to S4 build on `compile.ts`, the conventions, seed rows, errors,
     access and lifecycles, which C7 removed from the contract. The mock API
     needs some back, at least paths and seed data; this task says how much.
 
-- [ ] **S2** Contract codegen: types, client, hooks (90 min). Depends: S1, C2
+- [x] **S2** Contract codegen: types, client, hooks (90 min) (folded into CD4, 2026-11-01). Depends: S1, C2
+  - Folded into CD4 (2026-11-01). The notes below are history.
   - `src/codegen/entities.ts` writes `web/app/entities/<entity>/` (zod schemas
     and types from `compile.ts`, `api.ts` on `Server`, `hooks.ts` on TanStack
     Query, `index.ts`) and `web/app/entities/auth/` (session hooks). `Server`
@@ -1633,7 +1774,8 @@ file, all inside the generated app, by code and without model calls.
   - Done when: the generated app typechecks and lints; a test compiles the
     golden contract and snapshots the output.
 
-- [ ] **S3** Mock API: route handlers and JSON store (2.5 h). Depends: S2
+- [x] **S3** Mock API: route handlers and JSON store (2.5 h) (dropped 2026-11-01). Depends: S2
+  - Dropped (2026-11-01): the entity stores replace the route handlers and the JSON file (D6M.1 B). The notes below are history.
   - `src/codegen/mockApi.ts` writes `web/mocks/seed.json`, `web/mocks/db.json`,
     `web/app/api/_mock/` (store with a write queue, http helpers, session) and
     one `route.ts` per path from the conventions: list, get, create, update,
@@ -1644,22 +1786,24 @@ file, all inside the generated app, by code and without model calls.
     that appears in `web/mocks/db.json` and in the next list call; every error
     code in the contract is reproducible.
 
-- [ ] **S4** Contract tests against the mock (60 min). Depends: S3
+- [x] **S4** Contract tests against the mock (60 min) (dropped 2026-11-01). Depends: S3
+  - Dropped (2026-11-01): the app gets no tests from the coding stages, and the generator's tests cover the contract code (CD4). The notes below are history.
   - `src/codegen/apiTests.ts` writes `web/app/api/__tests__/<entity>.test.ts`
     per entity: every operation's happy path and every listed error, pagination
     and sort, cascade on delete, unauthenticated and cross-user access, and data
     surviving a store reload (D8.4 A to D, applied to the mock).
   - Done when: `pnpm nx test web` passes in the generated freelancer workspace.
 
-- [ ] **S5** Golden freelancer workspace to app (45 min). Depends: S4
+- [x] **S5** Golden freelancer workspace to app (45 min) (folded into CD10, 2026-11-01). Depends: S4
+  - Folded into CD10 (2026-11-01). The notes below are history.
   - `weave run … --to codegen` end to end; `pnpm build` of the app; record
     sizes and timings; fix codegen bugs found on the way.
   - Done when: **G5**.
 
-## Phase 7: Frontend (Sun Nov 1)
+## Phase 7: Frontend (folded into Phase 6, 2026-11-01)
 
-Spec: [specs/design.md](specs/design.md) "Rendered checks". Decisions: D3.6 C,
-D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
+Folded into Phase 6 (user, 2026-11-01): the shared, frames and pages
+sessions build the frontend. The done tasks and the code built here stay.
 
 - [x] **FE8** Muse Code trial on a golden app (1 h) (done 2026-11-01). Depends: C6, DS18
   - Why: the user moved the coding stages to Muse Code headless (D9.1 A,
@@ -1684,7 +1828,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     The runner decision went to the overnight calls to review; FE1 went
     ahead as D9.1 A says.
 
-- [ ] **FE1** Muse Code runner (1.5 h). Depends: FE8, S1. Decision D9.1 A
+- [x] **FE1** Muse Code runner (1.5 h) (folded into CD5, 2026-11-01). Depends: FE8, S1. Decision D9.1 A
+  - Folded into CD5 (2026-11-01): `src/engine/` is the session the code rounds run, and the real session runs in CD10. The notes below are history.
   - `src/engine/`: writes the app's agent config (the MCP servers, the
     validate-after-edit hook, the trusted workspace, the endpoint: the Meta
     API, or Muse Spark Open on Baseten through `endpoint_transport`), commits
@@ -1725,7 +1870,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     runner protects what they forbid (`packages/`, `tools/`, `.weave/`,
     `.muse/`, `.mcp.json`) besides tests.
 
-- [ ] **FE10** App MCP: the remaining checks while the agent works (2 h). Depends: FE1, FE5
+- [x] **FE10** App MCP: the remaining checks while the agent works (2 h) (folded into CD5, 2026-11-01). Depends: FE1, FE5
+  - Folded into CD5 (2026-11-01): the design check becomes CODE-005 and CODE-006, and the rendered checks run on each route after the session. The app MCP server is parked: the checks run after each session (user, 2026-11-01). The notes below are history.
   - Why: the agent validates while it runs instead of after (user,
     2026-11-01). The design-system MCP stays generic (it flags only wrong
     patterns), so the app's own checks get their own MCP.
@@ -1750,7 +1896,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   > in `mcps/frontend`); the rendered checks on a live route join the gate
   > with `resolveRouteSamples`.
 
-- [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
+- [x] **FE2** Routes, navigation and page shells from screens (90 min) (folded into CD8, 2026-11-01). Depends: S2
+  - Folded into CD8 (2026-11-01): the frames session builds the shells and the navigation, and each page session its route. The notes below are history.
   - `src/codegen/pages.ts`: the page frame from `02-design/08-assemble.json`'s shells,
     one per kind: their regions docked as the layout says and filled from the
     shell nodes, the navigation among them, shared by every framed page of
@@ -1761,7 +1908,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - Done when: the generated app builds and every route renders its H1;
     `pnpm verify` passes on every route.
 
-- [ ] **FE3** New components (60 min). Depends: FE1, FE2, FE9
+- [x] **FE3** New components (60 min) (folded into CD7, 2026-11-01). Depends: FE1, FE2, FE9
+  - Folded into CD7 (2026-11-01), without the axe test: the coding agent writes no tests. The notes below are history.
   - One Muse Code session per `newComponents` entry: the task names its
     design in `.weave/components/<Name>.json` and the guidelines; it writes
     `web/app/components/<Name>/` with the DS conventions and an axe test.
@@ -1769,7 +1917,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - Done when: the dashboard editor's new component passes its checks.
   - Step file `43-FE3-new-components.md` predates D9.1 A; rewrite before go.
 
-- [ ] **FE4** Pages: sections wired to hooks (2.5 h). Depends: FE3, FE10
+- [x] **FE4** Pages: sections wired to hooks (2.5 h) (folded into CD9, 2026-11-01). Depends: FE3, FE10
+  - Folded into CD9 (2026-11-01). The notes below are history.
   - One Muse Code session per screen filling the shell's sections from the
     nodes, using recipes, the entity hooks and the DS, with loading, empty,
     error, invalid and submitting states. The task names the screen's
@@ -1784,7 +1933,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - Done when: every freelancer-workspace route passes validate, typecheck, lint
     and verify, and the core loop works by hand.
 
-- [ ] **FE5** Rendered checks (90 min). Depends: FE2
+- [x] **FE5** Rendered checks (90 min) (folded into CD5, 2026-11-01). Depends: FE2
+  - Folded into CD5 (2026-11-01): its collectors run on each route after a session. The notes below are history.
   - `src/checks/`: DESIGN-R-001 to 009 with Playwright (axe, contrast, keyboard
     walk, target size, overflow, first viewport, type size, color variables,
     proximity), written as reusable collectors the benchmark reuses.
@@ -1799,12 +1949,13 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     and the app MCP (FE10) run its collectors; `resolveRouteSamples` comes
     with the gate.
 
-- [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
+- [ ] **FE6** Visual rubric (45 min, optional). Depends: CD9
   - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence
     (D3.8 A); warnings only.
   - Done when: a rubric report exists for the freelancer workspace.
 
-- [ ] **FE7** Golden freelancer workspace end to end (60 min). Depends: FE4, FE5
+- [x] **FE7** Golden freelancer workspace end to end (60 min) (folded into CD10, 2026-11-01). Depends: FE4, FE5
+  - Folded into CD10 (2026-11-01). The notes below are history.
   - `weave run … --to frontend`; walk every flow by hand on the mock API.
   - Done when: **G6**.
 
@@ -1813,7 +1964,7 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
 Decisions: D13.1 to D13.5. Steps 48 to 54. Runs right after generation and
 again after repairs; one table with every number.
 
-- [ ] **B1** Production build and server (45 min). Depends: S5
+- [ ] **B1** Production build and server (45 min). Depends: CD10
   - `src/bench/server.ts`: `next build`, then `next start` on a free port with
     a fresh seeded store; gzip, ETag and immutable static caching confirmed by
     the runner; security headers in the template's `next.config.js`.
@@ -1828,7 +1979,7 @@ again after repairs; one table with every number.
   - Done when: `benchmark/lighthouse/*.json` exists for every route of the
     freelancer workspace.
 
-- [ ] **B3** Accessibility: axe, contrast, targets (45 min). Depends: FE5, B1
+- [ ] **B3** Accessibility: axe, contrast, targets (45 min). Depends: CD5, B1
   - Reuse the FE5 collectors on the production server: axe violations by
     impact, contrast failures, small targets, per route and state.
   - Done when: `benchmark/accessibility.json` lists counts per route.
@@ -1840,13 +1991,13 @@ again after repairs; one table with every number.
     regions, and the spoken phrase log saved per route.
   - Done when: `benchmark/screen-reader/*.txt` and counts per route exist.
 
-- [ ] **B5** Keyboard navigation (60 min). Depends: FE5, B1
+- [ ] **B5** Keyboard navigation (60 min). Depends: CD5, B1
   - `src/bench/keyboard.ts`: Tab walk per route: reachability, focus visible,
     order against reading order, traps, Escape on dialogs, Enter and Space on
     controls, skip link.
   - Done when: `benchmark/keyboard.json` has percentages per route.
 
-- [ ] **B6** Code quality and duplicates (90 min). Depends: S5
+- [ ] **B6** Code quality and duplicates (90 min). Depends: CD10
   - `src/bench/code.ts`: tsc, ESLint by rule, MCP validate by rule (with a new
     `--json` flag), jscpd clones and duplicated percentage, design-system
     duplicates (hand-built elements, near-named components, native controls
@@ -1869,20 +2020,22 @@ again after repairs; one table with every number.
 Spec: [specs/flows.md](specs/flows.md) for the inputs. Decisions: D8.1 to
 D8.4. Steps 55 to 58.
 
-- [ ] **T1** Playwright tests from the flows (2 h). Depends: FE2
+- [ ] **T1** Playwright tests from the flows (2 h). Depends: CD1
+  - With the entity stores (D6M.1 B), resets and forced failures go through
+    the store's switches (CD4), not HTTP; the step file predates this.
   - `src/agents/tests/`: one `@playwright/test` spec per flow in `web/e2e/`,
     generated by code from steps, fields, alternatives and node IDs; the model
     only turns outcomes into assertions (structured call); a Playwright config
     with a seeded store and a `pnpm test:e2e` script in the app.
   - Done when: the golden freelancer workspace gets one spec per flow that compiles.
 
-- [ ] **T2** Run, evidence, repair requests (60 min). Depends: T1, FE7
+- [ ] **T2** Run, evidence, repair requests (60 min). Depends: T1, CD10
   - Run the specs, map failures to flow, step and screen, attach screenshot
     and trace, and write typed repair requests (D8.3 A); `06-e2e.md`.
   - Done when: the evidence table and the requests exist for a run with a
     planted defect.
 
-- [ ] **T3** Bounded repair (90 min). Depends: T2, FE1
+- [ ] **T3** Bounded repair (90 min). Depends: T2, CD5
   - A Muse Code session per repair request (D9.1 A), 2 rounds, rerun only
     the failed specs; benchmark again after repairs. The runner fails the
     session when its diff leaves the screen's route and components or
@@ -1934,13 +2087,14 @@ its routes, states and tools stay as D13 says.
 
 1. Wireframe HTML (D3.6 D) and the OpenAPI export (about 45 min)
 2. Visual rubric (FE6, 45 min)
-3. Muse Image moodboard (D3.3 C) if it was ever started
-4. The dashboard (P1) trimmed to the timeline and the benchmark table (saves
+3. The agent's Docker container (CD3, 2 h); sessions run on the host
+4. Muse Image moodboard (D3.3 C) if it was ever started
+5. The dashboard (P1) trimmed to the timeline and the benchmark table (saves
    about 45 min); the markdown reports carry the rest
-5. The Modal run (P2) stopped after `design-assemble` instead of a full run (saves
+6. The Modal run (P2) stopped after `design-assemble` instead of a full run (saves
    about 1 h; the open-weights prize needs the run to exist, not to be long)
-6. Parallel design and contracts (run them one after the other)
-7. The second repair round (T3); report what is still open instead
+7. Parallel design and contracts (run them one after the other)
+8. The second repair round (T3); report what is still open instead
 
 Never cut: schemas, validators, golden fixtures, the template-based
 scaffold, the whole benchmark phase. They are what keeps the
@@ -1954,7 +2108,7 @@ output from drifting and what proves it, which is the whole idea.
 | Credits run out                                              | Replay cache, golden fixtures for offline work, Spark by default, costs logged per call     |
 | Design outputs too big or inconsistent                       | Architect and catalog once, then calls per page, component, widget and shell (DS23); fixes return patches (F16) |
 | Phases 6 to 9 get one day each                               | The contract compiler (C2) feeds codegen; page shells are code; the model fills sections    |
-| The model writes outside its files or edits tests           | The loop refuses writes outside the allowed paths and logs the attempt (FE1)                |
+| The model writes outside its files or edits tests           | A session that writes outside its paths or touches a test fails (CD5)                       |
 | Lighthouse or the browser won't start on WSL                 | Playwright's Chromium with `--headless=new`; every tool in the benchmark is optional per run |
 | Prompt tuning turns into validator weakening                 | AGENTS.md forbids it; rule changes go through you                                           |
 | A hosted endpoint rejects or mishandles `json_schema`         | Verified on Modal and Baseten 2026-10-29; the smoke test checks it before any run          |

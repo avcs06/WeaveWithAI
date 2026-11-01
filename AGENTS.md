@@ -116,7 +116,7 @@ restructure) stay as they are.
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
 - Generated apps have no backend and no deployment this week (pivot
-  2026-10-28): the contract becomes a mock API inside the app
+  2026-10-28): the contract becomes entity stores inside the app
   (OPTIONS.md 6M), and a benchmark stage (section 13) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session may read and edit anything in the app; the

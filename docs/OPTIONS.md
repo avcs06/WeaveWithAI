@@ -276,6 +276,11 @@ cannot. Round 3's one call is the output reviewer; the peer runs once. Each
 stage has a peer and an output guide (user, 2026-10-30).
 Five rounds since DS22 (user, 2026-10-30): the output reviewer runs again in
 round 4, and round 5 is the final fix.
+Code units (user, 2026-11-01, CD5): three rounds, both reviewers from round
+1 since a fix session costs far more than a review, and no peer. One output
+reviewer checks code quality, readability and organization; the other
+checks adherence to the design, the theme and the behavior. The checks run
+first and reach them as known issues.
 
 ### D1.13 Output budget and reasoning effort (pick one)
 
@@ -629,7 +634,8 @@ Notes:
 - [ ] **B. Added to `packages/ui` inside the generated app.**
 - [ ] **C. A, and the gap report proposes them back to your DS.**
 
-Notes:
+Notes: no test by the coding agent (user, 2026-11-01): a new component gets
+no test file, and axe runs on the routes that use it (CD7).
 
 ### D3.11 How screens are generated (pick one)
 
@@ -867,47 +873,57 @@ Notes:
 
 ## 6M. Mock data and API (Phase 6, replaces the backend for now)
 
-Added 2026-10-28. The contract is compiled into the generated app by
-code: types, a typed client, hooks, seed data and a mock API. No model calls.
+Added 2026-10-28, revised 2026-11-01 (D6M.1 B). Code turns the contract into
+the app's entity layer: types, a persistent store per entity, one function
+per operation, and seed rows from one structured call (CD4).
 
 ### D6M.1 Mock API shape (pick one)
 
-- [x] **A. Next.js route handlers generated from the contract, backed by a JSON
-      file (default; user, 2026-10-28).** One `route.ts` per path from the
+- [ ] **A. Next.js route handlers generated from the contract, backed by a JSON
+      file (default; user, 2026-10-28; replaced by B, 2026-11-01).** One `route.ts` per path from the
       contract conventions (`web/app/api/<kebab-plural>/…`), validation with the
       compiled zod schemas, the real error envelope and status codes. Data lives
       in `web/mocks/db.json`: a create adds a row to the file. Real HTTP, so the
       typed client, the e2e tests and the benchmark all exercise the same path a
       backend will later serve.
-- [ ] **B. In-browser store** (`createStore` from `@packages/utils/state` plus
-      `localStorage`), hooks call it directly. No HTTP, nothing for Lighthouse
+- [x] **B. In-browser store** (`createStore` from `@packages/utils/state` plus
+      `localStorage`), hooks call it directly (user, 2026-11-01). No HTTP, nothing for Lighthouse
       or Playwright to see on the network; swapping in a backend rewrites the
       hooks.
 - [ ] **C. Mock Service Worker (MSW)** intercepting `fetch` in the browser.
       Real-looking requests; data is per tab and gone on reload unless persisted.
 
-Notes:
+Notes: B on the user's call, 2026-11-01. Code writes the stores from the
+contract (CD4), as the template's MCP asks, and FE8's agent built one that
+passed the gate. No route handlers, no JSON file, no API tests. A backend
+later replaces the stores' operations.
 
 ### D6M.2 Persistence and reset (pick one)
 
-- [x] **A. `web/mocks/seed.json` (pristine, from the contract's seed rows and a
-      demo user) and `web/mocks/db.json` (live) (default; user, 2026-10-28).**
+- [ ] **A. `web/mocks/seed.json` (pristine, from the contract's seed rows and a
+      demo user) and `web/mocks/db.json` (live) (default; user, 2026-10-28;
+      replaced by C, 2026-11-01).**
       `pnpm mock:reset` copies seed over db. The store serializes writes
       through one promise queue and writes atomically (temp file, rename).
       `MOCK_DB_PATH` points tests and benchmarks at their own copy.
 - [ ] **B. In-memory only**, reseeded on every server start.
+- [x] **C. `localStorage` through the persistent store, starting from the seed
+      rows; clearing storage resets it (follows D6M.1 B, 2026-11-01).**
 
 Notes:
 
 ### D6M.3 Auth in the mock (pick one)
 
-- [x] **A. Session cookie (default; user, 2026-10-28).** `POST /api/auth/sign-up`,
+- [ ] **A. Session cookie (default; user, 2026-10-28; replaced by C, 2026-11-01).** `POST /api/auth/sign-up`,
       `sign-in`, `sign-out` and `GET /api/auth/me` from the conventions; users
       in the store with a salted SHA-256 `passwordHash` (a mock, not for
       production); an httpOnly `weave_session` cookie holding a session id;
       `owner` access filters by `ownerId`; `role` access checks `user.role`.
 - [ ] **B. No auth**: every request runs as the demo user. Simpler; the auth
       flows and the denied alternatives can't be tested.
+- [x] **C. A session entity (user, 2026-11-01).** Sign up and sign in take any
+      email, sign out clears it, and signed-in screens need a session. No
+      passwords and no access filters: C7 dropped access.
 
 Notes:
 
@@ -919,7 +935,9 @@ Notes:
       tests use for the failure alternatives through `page.route`.
 - [ ] **B. None.**
 
-Notes:
+Notes: with D6M.1 B there is no request header. Each operation waits
+`NEXT_PUBLIC_MOCK_LATENCY_MS` and fails when the fail switch
+(`localStorage` key `weave:fail`) names it (CD4).
 
 ---
 
@@ -928,15 +946,20 @@ Notes:
 ### D7.1 Approach (pick one)
 
 - [ ] **A. Prototype pages from the design, then wire data (default) (P).**
-- [ ] **B. Page by page straight from the design spec (R3).**
+- [x] **B. Page by page straight from the design spec (R3) (user, 2026-11-01).**
 - [ ] **C. The whole app in one coding session.**
 
-Notes:
+Notes: B with the shared pieces first: `code-shared` (new components, then
+the widgets on two or more screens), `code-frames`, then one session per
+page, one after another. C was weighed and dropped: every call resends the
+session so far, so its cost grows faster than the work.
 
 ### D7.2 Data layer (pick one)
 
 - [ ] **A. A typed client and TanStack Query hooks generated from the contract (default).**
 - [ ] **B. Hand-written calls through the template's `Server` helper.**
+- [x] **C. Functions and hooks on the entity stores, written by code from the
+      contract (user, 2026-11-01, with D6M.1 B).**
 
 Notes:
 
@@ -955,8 +978,13 @@ Notes:
 - [ ] **C. Template ESLint, including import direction and Tailwind policy (default)**
 - [ ] **D. `next build` (default)**
 - [ ] **E. `pnpm verify <route>` for runtime errors and overflow (default)**
+- [x] **F. axe, contrast, target sizes and the keyboard walk on every frame and
+      page route (user, 2026-11-01)**
+- [x] **G. Every design node's `data-testid`, and every operation the widgets
+      read is called (user, 2026-11-01)**
 
-Notes:
+Notes: the checks run after each session and their failures go to the fix
+session (CD5). D runs once, after the last page.
 
 ---
 
@@ -1027,6 +1055,9 @@ Baseten: `-c endpoint_transport={"base_url":…,"auth":"bearer"}`, since a bare
 calls tools natively, has a 1,048,576-token context, and headless Muse Code
 wrote a file and ran a command there without an approval prompt. Muse
 Glimmer on Modal calls tools natively too. The trial is FE8.
+On 2026-11-01 (user): the coding stages run through `runSpecStage` (CD5),
+in small sessions one after another (CD7 to CD9), inside a Docker container
+(CD3), and the agent writes no tests.
 
 ---
 

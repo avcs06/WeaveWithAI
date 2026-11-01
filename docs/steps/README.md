@@ -56,18 +56,18 @@ spec's table.
 | 27  | C4   | Contract prompt and stage                       | 4     | 40 min  | [27-C4-contract-stage.md](27-C4-contract-stage.md) |
 | 28  | C5   | Contract renderer                               | 4     | 30 min  | [28-C5-contract-renderer.md](28-C5-contract-renderer.md) |
 | 29  | C6   | Contracts for every golden idea                 | 4     | 40 min  | [29-C6-golden-contracts.md](29-C6-golden-contracts.md) |
-| 36  | S1   | Scaffold and theme apply                        | 6     | 90 min  | [36-S1-scaffold-theme.md](36-S1-scaffold-theme.md) |
-| 37  | S2   | Contract codegen: types, client, hooks          | 6     | 90 min  | [37-S2-entities-codegen.md](37-S2-entities-codegen.md) |
-| 38  | S3   | Mock API: route handlers and JSON store         | 6     | 2.5 h   | [38-S3-mock-api.md](38-S3-mock-api.md) |
-| 39  | S4   | Contract tests against the mock                 | 6     | 60 min  | [39-S4-api-tests.md](39-S4-api-tests.md) |
-| 40  | S5   | Golden freelancer workspace to app                   | 6     | 45 min  | [40-S5-golden-app.md](40-S5-golden-app.md) |
-| 41  | FE1  | Muse Code runner                                | 7     | 1.5 h   | [41-FE1-muse-runner.md](41-FE1-muse-runner.md) |
-| 42  | FE2  | Routes, navigation and page shells              | 7     | 90 min  | [42-FE2-page-shells.md](42-FE2-page-shells.md) |
-| 43  | FE3  | New components                                  | 7     | 60 min  | [43-FE3-new-components.md](43-FE3-new-components.md) |
-| 44  | FE4  | Pages: sections wired to hooks                  | 7     | 2.5 h   | [44-FE4-pages.md](44-FE4-pages.md) |
-| 45  | FE5  | Rendered checks                                 | 7     | 90 min  | [45-FE5-rendered-checks.md](45-FE5-rendered-checks.md) |
+| 36  | S1   | Scaffold and theme apply (folded into CD1)      | 6     | 90 min  | [36-S1-scaffold-theme.md](36-S1-scaffold-theme.md) |
+| 37  | S2   | Contract codegen: types, client, hooks (folded into CD4) | 6     | 90 min  | [37-S2-entities-codegen.md](37-S2-entities-codegen.md) |
+| 38  | S3   | Mock API: route handlers and JSON store (dropped) | 6     | 2.5 h   | [38-S3-mock-api.md](38-S3-mock-api.md) |
+| 39  | S4   | Contract tests against the mock (dropped)       | 6     | 60 min  | [39-S4-api-tests.md](39-S4-api-tests.md) |
+| 40  | S5   | Golden freelancer workspace to app (folded into CD10) | 6     | 45 min  | [40-S5-golden-app.md](40-S5-golden-app.md) |
+| 41  | FE1  | Muse Code runner (folded into CD5)              | 7     | 1.5 h   | [41-FE1-muse-runner.md](41-FE1-muse-runner.md) |
+| 42  | FE2  | Routes, navigation and page shells (folded into CD8) | 7     | 90 min  | [42-FE2-page-shells.md](42-FE2-page-shells.md) |
+| 43  | FE3  | New components (folded into CD7)                | 7     | 60 min  | [43-FE3-new-components.md](43-FE3-new-components.md) |
+| 44  | FE4  | Pages: sections wired to hooks (folded into CD9) | 7     | 2.5 h   | [44-FE4-pages.md](44-FE4-pages.md) |
+| 45  | FE5  | Rendered checks (folded into CD5)               | 7     | 90 min  | [45-FE5-rendered-checks.md](45-FE5-rendered-checks.md) |
 | 46  | FE6  | Visual rubric (optional)                        | 7     | 45 min  | [46-FE6-visual-rubric.md](46-FE6-visual-rubric.md) |
-| 47  | FE7  | Golden freelancer workspace end to end               | 7     | 60 min  | [47-FE7-golden-frontend.md](47-FE7-golden-frontend.md) |
+| 47  | FE7  | Golden freelancer workspace end to end (folded into CD10) | 7     | 60 min  | [47-FE7-golden-frontend.md](47-FE7-golden-frontend.md) |
 | 48  | B1   | Production build and server                     | 8     | 45 min  | [48-B1-bench-server.md](48-B1-bench-server.md) |
 | 49  | B2   | Lighthouse                                      | 8     | 60 min  | [49-B2-lighthouse.md](49-B2-lighthouse.md) |
 | 50  | B3   | Accessibility: axe, contrast, targets           | 8     | 45 min  | [50-B3-accessibility.md](50-B3-accessibility.md) |
@@ -84,3 +84,13 @@ spec's table.
 | 61  | P3   | README and submission answers                   | 10    | 90 min  | [61-P3-readme-submission.md](61-P3-readme-submission.md) |
 | 62  | P4   | Demo video and submit                           | 10    | 2 h     | [62-P4-demo-submit.md](62-P4-demo-submit.md) |
 | 69  | FE8  | Muse Code trial on a golden app                 | 7     | 1 h     | [69-FE8-muse-trial.md](69-FE8-muse-trial.md) |
+| 70  | CD1  | App and theme                                   | 6     | 1.5 h   | [70-CD1-app-and-theme.md](70-CD1-app-and-theme.md) |
+| 71  | CD2  | The `.weave` folders                            | 6     | 2 h     | [71-CD2-weave-folders.md](71-CD2-weave-folders.md) |
+| 72  | CD3  | The agent in Docker                             | 6     | 2 h     | [72-CD3-agent-docker.md](72-CD3-agent-docker.md) |
+| 73  | CD4  | Contract code                                   | 6     | 2 h     | [73-CD4-contract-code.md](73-CD4-contract-code.md) |
+| 74  | CD5  | Code rounds in the stage runner                 | 6     | 2.5 h   | [74-CD5-code-rounds.md](74-CD5-code-rounds.md) |
+| 75  | CD6  | Code reviewers                                  | 6     | 1 h     | [75-CD6-code-reviewers.md](75-CD6-code-reviewers.md) |
+| 76  | CD7  | Shared                                          | 6     | 1 h     | [76-CD7-shared.md](76-CD7-shared.md) |
+| 77  | CD8  | Frames                                          | 6     | 1 h     | [77-CD8-frames.md](77-CD8-frames.md) |
+| 78  | CD9  | Pages                                           | 6     | 1.5 h   | [78-CD9-pages.md](78-CD9-pages.md) |
+| 79  | CD10 | Golden apps end to end                          | 6     | 1.5 h   | [79-CD10-golden-apps.md](79-CD10-golden-apps.md) |

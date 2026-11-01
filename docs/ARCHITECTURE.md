@@ -13,9 +13,8 @@ idea.md (+ answers.json)
         └─ design: theme ─ architect ─ catalog ─ screen, invent, draw, frame ─ assemble   Phase 3   specs/design.md
               └─ contract, beside screen, invent, draw and frame   Phase 4   specs/contracts.md
                     (it reads the flows and the catalog's widgets)
-  └─ scaffold app from template/ ─ apply theme      Phase 6   steps 36, 37
-        └─ codegen from the contract: types, client, hooks, seed, mock API, API tests
-  └─ frontend: page shells (code) ─ new components ─ pages (model sessions)   Phase 7
+  └─ code: scaffold (app, theme, .weave/) ─ contract (entity layer) ─ shared ─ frames ─ pages   Phase 6   steps 70 to 79
+        (shared, frames and pages are Muse Code sessions, one after another)
   └─ benchmark: build, serve, Lighthouse, axe, screen reader, keyboard, code  Phase 8
   └─ tests from the flows ─ run ─ evidence ─ repair (bounded) ─ benchmark again   Phase 9
 ```
@@ -81,10 +80,10 @@ src/
     01flows/             scope, catalog, expand, reconcile
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame, assemble
     03contract/          the records and operations behind every widget
+    04code/              planned: scaffold, contract, shared, frames, pages (CD1 to CD9)
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
-  codegen/               planned: ledger, entities, mock API, API tests, page shells
   engine/                the Muse Code runner: app config, `muse exec`, usage, the gate after the run
-  checks/                rendered checks (DESIGN-R-001 to 009) as reusable collectors; the gate and the app MCP are planned
+  checks/                rendered checks (DESIGN-R-001 to 009) as reusable collectors; the code rounds run them after each session (CD5)
   bench/                 planned: server, lighthouse, accessibility, screen reader,
                          keyboard, code, report
   dashboard/             planned: one static HTML per run
@@ -322,20 +321,14 @@ generator writes is recorded in `app.ledger.json` with its origin.
 
 ```text
 runs/<runId>/app/
-  colors.ts  tokens.ts  packages/styles/src/fonts.ts     themed by code (S1)
-  web/mocks/seed.json  web/mocks/db.json                  seed rows and the live store (S3)
-  web/app/api/_mock/{store,http,session}.ts               store queue, envelope, cookie session (S3)
-  web/app/api/<kebab-plural>/route.ts                     list, create (S3)
-  web/app/api/<kebab-plural>/[id]/route.ts                get, update, delete (S3)
-  web/app/api/<kebab-plural>/[id]/<kebab-verb>/route.ts   actions (S3)
-  web/app/api/auth/{sign-up,sign-in,sign-out,me}/route.ts (S3)
-  web/app/api/__tests__/<entity>.test.ts                  contract tests (S4)
-  web/app/entities/<entity>/{schema,api,hooks,index}.ts   compiled contract (S2)
-  web/app/entities/auth/{api,hooks,index}.ts              session (S2)
-  web/app/components/<Name>/                              new components (FE3, model)
-  web/app/components/PageHeader.tsx                       navigation from the IA (FE2)
-  web/app/(routes)/<route>/page.tsx                       shell by code (FE2), filled by the model (FE4)
-  web/app/(routes)/<route>/<Dialog>.tsx                   dialogs and drawers of that page
+  colors.ts  tokens.ts  packages/styles/src/fonts.ts     themed by code (CD1)
+  .weave/<NN>-<stage>/                                    each code stage's guidelines and inputs (CD2)
+  web/app/entities/<entity>/{schema,seed,store,operations,index}.ts   the contract as stores, by code (CD4)
+  web/app/entities/session/                               sign up and sign in with any email (CD4)
+  web/app/components/<Name>/                              new components (CD7, model)
+  web/app/blocks/<Widget>/                                widgets on two or more screens (CD7, model)
+  web/app/(routes)/(<shell>)/layout.tsx                   shells and navigation (CD8, model)
+  web/app/(routes)/(<shell>)/<route>/                     a page, its dialogs and its own widgets (CD9, model)
   web/e2e/<flow>.spec.ts  playwright.config.ts            tests from the flows (T1)
 ```
 
