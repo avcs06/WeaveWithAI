@@ -33,6 +33,7 @@ export const ConfigSchema = z.object({
   ),
   BASETEN_API_KEY: Optional,
   BASETEN_MODEL: Optional,
+  MUSE_BIN: blankable(z.string().default('muse')),
 });
 export type Config = z.infer<typeof ConfigSchema>;
 

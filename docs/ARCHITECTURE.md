@@ -85,7 +85,7 @@ src/
     04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   codegen/               planned: ledger, entities, mock API, API tests, page shells
-  engine/                planned: the Muse Code runner (app config, `muse exec`, usage, the gate after the run)
+  engine/                the Muse Code runner: app config, `muse exec`, usage, the gate after the run
   checks/                rendered checks (DESIGN-R-001 to 009) as reusable collectors; the gate and the app MCP are planned
   bench/                 planned: server, lighthouse, accessibility, screen reader,
                          keyboard, code, report

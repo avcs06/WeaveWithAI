@@ -39,6 +39,7 @@ const config: Config = {
   LLM_REPLAY: true,
   LLM_BACKEND: 'meta',
   BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
+  MUSE_BIN: 'muse',
 };
 const load = (name: string): unknown =>
   JSON.parse(

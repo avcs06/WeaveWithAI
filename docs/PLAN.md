@@ -1723,8 +1723,13 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     the scaffolded freelancer workspace passes its checks.
   - Step file: `docs/steps/41-FE1-muse-runner.md`, rewritten for D9.1 A with
     what FE8 learned.
+  > Blocked: the real session spends credits and waits for the user's go.
+  > Built 2026-11-01 overnight: `src/engine/` (`setup.ts`, `muse.ts`,
+  > `session.ts`, the hook and the guidelines), `MUSE_BIN` in the config,
+  > and run totals that count a session's calls; 6 tests with a fake
+  > `muse` pass.
 
-- [ ] **FE9** Development guidelines for the coding agent (1 h). Depends: FE8
+- [x] **FE9** Development guidelines for the coding agent (1 h) (done 2026-11-01). Depends: FE8
   - Why: the task prompt stays short and names the files (user, 2026-11-01):
     "build screen S04 from `.weave/screens/S04.json`; follow every guideline
     in `.weave/guidelines.md`". The guidelines carry the detail.
@@ -1737,6 +1742,10 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     the checks that end a session.
   - Done when: the FE8 screen task, rerun with the guidelines, passes its
     checks.
+  - Done 2026-11-01 overnight: the FE8 run already used these guidelines
+    word for word and passed the gate, so there was no rerun (credits). The
+    runner protects what they forbid (`packages/`, `tools/`, `.weave/`,
+    `.muse/`, `.mcp.json`) besides tests.
 
 - [ ] **FE10** App MCP: the remaining checks while the agent works (2 h). Depends: FE1, FE5
   - Why: the agent validates while it runs instead of after (user,

@@ -22,7 +22,7 @@ export type Session = {
   inputs: Record<string, unknown>;
   /** The route `pnpm verify` checks. */
   route?: string;
-  /** Globs the diff must not touch; tests are always protected. */
+  /** More globs the diff must not touch; tests and `PROTECTED` always are. */
   protect?: string[];
   maxSteps?: number;
   timeoutMs?: number;
@@ -47,6 +47,8 @@ export type SessionDeps = {
 };
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
+/** What the guidelines tell the agent never to change. */
+const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**'];
 const OURS = new Set(['.weave/hook.log', '.weave/ledger.json']);
 const MAX_OUTPUT_LINES = 200;
 
@@ -114,7 +116,7 @@ export async function runSession(
     .filter((change) => !OURS.has(change.path));
   const changed = changes.map((change) => change.path);
   const protectedHits = changed.filter(
-    (file) => TESTS.test(file) || (session.protect ?? []).some((glob) => path.matchesGlob(file, glob)),
+    (file) => TESTS.test(file) || [...PROTECTED, ...(session.protect ?? [])].some((glob) => path.matchesGlob(file, glob)),
   );
 
   const runCheck = deps.runCheck ?? appCheck;

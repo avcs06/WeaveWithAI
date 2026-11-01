@@ -127,7 +127,7 @@ export function readEvents(run: Run): Event[] {
     .map((line) => JSON.parse(line) as Event);
 }
 
-/** Sums the `llm:call` events. */
+/** Sums the `llm:call` events; a coding session's event carries its own call count. */
 export function totals(run: Run): {
   calls: number;
   input: number;
@@ -137,7 +137,7 @@ export function totals(run: Run): {
   const sum = { calls: 0, input: 0, output: 0, costUsd: 0 };
   for (const event of readEvents(run)) {
     if (event.type !== 'llm:call') continue;
-    sum.calls += 1;
+    sum.calls += asNumber(event.calls) || 1;
     sum.input += asNumber(event.input);
     sum.output += asNumber(event.output);
     sum.costUsd += asNumber(event.costUsd);
