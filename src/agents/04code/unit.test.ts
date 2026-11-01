@@ -1,15 +1,15 @@
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { ConfigSchema } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
-import { createRun, runPath } from '../../core/run';
+import { createRun, readEvents, runPath } from '../../core/run';
 import { pathBeside } from '../../core/utils';
 import type { Check } from '../../engine/session';
 import { git, prepareApp } from '../../engine/setup';
 import type { StageContext } from '../stages';
-import { runUnit, type UnitSpec } from './unit';
+import { runUnit, runUnits, type UnitSpec } from './unit';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-unit-'));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -87,9 +87,14 @@ describe('a coding unit', () => {
   it('records what is left after round 3 as known, and returns', async () => {
     const { ctx, spec, deps } = setup('known', false, (name) => name === 'typecheck');
     process.env.FAKE_VARY = '1';
+    process.env.FAKE_ARGS = runPath(ctx.run, 'muse-args.log');
     const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
     expect(result.rounds).toBe(3);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
+    // The three sessions are one Muse session; another attempt at the unit starts its own.
+    const ids = () => readFileSync(runPath(ctx.run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
+    expect(ids()).toHaveLength(3);
+    expect(new Set(ids()).size).toBe(1);
     // Each session is its own commit, failed or not, and a patch; the inputs commits touch only .weave/ and make none.
     const appDir = runPath(ctx.run, 'app');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
@@ -99,6 +104,17 @@ describe('a coding unit', () => {
       '002-page-S04-fix-1-failed-typecheck.patch',
       '003-page-S04-fix-2-failed-typecheck.patch',
     ]);
+    await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_ARGS);
+    expect(new Set(ids()).size).toBe(2);
+  });
+
+  it('logs a stage start and done once, whether its unit carries its name or units have their own', async () => {
+    const { ctx, spec, deps } = setup('events', false, () => false);
+    const count = (type: string, stage: string) => readEvents(ctx.run).filter((e) => e.type === type && e.stage === stage).length;
+    await withWrites(page, () => runUnits(ctx, 'code-shared', [{ ...spec, id: 'shared', stage: 'code-shared' }], deps));
+    expect([count('stage:start', 'code-shared'), count('stage:done', 'code-shared')]).toEqual([1, 1]);
+    await withWrites(page, () => runUnits(ctx, 'code-pages', [spec], deps));
+    expect([count('stage:start', 'code-pages'), count('stage:done', 'code-pages')]).toEqual([1, 1]);
   });
 
   it("warns about a read its guidelines rule out, from the hook's tool log", async () => {

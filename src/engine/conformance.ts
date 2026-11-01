@@ -14,16 +14,19 @@ export type ScreenExpect = { folder: string; testIds: string[]; words?: NodeWord
 /** A node's own words: its text or label as the design writes it. */
 export type NodeWords = { id: string; text: string };
 
-/** The words of these nodes that code must show as written: none that holds a {Noun.attribute} value. */
-export function nodeWords(nodes: { id: string; text: string; label: string }[]): NodeWords[] {
+/**
+ * The words of these nodes that code must show as written: none that holds a {Noun.attribute} value, and no
+ * text of a node that shows data, since that text is a sample of the record's value.
+ */
+export function nodeWords(nodes: { id: string; text: string; label: string; data: string[] }[]): NodeWords[] {
   return nodes.flatMap((node) =>
-    [node.text, node.label].filter((text) => text.trim() && !text.includes('{')).map((text) => ({ id: node.id, text: text.trim() })),
+    [node.data.length ? '' : node.text, node.label].filter((text) => text.trim() && !text.includes('{')).map((text) => ({ id: node.id, text: text.trim() })),
   );
 }
 
 type Design = {
   screens: { id: string; route: string; parent: string }[];
-  nodes: { id: string; section: string; text: string; label: string }[];
+  nodes: { id: string; section: string; text: string; label: string; data: string[] }[];
   sections: { id: string; screen: string }[];
   placements: { screen: string; widget: string }[];
 };

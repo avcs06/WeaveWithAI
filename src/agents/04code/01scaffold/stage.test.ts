@@ -25,9 +25,9 @@ const ARTIFACTS = [
   ['design-assemble', '02-design/08-assemble.json'],
   ['contract', '03-contract.json'],
 ] as const;
-const FILES = ['colors.ts', 'tokens.ts', 'packages/styles/src/fonts.ts', 'packages/ui/src/Root/UIRoot.tsx'];
+const FILES = ['colors.ts', 'tokens.ts', 'packages/styles/src/fonts.ts', 'packages/ui/src/Root/UIRoot.tsx', 'web/app/(routes)/layout.tsx'];
 
-/** The template's themed files only, and an empty node_modules so the app counts as installed. */
+/** The template's themed files and root layout only, and an empty node_modules so the app counts as installed. */
 async function fakeScaffold(appDir: string): Promise<void> {
   for (const file of FILES) {
     mkdirSync(path.dirname(path.join(appDir, file)), { recursive: true });
@@ -60,6 +60,8 @@ describe('the scaffold stage', () => {
     const app = (file: string) => readFileSync(runPath(run, 'app', file), 'utf8');
     expect(app('colors.ts')).toContain(golden.data.theme.colors.light.theme.accentBg);
     expect(app('packages/ui/src/Root/UIRoot.tsx')).toContain('const isDark = false;');
+    const scope = JSON.parse(readFileSync('fixtures/golden/freelancer-workspace/01-flows/01-scope.json', 'utf8')).data;
+    expect(app('web/app/(routes)/layout.tsx')).toContain(`export const metadata = { title: '${scope.app.name}' };`);
     const ledger = JSON.parse(app('.weave/ledger.json'));
     expect(ledger).toContainEqual({ path: 'colors.ts', status: 'M', origin: 'code', stage: 'code-scaffold' });
     expect(existsSync(runPath(run, 'app', '.git'))).toBe(true);

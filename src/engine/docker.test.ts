@@ -30,9 +30,10 @@ describe('the agent container', () => {
     expect(args.join(' ')).not.toContain('.config/muse');
   });
 
-  it('mounts the Muse login writable for the subscription', () => {
-    const args = dockerArgs('weave-agent:abc', 'runs/x/app', '/home/u/.local/bin', '/home/u/.config/muse');
+  it("mounts the Muse login writable for the subscription, and the run's Muse sessions so a fix can continue one", () => {
+    const args = dockerArgs('weave-agent:abc', 'runs/x/app', '/home/u/.local/bin', { login: '/home/u/.config/muse', data: 'runs/x/muse' });
     expect(args).toContain('/home/u/.config/muse:/tmp/.config/muse');
+    expect(args).toContain(`${path.resolve('runs/x/muse')}:/tmp/.local/share/muse`);
   });
 
   it("turns Muse's own sandbox off only inside the container", () => {

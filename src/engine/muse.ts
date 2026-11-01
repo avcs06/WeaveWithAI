@@ -23,7 +23,7 @@ export type MuseUsage = {
 /** The `muse exec` arguments for a backend; the key goes on stdin, except on the subscription, which Muse reads from its login. */
 export function museArgs(
   backend: Backend,
-  opts: { promptFile: string; maxSteps: number; effort: string; inContainer?: boolean; subscription?: boolean },
+  opts: { promptFile: string; maxSteps: number; effort: string; inContainer?: boolean; subscription?: boolean; sessionId?: string },
 ): string[] {
   const args = [
     'exec',
@@ -49,6 +49,8 @@ export function museArgs(
     '--disable-request-user-input',
     '--no-foreign-personal-context',
   ];
+  // A fix session continues its unit's first, with what that one already read and built.
+  if (opts.sessionId) args.push('--session-id', opts.sessionId);
   // The container is the sandbox, and Muse's own needs bubblewrap, which the image lacks.
   if (opts.inContainer) args.push('--disable-sandbox');
   // Muse Code keeps the key back from a bare --base-url off the Meta API.

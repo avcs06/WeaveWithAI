@@ -9,6 +9,16 @@ describe('path rules', () => {
     expect(inPath('web/app/(routes)/(app)/clients/c/page.tsx', `${folder}/page.tsx`)).toBe(false);
     expect(protectedOf([`${folder}/page.tsx`], { writes: [`${folder}/page.tsx`] })).toEqual([]);
   });
+
+  it('take a folder/ rule as the files directly in the folder, its styles included, and none of its subfolders', () => {
+    const shell = 'web/app/(routes)/(app)/';
+    expect(inPath('web/app/(routes)/(app)/layout.tsx', shell)).toBe(true);
+    expect(inPath('web/app/(routes)/(app)/layout.css.ts', shell)).toBe(true);
+    expect(inPath('web/app/(routes)/(app)/dashboards/page.tsx', shell)).toBe(false);
+    expect(protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/dashboards/page.tsx'], { writes: [shell] })).toEqual([
+      'web/app/(routes)/(app)/dashboards/page.tsx',
+    ]);
+  });
 });
 
 describe('the files a tool log shows read', () => {

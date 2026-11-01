@@ -163,6 +163,8 @@ describe('museArgs and readUsage', () => {
     const modal = museArgs(resolveBackend(config, 'modal'), opts);
     expect(modal.at(-1)).toContain('"base_url":"https://modal.example/v1"');
     expect(museArgs(resolveBackend(config, 'meta'), { ...opts, subscription: true })).not.toContain('--api-key-stdin');
+    expect(museArgs(resolveBackend(config, 'meta'), { ...opts, sessionId: 'u-1' }).join(' ')).toContain('--session-id u-1');
+    expect(meta).not.toContain('--session-id');
   });
 
   it('reads a failed run as not completed, with its message', () => {

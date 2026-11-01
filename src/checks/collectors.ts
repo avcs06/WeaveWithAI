@@ -18,6 +18,8 @@ export async function axeCheck(
 ): Promise<{ findings: Finding[]; violations: AxeViolation[] }> {
   const { violations } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    // `next dev` injects its own overlay; it is not the app's.
+    .exclude('nextjs-portal')
     .analyze();
   const findings = violations.flatMap((v) =>
     v.nodes.map((node) =>

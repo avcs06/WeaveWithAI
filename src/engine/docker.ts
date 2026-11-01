@@ -31,9 +31,11 @@ export function museDir(bin: string): string {
 
 /**
  * `docker run` up to the image, then the launcher: the app at /app, run as the user so files stay theirs.
- * `login` mounts the host's Muse login for the subscription, writable so Muse can refresh its token.
+ * `login` mounts the host's Muse login for the subscription, writable so Muse can refresh its token;
+ * `data` keeps Muse's sessions between containers, so a fix session can continue the one before it.
  */
-export function dockerArgs(image: string, appDir: string, muse: string, login?: string): string[] {
+export function dockerArgs(image: string, appDir: string, muse: string, mounts: { login?: string; data?: string } = {}): string[] {
+  const { login, data } = mounts;
   const user = `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`;
   return [
     'run', '--rm', '-i',
@@ -42,6 +44,7 @@ export function dockerArgs(image: string, appDir: string, muse: string, login?: 
     '-v', `${path.resolve(appDir)}:/app`,
     '-v', `${muse}:/opt/muse:ro`,
     ...(login ? ['-v', `${login}:/tmp/.config/muse`] : []),
+    ...(data ? ['-v', `${path.resolve(data)}:/tmp/.local/share/muse`] : []),
     '-w', '/app',
     image,
     '/opt/muse/muse',

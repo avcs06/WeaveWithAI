@@ -80,19 +80,21 @@ export async function runUnit(
 }
 
 /** A code stage's units, one after another: they share the app's git tree and its dev server port. */
-export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[]): Promise<void> {
-  appendEvent(ctx.run, { type: 'stage:start', stage });
+export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[], deps: SessionDeps = {}): Promise<void> {
+  // A unit named after its stage logs the stage's start and done itself.
+  const own = !specs.some((spec) => spec.stage === stage);
+  if (own) appendEvent(ctx.run, { type: 'stage:start', stage });
   updateStage(ctx.run, stage, { status: 'running' });
   const appDir = runPath(ctx.run, 'app');
   startStage(ctx.run, appDir, stage);
   let known = 0;
   let rounds = 0;
   for (const spec of specs) {
-    const result = await runUnit(ctx, spec);
+    const result = await runUnit(ctx, spec, deps);
     known += result.known.length;
     rounds = Math.max(rounds, result.rounds);
   }
   saveStagePatch(ctx.run, appDir, stage);
   updateStage(ctx.run, stage, { status: 'done', known, rounds, batches: specs.length });
-  appendEvent(ctx.run, { type: 'stage:done', stage, known, rounds });
+  if (own) appendEvent(ctx.run, { type: 'stage:done', stage, known, rounds });
 }

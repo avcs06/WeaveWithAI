@@ -35,6 +35,8 @@ export type Session = {
   reads?: ReadRules;
   /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
   stage?: string;
+  /** The Muse Code session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built. */
+  museSession?: string;
   maxSteps?: number;
   timeoutMs?: number;
 };
@@ -69,12 +71,16 @@ const OURS = new Set(['.weave/hook.log', '.weave/ledger.json', '.weave/tools.log
 const TOOLS_LOG = '.weave/tools.log';
 
 /**
- * A path rule: `folder/**` covers everything under the folder, anything else
- * one file. Literal, not a glob: route folders such as `[clientId]` and
- * `(routes)` are names, not patterns.
+ * A path rule: `folder/**` covers everything under the folder, `folder/` the
+ * files directly in it and none of its subfolders, anything else one file.
+ * Write rules are folders, so a file's `.css.ts` beside it is always allowed.
+ * Literal, not a glob: route folders such as `[clientId]` and `(routes)` are
+ * names, not patterns.
  */
 export function inPath(file: string, rule: string): boolean {
-  return rule.endsWith('/**') ? file.startsWith(rule.slice(0, -2)) : file === rule;
+  if (rule.endsWith('/**')) return file.startsWith(rule.slice(0, -2));
+  if (rule.endsWith('/')) return file.startsWith(rule) && !file.slice(rule.length).includes('/');
+  return file === rule;
 }
 
 /** The app files a tool log shows the agent reading: read tools' paths, and paths in its shell commands. */
@@ -152,10 +158,18 @@ export async function runSession(
   const subscription = ctx.config.MUSE_AUTH === 'subscription' && backend.name === 'meta';
   const login = subscription ? path.join(os.homedir(), '.config', 'muse') : undefined;
   const command = deps.bin ?? (inContainer
-    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN), login)]
+    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN), { login, data: runPath(run, 'muse') })]
     : [ctx.config.MUSE_BIN]);
   const [bin = 'muse', ...pre] = command;
-  const args = museArgs(backend, { promptFile, maxSteps: session.maxSteps ?? 60, effort: 'medium', inContainer, subscription });
+  mkdirSync(runPath(run, 'muse'), { recursive: true });
+  const args = museArgs(backend, {
+    promptFile,
+    maxSteps: session.maxSteps ?? 60,
+    effort: 'medium',
+    inContainer,
+    subscription,
+    sessionId: session.museSession,
+  });
   // The packages are the scaffold's; a session that changes them breaks every check after it.
   const installedBefore = installState(appDir);
   // The hook logs every tool call; this session's lines are the ones after this offset.

@@ -21,7 +21,8 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
       stage: STAGE,
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
       folders: ['01-scaffold', '02-contract', '03-shared', '04-frames'],
-      writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/layout.tsx`), 'web/app/components/**', ENTITIES],
+      // The shell folders' own files, a layout's styles included; the route folders inside are the pages'.
+      writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/`), 'web/app/components/**', ENTITIES],
       // No page sits in a shell yet, so the browser checks run on the starter route; the pages check the frames in place.
       route: '/',
       expect: {

@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { checkScreen, screenExpect } from './conformance';
+import { checkScreen, nodeWords, screenExpect } from './conformance';
 
 const read = (file: string) => JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8')).data;
 const design = read('../../fixtures/golden/dashboard-editor/02-design/08-assemble.json');
@@ -36,6 +36,18 @@ describe('the design check after a coding session', () => {
       'Nothing in web/app/(routes)/dashboards calls listDashboards; load the widget\'s data through it.',
     ]);
     expect(checkScreen(path.join(root, 'none'), s04).output).toContain('has no code');
+  });
+
+  it("leaves out the text of a node that shows data, a sample of its value, and keeps its label", () => {
+    const nodes = [
+      { id: 'SH1.n03', text: 'Q3 launch board', label: '', data: ['Dashboard.name'] },
+      { id: 'SH1.S05.n01', text: 'Q3 launch board', label: 'Dashboard name', data: ['Dashboard.name'] },
+      { id: 'SH1.n04', text: 'Create', label: '', data: [] },
+    ];
+    expect(nodeWords(nodes)).toEqual([
+      { id: 'SH1.S05.n01', text: 'Dashboard name' },
+      { id: 'SH1.n04', text: 'Create' },
+    ]);
   });
 
   it("lists a node's words missing from the code, as output that never fails the check", () => {

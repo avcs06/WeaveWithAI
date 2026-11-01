@@ -1,10 +1,12 @@
 // A stand-in for `muse exec` in tests: writes the files FAKE_WRITES names
 // (JSON, path to content) in its cwd, and prints the JSONL events the runner
 // reads. The key arrives on stdin; on the subscription nothing does.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const key = readFileSync(0, 'utf8');
+// FAKE_ARGS names a file each run appends its arguments to.
+if (process.env.FAKE_ARGS) appendFileSync(process.env.FAKE_ARGS, `${process.argv.slice(2).join(' ')}\n`);
 // FAKE_VARY makes each run's files differ, as a real fix session's would.
 for (const [file, content] of Object.entries(JSON.parse(process.env.FAKE_WRITES ?? '{}'))) {
   mkdirSync(path.dirname(file), { recursive: true });

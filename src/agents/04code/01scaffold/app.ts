@@ -51,6 +51,30 @@ export function pinMode(text: string, theme: Theme): string {
   return text.replace(SYSTEM_MODE, `const isDark = ${theme.modes[0] === 'dark'};`);
 }
 
+/** The app's root layout, which every route renders in. */
+export const ROOT_LAYOUT = 'web/app/(routes)/layout.tsx';
+
+const TITLE = /\nexport const metadata = \{ title: '(?:[^'\\]|\\.)*' \};\n/;
+
+/** The root layout with the app's name as the title of every page, so no page is untitled. */
+export function setTitle(text: string, name: string): string {
+  const line = `export const metadata = { title: '${name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}' };\n`;
+  if (TITLE.test(text)) return text.replace(TITLE, `\n${line}`);
+  const at = text.indexOf('\nexport default');
+  if (at === -1) throw new Error('no default export in the root layout to give a title');
+  return `${text.slice(0, at)}\n${line}${text.slice(at)}`;
+}
+
+/** Writes `setTitle` into the app's root layout; true when it changed the file. */
+export function applyTitle(appDir: string, name: string): boolean {
+  const file = path.join(appDir, ROOT_LAYOUT);
+  const before = readFileSync(file, 'utf8');
+  const after = setTitle(before, name);
+  if (after === before) return false;
+  writeFileSync(file, after);
+  return true;
+}
+
 /** Writes `pinMode` into the app's UIRoot; true when it changed the file. */
 export function applyMode(appDir: string, theme: Theme): boolean {
   const file = path.join(appDir, 'packages/ui/src/Root/UIRoot.tsx');

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Theme } from '../../02design/01theme/build';
-import { pinMode } from './app';
+import { pinMode, ROOT_LAYOUT, setTitle } from './app';
 
 const uiRoot = readFileSync('template/packages/ui/src/Root/UIRoot.tsx', 'utf8');
 const withModes = (modes: Theme['modes']) => ({ modes }) as Theme;
@@ -19,5 +19,16 @@ describe('pinMode', () => {
 
   it('leaves a theme with both modes to the system', () => {
     expect(pinMode(uiRoot, withModes(['light', 'dark']))).toBe(uiRoot);
+  });
+});
+
+describe('setTitle', () => {
+  const layout = readFileSync(`template/${ROOT_LAYOUT}`, 'utf8');
+
+  it("gives every page the app's name as its title, once, before the layout", () => {
+    const titled = setTitle(layout, "Ana's Studio");
+    expect(titled).toContain("export const metadata = { title: 'Ana\\'s Studio' };\n\nexport default function RootLayout");
+    expect(setTitle(titled, 'NeonBoard').match(/export const metadata/g)).toHaveLength(1);
+    expect(setTitle(titled, 'NeonBoard')).toContain("{ title: 'NeonBoard' }");
   });
 });

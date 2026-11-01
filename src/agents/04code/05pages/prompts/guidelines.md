@@ -1,8 +1,10 @@
 <!-- Guidelines of the pages folder (CD9), written to .weave/05-pages/guidelines.md. No placeholders. -->
 # Pages
 
-- Your page goes in the route folder your task names: `page.tsx` there, and
-  in `components/` beside it the page's own widgets, forms and dialogs.
+- Your page goes in the route folder your task names: `page.tsx` there, its
+  styles in `page.css.ts` beside it, and in `components/` beside it the
+  page's own widgets, forms and dialogs. The route folders inside yours
+  belong to other pages.
 - A placement marked `shared` uses its block from `web/app/blocks/`: pass it
   the words, the data and the `data-testid`s its nodes give on this page. A
   dialog in `sharedDialogs` comes from `web/app/blocks/` too.

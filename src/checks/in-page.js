@@ -17,21 +17,25 @@
       Number(style.opacity) > 0
     );
   };
-  const cssPath = (element) => {
-    const parts = [];
-    for (let at = element; at && at !== document.body; at = at.parentElement) {
-      const same = [...at.parentElement.children].filter((c) => c.tagName === at.tagName);
-      parts.unshift(`${at.tagName.toLowerCase()}:nth-of-type(${same.indexOf(at) + 1})`);
-    }
-    return ['body', ...parts].join(' > ');
-  };
-  /** How a finding names an element: its test id, its id, or a CSS path. */
-  const name = (element) =>
+  /** An element's own handle: its test id, else its id. */
+  const handle = (element) =>
     element.dataset?.testid
       ? `[data-testid="${element.dataset.testid}"]`
       : element.id
-        ? `#${element.id}`
-        : cssPath(element);
+        ? `#${CSS.escape(element.id)}`
+        : '';
+  /** A CSS path from the nearest ancestor with a handle, so a finding points at the node the code names. */
+  const cssPath = (element) => {
+    const parts = [];
+    let at = element;
+    for (; at && at !== document.body && !(at !== element && handle(at)); at = at.parentElement) {
+      const same = [...at.parentElement.children].filter((c) => c.tagName === at.tagName);
+      parts.unshift(`${at.tagName.toLowerCase()}:nth-of-type(${same.indexOf(at) + 1})`);
+    }
+    return [at && at !== document.body ? handle(at) : 'body', ...parts].join(' > ');
+  };
+  /** How a finding names an element: its test id, its id, or a CSS path from the nearest one. */
+  const name = (element) => handle(element) || cssPath(element);
   const find = (selector) => document.querySelector(selector);
 
   const rgb = (text) => {
@@ -214,10 +218,10 @@
           skip: element.tagName === 'A' && /^#./.test(element.getAttribute('href') || ''),
         }));
     },
-    /** The focused element and how it looks; '' for the page itself. */
+    /** The focused element and how it looks; '' for the page itself, and for the dev server's overlay, which is not the app's. */
     active() {
       const element = document.activeElement;
-      if (!element || element === document.body) return { element: '', style: '' };
+      if (!element || element === document.body || element.tagName === 'NEXTJS-PORTAL') return { element: '', style: '' };
       const style = getComputedStyle(element);
       return { element: name(element), style: `${style.outlineStyle} ${style.outlineWidth} ${style.boxShadow}` };
     },

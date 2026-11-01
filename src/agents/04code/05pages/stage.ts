@@ -52,7 +52,8 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
       task: fillPrompt(task, { screen: page.id, name: page.name, route: page.route, folder, url }),
       folders: ['01-scaffold', '02-contract', '04-frames', '05-pages', `05-pages/${page.id}`],
       // The root page replaces the template's starter page.
-      writes: [`${folder}/page.tsx`, `${folder}/components/**`, ENTITIES, ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : [])],
+      // The route folder's own files, a page's styles included, and its components; a child route's folder is its own page's.
+      writes: [`${folder}/`, `${folder}/components/**`, ENTITIES, ...(page.route === '/' ? ['web/app/(routes)/'] : [])],
       route: url,
       expect: { ...expect, folder, testIds: expect.testIds.filter((id) => !sharedIds.has(id)) },
       // No other page shapes this one: other routes and their .weave folders are measured as reads it should not make.

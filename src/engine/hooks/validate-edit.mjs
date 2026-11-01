@@ -11,7 +11,8 @@ try {
 const tool = input.tool_name ?? '';
 const file = input.tool_input?.path ?? input.tool_input?.file_path ?? '';
 const command = input.tool_input?.command ?? input.tool_input?.cmd ?? '';
-appendFileSync('.weave/tools.log', `${JSON.stringify({ tool, path: file || undefined, command: command || undefined })}\n`);
+// `at` is when the call finished, so the gap to the line before is the model's turn and the tool's run.
+appendFileSync('.weave/tools.log', `${JSON.stringify({ at: new Date().toISOString(), tool, path: file || undefined, command: command || undefined })}\n`);
 // Only what the agent wrote: a file it read is not its work to fix.
 if (!/write|edit|patch/i.test(tool) || !/\.tsx?$/.test(file) || !existsSync(file)) process.exit(0);
 const run = spawnSync('node', ['tools/validate-files.mjs', file], { encoding: 'utf8' });

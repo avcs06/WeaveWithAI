@@ -3,6 +3,7 @@ import { resolveBackend } from '../core/backends';
 import type { Issue } from '../core/issues';
 import type { Compose, Draft, Round } from '../runner/runSpecStage';
 import type { StageContext } from '../agents/stages';
+import { randomUUID } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { checkIssues, type LongFile, MAX_LINES } from './checks';
@@ -60,6 +61,8 @@ export function sessionCompose(
   deps: SessionDeps = {},
 ): Compose<UnitResult> {
   const baseline = git(appDir, 'rev-parse', 'HEAD');
+  // One Muse session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
+  const museSession = randomUUID();
   let sessions = 0;
   const run = async (task: string): Promise<Draft<UnitResult>> => {
     sessions += 1;
@@ -67,7 +70,7 @@ export function sessionCompose(
     const result = await runSession(
       ctx,
       appDir,
-      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads, stage: unit.stage },
+      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads, stage: unit.stage, museSession },
       deps,
     );
     // Rendered checks only mean something on a route that loads.

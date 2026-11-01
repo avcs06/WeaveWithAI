@@ -36,7 +36,10 @@
   <h2 id="add-title">Add a book</h2>
   <form method="dialog"><button type="submit">Close</button></form>
 </dialog>
+<nextjs-portal></nextjs-portal>
 <script>
+  // The overlay `next dev` adds: a shadow root with its own button, last in the body.
+  document.querySelector('nextjs-portal').attachShadow({ mode: 'open' }).innerHTML = '<button type="button" style="outline:none">N</button>';
   document.querySelector('[data-testid="add-book"]').addEventListener('click', () => document.getElementById('add').showModal());
 </script>
 </body>

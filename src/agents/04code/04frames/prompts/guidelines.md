@@ -16,4 +16,6 @@
   content.
 - Keep `web/app/(routes)/layout.tsx` and `web/app/(routes)/page.tsx` as they
   are.
-- Your paths are the shells' `layout.tsx` files and `web/app/components/`.
+- Your paths are the files of each shell's folder, such as `layout.tsx` and
+  its `layout.css.ts`, and `web/app/components/`. The route folders inside a
+  shell's folder belong to the pages.

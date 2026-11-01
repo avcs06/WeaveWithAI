@@ -133,10 +133,12 @@ describe('rendered checks on the fixture pages', () => {
 
   it('R-004 targets: a 12 px button fails; the clean page passes', async () => {
     const bad = await targetSizes(await open('defects.html'));
+    // Named from the nearest node with a test id, as the code names it.
     expect(bad.findings).toEqual([
       expect.objectContaining({
         severity: 'mandatory',
         message: 'target is 12 by 12; at least 24 by 24',
+        element: '[data-testid="controls"] > button:nth-of-type(3)',
       }),
     ]);
     expect((await targetSizes(await open('clean.html'))).findings).toEqual([]);
