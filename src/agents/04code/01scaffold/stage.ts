@@ -9,7 +9,9 @@ import type { Themed } from '../../02design/01theme/build';
 import type { StageContext, StageDef } from '../../stages';
 import { applyMode, scaffolded, scaffoldApp, setupMcp } from './app';
 import { applyTheme } from './apply';
+import { readCodeInputs } from './inputs';
 import { validateApplied } from './validation/validation';
+import { weaveFolders, writeWeave } from './weave';
 
 const STAGE = 'code-scaffold';
 const CHECKS: [string, string[]][] = [
@@ -29,7 +31,7 @@ const copyTemplate = async (appDir: string) => {
   await setupMcp(appDir);
 };
 
-/** The run's app: the template once, then the theme by code, proven by THEME-003, the agent config, and the app's own checks. */
+/** The run's app: the template once, then the theme by code, proven by THEME-003, the sessions' .weave folders, the agent config, and the app's own checks. */
 export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): Promise<void> {
   const { run } = ctx;
   appendEvent(run, { type: 'stage:start', stage: STAGE });
@@ -52,6 +54,8 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (issues.length) fail(issues.map((issue) => issue.message).join('\n'));
 
   appendLedger(appDir, changed.map((file) => ({ path: file, status: 'M', origin: 'code', stage: STAGE })));
+  // Before the baseline commit, so every session's diff starts with its inputs in place.
+  writeWeave(appDir, weaveFolders(readCodeInputs(run)));
   prepareApp(appDir);
 
   const check = deps.check ?? appCheck;

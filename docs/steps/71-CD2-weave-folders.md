@@ -128,8 +128,9 @@ On the golden freelancer workspace set:
 1. Every folder is written, with its guidelines where the stage has them.
 2. `05-pages/S04/page.json` holds S04's nodes and no node of another page.
 3. W01 and W29 (on several screens) are in `03-shared/widgets/`, S17 (opened
-   from S06 and S07) is in `03-shared/dialogs/`, and no page slice holds
-   their nodes.
+   from S06 and S07) is in `03-shared/dialogs/`. A page slice marks a shared
+   placement `shared` and keeps its nodes' ids and words, which the page
+   passes to the block; it holds no shared dialog.
 4. `issueOwner`: a node goes to its page, a dialog's node to its parent
    page, `SH1.r2` to frames, an unknown id to `01-scaffold`.
 5. The guidelines fill and hold no placeholder.
@@ -150,3 +151,6 @@ tree (ask first).
   harmless: a session that writes outside its paths fails.
 - Keep slices small: the cost of every call grows with what the session
   has read.
+- A shared widget's nodes have other ids and words on every screen
+  (S04.n01 "Home", S05.n01 "Clients"), so a block takes its words and its
+  elements' `data-testid`s as props, and each page passes its own.

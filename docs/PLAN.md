@@ -1659,7 +1659,7 @@ coding agent writes no tests.
     `mcp:check` and `verify /` pass. The copy still drops the lockfile, as
     `weave app` did, so the install resolves fresh (about 2 minutes).
 
-- [ ] **CD2** The `.weave` folders (2 h). Depends: CD1
+- [x] **CD2** The `.weave` folders (2 h) (done 2026-11-01). Depends: CD1
   - Why: each stage sees its own inputs and the earlier stages', and each
     folder carries its guidelines (user, 2026-11-01).
   - The scaffold writes `.weave/01-scaffold/` (guidelines for every
@@ -1676,6 +1676,11 @@ coding agent writes no tests.
   - Step file: `docs/steps/71-CD2-weave-folders.md`.
   - Done when: `pnpm test` on the golden freelancer set: every folder is
     written, and each page's slice holds its nodes and no other page's.
+  - Done 2026-11-01: `weave.ts` slices the run, `inputs.ts` reads it, the
+    app-wide guidelines replace `src/engine/guidelines.md`. The freelancer
+    run's tree: 12 page folders of 25 to 68 KB, 2 shared widgets, the shared
+    dialog S17, 2 shells. A shared widget's words and test ids differ per
+    page, so a block takes them as props.
 
 - [ ] **CD3** The agent in Docker (2 h). Depends: CD1
   - Why: headless Muse Code runs shell commands with no approval prompt

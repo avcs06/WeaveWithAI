@@ -51,13 +51,13 @@ const page = 'web/app/(routes)/books/page.tsx';
 const session = { id: 'page:S04', task: 'Build S04 from `.weave/screens/S04.json`.', inputs: { 'screens/S04.json': { id: 'S04' } }, route: '/books' };
 
 describe('prepareApp', () => {
-  it('writes the MCP and hook config, the hook and the guidelines, and commits a baseline', () => {
+  it('writes the MCP and hook config and the hook, and commits a baseline', () => {
     const { appDir } = setup('prepare');
     const mcp = JSON.parse(readFileSync(path.join(appDir, '.mcp.json'), 'utf8'));
     expect(Object.keys(mcp.mcpServers)).toEqual(['weave-design-system']);
     const hooks = JSON.parse(readFileSync(path.join(appDir, '.muse/hooks.json'), 'utf8'));
     expect(hooks.hooks.PostToolUse[0].hooks[0].command).toBe('node .weave/hooks/validate-edit.mjs');
-    expect(existsSync(path.join(appDir, '.weave/guidelines.md'))).toBe(true);
+    expect(existsSync(path.join(appDir, '.weave/hooks/validate-edit.mjs'))).toBe(true);
     expect(git(appDir, 'status', '--porcelain')).toBe('');
   });
 });

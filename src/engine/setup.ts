@@ -4,8 +4,8 @@ import { execaSync } from 'execa';
 import { pathBeside } from '../core/utils';
 
 // Muse Code's config in a generated app (D9.1 A): the MCP servers it loads
-// from `.mcp.json`, the hook that validates every file it writes, the
-// guidelines its tasks point to, and a git baseline its diff starts from.
+// from `.mcp.json`, the hook that validates every file it writes, and a git
+// baseline its diff starts from. The scaffold writes the guidelines (CD2).
 
 const MCP = {
   mcpServers: {
@@ -32,7 +32,6 @@ export function prepareApp(appDir: string): void {
   writeFileSync(at('.mcp.json'), `${JSON.stringify(MCP, null, 2)}\n`);
   writeFileSync(at('.muse', 'hooks.json'), `${JSON.stringify(HOOKS, null, 2)}\n`);
   copyFileSync(pathBeside(import.meta.url, './hooks/validate-edit.mjs'), at('.weave', 'hooks', 'validate-edit.mjs'));
-  copyFileSync(pathBeside(import.meta.url, './guidelines.md'), at('.weave', 'guidelines.md'));
   if (!existsSync(at('.git'))) git(appDir, 'init', '-q');
   git(appDir, 'add', '-A');
   git(appDir, 'commit', '-q', '--allow-empty', '-m', 'weave: agent setup');

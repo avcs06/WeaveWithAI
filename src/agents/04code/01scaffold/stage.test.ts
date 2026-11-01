@@ -17,6 +17,13 @@ writeFileSync(idea, '# An idea\n');
 
 // The golden freelancer theme is light only, so the scaffold pins the mode.
 const golden = JSON.parse(readFileSync('fixtures/golden/freelancer-workspace/02-design/01-theme.json', 'utf8'));
+const ARTIFACTS = [
+  ['flows-scope', '01-flows/01-scope.json'],
+  ['flows-reconcile', '01-flows/04-reconcile.json'],
+  ['design-theme', '02-design/01-theme.json'],
+  ['design-assemble', '02-design/08-assemble.json'],
+  ['contract', '03-contract.json'],
+] as const;
 const FILES = ['colors.ts', 'tokens.ts', 'packages/styles/src/fonts.ts', 'packages/ui/src/Root/UIRoot.tsx'];
 
 /** The template's themed files only, and an empty node_modules so the app counts as installed. */
@@ -31,7 +38,10 @@ async function fakeScaffold(appDir: string): Promise<void> {
 
 function setup(id: string, failing?: string) {
   const run = createRun({ idea, runsDir: root, id });
-  writeArtifact(run, 'design-theme', golden.data, { stage: 'design-theme', model: null, rounds: 1, inputs: [] });
+  for (const [name, file] of ARTIFACTS) {
+    const { data } = JSON.parse(readFileSync(`fixtures/golden/freelancer-workspace/${file}`, 'utf8'));
+    writeArtifact(run, name, data, { stage: name, model: null, rounds: 1, inputs: [] });
+  }
   const ran: string[] = [];
   const check = async (_appDir: string, name: string): Promise<Check> => {
     ran.push(name);
@@ -52,6 +62,9 @@ describe('the scaffold stage', () => {
     const ledger = JSON.parse(app('.weave/ledger.json'));
     expect(ledger).toContainEqual({ path: 'colors.ts', status: 'M', origin: 'code', stage: 'code-scaffold' });
     expect(existsSync(runPath(run, 'app', '.git'))).toBe(true);
+    expect(app('.weave/01-scaffold/guidelines.md')).toContain('make your own call');
+    expect(app('.weave/01-scaffold/guidelines.md')).not.toMatch(/\{\{|<!--/);
+    expect(existsSync(runPath(run, 'app', '.weave/05-pages/S04/page.json'))).toBe(true);
     expect(ran).toEqual(['typecheck', 'mcp:check', 'verify']);
     expect(readState(run).stages['code-scaffold']).toMatchObject({ status: 'done' });
   });
