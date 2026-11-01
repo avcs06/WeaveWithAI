@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
 import { resolveBackend } from '../core/backends';
@@ -6,6 +6,7 @@ import { costUsd } from '../core/prices';
 import { appendEvent, runPath } from '../core/run';
 import type { StageContext } from '../agents/stages';
 import { checkScreen, type ScreenExpect } from './conformance';
+import { appendLedger } from './ledger';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
@@ -55,7 +56,7 @@ const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/*
 const OURS = new Set(['.weave/hook.log', '.weave/ledger.json']);
 const MAX_OUTPUT_LINES = 200;
 
-async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
+export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
   const [cmd = 'pnpm', ...rest] = args;
   const result = await execa(cmd, rest, { cwd: appDir, reject: false, all: true });
   const output = String(result.all ?? '').split('\n').slice(-MAX_OUTPUT_LINES).join('\n');
@@ -141,10 +142,7 @@ export async function runSession(
           ? 'done'
           : 'failed';
 
-  const ledgerFile = at('.weave', 'ledger.json');
-  const ledger = existsSync(ledgerFile) ? (JSON.parse(readFileSync(ledgerFile, 'utf8')) as unknown[]) : [];
-  ledger.push(...changes.map((change) => ({ ...change, origin: 'model', session: session.id })));
-  writeFileSync(ledgerFile, `${JSON.stringify(ledger, null, 2)}\n`);
+  appendLedger(appDir, changes.map((change) => ({ ...change, origin: 'model', session: session.id })));
   if (status === 'done') {
     git(appDir, 'add', '-A');
     git(appDir, 'commit', '-q', '-m', `weave: ${session.id}`);

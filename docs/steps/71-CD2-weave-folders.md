@@ -57,16 +57,19 @@ earlier ones, and a page reads only its own screen's folder.
   02-contract/          guidelines.md and entities.md (CD4)
   03-shared/
     components/<Name>.json   each new component's design
-    widgets/<W01>.json       each widget on two or more screens: its catalog entry, nodes, slots, screens
+    widgets/<W01>.json       each widget on two or more screens, forms included: its catalog entry,
+                             nodes, slots, screens
+    dialogs/<S17>.json       each dialog opened from two or more pages, with its own widgets' nodes
     issues.json
   04-frames/
     shells/<SH1>.json        each shell: regions, nodes, the screens it frames
     navigation.json  frame-changes.json
     issues.json
   05-pages/
-    <S04>/page.json          the page and its dialogs: sections, placements, the nodes of its
-                             single-use widgets, the shared widgets it places by name, the steps
-                             and alternatives it serves, the operations its widgets read
+    <S04>/page.json          the page and its own dialogs: sections, placements, the nodes of its
+                             single-use widgets and forms, the shared widgets and dialogs it uses
+                             by name, the steps and alternatives it serves, the operations its
+                             widgets read
     <S04>/issues.json
 ```
 
@@ -75,8 +78,8 @@ earlier ones, and a page reads only its own screen's folder.
 ### Who owns an issue
 
 An `at` of a screen, section or node goes to its page (a dialog's to its
-parent page); a widget's to `03-shared` when the widget is shared, else to
-its page; a shell's or region's to `04-frames`; a step's to every unit
+parent page, or to `03-shared` when two or more pages open it); a widget's
+to `03-shared` when the widget is shared, else to its page; a shell's or region's to `04-frames`; a step's to every unit
 whose nodes serve it; a new component's to `03-shared`. Anything else goes
 to `01-scaffold`.
 
@@ -124,8 +127,9 @@ On the golden freelancer workspace set:
 
 1. Every folder is written, with its guidelines where the stage has them.
 2. `05-pages/S04/page.json` holds S04's nodes and no node of another page.
-3. W01 and W29 (on several screens) are in `03-shared/widgets/`, and no
-   page slice holds their nodes.
+3. W01 and W29 (on several screens) are in `03-shared/widgets/`, S17 (opened
+   from S06 and S07) is in `03-shared/dialogs/`, and no page slice holds
+   their nodes.
 4. `issueOwner`: a node goes to its page, a dialog's node to its parent
    page, `SH1.r2` to frames, an unknown id to `01-scaffold`.
 5. The guidelines fill and hold no placeholder.

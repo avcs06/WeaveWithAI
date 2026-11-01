@@ -28,7 +28,12 @@ reviewers read its diff from round 1.
    blockers (CD2's guidelines). The text the reviewers read is the unit's
    whole diff since its baseline, plus the agent's summary.
 5. **Checks become issues with rule ids**, so the report, the fix message
-   and `weave show` treat them like validator issues.
+   and `weave show` treat them like validator issues. The split (user,
+   2026-11-01): a check that needs no browser, no Storybook and no idea
+   context runs in the design-system MCP on the code alone, while the agent
+   writes. Every other check runs here, after the session. None of the
+   checks below works on code alone, so the MCP's `validate` stays as it is
+   and no app MCP is needed.
 6. **Write paths instead of a protect list.** Each session names the paths
    it may write; any other path, or a test, fails CODE-004.
 7. **One runner per unit**, named like draw's: `code-pages-S04`.

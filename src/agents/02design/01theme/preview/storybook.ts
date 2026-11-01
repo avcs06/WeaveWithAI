@@ -1,19 +1,10 @@
-import { existsSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
 import { chromium } from 'playwright-core';
 
-// The theme seen before any page exists: an app folder made from the template,
-// one story with every recipe on it, and a screenshot of it in each mode.
-
-/** The template copied into `appDir` by its own generator, then installed; MCP setup is left for the coding stage. */
-export async function scaffoldApp(appDir: string): Promise<void> {
-  await execa('node', ['template/tools/generate.mjs', 'template', appDir, '--skip-setup'], {
-    stdio: 'inherit',
-  });
-  // The template is a pnpm workspace with its own lockfile pruned by the generator.
-  await execa('pnpm', ['install', '--no-frozen-lockfile'], { cwd: appDir, stdio: 'inherit' });
-}
+// The theme seen before any page exists: one story with every recipe on it in
+// an app made by the scaffold, and a screenshot of it in each mode.
 
 export const STORY_ID = 'all-components--page';
 
@@ -109,5 +100,3 @@ export async function screenshotComponents(
   }
 }
 
-/** True when the app folder was made already; the scaffold runs once per app. */
-export const scaffolded = (appDir: string) => existsSync(path.join(appDir, 'node_modules'));

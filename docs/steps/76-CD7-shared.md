@@ -5,20 +5,23 @@ Phase 6 · 1 h · Depends: CD4, CD6 · Decisions: D9.1 A, D3.10 A
 ## Goal
 
 The `code-shared` stage builds what more than one screen uses, before any
-frame or page needs it: every new component, then every widget placed on
-two or more screens.
+frame or page needs it: every new component, then every widget, form and
+dialog used on two or more screens.
 
 ## What this step does
 
 1. **One session** builds the new components first, then the shared
-   widgets, which may use them.
+   widgets, forms and dialogs, which may use them.
 2. **New components** go in `web/app/components/<Name>/` with the DS
    conventions, and no test (user, 2026-11-01).
-3. **Shared widgets** go in `web/app/blocks/<Widget>/`. They take their data
-   through the entity layer and the operations their contract entry reads.
+3. **Shared widgets, forms and dialogs** go in `web/app/blocks/<Name>/`
+   (user, 2026-11-01). They take their data through the entity layer and
+   the operations their contract entry reads. A dialog is shared when two
+   or more pages open it.
 4. **Skipped when nothing is shared.** In the golden sets the freelancer
-   workspace shares W01 (a page header on six pages) and W29 (a delete
-   confirm on five dialogs); every idea has two or three new components.
+   workspace shares W01 (a page header on six pages), W29 (a delete
+   confirm on five dialogs) and the dialog S17 (opened from S06 and S07);
+   every idea has two or three new components.
 5. **No route yet**, so the checks that need one wait for frames and pages.
    Validate, typecheck, lint, the write paths and the `data-testid`s run.
 
@@ -27,8 +30,8 @@ two or more screens.
 - `src/agents/04code/03shared/stage.ts`: `sharedStage`, one CD5 unit
   `code-shared`, writes `web/app/components/**` and `web/app/blocks/**`.
 - `prompts/task.md`: build the components in `.weave/03-shared/components/`,
-  then the widgets in `.weave/03-shared/widgets/`; read `01-scaffold` to
-  `03-shared`.
+  then the widgets in `.weave/03-shared/widgets/` and the dialogs in
+  `.weave/03-shared/dialogs/`; read `01-scaffold` to `03-shared`.
 - `prompts/guidelines.md` becomes `.weave/03-shared/guidelines.md`: the
   write paths, a widget's props for the screen-specific parts (its slots),
   and that pages will import these and cannot change them.

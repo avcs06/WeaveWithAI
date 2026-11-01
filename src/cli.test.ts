@@ -186,6 +186,7 @@ describe('weave run', () => {
       'design-draw: no validators registered',
       'design-frame: no validators registered',
       'design-assemble: no validators registered',
+      'code-scaffold: no validators registered',
     ]);
     expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
   });

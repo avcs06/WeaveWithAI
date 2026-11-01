@@ -8,13 +8,12 @@ import {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { applyTheme } from './agents/02design/01theme/preview/apply';
 import {
-  scaffolded,
-  scaffoldApp,
   screenshotComponents,
   writeAllComponentsStory,
 } from './agents/02design/01theme/preview/storybook';
+import { applyTheme } from './agents/04code/01scaffold/apply';
+import { scaffolded, scaffoldApp } from './agents/04code/01scaffold/app';
 import {
   type ArtifactName,
   FILE_OF,

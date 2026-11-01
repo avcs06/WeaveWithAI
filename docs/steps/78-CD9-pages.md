@@ -12,9 +12,10 @@ by every check on its route.
 
 1. **One unit per page**, in the order of the navigation, so the entry
    pages come first. Each unit is a CD5 runner, `code-pages-<screen>`.
-2. **A page session** writes only the page's route folder: the page, its
-   dialogs and its single-use widgets. It imports the shared pieces and the
-   entity layer and cannot change them.
+2. **A page session** writes only the page's route folder (user,
+   2026-11-01): `page.tsx`, and in `components/` beside it the page's own
+   widgets, forms and dialogs. It imports the shared pieces and the entity
+   layer and cannot change them.
 3. **Every check runs on its route**: validate, typecheck, lint, the write
    paths, the design check (`data-testid`s and the operations its widgets
    read), `pnpm verify`, and the rendered checks DESIGN-R-001 to 009.
@@ -41,9 +42,9 @@ by every check on its route.
 - `prompts/task.md`: build the page in `.weave/05-pages/<screen>/`; read
   `01-scaffold` to `04-frames` and that folder only.
 - `prompts/guidelines.md` becomes `.weave/05-pages/guidelines.md`: the page
-  fills the frame's main region; dialogs beside the page; a single-use
-  widget stays in the route folder; every state and alternative the page
-  serves.
+  fills the frame's main region; its own widgets, forms and dialogs go in
+  `components/` beside `page.tsx`; shared ones come from `blocks/`; every
+  state and alternative the page serves.
 
 ## Tests
 

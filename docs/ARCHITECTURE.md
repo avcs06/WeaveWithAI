@@ -326,9 +326,11 @@ runs/<runId>/app/
   web/app/entities/<entity>/{schema,seed,store,operations,index}.ts   the contract as stores, by code (CD4)
   web/app/entities/session/                               sign up and sign in with any email (CD4)
   web/app/components/<Name>/                              new components (CD7, model)
-  web/app/blocks/<Widget>/                                widgets on two or more screens (CD7, model)
-  web/app/(routes)/(<shell>)/layout.tsx                   shells and navigation (CD8, model)
-  web/app/(routes)/(<shell>)/<route>/                     a page, its dialogs and its own widgets (CD9, model)
+  web/app/blocks/<Name>/                                  widgets, forms and dialogs on two or more screens (CD7, model)
+  web/app/components/<FramePart>/                         a shell's header, sidebar, navigation (CD8, model)
+  web/app/(routes)/(<shell>)/layout.tsx                   shells (CD8, model)
+  web/app/(routes)/(<shell>)/<route>/page.tsx             a page (CD9, model)
+  web/app/(routes)/(<shell>)/<route>/components/          its own widgets, forms and dialogs (CD9, model)
   web/e2e/<flow>.spec.ts  playwright.config.ts            tests from the flows (T1)
 ```
 

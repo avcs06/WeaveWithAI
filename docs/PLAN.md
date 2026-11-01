@@ -1608,12 +1608,18 @@ coding agent writes no tests.
 | --- | --- | --- | --- |
 | 1 | `code-scaffold` | code | The template in `runs/<id>/app`, the theme applied, the MCP built, the agent config and its container, a git baseline, and `.weave/`: one numbered folder per stage with its guidelines and inputs |
 | 2 | `code-contract` | code, one structured call | The entity layer from the contract: types, a persistent store, one function per operation, seed rows, a sign-in session |
-| 3 | `code-shared` | one Muse Code session | The new components, then the widgets placed on two or more screens |
-| 4 | `code-frames` | one session | The shells, the navigation and the frame changes; after shared, since a frame may use a shared piece |
-| 5 | `code-pages` | one session per page | The page, its dialogs and its single-use widgets |
+| 3 | `code-shared` | one Muse Code session | The new components into `components/`, then the widgets, forms and dialogs used on two or more screens into `blocks/` |
+| 4 | `code-frames` | one session | The shells as `layout.tsx` and their parts in `components/`, the navigation and the frame changes; after shared, since a frame may use a shared piece |
+| 5 | `code-pages` | one session per page | The page in `(routes)`, and its own widgets, forms and dialogs in `components/` beside it |
 
+- Each stage writes one set of folders in `web/app` (user, 2026-11-01):
+  contract to `entities/`, shared to `components/` and `blocks/`, frames to
+  `components/` and `layout.tsx`, pages to `(routes)/`.
 - Sessions run one after another: they share one app folder, one git tree
   and `pnpm verify`'s port 3001.
+- A check that needs no browser, no Storybook and no idea context runs in
+  the design-system MCP while the agent writes; every other check runs after
+  the session (user, 2026-11-01).
 - Each session unit runs on `runSpecStage`. Round 1: the session, the
   checks, both reviewers. Round 2: a fix session for every failed check and
   blocker, the checks, both reviewers. Round 3: a final fix session and the
@@ -1635,7 +1641,7 @@ coding agent writes no tests.
 - Rough cost from FE8: about $20 to $28 for the freelancer workspace and $8
   to $12 for the dashboard editor.
 
-- [ ] **CD1** App and theme (1.5 h). Depends: DS4a, FE8
+- [x] **CD1** App and theme (1.5 h) (done 2026-11-01). Depends: DS4a, FE8
   - `src/agents/04code/01scaffold/`: the `code-scaffold` stage copies
     `template/` into `runs/<id>/app`, installs it, builds the MCP and
     applies the theme with `applyTheme` (moved here from the theme
@@ -1647,6 +1653,11 @@ coding agent writes no tests.
   - Done when: `pnpm test`; the stage on `20261101-0150-freelancer-workspace`
     gives an app whose `pnpm typecheck`, `pnpm mcp:check` and
     `pnpm verify /` pass with the theme's colors.
+  - Done 2026-11-01: `scaffoldApp`, `applyTheme` and the mode pin in
+    `04code/01scaffold/`, THEME-003, the ledger write shared with the
+    session. The freelancer run's app themed light-only, typecheck,
+    `mcp:check` and `verify /` pass. The copy still drops the lockfile, as
+    `weave app` did, so the install resolves fresh (about 2 minutes).
 
 - [ ] **CD2** The `.weave` folders (2 h). Depends: CD1
   - Why: each stage sees its own inputs and the earlier stages', and each

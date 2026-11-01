@@ -20,6 +20,7 @@ import {
   themeStage,
 } from './02design/stages';
 import { contractStage } from './03contract/stage';
+import { scaffoldStage } from './04code/01scaffold/stage';
 
 export type StageContext = {
   run: Run;
@@ -52,10 +53,11 @@ export const PIPELINE: string[] = [
   'design-draw',
   'design-frame',
   'design-assemble',
-  'scaffold',
-  'codegen',
-  'apitest',
-  'frontend',
+  'code-scaffold',
+  'code-contract',
+  'code-shared',
+  'code-frames',
+  'code-pages',
   'bench',
   'e2e',
   'repair',
@@ -92,4 +94,5 @@ export const stages: StageDef[] = [
   drawStage,
   frameStage,
   assembleStage,
+  scaffoldStage,
 ];

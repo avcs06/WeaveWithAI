@@ -1,0 +1,71 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { readArtifact } from '../../../core/artifacts';
+import { appendEvent, runPath, updateStage } from '../../../core/run';
+import { appendLedger } from '../../../engine/ledger';
+import { appCheck, type Check } from '../../../engine/session';
+import { prepareApp } from '../../../engine/setup';
+import type { Themed } from '../../02design/01theme/build';
+import type { StageContext, StageDef } from '../../stages';
+import { applyMode, scaffolded, scaffoldApp, setupMcp } from './app';
+import { applyTheme } from './apply';
+import { validateApplied } from './validation/validation';
+
+const STAGE = 'code-scaffold';
+const CHECKS: [string, string[]][] = [
+  ['typecheck', ['pnpm', 'typecheck']],
+  ['mcp:check', ['pnpm', 'mcp:check']],
+  ['verify', ['pnpm', 'verify', '/']],
+];
+
+/** Tests swap the template copy and the app's checks. */
+export type ScaffoldDeps = {
+  scaffold?: (appDir: string) => Promise<void>;
+  check?: (appDir: string, name: string, args: string[]) => Promise<Check>;
+};
+
+const copyTemplate = async (appDir: string) => {
+  await scaffoldApp(appDir);
+  await setupMcp(appDir);
+};
+
+/** The run's app: the template once, then the theme by code, proven by THEME-003, the agent config, and the app's own checks. */
+export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): Promise<void> {
+  const { run } = ctx;
+  appendEvent(run, { type: 'stage:start', stage: STAGE });
+  updateStage(run, STAGE, { status: 'running' });
+  const fail = (error: string): never => {
+    updateStage(run, STAGE, { status: 'failed' });
+    appendEvent(run, { type: 'stage:failed', stage: STAGE, error });
+    throw new Error(`${STAGE}: ${error}`);
+  };
+
+  const { theme } = readArtifact<Themed>(run, 'design-theme').data;
+  const appDir = runPath(run, 'app');
+  if (!scaffolded(appDir)) await (deps.scaffold ?? copyTemplate)(appDir);
+  const { changed, skipped } = applyTheme(appDir, theme);
+  if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
+  for (const reason of skipped) appendEvent(run, { type: 'scaffold:skipped', stage: STAGE, reason });
+
+  // A wrong color here is a generator bug, never the model's.
+  const issues = validateApplied({ colorsTs: readFileSync(path.join(appDir, 'colors.ts'), 'utf8'), theme });
+  if (issues.length) fail(issues.map((issue) => issue.message).join('\n'));
+
+  appendLedger(appDir, changed.map((file) => ({ path: file, status: 'M', origin: 'code', stage: STAGE })));
+  prepareApp(appDir);
+
+  const check = deps.check ?? appCheck;
+  for (const [name, args] of CHECKS) {
+    const result = await check(appDir, name, args);
+    appendEvent(run, { type: 'check:run', stage: STAGE, name, ok: result.ok });
+    if (!result.ok) fail(`${name} failed in the app:\n${result.output}`);
+  }
+  updateStage(run, STAGE, { status: 'done' });
+  appendEvent(run, { type: 'stage:done', stage: STAGE });
+}
+
+export const scaffoldStage: StageDef = {
+  name: STAGE,
+  produces: [],
+  run: (ctx) => runScaffold(ctx),
+};

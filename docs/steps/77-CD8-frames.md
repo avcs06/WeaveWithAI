@@ -10,8 +10,9 @@ sign-in guard. It runs after shared, since a frame may use a shared piece.
 
 ## What this step does
 
-1. **One session** builds every shell as a layout in a route group under
-   `web/app/(routes)/`, one group per shell.
+1. **One session** builds every shell as a `layout.tsx` in a route group
+   under `web/app/(routes)/`, one group per shell. The frame's parts (header,
+   sidebar, navigation) go in `web/app/components/` (user, 2026-11-01).
 2. **The navigation** comes from the design's IA: each item's label is its
    page's title, and it opens the page's route.
 3. **Frame changes**: a screen whose frame differs from its shell's default
@@ -25,8 +26,8 @@ sign-in guard. It runs after shared, since a frame may use a shared piece.
 ## Implementation details
 
 - `src/agents/04code/04frames/stage.ts`: `framesStage`, one CD5 unit
-  `code-frames`, writes the route groups' `layout.tsx` and their
-  frame-only components beside them.
+  `code-frames`, writes the route groups' `layout.tsx` and
+  `web/app/components/**`.
 - `prompts/task.md` and `prompts/guidelines.md`: read `01-scaffold` to
   `04-frames`; the frame shows no page content; each page later fills the
   layout's main region.

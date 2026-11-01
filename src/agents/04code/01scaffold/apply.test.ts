@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildTheme, type Theme } from '../build';
-import type { ThemeCall } from '../schema';
+import { buildTheme, type Theme } from '../../02design/01theme/build';
+import type { ThemeCall } from '../../02design/01theme/schema';
 import {
   applyColors,
   applyRecipeDefaults,
