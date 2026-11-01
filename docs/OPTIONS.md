@@ -921,9 +921,9 @@ Notes:
       `owner` access filters by `ownerId`; `role` access checks `user.role`.
 - [ ] **B. No auth**: every request runs as the demo user. Simpler; the auth
       flows and the denied alternatives can't be tested.
-- [x] **C. A session entity (user, 2026-11-01).** Sign up and sign in take any
-      email, sign out clears it, and signed-in screens need a session. No
-      passwords and no access filters: C7 dropped access.
+- [x] **C. A sign-in entity, `entities/auth` (user, 2026-11-01).** Sign up and
+      sign in take any email, sign out clears it, and signed-in screens need
+      a signed-in user. No passwords and no access filters: C7 dropped access.
 
 Notes:
 

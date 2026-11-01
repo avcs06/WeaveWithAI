@@ -25,15 +25,33 @@ describe('the design check after a coding session', () => {
       mkdirSync(path.join(root, dir, s04.folder), { recursive: true });
       writeFileSync(path.join(root, dir, s04.folder, 'page.tsx'), text);
     };
-    page('good', `${s04.testIds.map((id) => `<div data-testid="${id}" />`).join('\n')}\nlistDashboards();\n`);
+    const words = (s04.words ?? []).map((w) => `<p>${w.text}</p>`).join('\n');
+    page('good', `${s04.testIds.map((id) => `<div data-testid="${id}" />`).join('\n')}\n${words}\nlistDashboards();\n`);
     expect(checkScreen(path.join(root, 'good'), s04)).toEqual({ name: 'design', ok: true, output: '' });
     page('bad', s04.testIds.slice(1).map((id) => `<div data-testid="${id}" />`).join('\n'));
     const bad = checkScreen(path.join(root, 'bad'), s04);
     expect(bad.ok).toBe(false);
-    expect(bad.output.split('\n')).toEqual([
+    expect(bad.output.split('\n').filter((line) => !line.startsWith('The words '))).toEqual([
       `No element has data-testid "${s04.testIds[0]}".`,
       'Nothing in web/app/(routes)/dashboards calls listDashboards; load the widget\'s data through it.',
     ]);
     expect(checkScreen(path.join(root, 'none'), s04).output).toContain('has no code');
+  });
+
+  it("lists a node's words missing from the code, as output that never fails the check", () => {
+    const words = s04.words ?? [];
+    expect(words.length).toBeGreaterThan(0);
+    expect(words.some((w) => w.text.includes('{'))).toBe(false);
+    mkdirSync(path.join(root, 'words', s04.folder), { recursive: true });
+    const all = `${s04.testIds.map((id) => `<div data-testid="${id}" />`).join('\n')}\nlistDashboards();\n`;
+    // Left out: words no other text on the page contains, so nothing else can show them.
+    const missing = words.find((w) => !all.includes(w.text) && !words.some((o) => o !== w && o.text.includes(w.text)))!;
+    const shown = words.filter((w) => w.text !== missing.text).map((w) => `<p>${w.text.replace(/'/g, '&apos;')}</p>`).join('\n');
+    writeFileSync(path.join(root, 'words', s04.folder, 'page.tsx'), `${all}${shown}\n`);
+    const result = checkScreen(path.join(root, 'words'), s04);
+    expect(result.ok).toBe(true);
+    expect(result.output.split('\n')).toEqual(
+      words.filter((w) => w.text === missing.text).map((w) => `The words "${w.text}" of ${w.id} are nowhere in ${s04.folder}; show the node's text as the design writes it.`),
+    );
   });
 });

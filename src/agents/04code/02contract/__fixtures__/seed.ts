@@ -1,7 +1,7 @@
 import type { Contract, EntityField } from '../../../03contract/schema';
 import type { SeedRows } from '../schema';
 
-// Seed rows built from the contract alone, for tests and offline checks: three rows per entity, refs to row 1.
+// Seed rows built from the contract alone, for tests and offline checks: four rows per entity, refs to row 1.
 
 function value(field: EntityField, contract: Contract, row: number): unknown {
   const one = (() => {
@@ -34,7 +34,7 @@ export function fakeSeed(contract: Contract): SeedRows {
   return Object.fromEntries(
     contract.entities.map((entity) => [
       entity.name,
-      [1, 2, 3].map((row) => Object.fromEntries(entity.fields.map((f) => [f.name, value(f, contract, row)]))),
+      [1, 2, 3, 4].map((row) => Object.fromEntries(entity.fields.map((f) => [f.name, value(f, contract, row)]))),
     ]),
   );
 }

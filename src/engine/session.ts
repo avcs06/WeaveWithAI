@@ -12,10 +12,10 @@ import { savePatch } from './patches';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
-// One coding session on Muse Code headless (D9.1 A). The agent may read and
-// edit anything in the app; this code judges the result: it reruns the
-// checks, records the diff in the ledger, and fails a session whose diff
-// touches a test or a protected path.
+// One coding session on Muse Code headless (D9.1 A). The agent can read
+// anything in the app; this code judges the result: it reruns the checks,
+// records the diff in the ledger, measures the reads its rules rule out, and
+// fails a session whose diff touches a test or a path outside its own.
 
 export type Session = {
   /** 'page:S04', 'component:WidgetBoard', 'repair:R03' */
@@ -28,8 +28,6 @@ export type Session = {
   route?: string;
   /** What the screen's route folder must name, from its design and the contract. */
   expect?: ScreenExpect;
-  /** More globs the diff must not touch; tests and `PROTECTED` always are. */
-  protect?: string[];
   /** The only paths the diff may touch, when given (CD5): each code stage writes its own folders. */
   writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
@@ -103,11 +101,11 @@ export function readPaths(log: string, appDir: string): string[] {
 }
 const MAX_OUTPUT_LINES = 200;
 
-/** The changed files a session may not touch: tests, `PROTECTED`, its own protect globs, and anything outside its write paths. */
-export function protectedOf(changed: string[], session: Pick<Session, 'protect' | 'writes'>): string[] {
+/** The changed files a session may not touch: tests, `PROTECTED`, and anything outside its write paths. */
+export function protectedOf(changed: string[], session: Pick<Session, 'writes'>): string[] {
   const outside = (file: string) => session.writes !== undefined && !session.writes.some((rule) => inPath(file, rule));
   return changed.filter(
-    (file) => TESTS.test(file) || [...PROTECTED, ...(session.protect ?? [])].some((rule) => inPath(file, rule)) || outside(file),
+    (file) => TESTS.test(file) || PROTECTED.some((rule) => inPath(file, rule)) || outside(file),
   );
 }
 

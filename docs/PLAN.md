@@ -1629,6 +1629,9 @@ coding agent writes no tests.
   operation the unit's widgets read; on a route, `pnpm verify` and the
   rendered checks DESIGN-R-001 to 009 (axe, contrast, the keyboard walk and
   target sizes among them). `next build` runs once after the last page.
+  Three checks are warnings, which never start a fix: a read the guidelines
+  rule out (CODE-010), a node's words missing from the code (CODE-011), and a
+  file over 300 lines (CODE-012).
 - Two reviewers read each unit's diff. One checks code quality, readability
   and clean organization, the product's selling point. The other checks
   adherence to the design, the theme and the behavior the flows and the

@@ -74,8 +74,8 @@ export type SpecStageOptions<T> = {
   schedule?: Round[];
   /** The reviewers' user message, with the placeholders system, user, output and known; default prompt-review-input.md. */
   reviewInput?: string;
-  /** Reviewers see every issue as known, mandatory ones too, not only the warnings. */
-  reviewersSeeAll?: boolean;
+  /** Reviewers see the mandatory issues as known, the ones the next fix takes, instead of the warnings. */
+  reviewersSeeMandatory?: boolean;
   /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
   ask?: (output: T) => Promise<Answers>;
   /** Output budget for the writer's calls, reasoning included (D1.13); the client doubles it once when the answer is cut. */
@@ -234,7 +234,7 @@ export async function runSpecStage<T>(
         round,
         reviewers,
         last.draft.raw,
-        o.reviewersSeeAll ? last.issues : warnings,
+        o.reviewersSeeMandatory ? mandatory : warnings,
       );
     } else if (produced) {
       // The final fix addressed these; nobody checked the result.

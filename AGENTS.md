@@ -121,8 +121,9 @@ restructure) stay as they are.
   2026-10-28): the contract becomes entity stores inside the app
   (OPTIONS.md 6M), and a benchmark stage (section 13) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
-  its origin. A Muse Code session may read and edit anything in the app; the
-  runner records its git diff in the ledger and fails the session when the
-  diff touches a test or a generated folder.
+  its origin. A Muse Code session writes only its stage's paths, and the
+  entity layer only for a blocker. The runner records its git diff in the
+  ledger, commits it with a patch in the run, and fails the session when the
+  diff touches a test or a path outside its own.
 - Secrets only in `.env` (gitignored), loaded with `process.loadEnvFile()`.
 - Docs you write: short plain sentences, no em dashes.

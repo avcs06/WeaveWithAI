@@ -7,8 +7,8 @@ Look for:
 - A state the screen or a node lists that the change does not build: empty, error, not found, denied.
 - A flow step or alternative the unit serves that does not work as the flow says: a control that does nothing, a form that does not save, a failure with no message, a destructive action without its confirm.
 - Data that does not come from the operations the widget's contract entry reads, or a value the design does not show.
-- A node's `look` or `size`, or the theme's defaults, not followed.
+- A node's `look` or `size` not followed.
 
 The design may hold errors. When the agent's summary lists a call, and the call is sound, it is not a blocker.
 
-Not blockers: spacing and sizes the checks cover, small differences in the words of system messages, and anything in the known issues.
+Not blockers: missing test ids, spacing and sizes the checks cover, variants left off their default without a reason (the MCP checks those), small differences in the words of system messages, and anything in the known issues.

@@ -23,7 +23,7 @@ export const ENTITIES = 'web/app/entities/**';
 export const READS_DENIED = ['packages/**', 'tools/**', 'tokens.ts', 'colors.ts', 'tailwind.preset.cjs', 'web/tailwind.config.js'];
 
 /** The two output reviewers of every coding unit (user, 2026-11-01). */
-export function codeReviewGuides(): Record<string, string> {
+function codeReviewGuides(): Record<string, string> {
   return { code: load('review-code.md'), adherence: load('review-adherence.md') };
 }
 
@@ -74,7 +74,7 @@ export async function runUnit(
     validate: unitIssues,
     review: { output: codeReviewGuides() },
     reviewInput: load('review-input.md'),
-    reviewersSeeAll: true,
+    reviewersSeeMandatory: true,
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(ctx, appDir, unit, deps),
   });
@@ -88,13 +88,13 @@ export async function runUnit(
 }
 
 /** A code stage's units, one after another: they share the app's git tree and its dev server port. */
-export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[], deps: SessionDeps = {}): Promise<void> {
+export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[]): Promise<void> {
   appendEvent(ctx.run, { type: 'stage:start', stage });
   updateStage(ctx.run, stage, { status: 'running' });
   let known = 0;
   let rounds = 0;
   for (const spec of specs) {
-    const result = await runUnit(ctx, spec, deps);
+    const result = await runUnit(ctx, spec);
     known += result.known.length;
     rounds = Math.max(rounds, result.rounds);
   }

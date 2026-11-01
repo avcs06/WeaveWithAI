@@ -12,7 +12,7 @@ import type { Flows } from '../../01flows/schema';
 import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
 import { entityFiles } from './codegen';
-import { entitiesDoc } from './doc';
+import { renderEntities } from './render';
 import { seedSystemPrompt, seedUserMessage } from './prompts/index';
 import { type SeedRows, seedSchema } from './schema';
 import { validateSeed } from './validation/validation';
@@ -21,7 +21,7 @@ const STAGE = 'code-contract';
 const SEED_MAX_TOKENS = 32_768;
 
 /** Tests swap the app's checks. */
-export type ContractDeps = { check?: (appDir: string, name: string, args: string[]) => Promise<Check> };
+type ContractDeps = { check?: (appDir: string, name: string, args: string[]) => Promise<Check> };
 
 /** The seed rows: from the artifact while the contract is unchanged, else from one call. */
 async function seedRows(ctx: StageContext, contract: Contract): Promise<SeedRows> {
@@ -58,7 +58,7 @@ export async function runContractCode(ctx: StageContext, deps: ContractDeps = {}
   appendEvent(run, { type: 'stage:start', stage: STAGE });
   const appDir = runPath(run, 'app');
   const files = entityFiles(contract, seed);
-  files.set('.weave/02-contract/entities.md', entitiesDoc(contract));
+  files.set('.weave/02-contract/entities.md', renderEntities(contract));
   for (const [file, text] of files) {
     mkdirSync(path.dirname(path.join(appDir, file)), { recursive: true });
     writeFileSync(path.join(appDir, file), text);

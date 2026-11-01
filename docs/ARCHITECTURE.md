@@ -111,8 +111,10 @@ runs/<runId>/
   02-design/08-skeleton.json  02-design/08-wireframes.html  02-design/08-ds-gaps.json
   02-design/01-theme-light.png  02-design/01-theme-dark.png   every component in the theme (weave app)
   03-contract.json             the records and operations behind every widget
-  app/                         the generated app (a template copy plus generated code)
-  app.ledger.json              every generated file with its origin and step
+  app/                         the generated app: a template copy plus generated code, a git repo with one commit per step
+  app.previous-<time>/         an app folder the scaffold did not make, moved aside
+  patches/<NNN>-<subject>.patch   each step's commit in the app, in order
+  sessions/<unit>.jsonl  sessions/<unit>.tools.jsonl   each coding session's events and tool calls
   benchmark/                   raw tool output; benchmark.json and 05-benchmark.md beside it
   06-e2e.md                    evidence table and repair requests
   reports/<stage>.json         issues per round
@@ -318,14 +320,14 @@ full inventory.
 ## Generated app
 
 A run's app is a copy of `template/` plus generated code. Everything the
-generator writes is recorded in `app.ledger.json` with its origin.
+generator writes is recorded in `.weave/ledger.json` with its origin.
 
 ```text
 runs/<runId>/app/
   colors.ts  tokens.ts  packages/styles/src/fonts.ts     themed by code (CD1)
   .weave/<NN>-<stage>/                                    each code stage's guidelines and inputs (CD2)
-  web/app/entities/<entity>/{schema,seed,store,operations,index}.ts   the contract as stores, by code (CD4)
-  web/app/entities/session/                               sign up and sign in with any email (CD4)
+  web/app/entities/<entity>/{types,seed,store,operations,index}.ts    the contract as stores, by code (CD4)
+  web/app/entities/{auth,mock,enums}/                     sign-in with any email, latency and failures, enums (CD4)
   web/app/components/<Name>/                              new components (CD7, model)
   web/app/blocks/<Name>/                                  widgets, forms and dialogs on two or more screens (CD7, model)
   web/app/components/<FramePart>/                         a shell's header, sidebar, navigation (CD8, model)

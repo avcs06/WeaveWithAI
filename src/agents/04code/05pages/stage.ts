@@ -4,7 +4,7 @@ import { appendEvent, runPath } from '../../../core/run';
 import { fillPrompt, loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
 import { screenExpect } from '../../../engine/conformance';
-import { appCheck, type Check, type SessionDeps } from '../../../engine/session';
+import { appCheck } from '../../../engine/session';
 import type { Themed } from '../../02design/01theme/build';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { Contract } from '../../03contract/schema';
@@ -71,20 +71,26 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
   });
 }
 
-export type PagesDeps = SessionDeps & { build?: (appDir: string, name: string, args: string[]) => Promise<Check> };
-
-export async function runPages(ctx: StageContext, deps: PagesDeps = {}): Promise<void> {
+async function runPages(ctx: StageContext): Promise<void> {
   const design = readArtifact<WidgetScreens>(ctx.run, 'design-assemble').data;
   const contract = readArtifact<Contract>(ctx.run, 'contract').data;
   const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
   const appDir = runPath(ctx.run, 'app');
+  const dialogs = new Set(design.screens.filter((s) => s.type === 'dialog').map((s) => s.id));
   const specs = pageSpecs(design, contract).map((spec) => {
     const page = design.screens.find((s) => `page-${s.id}` === spec.id);
-    return { ...spec, rendered: renderedOn(ctx.run, appDir, [routeSample(spec.route ?? '/', page?.id ?? '', page?.entry ?? false)], theme) };
+    // The first viewport check looks for the page's primary actions; the keyboard walk opens its dialogs.
+    const sections = new Set(design.sections.filter((s) => s.screen === page?.id).map((s) => s.id));
+    const nodes = design.nodes.filter((n) => sections.has(n.section));
+    const sample = {
+      ...routeSample(spec.route ?? '/', page?.id ?? '', page?.entry ?? false, nodes.filter((n) => n.role === 'primary-action').map((n) => n.id)),
+      dialogTriggers: nodes.filter((n) => dialogs.has(n.navigatesTo)).map((n) => n.id),
+    };
+    return { ...spec, rendered: renderedOn(ctx.run, appDir, [sample], theme) };
   });
-  await runUnits(ctx, STAGE, specs, deps);
+  await runUnits(ctx, STAGE, specs);
   // CODE-008: one production build once every page is in; what fails is known, the run goes on.
-  const build = await (deps.build ?? appCheck)(appDir, 'build', ['pnpm', 'build']);
+  const build = await appCheck(appDir, 'build', ['pnpm', 'build']);
   appendEvent(ctx.run, { type: 'check:run', stage: STAGE, name: 'build', ok: build.ok });
   writeReport(ctx.run, `${STAGE}-build`, 1, build.ok ? [] : [{ rule: 'CODE-008', severity: 'mandatory', message: `next build failed:\n${build.output.trim()}` }]);
 }

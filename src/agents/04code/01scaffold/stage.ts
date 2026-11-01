@@ -23,7 +23,7 @@ const CHECKS: [string, string[]][] = [
 ];
 
 /** Tests swap the template copy and the app's checks. */
-export type ScaffoldDeps = {
+type ScaffoldDeps = {
   scaffold?: (appDir: string) => Promise<void>;
   check?: (appDir: string, name: string, args: string[]) => Promise<Check>;
 };

@@ -1,9 +1,13 @@
 <!-- The rules for every coding session (CD2), written to .weave/01-scaffold/guidelines.md by the scaffold. Each stage's folder adds its own guidelines.md. No placeholders. -->
 # Guidelines for every session
 
-Follow every guideline here, `AGENTS.md`, the guidelines of your stage's
-folder, and the instructions the weave-design-system MCP gives when it
-connects.
+You build one part of a web app from its design, its flows and its
+contract: the part your task names. The parts after yours import what you
+build. When you finish, code checks your work, and two reviewers read your
+change: one for clean, readable, well-organized code, one for whether it
+builds what the design and the flows say. Follow every guideline here,
+`AGENTS.md`, the guidelines of your stage's folder, and the instructions the
+weave-design-system MCP gives when it connects.
 
 ## Read first
 
@@ -54,8 +58,7 @@ connects.
   defaults apply. A node that sets one has an `overrideReason`: write that
   reason, in your own words, in a comment on the prop. "The design asks for
   it" is no reason; the MCP refuses it.
-- Build every state its nodes list: loading, empty, error, not found,
-  denied.
+- Build every state its nodes list: empty, error, not found, denied.
 - Forms use the Form recipe and show the flow's messages for invalid
   fields.
 - A destructive action opens its confirm dialog. The operation runs only

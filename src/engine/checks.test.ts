@@ -37,3 +37,21 @@ describe('reads the guidelines rule out', () => {
     expect(issues).toEqual([expect.objectContaining({ rule: 'CODE-010', severity: 'warning', at: 'packages/ui/src/Dialog/Dialog.tsx' })]);
   });
 });
+
+describe('the warnings that never start a fix', () => {
+  it("CODE-011 for a node's words missing, CODE-012 for a file over 300 lines", () => {
+    const issues = checkIssues({
+      ...passing,
+      checks: [{ name: 'design', ok: true, output: 'The words "Dashboards" of S04.n01 are nowhere in web/app/(routes)/dashboards; show the node\'s text as the design writes it.' }],
+      longFiles: [{ path: 'web/app/(routes)/dashboards/page.tsx', lines: 340 }],
+    });
+    expect(issues.map((i) => [i.rule, i.severity, i.at])).toEqual([
+      ['CODE-012', 'warning', 'web/app/(routes)/dashboards/page.tsx'],
+      ['CODE-011', 'warning', 'S04.n01'],
+    ]);
+  });
+
+  it('none for a file at 300 lines or a check with every word shown', () => {
+    expect(checkIssues({ ...passing, longFiles: [] })).toEqual([]);
+  });
+});

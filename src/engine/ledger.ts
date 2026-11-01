@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 /** One file the generator changed in an app, with who changed it. */
-export type LedgerEntry = { path: string; status: string; origin: 'code' | 'model'; session?: string; stage?: string };
+type LedgerEntry = { path: string; status: string; origin: 'code' | 'model'; session?: string; stage?: string };
 
 /** Appends to the app's `.weave/ledger.json`, the record of every file the generator wrote. */
 export function appendLedger(appDir: string, entries: LedgerEntry[]): void {

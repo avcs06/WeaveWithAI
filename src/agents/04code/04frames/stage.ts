@@ -2,7 +2,7 @@ import { readArtifact } from '../../../core/artifacts';
 import { runPath } from '../../../core/run';
 import { loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
-import type { SessionDeps } from '../../../engine/session';
+import { nodeWords } from '../../../engine/conformance';
 import type { Themed } from '../../02design/01theme/build';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { StageContext, StageDef } from '../../stages';
@@ -14,6 +14,7 @@ const STAGE = 'code-frames';
 /** One session for every shell: its layout in a route group named after it, and its parts in components. */
 export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[] {
   if (!design.shells.length) return [];
+  const shellNodes = design.nodes.filter((n) => /^SH\d+\./.test(n.id));
   return [
     {
       id: 'frames',
@@ -25,19 +26,20 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
       route: '/',
       expect: {
         folder: 'web/app',
-        testIds: design.nodes.filter((n) => /^SH\d+\./.test(n.id)).map((n) => n.id),
+        testIds: shellNodes.map((n) => n.id),
+        words: nodeWords(shellNodes),
         operations: [],
       },
     },
   ];
 }
 
-export async function runFrames(ctx: StageContext, deps: SessionDeps = {}): Promise<void> {
+async function runFrames(ctx: StageContext): Promise<void> {
   const design = readArtifact<WidgetScreens>(ctx.run, 'design-assemble').data;
   const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
   const appDir = runPath(ctx.run, 'app');
   const rendered = renderedOn(ctx.run, appDir, [routeSample('/', 'frames', false)], theme);
-  await runUnits(ctx, STAGE, framesSpecs(design).map((spec) => ({ ...spec, rendered })), deps);
+  await runUnits(ctx, STAGE, framesSpecs(design).map((spec) => ({ ...spec, rendered })));
 }
 
 export const framesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runFrames(ctx) };

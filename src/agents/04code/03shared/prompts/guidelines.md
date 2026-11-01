@@ -11,5 +11,5 @@
   placement in a widget's file shows the ids and words one screen gives it.
 - Other code imports these and cannot change them, so build every state and
   variant the placements show.
-- Write only in `web/app/components/` and `web/app/blocks/`.
+- Your paths are `web/app/components/` and `web/app/blocks/`.
 - These have no route yet: skip `pnpm verify`.

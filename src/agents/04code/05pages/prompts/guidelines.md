@@ -18,4 +18,4 @@
   `page.json` uses (placements marked `shared`, and `sharedDialogs`). When
   nothing fits, build it yourself in `components/` beside `page.tsx`; never
   search other folders for one.
-- Write only inside your route folder.
+- Your path is your route folder.

@@ -10,10 +10,10 @@
    class that applies each. Never invent a color, spacing value or component
    prop, never read the token or Tailwind files, and never hand-build an
    element the system already has a component for.
-3. For a whole page, put its data in `web/app/entities/<name>` and build the
-   page in its route folder, `web/app/(routes)/<path>/`: `page.tsx` with its
-   page-only components and controllers beside it. Move a piece to `blocks`
-   or `components` only once a second route uses it.
+3. Build a page in its route folder, `web/app/(routes)/<path>/`: `page.tsx`,
+   and its own components and controllers in `components/` beside it. A
+   piece a second route uses goes in `blocks` or `components`. Data comes
+   from `web/app/entities/`.
 4. Run `validate` on each file you write and fix every finding. At the end, run once:
    `pnpm typecheck`, `pnpm nx lint web` and `pnpm verify <route>`. All three
    passing means done.
@@ -51,5 +51,6 @@ the React Compiler, and fits a 320px screen: `pnpm nx test ui` and
 - Imports go one way: shared → entities → components → blocks → (routes).
   Reach a sibling folder through its `index.ts`; a package as
   `@packages/<package>/<Module>`.
-- No backend yet: keep data in the entity, in a store made with `createStore`
-  from `@packages/utils/state`.
+- No backend yet: each entity keeps its data in a store made with
+  `createPersistentStore` from `@packages/utils/state`, behind its hooks and
+  functions.

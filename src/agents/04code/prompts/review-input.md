@@ -21,6 +21,6 @@ Review the code change below.
 
 ## Known issues, already being handled
 
-The checks after the session found these. Do not report them again.
+The checks after the session found these, and the next fix takes them. Do not report them again.
 
 {{known}}

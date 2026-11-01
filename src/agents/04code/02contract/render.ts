@@ -4,7 +4,7 @@ const lower = (name: string) => `${name.charAt(0).toLowerCase()}${name.slice(1)}
 const upper = (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
 
 /** `.weave/02-contract/entities.md`: each entity's import path, fields and what to call for each operation. */
-export function entitiesDoc(contract: Contract): string {
+export function renderEntities(contract: Contract): string {
   const sections = contract.entities.map((entity) => {
     const fields = entity.fields.map((f) => {
       const type = f.kind === 'enum' ? `enum ${f.enum}` : f.kind === 'ref' ? `ref ${f.ref} id` : f.kind;

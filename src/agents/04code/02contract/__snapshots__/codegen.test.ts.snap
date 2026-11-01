@@ -94,6 +94,16 @@ export const availabilitySeed: Availability[] = [
     ],
     "from": "13:00",
     "to": "13:00"
+  },
+  {
+    "id": "availability-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "days": [
+      "monday"
+    ],
+    "from": "14:00",
+    "to": "14:00"
   }
 ];
 ",
@@ -192,6 +202,15 @@ export const bookingSeed: Booking[] = [
     "updatedAt": "2026-01-01T09:00:00.000Z",
     "name": "name 3",
     "email": "email 3",
+    "session": "session-1",
+    "client": "client-1"
+  },
+  {
+    "id": "booking-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "name": "name 4",
+    "email": "email 4",
     "session": "session-1",
     "client": "client-1"
   }
@@ -308,6 +327,17 @@ export const clientSeed: Client[] = [
     "profile": "profile 3",
     "status": "lead",
     "followUpDate": "2026-03-13"
+  },
+  {
+    "id": "client-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "name": "name 4",
+    "email": "email 4",
+    "company": "company 4",
+    "profile": "profile 4",
+    "status": "lead",
+    "followUpDate": "2026-03-14"
   }
 ];
 ",
@@ -481,6 +511,14 @@ export const noteSeed: Note[] = [
     "date": "2026-03-13",
     "text": "text 3",
     "client": "client-1"
+  },
+  {
+    "id": "note-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "date": "2026-03-14",
+    "text": "text 4",
+    "client": "client-1"
   }
 ];
 ",
@@ -588,6 +626,15 @@ export const projectSeed: Project[] = [
     "description": "description 3",
     "dueDate": "2026-03-13",
     "client": "client-1"
+  },
+  {
+    "id": "project-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "name": "name 4",
+    "description": "description 4",
+    "dueDate": "2026-03-14",
+    "client": "client-1"
   }
 ];
 ",
@@ -692,6 +739,14 @@ export const sessionSeed: Session[] = [
     "updatedAt": "2026-01-01T09:00:00.000Z",
     "date": "2026-03-13",
     "startTime": "13:00",
+    "sessionType": "sessionType-1"
+  },
+  {
+    "id": "session-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "date": "2026-03-14",
+    "startTime": "14:00",
     "sessionType": "sessionType-1"
   }
 ];
@@ -800,6 +855,15 @@ export const sessionTypeSeed: SessionType[] = [
     "duration": 30,
     "priceDisplay": "priceDisplay 3",
     "maxPeople": 30
+  },
+  {
+    "id": "sessionType-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "name": "name 4",
+    "duration": 40,
+    "priceDisplay": "priceDisplay 4",
+    "maxPeople": 40
   }
 ];
 ",
@@ -910,6 +974,16 @@ export const taskSeed: Task[] = [
     "status": "to_do",
     "priority": "low",
     "dueDate": "2026-03-13",
+    "project": "project-1"
+  },
+  {
+    "id": "task-4",
+    "createdAt": "2026-01-01T09:00:00.000Z",
+    "updatedAt": "2026-01-01T09:00:00.000Z",
+    "title": "title 4",
+    "status": "to_do",
+    "priority": "low",
+    "dueDate": "2026-03-14",
     "project": "project-1"
   }
 ];

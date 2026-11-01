@@ -13,7 +13,7 @@ import type { Contract } from '../../03contract/schema';
 // stage builds. A page reads only its own folder of 05-pages.
 
 export type KnownIssue = Issue & { stage: string };
-export type QuestionRecord = { id: string; question: string; answer: string; from: string };
+type QuestionRecord = { id: string; question: string; answer: string; from: string };
 
 export type CodeInputs = {
   scope: Scope;
@@ -52,7 +52,7 @@ export function sharedUnits(design: WidgetScreens): { widgets: Set<string>; dial
 }
 
 /** A dialog's page is its parent; a page is its own. */
-export function pageOf(design: WidgetScreens, screen: string): string {
+function pageOf(design: WidgetScreens, screen: string): string {
   const found = design.screens.find((s) => s.id === screen);
   return found?.type === 'dialog' && found.parent ? found.parent : screen;
 }

@@ -38,10 +38,32 @@ describe('the seed', () => {
     expect(seedSchema(contract).safeParse(wrong).success).toBe(false);
   });
 
+  it('passes every seed rule with four full rows per entity', () => {
+    expect(validateSeed({ seed, contract })).toEqual([]);
+  });
+
+  it('SEED-002 fails an entity with three rows', () => {
+    const [entity] = contract.entities;
+    const short = { ...seed, [entity!.name]: seed[entity!.name]!.slice(0, 3) };
+    expect(validateSeed({ seed: short, contract }).map((i) => [i.rule, i.at])).toEqual([['SEED-002', entity!.name]]);
+  });
+
+  it('SEED-003 fails a required field left empty', () => {
+    const { e, f } = contract.entities.flatMap((e) => e.fields.map((f) => ({ e, f }))).find(({ f }) => f.required && f.kind === 'string' && !f.list)!;
+    const empty = { ...seed, [e.name]: [{ ...seed[e.name]![0], [f.name]: '' }, ...seed[e.name]!.slice(1)] };
+    expect(validateSeed({ seed: empty, contract }).map((i) => i.rule)).toEqual(['SEED-003']);
+  });
+
+  it('SEED-004 fails a date that is not ISO 8601', () => {
+    const { e, f } = contract.entities.flatMap((e) => e.fields.map((f) => ({ e, f }))).find(({ f }) => f.kind === 'date' && !f.list)!;
+    const loose = { ...seed, [e.name]: [{ ...seed[e.name]![0], [f.name]: 'March 14' }, ...seed[e.name]!.slice(1)] };
+    expect(validateSeed({ seed: loose, contract }).map((i) => i.rule)).toEqual(['SEED-004']);
+  });
+
   it('SEED-001 passes refs to rows that exist and fails one past the list', () => {
     expect(validateSeed({ seed, contract })).toEqual([]);
     const ref = contract.entities.flatMap((e) => e.fields.map((f) => ({ e, f }))).find(({ f }) => f.kind === 'ref' && !f.list)!;
-    const past = { ...seed, [ref.e.name]: [{ ...seed[ref.e.name]![0], [ref.f.name]: 4 }] };
+    const past = { ...seed, [ref.e.name]: [{ ...seed[ref.e.name]![0], [ref.f.name]: 5 }, ...seed[ref.e.name]!.slice(1)] };
     expect(validateSeed({ seed: past, contract }).map((i) => i.rule)).toEqual(['SEED-001']);
   });
 });

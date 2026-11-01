@@ -7,7 +7,7 @@ import type { SeedRows } from './schema';
 
 const lower = (name: string) => `${name.charAt(0).toLowerCase()}${name.slice(1)}`;
 const upper = (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-export const entityFolder = (entity: string) => `web/app/entities/${lower(entity)}`;
+const entityFolder = (entity: string) => `web/app/entities/${lower(entity)}`;
 /** A seed row's id, so refs between seed rows can name it before the app runs. */
 export const seedId = (entity: string, row: number) => `${lower(entity)}-${row}`;
 

@@ -54,7 +54,7 @@ function recipeLine(file: string): string {
 }
 
 /** `.weave/01-scaffold/recipes.md`: every recipe of the app's packages/recipes by name, with what it is for. */
-export function recipeIndex(appDir: string): string {
+function recipeIndex(appDir: string): string {
   const files = globSync('packages/recipes/src/**/*.recipe.tsx', { cwd: appDir }).sort();
   const lines = files.map((file) => {
     const name = path.basename(file, '.recipe.tsx');

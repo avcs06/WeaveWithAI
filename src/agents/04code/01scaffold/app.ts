@@ -4,24 +4,14 @@ import { execa } from 'execa';
 import { git } from '../../../engine/setup';
 import type { Theme } from '../../02design/01theme/build';
 
-/** The template copied into `appDir` by its own generator, then installed; the MCP is built by `setupMcp`. */
-export async function scaffoldApp(appDir: string): Promise<void> {
+/** The template copied by its own generator, installed, and the design-system MCP the agent connects to built inside it. */
+async function copyTemplate(appDir: string): Promise<void> {
   await execa('node', ['template/tools/generate.mjs', 'template', appDir, '--skip-setup'], {
     stdio: 'inherit',
   });
   // The template is a pnpm workspace with its own lockfile pruned by the generator.
   await execa('pnpm', ['install', '--no-frozen-lockfile'], { cwd: appDir, stdio: 'inherit' });
-}
-
-/** The design-system MCP the coding agent connects to, installed and built inside the app. */
-export async function setupMcp(appDir: string): Promise<void> {
   await execa('pnpm', ['mcp:setup'], { cwd: appDir, stdio: 'inherit' });
-}
-
-/** The template copied, installed and its MCP built: the whole app the scaffold makes. */
-export async function copyTemplate(appDir: string): Promise<void> {
-  await scaffoldApp(appDir);
-  await setupMcp(appDir);
 }
 
 /** Written once the copy is complete, so a folder without it is not the scaffold's app. */
