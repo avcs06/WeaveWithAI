@@ -1,5 +1,9 @@
 # 57 · T3 Bounded repair
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01): a repair runs
+> as a Muse Code session, and the runner checks its diff against the
+> allowed paths afterwards instead of refusing writes. Rewrite before go.
+
 Phase 9 · 90 min · Depends: T2, FE1 · Decisions: D1.6 A (2 repair rounds),
 D8.3 A
 

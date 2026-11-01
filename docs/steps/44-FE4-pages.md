@@ -1,5 +1,10 @@
 # 44 · FE4 Pages: sections wired to hooks
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01). The sessions
+> below ran on the dropped action loop; they become Muse Code sessions
+> whose short task names the `.weave/` files and the guidelines, with the
+> app MCP's checks (PLAN.md FE1, FE9, FE10). Rewrite before go.
+
 Phase 7 · 2.5 h · Depends: FE3 · Decisions: D3.6 C, D7.1 A, D7.2 A, D7.3 C,
 D7.4 · Spec: specs/design.md "Screens", "Rendered checks"
 

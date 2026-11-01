@@ -1692,11 +1692,12 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - Scaffold one golden app with `weave app`, add the agent config by hand
     (design-system MCP, a hook that runs MCP validate after every edit, the
     trusted workspace, `AGENTS.md`), and give Muse Code one screen task on
-    the Meta API (`muse-spark-1.3`) and on Muse Spark Open through Baseten.
-  - Record per run: steps, tokens, cost, wall time, what it wrote, and
-    whether validate, typecheck, lint and `pnpm verify <route>` pass after it.
+    the Meta API (`muse-spark-1.3`), one run only (limited credits; the
+    open-weight endpoints are proven by probes).
+  - Record: steps, tokens, cost, wall time, what it wrote, and whether
+    validate, typecheck, lint and `pnpm verify <route>` pass after it.
   - Step file: `docs/steps/69-FE8-muse-trial.md`.
-  - Done when: both runs are recorded, and the user decides on the runner.
+  - Done when: the run is recorded, and the user decides on the runner.
 
 - [ ] **FE1** Muse Code runner (1.5 h). Depends: FE8, S1. Decision D9.1 A
   - `src/engine/`: writes the app's agent config (the MCP servers, the
@@ -1785,13 +1786,14 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     proximity), written as reusable collectors the benchmark reuses.
   - Done when: each rule has a test on a fixture page; the freelancer workspace's
     routes pass the mandatory rules.
-  > Blocked: needs a model run, waiting for the user's go. The collectors,
-  > `runRenderedChecks` and their tests on fixture pages are in (2026-10-30);
-  > the frontend stage and `resolveRouteSamples` come once an app exists.
-  - 2026-11-01: that code is in the `fe` stash, from before F15. It comes
-    back after the design-system work in progress is committed, ported to
-    the current layout and checked with `/reconciliate` (user). The app MCP
-    (FE10) and the runner's gate run its collectors.
+  > Blocked: the second half needs a built app with routes (FE4). The
+  > collectors, `runRenderedChecks` and their tests on fixture pages are in.
+  - 2026-11-01: restored from the `fe` stash once DS50 to DS53 were
+    committed (user). It needed no port: `src/checks/` still fits the
+    layout and its 7 tests pass. `/reconciliate` on the FE part fixed two
+    comments and the step file. The gate after each coding session (FE1)
+    and the app MCP (FE10) run its collectors; `resolveRouteSamples` comes
+    with the gate.
 
 - [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
   - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence
@@ -1877,11 +1879,12 @@ D8.4. Steps 55 to 58.
     planted defect.
 
 - [ ] **T3** Bounded repair (90 min). Depends: T2, FE1
-  - A loop session per repair request, allowed paths limited to the screen's
-    route and components, tests read-only, 2 rounds, rerun only the failed
-    specs; benchmark again after repairs.
-  - Done when: the planted defect is repaired within the limits; a spec edit
-    attempted by the model is refused and logged.
+  - A Muse Code session per repair request (D9.1 A), 2 rounds, rerun only
+    the failed specs; benchmark again after repairs. The runner fails the
+    session when its diff leaves the screen's route and components or
+    touches a test.
+  - Done when: the planted defect is repaired within the limits; a test
+    edit by the model fails the session and is logged.
 
 - [ ] **T4** Golden freelancer workspace e2e green (45 min). Depends: T3
   - Done when: **G7**.

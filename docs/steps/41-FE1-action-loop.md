@@ -1,5 +1,9 @@
 # 41 · FE1 Coding engine: action loop with ownership and checks
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01). This file
+> describes the dropped own action loop (D9.1 B). FE1 is now the Muse Code
+> runner in PLAN.md; rewrite this file from it before go.
+
 Phase 7 · 2 h · Depends: F8, S2 · Decisions: D9.1 B (structured actions
 instead of tool calling, so it runs on every backend), D7.4 · Spec:
 ARCHITECTURE.md "Principles" 6 and 7

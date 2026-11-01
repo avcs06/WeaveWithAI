@@ -31,7 +31,7 @@ Sections, in this order:
 1. **Weave in one paragraph** and the one-line approach (models write
    specifications; code generates, checks and ships).
 2. **What was built during the hackathon (Oct 27 to Nov 4, 2026)**: the
-   generator (`src/`: every stage, validators, codegen, the action loop,
+   generator (`src/`: every stage, validators, codegen, the Muse Code runner,
    the benchmark, tests and repair), the changes to `template/` and
    `mcps/` made this week (list them from `git log --since=2026-10-27
    --oneline -- template mcps`), the docs. Name the commit range.

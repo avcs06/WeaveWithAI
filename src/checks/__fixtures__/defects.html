@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defects</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  [data-section] { display: flex; flex-direction: column; gap: 24px; padding: 0 16px; }
+  .sections { display: flex; flex-direction: column; gap: 8px; }
+  button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+  .no-ring:focus, .no-ring:focus-visible { outline: none; }
+  .tiny { width: 12px; height: 12px; min-height: 0; padding: 0; }
+  .wide { width: 2000px; height: 8px; background: #ffffff; }
+</style>
+</head>
+<body>
+<div class="sections">
+  <section data-section>
+    <p style="color:#949494">Grey text on white at about 3:1.</p>
+    <p style="color:#333333">Dark text in a color the theme does not have.</p>
+    <p style="font-size:12px">Small print at twelve pixels.</p>
+    <p>This paragraph runs the full width of a wide window, so each of its lines holds far more than ninety characters, which makes it slow to read and easy to lose the place in, the kind of measure a reader should never meet.</p>
+  </section>
+  <section data-section>
+    <button type="button" data-testid="primary">Start</button>
+    <button type="button" class="icon"><svg width="16" height="16" aria-hidden="true"><rect width="16" height="16" fill="#ffffff"/></svg></button>
+    <button type="button" class="tiny" aria-label="Close">x</button>
+    <button type="button" class="no-ring" tabindex="2">No ring</button>
+    <a href="/more" tabindex="-1">More</a>
+    <div role="button" tabindex="0" data-testid="fake" onclick="this.dataset.clicked = '1'">Fake button</div>
+  </section>
+</div>
+<div class="wide"></div>
+<div style="height:1000px"></div>
+<h1>Below the fold</h1>
+</body>
+</html>

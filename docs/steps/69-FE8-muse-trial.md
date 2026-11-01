@@ -23,10 +23,11 @@ by the app's own tools.
    guidelines carry the detail. Data lives in an entity store made with
    `createStore`, as the template's MCP instructions say, since the mock API
    (S2, S3) does not exist yet.
-4. **Two runs** from the same git baseline: Meta API (`muse-spark-1.3`), then
-   Muse Spark Open on Baseten. Muse Glimmer on Modal runs third if time and
-   budget allow.
-5. **Each run is checked after** by the app's tools, and its usage, cost,
+4. **One run** on the Meta API (`muse-spark-1.3`), from the git baseline
+   (user, 2026-11-01: limited credits). The open-weight endpoints are
+   already proven by probes: Spark Open on Baseten and Glimmer on Modal call
+   tools natively.
+5. **The run is checked after** by the app's tools, and its usage, cost,
    time and diff are recorded.
 
 ## Before you start
@@ -76,9 +77,10 @@ commit.
 
 ### 4. Runs
 
-Each run: reset the app to the baseline, `muse exec` with
-`--max-model-steps 80` and a 30-minute timeout, JSONL to
-`runs/20261101-0107-dashboard-editor/trial/<backend>.jsonl`.
+`muse exec --trust-workspace` (an untrusted workspace skips `AGENTS.md`,
+the hooks and the MCP) with `--model muse-spark-1.3`,
+`--contributor-mode off`, `--max-model-steps 60` and a 30-minute timeout,
+JSONL to `runs/20261101-0107-dashboard-editor/trial/meta.jsonl`.
 
 ### 5. After each run
 
@@ -89,12 +91,12 @@ The four checks, the `run.usage` totals, wall time, cost (Meta prices from
 
 ## Done when
 
-- Both runs are recorded in `runs/20261101-0107-dashboard-editor/trial/REPORT.md`.
+- The run is recorded in `runs/20261101-0107-dashboard-editor/trial/REPORT.md`.
 - The user decides on the runner (FE1).
 
 ## Watch out
 
 - No Storybook: `weave app` starts one on 6116; don't use it.
-- Budget: stop at $8 of model spend for the whole trial.
+- Budget: one run. Never a second one to fix the first; record what failed.
 - A config piece that won't work in about 20 minutes (hook, MCP, trust) is
   recorded and left out; the runs go ahead without it.

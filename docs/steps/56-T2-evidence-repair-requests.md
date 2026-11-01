@@ -1,5 +1,9 @@
 # 56 · T2 Run, evidence, repair requests
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01): a repair
+> request's `allowWrite` becomes the paths the runner checks the session's
+> diff against. Rewrite before go.
+
 Phase 9 · 60 min · Depends: T1, FE7 · Decisions: D8.3 A
 
 ## Goal

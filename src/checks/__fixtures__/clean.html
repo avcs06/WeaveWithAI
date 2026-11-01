@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shelf</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  .skip { position: absolute; left: 8px; top: -60px; padding: 12px 16px; background: #ffffff; color: #3d63b8; }
+  .skip:focus { top: 8px; }
+  main { display: flex; flex-direction: column; gap: 40px; max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+  [data-section] { display: flex; flex-direction: column; gap: 12px; }
+  h1, h2 { margin: 0; line-height: 1.25; }
+  p { margin: 0; max-width: 34em; }
+  button { min-width: 44px; min-height: 44px; padding: 10px 16px; border: 0; border-radius: 6px; background: #3d63b8; color: #ffffff; font: inherit; }
+  :focus-visible { outline: 3px solid #3d63b8; outline-offset: 2px; }
+  dialog { padding: 24px; border: 1px solid #5c5c64; border-radius: 8px; background: #ffffff; color: #18181b; }
+  dialog::backdrop { background: transparent; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<main id="main">
+  <section data-section>
+    <h1>Shelf</h1>
+    <p>Keep every book you mean to read in one quiet list. Add a book with its title and author, keep it on a shelf that says where you are with it, and find it again later.</p>
+    <div><button type="button" data-testid="add-book">Add a book</button></div>
+  </section>
+  <section data-section>
+    <h2>Your books</h2>
+    <p>The books you added appear here, newest first, each with its title, its author and its shelf.</p>
+  </section>
+</main>
+<dialog id="add" aria-labelledby="add-title">
+  <h2 id="add-title">Add a book</h2>
+  <form method="dialog"><button type="submit">Close</button></form>
+</dialog>
+<script>
+  document.querySelector('[data-testid="add-book"]').addEventListener('click', () => document.getElementById('add').showModal());
+</script>
+</body>
+</html>

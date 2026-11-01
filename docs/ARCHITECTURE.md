@@ -86,7 +86,7 @@ src/
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   codegen/               planned: ledger, entities, mock API, API tests, page shells
   engine/                planned: the Muse Code runner (app config, `muse exec`, usage, the gate after the run)
-  checks/                planned: rendered checks (DESIGN-R-*), reusable collectors
+  checks/                rendered checks (DESIGN-R-001 to 009) as reusable collectors; the gate and the app MCP are planned
   bench/                 planned: server, lighthouse, accessibility, screen reader,
                          keyboard, code, report
   dashboard/             planned: one static HTML per run

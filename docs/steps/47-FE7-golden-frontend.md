@@ -1,5 +1,9 @@
 # 47 · FE7 Golden freelancer workspace end to end
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01). Session costs
+> come from Muse Code's `run.usage` events, and fixes go to the guidelines
+> and the task files (PLAN.md FE1, FE9). Rewrite before go.
+
 Phase 7 · 60 min · Depends: FE4, FE5 · Gate G6
 
 ## Goal

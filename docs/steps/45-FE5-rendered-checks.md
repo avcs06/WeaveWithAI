@@ -6,8 +6,13 @@ specs/design.md "Rendered checks (Phase 7)"
 ## Goal
 
 DESIGN-R-001 to 009 measured in a real browser on the generated app, as
-reusable collectors: the `frontend` stage gates on the mandatory ones and
-the benchmark (Phase 8) reports all of them.
+reusable collectors: the gate after each Muse Code session (FE1) and the app
+MCP (FE10) fail on the mandatory ones, and the benchmark (Phase 8) reports
+all of them.
+
+The collectors, `runRenderedChecks` and their fixture tests are built
+(2026-10-30, restored from the `fe` stash on 2026-11-01). What is left: the
+route samples and the gate that runs them on a built app.
 
 ## What this step does
 
@@ -18,8 +23,9 @@ the benchmark (Phase 8) reports all of them.
    sizes, horizontal overflow, the H1 and primary action in the first
    viewport, body text size and line length, colors coming from the theme,
    spacing between groups larger than inside.
-2. **The frontend stage ends with them** at three widths; a mandatory
-   finding fails the stage with the rule and the element named.
+2. **The coding gate runs them** at 1280 wide, since the design is desktop
+   only (2026-10-30); a mandatory finding fails the session with the rule
+   and the element named.
 3. **The benchmark reuses the same collectors** (Phase 8), so the gate and
    the report never disagree.
 4. **Tests** on a fixture page with planted defects.
@@ -34,7 +40,8 @@ After this step "looks fine" is replaced by numbers per route.
   `pnpm exec playwright-core install chromium` once if it doesn't.
 - `template/tools/verify.mjs` already measures overflow (`measureLayout`);
   copy that function rather than shelling out.
-- Viewports: 320, 375, 1280 (D3.9 B), height 900.
+- Viewport: 1280 by 900, desktop only, as the spec's DESIGN-R-005 says.
+  D3.9 still shows its default (320, 375, 1280); the user decides.
 
 ## Implementation details
 
@@ -44,18 +51,18 @@ After this step "looks fine" is replaced by numbers per route.
 // browser.ts
 export async function withBrowser<T>(fn: (browser: Browser) => Promise<T>): Promise<T>;
 export async function signedInContext(browser: Browser, baseUrl: string, email: string, password: string): Promise<BrowserContext>;  // POST /api/auth/sign-in, adds the cookie
-export async function openRoute(context: BrowserContext, url: string, width: number): Promise<Page>;  // goto, networkidle, 300 ms settle
+export async function openRoute(context: BrowserContext, url: string): Promise<Page>;  // 1280 by 900, goto, networkidle, 300 ms settle
 
 // collectors: each returns findings and metrics for one page
 export type Finding = { rule: string; severity: 'mandatory' | 'warning'; message: string; element?: string };
 export async function axeCheck(page: Page): Promise<{ findings: Finding[]; violations: AxeViolation[] }>;        // R-001: @axe-core/playwright, tags wcag2a wcag2aa wcag21aa wcag22aa; serious and critical mandatory
 export async function contrastCheck(page: Page): Promise<{ findings: Finding[]; failures: ContrastFailure[] }>;  // R-002: in-page: each visible text element's color against its effective background (walk up for a non-transparent background); 4.5:1, 3:1 for ≥24px or ≥18.66px bold
-export async function keyboardWalk(page: Page, opts: { blockMutations: true }): Promise<KeyboardReport>;      // R-003: see below
-export async function targetSizes(page: Page, width: number): Promise<{ findings: Finding[]; small24: number; small44: number }>;  // R-004
+export async function keyboardWalk(page: Page, opts: { blockMutations: true; dialogTriggers?: string[] }): Promise<KeyboardReport>;  // R-003: see below
+export async function targetSizes(page: Page): Promise<{ findings: Finding[]; small24: number }>;  // R-004
 export async function overflowCheck(page: Page): Promise<Finding[]>;                                                // R-005: measureLayout from verify.mjs
 export async function firstViewport(page: Page, primaryTestIds: string[]): Promise<Finding[]>;                     // R-006: H1 and a primary action inside the first viewport, entry pages only
 export async function typography(page: Page): Promise<Finding[]>;                                                   // R-007: font-size ≥ 14px on body text; paragraphs 45 to 90ch
-export async function colorVariables(page: Page, themeHexes: Set<string>): Promise<Finding[]>;                     // R-008: computed colors ∈ theme vars; accent area ≤ 10% of first viewport
+export async function colorVariables(page: Page, theme: { all: Set<string>; accent: Set<string> }): Promise<Finding[]>;  // R-008: computed colors ∈ theme vars; accent area ≤ 10% of first viewport
 export async function proximity(page: Page): Promise<Finding[]>;                                                    // R-009: gap between [data-section] blocks > gaps inside
 ```
 
@@ -79,17 +86,18 @@ activation: { buttons, enterOk, spaceOk }, skipLink }` plus findings.
 
 ```ts
 // index.ts
-export async function runRenderedChecks(opts: { run: Run; baseUrl: string; routes: RouteSample[]; screens: Screens; theme: Theme }): Promise<{ issues: Issue[]; perRoute: RenderedReport[] }>;  // writes reports/rendered.json
+export async function runRenderedChecks(opts: { run: Run; routes: RouteSample[]; theme: ThemeColors }): Promise<{ issues: Issue[]; perRoute: RenderedReport[] }>;  // writes reports/rendered.json
 ```
 
-`RouteSample = { route: string; url: string; screen: string; entry: boolean; primaryTestIds: string[] }`;
+`RouteSample = { route: string; url: string; screen: string; entry: boolean; primaryTestIds: string[]; dialogTriggers?: string[] }`;
 dynamic segments are filled from the seeded store (`resolveRouteSamples`
 in `src/bench/routes.ts`, shared with Phase 8: `/projects/[projectId]` →
 the first seeded project's id).
 
-The `frontend` stage ends with `runRenderedChecks` against `pnpm dev`
-(started like `verify.mjs` does) at the three widths; mandatory findings
-throw `StageFailed('frontend', issues)`; warnings go to the report.
+The gate after each Muse Code session (FE1) and the app MCP's route tool
+(FE10) call `runRenderedChecks` against `pnpm dev` (started like
+`verify.mjs` does); mandatory findings fail the session; warnings go to
+the report.
 
 ### Tests
 
@@ -103,8 +111,10 @@ collector reports the planted defect and nothing on the clean page.
 
 ```sh
 pnpm test -- src/checks
-pnpm weave run … --run <id> --to frontend     # rendered checks pass on every freelancer-workspace route
 ```
+
+and the coding gate (FE1) passes the mandatory rendered checks on every
+freelancer-workspace route.
 
 ## Watch out
 

@@ -1,5 +1,10 @@
 # 43 · FE3 New components
 
+> Predates D9.1 A (Muse Code headless, user, 2026-11-01). The sessions
+> below ran on the dropped action loop; they become Muse Code sessions
+> whose short task names the `.weave/` files and the guidelines (PLAN.md
+> FE1, FE9). Rewrite before go.
+
 Phase 7 · 60 min · Depends: FE1, FE2 · Decisions: D3.1 B, D3.10 A · Spec:
 specs/design.md "New components"; `template/packages/ui/AGENTS.md`
 
