@@ -90,12 +90,15 @@ describe('a coding unit', () => {
     const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
     expect(result.rounds).toBe(3);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
-    // What the failing sessions left is committed under this unit, and each step is a patch.
+    // Each session is its own commit, failed or not, and a patch; the inputs commits touch only .weave/ and make none.
     const appDir = runPath(ctx.run, 'app');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
-    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('weave: page-S04 (1 known issues left)');
-    const patches = readdirSync(runPath(ctx.run, 'patches'));
-    expect(patches.at(-1)).toMatch(/weave-page-S04-1-known-issues-left\.patch$/);
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-fix-2 (failed: typecheck)');
+    expect(readdirSync(runPath(ctx.run, 'patches', 'code-pages-S04'))).toEqual([
+      '001-page-S04-failed-typecheck.patch',
+      '002-page-S04-fix-1-failed-typecheck.patch',
+      '003-page-S04-fix-2-failed-typecheck.patch',
+    ]);
   });
 
   it("warns about a read its guidelines rule out, from the hook's tool log", async () => {

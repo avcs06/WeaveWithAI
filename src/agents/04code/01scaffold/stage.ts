@@ -4,7 +4,7 @@ import { readArtifact } from '../../../core/artifacts';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { ensureAgentImage } from '../../../engine/docker';
 import { appendLedger } from '../../../engine/ledger';
-import { savePatch } from '../../../engine/patches';
+import { saveStagePatch } from '../../../engine/patches';
 import { appCheck, type Check } from '../../../engine/session';
 import { prepareApp } from '../../../engine/setup';
 import type { Themed } from '../../02design/01theme/build';
@@ -55,8 +55,8 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (ctx.config.MUSE_DOCKER === true) await ensureAgentImage();
   // Before the baseline commit, so every session's diff starts with its inputs in place.
   writeWeave(appDir, weaveFolders(readCodeInputs(run)));
-  prepareApp(appDir, 'code-scaffold: theme, .weave inputs and agent config');
-  savePatch(run, appDir, STAGE);
+  prepareApp(appDir, `${STAGE}: theme, .weave inputs and agent config`);
+  saveStagePatch(run, appDir, STAGE);
 
   const check = deps.check ?? appCheck;
   for (const [name, args] of CHECKS) {

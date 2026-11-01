@@ -90,6 +90,11 @@ export function runLog(
           return line(event.stage, `warning: ${String(event.message)}`);
         case 'stage:patch':
           return line(event.stage, `patch ${String(event.file)}`);
+        case 'stage:reset':
+          return line(
+            event.stage,
+            `reset to ${String(event.to)}: ${count(n('dropped'), 'commit')} thrown away${event.dirty ? ', and uncommitted changes' : ''}`,
+          );
       }
     },
   };

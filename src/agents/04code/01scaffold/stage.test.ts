@@ -66,9 +66,11 @@ describe('the scaffold stage', () => {
     // The template copy, then the scaffold's own changes, each a commit to review.
     expect(git(runPath(run, 'app'), 'log', '--format=%s')).toBe('code-scaffold: theme, .weave inputs and agent config\ntemplate: a fresh copy');
     expect(git(runPath(run, 'app'), 'diff', '--name-only', 'HEAD~1', 'HEAD')).toContain('colors.ts');
-    // Its commit is a patch in the run, named in the log; the template copy is the base, with none.
-    const patch = runPath(run, 'patches', '001-code-scaffold-theme-weave-inputs-and-agent-config.patch');
-    expect(readFileSync(patch, 'utf8')).toContain('Subject: [PATCH] code-scaffold: theme, .weave inputs and agent config');
+    // The stage is one patch in the run, named in the log, from the template copy; .weave/ stays out of it.
+    const patch = readFileSync(runPath(run, 'patches', 'code-scaffold.patch'), 'utf8');
+    expect(patch).toMatch(/^code-scaffold: [0-9a-f]{7}\.\.[0-9a-f]{7}\n/);
+    expect(patch).toContain('diff --git a/colors.ts b/colors.ts');
+    expect(patch).not.toContain('diff --git a/.weave/');
     const events = readFileSync(runPath(run, 'events.jsonl'), 'utf8');
     expect(events).toContain('"type":"stage:patch"');
     expect(app('.weave/01-scaffold/guidelines.md')).toContain('make your own call');

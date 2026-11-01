@@ -123,7 +123,7 @@ restructure) stay as they are.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session writes only its stage's paths, and the
   entity layer only for a blocker. The runner records its git diff in the
-  ledger, commits it with a patch in the run, and fails the session when the
-  diff touches a test or a path outside its own.
+  ledger, commits it with a patch in the run whether it passed or not, and
+  fails the session when the diff touches a test or a path outside its own.
 - Secrets only in `.env` (gitignored), loaded with `process.loadEnvFile()`.
 - Docs you write: short plain sentences, no em dashes.

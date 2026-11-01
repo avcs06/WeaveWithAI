@@ -111,9 +111,12 @@ runs/<runId>/
   02-design/08-skeleton.json  02-design/08-wireframes.html  02-design/08-ds-gaps.json
   02-design/01-theme-light.png  02-design/01-theme-dark.png   every component in the theme (weave app)
   03-contract.json             the records and operations behind every widget
-  app/                         the generated app: a template copy plus generated code, a git repo with one commit per step
+  app/                         the generated app: a template copy plus generated code, a git repo with one commit per
+                               step and per session, each subject starting with its stage; a code stage that starts again
+                               resets it to the end of the stage before, with no leftovers
   app.previous-<time>/         an app folder the scaffold did not make, moved aside
-  patches/<NNN>-<subject>.patch   each step's commit in the app, in order
+  patches/<stage>.patch        a code stage's whole change, from the stage before it, without .weave/
+  patches/<stage>/<NNN>-<subject>.patch   each of its commits that changed the app, in order
   sessions/<unit>.jsonl  sessions/<unit>.tools.jsonl   each coding session's events and tool calls
   benchmark/                   raw tool output; benchmark.json and 05-benchmark.md beside it
   06-e2e.md                    evidence table and repair requests

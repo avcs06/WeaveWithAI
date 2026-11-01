@@ -33,7 +33,7 @@ export type Session = {
   writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
   reads?: ReadRules;
-  /** The run's stage the session belongs to, for its patch lines in the log. */
+  /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
   stage?: string;
   maxSteps?: number;
   timeoutMs?: number;
@@ -132,6 +132,7 @@ export async function runSession(
   const { run } = ctx;
   const backend = resolveBackend(ctx.config, ctx.backend);
   const slug = session.id.replace(/[^a-zA-Z0-9]+/g, '-');
+  const stage = session.stage ?? 'session';
   const at = (...parts: string[]) => path.join(appDir, ...parts);
 
   for (const [name, value] of Object.entries(session.inputs)) {
@@ -142,8 +143,7 @@ export async function runSession(
   mkdirSync(at('.weave', 'tasks'), { recursive: true });
   writeFileSync(at(promptFile), `${session.task}\n`);
   git(appDir, 'add', '-A');
-  git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: inputs for ${session.id}`);
-  savePatch(run, appDir, session.stage ?? `session:${session.id}`);
+  git(appDir, 'commit', '-q', '--allow-empty', '-m', `${stage}: inputs for ${session.id}`);
 
   appendEvent(run, { type: 'session:start', stage: `session:${session.id}`, backend: backend.name, model: backend.model });
   // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
@@ -233,11 +233,12 @@ export async function runSession(
           : 'failed';
 
   appendLedger(appDir, changes.map((change) => ({ ...change, origin: 'model', session: session.id })));
-  if (status === 'done') {
-    git(appDir, 'add', '-A');
-    git(appDir, 'commit', '-q', '--allow-empty', '-m', `weave: ${session.id}`);
-    savePatch(run, appDir, session.stage ?? `session:${session.id}`);
-  }
+  // Committed whatever its status, so the next session starts from a clean tree and each commit is one session's work.
+  const failed = checks.filter((check) => !check.ok).map((check) => check.name);
+  const outcome = status === 'done' ? '' : status === 'checks' ? ` (failed: ${failed.join(', ')})` : ` (${status})`;
+  git(appDir, 'add', '-A');
+  git(appDir, 'commit', '-q', '--allow-empty', '-m', `${stage}: ${session.id}${outcome}`);
+  savePatch(run, appDir, stage);
 
   const result: SessionResult = {
     status,
@@ -255,7 +256,7 @@ export async function runSession(
     status,
     changed: changed.length,
     protectedHits,
-    failedChecks: checks.filter((check) => !check.ok).map((check) => check.name),
+    failedChecks: failed,
     costUsd: cost,
   });
   return result;

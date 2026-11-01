@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -6,7 +6,7 @@ import type { StageContext } from '../agents/stages';
 import { resolveBackend } from '../core/backends';
 import { ConfigSchema } from '../core/env';
 import type { Llm } from '../core/llm';
-import { createRun, readEvents, totals } from '../core/run';
+import { createRun, readEvents, runPath, totals } from '../core/run';
 import { pathBeside } from '../core/utils';
 import { museArgs, readUsage } from './muse';
 import { type Check, runSession } from './session';
@@ -79,8 +79,10 @@ describe('runSession', () => {
     expect(readFileSync(path.join(appDir, '.weave/screens/S04.json'), 'utf8')).toContain('"S04"');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
     expect(totals(run).calls).toBe(3);
-    // The inputs commit and the session's commit are each a patch in the run.
-    expect(readEvents(run).map((e) => e.type)).toEqual(['stage:patch', 'session:start', 'llm:call', 'stage:patch', 'session:end']);
+    // The inputs and the session are a commit each, named for the stage; only the session's touches the app, so only it is a patch.
+    expect(git(appDir, 'log', '-2', '--format=%s')).toBe('session: page:S04\nsession: inputs for page:S04');
+    expect(readdirSync(runPath(run, 'patches', 'session'))).toEqual(['001-page-S04.patch']);
+    expect(readEvents(run).map((e) => e.type)).toEqual(['session:start', 'llm:call', 'session:end']);
   });
 
   it('runs a Meta session on the subscription with no key, and counts its tokens but no spend', async () => {
@@ -102,7 +104,9 @@ describe('runSession', () => {
     );
     expect(result.status).toBe('protected');
     expect(result.protectedHits.sort()).toEqual(['packages/ui/x.ts', 'web/app/(routes)/books/page.test.tsx']);
-    expect(git(appDir, 'status', '--porcelain')).not.toBe('');
+    // Committed anyway, so the next session starts clean and the hit is there to review.
+    expect(git(appDir, 'status', '--porcelain')).toBe('');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('session: page:S04 (protected)');
   });
 
   it('fails a session whose gate fails, whatever the agent says', async () => {

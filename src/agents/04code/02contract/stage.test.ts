@@ -31,6 +31,7 @@ function setup(id: string) {
   const appDir = runPath(run, 'app');
   mkdirSync(appDir, { recursive: true });
   git(appDir, 'init', '-q');
+  git(appDir, 'commit', '-q', '--allow-empty', '-m', 'code-scaffold: the app');
   const calls: GenerateInput<unknown>[] = [];
   const llm: Llm = {
     async generateStructured(input) {
@@ -61,10 +62,12 @@ describe('the contract code stage', () => {
     expect(ledger).toContainEqual({ path: 'web/app/entities/client/store.ts', status: 'A', origin: 'code', stage: 'code-contract' });
     expect(ran).toEqual(['validate', 'typecheck', 'lint']);
     expect(git(appDir, 'status', '--porcelain')).toBe('');
+    expect(readFileSync(runPath(run, 'patches', 'code-contract.patch'), 'utf8')).toContain('web/app/entities/client/store.ts');
     expect(readState(run).stages['code-contract']).toMatchObject({ status: 'done' });
 
-    // A rerun with the contract unchanged keeps the seed and makes no call.
+    // A rerun with the contract unchanged keeps the seed and makes no call, and replaces the first attempt's commit.
     await runContractCode(ctx, { check });
     expect(calls).toHaveLength(1);
+    expect(git(appDir, 'log', '--format=%s')).toBe('code-contract: entities from the contract\ncode-scaffold: the app');
   });
 });
