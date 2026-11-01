@@ -1830,6 +1830,9 @@ coding agent writes no tests.
     CODE-006 takes a list as loading its gets; design-system elements carry
     `data-ds` and the browser checks skip them, contrast aside; motion frozen
     while checking; no Nx daemon left behind by a run.
+  - Fixes found on the 2026-11-02 rerun: the MCP's `invalid-selector` flags
+    a vanilla-extract `selectors` key that styles another element, like
+    `'& a'`, which fails the build.
 
 - [ ] **CD11** Phones in the code stages (4 h, plus a 1 h rerun). Depends: CD10
   - Paused (user, 2026-11-01). The MVP is desktop only (OPTIONS.md, user,

@@ -157,6 +157,35 @@ describe('validate — vanilla-extract surface', () => {
     `;
     expect(system.validate(code)).toEqual({ ok: true, findings: [] });
   });
+
+  it('flags a selector that styles another element, which fails the vanilla-extract build', () => {
+    const code = `
+      import { style } from '@vanilla-extract/css';
+      export const links = style({
+        '@media': { 'screen': { selectors: { '&:hover span': { cursor: 'pointer' } } } },
+        selectors: { '&:hover, & a': { cursor: 'pointer' }, [\`& \${child}\`]: { cursor: 'pointer' } },
+      });
+    `;
+    const result = system.validate(code);
+    expect(result.ok).toBe(false);
+    expect(result.findings.map((f) => f.rule)).toEqual(['invalid-selector', 'invalid-selector', 'invalid-selector']);
+    expect(result.findings.map((f) => f.message).join('\n')).toContain('globalStyle(`${name} a`');
+  });
+
+  it('accepts selectors that end on the style itself, and any selector in globalStyle()', () => {
+    const code = `
+      import { globalStyle, style } from '@vanilla-extract/css';
+      export const link = style({
+        selectors: {
+          '&:not([data-disabled]):is(:focus-visible, :active)': { cursor: 'pointer' },
+          [\`\${parent} > &\`]: { cursor: 'pointer' },
+          'html[data-theme="dark"] &::before': { cursor: 'pointer' },
+        },
+      });
+      globalStyle(\`\${link} a\`, { cursor: 'pointer' });
+    `;
+    expect(system.validate(code)).toEqual({ ok: true, findings: [] });
+  });
 });
 
 describe('validate — a hardcoded literal with a reason', () => {

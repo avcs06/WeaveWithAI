@@ -182,6 +182,12 @@ can apply in one pass.
    unreadable selector or import, empty `{}` names, a bare `@scope/pkg`, or a selector another
    component already declared. `pnpm mcp:check` fails on them, listing each one.
 
+5. **A selector that styles another element**: a key in a vanilla-extract `selectors` object
+   whose last compound selector is not `&`, like `'& a'` or `'&:hover span'`. vanilla-extract
+   fails the build on it, so the page doesn't render. `'&:hover'`, `` `${parent} &` `` and
+   `'&:not([data-disabled])'` are fine, and so is any selector in `globalStyle()`, which the
+   message names as the fix. A `${...}` in a computed key counts as another class.
+
 **Recipes are app code.** A recipe sits in its component's folder but shows how an app uses the
 component, so `validate` checks it with the general rules and without the folder's leave to use
 what the component supersedes. A `.ts` file is parsed without JSX.
@@ -262,6 +268,7 @@ src/
         flatten-object-literal.ts  AST helper both token readers use
         rules/
           hardcoded-literal.ts  a literal where a design token belongs, unless a comment says why
+          invalid-selector.ts   a `selectors` key that styles another element than `&`
       classname-adapter.ts      check(policy, value) runs the className rules;
                                 classNameTokens(value) reads the classes off a className
       classnames/

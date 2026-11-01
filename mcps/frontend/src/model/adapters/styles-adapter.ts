@@ -3,6 +3,7 @@ import type { File, ObjectExpression } from '@babel/types';
 import type { DesignSystem, DesignToken, Finding, Rule, Surface } from '../types.js';
 import * as objectStyles from './styles/object.js';
 import { hardcodedLiteral } from './styles/rules/hardcoded-literal.js';
+import { invalidSelector } from './styles/rules/invalid-selector.js';
 import * as vanillaExtractStyles from './styles/vanilla-extract.js';
 
 /**
@@ -21,7 +22,7 @@ export interface StyleObject {
 }
 
 /** Each known scenario is one file under `styles/rules/`, listed in the registry it applies to. */
-const styleRules: Rule<StyleObject>[] = [hardcodedLiteral];
+const styleRules: Rule<StyleObject>[] = [hardcodedLiteral, invalidSelector];
 /** An inline `style={{}}` is React, not a styling system: the same token check applies. */
 const inlineStyleRules: Rule<StyleObject>[] = [hardcodedLiteral];
 
