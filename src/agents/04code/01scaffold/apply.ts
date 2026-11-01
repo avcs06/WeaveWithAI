@@ -7,7 +7,7 @@ import type { Theme } from '../../02design/01theme/build';
 import { googleFont, TEXT_WEIGHTS } from '../../02design/01theme/fonts';
 import { PAGE_ROLES, ROLES } from '../../02design/01theme/schema';
 
-// 02-design/01-theme.json written into an app's own files (S1): the brand, base, page
+// 02-design/01-theme.json written into an app's own files: the brand, base, page
 // (divider, backdrop and skeleton included), entity and status colors into
 // colors.ts, radius and focus ring into tokens.ts, the three families into
 // fonts.ts and Storybook's head, and the component defaults into each

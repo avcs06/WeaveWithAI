@@ -11,7 +11,7 @@ import { renderContract } from './render';
 import { CONTRACT_KEYS, Contract } from './schema';
 import { validateContract } from './validation/validation';
 
-// The contract: one call once the catalog has its widgets, side by side with the screen calls (C7).
+// The contract: one call once the catalog has its widgets, side by side with the screen calls.
 const CONTRACT_MAX_TOKENS = 32_768;
 const CONTRACT_EFFORT = 'medium';
 

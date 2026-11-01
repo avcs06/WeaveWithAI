@@ -5,7 +5,7 @@ import { isButton, type LayoutInput } from '../helpers';
 /**
  * LAYOUT-011 · warning · H-11 Button groups
  * Buttons side by side are 8 apart; a danger button beside the primary needs more.
- * A warning since fixes kept bringing it back, and the last assemble fix left three (user, 2026-10-31).
+ * A warning since fixes kept bringing it back, and the last assemble fix left three.
  * Pass: Cancel and Save 8 apart.
  * Fail: Cancel and Save 12 apart.
  */

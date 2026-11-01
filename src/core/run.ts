@@ -14,7 +14,7 @@ export type StageState = {
   version?: number;
   hash?: string;
   rounds?: number;
-  /** Mandatory issues and reviewer blockers left after the last round (D1.12). */
+  /** Mandatory issues and reviewer blockers left after the last round. */
   known?: number;
   /** For a stage that ran its work as child stages: how many. */
   batches?: number;

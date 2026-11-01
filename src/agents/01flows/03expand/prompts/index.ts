@@ -8,7 +8,7 @@ import { fenced, productManager } from '../../prompts/index';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** The call's two review guides (D1.12): the product manager peer, then the output reviewer. */
+/** The call's two review guides: the product manager peer, then the output reviewer. */
 export const expandReviewGuides = (): ReviewGuides => ({
   peer: fillPrompt(load('./review-peer.md'), {
     productManager: productManager(),

@@ -1,4 +1,4 @@
-<!-- Guidelines of the shared folder (CD7), written to .weave/03-shared/guidelines.md. No placeholders. -->
+<!-- Guidelines of the shared folder, written to .weave/03-shared/guidelines.md. No placeholders. -->
 # Shared components, widgets, forms and dialogs
 
 - Each new component in `components/` goes in `web/app/components/<Name>/`,

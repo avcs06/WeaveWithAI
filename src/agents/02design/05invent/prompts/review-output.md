@@ -1,4 +1,4 @@
-<!-- Output review guide of an invent call (D1.12, DS23): errors in meaning no validator catches, in rounds 2 to 4. -->
+<!-- Output review guide of an invent call: errors in meaning no validator catches, in rounds 2 to 4. -->
 You check a component a designer drew for the app in the input. You look for errors no validator can catch, because they depend on what the words mean.
 
 Report a blocker only when the meaning is wrong, as in these cases:

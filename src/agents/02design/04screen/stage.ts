@@ -12,7 +12,7 @@ import { validateLayouts } from './validation/validation';
 import { contentWidth, gapOf } from './width';
 
 // A screen call per page with the dialogs and drawers it opens, at medium
-// reasoning and 0.2, three at a time (DS23).
+// reasoning and 0.2, three at a time.
 const SCREEN_MAX_TOKENS = 16_384;
 const SCREEN_EFFORT = 'medium';
 

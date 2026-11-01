@@ -3,7 +3,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execa, execaSync } from 'execa';
 
-// The coding agent's sandbox (CD3): Muse Code runs in a container that sees
+// The coding agent's sandbox: Muse Code runs in a container that sees
 // only the app, from the host's own install mounted read-only.
 
 const DOCKERFILE = 'docker/agent.Dockerfile';

@@ -3,7 +3,7 @@ import type { PageLayout } from '../01theme/schema';
 import { layoutShells, SHELL_IDS } from '../01theme/shells';
 import type { DesignNode, Ia, Screens } from '../schema';
 
-// The theme applied to the assembled design (DS4a): a framed page takes its
+// The theme applied to the assembled design: a framed page takes its
 // kind's shell, a page's padding and section gap come from its layout, and a
 // node's empty size or look takes the component's default.
 

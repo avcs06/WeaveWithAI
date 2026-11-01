@@ -1,9 +1,9 @@
 import type { ModelNode } from './06draw/schema';
 import type { NodeLayout } from './schema';
 
-// Code sets the gap of each column a widget or a new component stacks (H-01,
-// user, 2026-11-01). The model picks the structure and never these numbers,
-// so a fix no longer trades one spacing rule for another.
+// Code sets the gap of each column a widget or a new component stacks (H-01).
+// The model picks the structure and never these numbers,
+// so a fix does not trade one spacing rule for another.
 
 /** What a column's kind reads of a node. */
 type Kid = Pick<ModelNode, 'id' | 'role' | 'component' | 'what' | 'layout'>;

@@ -37,9 +37,8 @@ export function validate(
   context: ValidateContext,
 ): ValidateResult {
   const filePath = filename ? resolve(context.configDir, filename) : undefined;
-  // Temporary, for the coding agent (user, 2026-11-01): nothing in a design-system
-  // folder is checked, recipes included. The design system's own rules come back
-  // when it is worked on again.
+  // For the coding agent: nothing in a design-system
+  // folder is checked, recipes included.
   if (isDesignSystemFile(filePath, context)) return { ok: true, findings: [] };
   // Recipes are app code: app rules, and no use of what their component
   // supersedes.

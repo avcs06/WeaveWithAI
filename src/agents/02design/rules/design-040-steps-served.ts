@@ -4,7 +4,7 @@ import type { CatalogInput } from './helpers';
 /**
  * DESIGN-040 · mandatory
  * Every step and alternative a screen serves is served by one of the widgets
- * or components the catalog lists for it, or given to its frame (DS23, DR26).
+ * or components the catalog lists for it, or given to its frame.
  * Only a framed page has a frame, and its frame serves only its own steps.
  * Pass: F03.S01 on S04's header widget; F04.S01, signing out, given to S04's frame.
  * Fail: F05.S02 on S04 and on none of its widgets.

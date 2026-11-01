@@ -17,7 +17,7 @@ import {
 } from './boxes';
 import type { NodeLayout } from '../../schema-boxes';
 
-// Sizes each item of the tree (DS6b): a leaf from the inventory, its text or
+// Sizes each item of the tree: a leaf from the inventory, its text or
 // its box; a container from its children inside its chrome and padding.
 // Then lays the solved tree out as absolute rectangles.
 

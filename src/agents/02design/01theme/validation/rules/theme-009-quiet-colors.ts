@@ -14,7 +14,7 @@ const VISIBLE = 1.1;
  * divider and the skeleton at least 1.1:1 on pageBg and frameBg, the skeleton
  * also on the base set's bg, where placeholders sit in cards, the divider
  * also on every color of the page background, since cards and table rows
- * draw their borders with it over a gradient (user, 2026-11-01), and the
+ * draw their borders with it over a gradient, and the
  * backdrop darker than the page and the frame, so it dims them.
  * Pass: the reading-list theme, a #ECEBE7 divider on a white page.
  * Fail: the divider set to pageBg.

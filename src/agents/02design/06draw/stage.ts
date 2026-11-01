@@ -18,9 +18,8 @@ import {
 import { BUILD_KEYS, type Build, makeDrawSchemas } from './schema';
 import { validateDrawn } from './validation/validation';
 
-// A draw call builds one widget at medium (DS23): one widget a call to measure
-// what it costs against three, and so a fix patches the widget's own nodes
-// (user, 2026-10-31). Six calls run at a time.
+// A draw call builds one widget at medium: one widget a call, so a fix
+// patches the widget's own nodes. Six calls run at a time.
 const DRAW_MAX_TOKENS = 32_768;
 const DRAW_EFFORT = 'medium';
 const DRAW_PARALLEL = 6;
@@ -116,7 +115,7 @@ export async function runDraw(
 
 /**
  * Fixes once the calls that built widgets with issues on the assembled design,
- * each from its last output, and writes the new builds (DS23). `seeds` is
+ * each from its last output, and writes the new builds. `seeds` is
  * keyed by widget id.
  */
 export async function fixWidgets(

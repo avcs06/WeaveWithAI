@@ -3,7 +3,7 @@ import { appendEvent, type Run, runPath } from '../core/run';
 import { git } from './setup';
 
 // Every commit the generator makes in an app is a patch in the run, and each
-// code stage is one more patch, whole (user, 2026-11-01). Each commit's
+// code stage is one more patch, whole. Each commit's
 // subject starts with its stage's name, which is how a stage finds its own
 // commits. `.weave/` stays out of the patches: it holds the sessions' inputs
 // and logs, not the app.

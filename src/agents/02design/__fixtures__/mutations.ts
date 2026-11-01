@@ -91,7 +91,7 @@ export const designMutations: Record<string, (screens: Screens) => Screens> = {
   'DESIGN-035': edit((s) => (node(s, 'S06.n01').role = 'secondary-action')),
 };
 
-/** The spec's hand-broken screens: two primary actions in a section, a missing required input, a new component named Button. */
+/** Hand-broken screens: two primary actions in a section, a missing required input, a new component named Button. */
 export const handBroken = edit((s) => {
   node(s, 'S04.n05').role = 'primary-action';
   s.nodes = s.nodes.filter((n) => n.id !== 'S05.n01');

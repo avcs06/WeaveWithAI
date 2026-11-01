@@ -1,4 +1,4 @@
-<!-- User message of the seed call (CD4). Placeholders: app, vocabulary, fields, entities. -->
+<!-- User message of the seed call. Placeholders: app, vocabulary, fields, entities. -->
 # The product
 
 {{app}}

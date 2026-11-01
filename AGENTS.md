@@ -6,11 +6,11 @@ Hackathon (submissions close 2026-11-05 07:30 IST).
 
 | Path        | What it is                                                                                     | Who changes it                                       |
 | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `src/`      | The generator: CLI, runner, agents (one folder per stage), core. See "Where the code lives"   | You, through tasks in `docs/PLAN.md`                 |
+| `src/`      | The generator: CLI, runner, agents (one folder per stage), core. See "Where the code lives"   | You                                                  |
 | `template/` | The design-system workspace (packages, web, server, tools). Copied into every generated app    | Only tasks that name `template/`                     |
 | `mcps/`     | MCP servers, one folder each; `design-system` does design-system lookup and code validation    | Only tasks that name `mcps/`                         |
-| `docs/`     | Plan, options, architecture, stage specs, one step file per task in `docs/steps/`              | Tick tasks in `PLAN.md`; never change decisions      |
-| `fixtures/` | Reference idea briefs and golden artifacts used by tests and runs                              | Add files; don't rewrite existing ones               |
+| `docs/`     | The benchmark spec                                                                             | Never change decisions                               |
+| `fixtures/` | Reference idea briefs, and golden artifacts saved by `weave golden`                            | Add files; don't rewrite existing ones               |
 | `runs/`     | Output of generator runs (gitignored)                                                          | Written by the generator only                        |
 
 ## Where the code lives
@@ -57,25 +57,15 @@ All work happens on the `hackathonv3` branch, or on short-lived branches merged
 back into it. `hackathon` (the design system) and `hackathonv2` (the
 restructure) stay as they are.
 
-1. New session: read `docs/README.md`, then `docs/PLAN.md`. The next task is
-   the first unticked one whose dependencies are ticked; its step file is
-   `docs/steps/NN-<id>-<slug>.md`.
-2. Wait for the user's go on that step file. They read it first and may change
-   it; the step file as it is when they say go is the task.
-3. Before coding, read the spec sections and the decisions the step names in
-   `docs/OPTIONS.md`. A decision where nothing is ticked uses the option marked
-   **(default)**.
-4. Do only that step. Work you discover goes in as a new unticked task in
-   `PLAN.md`, with one line saying why. Don't do it now.
-5. Run every check in the step's **Done when**. All must pass.
-6. Tick the task in `PLAN.md` (`- [x]`, ` (done YYYY-MM-DD)` on its title line).
-   Never stage or commit: leave every change unstaged. After each step, keep a
+1. Do only what was asked. Name work you discover to the user, with one line
+   saying why. Don't do it now.
+2. Run the checks that prove the work. All must pass.
+3. Never stage or commit: leave every change unstaged. After each task, keep a
    snapshot of every file that differs from HEAD, outside the repo, so that
-   once the user has reviewed, each step becomes its own commit even when
-   later steps touched the same files. The user says "commit"; the message is
-   `<task id>: <what changed>`, one line.
-7. Blocked: leave it unticked, add an indented `> Blocked: <what and why>` line
-   under it, and stop for the user.
+   once the user has reviewed, each task becomes its own commit even when
+   later tasks touched the same files. The user says "commit"; the message is
+   one line saying what changed.
+4. Blocked: say what and why, and stop for the user.
 
 ## Rules
 
@@ -83,12 +73,12 @@ restructure) stay as they are.
 - No agent frameworks (LangChain, LangGraph, Mastra and the like). The
   orchestrator is plain TypeScript you can read top to bottom.
 - Every model call of the generator's own stages goes through
-  `src/core/llm.ts`. The coding stages run Muse Code headless (D9.1 A), which
+  `src/core/llm.ts`. The coding stages run Muse Code headless, which
   makes its own calls; the runner reads their usage from its JSONL events.
   Product runs use Meta's
   models only: the Meta Model API by default, or Meta open-weight models (Muse
   Spark Open, Muse Glimmer) served on Modal or locally, chosen with
-  `LLM_BACKEND` (D1.11). Meta tooling is 25% of the score and the open-weight
+  `LLM_BACKEND`. Meta tooling is 25% of the score and the open-weight
   run qualifies for a bonus prize. Another vendor's models are allowed only
   behind env vars for local experiments, never as a default.
 - Tests never touch the network. Use the replay cache in `src/core/llm.ts`, a
@@ -96,7 +86,7 @@ restructure) stay as they are.
 - Artifacts are JSON validated by zod schemas in the stage's `schema.ts`.
   Never parse free text from a model.
 - Validators are pure functions: artifacts in, `Issue[]` out. No I/O, no model
-  calls. Model review is separate: on the fixed round schedule (D1.12) the
+  calls. Model review is separate: on the fixed round schedule the
   stage runner asks reviewer calls for major blockers through a review
   schema; blockers join the fix rounds like mandatory issues, and whatever is
   left after the last round is recorded as known issues while the run
@@ -104,7 +94,7 @@ restructure) stay as they are.
 - Every validator rule has an id (`FLOW-007`), a severity (`mandatory` or
   `warning`), and a unit test with one passing and one failing fixture.
 - Never weaken a rule, threshold, fixture or test to make a run pass. If a rule
-  is wrong, add a task saying why and stop for the user.
+  is wrong, say why and stop for the user.
 - Prompts live in `.md` files in their stage's `prompts/` folder. Code only
   fills `{{placeholders}}`; no prompt prose inside TypeScript.
 - One stage per folder, laid out as in "Where the code lives". Keep files under
@@ -117,9 +107,9 @@ restructure) stay as they are.
 - Never put a `tsconfig.json` at the repo root: the template's `ts-node` finds
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
-- Generated apps have no backend and no deployment this week (pivot
-  2026-10-28): the contract becomes entity stores inside the app
-  (OPTIONS.md 6M), and a benchmark stage (section 13) measures the frontend.
+- Generated apps have no backend and no deployment: the contract becomes
+  entity stores inside the app, and a benchmark stage
+  (`docs/specs/benchmark.md`) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session writes only its stage's paths, and the
   entity layer only for a blocker. The runner records its git diff in the

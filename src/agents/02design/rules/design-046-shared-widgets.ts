@@ -3,8 +3,8 @@ import type { CatalogInput } from './helpers';
 
 /**
  * DESIGN-046 · mandatory
- * A widget used on several screens serves only steps every one of them serves
- * (DS23, user 2026-10-31). A node serves the same steps wherever code places
+ * A widget used on several screens serves only steps every one of them serves.
+ * A node serves the same steps wherever code places
  * its widget: words that differ stay words slots, and a part that differs,
  * such as a header's add button, is a small widget per screen in a parts slot.
  * Pass: one page header on five pages, each page's add button in its actions slot.

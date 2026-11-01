@@ -1,4 +1,4 @@
-<!-- User message of a frame call (DS23). Placeholders: target, steps, navigation, screens, vocabulary, look. -->
+<!-- User message of a frame call. Placeholders: target, steps, navigation, screens, vocabulary, look. -->
 # To fill
 
 The shell with its regions. Then the framed pages that use it, each with how its frame differs.

@@ -7,9 +7,8 @@ import { ACTIONS, type LayoutInput, sentences } from '../helpers';
  * What a list shows when it is empty has one icon or illustration, one
  * sentence and one action, centred. Those are the nodes a list, table or cards
  * section shows only when empty, or every node of an empty-state section: a
- * list widget holds its own empty state (DR08, DS31). A one-line empty message
- * inside another widget, such as a card's notes, is not checked (user,
- * 2026-10-31).
+ * list widget holds its own empty state. A one-line empty message
+ * inside another widget, such as a card's notes, is not checked.
  * Pass: a book icon, "No books yet: add the first one you mean to read.", an Add book button, centred.
  * Fail: the same without the icon.
  */

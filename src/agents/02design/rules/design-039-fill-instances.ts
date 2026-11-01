@@ -4,7 +4,7 @@ import type { ScreenInput } from './helpers';
 /**
  * DESIGN-039 · warning
  * An instance set to fill its height on a page: a page scrolls, so its height
- * is not bounded and fill means nothing there (DS23, DR14). Every combination
+ * is not bounded and fill means nothing there. Every combination
  * is valid; this one is worth a look.
  * Pass: a free list on a page; a fill editor in a dialog.
  * Fail: a fill list on a page.

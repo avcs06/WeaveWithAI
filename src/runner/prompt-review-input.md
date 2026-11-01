@@ -1,4 +1,4 @@
-<!-- The reviewer's user message (D1.12), the same for the peer and the output reviewer. Placeholders: system, user, output, known. -->
+<!-- The reviewer's user message, the same for the peer and the output reviewer. Placeholders: system, user, output, known. -->
 Review the output below.
 
 ## Instructions the model was given

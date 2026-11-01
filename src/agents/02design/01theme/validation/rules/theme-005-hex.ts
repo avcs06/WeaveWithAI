@@ -7,7 +7,7 @@ import type { ThemeInput } from '../helpers';
 /**
  * THEME-005 · mandatory
  * Every color is a hex value, #RRGGBB, and each page background is one CSS
- * background value of colors and gradients (DS35).
+ * background value of colors and gradients.
  * Pass: #2F6FB0.
  * Fail: a theme fg of "dark blue".
  */

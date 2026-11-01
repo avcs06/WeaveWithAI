@@ -7,7 +7,7 @@ import type { IaInput, PlanInput } from './helpers';
  * A new component has a purpose, at least one closest design-system component,
  * a reason none of them fits, and a description of its content, purpose,
  * emphasis, feel and look. Design is only look: its keys and ARIA are the
- * coding stage's (DS23).
+ * coding stage's.
  * Pass: TitleCover with all four.
  * Fail: TitleCover without whyNotExisting.
  */

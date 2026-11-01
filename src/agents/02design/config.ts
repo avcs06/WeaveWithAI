@@ -1,6 +1,6 @@
-// The design stage's fixed vocabularies and limits (specs/design.md, D3.5).
+// The design stage's fixed vocabularies and limits.
 
-/** App screens are design-system first; marketing pages are visual first (D3.1 notes). */
+/** App screens are design-system first; marketing pages are visual first. */
 export const SCREEN_KINDS = ['app', 'marketing'] as const;
 
 export const SECTION_KINDS = [
@@ -41,7 +41,7 @@ export const NODE_ROLES = [
 ] as const;
 
 /**
- * The states a design draws (user, 2026-10-31). Loading, a field's error and a
+ * The states a design draws. Loading, a field's error and a
  * submit's progress are the design system's own, and a form's result is a
  * toast, so the design neither draws nor checks them. `error` is a list or a
  * page that fails to load.
@@ -75,7 +75,7 @@ export const SECTION_GAP_PX = {
   marketing: [24, 48],
 } as const;
 
-/** The edges a shell region docks to (D3.5 B). */
+/** The edges a shell region docks to. */
 export const REGION_PLACES = ['top', 'bottom', 'left', 'right'] as const;
 
 /** The Dialog size a dialog or drawer of each content width is; its width and padding come from the inventory. */

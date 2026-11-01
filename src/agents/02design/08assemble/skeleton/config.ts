@@ -1,7 +1,7 @@
 // The layout solver's limits: the viewport it solves at and the estimates it
-// sizes text, fields and table rows with (DS6b).
+// sizes text, fields and table rows with.
 
-/** The viewport the layout skeleton is solved at: desktop only for the MVP. */
+/** The viewport the layout skeleton is solved at: desktop only. */
 export const VIEWPORT = { width: 1280, height: 800 } as const;
 
 /** Average glyph width in em for UI sans faces at 13 to 16px; enough to count wrapped lines, not to set type. */

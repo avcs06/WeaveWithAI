@@ -94,7 +94,7 @@ describe('every rule has a failing fixture', () => {
   );
 });
 
-describe('choices from records (FL12)', () => {
+describe('choices from records', () => {
   it('FLOW-005 accepts a choice that takes its options from a vocabulary noun, and flags a noun the scope does not have', () => {
     const fromShelves = structuredClone(flows);
     const shelf = fromShelves.fields.find((field) => field.id === 'FD05');
@@ -110,7 +110,7 @@ describe('choices from records (FL12)', () => {
   });
 });
 
-describe('one expansion batch (FL9)', () => {
+describe('one expansion batch', () => {
   const batch = (flowIds: string[]) => ({
     flows: flows.flows.filter((flow) => flowIds.includes(flow.id)),
     newFields: [],
@@ -134,7 +134,7 @@ describe('one expansion batch (FL9)', () => {
   });
 });
 
-describe("the spec's hand-broken flows", () => {
+describe('hand-broken flows', () => {
   it('fail exactly FLOW-007 and FLOW-011', () => {
     const broken = structuredClone(flows);
     const addBook = broken.flows.find((flow) => flow.id === 'F03');

@@ -38,7 +38,7 @@ export function planUserMessage(
 /** A review guide beside this file: `review-peer` or `review-output`. */
 const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});
 
-/** The architect's two review guides (D1.12): the product designer peer, then the output reviewer. */
+/** The architect's two review guides: the product designer peer, then the output reviewer. */
 export const planReviewGuides = (): ReviewGuides => ({
   peer: guide('review-peer'),
   output: guide('review-output'),

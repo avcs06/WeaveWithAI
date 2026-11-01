@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { type Inventory, spacingKeys } from '../../../ds/inventory';
 import { Brief, type Status, STATUSES } from './brief';
 
-// The theme call (D3.3 F, user 2026-11-01) sets the direction and every final
+// The theme call sets the direction and every final
 // value at once: the brief, the logo, the colors of each mode its color scheme
 // names (brand, base, page, logo, status and entity sets) as steps of ramps
-// code computes from the brief's hues (DS27), a layout for app pages and one
+// code computes from the brief's hues, a layout for app pages and one
 // for marketing pages, and each component's default variants and look. The schema is built from the
 // inventory, so the call writes only spacing keys and component values that
 // exist; THEME-010 checks the modes and entity sets against the brief the same
@@ -96,7 +96,7 @@ export const ModeSteps = z.object({
 });
 export type ModeSteps = z.infer<typeof ModeSteps>;
 
-/** The app's name set as its logo, a wordmark (user, 2026-11-01): the app ships no image files and the design system has no icons for a mark. */
+/** The app's name set as its logo, a wordmark: the app ships no image files and the design system has no icons for a mark. */
 export const Logo = z.object({
   font: z.enum(['ui', 'display', 'mono']).describe("Which of the brief's fonts sets it"),
   weight: z.enum(['400', '500', '600', '700', '800', '900']).describe('A weight its font has'),

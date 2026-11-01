@@ -82,7 +82,7 @@ export function widgetsUserMessage(
   });
 }
 
-/** The output reviewer alone (DS22): the decisions were the architect's, already reviewed. */
+/** The output reviewer alone: the decisions were the architect's, already reviewed. */
 export const widgetReviewGuides = (): ReviewGuides => ({
   output: guide('review-output'),
 });

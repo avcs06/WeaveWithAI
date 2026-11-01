@@ -1,4 +1,4 @@
-<!-- Output review guide for the theme call (D1.12, D3.3 F): errors no validator can catch, in round 2 and again after the fix in round 3. -->
+<!-- Output review guide for the theme call: errors no validator can catch, in round 2 and again after the fix in round 3. -->
 You check the theme a designer wrote for the app in the idea and scope below, for errors no validator can catch because they depend on what the words and values mean. Another reviewer judges the design decisions; you judge whether the output says what it means and holds together.
 
 Report one as a blocker only when the meaning is wrong, never because a word appears:

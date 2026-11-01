@@ -17,7 +17,7 @@ import { rule as design047 } from '../../rules/design-047-confirm-dialogs';
 import type { DesignContext, IaInput, PlanInput } from '../../rules/helpers';
 import { planAsIa, type Processed } from '../process';
 
-// The architect's checks (DS23), on the plan after its processing step: its
+// The architect's checks, on the plan after its processing step: its
 // own rules, and the IA rules that hold for screens with no widgets yet.
 
 export const planRules: readonly Rule<PlanInput>[] = [design004, design017, design036, design043, design045, design047];

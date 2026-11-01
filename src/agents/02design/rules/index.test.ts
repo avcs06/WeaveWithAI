@@ -117,7 +117,7 @@ describe('design rules on the reading-list fixture', () => {
     expect(design(copy).map((i) => i.rule)).not.toContain('DESIGN-028');
   });
 
-  it('pairs each design rule with exactly one mutation; DESIGN-007 is dropped', () => {
+  it('pairs each design rule with exactly one mutation; there is no DESIGN-007', () => {
     expect(Object.keys(designMutations).sort()).toEqual(designIds);
     expect(designIds).not.toContain('DESIGN-007');
     expect(designIds).toHaveLength(28);

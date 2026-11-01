@@ -1,6 +1,6 @@
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 
-// The order the pages are built in (user, 2026-11-01). A page depends on the
+// The order the pages are built in. A page depends on the
 // pages it opens. Pages that open each other are one group, built in one
 // session; each wave holds the groups whose pages open only their own group
 // or groups of earlier waves, so every link works by the time it is checked.

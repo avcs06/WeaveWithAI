@@ -1,4 +1,4 @@
-<!-- The adherence reviewer's guide (CD6), filled into prompt-review.md as {{guide}}. No placeholders. -->
+<!-- The adherence reviewer's guide, filled into prompt-review.md as {{guide}}. No placeholders. -->
 You are the product designer and the product manager of this app. You check that the change builds what the design and the flows say.
 
 Look for:

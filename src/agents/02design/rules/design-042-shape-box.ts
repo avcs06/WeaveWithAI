@@ -3,8 +3,8 @@ import type { ModelNodesInput } from './helpers';
 
 /**
  * DESIGN-042 · mandatory
- * A shape node draws a visual no component expresses, such as a progress ring
- * (DS23, DR23); it has no content to size it, so its box is fixed or fill in
+ * A shape node draws a visual no component expresses, such as a progress ring;
+ * it has no content to size it, so its box is fixed or fill in
  * both directions.
  * Pass: a ring fixed 48 by 48.
  * Fail: a ring as wide as its content.

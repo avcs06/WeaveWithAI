@@ -6,9 +6,9 @@ import { ACTIONS, isButton, type LayoutInput } from '../helpers';
  * LAYOUT-063 · mandatory · H-63 Confirmations
  * A confirmation, a dialog or drawer whose one job is a destructive action (no
  * inputs, no primary action), has one text node and two buttons. An edit
- * drawer with a Delete button is not one. Its words moved to DESIGN-048,
- * where the screen and draw calls write them (user, 2026-11-01); the shape
- * stays here, since a dialog's widgets come together only on assembly.
+ * drawer with a Delete button is not one. Its words are checked by DESIGN-048,
+ * where the screen and draw calls write them; the shape
+ * is checked here, since a dialog's widgets come together only on assembly.
  * Pass: "This removes “The Left Hand of Darkness” from your shelf for good.", Cancel, Delete book.
  * Fail: the same with a third button.
  */

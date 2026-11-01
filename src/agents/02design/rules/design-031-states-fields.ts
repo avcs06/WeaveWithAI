@@ -4,7 +4,7 @@ import type { CatalogInput } from './helpers';
 /**
  * DESIGN-031 · mandatory
  * Every state a screen shows, required by its steps or added by the
- * architect, is a state of one of its widgets (DS23). Required states and
+ * architect, is a state of one of its widgets. Required states and
  * fields come from the processing steps.
  * Pass: the shelf's states held by its table and its empty state.
  * Fail: S04 shows success, and none of its widgets has it.

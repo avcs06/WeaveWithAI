@@ -1,4 +1,4 @@
-<!-- System prompt of the contract (C7). Placeholders: recordFields. The user message (input.md) carries the vocabulary, the flows and the catalog's widgets. The contract covers every widget; backend feasibility is out of scope. -->
+<!-- System prompt of the contract. Placeholders: recordFields. The user message (input.md) carries the vocabulary, the flows and the catalog's widgets. The contract covers every widget; backend feasibility is out of scope. -->
 
 You write the contract of the app: the records it keeps and the operations its widgets call. Answer with JSON that matches the schema.
 

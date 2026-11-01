@@ -2,7 +2,7 @@ import type { Issue } from '../../../core/issues';
 import type { WidgetScreens } from './assemble';
 import { screenOf } from '../rules/helpers';
 
-// Where an issue found on the assembled design goes back to (DS23): the draw
+// Where an issue found on the assembled design goes back to: the draw
 // call that built the node or widget it names, or the frame call of the shell
 // it sits in. The plan, the layouts and the components are never rerun, and a
 // region's box is the theme's, so an issue on those is recorded as known,

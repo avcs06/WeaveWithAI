@@ -47,7 +47,7 @@ export function frameUserMessage(
   });
 }
 
-/** A frame call's review guide (D1.12): the output reviewer alone. */
+/** A frame call's review guide: the output reviewer alone. */
 export const frameReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });

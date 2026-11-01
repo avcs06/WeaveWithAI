@@ -6,7 +6,7 @@ import { confirmingSteps, type ScreenInput, type WidgetInput } from './helpers';
 
 /**
  * DESIGN-048 · mandatory
- * A confirmation's words, checked where they are written (user, 2026-11-01):
+ * A confirmation's words, checked where they are written:
  * each is one sentence, and they name what is destroyed, through a record's
  * data, in quotes, or as {Noun.attribute}. The screen call writes an
  * instance's slot words, the draw call a widget's own text. LAYOUT-063 keeps

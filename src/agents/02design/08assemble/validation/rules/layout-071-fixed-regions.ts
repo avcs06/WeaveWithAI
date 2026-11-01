@@ -7,7 +7,7 @@ import type { LayoutInput } from '../helpers';
  * A shell region the theme gives a fixed height keeps every node it holds
  * inside its padding; the solver draws the region at that height whatever
  * its nodes need, so nothing else notices a clipped bar. Its text is a
- * Truncate, one line whatever it says, so its height is exact (DS28).
+ * Truncate, one line whatever it says, so its height is exact.
  * Pass: the 56 tall app top bar, padding 12, holding 32 tall buttons.
  * Fail: the same bar holding 40 tall buttons, or a text node that can wrap.
  */

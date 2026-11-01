@@ -1,4 +1,4 @@
-<!-- User message of a draw call (DS23). Placeholders: widget, steps, components, screens, leads, vocabulary, look. -->
+<!-- User message of a draw call. Placeholders: widget, steps, components, screens, leads, vocabulary, look. -->
 # To draw
 
 The widget's definition: what it holds, its narrowest and widest width in px, its steps, fields, data and states, whether it contains a heading, its slots and the new components it holds.

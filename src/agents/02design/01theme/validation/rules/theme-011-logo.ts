@@ -6,7 +6,7 @@ import type { ThemeInput } from '../helpers';
 
 /**
  * THEME-011 · mandatory
- * The wordmark (user, 2026-11-01): its weight is one its font ships, and its
+ * The wordmark: its weight is one its font ships, and its
  * color reads at 3:1 on the frame and on the page in each mode, as large
  * text does, since an overlay header puts it on the page.
  * Pass: the reading-list theme, Playfair Display 600.

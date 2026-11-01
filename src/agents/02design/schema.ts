@@ -184,7 +184,7 @@ export function makeScreensSchema(inv: Inventory) {
   });
 
 
-  // A new component is look only (DS23): its behavior, props, keyboard and ARIA are the coding stage's.
+  // A new component is look only: its behavior, props, keyboard and ARIA are the coding stage's.
   const NewComponent = z.object({
     name: z
       .string()
@@ -244,7 +244,7 @@ export function makeScreensSchema(inv: Inventory) {
     maxWidthPx: z.number().int(),
     align: z.enum(['start', 'center']),
   });
-  /** A box of a screen's tree (DS23): it holds boxes and sections in a row or a column. */
+  /** A box of a screen's tree: it holds boxes and sections in a row or a column. */
   const ScreenBox = z.object({
     id: z.string().describe('S04.b1, S04.b2, ...'),
     screen: z.string(),
@@ -259,7 +259,7 @@ export function makeScreensSchema(inv: Inventory) {
     boxes: z.array(ScreenBox),
     containers: z.object({ app: Container, marketing: Container }),
     shells: z.array(Shell),
-    /** How a screen's frame differs from its shell's default (DS23): frame nodes only it shows, and default nodes it leaves out. */
+    /** How a screen's frame differs from its shell's default: frame nodes only it shows, and default nodes it leaves out. */
     frameChanges: z.array(
       z.object({
         screen: z.string(),

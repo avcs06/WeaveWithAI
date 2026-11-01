@@ -3,7 +3,7 @@ import { confirmingSteps, type PlanInput } from './helpers';
 
 /**
  * DESIGN-047 · mandatory
- * A confirmation is a dialog (DS23, user 2026-10-31): the steps of a subflow
+ * A confirmation is a dialog: the steps of a subflow
  * that asks the user to confirm, such as confirming a deletion, sit on a
  * dialog of the page that asks, never on the page itself.
  * Pass: confirming a deletion on the delete-book dialog.

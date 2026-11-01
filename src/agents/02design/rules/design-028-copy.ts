@@ -4,14 +4,14 @@ import { ACTIONS, isWordmark, type ScreensInput } from './helpers';
 
 /**
  * DESIGN-028 · mandatory (a step shown with two wordings is a warning)
- * Code builds the copy deck from every word shown (DS23), so the rule checks
+ * Code builds the copy deck from every word shown, so the rule checks
  * what a deck cannot fix: one step is shown with one wording everywhere (not a
  * node showing a record's value, whose words differ by record, and not a
  * subflow's step, which each flow words for its own record), a
  * frame's link to a navigation item's page says the item's label, and a page
  * with a navigation item has that label as its level-1 heading. A frame's
- * wordmark is the logo, so it says the app's name wherever it links (DS45).
- * The step wording only warns (user, 2026-11-01): most hits are controls in
+ * wordmark is the logo, so it says the app's name wherever it links.
+ * The step wording only warns: most hits are controls in
  * error states or tagged with a step they do not do.
  * Pass: "Add book" on every control of F03.S01; the Shelf item and its H1 both "Your shelf".
  * Fail: the app frame's Shelf link says "Home". "Add book" and "New book" both serving F03.S01 warn.

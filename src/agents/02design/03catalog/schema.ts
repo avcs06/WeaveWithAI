@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { type Inventory, spacingKeys } from '../../../ds/inventory';
 import { SECTION_KINDS, STATES } from '../config';
 
-// The catalog (DS23): one call for the whole app, which sees every screen, so
+// The catalog: one call for the whole app, which sees every screen, so
 // a widget that screens share is defined once. A definition says what a
 // widget holds and its coarse layout, never its nodes; widths only, as
 // heights follow content.
@@ -108,5 +108,5 @@ export type Catalog = z.infer<CatalogSchemas['Catalog']>;
 
 export type CatalogWidget = z.infer<CatalogSchemas['Widget']>;
 
-/** The catalog's keyed lists, for patch fixes (F16). */
+/** The catalog's keyed lists, for patch fixes. */
 export const CATALOG_KEYS = { widgets: 'id', components: 'name', screens: 'screen' };

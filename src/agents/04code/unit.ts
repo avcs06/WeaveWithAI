@@ -10,7 +10,7 @@ import type { SessionDeps } from '../../engine/session';
 import { runSpecStage, type SpecStageResult } from '../../runner/runSpecStage';
 import type { StageContext } from '../stages';
 
-// One coding unit of a code stage on the stage runner (CD5, CD6): its session,
+// One coding unit of a code stage on the stage runner: its session,
 // the checks after it, and the two reviewers, code and adherence.
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
@@ -21,7 +21,7 @@ export const ENTITIES = 'web/app/entities/**';
 /** What no session should read: the design system's and the tools' code, and the token and Tailwind files the MCP answers for. */
 export const READS_DENIED = ['packages/**', 'tools/**', 'tokens.ts', 'colors.ts', 'tailwind.preset.cjs', 'web/tailwind.config.js'];
 
-/** The two output reviewers of every coding unit (user, 2026-11-01). */
+/** The two output reviewers of every coding unit. */
 function codeReviewGuides(): Record<string, string> {
   return { code: load('review-code.md'), adherence: load('review-adherence.md') };
 }

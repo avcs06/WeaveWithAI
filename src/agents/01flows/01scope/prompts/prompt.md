@@ -13,9 +13,9 @@ Treat these as decided and don't ask them again.
 ## What the scope JSON holds
 
 - `app`: a name, a summary of 2 to 4 sentences (who it is for, the problem, the core loop) and its audience.
-- `roles`: 1 to 3 roles with camelCase ids (member, shopOwner), each with `signedIn`. A person who never signs in is a role with `signedIn` false. The landing page belongs to the role it invites in.
+- `roles`: 1 to 4 roles with camelCase ids (member, shopOwner), each with `signedIn`. A person who never signs in is a role with `signedIn` false. The landing page belongs to the role it invites in.
 - `inScope`: at least 3 things the MVP does, in the users' words. Include the landing page and the business rules the idea states ("a reader keeps one list; there are no shared lists").
-- `vocabulary`: the things the app keeps track of, 1 to 16 nouns, singular and PascalCase (Project, Note, Booking), in the users' words. `belongsTo` is the id of the role that owns the records, or "shared".
+- `vocabulary`: the things the app keeps track of, 1 to 4 nouns, singular and PascalCase (Project, Note, Booking), in the users' words. `belongsTo` is the id of the role that owns the records, or "shared".
 - `outOfScope`: anything the idea mentions or implies that the MVP will not do, each with the `item`, the `reason`, and a `placeholder` saying what the app does instead. Empty when nothing is left out.
 - `capabilities`: see below.
 - `assumptions`: where the idea is silent, numbered A01, A02, ..., each with a kind.

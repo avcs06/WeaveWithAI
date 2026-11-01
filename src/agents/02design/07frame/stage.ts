@@ -17,7 +17,7 @@ import {
 import { FRAME_KEYS, type FrameBuild, makeFrameSchemas } from './schema';
 import { validateFrame } from './validation/validation';
 
-// A frame call fills one shell at medium (DS23).
+// A frame call fills one shell at medium.
 const FRAME_MAX_TOKENS = 16_384;
 const FRAME_EFFORT = 'medium';
 
@@ -119,7 +119,7 @@ export async function runFrame(
   });
 }
 
-/** Fixes once the frame calls with issues on the assembled design, from their last output, and writes the new frames (DS23). */
+/** Fixes once the frame calls with issues on the assembled design, from their last output, and writes the new frames. */
 export async function fixFrames(
   ctx: StageContext,
   inv: Inventory,

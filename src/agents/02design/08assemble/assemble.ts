@@ -11,7 +11,7 @@ import type { Theme } from '../01theme/build';
 import { resolveScreens } from './resolve';
 import { AS_WRITTEN, depthFirst, designNode, type InstanceWords } from './nodes';
 
-// The screens from the chain, in code (DS23): each screen's box tree, a
+// The screens from the chain, in code: each screen's box tree, a
 // section per instance in a box, the widget's or component's nodes renumbered
 // to the screen, the instances in a slot inside it, the words of every slot,
 // heading levels from the instances, the frames with each screen's changes,

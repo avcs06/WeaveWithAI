@@ -3,7 +3,7 @@ import { type ScreenInput, slotsOf } from './helpers';
 
 /**
  * DESIGN-038 · mandatory
- * Each instance fills what it places (DS23): words for every words slot of its
+ * Each instance fills what it places: words for every words slot of its
  * widget and for no other slot; a fixed width inside the width range of what
  * it places; and in a slot, a minimum no wider than the slot's widest.
  * Pass: the shelf header with its title; a 280 side panel of 240 to 360.

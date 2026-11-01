@@ -24,7 +24,7 @@ export type FontFamily = {
 
 /**
  * The families `next/font/google` exports with a latin subset and a Google
- * popularity under 120, most popular first. Made once on 2026-10-30.
+ * popularity under 120, most popular first.
  */
 export const GOOGLE_FONTS: readonly FontFamily[] = JSON.parse(
   readFileSync(pathBeside(import.meta.url, './google-fonts.json'), 'utf8'),

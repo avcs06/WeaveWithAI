@@ -5,7 +5,7 @@ import type { Ia } from '../schema';
 import { requiredStates } from '../rules/helpers';
 import type { Plan, PlanScreen } from './schema';
 
-// What follows from the architect's steps (DS23, DR05): a screen's access and
+// What follows from the architect's steps: a screen's access and
 // roles from its flows, the states its steps require, and each alternative on
 // the screen of the step it branches from. One right answer each, so code
 // fills them before the rules run. A subflow's step or alternative belongs to

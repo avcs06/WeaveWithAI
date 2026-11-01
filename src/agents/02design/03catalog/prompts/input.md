@@ -1,4 +1,4 @@
-<!-- User message of the catalog (DS23). Placeholders: plan, flows, vocabulary, widths. -->
+<!-- User message of the catalog. Placeholders: plan, flows, vocabulary, widths. -->
 # Plan
 
 Every screen with its steps, states and composition. Then the navigation and the new components the architect declared.

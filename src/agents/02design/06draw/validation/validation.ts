@@ -19,7 +19,7 @@ import type { NewComponent } from '../../schema';
 import { nodeRules } from '../../rules/index';
 import type { Build, ModelNode } from '../schema';
 
-// A draw call's checks (DS23): the widget's own rules, the node rules on it
+// A draw call's checks: the widget's own rules, the node rules on it
 // alone, and the layout rules inside it, solved at its narrowest and widest.
 
 /** Rules on one widget's build against its definition. */

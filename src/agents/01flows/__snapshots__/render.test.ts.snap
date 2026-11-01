@@ -34,7 +34,7 @@ Other paths
 "
 `;
 
-exports[`render > flows follow the spec sample: numbered steps, fields with rules, changes, other paths, outcome 1`] = `
+exports[`render > flows read as numbered steps, fields with rules, changes, other paths, outcome 1`] = `
 "# Shelf: user flows
 
 ## F01 Sign up

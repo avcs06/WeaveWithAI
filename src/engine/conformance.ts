@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { Contract } from '../agents/03contract/schema';
 import type { Check } from './session';
 
-// The app's own checks after a coding session (FE10): the route folder against
+// The app's own checks after a coding session: the route folder against
 // the screen's design and the contract. The guidelines ask for a data-testid
 // per node and for data through functions named after the operations, so a
 // missing name is a missing element or an unwired widget, not a style choice.

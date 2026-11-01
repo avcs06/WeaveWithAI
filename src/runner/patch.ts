@@ -13,7 +13,7 @@ export const patchFormat = loadPrompt(
   pathBeside(import.meta.url, './prompt-patch.md'),
 );
 
-/** What a fix returns for a document with keyed lists (D1.5 C): per list the complete items that change or are new and the keys to remove; any other field null when it stays. */
+/** What a fix returns for a document with keyed lists: per list the complete items that change or are new and the keys to remove; any other field null when it stays. */
 export function patchSchema(schema: z.ZodType, keys: PatchKeys): z.ZodObject {
   if (!(schema instanceof z.ZodObject))
     throw new Error('a patch needs an object schema');
@@ -43,7 +43,7 @@ export function patchSchema(schema: z.ZodType, keys: PatchKeys): z.ZodObject {
 
 /**
  * An updated item, keeping every list the update sends empty that the item
- * had filled: a model that means "unchanged" sends [] (user, 2026-10-31), and
+ * had filled: a model that means "unchanged" sends [], and
  * a filled list emptied by a fix is never what the fix was for.
  */
 function kept(item: Item, update: Item): Item {

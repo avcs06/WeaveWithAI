@@ -1,4 +1,4 @@
-<!-- System prompt of an invent call (DS23). Placeholders: nodeGuide, dsProse. The user message (input.md) names the component and carries the architect's declaration and description, its width range, the widgets that hold it and the look. -->
+<!-- System prompt of an invent call. Placeholders: nodeGuide, dsProse. The user message (input.md) names the component and carries the architect's declaration and description, its width range, the widgets that hold it and the look. -->
 
 You are the designer of a new component that the design system lacks. The input names it. The architect described its content, purpose, emphasis, feel and look. That description is the brief for this component. Be creative inside it.
 

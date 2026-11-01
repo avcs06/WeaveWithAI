@@ -7,7 +7,7 @@ const SURFACE_CHROMA = ['neutral', 'muted', 'balanced', 'vivid'] as const;
 /** How tinted the base set is; it carries most components, so never vivid. */
 const BASE_CHROMA = ['neutral', 'muted', 'balanced'] as const;
 
-/** The status colors, each a set of the theme's own (user, 2026-11-01). */
+/** The status colors, each a set of the theme's own. */
 export const STATUSES = ['success', 'warning', 'error', 'info'] as const;
 export type Status = (typeof STATUSES)[number];
 
@@ -19,14 +19,14 @@ export const STATUS_BANDS: Record<Status, [number, number]> = {
   info: [220, 270],
 };
 
-/** A role's font candidates, best first; a model favors the top of a list, so it names three and says why (DS26). */
+/** A role's font candidates, best first; a model favors the top of a list, so it names three and says why. */
 const candidates = <T extends readonly [string, ...string[]]>(names: T) =>
   z
     .array(z.object({ family: z.enum(names), reason: z.string() }))
     .describe('Three families, best first, each with why it suits the brief');
 
 /**
- * The design direction, the first part of the theme call's answer (D3.3 F):
+ * The design direction, the first part of the theme call's answer:
  * the later stages read it beside the theme its values became.
  */
 export const Brief = z.object({

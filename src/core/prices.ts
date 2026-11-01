@@ -1,4 +1,4 @@
-/** USD per 1M tokens (docs/README.md). */
+/** USD per 1M tokens. */
 export type Price = { input: number; cachedInput: number; output: number };
 
 export const PRICES: Record<string, Price> = {

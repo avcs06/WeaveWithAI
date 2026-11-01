@@ -11,7 +11,7 @@ import type { Flows } from '../schema';
 import { patchUserMessage } from './prompts/index';
 import { FLOWS_KEYS, FlowsPatch } from './schema';
 
-// Reasoning tokens count toward the budget (D1.13); the patch returns only changes.
+// Reasoning tokens count toward the budget; the patch returns only changes.
 
 const PATCH_MAX_TOKENS = 16_384;
 

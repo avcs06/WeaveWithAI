@@ -1,7 +1,7 @@
 # Open-weight backends
 
 Weave runs the same pipeline on Meta's open-weight models by switching
-`LLM_BACKEND` (Decision D1.11): Muse Glimmer 30B on a Modal Dedicated
+`LLM_BACKEND`: Muse Glimmer 30B on a Modal Dedicated
 Endpoint, Muse Spark Open on Baseten's Model API. Both are managed
 endpoints, so neither needs a deploy of our own.
 

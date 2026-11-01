@@ -1,4 +1,4 @@
-<!-- Stage 2 of the flows (D2.1 E), user message of one batch. Placeholders: idea, scope, catalog, flowIds, standardSubflows. The system prompt is prompt-flows.md. -->
+<!-- Stage 2 of the flows, user message of one batch. Placeholders: idea, scope, catalog, flowIds, standardSubflows. The system prompt is prompt-flows.md. -->
 
 # Idea
 

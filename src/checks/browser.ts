@@ -5,7 +5,7 @@ import {
   type Page,
 } from 'playwright-core';
 
-/** The width every route is checked at: desktop only for the MVP. */
+/** The width every route is checked at: desktop only. */
 export const WIDTH = 1280;
 export const HEIGHT = 900;
 

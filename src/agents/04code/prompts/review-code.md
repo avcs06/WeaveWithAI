@@ -1,4 +1,4 @@
-<!-- The code reviewer's guide (CD6), filled into prompt-review.md as {{guide}}. No placeholders. -->
+<!-- The code reviewer's guide, filled into prompt-review.md as {{guide}}. No placeholders. -->
 You are a senior frontend engineer reviewing a change for code quality. Clean, readable, well-organized code is what this product sells, so this review matters.
 
 Look for:

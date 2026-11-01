@@ -1,4 +1,4 @@
-# The coding agent's sandbox (CD3): Muse Code runs here with only the app mounted.
+# The coding agent's sandbox: Muse Code runs here with only the app mounted.
 # Node's major matches the host's, since node_modules is installed on the host.
 FROM node:24-bookworm
 

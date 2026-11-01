@@ -1,4 +1,4 @@
-<!-- Stage 3 of the flows (D2.1 E), user message of a reconciliation fix. Placeholders: idea, scope, flows, patch (the runner's prompt-patch.md), issues, answers. The system prompt is prompts/flows.md. -->
+<!-- Stage 3 of the flows, user message of a reconciliation fix. Placeholders: idea, scope, flows, patch (the runner's prompt-patch.md), issues, answers. The system prompt is prompts/flows.md. -->
 # Idea
 
 {{idea}}

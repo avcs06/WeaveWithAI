@@ -3,9 +3,9 @@ import path from 'node:path';
 import { execaSync } from 'execa';
 import { pathBeside } from '../core/utils';
 
-// Muse Code's config in a generated app (D9.1 A): the MCP servers it loads
+// Muse Code's config in a generated app: the MCP servers it loads
 // from `.mcp.json`, the hook that validates every file it writes, and a git
-// baseline its diff starts from. The scaffold writes the guidelines (CD2).
+// baseline its diff starts from. The scaffold writes the guidelines.
 
 const MCP = {
   mcpServers: {

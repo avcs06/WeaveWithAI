@@ -89,7 +89,7 @@ describe('applyPatch', () => {
   it("keeps a list inside an item that an update sends empty, as a model means it unchanged, and takes one it fills", () => {
     const widgets = { widgets: [{ widget: 'W07', gap: '4', nodes: [{ id: 'W07.n01' }] }] };
     const patch = (nodes: { id: string }[]) => ({ widgets: { upsert: [{ widget: 'W07', gap: '6', nodes }], remove: [] } });
-    // The 2026-10-31 run: a spacing fix that sent W07 with no nodes.
+    // From a run: a spacing fix that sent W07 with no nodes.
     expect(applyPatch(widgets, patch([]), { widgets: 'widget' }).widgets).toEqual([
       { widget: 'W07', gap: '6', nodes: [{ id: 'W07.n01' }] },
     ]);

@@ -12,7 +12,7 @@ import { screenRule as design048 } from '../../rules/design-048-confirmation-wor
 import type { DesignContext, ScreenInput } from '../../rules/helpers';
 import type { ScreenLayouts } from '../schema';
 
-// A screen call's checks (DS23): each screen it was given laid out once, and
+// A screen call's checks: each screen it was given laid out once, and
 // each layout's rules.
 
 export const screenRules: readonly Rule<ScreenInput>[] = [

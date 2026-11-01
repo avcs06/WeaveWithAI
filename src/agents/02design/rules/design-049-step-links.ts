@@ -6,7 +6,7 @@ import { ACTIONS, type WidgetInput } from './helpers';
  * DESIGN-049 · mandatory
  * When the flow of a step goes on at a step only another screen lists, the
  * control that does the step opens that screen, so no page of a flow is left
- * with no way in (DS50). The draw stage passes the leads; DESIGN-017 at
+ * with no way in. The draw stage passes the leads; DESIGN-017 at
  * assemble is the net.
  * Pass: the shelf header's Add book action, serving F03.S01, opens S05.
  * Fail: the same action with navigatesTo "".

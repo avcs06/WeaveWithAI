@@ -29,8 +29,8 @@ export type Answer = { question: string; answer: string };
 export type Answers = Record<string, Answer>;
 
 /**
- * A stage's review guides (D1.12): the peer challenges the decisions, the output reviewer finds what the validators cannot.
- * Without a peer guide only the output reviewer runs. Named output guides are several output reviewers, one call each (code units, CD5).
+ * A stage's review guides: the peer challenges the decisions, the output reviewer finds what the validators cannot.
+ * Without a peer guide only the output reviewer runs. Named output guides are several output reviewers, one call each (code units).
  */
 export type ReviewGuides = { peer?: string; output: string | Record<string, string> };
 
@@ -70,7 +70,7 @@ export type SpecStageOptions<T> = {
   validate: (output: T) => Issue[];
   /** The stage's review guides. Without them no reviewer calls run. */
   review?: ReviewGuides;
-  /** The rounds; default D1.12's five. */
+  /** The rounds; default the five of SCHEDULE. */
   schedule?: Round[];
   /** The reviewers' user message, with the placeholders system, user, output and known; default prompt-review-input.md. */
   reviewInput?: string;
@@ -78,7 +78,7 @@ export type SpecStageOptions<T> = {
   reviewersSeeMandatory?: boolean;
   /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
   ask?: (output: T) => Promise<Answers>;
-  /** Output budget for the writer's calls, reasoning included (D1.13); the client doubles it once when the answer is cut. */
+  /** Output budget for the writer's calls, reasoning included; the client doubles it once when the answer is cut. */
   maxTokens?: number;
   /** Reasoning effort for the first draft, and medium for every fix; omitted, the model picks its own level for both. */
   reasoningEffort?: ReasoningEffort;
@@ -88,7 +88,7 @@ export type SpecStageOptions<T> = {
   draftModel?: ModelChoice;
   /** How the document is produced; the default is one conversation with the model. */
   compose?: Compose<T>;
-  /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges (D1.5 C); without them, the whole document. */
+  /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
   /** A document to start from: round 1 validates it instead of generating one (reconciliation). */
   start?: Draft<T>;
@@ -108,7 +108,7 @@ export type SpecStageResult<T> = {
   rounds: number;
 };
 
-// D1.12 (five rounds, user, 2026-10-30): a fix runs only when something is pending; from round 2 on reviewers look at the output whatever the validators found.
+// Five rounds: a fix runs only when something is pending; from round 2 on reviewers look at the output whatever the validators found.
 // The peer challenges the decisions once, in round 2; the output reviewer checks round 2 and the two fixes after it; round 5 is the final fix.
 const SCHEDULE: Round[] = [
   { fix: false, reviewers: [] },
@@ -118,7 +118,7 @@ const SCHEDULE: Round[] = [
   { fix: true, reviewers: [] },
 ];
 const FIX_EFFORT = 'medium';
-// Reviewers return a short list, so their tokens are mostly reasoning; medium keeps it considered but bounded (D1.13).
+// Reviewers return a short list, so their tokens are mostly reasoning; medium keeps it considered but bounded.
 const REVIEW_EFFORT = 'medium';
 const REVIEW_MAX_TOKENS = 8192;
 const NOT_REREVIEWED = ' (addressed in the final fix, not re-reviewed)';
@@ -307,7 +307,7 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
         reasoningEffort: o.reasoningEffort,
         temperature: o.temperature,
       }),
-    // A fix edits the named issues and nothing else, so it runs at the default 0.2, and at medium when the stage sets an effort (user, 2026-10-30).
+    // A fix edits the named issues and nothing else, so it runs at the default 0.2, and at medium when the stage sets an effort.
     async fix(call, current, pending, answers) {
       const reasoningEffort = o.reasoningEffort ? FIX_EFFORT : undefined;
       const keys = o.patchKeys;
@@ -337,7 +337,7 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
   };
 }
 
-/** The fix message of D1.5 A, for a document with no keyed lists: the pending issues and the answers given since the last generation. */
+/** The fix message for a document with no keyed lists: the pending issues and the answers given since the last generation. */
 export function fixMessage(pending: Issue[], answers: Answers): string {
   return fillPrompt(fixPrompt, {
     issues: formatIssues(pending),
@@ -345,7 +345,7 @@ export function fixMessage(pending: Issue[], answers: Answers): string {
   });
 }
 
-/** The fix message of D1.5 C: the same, asking for a patch. */
+/** The fix message for a document with keyed lists: the same, asking for a patch. */
 function patchFixMessage(pending: Issue[], answers: Answers): string {
   return fillPrompt(patchFixPrompt, {
     patch: patchFormat,

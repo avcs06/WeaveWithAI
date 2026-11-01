@@ -54,7 +54,7 @@ export function screenUserMessage(
   });
 }
 
-/** A screen call's review guide (D1.12): the output reviewer alone. */
+/** A screen call's review guide: the output reviewer alone. */
 export const screenReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });

@@ -17,7 +17,7 @@ import type { ThemeInput } from '../helpers';
  * accentHoverBg, for the theme, base, every entity and every status set; for pageFg and
  * pageFgMuted on pageBg and frameBg; and for the theme's and base's fg on
  * pageBg and frameBg, where a link draws it; and for pageFg and pageFgMuted
- * on every color of the page background (DS35); in every mode the theme has.
+ * on every color of the page background; in every mode the theme has.
  * Pass: the reading-list theme.
  * Fail: fgMuted set to the bg color.
  */

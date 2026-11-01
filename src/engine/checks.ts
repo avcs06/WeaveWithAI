@@ -1,7 +1,7 @@
 import type { Issue } from '../core/issues';
 import type { SessionResult } from './session';
 
-// The checks after a coding session as issues (CD5), so the rounds, the
+// The checks after a coding session as issues, so the rounds, the
 // reports and the fix task treat them like validator issues. Pure.
 
 /** Each check's rule: CODE-005 and CODE-006 split the design check by what it found. */
@@ -14,7 +14,7 @@ const RULE_OF: Record<string, string> = {
   install: 'CODE-013',
 };
 
-/** The longest file a session should write, as AGENTS.md sets for this repo (user, 2026-11-01). */
+/** The longest file a session should write, as AGENTS.md sets for this repo. */
 export const MAX_LINES = 300;
 
 /** A file the unit changed, over MAX_LINES. */

@@ -11,7 +11,7 @@ import { patchUserMessage } from './prompts/index';
 import { renderFlows } from './render';
 import { validateFlows } from './validation/validation';
 
-// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON (D1.13).
+// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
 
 /** Stage 3: starts from the draft, validates the whole document, and patches until the validators are clean. */

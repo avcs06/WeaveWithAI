@@ -7,7 +7,7 @@ import type { DesignNode, NewComponent, Screens } from '../schema';
 import { designNode } from './nodes';
 import { resolveScreens } from './resolve';
 
-// One widget or new component on a page of its own (DS23), for its call's
+// One widget or new component on a page of its own, for its call's
 // node and layout checks: one section of a fixed width and of the widget's
 // kind, holding the nodes under the ids the call wrote, so every issue names
 // what the call can see. A frame call's shell sits around an empty page the

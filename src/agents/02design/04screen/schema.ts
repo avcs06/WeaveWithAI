@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SURFACES } from '../config';
 
-// The screen layouts (DS23): one call per page with the dialogs and drawers
+// The screen layouts: one call per page with the dialogs and drawers
 // it opens. Each screen is a box tree of rows and columns holding instances;
 // an instance places a widget or a new component, in a box or in another
 // instance's slot. Spacing between them is the theme's section gap, so the
@@ -63,5 +63,5 @@ export type Instance = z.infer<typeof Instance>;
 export type ScreenLayout = z.infer<typeof ScreenLayout>;
 export type ScreenLayouts = z.infer<typeof ScreenLayouts>;
 
-/** A call's keyed lists, for patch fixes (F16): a fix sends a screen's layout whole. */
+/** A call's keyed lists, for patch fixes: a fix sends a screen's layout whole. */
 export const SCREEN_KEYS = { screens: 'screen' };

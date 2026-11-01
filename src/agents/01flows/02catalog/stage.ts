@@ -10,11 +10,11 @@ import { renderCatalog } from './render';
 import { Catalog } from './schema';
 import { validateCatalog } from './validation/validation';
 
-// Reasoning tokens count toward the budget (D1.13); the catalog carries every header and part.
+// Reasoning tokens count toward the budget; the catalog carries every header and part.
 
 const CATALOG_MAX_TOKENS = 32_768;
 
-// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON (D1.13).
+// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
 
 /** Stage 1: every flow's header and description plus the reusable parts, through the runner like scope. */

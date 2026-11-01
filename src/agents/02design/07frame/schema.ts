@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { Inventory } from '../../../ds/inventory';
 import { makeDrawSchemas } from '../06draw/schema';
 
-/** A frame call's shapes: a shell's nodes, each in one of its regions, and how a screen's frame differs (DS23). */
+/** A frame call's shapes: a shell's nodes, each in one of its regions, and how a screen's frame differs. */
 export function makeFrameSchemas(inv: Inventory) {
   const { ModelNode } = makeDrawSchemas(inv);
   const FrameNode = ModelNode.extend({
@@ -34,5 +34,5 @@ export type FrameNode = z.infer<FrameSchemas['FrameNode']>;
 
 export type FrameBuild = z.infer<FrameSchemas['FrameBuild']>;
 
-/** A frame's keyed lists, for patch fixes (F16). */
+/** A frame's keyed lists, for patch fixes. */
 export const FRAME_KEYS = { nodes: 'id', changes: 'screen' };

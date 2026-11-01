@@ -1,4 +1,4 @@
-<!-- The rules for every coding session (CD2), written to .weave/01-scaffold/guidelines.md by the scaffold. Each stage's folder adds its own guidelines.md. No placeholders. -->
+<!-- The rules for every coding session, written to .weave/01-scaffold/guidelines.md by the scaffold. Each stage's folder adds its own guidelines.md. No placeholders. -->
 # Guidelines for every session
 
 You build one part of a web app from its design, its flows and its

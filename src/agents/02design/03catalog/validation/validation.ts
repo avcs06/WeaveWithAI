@@ -11,7 +11,7 @@ import { rule as design046 } from '../../rules/design-046-shared-widgets';
 import type { CatalogInput, DesignContext } from '../../rules/helpers';
 import type { Processed } from '../process';
 
-// The catalog's checks (DS23), on its definitions after its processing step.
+// The catalog's checks, on its definitions after its processing step.
 
 
 export const catalogRules: readonly Rule<CatalogInput>[] = [

@@ -1,4 +1,4 @@
-<!-- System prompt of the architect (DS23). Placeholders: density, newComponentBudget, dsProse. The user message (input.md) carries the scope, the flows, the brief and the theme's page layouts. A processing step fills each screen's access, roles, required states and alternatives; the catalog, screen, invent, draw and frame calls build on this plan. -->
+<!-- System prompt of the architect. Placeholders: density, newComponentBudget, dsProse. The user message (input.md) carries the scope, the flows, the brief and the theme's page layouts. A processing step fills each screen's access, roles, required states and alternatives; the catalog, screen, invent, draw and frame calls build on this plan. -->
 
 You are the product designer of the app in the scope, flows and brief below. You plan its screens. Answer with JSON that matches the schema.
 

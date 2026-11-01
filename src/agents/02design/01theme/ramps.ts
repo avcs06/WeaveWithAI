@@ -2,8 +2,8 @@ import { clampChroma, formatHex, wcagContrast } from 'culori';
 import { type Status, STATUSES } from './brief';
 import { type Brief, entitySets, type Mode, modesOf } from './schema';
 
-// The theme call picks colors from ramps code computes from the brief's hues
-// (DS27, D3.3 F notes): a model cannot work out contrast, and writing hex it
+// The theme call picks colors from ramps code computes from the brief's hues:
+// a model cannot work out contrast, and writing hex it
 // falls back to palettes it knows.
 
 /** OKLCH lightness of each step: backgrounds first, then borders, solid fills, and text last. */
@@ -39,7 +39,7 @@ export type ModeRamps = {
 };
 export type Ramps = Partial<Record<Mode, ModeRamps>>;
 
-/** A status ramp's chroma: the brand's, at least balanced, so a quiet brand keeps statuses that read as their meaning (user, 2026-10-31). */
+/** A status ramp's chroma: the brand's, at least balanced, so a quiet brand keeps statuses that read as their meaning. */
 const statusChroma = (brief: Brief): ChromaLevel => (brief.seedChroma === 'vivid' ? 'vivid' : 'balanced');
 
 /** The ramps of every hue and chroma the brief names, in each of its modes. Entities take the brand's chroma, statuses at least balanced. */
@@ -67,9 +67,9 @@ export function rampsOf(brief: Brief): Ramps {
 
 /**
  * How code makes a ramp, and which steps read on which, for the prompt: the
- * hues come in the same answer, so no ramp exists to show (D3.3 F). Contrast
+ * hues come in the same answer, so no ramp exists to show. Contrast
  * follows lightness, so the table is each pair's worst case over every hue and
- * chroma, and holds for any two ramps (user, 2026-11-01).
+ * chroma, and holds for any two ramps.
  */
 export function stepGuide(): string {
   const levels = Object.entries(CHROMA).map(([level, c]) => `${level} ${c}`).join(', ');

@@ -12,7 +12,7 @@ export type Backend = {
 };
 
 // A scale-to-zero Modal endpoint answered 503 for about 4 minutes while it
-// started (F8); 5 minutes covers that with room.
+// started; 5 minutes covers that with room.
 const MODAL_COLD_START_MS = 300_000;
 
 export const BACKEND_NAMES: readonly BackendName[] = [

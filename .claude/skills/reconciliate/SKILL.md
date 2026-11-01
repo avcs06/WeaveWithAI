@@ -17,25 +17,19 @@ The argument names the chain:
 - `design`: brief, theme, architect, catalog, screen, then invent, draw and
   frame (all three carry the shared node guide), then assemble and layout.
   Also the processing steps of the architect and the catalog, the
-  design-system inventory and prose, the design and font config, the design
-  spec and the layout heuristics catalog.
+  design-system inventory and prose, and the design and font config.
 - `flows`: scope, flows-catalog, flows-expand, flows. Also the subflow and
-  capability config and the flows spec.
+  capability config.
 - empty: every chain that `git status --short` touches, each reviewed whole.
 
 Every chain also covers: the core code it calls (the stage runner, the review
-call, the schema helpers, the fix and review prompts), its entries in the
-stage registry, the sections of the options doc its spec names, the
-architecture doc, and the step files of its unticked tasks. Step files of
-ticked tasks are history: leave them. Find each piece by searching; don't
-assume a folder.
+call, the schema helpers, the fix and review prompts) and its entries in the
+stage registry. Find each piece by searching; don't assume a folder.
 
 ## 1. Establish the current truth
 
-- Decisions: the options doc (the ticked option, else the one marked
-  **(default)**), then the spec. Decisions the user made in this session that
-  the docs don't record yet count too. Never change a decision; fix the text
-  that contradicts it.
+- Decisions: AGENTS.md and the ones the user made in this session. Never
+  change a decision; fix the text that contradicts it.
 - For each step, in chain order, read whole files: the system prompt, its
   input message, the builder that fills both, the schema, the stage code that
   calls it, its rules and the list that registers them, its peer and output
@@ -51,7 +45,7 @@ assume a folder.
 
 - Text that matches a dropped decision: prompts, the HTML comments in prompts
   (notes for us; `loadPrompt` strips them), schema `.describe()` strings,
-  docs, unticked step files, test names, fixtures, snapshots.
+  docs, test names, fixtures, snapshots.
 - Unused code: exports, rule helpers, types, schema fields no prompt asks for
   and no code reads, fixture files, mutation entries. Prove each with
   `grep -rn` over the code, docs and fixtures.
@@ -68,7 +62,7 @@ assume a folder.
   explain.
 - Prompt and rule: the same threshold and the same cases.
 - Two prompts: a later step redefines a term or rule an earlier one set.
-- The spec, the options doc or the architecture doc and the code.
+- AGENTS.md and the code.
 - A test name and its assertion; a rule file's name, its id and what it checks.
 - One rule written in several places: keep one, delete the others.
 
@@ -126,7 +120,7 @@ be easy to follow. Every system prompt, input message and review guide:
 - Gives a reason only where the model would decide wrong without it.
 - Keeps one name and one meaning per term across the chain. A later prompt
   uses the word an earlier prompt or artifact set.
-- Names no decision ids, rule ids, file names or code in the model's text.
+- Names no rule ids, file names or code in the model's text.
   Those go in the HTML comment at the top, with the placeholders and who
   fills them.
 - In review guides, the peer reviewer judges decisions and the output
@@ -142,12 +136,11 @@ a reworded phrase gets the new phrase; what it checks stays.
 - Fix stale items, contradictions, handoffs, coverage and wording directly,
   toward the current decision. Never revert an agreed decision.
 - Ask, with AskUserQuestion, after the read-through and before touching those
-  items, when: code and tests disagree and the docs don't settle it; the code
-  follows a choice the options doc doesn't record; a fix needs a new decision.
+  items, when: code and tests disagree; a fix needs a new decision.
 - Never weaken a rule, threshold, fixture or test. Never rewrite a golden
   fixture: report a stale one instead.
 - No model calls: no `weave run`, no `pnpm smoke`.
-- Work that is not a fix goes into the plan as an unticked task with one line
+- Work that is not a fix goes in the report as noted for later, with one line
   saying why.
 - Keep files under about 300 lines. Docs in short plain sentences, no em
   dashes.
@@ -155,7 +148,7 @@ a reworded phrase gets the new phrase; what it checks stays.
 ## 4. Verify
 
 - `pnpm typecheck` and `pnpm test`. Show the summary lines.
-- `pnpm weave validate <runId>` on the latest run of each golden idea, before
+- `pnpm weave validate <runId>` on the latest run of each reference idea, before
   and after the fixes. It reruns the validators of the stages that register a
   `validate` hook, with no model calls. A new issue from a new rule is
   expected: list it. Any other change is a finding.
@@ -163,6 +156,6 @@ a reworded phrase gets the new phrase; what it checks stays.
 
 ## 5. Report
 
-Lead with the counts: fixed, asked, added to the plan, left as is. Then each
+Lead with the counts: fixed, asked, noted for later, left as is. Then each
 finding with `file:line`, what was wrong, the fix and its diff. Open
 questions last.

@@ -3,7 +3,7 @@ import type { Padding, Sizes } from './boxes';
 import type { DesignNode } from '../../schema';
 import type { NodeBox, NodeLayout } from '../../schema-boxes';
 
-// How a container places its children in a column, a row or a grid (DS6b).
+// How a container places its children in a column, a row or a grid.
 // Sizing calls back into the solver (layout-solve.ts) through the context.
 
 export type RectKind =

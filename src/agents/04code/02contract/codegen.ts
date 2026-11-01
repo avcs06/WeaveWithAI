@@ -1,7 +1,7 @@
 import type { Contract, Entity, EntityField, Operation } from '../../03contract/schema';
 import type { SeedRows } from './schema';
 
-// The contract as the app's entity layer (CD4), written by code: one folder per
+// The contract as the app's entity layer, written by code: one folder per
 // entity under web/app/entities/ with its types, seed rows, a persistent store
 // and one function per operation, plus sign-in (auth) and the mock helpers.
 

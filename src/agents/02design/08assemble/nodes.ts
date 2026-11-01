@@ -2,7 +2,7 @@ import type { SCREEN_KINDS } from '../config';
 import type { DesignNode } from '../schema';
 import type { ModelNode } from '../06draw/schema';
 
-// A draw, frame or invent call's node as a screen node (DS23): its own words,
+// A draw, frame or invent call's node as a screen node: its own words,
 // or the instance's words for the slot it stands for; a value it shows as its
 // sample; and a heading's level and type size from the instance that places
 // it, so a widget reads right wherever code places it.

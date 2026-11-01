@@ -1,6 +1,6 @@
 import { formatHex, parse } from 'culori';
 
-// A page background as CSS (DS35, user 2026-10-31): a color, or gradients of
+// A page background as CSS: a color, or gradients of
 // colors. Code reads the colors it names, so the brief's rule can check it and
 // the theme can check page text on every one of them. Alpha is ignored: a stop
 // counts as its opaque color.

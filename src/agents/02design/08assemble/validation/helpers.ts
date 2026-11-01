@@ -4,7 +4,7 @@ import type { Rect, Skeleton } from '../skeleton/skeleton';
 import type { DesignNode, DesignScreen, DesignSection, Screens } from '../../schema';
 import type { NodeLayout } from '../../schema-boxes';
 
-// What the layout rules (LAYOUT-0NN, specs/layout-heuristics.md) read: one
+// What the layout rules (LAYOUT-0NN) read: one
 // view per screen over the skeleton, with the nodes, sections and spacing
 // behind each rectangle.
 

@@ -1,4 +1,4 @@
-<!-- The task of a fix session (CD5), sent into the Muse session that built the unit, so it still holds what it read and wrote. Placeholders: folders, issues. -->
+<!-- The task of a fix session, sent into the Muse session that built the unit, so it still holds what it read and wrote. Placeholders: folders, issues. -->
 The checks after your work found the issues below. Fix them in the code you wrote for this unit.
 
 You built this unit earlier in this session, so you know what you changed: you need no git history. Your guidelines are in `.weave/01-scaffold/guidelines.md` and in these folders: {{folders}}. Read one again only when you need a detail you no longer have.

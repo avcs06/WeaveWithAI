@@ -61,7 +61,7 @@ export const widgetRule = defineRule<WidgetInput>(
   },
 );
 
-/** A frame serves the steps catalog gave it, each on one of its nodes (DS23, DR26). */
+/** A frame serves the steps catalog gave it, each on one of its nodes. */
 export const frameRule = defineRule<FrameInput>(
   'DESIGN-032',
   'mandatory',

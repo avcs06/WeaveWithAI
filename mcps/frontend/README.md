@@ -394,8 +394,8 @@ Style-defining code is always checked as vanilla-extract and `className` as Tail
 workspace passes its Tailwind rules (`tailwind` on the config given to `createDesignSystem`).
 Design-system code is not checked at all, recipes included: every file under
 `designSystemFolders` (here `packages`), or, when that is unset, under a `components` glob's
-folder. Its components and recipes are still read. This is temporary, so the coding agent never
-meets rules written for building the design system; those come back when it is worked on.
+folder. Its components and recipes are still read. This is so the coding agent never
+meets rules written for building the design system.
 The rules for writing the design system itself (layout in Tailwind only, no layout properties in
 vanilla-extract, Tailwind where a class matches exactly, no bare `flex`) are kept in
 [`design-system-rules/`](design-system-rules/), outside the server.

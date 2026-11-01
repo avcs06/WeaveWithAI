@@ -34,7 +34,7 @@ export const briefRules: readonly Rule<BriefInput>[] = [
 
 export const callRules: readonly Rule<CallInput>[] = [theme010, theme012];
 
-/** THEME-003 checks an applied app and comes with S1. */
+/** THEME-003 checks an applied app, so the scaffold stage runs it. */
 export const themeRules: readonly Rule<ThemeInput>[] = [
   theme001,
   theme002,
@@ -47,7 +47,7 @@ export const themeRules: readonly Rule<ThemeInput>[] = [
   theme011,
 ];
 
-/** The theme call's answer: the brief against the scope, the colors against the brief, and the theme they build (D3.3 F). */
+/** The theme call's answer: the brief against the scope, the colors against the brief, and the theme they build. */
 export function validateTheme(call: ThemeCall, scope: Scope, inventory: Inventory): Issue[] {
   return [
     ...runRules(briefRules, { brief: call.brief, scope }),

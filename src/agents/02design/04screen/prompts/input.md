@@ -1,4 +1,4 @@
-<!-- User message of a screen call (DS23). Placeholders: screens, parts. -->
+<!-- User message of a screen call. Placeholders: screens, parts. -->
 # To lay out
 
 Each screen with its title, its composition, its content width and its gap in px. The gap sits between its boxes and instances.

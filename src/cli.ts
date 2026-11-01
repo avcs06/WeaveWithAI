@@ -438,7 +438,7 @@ export async function main(argv: string[]): Promise<number> {
         await appCommand(first);
         return 0;
       case 'bench':
-        console.log('bench: added in step B7');
+        console.log('bench: not built yet (docs/specs/benchmark.md)');
         return 0;
       case 'docker-clean': {
         const removed = await cleanAgentImages({ all: values.all });

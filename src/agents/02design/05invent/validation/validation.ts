@@ -9,7 +9,7 @@ import type { Processed as Catalog } from '../../03catalog/process';
 import type { DesignContext } from '../../rules/helpers';
 import type { ComponentDesign } from '../schema';
 
-// An invent call's checks (DS23): its root inside the width range catalog
+// An invent call's checks: its root inside the width range catalog
 // gave it, and the node rules and the layout rules on the component alone, at
 // the narrowest and widest of that range. It stands as one node holding its nodes, as on a screen, so its
 // padding is its own and not a section's.

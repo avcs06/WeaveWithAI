@@ -3,7 +3,7 @@ import type { Flows, Step } from '../../01flows/schema';
 import type { Defined } from '../../02design/03catalog/process';
 import type { Contract, Entity, Operation } from '../schema';
 
-// What the contract rules (CONTRACT-0NN, specs/contracts.md) read.
+// What the contract rules (CONTRACT-0NN) read.
 
 /** What the contract covers of a catalog widget: the steps it serves and the values it shows. */
 export type Widget = Pick<Defined, 'id' | 'flowSteps' | 'data' | 'repeat'>;

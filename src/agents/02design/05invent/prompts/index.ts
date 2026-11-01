@@ -52,7 +52,7 @@ export function componentUserMessage(
   });
 }
 
-/** An invent call's two review guides (D1.12): the peer judges the drawing against the description, then the output reviewer. */
+/** An invent call's two review guides: the peer judges the drawing against the description, then the output reviewer. */
 export const componentReviewGuides = (): ReviewGuides => ({
   peer: fillPrompt(load('./review-peer.md'), {}),
   output: fillPrompt(load('./review-output.md'), {}),

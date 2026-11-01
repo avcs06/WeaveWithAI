@@ -22,7 +22,7 @@ export type ReasoningEffort =
   | 'high'
   | 'xhigh'
   | 'max';
-/** Two modes (user, 2026-10-30): 0.2 for exact values, 0.7 for the calls that set a direction. */
+/** Two modes: 0.2 for exact values, 0.7 for the calls that set a direction. */
 export type Temperature = 0.2 | 0.7;
 
 export type GenerateInput<T> = {
@@ -110,7 +110,7 @@ export type Llm = {
 };
 
 const TEMPERATURE = 0.2;
-// D1.8: a backend whose strong model is missing or the base model escalates by effort instead, never to max.
+// A backend whose strong model is missing or the base model escalates by effort instead, never to max.
 const STEP_UP: Partial<Record<ReasoningEffort, ReasoningEffort>> = {
   medium: 'high',
   high: 'xhigh',
@@ -307,7 +307,7 @@ export function createLlm(deps: LlmDeps): Llm {
         max_tokens: limit,
         response_format: {
           type: 'json_schema',
-          // Strict decoding keeps the answer to the schema: no prose, no wrong types (user, 2026-10-31).
+          // Strict decoding keeps the answer to the schema: no prose, no wrong types.
           json_schema: { name: request.schemaName, schema: request.schema, strict: true },
         },
       });

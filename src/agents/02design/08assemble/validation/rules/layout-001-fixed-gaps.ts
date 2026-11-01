@@ -9,7 +9,7 @@ import type { LayoutInput } from '../helpers';
  * title to its description 4, a header to its content and content to content
  * 16, groups to groups 24. So a column holds a header and one node, content,
  * or groups, and a header above groups needs them in a column of their own.
- * It replaced "gaps shrink with depth" and took in H-09 (user, 2026-11-01).
+ * It covers H-09 too.
  * Pass: a form's header above one column that holds its two groups of fields.
  * Fail: the header and the two groups in one column.
  */

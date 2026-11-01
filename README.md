@@ -17,7 +17,7 @@ of times.
 | `src/`      | The generator: CLI, stage runner, stages, validators                                           |
 | `template/` | The design-system workspace that every generated app is copied from: packages, web, server     |
 | `mcps/`     | MCP servers, one folder each; `design-system` makes the design system queryable and checkable |
-| `docs/`     | Plan, implementation options, architecture and stage specs                                     |
+| `docs/`     | The benchmark spec                                                                             |
 | `fixtures/` | Reference idea briefs and golden artifacts                                                     |
 
 ## Quick start
@@ -32,4 +32,4 @@ pnpm smoke                 # one structured call to the Meta Model API
 pnpm weave run fixtures/ideas/freelancer-workspace.md --to flows
 ```
 
-Runs land in `runs/<runId>/`. Start with `docs/README.md` for how the pieces fit.
+Runs land in `runs/<runId>/`.

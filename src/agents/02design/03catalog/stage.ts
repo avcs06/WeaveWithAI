@@ -11,7 +11,7 @@ import { catalogReviewGuides, catalogSystemPrompt, catalogUserMessage } from './
 import { CATALOG_KEYS, makeCatalogSchema } from './schema';
 import { validateCatalog } from './validation/validation';
 
-// The catalog: one call for the whole app at medium reasoning and 0.2 (DS23).
+// The catalog: one call for the whole app at medium reasoning and 0.2.
 const CATALOG_MAX_TOKENS = 65_536;
 const CATALOG_EFFORT = 'medium';
 

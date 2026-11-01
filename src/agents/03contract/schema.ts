@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// The contract (specs/contracts.md): the records and operations behind every
+// The contract: the records and operations behind every
 // widget. Every field is required; "none" is "" or [].
 
 /** Fields every record gets from the app, so no entity declares them. */

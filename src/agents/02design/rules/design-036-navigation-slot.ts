@@ -4,7 +4,7 @@ import type { PlanInput } from './helpers';
 /**
  * DESIGN-036 · mandatory
  * Every navigation item names the slot of the layout whose frame draws it: a
- * part the layout needs and a slot the theme put something in (DS23, DR25).
+ * part the layout needs and a slot the theme put something in.
  * The app frame draws a signed-in page's item; the marketing frame draws a
  * public page's item when the app has a framed marketing page, the app frame
  * otherwise, as the frame call does.

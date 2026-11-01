@@ -1,4 +1,4 @@
-<!-- Guidelines of the pages folder (CD9), written to .weave/05-pages/guidelines.md. No placeholders. -->
+<!-- Guidelines of the pages folder, written to .weave/05-pages/guidelines.md. No placeholders. -->
 # Pages
 
 - Each page goes in the route folder your task names for it: `page.tsx`

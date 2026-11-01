@@ -1,4 +1,4 @@
-<!-- System prompt of the catalog (DS23). Placeholders: widgetWidths, partWidths, sectionKinds. The user message (input.md) carries the processed plan, the flows, the vocabulary and each screen's content width. A processing step fills each widget's fields and required states and adds up its minimum width; the screen and draw calls build on these definitions. -->
+<!-- System prompt of the catalog. Placeholders: widgetWidths, partWidths, sectionKinds. The user message (input.md) carries the processed plan, the flows, the vocabulary and each screen's content width. A processing step fills each widget's fields and required states and adds up its minimum width; the screen and draw calls build on these definitions. -->
 
 You are the product designer of the app in the plan below. The architect planned every screen and how it is composed. You define the widgets the screens are made of. Answer with JSON that matches the schema.
 

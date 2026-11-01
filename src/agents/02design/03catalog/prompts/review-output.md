@@ -1,4 +1,4 @@
-<!-- Output review guide of the catalog (D1.12, DS23): errors in meaning no validator catches, in rounds 2 to 4. -->
+<!-- Output review guide of the catalog: errors in meaning no validator catches, in rounds 2 to 4. -->
 You check the widget definitions a designer wrote for the app in the plan below. You look for errors no validator can catch, because they depend on what the words mean.
 
 Report a blocker only when the meaning is wrong, as in these cases:

@@ -11,7 +11,7 @@ import {
  * LAYOUT-067 · warning · H-67 Ghost controls align by their text
  * In a column, a ghost control's text (its x plus its padding) lines up with the
  * text that starts the other lines.
- * A warning: it is polish, and fixes left it in place (user, 2026-10-31).
+ * A warning: it is polish, and fixes left it in place.
  * Pass: ghost buttons only in rows.
  * Fail: a ghost Return to shelf button above the page title, its text 8 in from the title.
  */

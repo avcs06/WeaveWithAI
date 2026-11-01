@@ -3,7 +3,7 @@ import type { DesignNode, Screens } from '../schema';
 import type { NodeLayout } from '../schema-boxes';
 import { isWordmark } from '../rules/helpers';
 
-// 02-design/08-wireframes.html (DS6b): every screen of the skeleton drawn as lines at
+// 02-design/08-wireframes.html: every screen of the skeleton drawn as lines at
 // desktop width. One self-contained file: inline styles, no scripts, no
 // fonts. Hovering a rectangle shows its id, what it is and where
 // its height came from.

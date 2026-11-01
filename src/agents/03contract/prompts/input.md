@@ -1,4 +1,4 @@
-<!-- User message of the contract (C7). Placeholders: vocabulary, flows, widgets. -->
+<!-- User message of the contract. Placeholders: vocabulary, flows, widgets. -->
 # Vocabulary
 
 {{vocabulary}}

@@ -1,4 +1,4 @@
-<!-- System prompt of a draw call (DS23). Placeholders: nodeGuide, dsProse. The user message (input.md) names the widget to draw and carries its definition, the steps it serves with their fields, the new components it holds, the screens a node can open, the vocabulary and the look. Code places each widget where the screen layouts put it. -->
+<!-- System prompt of a draw call. Placeholders: nodeGuide, dsProse. The user message (input.md) names the widget to draw and carries its definition, the steps it serves with their fields, the new components it holds, the screens a node can open, the vocabulary and the look. Code places each widget where the screen layouts put it. -->
 
 You are the product designer of the app in the input. Earlier calls defined each widget and placed the widgets on the screens. You draw the widget that the input names. Answer with JSON that matches the schema.
 

@@ -6,7 +6,7 @@ import type { ScreenInput } from './helpers';
  * DESIGN-037 · mandatory
  * A screen's boxes nest at most three levels, and every row fits: its items'
  * minimum widths and the gaps between them stay within the screen's content
- * width (DS23, DR13). The minimums are the catalog's, added up by code.
+ * width. The minimums are the catalog's, added up by code.
  * Pass: a 640 list beside a 280 panel in a 960 column, 24 apart.
  * Fail: the same row in a 640 column.
  */

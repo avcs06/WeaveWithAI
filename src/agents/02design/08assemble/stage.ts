@@ -19,7 +19,7 @@ import { writeDesignFiles } from './write';
 
 /**
  * The screens from the plan, the catalog, the layouts, the components, the
- * widgets and the frames, in code (DS23): `02-design/08-assemble.json`, the
+ * widgets and the frames, in code: `02-design/08-assemble.json`, the
  * skeleton, the wireframes, `02-design/08-assemble.md` and the gap report. An
  * issue on the assembled design goes back once to the draw or frame call that
  * built what it names, as a separately named fix; the rest are recorded as known.

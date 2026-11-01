@@ -1,4 +1,4 @@
-<!-- System prompt of a frame call (DS23). Placeholders: nodeGuide, dsProse. The user message (input.md) names the shell and carries its regions, the framed pages that use it with how each page's frame differs, the steps the frame serves, the navigation, the screens, the vocabulary and the look. -->
+<!-- System prompt of a frame call. Placeholders: nodeGuide, dsProse. The user message (input.md) names the shell and carries its regions, the framed pages that use it with how each page's frame differs, the steps the frame serves, the navigation, the screens, the vocabulary and the look. -->
 
 You are the product designer of the app in the input. The theme gave each page layout its frame. The architect said how a page's frame differs. An earlier call gave the frame the steps it serves. You fill the shell that the input names with nodes. Answer with JSON that matches the schema.
 

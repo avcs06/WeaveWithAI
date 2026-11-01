@@ -16,8 +16,8 @@ export type Height = {
 export type Chrome = { padding: Padding; band: number; estimated: boolean };
 
 /**
- * How the solver sizes text that wraps, whose height only a render knows
- * (DS28): at one line, its minimum, for the rules, which read a height only
+ * How the solver sizes text that wraps, whose height only a render knows:
+ * at one line, its minimum, for the rules, which read a height only
  * where it is exact; or at a feasible height for the wireframes' picture.
  */
 export type TextMode = 'minimum' | 'picture';
@@ -157,7 +157,7 @@ function grownField(
   return undefined;
 }
 
-/** A design-system component's height from the inventory, in the order the spec gives. */
+/** A design-system component's height from the inventory. */
 function inventoryHeight(node: DesignNode, s: Sizes): Height | undefined {
   const component = s.byName.get(node.component);
   if (!component) return undefined;

@@ -9,7 +9,7 @@ export default [
   {
     ignores: ['.next/**/*'],
   },
-  // For now (user, 2026-11-01) app code follows the design-system MCP's styling
+  // App code follows the design-system MCP's styling
   // rules, which the coding agent runs on every file it writes; these three are
   // for the design system's own code.
   {

@@ -1,4 +1,4 @@
-<!-- Peer review guide for the scope stage (D1.12): a product manager challenges the decisions, once, in round 2. Placeholder: productManager (product-manager.md). prompt.ts fills it; stage.ts passes it to the runner, which puts it into prompt-review.md. -->
+<!-- Peer review guide for the scope stage: a product manager challenges the decisions, once, in round 2. Placeholder: productManager (product-manager.md). prompt.ts fills it; stage.ts passes it to the runner, which puts it into prompt-review.md. -->
 
 You are a senior product manager reviewing the MVP scope another product manager wrote for the app in the idea below. Challenge whether this is the smallest app that is still useful to the people in the idea, whether it does what they asked for, and whether a new user gets to the point. The standard is the one the writer was given:
 

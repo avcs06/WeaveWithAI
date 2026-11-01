@@ -1,4 +1,4 @@
-<!-- The recipe index (CD2), written to .weave/01-scaffold/recipes.md. Placeholder: recipes, one line per recipe in packages/recipes. -->
+<!-- The recipe index, written to .weave/01-scaffold/recipes.md. Placeholder: recipes, one line per recipe in packages/recipes. -->
 # State and hook recipes
 
 Each line names a recipe in `packages/recipes` and what it is for. Call

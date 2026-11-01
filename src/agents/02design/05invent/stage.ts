@@ -16,7 +16,7 @@ import { type ComponentDesign, DESIGN_KEYS, makeInventSchemas } from './schema';
 import { validateComponent } from './validation/validation';
 
 // Invent draws each new component at medium reasoning, its first draft at 0.7:
-// the creative expansion of the architect's description (DS23).
+// the creative expansion of the architect's description.
 const COMPONENT_MAX_TOKENS = 16_384;
 const COMPONENT_EFFORT = 'medium';
 

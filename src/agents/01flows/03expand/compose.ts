@@ -10,7 +10,7 @@ import type { Flows } from '../schema';
 import { expandUserMessage } from './prompts/index';
 import { type FlowBatch, FlowBatch as FlowBatchSchema } from './schema';
 
-// Reasoning tokens count toward the budget (D1.13). A batch of eight flows fits well inside 16k.
+// Reasoning tokens count toward the budget. A batch of eight flows fits well inside 16k.
 export const EXPAND_BATCH_SIZE = 8;
 
 const EXPAND_MAX_TOKENS = 16_384;

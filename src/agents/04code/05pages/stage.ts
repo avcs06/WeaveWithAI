@@ -41,7 +41,7 @@ export type PageSpec = Omit<UnitSpec, 'rendered'> & { screens: string[]; wave: n
 export function pageSpecs(design: WidgetScreens, contract: Contract): PageSpec[] {
   const task = loadPrompt(pathBeside(import.meta.url, './prompts/task.md'));
   const screenById = new Map(design.screens.map((s) => [s.id, s]));
-  // A shared dialog is built in blocks/ and checked there (CD7), not in its parent page's folder.
+  // A shared dialog is built in blocks/ and checked there, not in its parent page's folder.
   const sharedIds = new Set(
     design.sections.filter((s) => sharedUnits(design).dialogs.has(s.screen)).flatMap((s) => design.nodes.filter((n) => n.section === s.id).map((n) => n.id)),
   );

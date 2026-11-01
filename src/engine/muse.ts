@@ -1,6 +1,6 @@
 import type { Backend } from '../core/backends';
 
-// How a coding session calls Muse Code headless (D9.1 A), and what it reads
+// How a coding session calls Muse Code headless, and what it reads
 // back from its JSONL events. The model is always pinned and contributor mode
 // is off: the user's global settings default to an expensive model with
 // contributor mode on.

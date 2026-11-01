@@ -13,7 +13,7 @@ import { savePatch } from './patches';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
-// One coding session on Muse Code headless (D9.1 A). The agent can read
+// One coding session on Muse Code headless. The agent can read
 // anything in the app; this code judges the result: it reruns the checks,
 // records the diff in the ledger, measures the reads its rules rule out, and
 // fails a session whose diff touches a test or a path outside its own.
@@ -29,7 +29,7 @@ export type Session = {
   routes?: CheckedRoute[];
   /** What each screen's route folder must name, from its design and the contract. */
   expects?: ScreenExpect[];
-  /** The only paths the diff may touch, when given (CD5): each code stage writes its own folders. */
+  /** The only paths the diff may touch, when given: each code stage writes its own folders. */
   writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
   reads?: ReadRules;
@@ -75,8 +75,8 @@ export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
 export type CheckedRoute = { url: string; signedIn: boolean };
 
 /**
- * `pnpm verify` on routes as the generated apps need it: at the desktop width only, since the MVP has no phone
- * layout (user, 2026-10-30), and signed in as a member on routes behind sign-in.
+ * `pnpm verify` on routes as the generated apps need it: at the desktop width only, since the apps have no phone
+ * layout, and signed in as a member on routes behind sign-in.
  */
 export function verifyCommand(routes: string[], signedIn = false): string[] {
   return ['pnpm', 'verify', ...routes, '--widths', '1280', ...(signedIn ? ['--storage', SIGNED_IN_FILE] : [])];

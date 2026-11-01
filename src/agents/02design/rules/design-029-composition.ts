@@ -4,7 +4,7 @@ import { type CatalogInput, type ScreenInput, slotsOf } from './helpers';
 
 /**
  * DESIGN-029 · mandatory
- * Composition (DS23). In the catalog: widget ids like W01, unique; each
+ * Composition. In the catalog: widget ids like W01, unique; each
  * planned screen lists the widgets and declared components it is made of;
  * every widget is a part of a screen, and every declared component is a part
  * of a screen or held inside a widget. On a screen: every part is placed by an

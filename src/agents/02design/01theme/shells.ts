@@ -2,7 +2,7 @@ import type { Region, Shell } from '../schema-boxes';
 import type { Layouts, PageLayout } from './schema';
 
 // The theme's layouts as shells, the shapes the solver, the shell rules and the
-// frame calls read (DS4a): each layout's needed parts become regions, docked in
+// frame calls read: each layout's needed parts become regions, docked in
 // the layout's order.
 
 /** The shell each kind's layout becomes. */

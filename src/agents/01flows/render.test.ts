@@ -20,7 +20,7 @@ describe('render', () => {
     expect(renderScope(scope)).toMatchSnapshot();
   });
 
-  it('flows follow the spec sample: numbered steps, fields with rules, changes, other paths, outcome', () => {
+  it('flows read as numbered steps, fields with rules, changes, other paths, outcome', () => {
     const text = renderFlows(flows, scope);
     expect(text).toContain('## F03 Add a book to the reading list');
     expect(text).toContain(

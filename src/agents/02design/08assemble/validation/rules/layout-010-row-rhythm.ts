@@ -9,7 +9,7 @@ import type { LayoutInput, View } from '../helpers';
  * component, or a `what` when they are plain boxes) keep one gap: 8 to 16 as
  * cards, 0 to 12 as rows. Items side by side share a height by structure: the
  * row or grid holding them stretches them, since the height of text that
- * wraps is not known before a render (DS28). A heading or a pagination beside
+ * wraps is not known before a render. A heading or a pagination beside
  * the list is not one of its items.
  * Pass: three cards in a stretched grid, 8 apart, under the section's heading.
  * Fail: cards in a grid aligned to the start, so each is as tall as its text.

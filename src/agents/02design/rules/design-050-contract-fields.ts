@@ -7,7 +7,7 @@ import type { Screens } from '../schema';
  * DESIGN-050 · mandatory
  * Every value a node shows, on a screen, a shell or a new component, is a
  * field of the contract's entity for its noun, or a record field. The
- * contract runs beside the screen, invent, draw and frame calls (DS32, C7),
+ * contract runs beside the screen, invent, draw and frame calls,
  * so only the assembled design meets it: a draw or frame call's node goes
  * back to that call, and a component's node stays a known issue for the code
  * stages.

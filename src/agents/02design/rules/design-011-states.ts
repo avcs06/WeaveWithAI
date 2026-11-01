@@ -6,7 +6,7 @@ import { type NodesInput, stepFields, steps } from './helpers';
  * DESIGN-011 · mandatory
  * A screen's nodes show every state the plan lists for it, and a screen
  * serving a list effect shows empty and error. Loading, a field's error and a
- * submit's result are the design system's or a toast (user, 2026-10-31). The
+ * submit's result are the design system's or a toast. The
  * plan's list alone shows nothing.
  * Pass: the shelf with its empty state and its load error.
  * Fail: the shelf without empty.

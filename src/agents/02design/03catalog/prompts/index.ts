@@ -37,7 +37,7 @@ export function catalogUserMessage(
   });
 }
 
-/** The catalog's review guide (D1.12): the output reviewer alone. */
+/** The catalog's review guide: the output reviewer alone. */
 export const catalogReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });

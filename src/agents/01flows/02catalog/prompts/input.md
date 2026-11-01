@@ -1,4 +1,4 @@
-<!-- Stage 1 of the flows (D2.1 E), user message. Placeholders: idea, scope, standardSubflows. The system prompt is prompt-flows.md. -->
+<!-- Stage 1 of the flows, user message. Placeholders: idea, scope, standardSubflows. The system prompt is prompt-flows.md. -->
 
 # Idea
 

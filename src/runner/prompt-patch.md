@@ -1,4 +1,4 @@
-<!-- How a patch is written (D1.5 C, F16). The runner's fix prompt and the flows reconciliation put it in as {{patch}}; the runner merges the patch into the current document. -->
+<!-- How a patch is written. The runner's fix prompt and the flows reconciliation put it in as {{patch}}; the runner merges the patch into the current document. -->
 A patch lists only what changes. In a patch, each list of the document has two parts:
 
 - `upsert`: every item that changes or is new.

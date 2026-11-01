@@ -48,7 +48,7 @@ import { rule as layout071 } from './rules/layout-071-fixed-regions';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
-/** The layout heuristics (specs/layout-heuristics.md) on the skeleton, LAYOUT-0NN for H-NN. */
+/** The layout heuristics on the skeleton, LAYOUT-0NN for H-NN. */
 export const layoutRules: readonly Rule<LayoutInput>[] = [
   layout001,
   layout002,

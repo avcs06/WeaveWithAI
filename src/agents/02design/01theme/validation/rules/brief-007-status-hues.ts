@@ -6,8 +6,8 @@ import type { BriefInput } from '../helpers';
 /**
  * BRIEF-007 · mandatory
  * Each status hue sits inside its band, so success reads as green, warning as
- * amber, error as red and info as blue in every theme (user, 2026-11-01: the
- * theme picks its status colors).
+ * amber, error as red and info as blue in every theme
+ * (the theme picks its status colors).
  * Pass: success 150, warning 80, error 25, info 240.
  * Fail: error at 200.
  */

@@ -11,11 +11,11 @@ import type { ScreenExpect } from './conformance';
 import { type CheckedRoute, protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
-// A coding unit on the stage runner (CD5): its draft and its fixes are Muse
+// A coding unit on the stage runner: its draft and its fixes are Muse
 // Code sessions, its validators are the checks after each session, and its
 // reviewers read the unit's whole diff.
 
-/** Round 1: the session, the checks, both reviewers. Round 2: a fix and both again. Round 3: a final fix (D1.6). */
+/** Round 1: the session, the checks, both reviewers. Round 2: a fix and both again. Round 3: a final fix. */
 export const CODE_SCHEDULE: Round[] = [
   { fix: false, reviewers: ['output'] },
   { fix: true, reviewers: ['output'] },

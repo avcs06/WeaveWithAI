@@ -16,7 +16,7 @@ import type { DesignContext, FrameInput } from '../../rules/helpers';
 import { validateScreenNodes } from '../../rules/index';
 import type { FrameBuild } from '../schema';
 
-// A frame call's checks (DS23): its changes and the steps catalog gave it, the
+// A frame call's checks: its changes and the steps catalog gave it, the
 // node rules on the shell's nodes and on what each change adds, and the fixed
 // regions of the shell solved around an empty page.
 

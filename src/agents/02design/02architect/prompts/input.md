@@ -1,4 +1,4 @@
-<!-- User message of the architect (DS23). Placeholders: scope, flows, brief, layouts. -->
+<!-- User message of the architect. Placeholders: scope, flows, brief, layouts. -->
 # Scope
 
 {{scope}}

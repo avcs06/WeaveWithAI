@@ -10,7 +10,7 @@ import type { ScreenLayout } from '../04screen/schema';
 import type { Build, ModelNode } from '../06draw/schema';
 import type { FrameBuild } from '../07frame/schema';
 
-// What the design rules (DESIGN-0NN, specs/design.md) read: the IA alone, one
+// What the design rules (DESIGN-0NN) read: the IA alone, one
 // screen's or shell's nodes, or the whole screens artifact, with the flows,
 // the scope, the full inventory, and the shells and component defaults from
 // the theme.
@@ -31,7 +31,7 @@ export type NodesInput = {
   screen: string;
 };
 export type ScreensInput = { screens: Screens; ctx: DesignContext };
-/** The architect's processed plan (DS23), with the theme's page layouts its navigation fits. */
+/** The architect's processed plan, with the theme's page layouts its navigation fits. */
 export type PlanInput = { plan: Plan; layouts: Layouts; ctx: DesignContext };
 /** The catalog's processed definitions, with the plan they serve and each screen's content width. */
 export type CatalogInput = {
@@ -123,7 +123,7 @@ export function leadsOf(widget: Defined, plan: Plan, catalog: Catalog, flows: Fl
   );
 }
 
-/** The wordmark is the leaf that shows the app's name; a box whose `what` mentions it only holds it (DS51). */
+/** The wordmark is the leaf that shows the app's name; a box whose `what` mentions it only holds it. */
 export const isWordmark = (node: Pick<DesignNode, 'what' | 'role'>) =>
   node.role !== 'container' && /wordmark/i.test(node.what);
 
@@ -214,11 +214,11 @@ const ALTERNATIVE_STATE: Partial<Record<string, State>> = {
 };
 
 /**
- * The states what serves these steps and alternatives must show (DR05, DR08):
+ * The states what serves these steps and alternatives must show:
  * listing records needs empty and error, and an alternative shows its own
  * state. Loading is the design system's, and saving fields needs none: a
  * field's error and the submit's progress are the design system's, and the
- * result, failure or denial included, is a toast (user, 2026-10-31).
+ * result, failure or denial included, is a toast.
  */
 export function requiredStates(ids: string[], flows: Flows): State[] {
   const byStep = new Map(steps(flows).map((step) => [step.id, step]));

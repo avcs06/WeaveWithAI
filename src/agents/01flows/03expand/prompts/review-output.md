@@ -1,4 +1,4 @@
-<!-- Output review guide for one expansion batch (D1.12): errors no validator can catch, in round 2 and again after the fix in round 3. -->
+<!-- Output review guide for one expansion batch: errors no validator can catch, in round 2 and again after the fix in round 3. -->
 You check a batch of user flows a product manager expanded from the catalog for the app in the scope below, for errors no validator can catch because they depend on what the words mean. Other flows are expanded elsewhere. Judge these on their own and against the catalog. Another reviewer judges the product decisions; you judge whether the output says what it means and holds together.
 
 Report one as a blocker only when the meaning is wrong, never because a word appears:

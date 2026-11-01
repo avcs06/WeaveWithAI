@@ -9,12 +9,12 @@ import { makeArchitectSchema, PLAN_KEYS } from './schema';
 import { validatePlan } from './validation/validation';
 
 // The architect plans every screen once, at high reasoning, its first draft at
-// 0.7 (DS23); it starts at the client's 64k cap, so no cut is billed before a
-// doubling (user, 2026-10-30).
+// 0.7; it starts at the client's 64k cap, so no cut is billed before a
+// doubling.
 const PLAN_MAX_TOKENS = 65_536;
 const PLAN_EFFORT = 'high';
 
-/** The architect's call: the screens, the navigation and the new components, with what follows from them filled in (DS23). */
+/** The architect's call: the screens, the navigation and the new components, with what follows from them filled in. */
 export async function runArchitect(ctx: StageContext, inv: Inventory): Promise<void> {
   const { run, llm } = ctx;
   const { scope, flows, brief, theme, context } = designInputs(run, inv);

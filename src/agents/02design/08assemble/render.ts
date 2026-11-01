@@ -6,10 +6,10 @@ import type { NodeLayout, Shell } from '../schema-boxes';
 import type { PageLayout } from '../01theme/schema';
 import type { Mode, Theme } from '../01theme/build';
 
-// 02-design/08-assemble.md (DS8): everything a reviewer needs to read a design without
+// 02-design/08-assemble.md: everything a reviewer needs to read a design without
 // the JSON: the direction, the palette with its contrast, the shells and the
 // navigation, each screen's sections and nodes as a tree, the new components. The
-// wireframes (02-design/08-wireframes.html, DS6b) draw the same screens.
+// wireframes (02-design/08-wireframes.html) draw the same screens.
 
 const byOrder = <T extends { order: number; id: string }>(a: T, b: T) =>
   a.order - b.order || a.id.localeCompare(b.id);

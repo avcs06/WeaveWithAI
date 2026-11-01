@@ -5,7 +5,7 @@ import { CONTENT_WIDTHS, SCREEN_KINDS, STATES } from '../config';
 import { makeScreensSchema } from '../schema';
 
 /**
- * The architect's plan (DS23, user 2026-10-31): the creative call. It plans
+ * The architect's plan: the creative call. It plans
  * the screens, their steps, composition and frame changes in prose, the
  * navigation, and the new components' look; no blocks and no layout. Access,
  * roles, required states and most alternatives follow from the steps, so a
@@ -93,7 +93,7 @@ export type PlanScreen = z.infer<PlanSchemas['Screen']>;
 
 export type PlannedComponent = z.infer<PlanSchemas['Component']>;
 
-/** The plan's keyed lists, for patch fixes (F16). */
+/** The plan's keyed lists, for patch fixes. */
 export const PLAN_KEYS = {
   screens: 'id',
   navigation: 'screen',

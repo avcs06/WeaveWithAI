@@ -3,7 +3,7 @@ import type { STATES } from '../config';
 import { requiredStates, stepFields, steps } from '../rules/helpers';
 import type { Catalog, CatalogWidget } from './schema';
 
-// What follows from the catalog's definitions (DS23, DR08, DR13): a widget's
+// What follows from the catalog's definitions: a widget's
 // fields and required states from the steps it serves, and its minimum width
 // added up from its coarse layout, so the model copies nothing and sums nothing.
 

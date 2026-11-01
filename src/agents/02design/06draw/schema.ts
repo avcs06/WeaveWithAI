@@ -4,7 +4,7 @@ import { EDGES } from '../config';
 import { makeScreensSchema } from '../schema';
 import { boxSchemas } from '../schema-boxes';
 
-/** A draw call's shapes: a widget's nodes, edge and root layout, its words inline (DS23). */
+/** A draw call's shapes: a widget's nodes, edge and root layout, its words inline. */
 export function makeDrawSchemas(inv: Inventory) {
   const { Node } = makeScreensSchema(inv);
   const { Layout } = boxSchemas(inv);
@@ -54,5 +54,5 @@ export type ModelNode = z.infer<DrawSchemas['ModelNode']>;
 
 export type Build = z.infer<DrawSchemas['Build']>;
 
-/** A build's keyed list, for patch fixes (F16): a fix sends only the nodes that change. */
+/** A build's keyed list, for patch fixes: a fix sends only the nodes that change. */
 export const BUILD_KEYS = { nodes: 'id' };

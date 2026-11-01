@@ -19,8 +19,8 @@ import {
   type ThemeCall,
 } from './schema';
 
-// The theme (DS4a, D3.3 F): the theme call picks every color as a step of a
-// ramp (DS27), the logo, the page layouts and the component defaults; code
+// The theme: the theme call picks every color as a step of a
+// ramp, the logo, the page layouts and the component defaults; code
 // turns the steps into hex and adds the brief's fonts, radius, focus ring and
 // density, the logo's family and spacing, and the contrast table the THEME
 // rules check.

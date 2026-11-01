@@ -6,13 +6,13 @@ import type { WidgetInput } from './helpers';
 
 /**
  * DESIGN-044 · mandatory
- * A widget draws its definition's slots and components (DS23): each slot is
+ * A widget draws its definition's slots and components: each slot is
  * one node naming it, a words slot's node has no words of its own, and a
  * parts slot's node is a container with nothing inside; no node names a slot
  * the definition lacks. A node is a new component only when the widget holds
  * it, and each component it holds is drawn. Invent draws a new component's
- * catalog slots the same way, so a screen can place instances in them
- * (user, 2026-11-01). Assembly fills slots by name.
+ * catalog slots the same way, so a screen can place instances in them.
+ * Assembly fills slots by name.
  * Pass: the shelf header's title heading naming the title slot, with no text.
  * Fail: the same heading with "Your shelf" written in and no slot.
  */

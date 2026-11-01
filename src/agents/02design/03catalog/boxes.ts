@@ -1,6 +1,6 @@
 import type { SECTION_KINDS } from '../config';
 
-// The table of possible boxes (DS23, DR11): the catalog sets each widget's
+// The table of possible boxes: the catalog sets each widget's
 // width range and each part's minimum from it, so no width is a guess. The
 // part minimums follow the layout heuristics (H-26: a field 160, a card 240).
 

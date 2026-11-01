@@ -1,4 +1,4 @@
-<!-- Output review guide for the flows catalog (D1.12): errors no validator can catch, in round 2 and again after the fix in round 3. -->
+<!-- Output review guide for the flows catalog: errors no validator can catch, in round 2 and again after the fix in round 3. -->
 You check the catalog of user flows a product manager wrote for the app in the scope below, for errors no validator can catch because they depend on what the words mean. The catalog holds every flow's header and description, and the reusable fields, forms and subflows. Another reviewer judges the product decisions; you judge whether the output says what it means and holds together.
 
 Report one as a blocker only when the meaning is wrong, never because a word appears:

@@ -16,18 +16,18 @@ import {
 import { makeThemeSchema } from './schema';
 import { briefRules, validateTheme } from './validation/validation';
 
-// One call sets the direction and every value (D3.3 F, user 2026-11-01): the
+// One call sets the direction and every value: the
 // brief, every color, both page layouts and the component defaults.
 
-// Reasoning tokens count toward the budget (D1.13): the call reasons at high and writes the brief and the theme.
+// Reasoning tokens count toward the budget: the call reasons at high and writes the brief and the theme.
 const THEME_MAX_TOKENS = 32_768;
 
-// The direction needs the most reasoning and room to be creative, so the first draft also runs at 0.7 (D1.13 C).
+// The direction needs the most reasoning and room to be creative, so the first draft also runs at 0.7.
 const THEME_EFFORT = 'high';
 
 const THEME_TEMPERATURE = 0.7;
 
-// A better first draft leaves fewer issues for the fixes, so it runs on the strong model (user, 2026-10-30).
+// A better first draft leaves fewer issues for the fixes, so it runs on the strong model.
 const THEME_DRAFT_MODEL = 'strong';
 
 /** The theme call: the brief and the theme its values become, from the idea, the scope and the flows. */
@@ -44,7 +44,7 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
     schemaName: 'Theme',
     system: themeSystemPrompt(inv),
     user: themeUserMessage(idea, scope, flows),
-    // The rules read the built theme, so a failing contrast pair goes back to this call (D3.3 F).
+    // The rules read the built theme, so a failing contrast pair goes back to this call.
     validate: (call) => validateTheme(call, scope, inv),
     review: themeReviewGuides(),
     maxTokens: THEME_MAX_TOKENS,

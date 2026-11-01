@@ -1,4 +1,4 @@
-<!-- Sent after a round that left mandatory issues or blockers, to a stage whose document has keyed lists (D1.5 C, F16). Placeholders: patch, how a patch is written (prompt-patch.md); issues, one "- RULE at ID: message" line each; answers, the user's answers since the last generation as one "- Q01 "question": answer" line each, or "None.". The runner merges the patch into the current document. -->
+<!-- Sent after a round that left mandatory issues or blockers, to a stage whose document has keyed lists. Placeholders: patch, how a patch is written (prompt-patch.md); issues, one "- RULE at ID: message" line each; answers, the user's answers since the last generation as one "- Q01 "question": answer" line each, or "None.". The runner merges the patch into the current document. -->
 Fix each problem below and apply each answer below.
 
 - Apply each answer everywhere it affects the document.

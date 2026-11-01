@@ -7,7 +7,7 @@ import { context, emit, type Rect } from './solve';
 import type { DesignNode, DesignScreen, DesignSection, Screens } from '../../schema';
 import type { NodeBox, Region } from '../../schema-boxes';
 
-// The layout skeleton (DS6b): a rectangle for every shell region, section and
+// The layout skeleton: a rectangle for every shell region, section and
 // node of every screen at desktop width, from the nodes' boxes and
 // layouts, the inventory's measured boxes and the type scale. Pure and
 // deterministic. Nothing is fixed silently: a row that does not fit is
@@ -94,7 +94,7 @@ function tree(screens: Screens, screen: DesignScreen) {
       { id, kind: 'section', what: title, box, layout, share, children: kids },
     ];
   };
-  // The screen's box tree (DS23): boxes hold boxes and sections, each by order.
+  // The screen's box tree: boxes hold boxes and sections, each by order.
   const own = screens.sections.filter((s) => s.screen === screen.id);
   const boxes = (screens.boxes ?? []).filter((b) => b.screen === screen.id);
   const inside = (parent: string): Item[] =>
@@ -120,7 +120,7 @@ function tree(screens: Screens, screen: DesignScreen) {
       );
   const sections = inside('');
   const shell = screens.shells.find((s) => s.id === screen.shell);
-  // A screen shows its shell's default nodes less the ones it removes, and the frame nodes only it adds (DS23).
+  // A screen shows its shell's default nodes less the ones it removes, and the frame nodes only it adds.
   const changes = screens.frameChanges ?? [];
   const mine = changes.find((c) => c.screen === screen.id);
   const others = new Set(
@@ -322,7 +322,7 @@ function layoutScreen(
   return { width: vw, height: Math.max(vh, y + height + 16), rects };
 }
 
-/** Every screen at desktop width; the rules read the minimum, the wireframes draw the picture (DS28). */
+/** Every screen at desktop width; the rules read the minimum, the wireframes draw the picture. */
 export function skeleton(
   screens: Screens,
   inv: Inventory,

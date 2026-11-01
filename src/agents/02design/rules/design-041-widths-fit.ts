@@ -4,7 +4,7 @@ import type { CatalogInput, ComponentInput } from './helpers';
 
 /**
  * DESIGN-041 · mandatory
- * Widths fit (DS23, DR13): a widget's minimum, added up from its coarse
+ * Widths fit: a widget's minimum, added up from its coarse
  * layout, fits the content width of every screen that uses it, and each slot's
  * range fits inside its widget's. Each declared component has one width
  * range, and invent draws its root inside it.

@@ -3,7 +3,7 @@ import type { Theme } from './01theme/build';
 import type { Layouts } from './01theme/schema';
 import type { Processed as Plan } from './02architect/process';
 
-// What the design calls after the plan are told about the app (DS23): the
+// What the design calls after the plan are told about the app: the
 // look, and the screens a node can open. A call gets what it builds from,
 // not the whole flows.
 

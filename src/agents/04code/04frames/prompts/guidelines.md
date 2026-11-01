@@ -1,4 +1,4 @@
-<!-- Guidelines of the frames folder (CD8), written to .weave/04-frames/guidelines.md. No placeholders. -->
+<!-- Guidelines of the frames folder, written to .weave/04-frames/guidelines.md. No placeholders. -->
 # Frames
 
 - Each shell in `shells/` is a layout,

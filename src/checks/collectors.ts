@@ -3,7 +3,7 @@ import type { Page } from 'playwright-core';
 import { inPage } from './page';
 import { type Finding, finding } from './types';
 
-// DESIGN-R-001, 002 and 004 to 009 (specs/design.md "Rendered checks"): each
+// DESIGN-R-001, 002 and 004 to 009: each
 // measures one open page and returns findings plus the numbers behind them,
 // so the coding gate, the app MCP and the benchmark read the same
 // collectors. The keyboard walk, R-003, is keyboard.ts.

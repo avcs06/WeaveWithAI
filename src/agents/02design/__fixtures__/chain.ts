@@ -20,7 +20,7 @@ import { sizes } from '../08assemble/skeleton/boxes';
 import { type DesignContext, requiredStates } from '../rules/helpers';
 import { type DesignNode, makeScreensSchema, type Screens } from '../schema';
 
-// The reading-list design as the chain's calls answer it (DS23), derived from
+// The reading-list design as the chain's calls answer it, derived from
 // reading-list.screens.json so that file stays the one source: the plan from
 // its screens, a widget per section, a layout per screen with an instance per
 // section, the component's look, a build per widget with its nodes renumbered

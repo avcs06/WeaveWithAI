@@ -16,7 +16,7 @@ import { stepGuide } from '../ramps';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** One reference color per name; the prompt shows its OKLCH hue, so a model that thinks in HSL or names picks the right degrees (DS26). */
+/** One reference color per name; the prompt shows its OKLCH hue, so a model that thinks in HSL or names picks the right degrees. */
 const NAMED_COLORS = {
   red: '#FF0000',
   orange: '#FF8000',
@@ -80,7 +80,7 @@ export function themeUserMessage(idea: string, scope: Scope, flows: Flows): stri
 /** A review guide beside this file: `review-peer` or `review-output`. */
 const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});
 
-/** The call's two review guides (D1.12): the product designer peer, then the output reviewer. */
+/** The call's two review guides: the product designer peer, then the output reviewer. */
 export const themeReviewGuides = (): ReviewGuides => ({
   peer: guide('review-peer'),
   output: guide('review-output'),

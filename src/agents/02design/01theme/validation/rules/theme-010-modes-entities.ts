@@ -7,7 +7,7 @@ import type { CallInput } from '../helpers';
  * THEME-010 · mandatory
  * The colors hold each mode the brief's color scheme names, once, and no
  * other, and each mode a set for each colored entity, once, and no other.
- * The brief and its values come in one answer (D3.3 F), so the schema cannot
+ * The brief and its values come in one answer, so the schema cannot
  * hold the colors to the brief.
  * Pass: a dark-only brief with one dark mode, holding a set for its one colored noun.
  * Fail: the same brief whose colors also hold a light mode.

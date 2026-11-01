@@ -9,7 +9,7 @@ const DARKEST = { light: 12, dark: 1 } as const;
 /**
  * THEME-012 · warning
  * Every set's shadow is its ramp's darkest step: 12 in light mode, 1 in dark.
- * A warning: a lighter shadow only softens the depth (user, 2026-11-01).
+ * A warning: a lighter shadow only softens the depth.
  * Pass: the reading-list theme.
  * Fail: the light theme set's shadow at step 9.
  */

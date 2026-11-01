@@ -3,8 +3,8 @@ import { type PlanInput, stepFields, steps } from './helpers';
 
 /**
  * DESIGN-045 · mandatory
- * A step that saves fields is on one screen, the one with its form (DS23,
- * user 2026-10-31). On a second screen, such as the page that opens the
+ * A step that saves fields is on one screen, the one with its form.
+ * On a second screen, such as the page that opens the
  * dialog or the page the step lands on, a widget there would have to take the
  * step's fields.
  * Pass: saving a client on the client dialog alone; choosing to add one on the clients page.

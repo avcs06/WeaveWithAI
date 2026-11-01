@@ -5,13 +5,13 @@ import type { CatalogInput, ScreenInput, WidgetInput } from './helpers';
 
 /**
  * DESIGN-030 · mandatory
- * The heading plan (DS23). On a screen, an instance whose widget contains a
+ * The heading plan. On a screen, an instance whose widget contains a
  * heading takes a level, 1 to 3, and no other does: a page has exactly one
  * level 1, which shows the page's title when it has one, and levels never skip
  * in reading order; a dialog or drawer has no level 1. In a widget that
  * contains a heading, its top heading comes first at level 1, the levels under
  * it never skip, and a widget without one has no heading. A widget takes its
- * level from each instance, so it no longer keeps one (user, 2026-10-31).
+ * level from each instance, so it keeps none of its own.
  * Pass: S04's header at 1 with the title "Your shelf", its list at 2.
  * Fail: a level 3 straight after the level 1.
  */
@@ -87,9 +87,8 @@ export const widgetRule = defineRule<WidgetInput>(
 
 /**
  * In the catalog: every page has a part with a heading for its level 1, and a
- * page with a title shows it there, in a `title` words slot. Untitled pages
- * were left out until the dashboard run's editor had no heading to give level
- * 1 in five screen rounds (user, 2026-10-31).
+ * page with a title shows it there, in a `title` words slot. An untitled page
+ * needs that part too, or the screen call has no heading to give level 1.
  */
 export const catalogRule = defineRule<CatalogInput>(
   'DESIGN-030',

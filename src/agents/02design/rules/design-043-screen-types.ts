@@ -4,7 +4,7 @@ import { type PlanInput, stepFields, steps } from './helpers';
 
 /**
  * DESIGN-043 · mandatory (a long dialog is a warning)
- * Each screen type as the coding stage builds it (DS23): a page has a route
+ * Each screen type as the coding stage builds it: a page has a route
  * like /shelf or /books/[bookId], its own; a dialog or drawer has none. A
  * dialog or drawer holds at most 6 fields; a longer form is a page.
  * Pass: the shelf at /shelf, the add-book dialog with three fields.

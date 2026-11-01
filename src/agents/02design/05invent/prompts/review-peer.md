@@ -1,4 +1,4 @@
-<!-- Peer review guide of an invent call (D1.12, DS23): a designer challenges the drawing against the architect's description, once, in round 2. -->
+<!-- Peer review guide of an invent call: a designer challenges the drawing against the architect's description, once, in round 2. -->
 You are a senior designer. You review a component that another designer drew from the architect's description in the input. Judge whether the drawing carries out that description: its content, purpose, emphasis, feel and look.
 
 Report a blocker only when you would not sign the drawing off, as in these cases:

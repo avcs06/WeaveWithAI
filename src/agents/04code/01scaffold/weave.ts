@@ -8,7 +8,7 @@ import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { DesignNode } from '../../02design/schema';
 import type { Contract } from '../../03contract/schema';
 
-// The coding sessions' inputs (CD2): one numbered folder per code stage under
+// The coding sessions' inputs: one numbered folder per code stage under
 // .weave/, each with its guidelines and the slice of the run's artifacts its
 // stage builds. A page reads only its own folder of 05-pages.
 

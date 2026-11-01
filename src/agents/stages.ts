@@ -67,7 +67,7 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
-/** Stages that read nothing of each other's, so they run side by side: after the catalog, the contract, layouts, components, widgets and frames (DS32, C7). */
+/** Stages that read nothing of each other's, so they run side by side: after the catalog, the contract, layouts, components, widgets and frames. */
 export const SIDE_BY_SIDE: string[][] = [
   ['contract', 'design-screen', 'design-invent', 'design-draw', 'design-frame'],
 ];
