@@ -36,6 +36,6 @@ export const FilterTrigger = ({
     tooltip="Filter"
     aria-label={active ? `Filter ${label} (active)` : `Filter ${label}`}
   >
-    <Filter fill={active ? 'currentColor' : 'none'} />
+    <Filter fill={active ? 'currentColor' : 'none'} data-ds="" />
   </IconButton>
 );

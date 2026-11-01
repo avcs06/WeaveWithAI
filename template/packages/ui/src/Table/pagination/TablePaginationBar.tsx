@@ -147,6 +147,7 @@ export const TablePaginationBar = memo(
     return (
       <div
         data-slot="pagination"
+        data-ds=""
         className={classNames(
           styles.paginationBar,
           'flex-row-gap-3 items-center justify-between flex-wrap px-1.5 py-2',

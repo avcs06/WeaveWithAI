@@ -27,6 +27,7 @@ export const BareInput = <D extends number = never>({
   return (
     <input
       {...props}
+      data-ds=""
       value={text}
       onChange={(event) => setText(event.target.value)}
       // Flush first so the caller's handler, a focus-moving click or Enter's

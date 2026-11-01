@@ -50,6 +50,7 @@ export const Link = ({
       <Tooltip tooltip={disabledWithReason}>
         <a
           {...anchorProps}
+          data-ds=""
           // Without `href`, an anchor isn't read as a link.
           role="link"
           aria-disabled
@@ -68,7 +69,11 @@ export const Link = ({
 
   const Anchor = asChild ? Slot : 'a';
   return (
-    <Anchor {...props} className={classNames(linkClassName, className)}>
+    <Anchor
+      {...props}
+      className={classNames(linkClassName, className)}
+      data-ds={asChild ? undefined : ''}
+    >
       {children}
     </Anchor>
   );

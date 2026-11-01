@@ -6,9 +6,9 @@ import { Button, type ButtonProps } from '../../Button';
 import type { TableSortDirection } from '../Table.types';
 
 const SORT_ICONS = {
-  asc: <ArrowUp />,
-  desc: <ArrowDown />,
-  none: <ArrowUpDown />,
+  asc: <ArrowUp data-ds="" />,
+  desc: <ArrowDown data-ds="" />,
+  none: <ArrowUpDown data-ds="" />,
 };
 
 const ARIA_SORT = {

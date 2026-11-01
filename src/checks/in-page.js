@@ -73,13 +73,18 @@
       .map((node) => node.textContent.trim())
       .join(' ')
       .trim();
+  /** Made by the app, not the design system: its own tests cover every element it marks with data-ds. */
+  const appMade = (element) => !element.hasAttribute('data-ds');
   const textElements = () =>
     [...document.body.querySelectorAll('*')].filter(
       (element) => ownText(element) && visible(element),
     );
 
   globalThis.__weaveChecks = {
-    /** R-002: each visible text against its background; 3:1 from 24px, or 18.66px bold. */
+    /**
+     * R-002: each visible text against its background; 3:1 from 24px, or 18.66px bold. The design system's text too:
+     * the background behind it, and the variant it shows, are the app's choice.
+     */
     contrast() {
       const failures = [];
       let unknown = 0;
@@ -104,7 +109,7 @@
     /** R-004: every visible control's box. */
     targets() {
       return [...document.querySelectorAll(`${FOCUSABLE}, [role="button"], [role="link"]`)]
-        .filter(visible)
+        .filter((element) => appMade(element) && visible(element))
         .map((element) => {
           const box = element.getBoundingClientRect();
           return { element: name(element), width: Math.round(box.width), height: Math.round(box.height) };
@@ -123,7 +128,7 @@
       return [
         ...(page.scrollWidth > window.innerWidth ? [`page is ${page.scrollWidth}px wide`] : []),
         ...[...document.body.querySelectorAll('*')]
-          .filter((element) => scrolls(element) && element.scrollWidth > element.clientWidth + 1 && !tables.has(element))
+          .filter((element) => appMade(element) && scrolls(element) && element.scrollWidth > element.clientWidth + 1 && !tables.has(element))
           .map((element) => `${name(element)} scrolls sideways (${element.scrollWidth}px in ${element.clientWidth}px)`),
       ];
     },
@@ -141,9 +146,10 @@
     /** R-007: text under 14px; wrapped paragraphs over 90 characters a line, or under 45. */
     typography() {
       const small = textElements()
+        .filter(appMade)
         .map((element) => ({ element: name(element), size: Number.parseFloat(getComputedStyle(element).fontSize) }))
         .filter((entry) => entry.size < 14);
-      const measure = [...document.querySelectorAll('p')].filter(visible).flatMap((p) => {
+      const measure = [...document.querySelectorAll('p')].filter((p) => appMade(p) && visible(p)).flatMap((p) => {
         const style = getComputedStyle(p);
         const probe = document.createElement('span');
         probe.textContent = '0';
@@ -177,7 +183,8 @@
           ]),
           ['outline-color', style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) > 0 ? style.outlineColor : ''],
         ];
-        for (const [property, value] of used) {
+        // The design system's colors are its own; how much accent the page shows counts every element.
+        for (const [property, value] of appMade(element) ? used : []) {
           const color = rgb(value);
           if (!color || color.a === 0) continue;
           if (!theme.has(hex(color))) stray.push({ element: name(element), property, hex: hex(color) });
@@ -214,6 +221,7 @@
         .filter((element) => visible(element) && !element.disabled && element.getAttribute('aria-disabled') !== 'true')
         .map((element) => ({
           element: name(element),
+          app: appMade(element),
           button: element.tagName === 'BUTTON' || element.getAttribute('role') === 'button',
           skip: element.tagName === 'A' && /^#./.test(element.getAttribute('href') || ''),
         }));
@@ -262,6 +270,24 @@
     },
     clicks(selector) {
       return globalThis.__weaveClicks?.[selector] || 0;
+    },
+    /** The selectors whose element the app made; the walk opens only those dialog triggers. */
+    appMadeOf(selectors) {
+      return selectors.filter((selector) => {
+        const element = find(selector);
+        return element ? appMade(element) : false;
+      });
+    },
+    /**
+     * Marks, for axe to leave out, each topmost design-system element whose whole subtree the design system made
+     * (an svg's own shapes count as its). A component holding what the app put in its slot stays in, so that is tested.
+     */
+    skipDesignSystem() {
+      for (const element of document.querySelectorAll('[data-ds]')) {
+        if (element.querySelector(':not([data-ds]):not(svg *)')) continue;
+        if (element.parentElement?.closest('[data-weave-skip]')) continue;
+        element.setAttribute('data-weave-skip', '');
+      }
     },
     /** An open dialog's accessible name, or null. */
     openDialog() {

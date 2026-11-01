@@ -45,7 +45,7 @@ export const SelectAllCell = memo(({ rows, rowKey }: SelectAllCellProps) => {
   return (
     <Primitives.HeaderCell data-slot="header-cell">
       {/* A block, so the cell centers it; inline, it sits on the baseline. */}
-      <div className="flex-row-gap-0 items-center justify-center">
+      <div className="flex-row-gap-0 items-center justify-center" data-ds="">
         <Checkbox
           aria-label="Select all rows"
           checked={allChecked}

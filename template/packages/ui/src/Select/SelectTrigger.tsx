@@ -168,6 +168,7 @@ export const SelectEnd = ({
   const iconClassName = controlIcon({ size });
   return (
     <span
+      data-ds=""
       className={classNames(
         selectLineBox,
         'inline-flex-row-gap-1 items-center shrink-0',
@@ -183,10 +184,15 @@ export const SelectEnd = ({
           tooltip="Clear selection"
           onClick={onClear}
         >
-          <X />
+          <X data-ds="" />
         </IconButton>
       )}
-      <ChevronDown aria-hidden data-slot="chevron" className={iconClassName} />
+      <ChevronDown
+        aria-hidden
+        data-slot="chevron"
+        className={iconClassName}
+        data-ds=""
+      />
     </span>
   );
 };
@@ -200,6 +206,7 @@ export const SelectContent = ({
 }) => (
   <span
     data-slot="value"
+    data-ds=""
     className="flex-fill-x flex-row-gap-1 flex-wrap items-center"
   >
     {value}

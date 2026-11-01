@@ -47,7 +47,7 @@ export const ExpandAllCell = memo(({ rows, rowKey }: ExpandAllCellProps) => {
   return (
     <Primitives.HeaderCell data-slot="header-cell">
       {/* A block, so the cell centers it; inline, it sits on the baseline. */}
-      <div className="flex-row-gap-0 items-center justify-center">
+      <div className="flex-row-gap-0 items-center justify-center" data-ds="">
         <IconButton
           size="xs"
           variant="base"
@@ -56,7 +56,11 @@ export const ExpandAllCell = memo(({ rows, rowKey }: ExpandAllCellProps) => {
           disabled={scopeKeys.length === 0}
           onClick={() => store('setRowsExpanded')(scopeKeys, !allExpanded)}
         >
-          {allExpanded ? <ChevronsDownUp /> : <ChevronsUpDown />}
+          {allExpanded ? (
+            <ChevronsDownUp data-ds="" />
+          ) : (
+            <ChevronsUpDown data-ds="" />
+          )}
         </IconButton>
       </div>
     </Primitives.HeaderCell>

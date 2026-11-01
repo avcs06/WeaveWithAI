@@ -147,6 +147,28 @@ describe('rendered checks on the fixture pages', () => {
     expect(page.url()).toMatch(/navigates\.html$/);
   });
 
+  it('stops an opened route\'s motion, so styles are measured at rest', async () => {
+    const context = await browser.newContext();
+    const page = await openRoute(context, `${base}navigates.html`);
+    expect(await page.evaluate("getComputedStyle(document.querySelector('button')).transitionDuration")).toBe('0s');
+    await context.close();
+  });
+
+  it("never tests the design system's own markup, and tests what the app put in a design-system slot", async () => {
+    const context = await browser.newContext();
+    const sample = { route: '/', url: `${base}design-system.html`, screen: 'S01', entry: false, primaryTestIds: [] };
+    const report = await checkRoute(sample, theme, (url) => openRoute(context, url));
+    const of = (rule: string) => report.findings.filter((f) => f.rule === rule);
+    // All three buttons are unnamed and 12px; nothing filters findings, so only the two the app made were tested.
+    expect(of('DESIGN-R-004').map((f) => f.element)).toEqual(['[data-testid="S01.n02"] > button:nth-of-type(1)', '#slotted']);
+    expect(of('DESIGN-R-001').filter((f) => f.message.startsWith('button-name'))).toHaveLength(2);
+    expect(report.metrics.keyboard).toMatchObject({ interactive: 2, activation: { buttons: 2, enterOk: 2, spaceOk: 2 } });
+    // Contrast is tested on the design system's text too; its text size is not.
+    expect(of('DESIGN-R-002').map((f) => f.element)).toContain('#ds-grey');
+    expect(of('DESIGN-R-007').map((f) => f.element)).not.toContain('#ds-small');
+    await context.close();
+  });
+
   it('turns a check that breaks into a warning on its rule, and finishes the route', async () => {
     const report = await checkRoute(
       { route: '/', url: `${base}clean.html`, screen: 'S01', entry: true, primaryTestIds: [] },

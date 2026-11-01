@@ -277,7 +277,7 @@ export function SelectControl(props: SelectControlProps) {
                   onClear={canClear ? selectionControl.clearValues : undefined}
                 />
                 {canEdit && (
-                  <span id={editHintId} hidden>
+                  <span id={editHintId} hidden data-ds="">
                     {selectionControl.multiple
                       ? `Backspace removes the last value, Delete the first.${hasTags ? ' ArrowLeft moves to the values.' : ''}`
                       : 'Press Backspace or Delete to clear.'}
@@ -288,7 +288,7 @@ export function SelectControl(props: SelectControlProps) {
           );
         }}
       </FormControl>
-      <span role="status" className="sr-only">
+      <span role="status" className="sr-only" data-ds="">
         {status}
       </span>
       <SelectMenu

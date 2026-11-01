@@ -140,6 +140,7 @@ export const ButtonBase = ({
         <Element
           type={element === 'button' ? (type ?? 'button') : type}
           {...elementProps}
+          data-ds=""
           role={role}
           aria-disabled={isDisabled || undefined}
           aria-busy={isLoading || undefined}
@@ -159,14 +160,16 @@ export const ButtonBase = ({
         >
           {leftSlot}
           {hasContent(children) && (
-            <span className="flex-fill-x text-left">{children}</span>
+            <span className="flex-fill-x text-left" data-ds="">
+              {children}
+            </span>
           )}
           {rightSlot}
         </Element>
       </Tooltip>
       {/* `aria-busy` isn't announced; staying mounted while empty lets a new load be. */}
       {canLoad && (
-        <span role="status" className="sr-only">
+        <span role="status" className="sr-only" data-ds="">
           {isLoading ? loadingWithReason || 'Loading…' : ''}
         </span>
       )}

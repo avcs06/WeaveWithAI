@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system and app</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { display: flex; flex-direction: column; gap: 16px; padding: 24px 16px; }
+  .tiny { width: 12px; height: 12px; min-height: 0; padding: 0; border: 0; background: #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Design system and app</h1>
+  <!-- A design-system container with its own unnamed 12px control, and the same defects in what the app put in its slot. -->
+  <div data-ds="">
+    <button type="button" class="tiny" data-ds=""></button>
+    <div data-testid="S01.n02"><button type="button" class="tiny"></button></div>
+    <button type="button" class="tiny" id="slotted"></button>
+    <!-- The design system's own text: its size is its own, its contrast depends on where the app put it. -->
+    <p data-ds="" id="ds-grey" style="color:#949494">Grey text the design system shows on the app's white.</p>
+    <span data-ds="" id="ds-small" style="font-size:12px">Small print the design system sets.</span>
+  </div>
+</main>
+</body>
+</html>

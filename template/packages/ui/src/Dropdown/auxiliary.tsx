@@ -23,7 +23,9 @@ export const DropdownButton = <C extends ButtonTarget = 'button'>(
       {...buttonProps}
       size={size}
       variant={variant}
-      rightIcon={rightIcon ?? <ChevronDown className={iconClassName} />}
+      rightIcon={
+        rightIcon ?? <ChevronDown className={iconClassName} data-ds="" />
+      }
       loading={isLoading}
       // The Dropdown decides whether loading disables, and passes that on
       // as `disabled`.

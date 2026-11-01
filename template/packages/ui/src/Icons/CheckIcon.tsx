@@ -8,5 +8,5 @@ export type CheckIconProps = LucideProps;
  * small sizes. General checks come from lucide-react.
  */
 export const CheckIcon = (props: CheckIconProps) => {
-  return <Check strokeWidth={3} {...props} />;
+  return <Check strokeWidth={3} {...props} data-ds="" />;
 };

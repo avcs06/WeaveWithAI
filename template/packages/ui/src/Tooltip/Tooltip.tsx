@@ -110,9 +110,11 @@ export const Tooltip = (props: TooltipProps) => {
       {triggerElement}
       {/* Screen readers read it without the hover or focus that shows the
           tooltip, such as a disabled control's reason. */}
-      <span id={id} hidden>
+      <span id={id} hidden data-ds="">
         {descriptions.map((entry, index) => (
-          <span key={index}>{entry} </span>
+          <span key={index} data-ds="">
+            {entry}{' '}
+          </span>
         ))}
       </span>
     </>

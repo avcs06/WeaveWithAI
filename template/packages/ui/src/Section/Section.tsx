@@ -42,6 +42,7 @@ export const SectionHeading = ({
   return (
     <Heading
       {...props}
+      data-ds=""
       className={classNames('flex-row-gap-2 items-center', className)}
     />
   );
@@ -60,7 +61,12 @@ export const SectionDescription = ({
   children: ReactNode;
 }) =>
   hasContent(children) ? (
-    <p id={id} data-slot="description" className={sectionDescription}>
+    <p
+      id={id}
+      data-slot="description"
+      className={sectionDescription}
+      data-ds=""
+    >
       {children}
     </p>
   ) : null;
@@ -78,6 +84,7 @@ export const SectionFrame = ({
   // Unnamed, so not a landmark: headings already outline the page.
   <section
     {...props}
+    data-ds=""
     data-slot="section"
     className={classNames('flex-col-gap-5 p-5', className)}
   />
@@ -100,8 +107,8 @@ export const SectionHeader = ({
   descriptionId?: string;
   action?: ReactNode;
 }) => (
-  <div data-slot="header" className="flex-row-gap-4 items-start">
-    <div className="flex-col-gap-1 flex-fill-x">
+  <div data-slot="header" className="flex-row-gap-4 items-start" data-ds="">
+    <div className="flex-col-gap-1 flex-fill-x" data-ds="">
       {heading}
       <SectionDescription id={descriptionId}>{description}</SectionDescription>
     </div>
@@ -109,6 +116,7 @@ export const SectionHeader = ({
       <div
         data-slot="header-actions"
         className="flex-row-gap-2 items-center shrink-0"
+        data-ds=""
       >
         {action}
       </div>
@@ -130,7 +138,7 @@ export const SectionContent = ({
 }) => (
   // Takes the height left in a section given one, so a FlexScrollArea in it
   // scrolls.
-  <div data-slot="content" className="flex-col-gap-4 flex-fill-y">
+  <div data-slot="content" className="flex-col-gap-4 flex-fill-y" data-ds="">
     <HeadingLevelContext value={level}>{children}</HeadingLevelContext>
   </div>
 );
@@ -175,7 +183,9 @@ export const Section = ({
         heading={
           <SectionHeading level={level} id={titleId} className={sectionTitle}>
             {leftSlot}
-            <span className="min-w-0">{title}</span>
+            <span className="min-w-0" data-ds="">
+              {title}
+            </span>
             {rightSlot}
           </SectionHeading>
         }

@@ -64,7 +64,7 @@ const TruncateText = ({
     };
   }, [ref, hasHandlers, onFocusRef, onBlurRef]);
 
-  return <span ref={ref} {...props} />;
+  return <span ref={ref} {...props} data-ds="" />;
 };
 
 /**

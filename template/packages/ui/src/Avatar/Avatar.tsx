@@ -90,6 +90,7 @@ export const Avatar = ({
         // Without a tab stop, keyboard users can't reach the name tooltip.
         tabIndex={focusable ? 0 : undefined}
         {...props}
+        data-ds=""
         className={classNames(
           avatarClassName,
           'inline-flex-row-gap-0 items-center justify-center shrink-0',
@@ -105,9 +106,10 @@ export const Avatar = ({
             data-slot="image"
             onError={image.onError}
             className="w-full h-full object-cover"
+            data-ds=""
           />
         ) : (
-          <span aria-hidden data-slot="initials">
+          <span aria-hidden data-slot="initials" data-ds="">
             {getInitials(name)}
           </span>
         )}

@@ -92,14 +92,7 @@ export async function checkRoute(
     );
     return {
       route: sample.route,
-      findings: [
-        ...axe.findings,
-        ...contrast.findings,
-        ...targets.findings,
-        ...rest,
-        ...walked,
-        ...broken,
-      ],
+      findings: [...axe.findings, ...contrast.findings, ...targets.findings, ...rest, ...walked, ...broken],
       metrics: {
         axeViolations: axe.violations.length,
         contrastFailures: contrast.failures.length,

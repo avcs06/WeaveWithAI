@@ -141,7 +141,7 @@ export const TableContent = ({
       </Primitives.Frame>
 
       {/* Loading rows are hidden from assistive tech; this announces them. */}
-      <span role="status" className="sr-only">
+      <span role="status" className="sr-only" data-ds="">
         {loading ? 'Loading…' : ''}
       </span>
       <SortStatus />

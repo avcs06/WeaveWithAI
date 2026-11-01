@@ -88,8 +88,9 @@ export const Radio = ({
                 boxClassName,
                 'grid place-items-center shrink-0 cursor-pointer',
               )}
+              data-ds=""
             >
-              <span data-slot="dot" />
+              <span data-slot="dot" data-ds="" />
             </span>
           </PlainButton>
         </Selectable>

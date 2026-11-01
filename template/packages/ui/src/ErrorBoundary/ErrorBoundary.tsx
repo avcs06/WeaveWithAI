@@ -99,6 +99,7 @@ export class ErrorBoundary extends Component<
         role="alert"
         tabIndex={-1}
         data-slot="fallback"
+        data-ds=""
         className={classNames(
           fallbackClassName,
           'flex-row-gap-2 flex-wrap items-center justify-center p-6-4',
@@ -110,6 +111,7 @@ export class ErrorBoundary extends Component<
               aria-hidden
               data-slot="icon"
               className={classNames(fallbackIcon, 'icon-size-body shrink-0')}
+              data-ds=""
             />
             Something went wrong.
             <Button onClick={this.reset}>Try again</Button>

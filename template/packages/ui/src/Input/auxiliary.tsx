@@ -51,7 +51,7 @@ export const SearchInput = ({
   value,
   onChange,
   variant = 'base',
-  leftIcon = <Search aria-hidden />,
+  leftIcon = <Search aria-hidden data-ds="" />,
   ref,
   onBlur,
   onKeyDown,
@@ -108,7 +108,7 @@ export const SearchInput = ({
               inputRef.current?.focus();
             }}
           >
-            <X />
+            <X data-ds="" />
           </FieldButton>
         )
       }
@@ -142,7 +142,7 @@ export const PasswordInput = (props: PasswordInputProps) => {
           aria-pressed={visible}
           onClick={() => setVisible(!visible)}
         >
-          {visible ? <EyeOff /> : <Eye />}
+          {visible ? <EyeOff data-ds="" /> : <Eye data-ds="" />}
         </FieldButton>
       }
     />

@@ -35,6 +35,7 @@ export const Textarea = <D extends number = never>({
         <textarea
           {...attributes}
           {...controlProps}
+          data-ds=""
           rows={rows}
           value={text}
           // Native `disabled` would block the box's tooltip; read-only instead.

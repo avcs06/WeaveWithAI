@@ -8,5 +8,5 @@ export type MinusIconProps = LucideProps;
  * plain icon for small sizes. General minus glyphs come from lucide-react.
  */
 export const MinusIcon = (props: MinusIconProps) => {
-  return <Minus strokeWidth={3} {...props} />;
+  return <Minus strokeWidth={3} {...props} data-ds="" />;
 };

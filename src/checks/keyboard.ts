@@ -7,7 +7,7 @@ import { type Finding, finding } from './types';
 // Space; a dialog closes on Escape and gives focus back. Requests that could
 // change data are aborted while it walks.
 
-type Focusable = { element: string; button: boolean; skip: boolean };
+type Focusable = { element: string; app: boolean; button: boolean; skip: boolean };
 type Active = { element: string; style: string };
 
 export type KeyboardReport = {
@@ -33,8 +33,10 @@ export async function keyboardWalk(
       route.request().method() === 'GET' ? route.continue() : route.abort(),
     );
   const findings: Finding[] = [];
+  // Tab passes every control, the design system's too, to reach the app's; only the app's are judged.
   const controls = await inPage<Focusable[]>(page, 'focusables');
-  const order = new Map(controls.map((c, i) => [c.element, i]));
+  const ours = controls.filter((c) => c.app);
+  const order = new Map(ours.map((c, i) => [c.element, i]));
 
   // Tab from the top until focus leaves the page or the presses run out.
   await inPage(page, 'reset');
@@ -46,7 +48,7 @@ export async function keyboardWalk(
     visits.push(active);
   }
   const reached = new Set(visits.map((v) => v.element));
-  for (const control of controls)
+  for (const control of ours)
     if (!reached.has(control.element))
       findings.push(
         finding(R, 'mandatory', 'not reachable with Tab', control.element),
@@ -64,13 +66,14 @@ export async function keyboardWalk(
         `focus stays among ${new Set(visits.slice(-3).map((v) => v.element)).size} controls and never leaves`,
       ),
     );
+  const ourVisits = visits.filter((v) => order.has(v.element));
   let inversions = 0;
-  for (const [i, visit] of visits.entries()) {
-    const before = visits[i - 1];
+  for (const [i, visit] of ourVisits.entries()) {
+    const before = ourVisits[i - 1];
     if (
       before &&
       (order.get(visit.element) ?? 0) < (order.get(before.element) ?? 0) &&
-      visit.element !== visits[0]?.element
+      visit.element !== ourVisits[0]?.element
     ) {
       inversions += 1;
       findings.push(
@@ -85,7 +88,7 @@ export async function keyboardWalk(
   }
 
   let focusVisible = 0;
-  for (const visit of new Map(visits.map((v) => [v.element, v])).values()) {
+  for (const visit of new Map(ourVisits.map((v) => [v.element, v])).values()) {
     const blurred = await inPage<string>(page, 'blurredStyle', visit.element);
     if (blurred !== visit.style) focusVisible += 1;
     else
@@ -106,7 +109,7 @@ export async function keyboardWalk(
 
   // Enter and Space on every button; Escape closes whatever a button opened.
   await inPage(page, 'watchClicks');
-  const buttons = controls.filter((c) => c.button);
+  const buttons = ours.filter((c) => c.button);
   const activation = { buttons: buttons.length, enterOk: 0, spaceOk: 0 };
   for (const button of buttons)
     for (const key of ['Enter', 'Space'] as const) {
@@ -131,8 +134,12 @@ export async function keyboardWalk(
 
   await inPage(page, 'releaseClicks');
   const dialogs = { opened: 0, escaped: 0, focusReturned: 0 };
-  for (const trigger of opts.dialogTriggers ?? []) {
-    const selector = `[data-testid="${trigger}"]`;
+  const triggers = await inPage<string[]>(
+    page,
+    'appMadeOf',
+    (opts.dialogTriggers ?? []).map((t) => `[data-testid="${t}"]`),
+  );
+  for (const selector of triggers) {
     await inPage(page, 'focus', selector);
     await page.keyboard.press('Enter');
     const label = await inPage<string | null>(page, 'openDialog');
@@ -175,8 +182,8 @@ export async function keyboardWalk(
   if (opts.blockMutations) await page.unroute('**/*');
 
   return {
-    interactive: controls.length,
-    reachable: controls.filter((c) => reached.has(c.element)).length,
+    interactive: ours.length,
+    reachable: ours.filter((c) => reached.has(c.element)).length,
     focusVisible,
     inversions,
     trap,

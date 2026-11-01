@@ -47,7 +47,7 @@ const CardSurface = ({
   // Inside the element a Slot clones, which ignores the props of a tooltip.
   return (
     <Tooltip tooltip={reason}>
-      <Comp {...props} {...state} />
+      <Comp {...props} {...state} data-ds={asChild ? undefined : ''} />
     </Tooltip>
   );
 };

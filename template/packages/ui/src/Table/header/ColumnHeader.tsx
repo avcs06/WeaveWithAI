@@ -41,6 +41,7 @@ export const ColumnHeader = memo(({ columnId }: { columnId: string }) => {
           styles.headerContent,
           'flex-row-gap-0.5 items-center',
         )}
+        data-ds=""
       >
         {column.sortable ? (
           <SortButton
@@ -55,6 +56,7 @@ export const ColumnHeader = memo(({ columnId }: { columnId: string }) => {
           <div
             id={titleId}
             className={classNames(styles.headerItem, 'flex-fill-x py-1.5')}
+            data-ds=""
           >
             {title}
           </div>

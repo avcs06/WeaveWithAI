@@ -146,6 +146,7 @@ export const FormControl = ({
     <div
       data-slot="form-control"
       className={classNames('flex-col-gap-2', className)}
+      data-ds=""
     >
       <ControlLabel
         id={labelId}
@@ -163,13 +164,13 @@ export const FormControl = ({
         <Slot {...box}>{control}</Slot>
       )}
       {hasContent(helpText) && (
-        <div id={helpId} data-slot="help" className={controlMessage}>
+        <div id={helpId} data-slot="help" className={controlMessage} data-ds="">
           {helpText}
         </div>
       )}
       <ControlMessage id={messageId} status={status} message={message} />
       {hiddenDescriptions.map((description) => (
-        <span key={description.id} id={description.id} hidden>
+        <span key={description.id} id={description.id} hidden data-ds="">
           {description.text}
         </span>
       ))}

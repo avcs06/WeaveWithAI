@@ -16,9 +16,11 @@ type AxeViolation = Awaited<
 export async function axeCheck(
   page: Page,
 ): Promise<{ findings: Finding[]; violations: AxeViolation[] }> {
+  // The design system's own subtrees are its tests' to check; `next dev` injects its own overlay.
+  await inPage(page, 'skipDesignSystem');
   const { violations } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-    // `next dev` injects its own overlay; it is not the app's.
+    .exclude('[data-weave-skip]')
     .exclude('nextjs-portal')
     .analyze();
   const findings = violations.flatMap((v) =>

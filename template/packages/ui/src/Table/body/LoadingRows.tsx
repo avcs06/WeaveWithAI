@@ -44,6 +44,7 @@ export const LoadingRows = memo(({ count, slots }: LoadingRowsProps) => {
                     'inline-block align-middle',
                   )}
                   style={{ width: `${skeletonWidth(row, column)}%` }}
+                  data-ds=""
                 />
               )}
             </Primitives.Cell>

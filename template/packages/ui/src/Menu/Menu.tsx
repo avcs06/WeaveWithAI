@@ -75,6 +75,7 @@ export const Menu = ({
       {...(header
         ? shellProps
         : { ...props, 'aria-busy': loading || undefined })}
+      data-ds=""
       style={{
         ...(availableHeight &&
           assignInlineVars({ [menuAvailableHeight]: availableHeight })),
@@ -107,6 +108,7 @@ export const Menu = ({
       >
         <div
           {...(header && listSemantics)}
+          data-ds=""
           data-slot="list"
           className={classNames(menuList, 'flex-col-gap-0.5')}
         >
@@ -163,6 +165,7 @@ export const MenuItem = ({
     <Tooltip tooltip={[truncated && children, tooltip]} description={tooltip}>
       <div
         {...props}
+        data-ds=""
         role={role}
         // `selected` in the attribute the row's role has. A menuitem has no
         // checked state: the chosen one is the current one.
@@ -189,6 +192,7 @@ export const MenuItem = ({
             aria-hidden
             data-slot="checkbox"
             data-state={selected ? 'checked' : 'unchecked'}
+            data-ds=""
             className={classNames(
               checkboxClassName,
               'grid place-items-center shrink-0',
@@ -201,6 +205,7 @@ export const MenuItem = ({
         <span
           ref={labelRef}
           data-slot="label"
+          data-ds=""
           className={classNames(labelClassName, 'flex-fill-x')}
         >
           {children}
@@ -217,6 +222,7 @@ export const MenuItem = ({
           <ChevronRight
             aria-hidden
             data-slot="chevron"
+            data-ds=""
             className={classNames(chevronClassName, menuChevron, 'shrink-0')}
           />
         )}
@@ -229,6 +235,7 @@ export const MenuItem = ({
 export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="group"
     className={classNames(menuGroup, 'flex-col-gap-0.5', className)}
   />
@@ -238,6 +245,7 @@ export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (
 export const MenuLabel = ({ className, ...props }: MenuLabelProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="group-label"
     className={classNames(menuLabel, className)}
   />
@@ -247,6 +255,7 @@ export const MenuLabel = ({ className, ...props }: MenuLabelProps) => (
 export const MenuSeparator = ({ className, ...props }: MenuSeparatorProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="separator"
     className={classNames(menuSeparator, className)}
   />

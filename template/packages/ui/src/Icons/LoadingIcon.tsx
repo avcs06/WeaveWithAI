@@ -19,6 +19,7 @@ export const LoadingIcon = ({ className, ...props }: LoadingIconProps) => {
     <LoaderCircle
       role={props['aria-label'] || props['aria-labelledby'] ? 'img' : undefined}
       {...props}
+      data-ds=""
       className={classNames('animate-spin', loadingIcon, className)}
     />
   );

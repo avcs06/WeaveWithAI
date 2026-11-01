@@ -28,7 +28,9 @@ export const PopoverButton = <C extends ButtonTarget = 'button'>(
       {...state}
       size={size}
       variant={variant}
-      rightIcon={rightIcon ?? <ChevronsUpDown className={iconClassName} />}
+      rightIcon={
+        rightIcon ?? <ChevronsUpDown className={iconClassName} data-ds="" />
+      }
     />
   );
 };

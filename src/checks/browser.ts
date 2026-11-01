@@ -24,7 +24,13 @@ export async function withBrowser<T>(
   }
 }
 
-/** A page at `url`, with `storage`'s localStorage entries written before it loads, such as a signed-in session. */
+/** No motion: styles are measured at rest, not halfway through a transition. */
+const STILL = '*, *::before, *::after { transition: none !important; animation: none !important; }';
+
+/**
+ * A page at `url`, with `storage`'s localStorage entries written before it loads, such as a signed-in session.
+ * Once it has loaded its motion stops, so the checks measure styles at rest.
+ */
 export async function openRoute(
   context: BrowserContext,
   url: string,
@@ -36,6 +42,7 @@ export async function openRoute(
   }, storage);
   await page.setViewportSize({ width: WIDTH, height: HEIGHT });
   await page.goto(url, { waitUntil: 'networkidle' });
+  await page.addStyleTag({ content: STILL });
   await page.waitForTimeout(300);
   return page;
 }

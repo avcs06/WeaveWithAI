@@ -23,7 +23,7 @@ export const TextFilter = ({ label, value, onChange }: TextFilterProps) => {
       align="end"
       menu={
         // Inset like the enum filter's search row.
-        <div className="mx-1.5">
+        <div className="mx-1.5" data-ds="">
           <SearchInput
             name={name}
             placeholder={`Search ${label}`}

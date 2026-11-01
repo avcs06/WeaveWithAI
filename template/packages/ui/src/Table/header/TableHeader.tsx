@@ -33,7 +33,9 @@ export const TableHeader = memo(
                   // Header cells need text, not only an aria-label.
                   return (
                     <Primitives.HeaderCell key={key} data-slot="header-cell">
-                      <span className="sr-only">Reorder</span>
+                      <span className="sr-only" data-ds="">
+                        Reorder
+                      </span>
                     </Primitives.HeaderCell>
                   );
                 case 'selection':
