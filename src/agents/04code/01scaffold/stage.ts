@@ -5,7 +5,7 @@ import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { ensureAgentImage } from '../../../engine/docker';
 import { appendLedger } from '../../../engine/ledger';
 import { saveStagePatch } from '../../../engine/patches';
-import { appCheck, type Check } from '../../../engine/session';
+import { appCheck, type Check, verifyCommand } from '../../../engine/session';
 import { prepareApp } from '../../../engine/setup';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Themed } from '../../02design/01theme/build';
@@ -20,7 +20,7 @@ const STAGE = 'code-scaffold';
 const CHECKS: [string, string[]][] = [
   ['typecheck', ['pnpm', 'typecheck']],
   ['mcp:check', ['pnpm', 'mcp:check']],
-  ['verify', ['pnpm', 'verify', '/']],
+  ['verify', verifyCommand('/')],
 ];
 
 /** Tests swap the template copy and the app's checks. */

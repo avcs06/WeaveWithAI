@@ -4,14 +4,14 @@ import { hasArtifact, isStale, readArtifact, writeArtifact } from '../../../core
 import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { appendLedger } from '../../../engine/ledger';
 import { saveStagePatch, startStage } from '../../../engine/patches';
-import { appCheck, type Check } from '../../../engine/session';
+import { appCheck, type Check, SIGNED_IN_FILE } from '../../../engine/session';
 import { git } from '../../../engine/setup';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
 import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
-import { entityFiles } from './codegen';
+import { entityFiles, SIGNED_IN } from './codegen';
 import { renderEntities } from './render';
 import { seedSystemPrompt, seedUserMessage } from './prompts/index';
 import { type SeedRows, seedSchema } from './schema';
@@ -60,6 +60,7 @@ export async function runContractCode(ctx: StageContext, deps: ContractDeps = {}
   startStage(run, appDir, STAGE);
   const files = entityFiles(contract, seed);
   files.set('.weave/02-contract/entities.md', renderEntities(contract));
+  files.set(SIGNED_IN_FILE, `${JSON.stringify(SIGNED_IN, null, 2)}\n`);
   for (const [file, text] of files) {
     mkdirSync(path.dirname(path.join(appDir, file)), { recursive: true });
     writeFileSync(path.join(appDir, file), text);

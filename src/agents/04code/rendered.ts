@@ -25,9 +25,15 @@ export function themeColors(theme: Theme): ThemeColors {
   return { all, accent };
 }
 
-/** One route as the checks sample it; an entry page also checks its first viewport. */
-export function routeSample(route: string, screen: string, entry: boolean, primaryTestIds: string[] = []): RouteSample {
-  return { route, url: `${APP_URL}${route}`, screen, entry, primaryTestIds };
+/** One route as the checks sample it; an entry page also checks its first viewport, and a page behind sign-in loads with `storage`'s session. */
+export function routeSample(
+  route: string,
+  screen: string,
+  entry: boolean,
+  primaryTestIds: string[] = [],
+  storage?: Record<string, string>,
+): RouteSample {
+  return { route, url: `${APP_URL}${route}`, screen, entry, primaryTestIds, ...(storage && { storage }) };
 }
 
 /** The checks on `routes`, with the app's dev server up for them. */

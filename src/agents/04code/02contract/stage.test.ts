@@ -58,6 +58,11 @@ describe('the contract code stage', () => {
     expect(hasArtifact(run, 'code-contract')).toBe(true);
     expect(existsSync(path.join(appDir, 'web/app/entities/client/operations.ts'))).toBe(true);
     expect(readFileSync(path.join(appDir, '.weave/02-contract/entities.md'), 'utf8')).toContain('`@app/entities/client`');
+    // The signed-in session the checks write is saved under the key the auth store reads.
+    const signedIn = JSON.parse(readFileSync(path.join(appDir, '.weave/02-contract/signed-in.json'), 'utf8')) as Record<string, string>;
+    const [[key = '', value = '{}'] = []] = Object.entries(signedIn);
+    expect(readFileSync(path.join(appDir, 'web/app/entities/auth/index.ts'), 'utf8')).toContain(`'${key}')`);
+    expect(JSON.parse(value).state.user.email).toBe('member@example.com');
     const ledger = JSON.parse(readFileSync(path.join(appDir, '.weave/ledger.json'), 'utf8'));
     expect(ledger).toContainEqual({ path: 'web/app/entities/client/store.ts', status: 'A', origin: 'code', stage: 'code-contract' });
     expect(ran).toEqual(['validate', 'typecheck', 'lint']);

@@ -74,8 +74,9 @@ export function checkScreen(appDir: string, expect: ScreenExpect): Check {
     ...(expect.words ?? [])
       .filter((w) => !text.includes(shown(w.text)))
       .map((w) => `The words "${w.text}" of ${w.id} are nowhere in ${expect.folder}; show the node's text as the design writes it.`),
+    // An operation is called by its function or its hook: listBooks() or useListBooks().
     ...expect.operations
-      .filter((op) => !new RegExp(`\\b${op}\\b`).test(code))
+      .filter((op) => !new RegExp(`\\b(${op}|use${op.charAt(0).toUpperCase()}${op.slice(1)})\\b`).test(code))
       .map((op) => `Nothing in ${expect.folder} calls ${op}; load the widget's data through it.`),
   ];
   // Missing words are a warning: they never fail the check, only show in its output.

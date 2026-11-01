@@ -41,8 +41,14 @@ describe('the code stages on the golden freelancer workspace', () => {
     expect(specs.find((s) => s.id === 'page-S01')?.writes).toContain('web/app/(routes)/');
     expect(s06.reads?.deny).toEqual(expect.arrayContaining(['packages/**', 'web/app/(routes)/**', '.weave/05-pages/**']));
     expect(s06.reads?.allow).toEqual(
-      expect.arrayContaining(['web/app/(routes)/(app)/clients/[clientId]/**', 'web/app/(routes)/(app)/layout.tsx', '.weave/05-pages/S06/**']),
+      expect.arrayContaining(['web/app/(routes)/(app)/clients/[clientId]/**', 'web/app/(routes)/(app)/', '.weave/05-pages/S06/**']),
     );
+    // A page behind sign-in checks itself signed in as a member; a public page as a visitor.
+    expect(s06.signedIn).toBe(true);
+    expect(s06.task).toContain('`pnpm verify /clients/client-1 --widths 1280 --storage .weave/02-contract/signed-in.json`');
+    const s03 = specs.find((s) => s.id === 'page-S03')!;
+    expect(s03.signedIn).toBe(false);
+    expect(s03.task).toContain('`pnpm verify /signin --widths 1280`');
   });
 
   it('opens a route param on its entity, or on demo', () => {

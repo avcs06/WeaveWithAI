@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { type Browser, chromium, type Page } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createRun } from '../core/run';
-import { HEIGHT, WIDTH } from './browser';
+import { HEIGHT, openRoute, WIDTH } from './browser';
 import {
   axeCheck,
   colorVariables,
@@ -129,6 +129,13 @@ describe('rendered checks on the fixture pages', () => {
       activation: { buttons: 1, enterOk: 1, spaceOk: 1 },
       dialogs: { opened: 1, escaped: 1, focusReturned: 1 },
     });
+  });
+
+  it('opens a route with its localStorage entries written before the page loads, as a signed-in session', async () => {
+    const context = await browser.newContext();
+    const page = await openRoute(context, `${base}clean.html`, { 'weave:auth': '{"state":{"user":{"email":"m@x.com"}}}' });
+    expect(await page.evaluate(() => localStorage.getItem('weave:auth'))).toBe('{"state":{"user":{"email":"m@x.com"}}}');
+    await context.close();
   });
 
   it('R-004 targets: a 12 px button fails; the clean page passes', async () => {

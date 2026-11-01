@@ -115,8 +115,8 @@ already; a control you build yourself must too.
 
 - The MCP validates every file you write right after you write it. Fix
   every finding.
-- Then run `pnpm typecheck` and `pnpm nx lint web`, and `pnpm verify
-  <route>` when your task names a route. Fix until they pass.
+- Then run `pnpm typecheck` and `pnpm nx lint web`, and the `pnpm verify`
+  command your task names, when it names one. Fix until they pass.
 - End with a summary in four parts:
   - `## Priorities`: each question and known issue, blocker or not, fixed
     or left.

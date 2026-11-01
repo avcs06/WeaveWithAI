@@ -24,30 +24,16 @@ export async function withBrowser<T>(
   }
 }
 
-/** A context signed in through the app's own sign-in; the cookie stays in the context. */
-export async function signedInContext(
-  browser: Browser,
-  baseUrl: string,
-  email: string,
-  password: string,
-): Promise<BrowserContext> {
-  const context = await browser.newContext();
-  const response = await context.request.post(
-    new URL('/api/auth/sign-in', baseUrl).href,
-    {
-      data: { email, password },
-    },
-  );
-  if (!response.ok())
-    throw new Error(`sign-in as ${email} failed: ${response.status()}`);
-  return context;
-}
-
+/** A page at `url`, with `storage`'s localStorage entries written before it loads, such as a signed-in session. */
 export async function openRoute(
   context: BrowserContext,
   url: string,
+  storage: Record<string, string> = {},
 ): Promise<Page> {
   const page = await context.newPage();
+  await page.addInitScript((entries) => {
+    for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value);
+  }, storage);
   await page.setViewportSize({ width: WIDTH, height: HEIGHT });
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForTimeout(300);

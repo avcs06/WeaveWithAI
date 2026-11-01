@@ -38,6 +38,16 @@ describe('the design check after a coding session', () => {
     expect(checkScreen(path.join(root, 'none'), s04).output).toContain('has no code');
   });
 
+  it('counts the hook of an operation as calling it, as the entity guide writes it', () => {
+    const words = (s04.words ?? []).map((w) => `<p>${w.text}</p>`).join('\n');
+    mkdirSync(path.join(root, 'hook', s04.folder), { recursive: true });
+    writeFileSync(
+      path.join(root, 'hook', s04.folder, 'page.tsx'),
+      `${s04.testIds.map((id) => `<div data-testid="${id}" />`).join('\n')}\n${words}\nconst list = useListDashboards();\n`,
+    );
+    expect(checkScreen(path.join(root, 'hook'), s04).ok).toBe(true);
+  });
+
   it("leaves out the text of a node that shows data, a sample of its value, and keeps its label", () => {
     const nodes = [
       { id: 'SH1.n03', text: 'Q3 launch board', label: '', data: ['Dashboard.name'] },

@@ -27,6 +27,8 @@ export type Session = {
   inputs: Record<string, unknown>;
   /** The route `pnpm verify` checks. */
   route?: string;
+  /** The route is behind sign-in: `pnpm verify` writes a member's session first. */
+  signedIn?: boolean;
   /** What the screen's route folder must name, from its design and the contract. */
   expect?: ScreenExpect;
   /** The only paths the diff may touch, when given (CD5): each code stage writes its own folders. */
@@ -67,6 +69,17 @@ export type SessionDeps = {
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
 /** What the guidelines tell the agent never to change. */
 const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**'];
+
+/** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
+export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
+
+/**
+ * `pnpm verify` on a route as the generated apps need it: at the desktop width only, since the MVP has no phone
+ * layout (user, 2026-10-30), and signed in as a member on a route behind sign-in.
+ */
+export function verifyCommand(route: string, signedIn = false): string[] {
+  return ['pnpm', 'verify', route, '--widths', '1280', ...(signedIn ? ['--storage', SIGNED_IN_FILE] : [])];
+}
 const OURS = new Set(['.weave/hook.log', '.weave/ledger.json', '.weave/tools.log']);
 const TOOLS_LOG = '.weave/tools.log';
 
@@ -78,7 +91,7 @@ const TOOLS_LOG = '.weave/tools.log';
  * names, not patterns.
  */
 export function inPath(file: string, rule: string): boolean {
-  if (rule.endsWith('/**')) return file.startsWith(rule.slice(0, -2));
+  if (rule.endsWith('/**')) return file === rule.slice(0, -3) || file.startsWith(rule.slice(0, -2));
   if (rule.endsWith('/')) return file.startsWith(rule) && !file.slice(rule.length).includes('/');
   return file === rule;
 }
@@ -125,8 +138,9 @@ export function protectedOf(changed: string[], session: Pick<Session, 'writes'>)
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
   const [cmd = 'pnpm', ...rest] = args;
   const result = await execa(cmd, rest, { cwd: appDir, reject: false, all: true });
-  const output = String(result.all ?? '').split('\n').slice(-MAX_OUTPUT_LINES).join('\n');
-  return { name, ok: result.exitCode === 0, output };
+  // pnpm warns that the host's Node is older than a package wants; the line says nothing about the app and crowds out what does.
+  const lines = String(result.all ?? '').split('\n').filter((line) => !/WARN\s+Unsupported engine/.test(line));
+  return { name, ok: result.exitCode === 0, output: lines.slice(-MAX_OUTPUT_LINES).join('\n') };
 }
 
 export async function runSession(
@@ -185,8 +199,10 @@ export async function runSession(
   const tools = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)).subarray(toolsFrom).toString('utf8') : '';
   writeFileSync(runPath(run, 'sessions', `${slug}.tools.jsonl`), tools);
   const { deny = [], allow = [] } = session.reads ?? {};
+  // A folder listed on the way to an allowed file is no read of what the rules keep the agent from.
+  const toward = (folder: string, rule: string) => rule.startsWith(`${folder.replace(/\/$/, '')}/`);
   const readsOutside = readPaths(tools, appDir).filter(
-    (file) => deny.some((rule) => inPath(file, rule)) && !allow.some((rule) => inPath(file, rule)),
+    (file) => deny.some((rule) => inPath(file, rule)) && !allow.some((rule) => inPath(file, rule) || toward(file, rule)),
   );
   const usage = readUsage(exec.stdout);
   if (!usage.childrenIncluded && usage.children > 0)
@@ -233,7 +249,7 @@ export async function runSession(
   if (sources.length) checks.push(await runCheck(appDir, 'validate', ['node', 'tools/validate-files.mjs', ...sources]));
   checks.push(await runCheck(appDir, 'typecheck', ['pnpm', 'typecheck']));
   checks.push(await runCheck(appDir, 'lint', ['pnpm', 'nx', 'lint', 'web']));
-  if (session.route) checks.push(await runCheck(appDir, 'verify', ['pnpm', 'verify', session.route]));
+  if (session.route) checks.push(await runCheck(appDir, 'verify', verifyCommand(session.route, session.signedIn)));
   if (session.expect) checks.push(checkScreen(appDir, session.expect));
 
   const status: SessionResult['status'] = exec.timedOut

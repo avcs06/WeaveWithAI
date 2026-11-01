@@ -9,7 +9,7 @@ import type { Llm } from '../core/llm';
 import { createRun, readEvents, runPath, totals } from '../core/run';
 import { pathBeside } from '../core/utils';
 import { museArgs, readUsage } from './muse';
-import { type Check, runSession } from './session';
+import { appCheck, type Check, runSession } from './session';
 import { git, prepareApp } from './setup';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-engine-'));
@@ -94,6 +94,23 @@ describe('runSession', () => {
     expect(result.costUsd).toBe(0);
     expect(readEvents(run).find((e) => e.type === 'llm:call')).toMatchObject({ input: 30000, costUsd: 0, billing: 'subscription' });
     expect(totals(run)).toMatchObject({ calls: 3, costUsd: 0 });
+  });
+
+  it('runs pnpm verify at the desktop width, signed in as a member on a route behind sign-in', async () => {
+    const { appDir, ctx } = setup('signed-in');
+    const ran: string[] = [];
+    const runCheck = async (_dir: string, name: string, args: string[]): Promise<Check> => {
+      ran.push(args.join(' '));
+      return { name, ok: true, output: '' };
+    };
+    await withWrites({ [page]: 'x\n' }, () => runSession(ctx, appDir, { ...session, signedIn: true }, { bin: fake, runCheck }));
+    expect(ran).toContain('pnpm verify /books --widths 1280 --storage .weave/02-contract/signed-in.json');
+  });
+
+  it("leaves pnpm's engine warnings out of a check's output", async () => {
+    const { appDir } = setup('engine-warn');
+    const script = "console.log(' WARN  Unsupported engine: wanted node >=24.11.0'); console.log('Type error in page.tsx'); process.exit(1)";
+    expect(await appCheck(appDir, 'typecheck', ['node', '-e', script])).toEqual({ name: 'typecheck', ok: false, output: 'Type error in page.tsx' });
   });
 
   it('fails a session whose diff touches a test or a protected path', async () => {

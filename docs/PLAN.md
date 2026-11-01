@@ -1823,6 +1823,32 @@ coding agent writes no tests.
     checks for frames, since no route renders a frame yet; the starter
     `PageLayout` moved out of the root layout.
 
+- [ ] **CD11** Phones in the code stages (4 h, plus a 1 h rerun). Depends: CD10
+  - Paused (user, 2026-11-01). The MVP is desktop only (OPTIONS.md, user,
+    2026-10-30). Take it only if the last day has time, and only on the
+    user's go. The next task skips it until then.
+  - Why: the design stages stay desktop. The code stages make each page fit
+    a phone by fixed rules. The design system's components already fit
+    320px, and the MCP already gives the phone patterns.
+  - A run setting, `PHONES`, off by default. Off, runs stay as they are. On,
+    `verifyCommand` checks 320, 375 and 1280, and the scaffold writes a
+    phone guideline file into `.weave/01-scaffold/`.
+  - The phone guidelines: below 640px, rows stack; a sidebar or a second
+    column collapses behind a menu button in the header; a table scrolls
+    inside its own box; a fixed width becomes a max width; nothing scrolls
+    sideways at 320px; no action shows only on hover.
+  - Frames get browser checks on phones: a stand-in page the runner puts in
+    each shell, signed in where the shell needs it, and removes at the end
+    of the stage. A page cannot change its shell, so the shell's phone
+    layout is fixed in frames.
+  - The rendered checks run DESIGN-R-005 (no sideways scroll) at 375 as
+    well as at 1280.
+  - The adherence reviewer reads the phone layout against these rules, not
+    against the desktop design.
+  - Done when: the dashboard editor runs from the scaffold to the pages with
+    `PHONES` on, and every route passes `pnpm verify` at 320, 375 and 1280,
+    or its known issues are recorded.
+
 ### Replaced by the code stages (2026-11-01)
 
 - [x] **S1** Scaffold and theme apply (90 min) (folded into CD1, 2026-11-01). Depends: DS4, DS4a

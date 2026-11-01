@@ -6,6 +6,7 @@ describe('path rules', () => {
     const folder = 'web/app/(routes)/(app)/clients/[clientId]';
     expect(inPath(`${folder}/page.tsx`, `${folder}/page.tsx`)).toBe(true);
     expect(inPath(`${folder}/components/Notes.tsx`, `${folder}/components/**`)).toBe(true);
+    expect(inPath(`${folder}/components`, `${folder}/components/**`)).toBe(true);
     expect(inPath('web/app/(routes)/(app)/clients/c/page.tsx', `${folder}/page.tsx`)).toBe(false);
     expect(protectedOf([`${folder}/page.tsx`], { writes: [`${folder}/page.tsx`] })).toEqual([]);
   });

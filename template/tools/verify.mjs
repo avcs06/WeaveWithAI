@@ -3,6 +3,10 @@
 // widths for runtime and hydration errors and layout that doesn't fit.
 //
 //   pnpm verify /events [/other …]     app routes, on the dev server (:3001)
+//   pnpm verify /orders --storage f    the routes with f's localStorage entries
+//                                      (a JSON object) set before each load,
+//                                      such as a signed-in session
+//   pnpm verify /orders --widths 1280  at these widths only (default 320,375,1280)
 //   pnpm verify --recipes              every recipe story, on Storybook (:6006)
 import { spawn, spawnSync } from 'node:child_process';
 import {
@@ -21,7 +25,7 @@ import ts from 'typescript';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const appUrl = 'http://localhost:3001';
 const storybookUrl = 'http://localhost:6006';
-const widths = [320, 375, 1280];
+let widths = [320, 375, 1280];
 const screenshots = join(root, 'tmp/verify');
 
 const webDir = join(root, 'web');
@@ -214,6 +218,10 @@ const measureLayout = () => {
 
 async function check(browser, { name, url, allowConsoleErrors }, width) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript((entries) => {
+    for (const [key, value] of Object.entries(entries))
+      localStorage.setItem(key, value);
+  }, storage);
   const problems = [];
   page.on('pageerror', (error) => problems.push(`error: ${error.message}`));
   page.on('console', (message) => {
@@ -230,8 +238,19 @@ async function check(browser, { name, url, allowConsoleErrors }, width) {
 }
 
 const args = process.argv.slice(2);
+const storageAt = args.indexOf('--storage');
+const storage =
+  storageAt === -1 ? {} : JSON.parse(readFileSync(args[storageAt + 1], 'utf8'));
+if (storageAt !== -1) args.splice(storageAt, 2);
+const widthsAt = args.indexOf('--widths');
+if (widthsAt !== -1) {
+  widths = args[widthsAt + 1].split(',').map(Number);
+  args.splice(widthsAt, 2);
+}
 if (!args.length) {
-  console.error('Usage: pnpm verify <route> [<route> …] | pnpm verify --recipes');
+  console.error(
+    'Usage: pnpm verify <route> [<route> …] [--storage <file>] [--widths <a,b>] | pnpm verify --recipes',
+  );
   process.exit(2);
 }
 

@@ -28,6 +28,8 @@ export type RouteSample = {
   primaryTestIds: string[];
   /** `data-testid`s of controls that open a dialog. */
   dialogTriggers?: string[];
+  /** localStorage entries written before the route loads: a member's session on a page behind sign-in. */
+  storage?: Record<string, string>;
 };
 
 export type RenderedReport = {
@@ -100,7 +102,7 @@ export async function runRenderedChecks(opts: {
     const reports: RenderedReport[] = [];
     for (const sample of opts.routes)
       reports.push(
-        await checkRoute(sample, opts.theme, (url) => openRoute(context, url)),
+        await checkRoute(sample, opts.theme, (url) => openRoute(context, url, sample.storage)),
       );
     await context.close();
     return reports;

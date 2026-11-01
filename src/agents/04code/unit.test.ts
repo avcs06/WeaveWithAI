@@ -125,6 +125,16 @@ describe('a coding unit', () => {
     expect(result.warnings.map((i) => [i.rule, i.at])).toContainEqual(['CODE-010', 'packages/ui/src/Dialog/Dialog.tsx']);
   });
 
+  it('takes a folder listed on the way to an allowed file, or the unit\'s own folder, as no read to warn about', async () => {
+    const { ctx, spec, deps } = setup('toward', false, () => false);
+    const reads = { deny: ['web/app/(routes)/**', '.weave/05-pages/**'], allow: ['web/app/(routes)/books/**', '.weave/05-pages/S04/**'] };
+    const log = ['ls web/app/\\(routes\\)/books', 'ls .weave/05-pages/', 'cat web/app/\\(routes\\)/other/page.tsx']
+      .map((command) => JSON.stringify({ tool: 'bash', command }))
+      .join('\n');
+    const result = await withWrites({ ...page, '.weave/tools.log': `${log}\n` }, () => runUnit(ctx, { ...spec, reads }, deps));
+    expect(result.warnings.filter((i) => i.rule === 'CODE-010').map((i) => i.at)).toEqual(['web/app/(routes)/other/page.tsx']);
+  });
+
   it('fails a write outside the unit paths with CODE-004', async () => {
     const { ctx, spec, deps } = setup('outside', false, () => false);
     const writes = { ...page, 'web/app/blocks/Header/Header.tsx': 'export {};\n' };

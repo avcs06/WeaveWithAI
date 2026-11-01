@@ -209,6 +209,14 @@ export function useRead<T>(operation: string, data: T): Read<T> {
 }
 `;
 
+/** Where the auth store keeps the signed-in user in the browser. */
+const AUTH_KEY = 'weave:auth';
+
+/** A signed-in member's browser storage, as the auth store saves it: the checks write it before a signed-in page loads. */
+export const SIGNED_IN: Record<string, string> = {
+  [AUTH_KEY]: JSON.stringify({ state: { user: { email: 'member@example.com' } }, version: 0 }),
+};
+
 const AUTH = `import { createPersistentStore } from '@packages/utils/state';
 
 import { mockCall } from '../mock';
@@ -219,7 +227,7 @@ export type User = { email: string };
 
 type AuthState = { user: User | null };
 
-const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), 'weave:auth');
+const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), '${AUTH_KEY}');
 
 export async function signUp(email: string): Promise<User> {
   await mockCall('signUp');

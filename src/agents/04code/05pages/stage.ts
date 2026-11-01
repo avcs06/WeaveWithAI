@@ -4,12 +4,12 @@ import { appendEvent, runPath } from '../../../core/run';
 import { fillPrompt, loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
 import { screenExpect } from '../../../engine/conformance';
-import { appCheck } from '../../../engine/session';
+import { appCheck, verifyCommand } from '../../../engine/session';
 import type { Themed } from '../../02design/01theme/build';
 import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
-import { seedId } from '../02contract/codegen';
+import { SIGNED_IN, seedId } from '../02contract/codegen';
 import { sharedUnits } from '../01scaffold/weave';
 import { renderedOn, routeSample } from '../rendered';
 import { ENTITIES, READS_DENIED, runUnits, type UnitSpec } from '../unit';
@@ -45,16 +45,24 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
   return pages.map((page) => {
     const folder = pageFolder(design, page);
     const url = concreteRoute(page.route, contract);
+    const signedIn = page.access === 'signedIn';
     const expect = screenExpect(design, contract, page.id);
     return {
       id: `page-${page.id}`,
       stage: `${STAGE}-${page.id}`,
-      task: fillPrompt(task, { screen: page.id, name: page.name, route: page.route, folder, url }),
+      task: fillPrompt(task, {
+        screen: page.id,
+        name: page.name,
+        route: page.route,
+        folder,
+        verify: verifyCommand(url, signedIn).join(' '),
+      }),
       folders: ['01-scaffold', '02-contract', '04-frames', '05-pages', `05-pages/${page.id}`],
-      // The root page replaces the template's starter page.
       // The route folder's own files, a page's styles included, and its components; a child route's folder is its own page's.
+      // The root page replaces the template's starter page.
       writes: [`${folder}/`, `${folder}/components/**`, ENTITIES, ...(page.route === '/' ? ['web/app/(routes)/'] : [])],
       route: url,
+      signedIn,
       expect: { ...expect, folder, testIds: expect.testIds.filter((id) => !sharedIds.has(id)) },
       // No other page shapes this one: other routes and their .weave folders are measured as reads it should not make.
       reads: {
@@ -62,7 +70,7 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
         allow: [
           `${folder}/**`,
           'web/app/(routes)/layout.tsx',
-          ...design.shells.filter((s) => s.id === page.shell).map((s) => `web/app/(routes)/(${s.name})/layout.tsx`),
+          ...design.shells.filter((s) => s.id === page.shell).map((s) => `web/app/(routes)/(${s.name})/`),
           ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : []),
           '.weave/05-pages/guidelines.md',
           `.weave/05-pages/${page.id}/**`,
@@ -84,7 +92,13 @@ async function runPages(ctx: StageContext): Promise<void> {
     const sections = new Set(design.sections.filter((s) => s.screen === page?.id).map((s) => s.id));
     const nodes = design.nodes.filter((n) => sections.has(n.section));
     const sample = {
-      ...routeSample(spec.route ?? '/', page?.id ?? '', page?.entry ?? false, nodes.filter((n) => n.role === 'primary-action').map((n) => n.id)),
+      ...routeSample(
+        spec.route ?? '/',
+        page?.id ?? '',
+        page?.entry ?? false,
+        nodes.filter((n) => n.role === 'primary-action').map((n) => n.id),
+        spec.signedIn ? SIGNED_IN : undefined,
+      ),
       dialogTriggers: nodes.filter((n) => dialogs.has(n.navigatesTo)).map((n) => n.id),
     };
     return { ...spec, rendered: renderedOn(ctx.run, appDir, [sample], theme) };

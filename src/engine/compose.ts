@@ -30,11 +30,13 @@ export type Unit = {
   task: string;
   /** The fix session's task for the pending issues. */
   fixTask: (pending: Issue[]) => string;
-  /** The paths the unit may write: a file, or `folder/**`. */
+  /** The paths the unit may write: `folder/` for a folder's own files, or `folder/**`. */
   writes: string[];
   /** The paths its guidelines keep it from reading, measured after the session. */
   reads?: ReadRules;
   route?: string;
+  /** Its route is behind sign-in, so `pnpm verify` signs in as a member first. */
+  signedIn?: boolean;
   expect?: ScreenExpect;
   /** The rendered checks on the unit's routes, once its app builds. */
   rendered?: () => Promise<Issue[]>;
@@ -70,7 +72,18 @@ export function sessionCompose(
     const result = await runSession(
       ctx,
       appDir,
-      { id, task, inputs: {}, route: unit.route, expect: unit.expect, writes: unit.writes, reads: unit.reads, stage: unit.stage, museSession },
+      {
+        id,
+        task,
+        inputs: {},
+        route: unit.route,
+        signedIn: unit.signedIn,
+        expect: unit.expect,
+        writes: unit.writes,
+        reads: unit.reads,
+        stage: unit.stage,
+        museSession,
+      },
       deps,
     );
     // Rendered checks only mean something on a route that loads.
