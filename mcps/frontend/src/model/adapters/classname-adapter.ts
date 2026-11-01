@@ -18,6 +18,8 @@ import { unknownClass } from './classnames/rules/unknown-class.js';
 export interface ClassNameValue {
   value: Expression;
   policy: TailwindPolicy;
+  /** Design-system files skip the class-list limits. */
+  designSystem: boolean;
 }
 
 /** A rule for one class at a time, returning the finding's rule and message when it objects. */
@@ -34,8 +36,8 @@ export type ClassRule = (
 const classRules: ClassRule[] = [restrictedSyntax, unknownClass];
 const valueRules: Rule<ClassNameValue>[] = [classListLimit];
 
-export function check(policy: TailwindPolicy, value: Expression): Finding[] {
-  const subject: ClassNameValue = { value, policy };
+export function check(policy: TailwindPolicy, value: Expression, designSystem = false): Finding[] {
+  const subject: ClassNameValue = { value, policy, designSystem };
   const strings: string[] = [];
   classNameStrings.collectClassNameStrings(value, strings);
 

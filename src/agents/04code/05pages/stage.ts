@@ -10,6 +10,7 @@ import type { WidgetScreens } from '../../02design/08assemble/assemble';
 import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
 import { seedId } from '../02contract/codegen';
+import { sharedUnits } from '../01scaffold/weave';
 import { renderedOn, routeSample } from '../rendered';
 import { runUnits, type UnitSpec } from '../unit';
 
@@ -37,6 +38,10 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
   const rank = (id: string) => (order.includes(id) ? order.indexOf(id) : order.length);
   const pages = design.screens.filter((s) => s.type === 'page').sort((a, b) => rank(a.id) - rank(b.id) || a.id.localeCompare(b.id));
   const task = loadPrompt(pathBeside(import.meta.url, './prompts/task.md'));
+  // A shared dialog is built in blocks/ and checked there (CD7), not in its parent page's folder.
+  const sharedIds = new Set(
+    design.sections.filter((s) => sharedUnits(design).dialogs.has(s.screen)).flatMap((s) => design.nodes.filter((n) => n.section === s.id).map((n) => n.id)),
+  );
   return pages.map((page) => {
     const folder = pageFolder(design, page);
     const url = concreteRoute(page.route, contract);
@@ -49,7 +54,7 @@ export function pageSpecs(design: WidgetScreens, contract: Contract): Omit<UnitS
       // The root page replaces the template's starter page.
       writes: [`${folder}/page.tsx`, `${folder}/components/**`, ...(page.route === '/' ? ['web/app/(routes)/page.tsx'] : [])],
       route: url,
-      expect: { ...expect, folder },
+      expect: { ...expect, folder, testIds: expect.testIds.filter((id) => !sharedIds.has(id)) },
     };
   });
 }

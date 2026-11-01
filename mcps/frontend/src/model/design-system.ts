@@ -1,7 +1,8 @@
-import { globSync, readFileSync } from 'node:fs';
-import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
+import { existsSync, globSync, readFileSync } from 'node:fs';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
 import { loadTokens } from './adapters/styles-adapter.js';
+import { recipeDefaults } from './adapters/styles/recipe-defaults.js';
 import { componentRoots, loadComponents, loadPackageComponents } from './adapters/components-adapter.js';
 import { loadRecipes, recipeImporting, type RecipeFile } from './adapters/recipes-adapter.js';
 import { buildInvalidAlternativeOwners } from './adapters/tsx-adapter.js';
@@ -33,9 +34,31 @@ function loadAllTokens(config: ResolvedConfig): DesignToken[] {
 
 function loadAllComponents(config: ResolvedConfig): ComponentContract[] {
   return [
-    ...loadComponents(config.components, config.configDir),
+    ...loadComponents(config.components, config.configDir).map(withRecipeDefaults),
     ...(config.packages ?? []).flatMap((pkg) => loadPackageComponents(pkg, config.configDir)),
   ];
+}
+
+/**
+ * A component's variant defaults from its styles recipe, `<Name>.recipes.css.ts`
+ * beside it with `<name>Recipe`, where the theme sets them; a default the props
+ * declare themselves wins.
+ */
+function withRecipeDefaults(component: ComponentContract): ComponentContract {
+  if (!component.filePath) return component;
+  const file = join(dirname(component.filePath), `${component.name}.recipes.css.ts`);
+  const name = `${component.name.charAt(0).toLowerCase()}${component.name.slice(1)}Recipe`;
+  const recipe = existsSync(file) ? recipeDefaults(file, name) : undefined;
+  if (!recipe) return component;
+  return {
+    ...component,
+    props: component.props.map((prop) =>
+      prop.default === undefined && recipe.defaults[prop.name] !== undefined
+        ? { ...prop, default: recipe.defaults[prop.name] }
+        : prop,
+    ),
+    looks: recipe.variants.filter((variant) => variant.name !== 'variant' && variant.name !== 'size'),
+  };
 }
 
 /**
@@ -79,7 +102,9 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   const byName = new Map(components.map((c) => [c.name.toLowerCase(), c]));
   const byExactName = new Map(components.map((c) => [c.name, c]));
   const invalidAlternatives = buildInvalidAlternativeOwners(components);
-  const designSystemRoots = componentRoots(config.components, config.configDir);
+  const designSystemRoots = config.designSystemFolders
+    ? config.designSystemFolders.map((folder) => resolve(config.configDir, folder))
+    : componentRoots(config.components, config.configDir);
   const recipeFiles = loadRecipes(config.recipes ?? [], config.configDir);
   const recipePaths = new Set(recipeFiles.map((recipe) => recipe.filePath));
   const importExceptionPaths = new Set(

@@ -71,6 +71,11 @@ export interface ComponentContract {
   invalidAlternatives: string[];
   /** Absolute path of the file declaring the component, when it came from one. */
   filePath?: string;
+  /**
+   * The recipe variants a `look` prop sets (all but `variant` and `size`): an
+   * on/off one by its name or `!name`, any other by one of its values.
+   */
+  looks?: { name: string; values: string[]; boolean: boolean; default?: string }[];
 }
 
 /**

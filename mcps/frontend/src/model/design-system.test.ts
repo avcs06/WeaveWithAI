@@ -12,17 +12,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXAMPLE = join(__dirname, '..', '..', 'examples', 'synthetic-design-system');
 
 let system: DesignSystem;
+const config = {
+  tokens: ['theme.css.ts', 'tokens.ts'],
+  components: ['components/**/*.tsx'],
+  recipes: ['components/**/*.recipe.tsx'],
+  configDir: EXAMPLE,
+};
 
 beforeAll(() => {
-  system = createDesignSystem({
-    tokens: [
-      'theme.css.ts',
-      'tokens.ts',
-    ],
-    components: ['components/**/*.tsx'],
-    recipes: ['components/**/*.recipe.tsx'],
-    configDir: EXAMPLE,
-  });
+  system = createDesignSystem(config);
 });
 
 describe('tokens', () => {
@@ -185,6 +183,11 @@ describe('validate — a hardcoded literal with a reason', () => {
     const result = system.validate('<div style={{ padding: "7px" }} />');
     expect(result.findings[0]?.message).toContain('say why in a comment');
   });
+
+  it('refuses a comment that only points at the design', () => {
+    const result = system.validate('<div style={{ padding: "7px" /* as the mockup shows */ }} />');
+    expect(result.findings[0]?.message).toContain('the design may be wrong');
+  });
 });
 
 describe('validate — class lists', () => {
@@ -201,8 +204,10 @@ describe('validate — class lists', () => {
     expect(result.findings.map((f) => f.message).join()).toContain('3 static class lists');
   });
 
-  it('applies the limits in a design-system folder too', () => {
-    const result = system.validate(`<div className="${long}" />`, 'components/Button.tsx');
+  it('skips the limits in a design-system folder only', () => {
+    expect(system.validate(`<div className="${long}" />`, 'components/Button.tsx').findings).toEqual([]);
+    const web = createDesignSystem({ ...config, designSystemFolders: ['packages'] });
+    const result = web.validate(`<div className="${long}" />`, 'components/Button.tsx');
     expect(result.findings.map((f) => f.rule)).toContain('tailwind-class-list-limit');
   });
 
@@ -243,12 +248,35 @@ describe('validate — jsx surface', () => {
   });
 });
 
+describe('validate — non-default variants', () => {
+  it('passes a variant left out or set to its default', () => {
+    expect(system.validate('<Button />', 'app/page.tsx').findings).toEqual([]);
+    expect(system.validate('<Button variant="primary" />', 'app/page.tsx').findings).toEqual([]);
+  });
+
+  it('asks for a reason when app code picks another valid variant', () => {
+    const [finding] = system.validate('<Button variant="danger" />', 'app/page.tsx').findings;
+    expect(finding).toMatchObject({ rule: 'non-default-variant' });
+    expect(finding?.message).toContain('not Button\'s default ("primary")');
+  });
+
+  it("passes the author's own reason, and refuses the design as one", () => {
+    const own = '<Button\n  // deleting a client cannot be undone\n  variant="danger"\n/>';
+    expect(system.validate(own, 'app/page.tsx').findings).toEqual([]);
+    const design = '<Button\n  // the design asks for a red button\n  variant="danger"\n/>';
+    expect(system.validate(design, 'app/page.tsx').findings[0]?.message).toContain('the design may be wrong');
+  });
+
+  it('leaves design-system code and recipes their own choices', () => {
+    expect(system.validate('<Button variant="danger" />', 'components/Stack.tsx').findings).toEqual([]);
+    expect(system.validate('<Button variant="danger" />', 'components/Button.recipe.tsx').findings).toEqual([]);
+  });
+});
+
 describe('validate — unknown-variant', () => {
   it('accepts a variant value in the allowed set', () => {
-    expect(system.validate('<Button variant="secondary" size="lg" />')).toEqual({
-      ok: true,
-      findings: [],
-    });
+    const rules = system.validate('<Button variant="secondary" size="lg" />').findings.map((f) => f.rule);
+    expect(rules).not.toContain('unknown-variant');
   });
 
   it('flags a variant value outside the allowed set, naming the legal alternatives', () => {

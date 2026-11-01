@@ -152,8 +152,9 @@ export function createServer(system: DesignSystem): McpServer {
       title: 'Validate code against the design system',
       description:
         "Check a JSX/TSX snippet or a style file's content against the real design system: " +
-        'hardcoded values that should be tokens (allowed with a comment saying why), variant props ' +
-        'set outside their allowed set, elements or components the design system supersedes, form ' +
+        'hardcoded values that should be tokens, variant props outside their allowed set or off their ' +
+        'default (either allowed with a comment giving your own reason), elements or components the ' +
+        'design system supersedes, form ' +
         "fields kept outside react-hook-form and the design system's Controller, classes Tailwind " +
         'does not generate, Tailwind variants, selectors and arbitrary values, which belong in ' +
         'vanilla-extract, and class lists over 50 characters or more than 2 per element. Some rules ' +
@@ -168,7 +169,7 @@ export function createServer(system: DesignSystem): McpServer {
           .optional()
           .describe(
             'Path of the file the code belongs in, relative to the workspace root or absolute. ' +
-              "Files under the config's component paths skip the form rules. A component's own folder " +
+              "Files under the config's design-system folders skip the rules for app code. A component's own folder " +
               '(not its recipe) may use what it supersedes. A .ts file is parsed without JSX.',
           ),
       }),

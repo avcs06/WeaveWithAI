@@ -28,6 +28,12 @@ const ConfigSchema = z.object({
    * skips them.
    */
   importExceptions: z.array(z.string().min(1)).optional(),
+  /**
+   * Folders holding the design system's own code, which skips the rules for
+   * app code (class-list limits, form rules, non-default variants). Default:
+   * every `components` glob's folder.
+   */
+  designSystemFolders: z.array(z.string().min(1)).optional(),
 });
 
 export interface ResolvedConfig {
@@ -36,6 +42,7 @@ export interface ResolvedConfig {
   packages?: PackageConfig[];
   recipes?: string[];
   importExceptions?: string[];
+  designSystemFolders?: string[];
   /** classNames are always Tailwind; the host workspace supplies its rules. */
   tailwind?: TailwindPolicy;
   /** Directory the config file lives in — adapters that treat a field as a filesystem path resolve relative to this, not to `process.cwd()`. */
@@ -78,13 +85,14 @@ export function loadConfig(cwd: string = process.cwd()): ResolvedConfig {
     throw new Error(`${configPath} is invalid:\n${formatZodError(result.error)}`);
   }
 
-  const { tokens, components, packages = [], recipes, importExceptions } = result.data;
+  const { tokens, components, packages = [], recipes, importExceptions, designSystemFolders } = result.data;
   return {
     tokens,
     components,
     packages: Array.isArray(packages) ? packages : [packages],
     recipes,
     importExceptions,
+    designSystemFolders,
     configDir: resolve(dirname(configPath)),
   };
 }

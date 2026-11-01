@@ -14,6 +14,7 @@ const contract = golden('03-contract.json') as Contract;
 describe('the code stages on the golden freelancer workspace', () => {
   it('shared: one session writing components and blocks, none when nothing is shared', () => {
     expect(sharedSpecs(design)).toMatchObject([{ id: 'shared', writes: ['web/app/components/**', 'web/app/blocks/**'] }]);
+    expect(sharedSpecs(design)[0]?.expect?.testIds).toContain('S17.n01');
     const bare = { ...design, newComponents: [], placements: design.placements.slice(0, 1), nodes: [] };
     expect(sharedSpecs(bare)).toEqual([]);
   });
@@ -32,6 +33,9 @@ describe('the code stages on the golden freelancer workspace', () => {
     expect(s06.writes).toEqual(['web/app/(routes)/(app)/clients/[clientId]/page.tsx', 'web/app/(routes)/(app)/clients/[clientId]/components/**']);
     expect(s06.route).toBe('/clients/client-1');
     expect(s06.expect?.testIds).toContain('S06.n01');
+    // S17 opens from S06 and S07, so blocks/ holds it and S06 is not asked for its ids.
+    expect(s06.expect?.testIds.some((id) => id.startsWith('S17.'))).toBe(false);
+    expect(s06.expect?.testIds.some((id) => id.startsWith('S14.'))).toBe(true);
     expect(specs.find((s) => s.id === 'page-S01')?.writes).toContain('web/app/(routes)/page.tsx');
   });
 

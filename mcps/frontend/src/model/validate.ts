@@ -49,6 +49,7 @@ export function validate(
       ...validateStyles(ast, system),
       ...validateJsx(ast, system, context.tailwind, context.invalidAlternatives, {
         designSystem: !recipe && isDesignSystemFile(filePath, context),
+        recipe,
         importException: filePath !== undefined && context.importExceptions.has(filePath),
         filePath: recipe ? undefined : filePath,
       }),

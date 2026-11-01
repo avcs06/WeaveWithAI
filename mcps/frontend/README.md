@@ -73,8 +73,8 @@ Each finding names the exact constraint broken and, where derivable, the exact f
 
 **Values that should be tokens**
 
-1. **Hardcoded literals in style-defining code**, unless a comment on the property says why the
-   literal is right — for `vanilla-extract`, that's `style()` and
+1. **Hardcoded literals in style-defining code**, unless a comment on the property gives the
+   author's own reason (one that only cites the design does not count) — for `vanilla-extract`, that's `style()` and
    `styleVariants()` (from `@vanilla-extract/css`) and `recipe()` (from the separate
    `@vanilla-extract/recipes` package), including everything nested inside `selectors`,
    media-query and variant objects, quoted pseudo-selector keys included. In a system that splits
@@ -91,7 +91,11 @@ can apply in one pass.
 **Wrong implementations**
 
 3. **Unknown variant value** — a variant-like prop set to a value outside its allowed set, with
-   the allowed set named in the message.
+   the allowed set named in the message. In app code, a valid value other than the component's
+   default (`non-default-variant`) needs a comment on the prop with the author's own reason; a
+   comment that only cites the design is refused. Defaults come from the props, else from the
+   component's `<Name>.recipes.css.ts` (`<name>Recipe`'s `defaultVariants`); a `look` prop is read
+   as the template's `createLook` reads it.
 4. **An invalid alternative to a design system component** — reaching for a raw `<button>`, or for
    some other library's `MuiButton`, when the system has a `Button` of its own. A component
    declares what it supersedes with an `@invalidAlternative` JSDoc tag, naming native elements and
@@ -380,7 +384,9 @@ recipe keeps them working. Recipe files are never read as components.
 
 Style-defining code is always checked as vanilla-extract and `className` as Tailwind. The host
 workspace passes its Tailwind rules (`tailwind` on the config given to `createDesignSystem`).
-Every file under a `components` glob's folder is design-system code, which skips the form rules.
+Design-system code skips the rules for app code: the class-list limits, the form rules and
+`non-default-variant`. It is every file under `designSystemFolders` (here `packages`), or, when
+that is unset, under a `components` glob's folder.
 The rules for writing the design system itself (layout in Tailwind only, no layout properties in
 vanilla-extract, Tailwind where a class matches exactly, no bare `flex`) are kept in
 [`design-system-rules/`](design-system-rules/), outside the server.

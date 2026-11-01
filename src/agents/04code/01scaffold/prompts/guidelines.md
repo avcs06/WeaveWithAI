@@ -35,6 +35,10 @@ connects.
   node id, such as `data-testid="S04.n03"`.
 - Show the node's `text` as its words. The node with heading level 1 is the
   page's H1.
+- Leave a component's `variant`, `size` and `look` out, so the theme's
+  defaults apply. A node that sets one has an `overrideReason`: write that
+  reason, in your own words, in a comment on the prop. "The design asks for
+  it" is no reason; the MCP refuses it.
 - Build every state the screen and its nodes list: loading, empty, error,
   not found, denied.
 - Forms use the Form recipe and show the flow's messages for invalid

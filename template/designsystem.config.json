@@ -15,5 +15,6 @@
     "web/app/components/*/*.recipe.tsx",
     "web/app/shared/*.recipe.tsx"
   ],
-  "importExceptions": ["packages/ui/src/Selectable/Selectable.tsx"]
+  "importExceptions": ["packages/ui/src/Selectable/Selectable.tsx"],
+  "designSystemFolders": ["packages"]
 }

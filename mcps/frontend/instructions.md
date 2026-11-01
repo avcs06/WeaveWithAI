@@ -32,7 +32,10 @@ the React Compiler, and fits a 320px screen: `pnpm nx test ui` and
   `classNames('flex-row-gap-2 flex-wrap', 'items-center')`. Styles that don't
   fit go in the `.css.ts` too.
 - Use a token for every color, spacing and size. A literal needs a comment on
-  the property saying why it is right.
+  the property saying why it is right, in your own words; "the design asks for
+  it" is no reason, since the design may be wrong.
+- Leave `variant`, `size` and `look` out to keep the defaults the theme set.
+  Another value needs a comment on the prop with your own reason, the same way.
 - Phones: `@media (max-width: 639px)`. Card grids:
   `repeat(auto-fill, minmax(min(100%, 280px), 1fr))`.
 

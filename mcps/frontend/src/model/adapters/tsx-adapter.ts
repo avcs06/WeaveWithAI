@@ -46,6 +46,8 @@ export interface JsxElement {
   classes?: Set<string>;
   owners: InvalidAlternativeOwners;
   designSystem: boolean;
+  /** A recipe file: app code that shows each case of a component on purpose. */
+  recipe: boolean;
   filePath?: string;
 }
 
@@ -169,9 +171,9 @@ export function validateJsx(
   system: DesignSystem,
   tailwind: TailwindPolicy,
   owners: InvalidAlternativeOwners,
-  options: { designSystem?: boolean; importException?: boolean; filePath?: string } = {},
+  options: { designSystem?: boolean; recipe?: boolean; importException?: boolean; filePath?: string } = {},
 ): Finding[] {
-  const { designSystem = false, importException = false, filePath } = options;
+  const { designSystem = false, recipe = false, importException = false, filePath } = options;
   const findings: Finding[] = fileRules.flatMap((rule) => rule({ ast, designSystem }));
 
   const checkModule = (nodePath: NodePath) => {
@@ -202,6 +204,7 @@ export function validateJsx(
           classes: classNameValue ? classNameAdapter.classNameTokens(classNameValue) : undefined,
           owners,
           designSystem,
+          recipe,
           filePath,
         };
         findings.push(...elementRules.flatMap((rule) => rule(subject)));
@@ -213,7 +216,7 @@ export function validateJsx(
       }
 
       if (classNameValue) {
-        findings.push(...classNameAdapter.check(tailwind, classNameValue));
+        findings.push(...classNameAdapter.check(tailwind, classNameValue, designSystem));
       }
     },
   });

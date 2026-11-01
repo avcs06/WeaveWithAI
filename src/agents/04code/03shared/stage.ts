@@ -21,6 +21,14 @@ export function sharedSpecs(design: WidgetScreens): UnitSpec[] {
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
       folders: ['01-scaffold', '02-contract', '03-shared'],
       writes: ['web/app/components/**', 'web/app/blocks/**'],
+      // A shared dialog is one screen, so its node ids are the same wherever it opens; a shared widget's come from each page.
+      expect: {
+        folder: 'web/app/blocks',
+        testIds: design.sections
+          .filter((s) => shared.dialogs.has(s.screen))
+          .flatMap((s) => design.nodes.filter((n) => n.section === s.id).map((n) => n.id)),
+        operations: [],
+      },
     },
   ];
 }
