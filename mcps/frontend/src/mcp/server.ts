@@ -152,9 +152,11 @@ export function createServer(system: DesignSystem): McpServer {
       title: 'Validate code against the design system',
       description:
         "Check a JSX/TSX snippet or a style file's content against the real design system: " +
-        'hardcoded values that should be tokens, variant props set outside their allowed set, ' +
-        'elements or components the design system supersedes, form fields kept ' +
-        "outside react-hook-form and the design system's Controller, and className rules — which " +
+        'hardcoded values that should be tokens (allowed with a comment saying why), variant props ' +
+        'set outside their allowed set, elements or components the design system supersedes, form ' +
+        "fields kept outside react-hook-form and the design system's Controller, classes Tailwind " +
+        'does not generate, Tailwind variants, selectors and arbitrary values, which belong in ' +
+        'vanilla-extract, and class lists over 50 characters or more than 2 per element. Some rules ' +
         'depend on the file path, so always pass filename. Call this on ' +
         'every piece of UI code you generate before returning it — a finding names the exact ' +
         'constraint broken and, where derivable, the exact fix to apply. Unparseable input comes ' +
@@ -166,9 +168,8 @@ export function createServer(system: DesignSystem): McpServer {
           .optional()
           .describe(
             'Path of the file the code belongs in, relative to the workspace root or absolute. ' +
-              "Files under the config's component paths get the design-system rules; any other " +
-              "path, a recipe, or no path, gets the general rules. A component's own folder (not its " +
-              'recipe) may use what it supersedes. A .ts file is parsed without JSX.',
+              "Files under the config's component paths skip the form rules. A component's own folder " +
+              '(not its recipe) may use what it supersedes. A .ts file is parsed without JSX.',
           ),
       }),
     },

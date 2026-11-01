@@ -5,7 +5,7 @@ import { position } from '../../ast.js';
 import type { ClassNameValue } from '../../classname-adapter.js';
 
 const MOVE_TO_VANILLA_EXTRACT =
-  'Move the styles to vanilla-extract; display, flex and alignment stay in Tailwind.';
+  'Move the rest to a colocated .css.ts (vanilla-extract) with the design tokens.';
 
 /**
  * The class lists an element always carries: the value itself when it is a
@@ -15,24 +15,25 @@ const MOVE_TO_VANILLA_EXTRACT =
 function staticClassLists(node: Expression): string[] {
   const staticString = (value: Expression): string | undefined => {
     if (value.type === 'StringLiteral') return value.value;
-    if (value.type === 'TemplateLiteral' && !value.expressions.length) return value.quasis[0]?.value.cooked ?? '';
+    if (value.type === 'TemplateLiteral' && !value.expressions.length)
+      return value.quasis[0]?.value.cooked ?? '';
     return undefined;
   };
   const value = staticString(node);
   if (value !== undefined) return [value];
   if (node.type !== 'CallExpression') return [];
   return node.arguments.flatMap((arg) => {
-    const argValue = arg.type === 'SpreadElement' || arg.type === 'ArgumentPlaceholder' ? undefined : staticString(arg);
+    const argValue =
+      arg.type === 'SpreadElement' || arg.type === 'ArgumentPlaceholder' ? undefined : staticString(arg);
     return argValue === undefined ? [] : [argValue];
   });
 }
 
 /**
- * Outside design-system files a static class list may be only so long, and an
- * element may carry only so many; past that, styles belong in vanilla-extract.
+ * A static class list may be only so long, and an element may carry only so
+ * many; past that, styles belong in vanilla-extract.
  */
-export const classListLimit: Rule<ClassNameValue> = ({ value, policy, designSystem }) => {
-  if (designSystem) return [];
+export const classListLimit: Rule<ClassNameValue> = ({ value, policy }) => {
   const maxLength = policy.maxClassListLength ?? 50;
   const maxLists = policy.maxClassListsPerElement ?? 2;
   const finding = (message: string): Finding => ({
@@ -49,7 +50,9 @@ export const classListLimit: Rule<ClassNameValue> = ({ value, policy, designSyst
     const length = list.trim().split(/\s+/).join(' ').length;
     if (length > maxLength) {
       findings.push(
-        finding(`This class list is ${length} characters; the maximum is ${maxLength}. ${MOVE_TO_VANILLA_EXTRACT}`),
+        finding(
+          `This class list is ${length} characters; the maximum is ${maxLength}. ${MOVE_TO_VANILLA_EXTRACT}`,
+        ),
       );
     }
   }

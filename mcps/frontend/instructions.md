@@ -25,15 +25,14 @@ the React Compiler, and fits a 320px screen: `pnpm nx test ui` and
 
 ## Styling
 
-- Layout styles use only Tailwind: `flex-row-gap-*` and `flex-col-gap-*`
-  (never a bare `flex`), `items-*`, `justify-*`, `grid`, `gap-*`, padding,
-  margin and sizes. In a `.css.ts`, display, flex and alignment properties
-  are allowed only inside `@media`.
-- No Tailwind variants (`sm:`, `hover:`), arbitrary values or negative classes.
+- Tailwind variants and selectors (`hover:`, `sm:`), arbitrary values
+  (`w-[13px]`) and negative classes go in a colocated `.css.ts`
+  (vanilla-extract) using `tokens` from `@packages/styles/tokens.css`.
 - A class list has at most 50 characters, and an element at most two lists:
   `classNames('flex-row-gap-2 flex-wrap', 'items-center')`. Styles that don't
-  fit go in a colocated `.css.ts` (vanilla-extract) using `tokens` from
-  `@packages/styles/tokens.css`.
+  fit go in the `.css.ts` too.
+- Use a token for every color, spacing and size. A literal needs a comment on
+  the property saying why it is right.
 - Phones: `@media (max-width: 639px)`. Card grids:
   `repeat(auto-fill, minmax(min(100%, 280px), 1fr))`.
 

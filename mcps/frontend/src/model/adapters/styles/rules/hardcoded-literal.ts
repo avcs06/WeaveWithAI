@@ -1,4 +1,4 @@
-import type { Expression, ObjectExpression } from '@babel/types';
+import type { Expression, ObjectExpression, ObjectProperty } from '@babel/types';
 
 import type { Finding, Rule } from '../../../types.js';
 import type { StyleObject } from '../../styles-adapter.js';
@@ -98,6 +98,13 @@ const GENERIC_VALUES = new Set([
   '0',
 ]);
 
+/** A comment on the property or its value, before or after it, says why the literal is right. */
+function explained(prop: ObjectProperty): boolean {
+  return [prop, prop.value].some((node) =>
+    [...(node.leadingComments ?? []), ...(node.trailingComments ?? [])].some((comment) => comment.value.trim() !== ''),
+  );
+}
+
 function isLiteralValue(node: Expression): string | undefined {
   if (node.type === 'StringLiteral') return node.value;
   if (node.type === 'NumericLiteral') return String(node.value);
@@ -117,6 +124,7 @@ function isLiteralValue(node: Expression): string | undefined {
  *
  * Shared by every styles implementation and the TSX adapter's inline `style`
  * check, so "which properties map to which token group" lives in one place.
+ * A literal with a comment explaining it is allowed.
  */
 export const hardcodedLiteral: Rule<StyleObject> = ({ object, system, surface }) => {
   const findings: Finding[] = [];
@@ -154,6 +162,7 @@ export const hardcodedLiteral: Rule<StyleObject> = ({ object, system, surface })
       // Local stacking contexts may use literal levels; suggest only an exact
       // named layer.
       if (key === 'zIndex' && !system.tokens(group).some((token) => token.value === literal)) continue;
+      if (explained(prop)) continue;
 
       const nearest = system.nearestToken(literal, group);
       const loc = value.loc;
@@ -165,7 +174,7 @@ export const hardcodedLiteral: Rule<StyleObject> = ({ object, system, surface })
         column: loc ? loc.start.column + 1 : 0,
         message: `"${key}: ${literal}" hardcodes a ${group} value instead of using a design token.${
           nearest ? ` The closest token is "${nearest.name}".` : ''
-        }`,
+        } If the literal is right, say why in a comment on this property.`,
         suggestion: nearest?.reference,
       });
     }

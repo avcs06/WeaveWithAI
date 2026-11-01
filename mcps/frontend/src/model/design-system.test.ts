@@ -155,6 +155,63 @@ describe('validate — vanilla-extract surface', () => {
   });
 });
 
+describe('validate — a hardcoded literal with a reason', () => {
+  it('allows a literal explained by a comment above it', () => {
+    const code = `
+      import { style } from '@vanilla-extract/css';
+      export const logo = style({
+        // the logo file's own color, not a theme color
+        color: '#3b5bdc',
+      });
+    `;
+    expect(system.validate(code)).toEqual({ ok: true, findings: [] });
+  });
+
+  it('allows a literal explained by a comment after it', () => {
+    const code = `
+      import { style } from '@vanilla-extract/css';
+      export const logo = style({
+        color: '#3b5bdc', // the logo file's own color
+      });
+    `;
+    expect(system.validate(code)).toEqual({ ok: true, findings: [] });
+  });
+
+  it('allows an inline style literal with a comment', () => {
+    expect(system.validate('<div style={{ padding: "7px" /* lines up with the icon */ }} />').ok).toBe(true);
+  });
+
+  it('still flags a literal with no comment, and says how to keep it', () => {
+    const result = system.validate('<div style={{ padding: "7px" }} />');
+    expect(result.findings[0]?.message).toContain('say why in a comment');
+  });
+});
+
+describe('validate — class lists', () => {
+  const long = 'items-center justify-between gap-2 px-4 py-2 w-full';
+
+  it('flags a class list over 50 characters', () => {
+    expect(long.length).toBeGreaterThan(50);
+    const result = system.validate(`<div className="${long}" />`);
+    expect(result.findings.map((f) => f.rule)).toContain('tailwind-class-list-limit');
+  });
+
+  it('flags a third static class list on one element', () => {
+    const result = system.validate('<div className={cn("items-center", "gap-2", "px-4")} />');
+    expect(result.findings.map((f) => f.message).join()).toContain('3 static class lists');
+  });
+
+  it('applies the limits in a design-system folder too', () => {
+    const result = system.validate(`<div className="${long}" />`, 'components/Button.tsx');
+    expect(result.findings.map((f) => f.rule)).toContain('tailwind-class-list-limit');
+  });
+
+  it('sends a variant to vanilla-extract', () => {
+    const result = system.validate('<span className="hover:underline" />');
+    expect(result.findings[0]?.message).toContain('vanilla-extract');
+  });
+});
+
 describe('validate — jsx surface', () => {
   it('accepts a real token reference in an inline style prop', () => {
     expect(system.validate('<div style={{ color: vars.color.accent }} />')).toEqual({

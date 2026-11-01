@@ -213,7 +213,7 @@ export function validateJsx(
       }
 
       if (classNameValue) {
-        findings.push(...classNameAdapter.check(tailwind, classNameValue, designSystem));
+        findings.push(...classNameAdapter.check(tailwind, classNameValue));
       }
     },
   });

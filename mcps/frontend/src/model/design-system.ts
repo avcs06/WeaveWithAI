@@ -203,7 +203,6 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
 
     validate(code, filename) {
       return runValidate(system, code, filename, {
-        vanillaExtract: config.vanillaExtract ?? {},
         tailwind: config.tailwind ?? {},
         designSystemRoots,
         recipeFiles: recipePaths,

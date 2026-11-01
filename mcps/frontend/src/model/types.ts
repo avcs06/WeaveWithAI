@@ -10,28 +10,11 @@ export type Surface = 'vanilla-extract' | 'jsx' | 'tailwind';
 
 /** The repository's Tailwind rules, supplied by the host workspace. Omitted fields leave only the built-in syntax checks. */
 export interface TailwindPolicy {
-  /** The only utilities a design-system file may use. */
-  layoutClasses?: ReadonlySet<string>;
-  forbiddenClasses?: ReadonlySet<string>;
   maxClassListLength?: number;
   maxClassListsPerElement?: number;
   isValidClass?: (className: string) => boolean;
   /** The class that applies a token's value, when Tailwind generates one. */
   tokenClass?: (token: DesignToken) => string | undefined;
-}
-
-/** A Tailwind class and the exact declarations it generates. */
-export interface TailwindEquivalent {
-  className: string;
-  declarations: Record<string, string>;
-}
-
-/** The repository's vanilla-extract rules, supplied by the host workspace. */
-export interface VanillaExtractPolicy {
-  /** Declarations an allowed Tailwind class expresses exactly, which must use that class instead. */
-  tailwindEquivalents?: TailwindEquivalent[];
-  /** Properties that may never appear in a style object. */
-  forbiddenProperties?: Set<string>;
 }
 
 export interface DesignToken {

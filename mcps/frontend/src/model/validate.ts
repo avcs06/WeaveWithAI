@@ -4,10 +4,9 @@ import { parse } from '@babel/parser';
 
 import { validateStyles } from './adapters/styles-adapter.js';
 import { validateJsx, type InvalidAlternativeOwners } from './adapters/tsx-adapter.js';
-import type { DesignSystem, Finding, TailwindPolicy, ValidateResult, VanillaExtractPolicy } from './types.js';
+import type { DesignSystem, Finding, TailwindPolicy, ValidateResult } from './types.js';
 
 interface ValidateContext {
-  vanillaExtract: VanillaExtractPolicy;
   tailwind: TailwindPolicy;
   /** Folders holding the design system's own source; a file inside one gets the design-system rules. */
   designSystemRoots: string[];
@@ -47,7 +46,7 @@ export function validate(
   try {
     const ast = parse(code, { sourceType: 'module', plugins: jsx ? ['typescript', 'jsx'] : ['typescript'] });
     findings = [
-      ...validateStyles(ast, system, context.vanillaExtract),
+      ...validateStyles(ast, system),
       ...validateJsx(ast, system, context.tailwind, context.invalidAlternatives, {
         designSystem: !recipe && isDesignSystemFile(filePath, context),
         importException: filePath !== undefined && context.importExceptions.has(filePath),

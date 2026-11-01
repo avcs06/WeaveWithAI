@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 
 import * as z from 'zod/v4';
 
-import type { DesignToken, PackageConfig, TailwindPolicy, VanillaExtractPolicy } from './types.js';
+import type { DesignToken, PackageConfig, TailwindPolicy } from './types.js';
 
 const CONFIG_FILENAME = 'designsystem.config.json';
 
@@ -36,8 +36,7 @@ export interface ResolvedConfig {
   packages?: PackageConfig[];
   recipes?: string[];
   importExceptions?: string[];
-  /** Styles are always vanilla-extract and classNames always Tailwind; the host workspace supplies its rules for both. */
-  vanillaExtract?: VanillaExtractPolicy;
+  /** classNames are always Tailwind; the host workspace supplies its rules. */
   tailwind?: TailwindPolicy;
   /** Directory the config file lives in — adapters that treat a field as a filesystem path resolve relative to this, not to `process.cwd()`. */
   configDir: string;

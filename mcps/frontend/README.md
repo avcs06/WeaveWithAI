@@ -73,7 +73,8 @@ Each finding names the exact constraint broken and, where derivable, the exact f
 
 **Values that should be tokens**
 
-1. **Hardcoded literals in style-defining code** — for `vanilla-extract`, that's `style()` and
+1. **Hardcoded literals in style-defining code**, unless a comment on the property says why the
+   literal is right — for `vanilla-extract`, that's `style()` and
    `styleVariants()` (from `@vanilla-extract/css`) and `recipe()` (from the separate
    `@vanilla-extract/recipes` package), including everything nested inside `selectors`,
    media-query and variant objects, quoted pseudo-selector keys included. In a system that splits
@@ -255,20 +256,16 @@ src/
         object.ts               loadTokens() for a plain JS/JSON file
         flatten-object-literal.ts  AST helper both token readers use
         rules/
-          forbidden-layout.ts   layout properties reserved for Tailwind
-          hardcoded-literal.ts  a literal where a design token belongs
-          prefer-tailwind.ts    declarations an allowed Tailwind class replaces exactly
+          hardcoded-literal.ts  a literal where a design token belongs, unless a comment says why
       classname-adapter.ts      check(policy, value) runs the className rules;
                                 classNameTokens(value) reads the classes off a className
       classnames/
         class-name-strings.ts   reads the strings off a className, whatever expression shape it
                                 takes — knows no className convention
         rules/
-          restricted-syntax.ts  variants, arbitrary values, negative modifiers
-          forbidden-class.ts    classes the policy forbids outright
-          layout-only.ts        design-system files: layout utilities only
+          restricted-syntax.ts  variants, selectors, arbitrary values, negative modifiers: vanilla-extract
           unknown-class.ts      classes the Tailwind config doesn't generate
-          class-list-limit.ts   class-list length and count outside the design system
+          class-list-limit.ts   class-list length (50) and count per element (2)
   mcp/
     server.ts                  tool registration
     workspace.ts               serveWorkspace(config): createDesignSystem -> serveStdio
@@ -382,9 +379,11 @@ as written, so make it code that typechecks and passes your lint; a test that re
 recipe keeps them working. Recipe files are never read as components.
 
 Style-defining code is always checked as vanilla-extract and `className` as Tailwind. The host
-workspace passes its own rules for both (`vanillaExtract` and `tailwind` on the config given to
-`createDesignSystem`). Every file under a `components` glob's folder is design-system code:
-there, Tailwind is limited to layout utilities.
+workspace passes its Tailwind rules (`tailwind` on the config given to `createDesignSystem`).
+Every file under a `components` glob's folder is design-system code, which skips the form rules.
+The rules for writing the design system itself (layout in Tailwind only, no layout properties in
+vanilla-extract, Tailwind where a class matches exactly, no bare `flex`) are kept in
+[`design-system-rules/`](design-system-rules/), outside the server.
 
 A format that isn't listed here needs a new adapter — see [Architecture](#architecture).
 

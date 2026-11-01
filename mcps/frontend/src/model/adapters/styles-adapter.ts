@@ -1,10 +1,8 @@
 import type { File, ObjectExpression } from '@babel/types';
 
-import type { DesignSystem, DesignToken, Finding, Rule, Surface, VanillaExtractPolicy } from '../types.js';
+import type { DesignSystem, DesignToken, Finding, Rule, Surface } from '../types.js';
 import * as objectStyles from './styles/object.js';
-import { forbiddenLayout } from './styles/rules/forbidden-layout.js';
 import { hardcodedLiteral } from './styles/rules/hardcoded-literal.js';
-import { preferTailwind } from './styles/rules/prefer-tailwind.js';
 import * as vanillaExtractStyles from './styles/vanilla-extract.js';
 
 /**
@@ -19,18 +17,17 @@ import * as vanillaExtractStyles from './styles/vanilla-extract.js';
 export interface StyleObject {
   object: ObjectExpression;
   system: DesignSystem;
-  policy: VanillaExtractPolicy;
   surface: Surface;
 }
 
 /** Each known scenario is one file under `styles/rules/`, listed in the registry it applies to. */
-const styleRules: Rule<StyleObject>[] = [forbiddenLayout, hardcodedLiteral, preferTailwind];
-/** An inline `style={{}}` is React, not a styling system: only the token check applies. */
+const styleRules: Rule<StyleObject>[] = [hardcodedLiteral];
+/** An inline `style={{}}` is React, not a styling system: the same token check applies. */
 const inlineStyleRules: Rule<StyleObject>[] = [hardcodedLiteral];
 
 /** Checks an inline JSX `style={{}}` prop. */
 export function checkStyleObject(object: ObjectExpression, system: DesignSystem, surface: Surface): Finding[] {
-  return inlineStyleRules.flatMap((rule) => rule({ object, system, policy: {}, surface }));
+  return inlineStyleRules.flatMap((rule) => rule({ object, system, surface }));
 }
 
 /**
@@ -46,8 +43,8 @@ export function loadTokens(filePath: string): DesignToken[] {
  * `validate`'s entry point for style-defining code (always vanilla-extract),
  * named styling-system-agnostic so callers don't change if that does.
  */
-export function validateStyles(ast: File, system: DesignSystem, policy: VanillaExtractPolicy): Finding[] {
+export function validateStyles(ast: File, system: DesignSystem): Finding[] {
   return vanillaExtractStyles
     .styleObjects(ast)
-    .flatMap((object) => styleRules.flatMap((rule) => rule({ object, system, policy, surface: 'vanilla-extract' })));
+    .flatMap((object) => styleRules.flatMap((rule) => rule({ object, system, surface: 'vanilla-extract' })));
 }
