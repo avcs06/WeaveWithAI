@@ -39,5 +39,5 @@ instead of retrying it.
 
 ## Watch out
 
-- The FE8 trial app in `20261101-0107-dashboard-editor/app` is in the way:
-  move it aside before the scaffold, never delete it unasked.
+- The FE8 trial app in `20261101-0107-dashboard-editor/app` has no scaffold
+  marker, so the scaffold moves it to `app.previous-<time>` by itself.

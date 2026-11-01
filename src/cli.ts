@@ -3,6 +3,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  rmSync,
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
@@ -13,7 +14,7 @@ import {
   writeAllComponentsStory,
 } from './agents/02design/01theme/preview/storybook';
 import { applyTheme } from './agents/04code/01scaffold/apply';
-import { scaffolded, scaffoldApp } from './agents/04code/01scaffold/app';
+import { applyMode, ensureApp } from './agents/04code/01scaffold/app';
 import {
   type ArtifactName,
   FILE_OF,
@@ -44,7 +45,6 @@ import { skeleton } from './agents/02design/08assemble/skeleton/skeleton';
 import { makeScreensSchema } from './agents/02design/schema';
 import type { Themed } from './agents/02design/01theme/build';
 import { renderWireframes } from './agents/02design/08assemble/wireframes';
-import type { Scope } from './agents/01flows/01scope/schema';
 import { writeJsonAtomic } from './core/utils';
 
 export class UsageError extends Error {}
@@ -346,11 +346,10 @@ export async function wireframesCommand(
   return lines;
 }
 
-const DEFAULT_APPS_DIR = 'apps';
-
 /**
- * The run's theme applied to apps/<app name>, made from the template on first
- * use, and every component screenshotted in each mode into the run.
+ * The run's theme applied to the run's own app, the one the code stages build
+ * on (made by the scaffold on first use), and every component screenshotted in
+ * each mode into the run.
  */
 export async function appCommand(
   runId: string,
@@ -358,13 +357,12 @@ export async function appCommand(
 ): Promise<string[]> {
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
-  const { app } = readArtifact<Scope>(run, 'flows-scope').data;
   const { theme } = readArtifact<Themed>(run, 'design-theme').data;
-  const slug = app.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const appDir = path.join(DEFAULT_APPS_DIR, slug);
-  if (!scaffolded(appDir)) await scaffoldApp(appDir);
+  const appDir = runPath(run, 'app');
+  await ensureApp(appDir);
   const { changed, skipped } = applyTheme(appDir, theme);
-  writeAllComponentsStory(appDir);
+  if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
+  const story = writeAllComponentsStory(appDir);
   // Only the modes the theme has; the other would show the template's colors.
   const shots = await screenshotComponents(
     appDir,
@@ -372,6 +370,8 @@ export async function appCommand(
       theme.modes.map((mode) => [mode, runPath(run, `02-design/01-theme-${mode}.png`)]),
     ),
   );
+  // The preview story is the generator's, not the app's: it leaves with the screenshots.
+  rmSync(story);
   const lines = [
     `app ${appDir}`,
     `changed ${changed.join(', ') || 'nothing'}`,

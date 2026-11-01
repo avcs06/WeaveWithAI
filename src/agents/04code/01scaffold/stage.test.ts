@@ -76,3 +76,32 @@ describe('the scaffold stage', () => {
     expect(readState(run).stages['code-scaffold']).toMatchObject({ status: 'failed' });
   });
 });
+
+describe('the scaffold and an app it did not make', () => {
+  it('moves the folder aside, never deletes it, and makes its own', async () => {
+    const { run, ctx, check } = setup('foreign');
+    const appDir = runPath(run, 'app');
+    mkdirSync(path.join(appDir, 'node_modules'), { recursive: true });
+    writeFileSync(path.join(appDir, 'trial.txt'), 'a trial app\n');
+
+    await runScaffold(ctx, { scaffold: fakeScaffold, check });
+
+    const aside = readFileSync(path.join(root, 'foreign', 'events.jsonl'), 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => JSON.parse(line))
+      .find((e) => e.type === 'scaffold:moved-aside');
+    expect(readFileSync(path.join(aside.to, 'trial.txt'), 'utf8')).toBe('a trial app\n');
+    expect(existsSync(path.join(appDir, 'trial.txt'))).toBe(false);
+    expect(existsSync(path.join(appDir, '.weave/scaffold.json'))).toBe(true);
+  });
+
+  it('reuses its own app on a rerun', async () => {
+    const { run, ctx, check } = setup('rerun');
+    await runScaffold(ctx, { scaffold: fakeScaffold, check });
+    let copies = 0;
+    await runScaffold(ctx, { scaffold: async (dir) => { copies += 1; await fakeScaffold(dir); }, check });
+    expect(copies).toBe(0);
+    expect(existsSync(runPath(run, 'app', 'colors.ts'))).toBe(true);
+  });
+});

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
 import type { Theme } from '../../02design/01theme/build';
@@ -17,8 +17,35 @@ export async function setupMcp(appDir: string): Promise<void> {
   await execa('pnpm', ['mcp:setup'], { cwd: appDir, stdio: 'inherit' });
 }
 
-/** True when the app folder was made already; the scaffold runs once per app. */
-export const scaffolded = (appDir: string) => existsSync(path.join(appDir, 'node_modules'));
+/** The template copied, installed and its MCP built: the whole app the scaffold makes. */
+export async function copyTemplate(appDir: string): Promise<void> {
+  await scaffoldApp(appDir);
+  await setupMcp(appDir);
+}
+
+/** Written once the copy is complete, so a folder without it is not the scaffold's app. */
+const MARKER = '.weave/scaffold.json';
+
+/**
+ * The run's app, for the code stages and `weave app` alike: made from the
+ * template once and reused after. A folder the scaffold did not make, such as
+ * a trial app, is moved aside to `app.previous-<time>`, never deleted.
+ */
+export async function ensureApp(
+  appDir: string,
+  copy: (appDir: string) => Promise<void> = copyTemplate,
+): Promise<{ made: boolean; movedAside?: string }> {
+  if (existsSync(path.join(appDir, MARKER)) && existsSync(path.join(appDir, 'node_modules'))) return { made: false };
+  let movedAside: string | undefined;
+  if (existsSync(appDir)) {
+    movedAside = `${appDir}.previous-${new Date().toISOString().replace(/[:.]/g, '-')}`;
+    renameSync(appDir, movedAside);
+  }
+  await copy(appDir);
+  mkdirSync(path.join(appDir, '.weave'), { recursive: true });
+  writeFileSync(path.join(appDir, MARKER), `${JSON.stringify({ madeAt: new Date().toISOString() }, null, 2)}\n`);
+  return { made: true, movedAside };
+}
 
 const SYSTEM_MODE = /const isDark = [^;\n]+;/;
 

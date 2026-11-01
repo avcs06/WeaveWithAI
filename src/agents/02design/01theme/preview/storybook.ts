@@ -8,10 +8,11 @@ import { chromium } from 'playwright-core';
 
 export const STORY_ID = 'all-components--page';
 
-/** A story beside the template's recipe stories that renders every one of them on one page. */
-export function writeAllComponentsStory(appDir: string): void {
+/** A story beside the template's recipe stories that renders every one of them on one page; returns its path. */
+export function writeAllComponentsStory(appDir: string): string {
+  const file = path.join(appDir, 'packages/ui/src/AllComponents.stories.tsx');
   writeFileSync(
-    path.join(appDir, 'packages/ui/src/AllComponents.stories.tsx'),
+    file,
     `import React from 'react';
 
 import * as recipes from './Recipes.stories';
@@ -43,6 +44,7 @@ export const Page: StoryObj = {
 };
 `,
   );
+  return file;
 }
 
 /** Waits until Storybook answers on `url`, or fails after `ms`. */

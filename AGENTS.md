@@ -29,6 +29,8 @@ src/
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame,
                          assemble; the shapes, config and DESIGN rules they share
     03contract/          the contract: the records and operations behind every widget
+    04code/              scaffold, contract code, shared, frames, pages; the unit runner and the
+                         code reviewers they share
 ```
 
 Each stage is a folder `<NN><name>` in its group, and a full pipeline stage

@@ -1658,6 +1658,11 @@ coding agent writes no tests.
     session. The freelancer run's app themed light-only, typecheck,
     `mcp:check` and `verify /` pass. The copy still drops the lockfile, as
     `weave app` did, so the install resolves fresh (about 2 minutes).
+  - The scaffold makes the run's app for `weave app` too (user,
+    2026-11-01): the theme preview no longer keeps its own copy in
+    `apps/<slug>`, and its preview story leaves after the screenshots. A
+    folder without the scaffold's marker, such as the FE8 trial app, is
+    moved to `app.previous-<time>`, never deleted.
 
 - [x] **CD2** The `.weave` folders (2 h) (done 2026-11-01). Depends: CD1
   - Why: each stage sees its own inputs and the earlier stages', and each

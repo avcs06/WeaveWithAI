@@ -80,7 +80,8 @@ src/
     01flows/             scope, catalog, expand, reconcile
     02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame, assemble
     03contract/          the records and operations behind every widget
-    04code/              planned: scaffold, contract, shared, frames, pages (CD1 to CD9)
+    04code/              scaffold (app, theme, .weave), contract (entity layer), shared, frames, pages;
+                         unit.ts runs one coding unit, prompts/ holds the code reviewers
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   engine/                the Muse Code runner: app config, `muse exec`, usage, the gate after the run
   checks/                rendered checks (DESIGN-R-001 to 009) as reusable collectors; the code rounds run them after each session (CD5)

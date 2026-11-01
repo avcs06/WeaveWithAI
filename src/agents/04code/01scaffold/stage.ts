@@ -8,7 +8,7 @@ import { appCheck, type Check } from '../../../engine/session';
 import { prepareApp } from '../../../engine/setup';
 import type { Themed } from '../../02design/01theme/build';
 import type { StageContext, StageDef } from '../../stages';
-import { applyMode, scaffolded, scaffoldApp, setupMcp } from './app';
+import { applyMode, ensureApp } from './app';
 import { applyTheme } from './apply';
 import { readCodeInputs } from './inputs';
 import { validateApplied } from './validation/validation';
@@ -27,11 +27,6 @@ export type ScaffoldDeps = {
   check?: (appDir: string, name: string, args: string[]) => Promise<Check>;
 };
 
-const copyTemplate = async (appDir: string) => {
-  await scaffoldApp(appDir);
-  await setupMcp(appDir);
-};
-
 /** The run's app: the template once, then the theme by code, proven by THEME-003, the sessions' .weave folders, the agent config, and the app's own checks. */
 export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): Promise<void> {
   const { run } = ctx;
@@ -45,7 +40,8 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
 
   const { theme } = readArtifact<Themed>(run, 'design-theme').data;
   const appDir = runPath(run, 'app');
-  if (!scaffolded(appDir)) await (deps.scaffold ?? copyTemplate)(appDir);
+  const { movedAside } = await ensureApp(appDir, deps.scaffold);
+  if (movedAside) appendEvent(run, { type: 'scaffold:moved-aside', stage: STAGE, to: movedAside });
   const { changed, skipped } = applyTheme(appDir, theme);
   if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
   for (const reason of skipped) appendEvent(run, { type: 'scaffold:skipped', stage: STAGE, reason });
