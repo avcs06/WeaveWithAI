@@ -11,6 +11,7 @@ const RULE_OF: Record<string, string> = {
   lint: 'CODE-003',
   verify: 'CODE-007',
   build: 'CODE-008',
+  install: 'CODE-013',
 };
 
 /** The longest file a session should write, as AGENTS.md sets for this repo (user, 2026-11-01). */

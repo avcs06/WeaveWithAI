@@ -2,7 +2,10 @@
 # Node's major matches the host's, since node_modules is installed on the host.
 FROM node:24-bookworm
 
-RUN corepack enable
+# The app is installed on the host with pnpm 10.20.0; another major refuses its
+# node_modules, and the agent then tries to reinstall it (2026-11-01).
+RUN corepack enable && corepack prepare pnpm@10.20.0 --activate
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # The Chromium of the template's playwright-core, for `pnpm verify` inside a session.
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright

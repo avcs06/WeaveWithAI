@@ -54,4 +54,9 @@ describe('the design check after a coding session', () => {
       words.filter((w) => w.text === missing.text).map((w) => `The words "${w.text}" of ${w.id} are nowhere in ${s04.folder}; show the node's text as the design writes it.`),
     );
   });
+
+  it('passes a folder with nothing to find, empty or not', () => {
+    const nothing = { folder: 'web/app/blocks', testIds: [], words: [], operations: [] };
+    expect(checkScreen(path.join(root, 'empty'), nothing)).toEqual({ name: 'design', ok: true, output: '' });
+  });
 });

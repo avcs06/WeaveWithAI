@@ -86,6 +86,9 @@ weave-design-system MCP gives when it connects.
 - Write only inside the paths your stage's guidelines name, and in
   `entities/` only for a blocker.
 - Never change `packages/`, `tools/`, `.weave/`, `.muse/` or a config file.
+- Never install, add or remove a package (`pnpm install`, `pnpm add`): the
+  app's packages are fixed. When a command fails because of the install,
+  stop and say so in your summary.
 
 ## Finish
 

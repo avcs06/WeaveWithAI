@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -83,6 +83,17 @@ describe('runSession', () => {
     expect(readEvents(run).map((e) => e.type)).toEqual(['stage:patch', 'session:start', 'llm:call', 'stage:patch', 'session:end']);
   });
 
+  it('runs a Meta session on the subscription with no key, and counts its tokens but no spend', async () => {
+    const { run, appDir, ctx } = setup('subscription');
+    const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
+      runSession({ ...ctx, config: { ...config, MUSE_AUTH: 'subscription' } }, appDir, session, { bin: fake, runCheck: checks() }),
+    );
+    expect(result.summary).toBe('no key');
+    expect(result.costUsd).toBe(0);
+    expect(readEvents(run).find((e) => e.type === 'llm:call')).toMatchObject({ input: 30000, costUsd: 0, billing: 'subscription' });
+    expect(totals(run)).toMatchObject({ calls: 3, costUsd: 0 });
+  });
+
   it('fails a session whose diff touches a test or a protected path', async () => {
     const { appDir, ctx } = setup('protected');
     const result = await withWrites(
@@ -103,6 +114,23 @@ describe('runSession', () => {
     expect(result.checks.find((c) => c.name === 'typecheck')?.ok).toBe(false);
   });
 
+  it('fails a session that reinstalls the packages, and puts them back from the lockfile', async () => {
+    const { appDir, ctx } = setup('install');
+    mkdirSync(path.join(appDir, 'node_modules'), { recursive: true });
+    writeFileSync(path.join(appDir, 'node_modules/.modules.yaml'), 'packageManager: pnpm@10.20.0\n');
+    const ran: string[] = [];
+    const runCheck = async (_dir: string, name: string, args: string[]): Promise<Check> => {
+      ran.push(`${name}: ${args.join(' ')}`);
+      return { name, ok: true, output: '' };
+    };
+    const result = await withWrites({ [page]: 'x\n', 'node_modules/.modules.yaml': 'packageManager: pnpm@12.16.1\n' }, () =>
+      runSession(ctx, appDir, session, { bin: fake, runCheck }),
+    );
+    expect(result.status).toBe('checks');
+    expect(result.checks.find((c) => c.name === 'install')?.ok).toBe(false);
+    expect(ran.at(-1)).toBe('restore: env CI=true pnpm install --frozen-lockfile --prefer-offline');
+  });
+
   it('fails a session whose page misses a node of its design', async () => {
     const { appDir, ctx } = setup('design');
     const expectations = { folder: 'web/app/(routes)/books', testIds: ['S04.n01', 'S04.n02'], operations: ['listBooks'] };
@@ -120,16 +148,33 @@ describe('museArgs and readUsage', () => {
     const meta = museArgs(resolveBackend(config, 'meta'), opts);
     expect(meta).toEqual(expect.arrayContaining(['--trust-workspace', '--api-key-stdin', '--model', 'muse-spark-1.3']));
     expect(meta.join(' ')).toContain('--contributor-mode off');
+    expect(meta).toEqual(
+      expect.arrayContaining(['--disable-reminders', '--disable-web-tools', '--disable-request-user-input', '--no-foreign-personal-context']),
+    );
     expect(meta).not.toContain('-c');
     const baseten = museArgs(resolveBackend(config, 'baseten'), opts);
     expect(baseten.at(-1)).toBe('endpoint_transport={"base_url":"https://inference.baseten.co/v1","auth":"bearer"}');
     expect(baseten).toContain('meta-models/muse-spark-open-1026');
     const modal = museArgs(resolveBackend(config, 'modal'), opts);
     expect(modal.at(-1)).toContain('"base_url":"https://modal.example/v1"');
+    expect(museArgs(resolveBackend(config, 'meta'), { ...opts, subscription: true })).not.toContain('--api-key-stdin');
   });
 
   it('reads a failed run as not completed, with its message', () => {
     const usage = readUsage('{"payload_type":"run.terminal.failed","payload":{"reason":"API error 401"}}\nnot json\n');
     expect(usage).toMatchObject({ completed: false, summary: 'API error 401', calls: 0 });
+  });
+
+  it("counts the side agents Muse leaves out of its totals", () => {
+    const event = (payload_type: string, payload: unknown) => JSON.stringify({ payload_type, payload });
+    const usage = readUsage(
+      [
+        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'reminder.agent.skill-reminder' } }),
+        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'model.meta.response' } }),
+        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'tool.bash' } }),
+        event('run.usage', { children_included: false, models: [{ model: 'muse-spark-1.3', calls: 1, input_tokens: 10, cached_tokens: 0, output_tokens: 1 }] }),
+      ].join('\n'),
+    );
+    expect(usage).toMatchObject({ childrenIncluded: false, children: 1, calls: 1 });
   });
 });

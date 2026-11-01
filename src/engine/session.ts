@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { execa } from 'execa';
 import { resolveBackend } from '../core/backends';
@@ -101,6 +102,12 @@ export function readPaths(log: string, appDir: string): string[] {
 }
 const MAX_OUTPUT_LINES = 200;
 
+/** What pnpm wrote when it installed the app; it changes when anything reinstalls the packages. */
+function installState(appDir: string): string {
+  const file = path.join(appDir, 'node_modules', '.modules.yaml');
+  return existsSync(file) ? readFileSync(file, 'utf8') : '';
+}
+
 /** The changed files a session may not touch: tests, `PROTECTED`, and anything outside its write paths. */
 export function protectedOf(changed: string[], session: Pick<Session, 'writes'>): string[] {
   const outside = (file: string) => session.writes !== undefined && !session.writes.some((rule) => inPath(file, rule));
@@ -141,16 +148,21 @@ export async function runSession(
   appendEvent(run, { type: 'session:start', stage: `session:${session.id}`, backend: backend.name, model: backend.model });
   // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
   const inContainer = !deps.bin && ctx.config.MUSE_DOCKER === true;
+  // The subscription is a Muse Code login on the Meta API; the open-weight backends have only keys.
+  const subscription = ctx.config.MUSE_AUTH === 'subscription' && backend.name === 'meta';
+  const login = subscription ? path.join(os.homedir(), '.config', 'muse') : undefined;
   const command = deps.bin ?? (inContainer
-    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN))]
+    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN), login)]
     : [ctx.config.MUSE_BIN]);
   const [bin = 'muse', ...pre] = command;
-  const args = museArgs(backend, { promptFile, maxSteps: session.maxSteps ?? 60, effort: 'medium', inContainer });
+  const args = museArgs(backend, { promptFile, maxSteps: session.maxSteps ?? 60, effort: 'medium', inContainer, subscription });
+  // The packages are the scaffold's; a session that changes them breaks every check after it.
+  const installedBefore = installState(appDir);
   // The hook logs every tool call; this session's lines are the ones after this offset.
   const toolsFrom = existsSync(at(TOOLS_LOG)) ? statSync(at(TOOLS_LOG)).size : 0;
   const exec = await execa(bin, [...pre, ...args], {
     cwd: appDir,
-    input: backend.apiKey,
+    input: subscription ? '' : backend.apiKey,
     timeout: session.timeoutMs ?? 30 * 60_000,
     reject: false,
   });
@@ -163,7 +175,14 @@ export async function runSession(
     (file) => deny.some((rule) => inPath(file, rule)) && !allow.some((rule) => inPath(file, rule)),
   );
   const usage = readUsage(exec.stdout);
-  const cost = costUsd(usage.model || backend.model, { input: usage.input, cachedInput: usage.cached, output: usage.output });
+  if (!usage.childrenIncluded && usage.children > 0)
+    appendEvent(run, {
+      type: 'warning',
+      stage: session.stage ?? `session:${session.id}`,
+      message: `Muse left ${usage.children} side agents out of this session's usage, so its cost is short by their share; the bill shows it.`,
+    });
+  // The subscription's allowance pays for these tokens, so they add nothing to the run's spend.
+  const cost = subscription ? 0 : costUsd(usage.model || backend.model, { input: usage.input, cachedInput: usage.cached, output: usage.output });
   appendEvent(run, {
     type: 'llm:call',
     stage: `session:${session.id}`,
@@ -174,6 +193,7 @@ export async function runSession(
     cachedInput: usage.cached,
     output: usage.output,
     costUsd: cost,
+    ...(subscription ? { billing: 'subscription' } : {}),
   });
 
   git(appDir, 'add', '-A');
@@ -196,6 +216,10 @@ export async function runSession(
   checks.push(await runCheck(appDir, 'lint', ['pnpm', 'nx', 'lint', 'web']));
   if (session.route) checks.push(await runCheck(appDir, 'verify', ['pnpm', 'verify', session.route]));
   if (session.expect) checks.push(checkScreen(appDir, session.expect));
+  if (installState(appDir) !== installedBefore) {
+    checks.push({ name: 'install', ok: false, output: 'The session changed node_modules. Never install, add or remove a package; the runner reinstalled them from the lockfile.' });
+    await runCheck(appDir, 'restore', ['env', 'CI=true', 'pnpm', 'install', '--frozen-lockfile', '--prefer-offline']);
+  }
 
   const status: SessionResult['status'] = exec.timedOut
     ? 'timeout'

@@ -29,8 +29,11 @@ export function museDir(bin: string): string {
   return path.dirname(realpathSync(found));
 }
 
-/** `docker run` up to the image, then the launcher: the app at /app, run as the user so files stay theirs. */
-export function dockerArgs(image: string, appDir: string, muse: string): string[] {
+/**
+ * `docker run` up to the image, then the launcher: the app at /app, run as the user so files stay theirs.
+ * `login` mounts the host's Muse login for the subscription, writable so Muse can refresh its token.
+ */
+export function dockerArgs(image: string, appDir: string, muse: string, login?: string): string[] {
   const user = `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`;
   return [
     'run', '--rm', '-i',
@@ -38,6 +41,7 @@ export function dockerArgs(image: string, appDir: string, muse: string): string[
     '-e', 'HOME=/tmp',
     '-v', `${path.resolve(appDir)}:/app`,
     '-v', `${muse}:/opt/muse:ro`,
+    ...(login ? ['-v', `${login}:/tmp/.config/muse`] : []),
     '-w', '/app',
     image,
     '/opt/muse/muse',

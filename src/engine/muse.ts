@@ -14,18 +14,22 @@ export type MuseUsage = {
   reasoning: number;
   summary: string;
   completed: boolean;
+  /** False when Muse left its side agents out of these totals. */
+  childrenIncluded: boolean;
+  /** Side agents Muse started: reminders and subagents, which the totals may leave out. */
+  children: number;
 };
 
-/** The `muse exec` arguments for a backend; the key goes on stdin. */
+/** The `muse exec` arguments for a backend; the key goes on stdin, except on the subscription, which Muse reads from its login. */
 export function museArgs(
   backend: Backend,
-  opts: { promptFile: string; maxSteps: number; effort: string; inContainer?: boolean },
+  opts: { promptFile: string; maxSteps: number; effort: string; inContainer?: boolean; subscription?: boolean },
 ): string[] {
   const args = [
     'exec',
     '--json',
     '--trust-workspace',
-    '--api-key-stdin',
+    ...(opts.subscription ? [] : ['--api-key-stdin']),
     '--provider',
     'meta',
     '--model',
@@ -38,6 +42,12 @@ export function museArgs(
     String(opts.maxSteps),
     '--prompt-file',
     opts.promptFile,
+    // No reminder agents (each is its own model call), no web, nobody to ask,
+    // and none of the user's own Muse rules or skills.
+    '--disable-reminders',
+    '--disable-web-tools',
+    '--disable-request-user-input',
+    '--no-foreign-personal-context',
   ];
   // The container is the sandbox, and Muse's own needs bubblewrap, which the image lacks.
   if (opts.inContainer) args.push('--disable-sandbox');
@@ -49,7 +59,7 @@ export function museArgs(
 
 /** The usage, the final text and whether the run completed, from `muse exec --json` output. */
 export function readUsage(jsonl: string): MuseUsage {
-  const usage: MuseUsage = { model: '', calls: 0, input: 0, cached: 0, output: 0, reasoning: 0, summary: '', completed: false };
+  const usage: MuseUsage = { model: '', calls: 0, input: 0, cached: 0, output: 0, reasoning: 0, summary: '', completed: false, childrenIncluded: true, children: 0 };
   for (const line of jsonl.split('\n')) {
     if (!line.trim()) continue;
     let event: { payload_type?: string; payload?: Record<string, unknown> };
@@ -59,6 +69,10 @@ export function readUsage(jsonl: string): MuseUsage {
       continue;
     }
     const payload = event.payload ?? {};
+    // Muse leaves its side agents (reminders, subagents) out of the totals unless it says so.
+    const task = (payload as { event?: { kind?: string; task_kind?: string } }).event;
+    if (task?.kind === 'proposed' && task.task_kind && !/^(model|tool)\./.test(task.task_kind)) usage.children += 1;
+    if (event.payload_type === 'run.usage' && payload.children_included === false) usage.childrenIncluded = false;
     if (event.payload_type === 'run.usage')
       for (const m of (payload.models ?? []) as Record<string, unknown>[]) {
         usage.model = String(m.model ?? usage.model);

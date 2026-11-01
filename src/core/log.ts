@@ -61,7 +61,8 @@ export function runLog(
             : event.truncated
               ? 'answer was cut at the output limit'
               : 'written';
-          return line(event.stage, `${round} ${what} (${stats(event)})`);
+          // A coding session's call has no round of its own: it reports once, when the session ends.
+          return line(event.stage, `${event.round === undefined ? '' : `${round} `}${what} (${stats(event)})`);
         }
         case 'round:validated': {
           if (!n('mandatory') && !n('warnings'))
@@ -105,7 +106,7 @@ function stats(event: Event): string {
     String(event.model),
     `${tokens(n('input'))} in${n('cachedInput') ? ` (${tokens(n('cachedInput'))} cached)` : ''}`,
     `${tokens(n('output'))} out`,
-    `$${n('costUsd').toFixed(4)}`,
+    event.billing === 'subscription' ? 'subscription' : `$${n('costUsd').toFixed(4)}`,
     ...(event.durationMs === undefined ? [] : [`${(n('durationMs') / 1000).toFixed(1)}s`]),
     ...(event.replayed ? ['replayed'] : []),
   ].join(', ');

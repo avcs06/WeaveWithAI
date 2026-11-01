@@ -55,3 +55,10 @@ describe('the warnings that never start a fix', () => {
     expect(checkIssues({ ...passing, longFiles: [] })).toEqual([]);
   });
 });
+
+describe('a session that reinstalls the packages', () => {
+  it('fails CODE-013', () => {
+    const issues = checkIssues({ ...passing, status: 'checks', checks: [{ name: 'install', ok: false, output: 'The session changed node_modules.' }] });
+    expect(issues.map((i) => [i.rule, i.severity])).toEqual([['CODE-013', 'mandatory']]);
+  });
+});

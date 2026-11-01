@@ -66,7 +66,7 @@ export function checkScreen(appDir: string, expect: ScreenExpect): Check {
   const code = sourcesIn(path.join(appDir, expect.folder));
   const text = shown(code);
   const lines = [
-    ...(code ? [] : [`${expect.folder} has no code.`]),
+    ...(code || !(expect.testIds.length || expect.words?.length || expect.operations.length) ? [] : [`${expect.folder} has no code.`]),
     ...expect.testIds.filter((id) => !code.includes(id)).map((id) => `No element has data-testid "${id}".`),
     ...(expect.words ?? [])
       .filter((w) => !text.includes(shown(w.text)))

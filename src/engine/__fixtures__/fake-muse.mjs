@@ -1,6 +1,6 @@
 // A stand-in for `muse exec` in tests: writes the files FAKE_WRITES names
 // (JSON, path to content) in its cwd, and prints the JSONL events the runner
-// reads. The key must arrive on stdin.
+// reads. The key arrives on stdin; on the subscription nothing does.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
