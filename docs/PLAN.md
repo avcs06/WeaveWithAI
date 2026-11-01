@@ -1642,6 +1642,11 @@ file, all inside the generated app, by code and without model calls.
     yields an app whose `pnpm typecheck`, `pnpm mcp:check` and `pnpm verify /`
     pass, with the theme's colors in `colors.ts`.
 
+- [ ] **S6** Rescope S2 to S4 after C7 (30 min). Depends: C7
+  - Why: S2 to S4 build on `compile.ts`, the conventions, seed rows, errors,
+    access and lifecycles, which C7 removed from the contract. The mock API
+    needs some back, at least paths and seed data; this task says how much.
+
 - [ ] **S2** Contract codegen: types, client, hooks (90 min). Depends: S1, C2
   - `src/codegen/entities.ts` writes `web/app/entities/<entity>/` (zod schemas
     and types from `compile.ts`, `api.ts` on `Server`, `hooks.ts` on TanStack
@@ -1678,16 +1683,70 @@ file, all inside the generated app, by code and without model calls.
 Spec: [specs/design.md](specs/design.md) "Rendered checks". Decisions: D3.6 C,
 D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
 
-- [ ] **FE1** Coding engine: action loop with ownership and checks (2 h). Depends: F8, S2
-  - `src/engine/loop.ts`: a structured-output action loop on the model layer
-    (read, write, list, recipe, check, done), bounded turns and tokens,
-    allowed write paths per session, every write recorded in the ledger,
-    checks run through the app's own tools (validate, typecheck, lint, verify).
-  - Done when: tests with a fake model show a write outside the allowed paths
-    refused, a failing check fed back, and the loop ending on `done`.
+- [ ] **FE8** Muse Code trial on a golden app (1 h). Depends: C6, DS18
+  - Why: the user moved the coding stages to Muse Code headless (D9.1 A,
+    2026-11-01). It reads and edits anywhere in the app, runs the app's
+    checks itself and fixes what they find, so the generator writes the
+    setup and the task, not an agent loop. A probe ran it on Muse Spark Open
+    through Baseten with a real tool call.
+  - Scaffold one golden app with `weave app`, add the agent config by hand
+    (design-system MCP, a hook that runs MCP validate after every edit, the
+    trusted workspace, `AGENTS.md`), and give Muse Code one screen task on
+    the Meta API (`muse-spark-1.3`) and on Muse Spark Open through Baseten.
+  - Record per run: steps, tokens, cost, wall time, what it wrote, and
+    whether validate, typecheck, lint and `pnpm verify <route>` pass after it.
+  - Step file: `docs/steps/69-FE8-muse-trial.md`.
+  - Done when: both runs are recorded, and the user decides on the runner.
+
+- [ ] **FE1** Muse Code runner (1.5 h). Depends: FE8, S1. Decision D9.1 A
+  - `src/engine/`: writes the app's agent config (the MCP servers, the
+    validate-after-edit hook, the trusted workspace, the endpoint: the Meta
+    API, or Muse Spark Open on Baseten through `endpoint_transport`), commits
+    a git baseline in the app, runs `muse exec --json --prompt-file` with a
+    step cap, and reads its `run.usage` events into the run's events and
+    costs.
+  - After the run it does not trust the agent: it reruns the session's
+    checks, records the git diff in the ledger with origin `model`, and fails
+    the session when the diff touches a test or a generated folder
+    (`entities`, `api`, `mocks`).
+  - Done when: tests with a fake `muse` executable (a script that edits files
+    and prints JSONL) show the usage read, the diff recorded, a test edit
+    failing the session and a failing check failing it; a real session on
+    the scaffolded freelancer workspace passes its checks.
+  - The step file `41-FE1-action-loop.md` describes the old own loop
+    (D9.1 B) and is rewritten before go.
+
+- [ ] **FE9** Development guidelines for the coding agent (1 h). Depends: FE8
+  - Why: the task prompt stays short and names the files (user, 2026-11-01):
+    "build screen S04 from `.weave/screens/S04.json`; follow every guideline
+    in `.weave/guidelines.md`". The guidelines carry the detail.
+  - `src/engine/guidelines.md`, copied into each app as
+    `.weave/guidelines.md`: how to read the `.weave/` files (screen design,
+    the flow steps it serves, the contract and which operations load each
+    widget), data only through the entity hooks, every state (loading,
+    empty, error, invalid, submitting), forms through the Form recipe, a
+    `data-testid` on every node, the H1, where files go, never tests, and
+    the checks that end a session.
+  - Done when: the FE8 screen task, rerun with the guidelines, passes its
+    checks.
+
+- [ ] **FE10** App MCP: the remaining checks while the agent works (2 h). Depends: FE1, FE5
+  - Why: the agent validates while it runs instead of after (user,
+    2026-11-01). The design-system MCP stays generic (it flags only wrong
+    patterns), so the app's own checks get their own MCP.
+  - Tools: the screen against its design (every section and widget, the
+    `data-testid`s, the H1), each widget against the contract (the hooks of
+    the operations that load it), and the rendered checks on a route
+    (DESIGN-R-001 to 009 from `src/checks/`). The runner's gate after the
+    run calls the same code.
+  - Open: serve it from the generator (`src/`, so it reuses `src/checks/`
+    and reads the run's files) or as `mcps/app/` with its own tooling; the
+    step file decides.
+  - Done when: each tool has a test with one passing and one failing page,
+    and the FE8 screen task calls them during its run.
 
 - [ ] **FE2** Routes, navigation and page shells from screens (90 min). Depends: S2
-  - `src/codegen/pages.ts`: the page frame from `02-design/09-assemble.json`'s shells,
+  - `src/codegen/pages.ts`: the page frame from `02-design/08-assemble.json`'s shells,
     one per kind: their regions docked as the layout says and filled from the
     shell nodes, the navigation among them, shared by every framed page of
     the kind. For every page screen a route folder with a `page.tsx` in its
@@ -1697,16 +1756,21 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   - Done when: the generated app builds and every route renders its H1;
     `pnpm verify` passes on every route.
 
-- [ ] **FE3** New components (60 min). Depends: FE1, FE2
-  - One loop session per `newComponents` entry writing
-    `web/app/components/<Name>/` with the DS conventions and an axe test;
-    validate, typecheck, lint and `nx test web` as checks.
+- [ ] **FE3** New components (60 min). Depends: FE1, FE2, FE9
+  - One Muse Code session per `newComponents` entry: the task names its
+    design in `.weave/components/<Name>.json` and the guidelines; it writes
+    `web/app/components/<Name>/` with the DS conventions and an axe test.
+    Validate, typecheck, lint and `nx test web` end the session.
   - Done when: the dashboard editor's new component passes its checks.
+  - Step file `43-FE3-new-components.md` predates D9.1 A; rewrite before go.
 
-- [ ] **FE4** Pages: sections wired to hooks (2.5 h). Depends: FE3
-  - One loop session per screen filling the shell's sections from the nodes,
-    using recipes, the entity hooks and the DS, with loading, empty, error,
-    invalid and submitting states; `pnpm verify <route>` as the last check.
+- [ ] **FE4** Pages: sections wired to hooks (2.5 h). Depends: FE3, FE10
+  - One Muse Code session per screen filling the shell's sections from the
+    nodes, using recipes, the entity hooks and the DS, with loading, empty,
+    error, invalid and submitting states. The task names the screen's
+    `.weave/` files and the guidelines; the app MCP's checks and
+    `pnpm verify <route>` end the session.
+  - Step file `44-FE4-pages.md` predates D9.1 A; rewrite before go.
   - Nodes reach the session and the shell's manifests without `component`,
     which serves validation only; the session picks the component from
     `what` through the MCP (design spec, 2026-10-30). `size` and `look` come
@@ -1724,6 +1788,10 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
   > Blocked: needs a model run, waiting for the user's go. The collectors,
   > `runRenderedChecks` and their tests on fixture pages are in (2026-10-30);
   > the frontend stage and `resolveRouteSamples` come once an app exists.
+  - 2026-11-01: that code is in the `fe` stash, from before F15. It comes
+    back after the design-system work in progress is committed, ported to
+    the current layout and checked with `/reconciliate` (user). The app MCP
+    (FE10) and the runner's gate run its collectors.
 
 - [ ] **FE6** Visual rubric (45 min, optional). Depends: FE5
   - Screenshots to Muse Spark, scored 0 to 4 per concern with evidence

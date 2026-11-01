@@ -89,3 +89,4 @@ spec's table.
 | 60  | P2   | Two full runs, a Modal run, benchmarks          | 10    | 3 h     | [60-P2-full-runs.md](60-P2-full-runs.md) |
 | 61  | P3   | README and submission answers                   | 10    | 90 min  | [61-P3-readme-submission.md](61-P3-readme-submission.md) |
 | 62  | P4   | Demo video and submit                           | 10    | 2 h     | [62-P4-demo-submit.md](62-P4-demo-submit.md) |
+| 69  | FE8  | Muse Code trial on a golden app                 | 7     | 1 h     | [69-FE8-muse-trial.md](69-FE8-muse-trial.md) |

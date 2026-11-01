@@ -1000,7 +1000,7 @@ Notes:
 
 ### D9.1 Engine (pick one)
 
-- [ ] **A. Muse Code headless (`muse exec --json --prompt-file`) (P).** Skills from
+- [x] **A. Muse Code headless (`muse exec --json --prompt-file`) (P) (user, 2026-11-01).** Skills from
       your recipes, hooks running MCP validate per edit, subagents. Most Meta
       tooling; less control; its Linux sandbox needs bubblewrap.
 - [ ] **B. Own tool loop on the Meta Model API (R2).** Tools: read file, write
@@ -1013,7 +1013,15 @@ Notes:
       (default).** Switch to A if the spike shows headless runs work with your
       skills, hooks and MCP on WSL.
 
-Notes:
+Notes: A, the user's choice on 2026-11-01. Muse Code reads and edits
+anywhere in the app and runs the app's checks itself; the runner checks the
+result after the run and records the git diff. It runs on the Meta API
+(`muse-spark-1.3`) or, for the open-weight run, on Muse Spark Open through
+Baseten: `-c endpoint_transport={"base_url":…,"auth":"bearer"}`, since a bare
+`--base-url` keeps the key back. Probes on 2026-11-01: Spark Open on Baseten
+calls tools natively, has a 1,048,576-token context, and headless Muse Code
+wrote a file and ran a command there without an approval prompt. Muse
+Glimmer on Modal calls tools natively too. The trial is FE8.
 
 ---
 

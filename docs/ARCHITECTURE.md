@@ -85,7 +85,7 @@ src/
     04reconcile/         matrix.ts, patch.ts, procedure.ts, prompts
                          each stage a folder: stage.ts, schema.ts, render.ts, prompts/, validation/
   codegen/               planned: ledger, entities, mock API, API tests, page shells
-  engine/                planned: the action loop and the checks a session may run
+  engine/                planned: the Muse Code runner (app config, `muse exec`, usage, the gate after the run)
   checks/                planned: rendered checks (DESIGN-R-*), reusable collectors
   bench/                 planned: server, lighthouse, accessibility, screen reader,
                          keyboard, code, report
@@ -355,5 +355,5 @@ blocks → (routes). Route folders never import each other.
 | Repairs that failed twice        | Muse Wonder (D1.8)                                              |
 | Screenshot review of prototypes  | Muse Spark image understanding (D3.7)                           |
 | Moodboard and hero art, optional | Muse Image, $0.01 per image (D3.3 option C)                     |
-| Coding stages                    | An action loop on the Model API (D9.1 B); the same loop on Muse Spark Open through Modal (D1.11) |
+| Coding stages                    | Muse Code headless (D9.1 A) on the Model API, or on Muse Spark Open through Baseten (D1.11) |
 | Assertions in generated tests    | Muse Spark structured output turns flow outcomes into assertions (D8.2 A) |

@@ -79,7 +79,10 @@ restructure) stay as they are.
 - Node 22.18+, TypeScript strict, ESM. Run `src/` with `tsx`; there is no build step.
 - No agent frameworks (LangChain, LangGraph, Mastra and the like). The
   orchestrator is plain TypeScript you can read top to bottom.
-- Every model call goes through `src/core/llm.ts`. Product runs use Meta's
+- Every model call of the generator's own stages goes through
+  `src/core/llm.ts`. The coding stages run Muse Code headless (D9.1 A), which
+  makes its own calls; the runner reads their usage from its JSONL events.
+  Product runs use Meta's
   models only: the Meta Model API by default, or Meta open-weight models (Muse
   Spark Open, Muse Glimmer) served on Modal or locally, chosen with
   `LLM_BACKEND` (D1.11). Meta tooling is 25% of the score and the open-weight
@@ -115,7 +118,8 @@ restructure) stay as they are.
   2026-10-28): the frozen contract becomes a mock API inside the app
   (OPTIONS.md 6M), and a benchmark stage (section 13) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
-  its origin; a model session may write only inside the paths its step allows,
-  and never a test.
+  its origin. A Muse Code session may read and edit anything in the app; the
+  runner records its git diff in the ledger and fails the session when the
+  diff touches a test or a generated folder.
 - Secrets only in `.env` (gitignored), loaded with `process.loadEnvFile()`.
 - Docs you write: short plain sentences, no em dashes.
