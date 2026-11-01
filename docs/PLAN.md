@@ -1683,7 +1683,7 @@ file, all inside the generated app, by code and without model calls.
 Spec: [specs/design.md](specs/design.md) "Rendered checks". Decisions: D3.6 C,
 D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
 
-- [ ] **FE8** Muse Code trial on a golden app (1 h). Depends: C6, DS18
+- [x] **FE8** Muse Code trial on a golden app (1 h) (done 2026-11-01). Depends: C6, DS18
   - Why: the user moved the coding stages to Muse Code headless (D9.1 A,
     2026-11-01). It reads and edits anywhere in the app, runs the app's
     checks itself and fixes what they find, so the generator writes the
@@ -1698,6 +1698,13 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     validate, typecheck, lint and `pnpm verify <route>` pass after it.
   - Step file: `docs/steps/69-FE8-muse-trial.md`.
   - Done when: the run is recorded, and the user decides on the runner.
+  - Done 2026-11-01 overnight: one run built S04 and its dialog S08 in 6
+    minutes for $1.07 (56 calls, 97.7% of the input cached). Our gate
+    passed it: MCP validate, typecheck, lint and `pnpm verify /dashboards`
+    at three widths; all 30 design nodes have their `data-testid` and every
+    state is built. Report: `runs/20261101-0107-dashboard-editor/trial/REPORT.md`.
+    The runner decision went to the overnight calls to review; FE1 went
+    ahead as D9.1 A says.
 
 - [ ] **FE1** Muse Code runner (1.5 h). Depends: FE8, S1. Decision D9.1 A
   - `src/engine/`: writes the app's agent config (the MCP servers, the
@@ -1714,8 +1721,8 @@ D3.7, D3.10, D7.1 to D7.4, D9.1. Steps 41 to 47.
     and prints JSONL) show the usage read, the diff recorded, a test edit
     failing the session and a failing check failing it; a real session on
     the scaffolded freelancer workspace passes its checks.
-  - The step file `41-FE1-action-loop.md` describes the old own loop
-    (D9.1 B) and is rewritten before go.
+  - Step file: `docs/steps/41-FE1-muse-runner.md`, rewritten for D9.1 A with
+    what FE8 learned.
 
 - [ ] **FE9** Development guidelines for the coding agent (1 h). Depends: FE8
   - Why: the task prompt stays short and names the files (user, 2026-11-01):

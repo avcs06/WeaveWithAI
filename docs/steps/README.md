@@ -67,7 +67,7 @@ spec's table.
 | 38  | S3   | Mock API: route handlers and JSON store         | 6     | 2.5 h   | [38-S3-mock-api.md](38-S3-mock-api.md) |
 | 39  | S4   | Contract tests against the mock                 | 6     | 60 min  | [39-S4-api-tests.md](39-S4-api-tests.md) |
 | 40  | S5   | Golden freelancer workspace to app                   | 6     | 45 min  | [40-S5-golden-app.md](40-S5-golden-app.md) |
-| 41  | FE1  | Muse Code runner (file predates D9.1 A)         | 7     | 1.5 h   | [41-FE1-action-loop.md](41-FE1-action-loop.md) |
+| 41  | FE1  | Muse Code runner                                | 7     | 1.5 h   | [41-FE1-muse-runner.md](41-FE1-muse-runner.md) |
 | 42  | FE2  | Routes, navigation and page shells              | 7     | 90 min  | [42-FE2-page-shells.md](42-FE2-page-shells.md) |
 | 43  | FE3  | New components                                  | 7     | 60 min  | [43-FE3-new-components.md](43-FE3-new-components.md) |
 | 44  | FE4  | Pages: sections wired to hooks                  | 7     | 2.5 h   | [44-FE4-pages.md](44-FE4-pages.md) |
