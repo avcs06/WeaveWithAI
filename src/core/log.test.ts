@@ -69,6 +69,15 @@ describe('the run log', () => {
   });
 });
 
+describe('the pages stage', () => {
+  it('names its build order, wave by wave', () => {
+    const lines: string[] = [];
+    const log = runLog(['code-pages'], (line) => lines.push(line));
+    log.event({ ts: '', type: 'stage:plan', stage: 'code-pages', waves: ['wave 1: S04+S05', 'wave 2: S02+S03', 'wave 3: S01'] });
+    expect(lines.at(-1)).toBe('    pages build order: wave 1: S04+S05; wave 2: S02+S03; wave 3: S01');
+  });
+});
+
 describe('a coding session on the subscription', () => {
   it('shows the allowance after it in place of a price', () => {
     const { durationMs: _, ...used } = call;

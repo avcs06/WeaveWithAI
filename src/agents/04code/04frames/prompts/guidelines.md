@@ -11,7 +11,8 @@
 - `frame-changes.json` lists, per screen, the frame nodes it adds or
   removes. The layout adds or removes them on that screen's route.
 - A shell that frames signed-in screens sends a visitor to sign in: read
-  `useCurrentUser()` from `@app/entities/auth`.
+  `useCurrentUser()` from `@app/entities/auth`, and redirect only when it is
+  `null`. It is `undefined` until the saved session is read.
 - A layout shows its frame, and `children` in its main region. No page
   content.
 - Keep `web/app/(routes)/layout.tsx` and `web/app/(routes)/page.tsx` as they

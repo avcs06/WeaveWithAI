@@ -46,6 +46,7 @@ import { makeScreensSchema } from './agents/02design/schema';
 import type { Themed } from './agents/02design/01theme/build';
 import { renderWireframes } from './agents/02design/08assemble/wireframes';
 import { writeJsonAtomic } from './core/utils';
+import { cleanAgentImages } from './engine/docker';
 
 export class UsageError extends Error {}
 
@@ -75,7 +76,8 @@ const USAGE = `usage:
   weave ds
   weave wireframes <screens.json> [--out <dir>]
   weave app <runId>
-  weave bench <runId>`;
+  weave bench <runId>
+  weave docker-clean [--all]     remove the agent's old images; --all removes the current one too`;
 
 export async function runCommand(
   args: RunArgs,
@@ -398,6 +400,7 @@ export async function main(argv: string[]): Promise<number> {
         backend: { type: 'string' },
         stages: { type: 'string' },
         out: { type: 'string' },
+        all: { type: 'boolean' },
       },
     });
     const [command, first, second] = positionals;
@@ -434,6 +437,11 @@ export async function main(argv: string[]): Promise<number> {
       case 'bench':
         console.log('bench: added in step B7');
         return 0;
+      case 'docker-clean': {
+        const removed = await cleanAgentImages({ all: values.all });
+        console.log(removed.length ? `removed ${removed.join(', ')}` : 'no agent images to remove');
+        return 0;
+      }
       default:
         throw new UsageError(
           command ? `unknown command: ${command}` : 'no command given',

@@ -90,6 +90,8 @@ export function runLog(
           return line(event.stage, `warning: ${String(event.message)}`);
         case 'stage:patch':
           return line(event.stage, `patch ${String(event.file)}`);
+        case 'stage:plan':
+          return line(event.stage, `build order: ${(event.waves as string[]).join('; ')}`);
         case 'stage:reset':
           return line(
             event.stage,

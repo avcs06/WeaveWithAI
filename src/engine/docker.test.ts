@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { resolveBackend } from '../core/backends';
 import { ConfigSchema } from '../core/env';
-import { agentImage, dockerArgs, ensureAgentImage } from './docker';
+import { agentImage, cleanAgentImages, dockerArgs, ensureAgentImage } from './docker';
 import { museArgs } from './muse';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-docker-'));
@@ -41,6 +41,17 @@ describe('the agent container', () => {
     const opts = { promptFile: '.weave/tasks/x.md', maxSteps: 60, effort: 'medium' };
     expect(museArgs(backend, { ...opts, inContainer: true })).toContain('--disable-sandbox');
     expect(museArgs(backend, opts)).not.toContain('--disable-sandbox');
+  });
+
+  it("removes the agent's old images, and with all the current one too", async () => {
+    const log = path.join(root, 'clean.log');
+    const bin = path.join(root, 'docker-clean');
+    const tags = ['weave-agent:old1', agentImage(), 'weave-agent:dev'].join('\\n');
+    writeFileSync(bin, `#!/bin/sh\necho "$@" >> ${log}\n[ "$1" = images ] && printf '${tags}\\n'\nexit 0\n`);
+    chmodSync(bin, 0o755);
+    expect(await cleanAgentImages({}, bin)).toEqual(['weave-agent:old1', 'weave-agent:dev']);
+    expect(readFileSync(log, 'utf8')).toContain('rmi weave-agent:old1 weave-agent:dev');
+    expect(await cleanAgentImages({ all: true }, bin)).toEqual(['weave-agent:old1', agentImage(), 'weave-agent:dev']);
   });
 
   it('builds the image only when its tag is missing', async () => {

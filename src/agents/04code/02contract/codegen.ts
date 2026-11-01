@@ -218,6 +218,7 @@ export const SIGNED_IN: Record<string, string> = {
 };
 
 const AUTH = `import { createPersistentStore } from '@packages/utils/state';
+import { useSyncExternalStore } from 'react';
 
 import { mockCall } from '../mock';
 
@@ -245,9 +246,16 @@ export function signOut(): void {
   useAuthStore.setState({ user: null });
 }
 
-/** The signed-in user, or null for a visitor. */
-export function useCurrentUser(): User | null {
-  return useAuthStore('user');
+const noSubscription = () => () => undefined;
+
+/**
+ * The signed-in user, null for a visitor, or undefined until the saved session is read: the server and the
+ * first render after it cannot read the browser's storage, so a page waits instead of taking a member for a visitor.
+ */
+export function useCurrentUser(): User | null | undefined {
+  const user = useAuthStore('user');
+  const read = useSyncExternalStore(noSubscription, () => true, () => false);
+  return read ? user : undefined;
 }
 `;
 

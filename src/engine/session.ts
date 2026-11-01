@@ -25,12 +25,10 @@ export type Session = {
   task: string;
   /** Written to `.weave/<name>` before the run; strings as is, anything else as JSON. */
   inputs: Record<string, unknown>;
-  /** The route `pnpm verify` checks. */
-  route?: string;
-  /** The route is behind sign-in: `pnpm verify` writes a member's session first. */
-  signedIn?: boolean;
-  /** What the screen's route folder must name, from its design and the contract. */
-  expect?: ScreenExpect;
+  /** The routes `pnpm verify` checks. */
+  routes?: CheckedRoute[];
+  /** What each screen's route folder must name, from its design and the contract. */
+  expects?: ScreenExpect[];
   /** The only paths the diff may touch, when given (CD5): each code stage writes its own folders. */
   writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
@@ -73,12 +71,15 @@ const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/*
 /** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
 export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
 
+/** A route `pnpm verify` checks; one behind sign-in is checked signed in as a member. */
+export type CheckedRoute = { url: string; signedIn: boolean };
+
 /**
- * `pnpm verify` on a route as the generated apps need it: at the desktop width only, since the MVP has no phone
- * layout (user, 2026-10-30), and signed in as a member on a route behind sign-in.
+ * `pnpm verify` on routes as the generated apps need it: at the desktop width only, since the MVP has no phone
+ * layout (user, 2026-10-30), and signed in as a member on routes behind sign-in.
  */
-export function verifyCommand(route: string, signedIn = false): string[] {
-  return ['pnpm', 'verify', route, '--widths', '1280', ...(signedIn ? ['--storage', SIGNED_IN_FILE] : [])];
+export function verifyCommand(routes: string[], signedIn = false): string[] {
+  return ['pnpm', 'verify', ...routes, '--widths', '1280', ...(signedIn ? ['--storage', SIGNED_IN_FILE] : [])];
 }
 const OURS = new Set(['.weave/hook.log', '.weave/ledger.json', '.weave/tools.log']);
 const TOOLS_LOG = '.weave/tools.log';
@@ -249,8 +250,12 @@ export async function runSession(
   if (sources.length) checks.push(await runCheck(appDir, 'validate', ['node', 'tools/validate-files.mjs', ...sources]));
   checks.push(await runCheck(appDir, 'typecheck', ['pnpm', 'typecheck']));
   checks.push(await runCheck(appDir, 'lint', ['pnpm', 'nx', 'lint', 'web']));
-  if (session.route) checks.push(await runCheck(appDir, 'verify', verifyCommand(session.route, session.signedIn)));
-  if (session.expect) checks.push(checkScreen(appDir, session.expect));
+  // One verify for the visitor's routes and one for the member's: each call sets its storage for every route it opens.
+  for (const signedIn of [false, true]) {
+    const urls = (session.routes ?? []).filter((route) => route.signedIn === signedIn).map((route) => route.url);
+    if (urls.length) checks.push(await runCheck(appDir, 'verify', verifyCommand(urls, signedIn)));
+  }
+  for (const expect of session.expects ?? []) checks.push(checkScreen(appDir, expect));
 
   const status: SessionResult['status'] = exec.timedOut
     ? 'timeout'

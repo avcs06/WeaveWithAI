@@ -48,7 +48,7 @@ function withWrites<T>(writes: Record<string, string>, fn: () => Promise<T>): Pr
 }
 
 const page = 'web/app/(routes)/books/page.tsx';
-const session = { id: 'page:S04', task: 'Build S04 from `.weave/screens/S04.json`.', inputs: { 'screens/S04.json': { id: 'S04' } }, route: '/books' };
+const session = { id: 'page:S04', task: 'Build S04 from `.weave/screens/S04.json`.', inputs: { 'screens/S04.json': { id: 'S04' } }, routes: [{ url: '/books', signedIn: false }] };
 
 describe('prepareApp', () => {
   it('writes the MCP and hook config and the hook, and commits a baseline', () => {
@@ -103,8 +103,17 @@ describe('runSession', () => {
       ran.push(args.join(' '));
       return { name, ok: true, output: '' };
     };
-    await withWrites({ [page]: 'x\n' }, () => runSession(ctx, appDir, { ...session, signedIn: true }, { bin: fake, runCheck }));
-    expect(ran).toContain('pnpm verify /books --widths 1280 --storage .weave/02-contract/signed-in.json');
+    const routes = [
+      { url: '/', signedIn: false },
+      { url: '/books', signedIn: true },
+      { url: '/books/b-1', signedIn: true },
+    ];
+    await withWrites({ [page]: 'x\n' }, () => runSession(ctx, appDir, { ...session, routes }, { bin: fake, runCheck }));
+    // One call for the visitor's routes, one for the member's.
+    expect(ran.filter((line) => line.startsWith('pnpm verify'))).toEqual([
+      'pnpm verify / --widths 1280',
+      'pnpm verify /books /books/b-1 --widths 1280 --storage .weave/02-contract/signed-in.json',
+    ]);
   });
 
   it("leaves pnpm's engine warnings out of a check's output", async () => {
@@ -157,7 +166,7 @@ describe('runSession', () => {
     const { appDir, ctx } = setup('design');
     const expectations = { folder: 'web/app/(routes)/books', testIds: ['S04.n01', 'S04.n02'], operations: ['listBooks'] };
     const result = await withWrites({ [page]: '<h1 data-testid="S04.n01" />; listBooks();\n' }, () =>
-      runSession(ctx, appDir, { ...session, expect: expectations }, { bin: fake, runCheck: checks() }),
+      runSession(ctx, appDir, { ...session, expects: [expectations] }, { bin: fake, runCheck: checks() }),
     );
     expect(result.status).toBe('checks');
     expect(result.checks.at(-1)).toEqual({ name: 'design', ok: false, output: 'No element has data-testid "S04.n02".' });

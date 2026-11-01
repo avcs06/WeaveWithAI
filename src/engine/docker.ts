@@ -23,6 +23,22 @@ export async function ensureAgentImage(docker = 'docker'): Promise<string> {
   return image;
 }
 
+/**
+ * Removes the agent's images and any container left from them: every tag but the current Dockerfile's, or with
+ * `all` that one too, as when the work is done. Returns the tags it removed.
+ */
+export async function cleanAgentImages(opts: { all?: boolean } = {}, docker = 'docker'): Promise<string[]> {
+  const current = agentImage();
+  const listed = await execa(docker, ['images', 'weave-agent', '--format', '{{.Repository}}:{{.Tag}}']);
+  const tags = listed.stdout.split('\n').filter((tag) => tag && (opts.all || tag !== current));
+  for (const tag of tags) {
+    const containers = (await execa(docker, ['ps', '-aq', '--filter', `ancestor=${tag}`])).stdout.split('\n').filter(Boolean);
+    if (containers.length) await execa(docker, ['rm', '-f', ...containers]);
+  }
+  if (tags.length) await execa(docker, ['rmi', ...tags]);
+  return tags;
+}
+
 /** The folder Muse Code is installed in: its launcher's, with the binary beside it. */
 export function museDir(bin: string): string {
   const found = bin.includes('/') ? bin : execaSync('which', [bin]).stdout.trim();

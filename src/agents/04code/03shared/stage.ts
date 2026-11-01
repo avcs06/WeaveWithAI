@@ -24,7 +24,7 @@ export function sharedSpecs(design: WidgetScreens): UnitSpec[] {
       folders: ['01-scaffold', '02-contract', '03-shared'],
       writes: ['web/app/components/**', 'web/app/blocks/**', ENTITIES],
       // A shared dialog is one screen, so its node ids are the same wherever it opens; a shared widget's come from each page.
-      expect: { folder: 'web/app/blocks', testIds: dialogNodes.map((n) => n.id), words: nodeWords(dialogNodes), operations: [] },
+      expects: [{ folder: 'web/app/blocks', testIds: dialogNodes.map((n) => n.id), words: nodeWords(dialogNodes), operations: [] }],
     },
   ];
 }

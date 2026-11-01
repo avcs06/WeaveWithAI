@@ -1821,7 +1821,10 @@ coding agent writes no tests.
     rules; the app's title; no dev overlay in the browser checks; findings
     named by test id; fix sessions continue their Muse session; no browser
     checks for frames, since no route renders a frame yet; the starter
-    `PageLayout` moved out of the root layout.
+    `PageLayout` moved out of the root layout; checks at the desktop width
+    only; checks signed in on pages behind sign-in; `useCurrentUser()` is
+    `undefined` until the saved session is read; pages that open each other
+    built in one session, wave by wave, after the pages they open.
 
 - [ ] **CD11** Phones in the code stages (4 h, plus a 1 h rerun). Depends: CD10
   - Paused (user, 2026-11-01). The MVP is desktop only (OPTIONS.md, user,

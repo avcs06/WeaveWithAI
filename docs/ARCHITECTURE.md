@@ -115,6 +115,7 @@ runs/<runId>/
                                step and per session, each subject starting with its stage; a code stage that starts again
                                resets it to the end of the stage before, with no leftovers
   app.previous-<time>/         an app folder the scaffold did not make, moved aside
+  04-code/05-pages-plan.json   the pages' build order: groups of pages that open each other, wave by wave
   patches/<stage>.patch        a code stage's whole change, from the stage before it, without .weave/
   patches/<stage>/<NNN>-<subject>.patch   each of its commits that changed the app, in order
   sessions/<unit>.jsonl  sessions/<unit>.tools.jsonl   each coding session's events and tool calls

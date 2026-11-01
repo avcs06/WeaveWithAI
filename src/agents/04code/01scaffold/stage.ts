@@ -20,7 +20,7 @@ const STAGE = 'code-scaffold';
 const CHECKS: [string, string[]][] = [
   ['typecheck', ['pnpm', 'typecheck']],
   ['mcp:check', ['pnpm', 'mcp:check']],
-  ['verify', verifyCommand('/')],
+  ['verify', verifyCommand(['/'])],
 ];
 
 /** Tests swap the template copy and the app's checks. */

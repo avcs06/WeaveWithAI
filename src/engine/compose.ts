@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { checkIssues, type LongFile, MAX_LINES } from './checks';
 import type { ScreenExpect } from './conformance';
-import { protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
+import { type CheckedRoute, protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
 // A coding unit on the stage runner (CD5): its draft and its fixes are Muse
@@ -34,10 +34,10 @@ export type Unit = {
   writes: string[];
   /** The paths its guidelines keep it from reading, measured after the session. */
   reads?: ReadRules;
-  route?: string;
-  /** Its route is behind sign-in, so `pnpm verify` signs in as a member first. */
-  signedIn?: boolean;
-  expect?: ScreenExpect;
+  /** The routes `pnpm verify` checks after each session. */
+  routes?: CheckedRoute[];
+  /** What each of its screens' code must name. */
+  expects?: ScreenExpect[];
   /** The rendered checks on the unit's routes, once its app builds. */
   rendered?: () => Promise<Issue[]>;
 };
@@ -76,9 +76,8 @@ export function sessionCompose(
         id,
         task,
         inputs: {},
-        route: unit.route,
-        signedIn: unit.signedIn,
-        expect: unit.expect,
+        routes: unit.routes,
+        expects: unit.expects,
         writes: unit.writes,
         reads: unit.reads,
         stage: unit.stage,

@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "template:setup": "pnpm --dir template install --frozen-lockfile && pnpm --dir template mcp:setup && pnpm --dir template mcp:check",
     "ds:export": "node template/tools/export-design-system.mjs",
-    "ds:measure": "node template/tools/measure-design-system.mjs > src/ds/boxes.json.tmp && mv src/ds/boxes.json.tmp src/ds/boxes.json"
+    "ds:measure": "node template/tools/measure-design-system.mjs > src/ds/boxes.json.tmp && mv src/ds/boxes.json.tmp src/ds/boxes.json",
+    "docker:clean": "tsx src/cli.ts docker-clean"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.14.0",

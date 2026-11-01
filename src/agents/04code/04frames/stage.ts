@@ -21,12 +21,14 @@ export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[]
       // The shell folders' own files, a layout's styles included; the route folders inside are the pages'.
       writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/`), 'web/app/components/**', ENTITIES],
       // No page sits in a shell yet, so no route renders a frame: the pages check the frames in place, in the browser.
-      expect: {
-        folder: 'web/app',
-        testIds: shellNodes.map((n) => n.id),
-        words: nodeWords(shellNodes),
-        operations: [],
-      },
+      expects: [
+        {
+          folder: 'web/app',
+          testIds: shellNodes.map((n) => n.id),
+          words: nodeWords(shellNodes),
+          operations: [],
+        },
+      ],
     },
   ];
 }
