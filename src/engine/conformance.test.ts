@@ -20,6 +20,11 @@ describe('the design check after a coding session', () => {
     expect(s04.operations).toEqual(['listDashboards']);
   });
 
+  it("drops a get the screen's list of the same entity loads already, and keeps the rest", () => {
+    // S05's widget bodies read getWidget, and its board reads listWidgets, which holds every widget.
+    expect(screenExpect(design, contract, 'S05').operations).toEqual(['getDashboard', 'listWidgets', 'listChecklistItems', 'listLinkItems']);
+  });
+
   it('passes a folder that names every node and the operation, and lists what another misses', () => {
     const page = (dir: string, text: string) => {
       mkdirSync(path.join(root, dir, s04.folder), { recursive: true });

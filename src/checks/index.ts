@@ -13,7 +13,7 @@ import {
   typography,
 } from './collectors';
 import { type KeyboardReport, keyboardWalk } from './keyboard';
-import type { Finding } from './types';
+import { type Finding, finding } from './types';
 
 // The rendered checks over every sampled route: the gate after a coding
 // session and the app MCP fail on the mandatory findings, and the benchmark
@@ -44,6 +44,18 @@ export type RenderedReport = {
   };
 };
 
+/** A walk that could not finish: nothing it counted stands. */
+const EMPTY_WALK: Omit<KeyboardReport, 'findings'> = {
+  interactive: 0,
+  reachable: 0,
+  focusVisible: 0,
+  inversions: 0,
+  trap: false,
+  dialogs: { opened: 0, escaped: 0, focusReturned: 0 },
+  activation: { buttons: 0, enterOk: 0, spaceOk: 0 },
+  skipLink: false,
+};
+
 /** The theme's colors as hex, and the accent ones among them. */
 export type ThemeColors = { all: Set<string>; accent: Set<string> };
 
@@ -53,22 +65,31 @@ export async function checkRoute(
   open: (url: string) => Promise<import('playwright-core').Page>,
 ): Promise<RenderedReport> {
   const page = await open(sample.url);
+  // A check that breaks is the checker's trouble, not the page's: a warning on its rule, and the other checks go on.
+  const broken: Finding[] = [];
+  const guard = async <T>(rule: string, fallback: T, check: () => Promise<T>): Promise<T> => {
+    try {
+      return await check();
+    } catch (error) {
+      broken.push(finding(rule, 'warning', `the check could not finish: ${String(error).split('\n')[0]}`));
+      return fallback;
+    }
+  };
   try {
-    const axe = await axeCheck(page);
-    const contrast = await contrastCheck(page);
-    const targets = await targetSizes(page);
+    const axe = await guard('DESIGN-R-001', { findings: [], violations: [] }, () => axeCheck(page));
+    const contrast = await guard('DESIGN-R-002', { findings: [], failures: [], unknown: 0 }, () => contrastCheck(page));
+    const targets = await guard('DESIGN-R-004', { findings: [], small24: 0 }, () => targetSizes(page));
     const rest = [
-      ...(await overflowCheck(page)),
-      ...(sample.entry ? await firstViewport(page, sample.primaryTestIds) : []),
-      ...(await typography(page)),
-      ...(await colorVariables(page, theme)),
-      ...(await proximity(page)),
+      ...(await guard('DESIGN-R-005', [], () => overflowCheck(page))),
+      ...(sample.entry ? await guard('DESIGN-R-006', [], () => firstViewport(page, sample.primaryTestIds)) : []),
+      ...(await guard('DESIGN-R-007', [], () => typography(page))),
+      ...(await guard('DESIGN-R-008', [], () => colorVariables(page, theme))),
+      ...(await guard('DESIGN-R-009', [], () => proximity(page))),
     ];
     // Last: the walk presses keys and may open and close things.
-    const { findings: walked, ...keyboard } = await keyboardWalk(page, {
-      blockMutations: true,
-      dialogTriggers: sample.dialogTriggers ?? [],
-    });
+    const { findings: walked, ...keyboard } = await guard('DESIGN-R-003', { ...EMPTY_WALK, findings: [] }, () =>
+      keyboardWalk(page, { blockMutations: true, dialogTriggers: sample.dialogTriggers ?? [] }),
+    );
     return {
       route: sample.route,
       findings: [
@@ -77,6 +98,7 @@ export async function checkRoute(
         ...targets.findings,
         ...rest,
         ...walked,
+        ...broken,
       ],
       metrics: {
         axeViolations: axe.violations.length,

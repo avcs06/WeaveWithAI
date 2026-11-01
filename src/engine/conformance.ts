@@ -40,6 +40,9 @@ export function screenExpect(design: Design, contract: Contract, screen: string)
   const widgets = new Set(design.placements.filter((p) => ids.has(p.screen)).map((p) => p.widget));
   // Not every operation of the screen's steps: a step's effect may run inside another, as duplicating a dashboard copies its widgets.
   const operations = new Set(contract.widgets.filter((w) => widgets.has(w.widget)).flatMap((w) => w.reads));
+  // A get is loaded already when the screen calls its entity's list: the list holds each record.
+  const listed = new Set(contract.operations.filter((op) => op.kind === 'list' && operations.has(op.id)).map((op) => op.entity));
+  for (const op of contract.operations) if (op.kind === 'get' && listed.has(op.entity)) operations.delete(op.id);
   const nodes = design.nodes.filter((n) => sections.has(n.section));
   return {
     folder: path.join('web/app/(routes)', page.route.replace(/^\//, '')),

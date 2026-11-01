@@ -239,14 +239,26 @@
     focus(selector) {
       find(selector)?.focus();
     },
-    /** Counts clicks by element and keeps forms from submitting while keys are pressed. */
+    /**
+     * Counts clicks by element and, until releaseClicks, stops each one before the page sees it: a button that
+     * opens another page, creates a record or signs out does none of it, and the walk stays on its route.
+     */
     watchClicks() {
       globalThis.__weaveClicks = {};
-      document.addEventListener('click', (event) => {
+      globalThis.__weaveSwallow = true;
+      window.addEventListener('click', (event) => {
         const target = event.target.closest('button, [role="button"]');
         if (target) globalThis.__weaveClicks[name(target)] = (globalThis.__weaveClicks[name(target)] || 0) + 1;
+        if (globalThis.__weaveSwallow) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
       }, true);
       document.addEventListener('submit', (event) => event.preventDefault(), true);
+    },
+    /** Lets clicks through again, for the checks that need a button to act, such as opening its dialog. */
+    releaseClicks() {
+      globalThis.__weaveSwallow = false;
     },
     clicks(selector) {
       return globalThis.__weaveClicks?.[selector] || 0;

@@ -25,6 +25,7 @@ import {
   typography,
 } from './collectors';
 import { runRenderedChecks } from './index';
+import { checkRoute } from './index';
 import { keyboardWalk } from './keyboard';
 import type { Finding } from './types';
 
@@ -136,6 +137,30 @@ describe('rendered checks on the fixture pages', () => {
     const page = await openRoute(context, `${base}clean.html`, { 'weave:auth': '{"state":{"user":{"email":"m@x.com"}}}' });
     expect(await page.evaluate(() => localStorage.getItem('weave:auth'))).toBe('{"state":{"user":{"email":"m@x.com"}}}');
     await context.close();
+  });
+
+  it('R-003 keyboard: a button that opens another page counts as acting, and the walk never leaves its route', async () => {
+    const page = await open('navigates.html');
+    const walk = await keyboardWalk(page, { blockMutations: true });
+    expect(walk.activation).toEqual({ buttons: 3, enterOk: 3, spaceOk: 3 });
+    expect(walk.findings.filter((f) => f.message.includes('does not activate'))).toEqual([]);
+    expect(page.url()).toMatch(/navigates\.html$/);
+  });
+
+  it('turns a check that breaks into a warning on its rule, and finishes the route', async () => {
+    const report = await checkRoute(
+      { route: '/', url: `${base}clean.html`, screen: 'S01', entry: true, primaryTestIds: [] },
+      theme,
+      async (url) => {
+        const page = await (await browser.newContext()).newPage();
+        await page.goto(url);
+        await page.close();
+        return page;
+      },
+    );
+    expect(report.findings.length).toBeGreaterThan(0);
+    expect(report.findings.every((f) => f.severity === 'warning' && f.message.startsWith('the check could not finish'))).toBe(true);
+    expect(new Set(report.findings.map((f) => f.rule))).toContain('DESIGN-R-003');
   });
 
   it('R-004 targets: a 12 px button fails; the clean page passes', async () => {

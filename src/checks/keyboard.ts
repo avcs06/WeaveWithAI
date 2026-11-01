@@ -129,6 +129,7 @@ export async function keyboardWalk(
         await page.keyboard.press('Escape');
     }
 
+  await inPage(page, 'releaseClicks');
   const dialogs = { opened: 0, escaped: 0, focusReturned: 0 };
   for (const trigger of opts.dialogTriggers ?? []) {
     const selector = `[data-testid="${trigger}"]`;
