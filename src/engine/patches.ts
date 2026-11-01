@@ -26,11 +26,12 @@ export function startStage(run: Run, appDir: string, stage: string): void {
   const base = stageBase(appDir, stage);
   const dropped = git(appDir, 'log', '--format=%s', `${base}..HEAD`).split('\n').filter(Boolean);
   const dirty = git(appDir, 'status', '--porcelain').trim() !== '';
-  if (!dropped.length && !dirty) return;
+  // The stage's own patches go even on a fresh app, where an earlier app's may still sit in the run.
   for (const name of new Set([stage, ...dropped.map((subject) => subject.split(':')[0] ?? '')])) {
     rmSync(runPath(run, 'patches', name), { recursive: true, force: true });
     rmSync(runPath(run, 'patches', `${name}.patch`), { force: true });
   }
+  if (!dropped.length && !dirty) return;
   git(appDir, 'reset', '-q', '--hard', base);
   // Nothing of the attempt may stay for a session to find: not in the reflog, the object store, or a
   // cache that saw its files (Nx, Next, tsc). Only the installs stay.

@@ -112,8 +112,10 @@ export function createServer(system: DesignSystem): McpServer {
       description:
         "Get a component's props: each prop's type, whether it is required, its default (the " +
         "theme's, read from the component's recipe styles) and, for a variant-like prop, its " +
-        'allowed values; the styles its `look` prop takes and their defaults; and what it ' +
-        "replaces. Use it with get_recipe instead of reading the component's source: the recipe " +
+        'allowed values; the styles its `look` prop takes and their defaults; what it ' +
+        'replaces; and `passesHtmlAttributes`, whether a `data-testid` or `aria-*` set on it ' +
+        'reaches the DOM (when false, set it on an element around the component). Use it with ' +
+        "get_recipe instead of reading the component's source: the recipe " +
         'shows the cases, this shows every prop. An unknown name returns the closest names.',
       inputSchema: z.object({
         name: z.string().min(1).describe('Component name, e.g. "Button" or "Select".'),

@@ -68,6 +68,12 @@ describe('components', () => {
     expect(button?.props.some((p) => p.name === 'onClick')).toBe(false);
   });
 
+  it('says whether a data-testid set on the component reaches the DOM', () => {
+    // Button takes the button's attributes and spreads them; Stack takes none and spreads nothing.
+    expect(system.component('Button')?.passesHtmlAttributes).toBe(true);
+    expect(system.component('Stack')?.passesHtmlAttributes).toBe(false);
+  });
+
   it('returns undefined, plus closest matches, for an unknown name', () => {
     expect(system.component('Buttn')).toBeUndefined();
     expect(system.closestComponents('Buttn')).toContain('Button');

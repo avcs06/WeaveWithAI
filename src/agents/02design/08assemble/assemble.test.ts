@@ -1,14 +1,21 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { runRules } from '../../../core/rules';
+import type { Contract } from '../../03contract/schema';
 import { DIALOG_GAP } from '../config';
 import { chain, ctx, inventory, screens, theme } from '../__fixtures__/chain';
 import type { Chain } from './assemble';
 import { assembleChain } from './assemble';
+import { rule as design050 } from '../rules/design-050-contract-fields';
 import { screensOf } from '../rules/helpers';
 import { skeleton } from './skeleton/skeleton';
 import type { Screens } from '../schema';
 import { validateDesign } from './validation/validation';
 
 const { screens: assembled, origin } = assembleChain(chain, theme);
+const contract = JSON.parse(
+  readFileSync(new URL('../../03contract/__fixtures__/reading-list.contract.json', import.meta.url), 'utf8'),
+) as Contract;
 
 const textsOf = (s: Screens, screen: string) =>
   s.nodes
@@ -39,7 +46,18 @@ describe('assembleChain', () => {
   });
 
   it('passes every design rule and every layout rule, warnings included', () => {
-    expect(validateDesign(assembled, skeleton(assembled, inventory), ctx)).toEqual([]);
+    expect(validateDesign(assembled, skeleton(assembled, inventory), ctx, contract)).toEqual([]);
+  });
+
+  it("DESIGN-050 holds each value a screen or a new component shows to a field of its contract entity", () => {
+    const copy = structuredClone(assembled);
+    copy.nodes.find((n) => n.id === 'S06.n08')!.data = ['Book.blurb'];
+    const cover = copy.newComponents[0]!.nodes[0]!;
+    cover.data = ['Shelf.name'];
+    const issues = runRules([design050], { screens: copy, contract });
+    expect(issues.map((i) => i.at)).toEqual(['S06.n08', cover.id]);
+    expect(issues[0]?.message).toContain('Its fields are id, createdAt, updatedAt, title, author, shelf.');
+    expect(issues[1]?.message).toContain('the contract has no entity for Shelf');
   });
 
   it('renumbers the nodes to their screen in reading order and keeps the node each call wrote', () => {

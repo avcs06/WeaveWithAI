@@ -68,11 +68,14 @@ describe('the patches of a code stage', () => {
     expect(readEvents(run).at(-1)).toMatchObject({ type: 'stage:reset', stage: 'code-shared', to: contract.slice(0, 7), dropped: 3, dirty: true });
   });
 
-  it('leaves a clean app alone when the stage has not run yet', () => {
+  it('leaves a clean app alone when the stage has not run yet, but drops the patches an earlier app left for it', () => {
     const { run, appDir } = setup('first');
+    mkdirSync(runPath(run, 'patches', 'code-pages'), { recursive: true });
+    writeFileSync(runPath(run, 'patches', 'code-pages', '001-page-S04.patch'), 'from an earlier app\n');
     const head = git(appDir, 'rev-parse', 'HEAD');
     startStage(run, appDir, 'code-pages');
     expect(git(appDir, 'rev-parse', 'HEAD')).toBe(head);
+    expect(existsSync(runPath(run, 'patches', 'code-pages'))).toBe(false);
     expect(readEvents(run).some((e) => e.type === 'stage:reset')).toBe(false);
   });
 });

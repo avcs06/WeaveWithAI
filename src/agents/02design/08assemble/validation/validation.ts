@@ -1,6 +1,8 @@
 import type { Issue } from '../../../../core/issues';
 import { type Rule, runRules } from '../../../../core/rules';
 import type { Inventory } from '../../../../ds/inventory';
+import type { Contract } from '../../../03contract/schema';
+import { rule as design050 } from '../../rules/design-050-contract-fields';
 import type { DesignContext } from '../../rules/helpers';
 import {
   validateIa,
@@ -92,11 +94,12 @@ export function validateLayout(
   return runRules(layoutRules, layoutInput(screens, skeleton, inventory));
 }
 
-/** The assembled design: the IA, each screen's and shell's nodes, the whole artifact and its solved layout. */
+/** The assembled design: the IA, each screen's and shell's nodes, the whole artifact, its solved layout, and the values it shows against the contract. */
 export function validateDesign(
   screens: Screens,
   solved: ReturnType<typeof skeleton>,
   ctx: DesignContext,
+  contract: Contract,
 ): Issue[] {
   const { nodes, shells, containers: _containers, ...ia } = screens;
   const owner = (section: string) =>
@@ -114,5 +117,6 @@ export function validateDesign(
     ),
     ...validateScreens(screens, ctx),
     ...validateLayout(screens, solved, ctx.inventory),
+    ...runRules([design050], { screens, contract }),
   ];
 }

@@ -317,6 +317,9 @@ const processColors = (
   return varObj;
 };
 
+/** Each entity's color set by its name, from whichever modes define it. */
+type EntitySets = Record<keyof typeof colors.entity.light | keyof typeof colors.entity.dark, ColorSet>;
+
 export const colorTokens = processColors(colors) as {
   primary: ColorSet;
   base: ColorSet;
@@ -325,4 +328,4 @@ export const colorTokens = processColors(colors) as {
   warning: ColorSet;
   error: ColorSet;
   info: ColorSet;
-};
+} & EntitySets;

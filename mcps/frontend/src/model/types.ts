@@ -69,6 +69,12 @@ export interface ComponentContract {
    * design system has this component for exactly that job.
    */
   invalidAlternatives: string[];
+  /**
+   * Whether it passes any other HTML attribute, `data-testid` and `aria-*`
+   * included, to the element it renders. False: one set on it is lost.
+   * Unknown for a component read from a package's types.
+   */
+  passesHtmlAttributes?: boolean;
   /** Absolute path of the file declaring the component, when it came from one. */
   filePath?: string;
   /**

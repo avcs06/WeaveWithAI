@@ -85,7 +85,7 @@ function fakeLlm(first: Record<string, Build> = {}) {
   return { llm, inputs };
 }
 
-/** A run with the scope, flows, brief and theme the design stages read. */
+/** A run with the scope, flows, brief and theme the design stages read, and the contract assemble checks against. */
 function prepared(id: string) {
   const run = createRun({ idea, runsDir: root, id });
   const meta = { model: null, rounds: 1 };
@@ -104,6 +104,9 @@ function prepared(id: string) {
     stage: 'design-theme',
     inputs: ['flows-scope', 'flows-reconcile'],
   });
+  // The contract stage runs beside the design calls; assemble reads what it left.
+  const contract = JSON.parse(readFileSync(new URL('../../03contract/__fixtures__/reading-list.contract.json', import.meta.url), 'utf8'));
+  writeArtifact(run, 'contract', contract, { ...meta, stage: 'contract', inputs: ['flows-scope', 'flows-reconcile'] });
   return run;
 }
 const contextFor = (run: StageContext['run'], llm: Llm): StageContext => ({
@@ -164,6 +167,7 @@ describe('the design stages after the theme', () => {
         'design-draw',
         'design-frame',
         'design-theme',
+        'contract',
         'flows-scope',
         'flows-reconcile',
       ].sort(),

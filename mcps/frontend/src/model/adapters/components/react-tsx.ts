@@ -103,10 +103,23 @@ function isTypeOnly(doc: ComponentDoc, checker: ts.TypeChecker): boolean {
 const isInternal = (doc: ComponentDoc) => 'internal' in (doc.tags ?? {});
 
 /**
+ * True when the component takes an element's HTML attributes (props inherited
+ * from `node_modules` types) and its own declaration spreads props onto an
+ * element, so a `data-testid` or `aria-*` set on it reaches the DOM.
+ */
+function passesHtmlAttributes(doc: ComponentDoc, checker: ts.TypeChecker): boolean {
+  if (!Object.values(doc.props).some((prop) => prop.parent?.fileName.includes('/node_modules/'))) return false;
+  const symbol = doc.rootExpression;
+  const target = symbol && symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+  const spreads = (node: ts.Node): boolean => ts.isJsxSpreadAttribute(node) || (ts.forEachChild(node, spreads) ?? false);
+  return (target?.declarations ?? []).some(spreads);
+}
+
+/**
  * `filePath` is passed in: react-docgen-typescript trims `doc.filePath`,
  * breaking sibling lookups like a component's recipe.
  */
-function toContract(doc: ComponentDoc, filePath: string): ComponentContract {
+function toContract(doc: ComponentDoc, filePath: string, checker: ts.TypeChecker): ComponentContract {
   const props = toProps(doc.props);
 
   return {
@@ -116,6 +129,7 @@ function toContract(doc: ComponentDoc, filePath: string): ComponentContract {
     props,
     variantProps: props.filter((p) => p.allowedValues).map((p) => p.name),
     invalidAlternatives: declaredInvalidAlternatives(doc),
+    passesHtmlAttributes: passesHtmlAttributes(doc, checker),
     filePath,
   };
 }
@@ -162,7 +176,7 @@ export function loadComponents(patterns: string[], configDir: string): Component
         files.find((candidate) => candidate === resolve(doc.filePath)) ??
         files.find((candidate) => candidate.endsWith(doc.filePath));
       if (file && !seen.has(doc.displayName)) {
-        contracts.push(toContract(doc, file));
+        contracts.push(toContract(doc, file, program.getTypeChecker()));
         seen.add(doc.displayName);
       }
     }

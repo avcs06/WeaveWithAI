@@ -3,6 +3,7 @@ import { type Issue, writeReport } from '../../../core/issues';
 import { appendEvent, updateStage } from '../../../core/run';
 import { type Inventory, inventory } from '../../../ds/inventory';
 import type { StageContext, StageDef } from '../../stages';
+import type { Contract } from '../../03contract/schema';
 import type { Processed as Plan } from '../02architect/process';
 import type { Processed as Catalog } from '../03catalog/process';
 import type { Laid } from '../04screen/stage';
@@ -36,6 +37,7 @@ export async function runAssemble(
   const catalog = readArtifact<Catalog>(run, 'design-catalog').data;
   const laid = readArtifact<Laid>(run, 'design-screen').data;
   const invented = readArtifact<Invented>(run, 'design-invent').data;
+  const contract = readArtifact<Contract>(run, 'contract').data;
   const designs = new Map(invented.components.map((c) => [c.name, c.design]));
 
   const assemble = () => {
@@ -57,7 +59,7 @@ export async function runAssemble(
       screens,
       origin,
       solved,
-      issues: validateDesign(screens, solved, context),
+      issues: validateDesign(screens, solved, context, contract),
     };
   };
   let design = assemble();
@@ -93,6 +95,7 @@ export async function runAssemble(
       'design-draw',
       'design-frame',
       'design-theme',
+      'contract',
       'flows-scope',
       'flows-reconcile',
     ],

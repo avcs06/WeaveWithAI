@@ -32,9 +32,10 @@ weave-design-system MCP gives when it connects.
 - Every file you read stays in your context for the rest of the session and
   is paid for again on every step. Read only what your task needs.
 - For each component you use, call `get_recipe` for its cases and
-  `get_component` for its props, their types and defaults. Read a file in
-  `packages/` only when neither answers your question, and then only that
-  file, never a folder.
+  `get_component` for its props, their types and defaults, and whether a
+  `data-testid` set on it reaches the page. Read a file in `packages/` only
+  when neither answers your question, and then only that file, never a
+  folder.
 - `recipes.md` lists the state and hook recipes with what each is for. Call
   `get_recipe` for the ones you use; never read `packages/recipes`.
 - Token names, and the class that applies each, come from `list_tokens` and
@@ -52,7 +53,9 @@ weave-design-system MCP gives when it connects.
 ## Building
 
 - Every node is an element. Give its root element `data-testid` set to the
-  node id, such as `data-testid="S04.n03"`.
+  node id, such as `data-testid="S04.n03"`. When `get_component` gives a
+  component `passesHtmlAttributes: false`, put the test id on an element
+  around it.
 - Show the node's `text` as its words.
 - Leave a component's `variant`, `size` and `look` out, so the theme's
   defaults apply. A node that sets one has an `overrideReason`: write that
@@ -65,6 +68,24 @@ weave-design-system MCP gives when it connects.
   after the user confirms.
 - A node with `navigatesTo` opens that screen's route from `routes.json`
   with `NextLink` or `useRouter`, even when that screen is not built yet.
+
+## Keyboard and accessibility
+
+The checks after your session load each page in a browser and hold it to
+these. Build to them from the start. The design-system components meet them
+already; a control you build yourself must too.
+
+- Every control works by keyboard. Tab reaches it in reading order, its
+  focus shows, and focus never gets stuck.
+- Buttons act on Enter and Space. Use a design-system button or a native
+  `button`, never a clickable `div`.
+- A dialog closes on Escape and gives focus back to the control that opened
+  it.
+- Every control has an accessible name: its visible label, or `aria-label`
+  when it shows only an icon.
+- Text has a contrast of at least 4.5:1, or 3:1 for large text.
+- Click and touch targets are at least 24 by 24 px.
+- axe finds no serious or critical violation.
 
 ## When the design is wrong
 
