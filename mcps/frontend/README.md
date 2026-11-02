@@ -186,6 +186,19 @@ can apply in one pass.
    unreadable selector or import, empty `{}` names, a bare `@scope/pkg`, or a selector another
    component already declared. `pnpm mcp:check` fails on them, listing each one.
 
+   **Generic declarations.** A pattern no one component owns, such as a combination of
+   components, goes in the JSON file the config's `invalidAlternatives` names, each entry with
+   what to use instead:
+
+   ```json
+   [{ "selector": "IconButton:has(Avatar)", "use": "a PlainButton around the Avatar" }]
+   ```
+
+   The selector and import forms are the same as a tag's. The finding reads
+   `Use <use> instead of <…>.` and names no component as its suggestion. No folder owns a
+   generic declaration, so no file is exempt from it beyond the design-system folders `validate`
+   skips anyway, and one that repeats a component's, or another generic one, is a diagnostic.
+
 5. **A selector that styles another element**: a key in a vanilla-extract `selectors` object
    whose last compound selector is not `&`, like `'& a'` or `'&:hover span'`. vanilla-extract
    fails the build on it, so the page doesn't render. `'&:hover'`, `` `${parent} &` `` and
@@ -366,6 +379,7 @@ under `web/`), and `pnpm verify --recipes` on every recipe, then drives the brow
 | `packages`   | _Optional._ Installed packages whose components join the inventory.                                                         |
 | `recipes`    | _Optional._ Globs for recipe files: each component's distinct cases, served by `get_recipe`.                                |
 | `importExceptions` | _Optional._ Globs for files that may import a package another component supersedes, like a shared primitive several components are built on. Only the import rule skips them; everywhere else, only the declaring component's folder may use what it supersedes. |
+| `invalidAlternatives` | _Optional._ A JSON file of invalid alternatives no one component owns, `[{ "selector", "use" }]`, each with what to use instead. |
 
 **Tokens** (`tokens[]`) — file paths. Each file's format and exports are inferred:
 

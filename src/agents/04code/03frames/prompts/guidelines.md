@@ -12,10 +12,11 @@
 - A step that leads somewhere opens that route from
   `.weave/01-scaffold/routes.json` with `NextLink`, even when the screen is
   not built yet. The navigation marks the item of the screen the user is on.
-- A sidebar's navigation is a `SidebarMenu`: its `header` holds the frame's
-  action there, such as Create, its `footer` the account and sign out, and
-  each destination is a `SidebarMenuItem` around a `NextLink`. The sidebar
-  fills the height under the header, and the list scrolls inside it.
+- A sidebar's navigation is a `SidebarMenu`: its `header` holds what sits
+  above the list, such as the logo, a search or a Create button, its
+  `footer` what sits below it, such as the account and sign out, and each
+  destination is a `SidebarMenuItem` around a `NextLink`. The sidebar fills
+  the height under the header, and the list scrolls inside it.
 - The header's height and the sidebar's top are one value: export it once
   from the layout's `layout.css.ts` and use it for both, so the sidebar
   touches the header.

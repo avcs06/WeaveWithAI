@@ -22,8 +22,3 @@
 - For a component a step needs, ask the MCP: `search_components`, then
   `get_component` and `get_recipe`. When nothing fits, build it yourself in
   `components/` beside the page.
-- In a list, the record's name is a `NextLink` that opens it, long text is a
-  `Truncate`, and the row's actions are `IconButton`s with tooltips, or one
-  row menu when there are more than two.
-- Every form is the `Form` component. A button beside a field goes in the
-  field's `action` slot.

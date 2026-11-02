@@ -67,8 +67,6 @@ export const Form = ({
 /**
  * Fields side by side on one row of a Form, each at its own width; they wrap
  * when the row is too narrow.
- *
- * @invalidAlternative Form [className*="flex-row"]:has(Input, NumberInput, PasswordInput, SearchInput, Select, MultiSelect, Textarea)
  */
 export const FormRow = ({ className, ...props }: FormRowProps) => (
   <div

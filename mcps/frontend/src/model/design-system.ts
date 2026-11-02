@@ -8,7 +8,7 @@ import { loadRecipes, recipeImporting, type RecipeFile } from './adapters/recipe
 import { buildInvalidAlternativeOwners } from './adapters/tsx-adapter.js';
 import type { ResolvedConfig } from './config.js';
 import { buildReverseIndex } from './reverse-index.js';
-import type { ComponentContract, DesignSystem, DesignToken, Recipe, SearchHit } from './types.js';
+import type { ComponentContract, DesignSystem, DesignToken, GenericAlternative, Recipe, SearchHit } from './types.js';
 import { validate as runValidate } from './validate.js';
 
 function levenshtein(a: string, b: string): number {
@@ -37,6 +37,20 @@ function loadAllComponents(config: ResolvedConfig): ComponentContract[] {
     ...loadComponents(config.components, config.configDir).map(withRecipeDefaults),
     ...(config.packages ?? []).flatMap((pkg) => loadPackageComponents(pkg, config.configDir)),
   ];
+}
+
+/** The config's file of invalid alternatives no one component owns; an entry without both fields fails the load, named. */
+function loadGenericAlternatives(config: ResolvedConfig): GenericAlternative[] {
+  if (!config.invalidAlternatives) return [];
+  const file = resolve(config.configDir, config.invalidAlternatives);
+  const entries: unknown = JSON.parse(readFileSync(file, 'utf8'));
+  if (!Array.isArray(entries)) throw new Error(`${file}: expected a list of { selector, use } entries`);
+  return entries.map((entry, index) => {
+    const { selector, use } = (entry ?? {}) as Partial<GenericAlternative>;
+    if (typeof selector !== 'string' || !selector.trim() || typeof use !== 'string' || !use.trim())
+      throw new Error(`${file}: entry ${index + 1} needs a "selector" and a "use", what to use instead`);
+    return { selector: selector.trim(), use: use.trim() };
+  });
 }
 
 /**
@@ -101,7 +115,7 @@ export function createDesignSystem(config: ResolvedConfig): DesignSystem {
   // per JSX tag.
   const byName = new Map(components.map((c) => [c.name.toLowerCase(), c]));
   const byExactName = new Map(components.map((c) => [c.name, c]));
-  const invalidAlternatives = buildInvalidAlternativeOwners(components);
+  const invalidAlternatives = buildInvalidAlternativeOwners(components, loadGenericAlternatives(config));
   const designSystemRoots = config.designSystemFolders
     ? config.designSystemFolders.map((folder) => resolve(config.configDir, folder))
     : componentRoots(config.components, config.configDir);

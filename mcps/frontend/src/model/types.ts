@@ -91,6 +91,16 @@ export interface ComponentContract {
 }
 
 /**
+ * An invalid alternative no one component owns, from the config's file: a
+ * selector or import declaration written as a component's `@invalidAlternative`
+ * is, and what to use instead, which the finding says.
+ */
+export interface GenericAlternative {
+  selector: string;
+  use: string;
+}
+
+/**
  * Working examples of a component: a recipe file kept beside it, served as
  * written, with one case per distinct use and when to use it.
  */

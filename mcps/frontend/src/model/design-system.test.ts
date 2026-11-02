@@ -16,6 +16,7 @@ const config = {
   tokens: ['theme.css.ts', 'tokens.ts'],
   components: ['components/**/*.tsx'],
   recipes: ['components/**/*.recipe.tsx'],
+  invalidAlternatives: 'invalid-alternatives.json',
   configDir: EXAMPLE,
 };
 
@@ -528,5 +529,26 @@ describe('validate — an ancestor tag before a space', () => {
     expect(finding?.message).toContain('inside <Form>');
     const outside = '<header><div><TextField label="Search" /></div></header>';
     expect(system.validate(outside, 'app/page.tsx').findings).toEqual([]);
+  });
+});
+
+describe('validate — generic invalid alternatives from the config file', () => {
+  it('flags the pattern and says what to use instead, with no component as the suggestion', () => {
+    const [finding] = system.validate('<img className="rounded-full" src={photo} alt="" />', 'app/page.tsx').findings;
+    expect(finding).toMatchObject({
+      rule: 'invalid-alternative',
+      message: 'Use an Avatar for a person\'s picture instead of <img className="rounded-full">.',
+    });
+    expect(finding?.suggestion).toBeUndefined();
+    expect(system.validate('<img src={photo} alt="" />', 'app/page.tsx').findings).toEqual([]);
+  });
+
+  it('covers imports too', () => {
+    const [finding] = system.validate("import ReactSelect from 'react-select';", 'app/page.tsx').findings;
+    expect(finding?.message).toBe('Use the Select component instead of importing directly from react-select.');
+  });
+
+  it('has no diagnostics for the example file', () => {
+    expect(system.diagnostics()).toEqual([]);
   });
 });

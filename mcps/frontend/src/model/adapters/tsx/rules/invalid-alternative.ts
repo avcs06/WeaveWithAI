@@ -2,7 +2,7 @@ import { basename, dirname, relative } from 'node:path';
 
 import type { Node } from '@babel/types';
 
-import type { ComponentContract, Finding, Rule } from '../../../types.js';
+import type { ComponentContract, Finding, GenericAlternative, Rule } from '../../../types.js';
 import { position } from '../../ast.js';
 import type { JsxElement, JsxImport } from '../../tsx-adapter.js';
 
@@ -33,8 +33,10 @@ interface AlternativeMatcher extends Compound {
   not: Compound[];
   /** The declaration as written, for the finding's message. */
   source: string;
-  /** The design system component that supersedes this. */
+  /** The design system component that supersedes this; '' for a generic declaration from the config's file. */
   owner: string;
+  /** What to use instead, for a generic declaration. */
+  use?: string;
 }
 
 /** One parsed `import('…')` declaration. */
@@ -46,7 +48,9 @@ interface ImportMatcher {
   /** The named exports it covers (`default` for a default export), or `undefined` for the whole package. */
   names?: Set<string>;
   source: string;
+  /** The component that supersedes it; '' for a generic declaration. */
   owner: string;
+  use?: string;
 }
 
 /** Invalid alternatives indexed for lookup, built once per design system. */
@@ -136,14 +140,14 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  * branch of a conditional, or a key of a spread object literal. Classes are
  * plain literals; matching works whether or not `classNames` is configured.
  */
-function parseAlternative(source: string, owner: string): AlternativeMatcher | undefined {
+function parseAlternative(source: string, owner: string, use?: string): AlternativeMatcher | undefined {
   const text = source.trim().replace(/[<>]/g, '');
   const split = topLevelSpace(text);
   const within = split === -1 ? undefined : text.slice(0, split);
   if (within !== undefined && SELECTOR_TAG.exec(within)?.[0] !== within) return undefined;
   const rest = split === -1 ? text : text.slice(split + 1).trim();
   const tag = SELECTOR_TAG.exec(rest)?.[0];
-  const matcher: AlternativeMatcher = { tag, within, classNames: [], attributes: [], has: [], not: [], source: text, owner };
+  const matcher: AlternativeMatcher = { tag, within, classNames: [], attributes: [], has: [], not: [], source: text, owner, use };
 
   if (!parseParts(rest.slice(tag?.length ?? 0), matcher, matcher.not)) return undefined;
   if (!tag && matcher.classNames.length === 0 && matcher.attributes.length === 0 && matcher.has.length === 0) return undefined;
@@ -216,13 +220,19 @@ function unreadable(source: string): string {
   return 'expected an ancestor tag and a space (optional), a tag, then .class, [attribute], :has(Tag) and :not(…) parts';
 }
 
+/** How a diagnostic names the config's file of generic declarations. */
+const GENERIC = 'invalid-alternatives';
+
 /**
- * Flattens every component's invalid alternatives into one index, so a JSX tag
- * costs a hash lookup plus a scan of only its matchers. Built once per design
- * system. An unreadable declaration, or one a second owner repeats, becomes a
- * diagnostic.
+ * Flattens every component's invalid alternatives, and the generic ones from
+ * the config's file, into one index, so a JSX tag costs a hash lookup plus a
+ * scan of only its matchers. Built once per design system. An unreadable
+ * declaration, or one a second owner repeats, becomes a diagnostic.
  */
-export function buildInvalidAlternativeOwners(components: ComponentContract[]): InvalidAlternativeOwners {
+export function buildInvalidAlternativeOwners(
+  components: ComponentContract[],
+  generic: GenericAlternative[] = [],
+): InvalidAlternativeOwners {
   const owners: InvalidAlternativeOwners = {
     imports: [],
     byTag: new Map(),
@@ -232,17 +242,51 @@ export function buildInvalidAlternativeOwners(components: ComponentContract[]): 
   };
   const declaredBy = new Map<string, string>();
 
-  // The first owner of a declaration is the one a finding names.
+  // The first owner of a declaration is the one a finding names; a generic one is never repeated.
   const claim = (key: string, owner: string, source: string): boolean => {
     const first = declaredBy.get(key);
-    if (first && first !== owner) {
+    if (first !== undefined && (first !== owner || owner === '')) {
       owners.diagnostics.push(
-        `${owner}: @invalidAlternative ${source} is also declared by ${first}, which wins`,
+        `${owner || GENERIC}: @invalidAlternative ${source} is also declared by ${first || GENERIC}, which wins`,
       );
       return false;
     }
     declaredBy.set(key, owner);
     return true;
+  };
+
+  const declare = (owner: string, source: string, use?: string) => {
+    const imported = IMPORT_DECLARATION.exec(source);
+    const names = imported?.[3]
+      ?.split(',')
+      .map((name) => name.trim())
+      .filter(Boolean);
+    const matcher = imported ? undefined : parseAlternative(source, owner, use);
+    if (
+      (!imported && !matcher) ||
+      (names && !(names.length && names.every((name) => EXPORT_NAME.test(name))))
+    ) {
+      owners.diagnostics.push(
+        `${owner || GENERIC}: @invalidAlternative ${source} can't be read: ${unreadable(source)}`,
+      );
+      return;
+    }
+
+    if (matcher) {
+      if (claim(matcher.source, owner, source)) addMatcher(owners, matcher);
+      return;
+    }
+    const specifier = imported![2]!;
+    const unclaimed = (names ?? ['*']).filter((name) => claim(`import('${specifier}'){${name}}`, owner, source));
+    if (!unclaimed.length) return;
+    owners.imports.push({
+      exact: !specifier.includes('*'),
+      matches: specifierMatcher(specifier),
+      names: names && new Set(unclaimed),
+      source,
+      owner,
+      use,
+    });
   };
 
   for (const component of components) {
@@ -251,41 +295,9 @@ export function buildInvalidAlternativeOwners(components: ComponentContract[]): 
       const isBarrel = /^index\.[cm]?[jt]sx?$/.test(basename(component.filePath));
       owners.ownerScopes.set(component.name, isBarrel ? dirname(component.filePath) : component.filePath);
     }
-    for (const source of component.invalidAlternatives) {
-      const imported = IMPORT_DECLARATION.exec(source);
-      const names = imported?.[3]
-        ?.split(',')
-        .map((name) => name.trim())
-        .filter(Boolean);
-      const matcher = imported ? undefined : parseAlternative(source, component.name);
-      if (
-        (!imported && !matcher) ||
-        (names && !(names.length && names.every((name) => EXPORT_NAME.test(name))))
-      ) {
-        owners.diagnostics.push(
-          `${component.name}: @invalidAlternative ${source} can't be read: ${unreadable(source)}`,
-        );
-        continue;
-      }
-
-      if (matcher) {
-        if (claim(matcher.source, component.name, source)) addMatcher(owners, matcher);
-        continue;
-      }
-      const specifier = imported![2]!;
-      const unclaimed = (names ?? ['*']).filter((name) =>
-        claim(`import('${specifier}'){${name}}`, component.name, source),
-      );
-      if (!unclaimed.length) continue;
-      owners.imports.push({
-        exact: !specifier.includes('*'),
-        matches: specifierMatcher(specifier),
-        names: names && new Set(unclaimed),
-        source,
-        owner: component.name,
-      });
-    }
+    for (const source of component.invalidAlternatives) declare(component.name, source);
   }
+  for (const entry of generic) declare('', entry.selector, entry.use);
 
   return owners;
 }
@@ -368,14 +380,18 @@ function bestMatch(element: JsxElement): AlternativeMatcher | undefined {
   return best;
 }
 
-function finding(node: Node, owner: string, used: string, declared?: string): Finding {
+/** The finding: a component's declaration names the component as the fix; a generic one says what to use instead. */
+function finding(node: Node, { owner, use }: { owner: string; use?: string }, used: string, declared?: string): Finding {
+  const message = owner
+    ? `Use ${describeOwner(owner)} instead of ${used}${declared ? ` — ${owner} declares ${declared} an invalid alternative to itself` : ''}.`
+    : `Use ${use} instead of ${used}.`;
   return {
     rule: 'invalid-alternative',
     severity: 'error',
     surface: 'jsx',
     ...position(node),
-    message: `Use ${describeOwner(owner)} instead of ${used}${declared ? ` — ${owner} declares ${declared} an invalid alternative to itself` : ''}.`,
-    suggestion: owner,
+    message,
+    ...(owner && { suggestion: owner }),
   };
 }
 
@@ -391,7 +407,7 @@ function finding(node: Node, owner: string, used: string, declared?: string): Fi
 export const invalidAlternativeElement: Rule<JsxElement> = (element) => {
   const match = bestMatch(element);
   if (!match) return [];
-  return [finding(element.node, match.owner, describeMatcher({ ...match, tag: element.tag }), match.source)];
+  return [finding(element.node, match, describeMatcher({ ...match, tag: element.tag }), match.source)];
 };
 
 /**
@@ -416,14 +432,14 @@ export const invalidAlternativeImport: Rule<JsxImport> = ({
     .sort((a, b) => Number(b.exact) - Number(a.exact));
 
   const whole = candidates.find((matcher) => !matcher.names);
-  if (whole) return [finding(node, whole.owner, `importing directly from ${source}`)];
+  if (whole) return [finding(node, whole, `importing directly from ${source}`)];
   return uses.flatMap(({ name, node: use }) => {
     const named = candidates.find((matcher) => matcher.names?.has(name));
     if (!named) return [];
     return [
       finding(
         use,
-        named.owner,
+        named,
         name === 'default' ? `the default export of ${source}` : `${name} from ${source}`,
       ),
     ];

@@ -1,8 +1,9 @@
 /**
- * SidebarMenu: a sidebar's navigation. Its `header` holds the frame's action
- * there, like Create, its `footer` the account and sign out, and the rows
- * between them are SidebarMenuItems, one per destination, which scroll when
- * there are more than fit. It fills the height the sidebar gives it, so the
+ * SidebarMenu: a sidebar's navigation. Its `header` holds what sits above
+ * the list, like the logo, a search or a Create button, its `footer` what
+ * sits below it, like the account and sign out, and the rows between them
+ * are SidebarMenuItems, one per destination, which scroll when there are
+ * more than fit. It fills the height the sidebar gives it, so the
  * sidebar sets that height: the one under the app's header.
  *
  * When not to use:
@@ -17,8 +18,8 @@
  *   app); it marks the row `aria-current="page"`.
  * - `asChild` takes one link element, the app's NextLink, and replaces its
  *   children with the row, so pass the label as the link's text.
- * - Rows are links. An action in the sidebar, like Create or Sign out, is a
- *   Button or IconButton in `header` or `footer`, never a row.
+ * - Rows are links. Anything else in the sidebar, like the logo, a search, a
+ *   Create button or Sign out, goes in `header` or `footer`, never in a row.
  * - The sidebar wears the frame's background (`bg-surface-frame`); the rows
  *   are colored for it.
  */

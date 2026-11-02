@@ -6,7 +6,6 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Lists and records
 
 - In a list, the record's name is the link that opens it, and it looks like a link.
-- Single-line text from a record, such as a name, a title or an email, is a `Truncate` in a `min-w-0` parent. It never wraps or overflows.
 - A row's actions are quiet: an `IconButton` with a tooltip for each, or one row menu when there are more than two. Never a filled button on every row.
 - A delete on a row is as quiet as the row's other actions. The filled `danger` button belongs to the confirm dialog's Delete only.
 - An inline action, in a row or a toolbar, shows an icon alone with a tooltip. An action in a menu shows an icon and its text.
@@ -30,8 +29,12 @@ the coding agent builds to them, and the reviewers hold the work to them.
 
 ## Frames
 
-- The sidebar's navigation is a `SidebarMenu`: every item has the same padding and hover, the current item is marked, a fixed top and bottom hold the create action and the account, and the list between them scrolls.
+- The sidebar's navigation is a `SidebarMenu`: every item has the same padding and hover, the current item is marked, a fixed top and bottom hold what sits above and below the list, such as a logo, a search or a Create button, and the account, and the list between them scrolls.
 - The sidebar fills the height under the header. The header's height and the sidebar's top come from one value.
+
+## Text
+
+- Any text that stays on one line is a `Truncate`, wherever it sits: a heading, a label, a cell, a breadcrumb, a status line. Whether or not its container has a set width, it cuts the text with an ellipsis and a tooltip where the room runs out, and changes nothing where it does not. A flex parent needs `min-w-0`.
 
 ## Spacing
 

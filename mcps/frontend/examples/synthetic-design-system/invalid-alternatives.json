@@ -1,0 +1,10 @@
+[
+  {
+    "selector": "img.rounded-full",
+    "use": "an Avatar for a person's picture"
+  },
+  {
+    "selector": "import('react-select')",
+    "use": "the Select component"
+  }
+]

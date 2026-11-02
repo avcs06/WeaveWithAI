@@ -1,5 +1,13 @@
 {
-  "tokens": ["theme.css.ts", "tokens.ts"],
-  "components": ["components/**/*.tsx"],
-  "recipes": ["components/**/*.recipe.tsx"]
+  "tokens": [
+    "theme.css.ts",
+    "tokens.ts"
+  ],
+  "components": [
+    "components/**/*.tsx"
+  ],
+  "recipes": [
+    "components/**/*.recipe.tsx"
+  ],
+  "invalidAlternatives": "invalid-alternatives.json"
 }

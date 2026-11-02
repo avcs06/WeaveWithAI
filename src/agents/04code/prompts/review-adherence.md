@@ -38,7 +38,7 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 - The same action twice in one view, such as an add action above an empty list and again in its empty state.
 - A value edited through a second field added under it, instead of in its place or in a dialog.
 - A document screen with no view mode: editing controls shown while the user only reads.
-- A record's name or title that wraps or overflows instead of truncating.
+- Text meant for one line, wherever it sits, set without `Truncate`, so it wraps or overflows where the room runs out.
 
 A list's search, filters and add action together right above the list are what the guidelines ask, not a blocker.
 

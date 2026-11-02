@@ -1,0 +1,18 @@
+[
+  {
+    "selector": "IconButton:has(Avatar)",
+    "use": "a PlainButton around the Avatar, as the Avatar recipe's account menu shows; IconButton is sized for an icon"
+  },
+  {
+    "selector": "Button:has(Avatar)",
+    "use": "a PlainButton around the Avatar, as the Avatar recipe's account menu shows"
+  },
+  {
+    "selector": "aside:has(nav, ul)",
+    "use": "a SidebarMenu for a sidebar's navigation, with a SidebarMenuItem around each of the app's links"
+  },
+  {
+    "selector": "Form [className*=\"flex-row\"]:has(Input, NumberInput, PasswordInput, SearchInput, Select, MultiSelect, Textarea)",
+    "use": "a FormRow for fields side by side in a Form"
+  }
+]

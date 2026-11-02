@@ -12,6 +12,7 @@
 - `auxiliary.tsx` holds side components built on top of the folder's main component: PlainButton beside Button, PasswordInput and NumberInput beside Input, CheckboxGroup beside Checkbox. The main component's own parts and its context providers never go in `auxiliary.tsx`: keep them in the main component's file, or in files of their own when they're large, one per component or one for several small ones.
 - Every DOM element a component's own code creates carries `data-ds=""`: each lowercase tag (an `<svg>`, not its paths), each polymorphic element, and each third-party part that renders DOM, as a prop. Never another design-system component, an `asChild` part, or what the caller passes in. App checks skip the marked elements, since this package's tests cover them, and check what an app puts in a slot.
 - An `aria-*` attribute is set once, by the component whose props decide it: `aria-disabled` from `disabled`, `aria-busy` from `loading`. That component types the attribute `never` with `SetByComponent`, since leaving it out of the type doesn't stop JSX from accepting it. Callers pass the prop, never the attribute: no `aria-disabled` on a Button.
+- A component declares what it supersedes with `@invalidAlternative` only for a single element or component in its own place, like `button` for Button. A pattern no one component owns, such as a combination (an Avatar inside an IconButton, a row of fields inside a Form), goes in `invalid-alternatives.json` at the template root, with what to use instead.
 
 ## Recipes
 
