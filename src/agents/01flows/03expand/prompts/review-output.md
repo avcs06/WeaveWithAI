@@ -57,7 +57,7 @@ The validators find the steps that need an alternative from the fields and effec
 
 ## No design or contract details
 
-- Design details in a step or an alternative: component names such as modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast or tooltip, positions such as left, right, top or bottom, colors or pixels. The flow says what the website shows, not where or with what. "Page", "screen" and "clicks" are fine.
+- Design details in a step or an alternative: component names such as modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast or tooltip, positions such as left, right, top or bottom, colors, pixels, or the look, such as "in the dark glowing style". The flow says what the website shows, not where or with what. "Page", "screen" and "clicks" are fine.
 - Contract details: endpoints, APIs, databases, JSON, SQL, REST, GraphQL, HTTP and its verbs, or a named technology, such as a payment provider.
 
 Leave to the validators, which check:

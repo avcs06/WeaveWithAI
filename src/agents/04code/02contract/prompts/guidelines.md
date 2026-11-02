@@ -16,7 +16,7 @@ operation. Use those names; never guess one.
 - Sign up, sign in and sign out through `@app/entities/auth`; any email
   works. `useCurrentUser()` is the signed-in user, `null` for a visitor,
   or `undefined` until the saved session is read. Show nothing while it is
-  `undefined`, and send a visitor to sign in only when it is `null`.
+  `undefined`, and send a visitor to the landing page only when it is `null`.
 - When a screen needs an operation or a field the layer lacks, add it in
   the entity's folder, written like the ones beside it, and list it in your
   summary.

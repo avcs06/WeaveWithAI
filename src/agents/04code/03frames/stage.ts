@@ -8,7 +8,7 @@ import { ENTITIES, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-frames';
 
-/** One session for every frame: its layout in its route group, and its parts in components. */
+/** One session for every frame: its layout in its route group, and its parts in components and blocks. */
 export function framesSpecs(architecture: Architecture): Omit<UnitSpec, 'rendered'>[] {
   if (!architecture.frames.length) return [];
   return [
@@ -21,6 +21,7 @@ export function framesSpecs(architecture: Architecture): Omit<UnitSpec, 'rendere
       writes: [
         ...architecture.frames.map((frame) => `web/app/(routes)/(${frameGroup(architecture, frame.id)})/`),
         'web/app/components/**',
+        'web/app/blocks/**',
         ENTITIES,
       ],
     },

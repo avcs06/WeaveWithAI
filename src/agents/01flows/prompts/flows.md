@@ -68,7 +68,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
 
 ## No design or contract details
 
-Flows say what the user does and what the website shows. Write "the website shows the note", never "a modal on the right shows the note". Design details belong to the designers: component names (modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast, tooltip), positions (left, right, top, bottom), colors and pixels. Contract details belong to the engineers: endpoints, APIs, databases, JSON, SQL, REST, GraphQL, HTTP and its verbs. "Page", "screen" and "clicks" are fine.
+Flows say what the user does and what the website shows. Write "the website shows the note", never "a modal on the right shows the note". Design details belong to the designers: component names (modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast, tooltip), positions (left, right, top, bottom), colors and pixels, and the look, such as "in the dark glowing style": the theme sets it. Contract details belong to the engineers: endpoints, APIs, databases, JSON, SQL, REST, GraphQL, HTTP and its verbs. "Page", "screen" and "clicks" are fine.
 
 ## Two flows with the parts they use, to show the format only (don't reuse their content)
 

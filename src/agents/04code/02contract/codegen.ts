@@ -61,8 +61,13 @@ export type ${entity.name}Input = Omit<${entity.name}, 'id' | 'createdAt' | 'upd
 `;
 }
 
+// Rows a couple of days apart over the last weeks, each edited an hour or more after it was made, so a list in order of
+// creation or of last edit shows a real order.
+const DAY = 86_400_000;
+const HOUR = 3_600_000;
+
 function seedModule(entity: Entity, rows: SeedRows[string]): string {
-  const stamp = '2026-01-01T09:00:00.000Z';
+  const now = Date.now();
   const records = rows.map((row, i) => {
     const values = Object.fromEntries(
       entity.fields.flatMap((f) => {
@@ -73,7 +78,13 @@ function seedModule(entity: Entity, rows: SeedRows[string]): string {
         return [[f.name, Array.isArray(value) ? value.map(toId) : toId(value)]];
       }),
     );
-    return { id: seedId(entity.name, i + 1), createdAt: stamp, updatedAt: stamp, ...values };
+    const created = now - (rows.length - i) * 2 * DAY;
+    return {
+      id: seedId(entity.name, i + 1),
+      createdAt: new Date(created).toISOString(),
+      updatedAt: new Date(created + (i + 1) * HOUR).toISOString(),
+      ...values,
+    };
   });
   return `import type { ${entity.name} } from './types';
 
