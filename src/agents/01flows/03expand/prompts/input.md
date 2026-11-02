@@ -19,6 +19,6 @@ These flows share a role and a record, so they work alike. What one flow decides
 Before you answer, check each flow against this list. First drafts miss these most often:
 
 - Every step that lists records has an "empty" alternative: what the user sees when there is nothing yet, and what they can do next.
-- Every delete has a "confirm" or "cancel" alternative.
+- Every delete sits on the step that asks to confirm, with a "confirm" or "cancel" alternative from that step.
 - Every step that saves fields has an "invalid" and a "failure" alternative.
 - No design details: no positions such as "top" or "right", and no components such as "sidebar" or "modal". Say what the website shows, not where.

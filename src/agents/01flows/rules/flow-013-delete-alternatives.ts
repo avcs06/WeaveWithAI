@@ -28,7 +28,7 @@ export const rule = defineRule<FlowInput>(
           const nouns = deletes.map((effect) => effect.noun).join(', ');
           issues.push(
             fail(
-              `${step.id} deletes ${nouns} with no way to back out; add a "confirm" or "cancel" alternative from ${step.id}.`,
+              `${step.id} deletes ${nouns} with no way to back out. The delete belongs on the step that asks to confirm, with a "confirm" or "cancel" alternative from that step. When ${step.id} is the user confirming, move its effects to the step that asks and turn ${step.id} into that step's "confirm" alternative.`,
               step.id,
             ),
           );

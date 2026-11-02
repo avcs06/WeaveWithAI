@@ -56,7 +56,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
 7. Alternatives (F01.A01, ...) branch `from` a step of the same flow. Each is a path. `condition` says when it happens ("The title is empty."). `steps` are what happens from there, one or more, written like the flow's steps and numbered F01.A01.S01, F01.A01.S02, .... A path changes no records, so its steps have no effects: the flow's own steps carry them. `resumesAt` says where the path merges back: the step of the same flow the user continues at after the path's last step, or "" when the flow ends there. No path leaves the user without a next action. These steps need these alternatives:
    - A step that saves fields: an "invalid" path (the website marks what is wrong and keeps the typed values) and a "failure" path (saving fails, the values are kept, and a retry is offered).
    - A step that lists records: an "empty" path saying what the user sees and can do next.
-   - A delete: a "confirm" or "cancel" path.
+   - A delete: the step that asks to confirm carries the delete effect, and its "confirm" or "cancel" path branches from it.
    - Something a role may not do: a "denied" path. Signing in with an email and password that match no account is one.
    - A record that may be gone: a "notFound" path.
    - A save that clashes with a record that already exists, such as signing up with an email that already has an account: a "conflict" path.
