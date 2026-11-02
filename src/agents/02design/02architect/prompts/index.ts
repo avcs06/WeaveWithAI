@@ -1,27 +1,18 @@
 import { fillPrompt, json, loadPrompt } from '../../../../core/prompt';
 import { pathBeside } from '../../../../core/utils';
-import type { Inventory } from '../../../../ds/inventory';
-import { inventoryProse } from '../../../../ds/prose';
 import type { ReviewGuides } from '../../../../runner/runSpecStage';
 import type { Scope } from '../../../01flows/01scope/schema';
 import type { Flows } from '../../../01flows/schema';
-import type { Brief } from '../../01theme/schema';
-import type { Layouts } from '../../01theme/schema';
-import { NEW_COMPONENT_BUDGET } from '../../config';
+import type { Brief, Layouts } from '../../01theme/schema';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** The architect's system prompt: the density, the design system and the budget. */
-export function planSystemPrompt(brief: Brief, inv: Inventory): string {
-  return fillPrompt(load('./prompt.md'), {
-    density: brief.density,
-    newComponentBudget: String(NEW_COMPONENT_BUDGET),
-    dsProse: inventoryProse(inv),
-  });
-}
+/** The architect's system prompt: the job, and how frames, screens and dialogs are written. */
+export const architectSystemPrompt = (): string =>
+  fillPrompt(load('./prompt.md'), {});
 
 /** The architect's user message: the scope, the flows, the brief and the theme's two page layouts. */
-export function planUserMessage(
+export function architectUserMessage(
   scope: Scope,
   flows: Flows,
   brief: Brief,
@@ -39,7 +30,7 @@ export function planUserMessage(
 const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});
 
 /** The architect's two review guides: the product designer peer, then the output reviewer. */
-export const planReviewGuides = (): ReviewGuides => ({
+export const architectReviewGuides = (): ReviewGuides => ({
   peer: guide('review-peer'),
   output: guide('review-output'),
 });

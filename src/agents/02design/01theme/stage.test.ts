@@ -64,9 +64,9 @@ function runWithFlows(id: string) {
     stage: 'flows-scope',
     inputs: [],
   });
-  writeArtifact(run, 'flows-reconcile', flows, {
+  writeArtifact(run, 'flows-expand', flows, {
     ...meta,
-    stage: 'flows-reconcile',
+    stage: 'flows-expand',
     inputs: ['flows-scope'],
   });
   return run;
@@ -90,7 +90,7 @@ describe('the theme stage', () => {
       meta: {
         version: 1,
         stage: 'design-theme',
-        inputs: { 'flows-scope': { version: 1 }, 'flows-reconcile': { version: 1 } },
+        inputs: { 'flows-scope': { version: 1 }, 'flows-expand': { version: 1 } },
       },
       data: themed(call),
     });

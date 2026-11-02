@@ -8,16 +8,7 @@ import {
   expandStage,
   scopeStage,
 } from './01flows/stages';
-import {
-  architectStage,
-  assembleStage,
-  designCatalogStage,
-  drawStage,
-  frameStage,
-  inventStage,
-  screenStage,
-  themeStage,
-} from './02design/stages';
+import { architectStage, themeStage } from './02design/stages';
 import { contractStage } from './03contract/stage';
 import { scaffoldStage } from './04code/01scaffold/stage';
 import { contractCodeStage } from './04code/02contract/stage';
@@ -48,13 +39,7 @@ export const PIPELINE: string[] = [
   'flows-expand',
   'design-theme',
   'design-architect',
-  'design-catalog',
   'contract',
-  'design-screen',
-  'design-invent',
-  'design-draw',
-  'design-frame',
-  'design-assemble',
   'code-scaffold',
   'code-contract',
   'code-shared',
@@ -65,10 +50,8 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
-/** Stages that read nothing of each other's, so they run side by side: after the catalog, the contract, layouts, components, widgets and frames. */
-export const SIDE_BY_SIDE: string[][] = [
-  ['contract', 'design-screen', 'design-invent', 'design-draw', 'design-frame'],
-];
+/** Stages that read nothing of each other's, so they run side by side. None at the moment. */
+export const SIDE_BY_SIDE: string[][] = [];
 
 /** `order` in runs of stages that start together: each side-by-side group as one batch, every other stage alone. */
 export function stageBatches(order: string[], groups = SIDE_BY_SIDE): string[][] {
@@ -88,13 +71,7 @@ export const stages: StageDef[] = [
   expandStage,
   themeStage,
   architectStage,
-  designCatalogStage,
   contractStage,
-  screenStage,
-  inventStage,
-  drawStage,
-  frameStage,
-  assembleStage,
   scaffoldStage,
   contractCodeStage,
   sharedStage,

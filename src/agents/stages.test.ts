@@ -10,23 +10,23 @@ describe('stages', () => {
 });
 
 describe('stageBatches', () => {
-  it('starts the contract, screen, invent, draw and frame together after the catalog, and every other stage alone', () => {
-    const batches = stageBatches(PIPELINE);
-    expect(batches).toContainEqual(['contract', 'design-screen', 'design-invent', 'design-draw', 'design-frame']);
-    const at = batches.findIndex((b) => b.includes('contract'));
-    expect(batches[at - 1]).toEqual(['design-catalog']);
-    expect(batches[at + 1]).toEqual(['design-assemble']);
-    expect(batches.filter((b) => b.length > 1)).toHaveLength(1);
-    expect(batches.flat()).toEqual(PIPELINE);
+  const groups = [['b', 'c', 'd']];
+
+  it('starts a side-by-side group together, and every other stage alone', () => {
+    expect(stageBatches(['a', 'b', 'c', 'd', 'e'], groups)).toEqual([
+      ['a'],
+      ['b', 'c', 'd'],
+      ['e'],
+    ]);
   });
 
-  it("cuts a group where the order ends, as --to does", () => {
-    const order = PIPELINE.slice(0, PIPELINE.indexOf('design-invent') + 1);
-    expect(stageBatches(order).at(-1)).toEqual(['contract', 'design-screen', 'design-invent']);
+  it('cuts a group where the order ends, as --to does', () => {
+    expect(stageBatches(['a', 'b', 'c'], groups)).toEqual([['a'], ['b', 'c']]);
   });
 
-  it('runs the contract alone after the catalog with --to contract', () => {
-    const order = PIPELINE.slice(0, PIPELINE.indexOf('contract') + 1);
-    expect(stageBatches(order).slice(-2)).toEqual([['design-catalog'], ['contract']]);
+  it('runs every pipeline stage alone while no stages share a batch', () => {
+    expect(stageBatches(PIPELINE).every((batch) => batch.length === 1)).toBe(
+      true,
+    );
   });
 });

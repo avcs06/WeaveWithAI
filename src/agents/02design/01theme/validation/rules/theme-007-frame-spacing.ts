@@ -1,8 +1,7 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule } from '../../../../../core/rules';
 import { SECTION_GAP_PX } from '../../../config';
-import { sizes } from '../../../08assemble/skeleton/boxes';
-import type { ThemeInput } from '../helpers';
+import { spacingPx, type ThemeInput } from '../helpers';
 
 /**
  * THEME-007 · mandatory
@@ -18,7 +17,7 @@ export const rule = defineRule<ThemeInput>(
   'mandatory',
   ({ theme, inventory }, fail) => {
     const issues: Issue[] = [];
-    const px = sizes(inventory, []).spacing;
+    const px = spacingPx(inventory);
     for (const kind of ['app', 'marketing'] as const) {
       const { main, header, sidebar, extraSidebar, footer } =
         theme.layouts[kind];

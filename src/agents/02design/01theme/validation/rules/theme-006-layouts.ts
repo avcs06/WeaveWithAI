@@ -1,7 +1,6 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule } from '../../../../../core/rules';
-import { sizes } from '../../../08assemble/skeleton/boxes';
-import type { ThemeInput } from '../helpers';
+import { spacingPx, type ThemeInput } from '../helpers';
 
 /**
  * THEME-006 · mandatory
@@ -17,7 +16,7 @@ export const rule = defineRule<ThemeInput>(
   'mandatory',
   ({ theme, inventory }, fail) => {
     const issues: Issue[] = [];
-    const px = sizes(inventory, []).spacing;
+    const px = spacingPx(inventory);
     const size = theme.defaults.Button?.size || 'md';
     const box = inventory.components.find((c) => c.name === 'Button')?.box;
     const button = box?.[size]?.height ?? box?.md?.height ?? 0;

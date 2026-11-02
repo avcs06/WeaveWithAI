@@ -8,12 +8,6 @@ export type ArtifactName =
   | 'flows-expand'
   | 'design-theme'
   | 'design-architect'
-  | 'design-catalog'
-  | 'design-screen'
-  | 'design-invent'
-  | 'design-draw'
-  | 'design-frame'
-  | 'design-assemble'
   | 'contract'
   | 'code-contract';
 export type ArtifactRef = { version: number; hash: string };
@@ -44,12 +38,6 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'flows-expand': '01-flows/03-expand.json',
   'design-theme': '02-design/01-theme.json',
   'design-architect': '02-design/02-architect.json',
-  'design-catalog': '02-design/03-catalog.json',
-  'design-screen': '02-design/04-screen.json',
-  'design-invent': '02-design/05-invent.json',
-  'design-draw': '02-design/06-draw.json',
-  'design-frame': '02-design/07-frame.json',
-  'design-assemble': '02-design/08-assemble.json',
   contract: '03-contract.json',
   'code-contract': '04-code/02-contract.json',
 };
