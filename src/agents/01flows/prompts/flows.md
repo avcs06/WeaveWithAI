@@ -43,6 +43,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
    - `userAction`: what the user does, and `websiteResponse`: what the website visibly does in response.
    - `kind`: "user", or "system" for a step the system starts on its own (a deadline passes). A system step has a `websiteResponse` and an empty `userAction`.
 5. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
+   - `noun`: the vocabulary noun whose records keep the value, spelled as the scope spells it ("Book" for a book's title). "" when no record keeps it, such as a password, a sign-in email or a search.
    - A label and a business meaning. No technical name: the engineers name the field later from these.
    - A type and `required`.
    - `min` and `max`: lengths for text, values for numbers, `null` when there are none.

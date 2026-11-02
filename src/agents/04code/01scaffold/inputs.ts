@@ -17,8 +17,8 @@ import { CONTRACT, type CodeInputs, FRAMES, type KnownIssue, PAGES, SCAFFOLD } f
 const GUIDELINES: Record<string, string> = {
   [SCAFFOLD]: '01scaffold',
   [CONTRACT]: '02contract',
-  [FRAMES]: '04frames',
-  [PAGES]: '05pages',
+  [FRAMES]: '03frames',
+  [PAGES]: '04pages',
 };
 
 function guidelines(): Record<string, string> {

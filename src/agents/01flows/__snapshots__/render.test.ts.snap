@@ -19,11 +19,15 @@ exports[`render > catalog lists every flow with its description, the skipped pai
 - Reader, account: The reader has only an email and a password, and the MVP has no profile.
 
 ## Fields
-- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
-- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
+
+### Book
 - FD03 Title (required, up to 200 characters), e.g. "The Left Hand of Darkness". How the reader refers to the book
 - FD04 Author (optional, up to 120 characters), e.g. "Ursula K. Le Guin". Who wrote it, to tell books with similar titles apart
 - FD05 Shelf (required, one of: To read, Reading, Finished), e.g. "To read". Where the reader is with the book
+
+### Kept by no record
+- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
+- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
 
 ## Forms
 - FM01 Book form: FD03, FD04, FD05
@@ -134,11 +138,15 @@ Before: Signed in.
 Outcome: The reader is signed out; a refresh still shows the public start page.
 
 ## Fields
-- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
-- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
+
+### Book
 - FD03 Title (required, up to 200 characters), e.g. "The Left Hand of Darkness". How the reader refers to the book
 - FD04 Author (optional, up to 120 characters), e.g. "Ursula K. Le Guin". Who wrote it, to tell books with similar titles apart
 - FD05 Shelf (required, one of: To read, Reading, Finished), e.g. "To read". Where the reader is with the book
+
+### Kept by no record
+- FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
+- FD02 Password (required, 8 to 128 characters), e.g. "correct-horse-battery". The secret that protects the reader's list
 
 ## Forms
 - FM01 Book form: FD03, FD04, FD05

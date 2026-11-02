@@ -1,4 +1,4 @@
-<!-- Guidelines of the frames folder, written to .weave/04-frames/guidelines.md. No placeholders. -->
+<!-- Guidelines of the frames folder, written to .weave/03-frames/guidelines.md. No placeholders. -->
 # Frames
 
 - `frames.md` lists each frame: what it shows around its screens, as steps

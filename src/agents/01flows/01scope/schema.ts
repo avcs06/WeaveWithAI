@@ -13,7 +13,7 @@ export const Scope = z.object({
   domains: z
     .array(z.enum(DOMAIN_IDS))
     .describe(
-      'The kinds of app and the situations from the list that this idea is, 1 to 4',
+      'The kinds of app and the situations from the list that this idea is, 1 to 3',
     ),
   roles: z.array(
     z.object({

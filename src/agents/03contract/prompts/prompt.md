@@ -13,11 +13,11 @@ The contract has one job. Every screen and dialog knows where its data comes fro
 ## Entities
 
 - `entities`: one for each vocabulary noun that a flow changes or a screen shows. `noun` names the noun. `name` is its PascalCase singular, usually the noun itself.
-- `fields`: every value the screens show and every value the users fill in. The flows define each field once (FD01, FD02, ...) with its label, type and options, and the screens name the fields they show by those ids.
+- `fields`: every value the screens show and every value the users fill in. The flows define each field once (FD01, FD02, ...) with its label, type and options, and its `noun` names the entity that keeps it. The screens name the fields they show by those ids.
 - Name a field in camelCase from its label: "Due date" is `dueDate`. A value that several screens show is one field.
 - `kind`: the type of the value. `enum` names an enum for a fixed set of choices. `ref` names the entity the value points at, such as the project of a task. `list` is true for many values, such as tags.
 - `enums`: the values of each enum. Each has a snake_case `key` and a `label` written exactly as the flow's options write it.
-- Every record already has the fields below. Leave them out of `fields`:
+- The app gives every record the fields below on its own, so no entity lists them in its `fields`:
 
 {{recordFields}}
 

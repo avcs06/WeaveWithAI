@@ -73,6 +73,11 @@ export const Question = z.object({
 
 export const Field = z.object({
   id: z.string().describe('FD01, FD02, ...; steps and forms refer to it'),
+  noun: z
+    .string()
+    .describe(
+      'The vocabulary noun whose records keep this value; "" when no record keeps it, such as a password or a search',
+    ),
   label: z.string(),
   meaning: z.string().describe('What the value means to the business'),
   type: z.enum(FIELD_TYPES),

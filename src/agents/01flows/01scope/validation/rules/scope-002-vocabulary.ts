@@ -1,6 +1,6 @@
 /**
  * SCOPE-002 · mandatory
- * 1 to 16 vocabulary nouns, each unique, PascalCase and singular; belongsTo is a role id or "shared".
+ * 1 to 4 vocabulary nouns, each unique, PascalCase and singular; belongsTo is a role id or "shared".
  * Plural heuristic: a trailing "s" unless the noun ends in ss, us or is ('Address' and 'Status' pass).
  * Pass: vocabulary: [{ noun: 'Book', belongsTo: 'reader' }, { noun: 'Shelf', belongsTo: 'shared' }]
  * Fail: { noun: 'books' } · { noun: 'Book', belongsTo: 'owner' } when no role has id 'owner'
@@ -19,10 +19,10 @@ export const rule = defineRule<Scope>(
   (scope, fail) => {
     const issues: Issue[] = [];
     const roleIds = new Set(scope.roles.map((role) => role.id));
-    if (scope.vocabulary.length < 1 || scope.vocabulary.length > 16) {
+    if (scope.vocabulary.length < 1 || scope.vocabulary.length > 4) {
       issues.push(
         fail(
-          `${scope.vocabulary.length} vocabulary nouns; keep 1 to 16, the things the app tracks.`,
+          `${scope.vocabulary.length} vocabulary nouns; keep 1 to 4, the things the app tracks.`,
           'vocabulary',
         ),
       );

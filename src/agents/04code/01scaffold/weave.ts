@@ -36,8 +36,8 @@ export type CodeInputs = {
 
 export const SCAFFOLD = '01-scaffold';
 export const CONTRACT = '02-contract';
-export const FRAMES = '04-frames';
-export const PAGES = '05-pages';
+export const FRAMES = '03-frames';
+export const PAGES = '04-pages';
 
 const slug = (name: string) =>
   name

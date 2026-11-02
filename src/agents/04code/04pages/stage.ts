@@ -52,13 +52,13 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
   });
   const lines = parts.map(
     ({ screen, folder, route }) =>
-      `- ${screen.id} (${screen.title}) at \`${screen.route}\`, from \`.weave/05-pages/${screen.id}.md\`, in \`${folder}\`. Check it with \`${verifyCommand([route.url], route.signedIn).join(' ')}\`.`,
+      `- ${screen.id} (${screen.title}) at \`${screen.route}\`, from \`.weave/04-pages/${screen.id}.md\`, in \`${folder}\`. Check it with \`${verifyCommand([route.url], route.signedIn).join(' ')}\`.`,
   );
   return {
     id: 'pages',
     stage: STAGE,
     task: fillPrompt(loadPrompt(pathBeside(import.meta.url, './prompts/task.md')), { pages: lines.join('\n') }),
-    folders: ['01-scaffold', '02-contract', '04-frames', '05-pages'],
+    folders: ['01-scaffold', '02-contract', '03-frames', '04-pages'],
     // Each route folder's own files and components, what screens share, and the entity layer. The screen at / replaces
     // the template's starter page, so the routes folder's own files are writable too.
     writes: [

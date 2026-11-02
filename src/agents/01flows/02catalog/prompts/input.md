@@ -28,7 +28,7 @@ Write the catalog: the fields, the forms, and a header and a description for eve
    - `goal`, `preconditions` and `outcome`.
    - `description`: one paragraph on everything the user does and sees, from the start to the outcome. Name the forms and fields it uses by id: "fills in FM02", "picks the due date (FD07)".
 4. Write the parts once, so flows refer to them by id:
-   - `fields`: every field a flow asks for, with an id (FD01, FD02, ...). A field two flows use is one entry.
+   - `fields`: every field a flow asks for, with an id (FD01, FD02, ...) and the `noun` whose records keep it. List them noun by noun. A field two flows use is one entry.
    - `forms`: the fields one screen asks for, when more than one flow shows that screen, with an id (FM01, FM02, ...).
 5. Assumptions and questions continue the scope's numbering.
 

@@ -1,4 +1,4 @@
-<!-- Guidelines of the pages folder, written to .weave/05-pages/guidelines.md. No placeholders. -->
+<!-- Guidelines of the pages folder, written to .weave/04-pages/guidelines.md. No placeholders. -->
 # Screens
 
 - Each file here is one screen: its title, its purpose, its steps in

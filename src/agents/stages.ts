@@ -12,8 +12,8 @@ import { architectStage, themeStage } from './02design/stages';
 import { contractStage } from './03contract/stage';
 import { scaffoldStage } from './04code/01scaffold/stage';
 import { contractCodeStage } from './04code/02contract/stage';
-import { framesStage } from './04code/04frames/stage';
-import { pagesStage } from './04code/05pages/stage';
+import { framesStage } from './04code/03frames/stage';
+import { pagesStage } from './04code/04pages/stage';
 
 export type StageContext = {
   run: Run;

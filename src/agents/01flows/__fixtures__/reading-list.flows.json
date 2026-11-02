@@ -353,6 +353,7 @@
   "fields": [
     {
       "id": "FD01",
+      "noun": "",
       "label": "Email",
       "meaning": "How the reader signs in and can be reached",
       "type": "email",
@@ -365,6 +366,7 @@
     },
     {
       "id": "FD02",
+      "noun": "",
       "label": "Password",
       "meaning": "The secret that protects the reader's list",
       "type": "password",
@@ -377,6 +379,7 @@
     },
     {
       "id": "FD03",
+      "noun": "Book",
       "label": "Title",
       "meaning": "How the reader refers to the book",
       "type": "text",
@@ -389,6 +392,7 @@
     },
     {
       "id": "FD04",
+      "noun": "Book",
       "label": "Author",
       "meaning": "Who wrote it, to tell books with similar titles apart",
       "type": "text",
@@ -401,6 +405,7 @@
     },
     {
       "id": "FD05",
+      "noun": "Book",
       "label": "Shelf",
       "meaning": "Where the reader is with the book",
       "type": "singleChoice",

@@ -16,7 +16,7 @@ export function framesSpecs(architecture: Architecture): Omit<UnitSpec, 'rendere
       id: 'frames',
       stage: STAGE,
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
-      folders: ['01-scaffold', '02-contract', '04-frames'],
+      folders: ['01-scaffold', '02-contract', '03-frames'],
       // The route groups' own files, a layout's styles included; the route folders inside are the screens'.
       writes: [
         ...architecture.frames.map((frame) => `web/app/(routes)/(${frameGroup(architecture, frame.id)})/`),

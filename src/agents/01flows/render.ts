@@ -105,16 +105,20 @@ function alternativeLine(
   return `${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
 }
 
-/** The reusable parts, once per document. */
+/** The reusable parts, once per document: the fields noun by noun, those no record keeps last, then the forms. */
 export function partLines(doc: Pick<Flows, 'fields' | 'forms'>): string[] {
   const lines: string[] = [];
-  if (doc.fields.length > 0)
+  if (doc.fields.length > 0) lines.push('', '## Fields');
+  const nouns = [...new Set(doc.fields.map((field) => field.noun))].sort(
+    (a, b) => Number(a === '') - Number(b === ''),
+  );
+  for (const noun of nouns)
     lines.push(
       '',
-      '## Fields',
-      ...doc.fields.map(
-        (field) => `- ${field.id} ${fieldLine(field)}. ${field.meaning}`,
-      ),
+      `### ${noun === '' ? 'Kept by no record' : noun}`,
+      ...doc.fields
+        .filter((field) => field.noun === noun)
+        .map((field) => `- ${field.id} ${fieldLine(field)}. ${field.meaning}`),
     );
   if (doc.forms.length > 0)
     lines.push(

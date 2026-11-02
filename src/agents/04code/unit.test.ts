@@ -35,9 +35,9 @@ function fakeReviewers(blockFirst: boolean) {
 function setup(id: string, blockFirst: boolean, failing: (name: string, session: number) => boolean) {
   const run = createRun({ idea, runsDir: root, id });
   const appDir = runPath(run, 'app');
-  mkdirSync(path.join(appDir, '.weave/05-pages/S04'), { recursive: true });
-  writeFileSync(path.join(appDir, '.weave/05-pages/guidelines.md'), 'Pages go in their route folder.');
-  writeFileSync(path.join(appDir, '.weave/05-pages/S04/page.json'), '{ "screens": [] }');
+  mkdirSync(path.join(appDir, '.weave/04-pages/S04'), { recursive: true });
+  writeFileSync(path.join(appDir, '.weave/04-pages/guidelines.md'), 'Pages go in their route folder.');
+  writeFileSync(path.join(appDir, '.weave/04-pages/S04/page.json'), '{ "screens": [] }');
   git(appDir, 'init', '-q');
   prepareApp(appDir);
   const { llm, reviews } = fakeReviewers(blockFirst);
@@ -52,8 +52,8 @@ function setup(id: string, blockFirst: boolean, failing: (name: string, session:
   const spec: UnitSpec = {
     id: 'page-S04',
     stage: 'code-pages-S04',
-    task: 'Build S04 from .weave/05-pages/S04/.',
-    folders: ['05-pages', '05-pages/S04'],
+    task: 'Build S04 from .weave/04-pages/S04/.',
+    folders: ['04-pages', '04-pages/S04'],
     writes: ['web/app/(routes)/books/**'],
   };
   const tasks = () => sessionsRun;
@@ -127,8 +127,8 @@ describe('a coding unit', () => {
 
   it('takes a folder listed on the way to an allowed file, or the unit\'s own folder, as no read to warn about', async () => {
     const { ctx, spec, deps } = setup('toward', false, () => false);
-    const reads = { deny: ['web/app/(routes)/**', '.weave/05-pages/**'], allow: ['web/app/(routes)/books/**', '.weave/05-pages/S04/**'] };
-    const log = ['ls web/app/\\(routes\\)/books', 'ls .weave/05-pages/', 'cat web/app/\\(routes\\)/other/page.tsx']
+    const reads = { deny: ['web/app/(routes)/**', '.weave/04-pages/**'], allow: ['web/app/(routes)/books/**', '.weave/04-pages/S04/**'] };
+    const log = ['ls web/app/\\(routes\\)/books', 'ls .weave/04-pages/', 'cat web/app/\\(routes\\)/other/page.tsx']
       .map((command) => JSON.stringify({ tool: 'bash', command }))
       .join('\n');
     const result = await withWrites({ ...page, '.weave/tools.log': `${log}\n` }, () => runUnit(ctx, { ...spec, reads }, deps));
