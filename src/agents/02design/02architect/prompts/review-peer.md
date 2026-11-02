@@ -13,7 +13,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 ## The right places
 
-- A place a flow needs with no screen of its own: the landing page, sign in and sign up, each list, each record's details, each editor, each form with many fields, account, settings, and the screen each signed-in role lands on after signing in.
+- A place a flow needs with no screen of its own: the landing page, sign in and sign up, each list the frame does not hold, each record's details, each editor, each form with many fields, account, settings, and the screen each signed-in role lands on after signing in.
 - Information the user comes to look at, such as a dashboard, a list or a record's details, squeezed into another screen where it gets lost.
 - One screen doing two jobs the user does at different times, or two screens for the same job.
 - A dialog holding a task that needs a page: many fields, or something the user wants to link to or come back to. A page for a task of one or two fields that keeps the user's place better as a dialog.
@@ -31,7 +31,8 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 - A frame that doesn't lead to a screen its role uses often, or leads to one the role cannot use.
 - A signed-in role with no way to reach its account and settings, or to sign out.
-- A frame that repeats an action or a list a screen already offers, such as Create or the list of dashboards, or a navigation with fewer than two destinations.
+- A screen, or a part of one, that repeats a list its frame holds, such as the list of dashboards the navigation already shows. Delete the repeat from the screen, even when a flow puts it there. When that leaves the screen with nothing of its own, ask for it to be built from what the role comes there for in the flows.
+- A navigation with fewer than two destinations.
 - A frame with the same action in two places, such as Create in the header and at the top of the sidebar, whatever the theme's layout slots say.
 - A dead end: a screen with no way back or on, an empty list with no action that fills it, a dialog with no way out, or a record that is gone with no way on.
 - A frame around signed-in screens that does not say what a visitor who is not signed in sees there.
