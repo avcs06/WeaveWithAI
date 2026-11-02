@@ -40,4 +40,16 @@ describe('the architect prompt', () => {
     expect(output).toContain('you also check that its parts point at each other');
     expect(`${peer}${output}`).not.toContain('{{');
   });
+
+  it('asks for landing content in order without repeating the frame action', () => {
+    const landing = architectSystemPrompt().split('## The landing page')[1]!.split('## Dialogs')[0]!;
+    const steps = ['1. The headline', '2. The main action', '3. A preview', '4. Three or four reasons'];
+    const positions = steps.map((step) => landing.indexOf(step));
+    expect(positions.every((position) => position >= 0)).toBe(true);
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    expect(landing).toContain('when the screen offers sign-up, the frame offers only sign-in');
+    expect(landing).toContain('when the screen offers sign-in, the frame offers only sign-up');
+    expect(landing).toContain('The preview changes no records');
+    expect(architectReviewGuides().peer).toContain('A landing page missing its headline, main action, preview');
+  });
 });

@@ -27,6 +27,7 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 
 ## Layout and emphasis
 
+- A landing page that does not carry the theme: no hero, a headline not in the display font, no preview of the app, or the brief's signature missing.
 - A screen where what the user came for does not come first and stand out: steps in another order than the design gives, a title and first steps quieter than later ones, or help text and secondary actions before them.
 - A view with more than one action styled as its main one, or whose main action looks like the others. Many secondary actions in a row where a menu belongs.
 - Sibling actions of equal weight as different elements, such as sign in as a link beside sign up as a button.

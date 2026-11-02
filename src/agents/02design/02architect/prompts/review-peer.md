@@ -23,6 +23,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 - A title and first steps that don't say what the screen is for.
 - What the user came for buried under secondary actions, filters, help text or promotions. The first steps carry what the `purpose` names, and secondary actions come after them.
 - A landing page that does not first say what the app is, who it is for and what to do next.
+- A landing page missing its headline, main action, preview of the app with sample records, or three or four reasons to join.
 - Steps too vague to build: "Sees the details" instead of naming the fields, a list without what each item shows, an action without where it leads, or a choice without its options.
 - A landing page or an empty state without its quoted words, or words that would fit any app, such as "Welcome to our app".
 

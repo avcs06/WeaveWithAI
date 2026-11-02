@@ -37,6 +37,17 @@ A screen is one URL. Make one for each place a flow needs: the landing page, eac
 
 A screen the user comes to look at or use, and can also change, has a view mode and an edit mode: a dashboard, a document, a board, a profile, a settings page, whatever the flows call it, an editor included. Its steps are the viewing ones, with one action that enters editing: "Can choose "Edit", which shows the editing controls." The editing steps go under an alternative "When editing:", ending with the action that leaves it: "Can choose "Done", which shows the dashboard as it is now." No editing control shows while the user only views. Using the content, such as ticking a checklist item or opening a link, is viewing and stays in the viewing steps.
 
+## The landing page
+
+Write the landing screen's steps in this order:
+
+1. The headline and the line under it, with their exact words.
+2. The main action and where it leads. Signing up and signing in are each offered once across the landing screen and its frame: when the screen offers sign-up, the frame offers only sign-in; when the screen offers sign-in, the frame offers only sign-up. State that choice in the frame's steps, so people who already have an account can sign in without repeating an action on the screen.
+3. A preview of the app at work. Say what it shows, with sample records from the app's work, such as "Sees a preview of a dashboard with a note called 'Launch plan', a counter showing 12 tasks and a checklist with 'Review the draft' checked." The preview changes no records.
+4. Three or four reasons to join, each with a short title and one line. Give the exact words and connect each reason to what the app lets people do.
+
+Describe what people read and do, not components, positions or looks.
+
 ## Dialogs
 
 A dialog holds a short task that keeps the user's place: confirming a delete, a quick form of a few fields, a choice from a short list. A task with many fields, or one the user may want to link to, is a screen instead. `openedFrom` lists the screens with a step that opens the dialog. Its steps end with where each way out leads:

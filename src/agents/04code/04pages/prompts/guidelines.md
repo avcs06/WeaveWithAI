@@ -23,3 +23,27 @@
 - For a component a step needs, ask the MCP: `search_components`, then
   `get_component` and `get_recipe`. When nothing fits, build it yourself in
   `components/` beside the page.
+
+## The landing page
+
+- Build a full-width hero using the marketing layout's `main.fullBleed`:
+  its background spans the width while its content stays in the container.
+  Draw the background from the theme's brand colors through tokens, such
+  as a gradient from `tokens.color.primary.bg` into
+  `tokens.color.surface.pageBg`. Keep all text at 4.5:1 against every
+  background color, in each supported mode.
+- The headline is the page's only H1, in `tokens.fontFamily.display` at
+  `tokens.fontSize.display`, `tokens.lineHeight.display` and
+  `tokens.fontWeight.display`.
+- Keep actions once per view. When the hero offers sign-up, the landing
+  page's header offers only sign-in; when the hero offers sign-in, the
+  header offers only sign-up. Follow the architect's choice, and do not
+  repeat either action in the preview or the reasons.
+- Build the preview from the app's own components and blocks, with records
+  from the seed data. It is read-only: nothing in it saves. The app ships
+  no images, so this preview is the landing page's picture.
+- Put the three or four reasons in a grid. Give each an icon from
+  `lucide-react` when the brief's `imagery` is `icons`.
+- Make the brief's `signature` in `theme.json` visible on the landing page.
+- All checks still hold: DESIGN-R-006 needs the H1 in the first view, and
+  contrast and target sizes apply as everywhere else.
