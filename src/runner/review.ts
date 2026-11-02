@@ -6,7 +6,10 @@ export const Blocker = z.object({
   problem: z.string().describe('What is wrong, in one sentence'),
   fix: z.string().describe('What the output must say instead'),
 });
-export const Review = z.object({ blockers: z.array(Blocker) });
+export const Review = z.object({
+  checked: z.number().int().describe('How many points of the guide were checked'),
+  blockers: z.array(Blocker),
+});
 export type Review = z.infer<typeof Review>;
 
 export const REVIEW_RULE = 'REVIEW';

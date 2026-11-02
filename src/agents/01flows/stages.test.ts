@@ -66,7 +66,7 @@ function fakeLlm() {
             newForms: [],
           };
         },
-        Review: () => ({ blockers: [] }),
+        Review: () => ({ checked: 0, blockers: [] }),
       };
       const data = answers[input.schemaName]?.();
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);

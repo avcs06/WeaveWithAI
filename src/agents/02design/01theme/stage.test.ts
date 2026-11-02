@@ -36,7 +36,7 @@ function fakeLlm() {
       inputs.push(input as GenerateInput<unknown>);
       const answers: Record<string, unknown> = {
         Theme: call,
-        Review: { blockers: [] },
+        Review: { checked: 0, blockers: [] },
       };
       const data = answers[input.schemaName];
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
@@ -105,8 +105,8 @@ describe('the theme stage', () => {
       ]),
     ).toEqual([
       ['design-theme', 'strong', 'high', 0.7, 32_768],
-      ['design-theme-review-peer', 'default', 'medium', undefined, 8192],
-      ['design-theme-review-output', 'default', 'medium', undefined, 8192],
+      ['design-theme-review-peer', 'default', 'medium', undefined, 16_384],
+      ['design-theme-review-output', 'default', 'medium', undefined, 16_384],
     ]);
     expect(inputs[0]?.messages[1]?.content).toContain('A reading list for one reader.');
     expect(inputs[0]?.messages[1]?.content).toContain('# Flows, what each flow is');

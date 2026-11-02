@@ -116,9 +116,9 @@ const SCHEDULE: Round[] = [
   { fix: true, reviewers: [] },
 ];
 const FIX_EFFORT = 'medium';
-// Reviewers return a short list, so their tokens are mostly reasoning; medium keeps it considered but bounded.
+// Reviewers walk every guide point and look past the guide, so their tokens are mostly reasoning; medium keeps it considered but bounded.
 const REVIEW_EFFORT = 'medium';
-const REVIEW_MAX_TOKENS = 8192;
+const REVIEW_MAX_TOKENS = 16_384;
 const NOT_REREVIEWED = ' (addressed in the final fix, not re-reviewed)';
 
 const fixPrompt = loadPrompt(

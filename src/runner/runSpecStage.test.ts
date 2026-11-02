@@ -34,8 +34,9 @@ const longTitle: Issue = {
   severity: 'warning',
   message: 'title is long',
 };
-const clean: Review = { blockers: [] };
+const clean: Review = { checked: 1, blockers: [] };
 const generic: Review = {
+  checked: 1,
   blockers: [
     { at: 'title', problem: 'Title is generic.', fix: 'Name the breed.' },
   ],
@@ -139,8 +140,8 @@ describe('runSpecStage with reviewers', () => {
           input.schemaName,
         ]),
     ).toEqual([
-      [2, 'default', undefined, 'medium', 8192, 'Review'],
-      [2, 'default', undefined, 'medium', 8192, 'Review'],
+      [2, 'default', undefined, 'medium', 16_384, 'Review'],
+      [2, 'default', undefined, 'medium', 16_384, 'Review'],
     ]);
     // Both read the same input; each has its own guide.
     const review1 = lastUser(inputs[1]);

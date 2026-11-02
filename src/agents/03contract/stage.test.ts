@@ -26,7 +26,7 @@ function fakeLlm() {
   const llm: Llm = {
     async generateStructured(input) {
       inputs.push(input as GenerateInput<unknown>);
-      const answers: Record<string, unknown> = { Contract: contract, Review: { blockers: [] } };
+      const answers: Record<string, unknown> = { Contract: contract, Review: { checked: 0, blockers: [] } };
       const data = answers[input.schemaName];
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
       return {
@@ -67,8 +67,8 @@ describe('the contract stage', () => {
     // A clean draft ends after round 2's two reviews.
     expect(inputs.map((input) => [input.stage, input.reasoningEffort, input.maxTokens])).toEqual([
       ['contract', 'medium', 32_768],
-      ['contract-review-peer', 'medium', 8192],
-      ['contract-review-output', 'medium', 8192],
+      ['contract-review-peer', 'medium', 16_384],
+      ['contract-review-output', 'medium', 16_384],
     ]);
     expect(inputs[0]?.messages.at(-1)?.content).toContain('# Frames, screens and dialogs');
     expect(readFileSync(path.join(run.dir, '03-contract.md'), 'utf8')).toContain('## What each screen loads');
