@@ -1,27 +1,27 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { checkScreen, nodeWords } from './conformance';
+import { checkScreen } from './conformance';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-conformance-'));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
-describe('the design check after a coding session', () => {
-  it("leaves out the text of a node that shows data, a sample of its value, and keeps its label", () => {
-    const nodes = [
-      { id: 'SH1.n03', text: 'Q3 launch board', label: '', data: ['Dashboard.name'] },
-      { id: 'SH1.S05.n01', text: 'Q3 launch board', label: 'Dashboard name', data: ['Dashboard.name'] },
-      { id: 'SH1.n04', text: 'Create', label: '', data: [] },
-    ];
-    expect(nodeWords(nodes)).toEqual([
-      { id: 'SH1.S05.n01', text: 'Dashboard name' },
-      { id: 'SH1.n04', text: 'Create' },
-    ]);
+describe('the screen check after a coding session', () => {
+  it('fails a screen with no code in its route folder', () => {
+    const expected = { folder: 'web/app/(routes)/books', operations: [] };
+    expect(checkScreen(path.join(root, 'empty'), expected)).toEqual({
+      name: 'design',
+      ok: false,
+      output: 'web/app/(routes)/books has no code.',
+    });
   });
 
-  it('passes a folder with nothing to find, empty or not', () => {
-    const nothing = { folder: 'web/app/blocks', testIds: [], words: [], operations: [] };
-    expect(checkScreen(path.join(root, 'empty'), nothing)).toEqual({ name: 'design', ok: true, output: '' });
+  it('passes a screen that calls each operation by its function or its hook', () => {
+    const folder = path.join(root, 'app', 'web/app/(routes)/books');
+    mkdirSync(folder, { recursive: true });
+    writeFileSync(path.join(folder, 'page.tsx'), 'useListBooks(); createBook();\n');
+    const expected = { folder: 'web/app/(routes)/books', operations: ['listBooks', 'createBook'] };
+    expect(checkScreen(path.join(root, 'app'), expected)).toEqual({ name: 'design', ok: true, output: '' });
   });
 });

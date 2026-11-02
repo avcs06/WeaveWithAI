@@ -162,14 +162,18 @@ describe('runSession', () => {
     expect(ran.slice(1).map((line) => line.split(':')[0])).toEqual(['validate', 'typecheck', 'lint', 'verify']);
   });
 
-  it('fails a session whose page misses a node of its design', async () => {
+  it('fails a session whose page does not load what its screen shows', async () => {
     const { appDir, ctx } = setup('design');
-    const expectations = { folder: 'web/app/(routes)/books', testIds: ['S04.n01', 'S04.n02'], operations: ['listBooks'] };
-    const result = await withWrites({ [page]: '<h1 data-testid="S04.n01" />; listBooks();\n' }, () =>
+    const expectations = { folder: 'web/app/(routes)/books', operations: ['listBooks', 'listShelves'] };
+    const result = await withWrites({ [page]: '<h1>Reading list</h1>; listBooks();\n' }, () =>
       runSession(ctx, appDir, { ...session, expects: [expectations] }, { bin: fake, runCheck: checks() }),
     );
     expect(result.status).toBe('checks');
-    expect(result.checks.at(-1)).toEqual({ name: 'design', ok: false, output: 'No element has data-testid "S04.n02".' });
+    expect(result.checks.at(-1)).toEqual({
+      name: 'design',
+      ok: false,
+      output: "Nothing in web/app/(routes)/books calls listShelves; load the screen's records through it.",
+    });
   });
 });
 

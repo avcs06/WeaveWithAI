@@ -138,10 +138,7 @@
       "alternatives": [
         {
           "when": "the book was deleted in the meantime",
-          "steps": [
-            "Reads that the book is gone.",
-            "Can go back to /books."
-          ]
+          "steps": ["Reads that the book is gone.", "Can go back to /books."]
         }
       ]
     }

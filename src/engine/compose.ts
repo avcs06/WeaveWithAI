@@ -23,9 +23,9 @@ export const CODE_SCHEDULE: Round[] = [
 ];
 
 export type Unit = {
-  /** 'shared', 'frames', 'page-S04': the session ids and the runner's stage name end with it. */
+  /** 'frames', 'pages': the session ids and the runner's stage name end with it. */
   id: string;
-  /** The run's stage of the unit, such as `code-pages-S04`. */
+  /** The run's stage of the unit, such as `code-pages`. */
   stage?: string;
   task: string;
   /** The fix session's task for the pending issues. */

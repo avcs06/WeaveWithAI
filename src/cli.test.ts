@@ -10,7 +10,6 @@ import {
   showCommand,
   UsageError,
   validateCommand,
-  wireframesCommand,
 } from './cli';
 import { readArtifact } from './core/artifacts';
 import type { Config } from './core/env';
@@ -180,16 +179,9 @@ describe('weave run', () => {
       'flows-expand: no artifact to validate',
       'design-theme: no artifact to validate',
       'design-architect: no validators registered',
-      'design-catalog: no validators registered',
       'contract: no validators registered',
-      'design-screen: no validators registered',
-      'design-invent: no validators registered',
-      'design-draw: no validators registered',
-      'design-frame: no validators registered',
-      'design-assemble: no validators registered',
       'code-scaffold: no validators registered',
       'code-contract: no validators registered',
-      'code-shared: no validators registered',
       'code-frames: no validators registered',
       'code-pages: no validators registered',
     ]);
@@ -216,35 +208,3 @@ describe('weave ds', () => {
   });
 });
 
-describe('weave wireframes', () => {
-  it('writes the skeleton and the wireframes for a screens file under runs/wireframes/<name>/', async () => {
-    lines.length = 0;
-    const screens = fileURLToPath(
-      new URL(
-        './agents/02design/__fixtures__/reading-list.screens.json',
-        import.meta.url,
-      ),
-    );
-    const printed = await wireframesCommand(screens, undefined, {
-      templateDir: 'template',
-      cacheDir: path.join(runsDir, 'cache'),
-      exporter: printFile(fixture('export.json')),
-      boxesFile: fixture('boxes.json'),
-      runsDir,
-      out: deps.out,
-    });
-    const dest = path.join(runsDir, 'wireframes', 'reading-list.screens');
-    expect(printed).toEqual([
-      expect.stringMatching(/^7 screens, \d+ rectangles$/),
-      path.join(dest, '02-skeleton.json'),
-      path.join(dest, '02-wireframes.html'),
-    ]);
-    const solved = JSON.parse(
-      readFileSync(path.join(dest, '02-skeleton.json'), 'utf8'),
-    ) as { screens: unknown[] };
-    expect(solved.screens).toHaveLength(7);
-    expect(
-      readFileSync(path.join(dest, '02-wireframes.html'), 'utf8'),
-    ).toContain('<svg');
-  });
-});

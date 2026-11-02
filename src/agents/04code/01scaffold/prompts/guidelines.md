@@ -5,7 +5,8 @@ You build one part of a web app from its design, its flows and its
 contract: the part your task names. The parts after yours import what you
 build. When you finish, code checks your work, and two reviewers read your
 change: one for clean, readable, well-organized code, one for whether it
-builds what the design and the flows say. Follow every guideline here,
+builds what the design and the flows say, and puts first what the user
+came for. Follow every guideline here,
 `AGENTS.md`, the guidelines of your stage's folder, and the instructions the
 weave-design-system MCP gives when it connects.
 
@@ -19,10 +20,11 @@ weave-design-system MCP gives when it connects.
   the contract. Look something up in `flows.json`, `contract.json`,
   `scope.json` or `theme.json` only when your folder does not have it, and
   read only that part (search for its id), never the whole file.
-- In a design file, a node says what it is (`what`, `component`, `role`),
-  its words (`text`, `label`), its heading level, the values it shows
-  (`data`, as `Noun.attribute`), the flow steps it serves, the states it
-  shows in (`states`), and the screen it opens (`navigatesTo`).
+- The design is prose. Each frame, screen and dialog lists what the user
+  sees and can do there as numbered steps, in reading order, then its
+  alternatives: what it shows in other situations, such as an empty list or
+  a record that is gone. Steps name fields (FD03), forms (FM01), dialogs
+  (D01), routes (/books/[bookId]) and flows (F05) by their ids.
 - A flow step says what the user does and what the website shows. An
   alternative says what happens on invalid input, failure, empty, cancel,
   confirm, denied or not found. Build every one that your task asks for.
@@ -32,8 +34,8 @@ weave-design-system MCP gives when it connects.
 - Every file you read stays in your context for the rest of the session and
   is paid for again on every step. Read only what your task needs.
 - For each component you use, call `get_recipe` for its cases and
-  `get_component` for its props, their types and defaults, and whether a
-  `data-testid` set on it reaches the page. Read a file in `packages/` only
+  `get_component` for its props, their types and defaults. Read a file in
+  `packages/` only
   when neither answers your question, and then only that file, never a
   folder.
 - `recipes.md` lists the state and hook recipes with what each is for. Call
@@ -45,29 +47,47 @@ weave-design-system MCP gives when it connects.
 ## Data
 
 - Get and change data only through `web/app/entities/`; `02-contract/`
-  says how. Never change `entities/`, unless a blocker needs it; then name
-  the blocker in your summary.
-- A widget loads its data through the operations its contract entry
-  `reads`.
+  says how.
+- A screen loads its records through the operations its file names.
+- When a screen needs an operation or a field the entity layer lacks, add
+  it there, written like the ones beside it, and list it in your summary.
+
+## Layout and emphasis
+
+The design says what each screen holds and in what order; you decide how it
+looks. Build every screen so a user sees at a glance what it is for:
+
+- What the user came for comes first and stands out. The step order is the
+  reading order and the order of importance: the title and the first steps
+  are the most prominent, later steps are quieter.
+- One main action per view, as the primary button. Other actions are
+  secondary, or sit in a menu when there are many.
+- What belongs together sits together: a record's fields in one section,
+  and a list's search, filters and add action together above the list.
+- Everything lines up on one left edge and one grid. Spacing comes from the
+  tokens: more space between groups than inside a group.
+- Records the user compares go in a table; records the user opens one by
+  one go in cards or a list.
+- Text lines stay short enough to read, and nothing crowds the screen at
+  desktop width.
+- Leave a component's `variant`, `size` and `look` out, so the theme's
+  defaults apply. When the emphasis needs another, write your reason in a
+  comment on the prop. "The design asks for it" is no reason; the MCP
+  refuses it.
 
 ## Building
 
-- Every node is an element. Give its root element `data-testid` set to the
-  node id, such as `data-testid="S04.n03"`. When `get_component` gives a
-  component `passesHtmlAttributes: false`, put the test id on an element
-  around it.
-- Show the node's `text` as its words.
-- Leave a component's `variant`, `size` and `look` out, so the theme's
-  defaults apply. A node that sets one has an `overrideReason`: write that
-  reason, in your own words, in a comment on the prop. "The design asks for
-  it" is no reason; the MCP refuses it.
-- Build every state its nodes list: empty, error, not found, denied.
+- Build every step and every alternative, in the order the design gives
+  them.
+- Loading and a failed load look the same on every screen: show the
+  loading state while records load, and an error with a retry when loading
+  fails.
 - Forms use the Form recipe and show the flow's messages for invalid
   fields.
 - A destructive action opens its confirm dialog. The operation runs only
   after the user confirms.
-- A node with `navigatesTo` opens that screen's route from `routes.json`
-  with `NextLink` or `useRouter`, even when that screen is not built yet.
+- A step that leads to a route opens it from `routes.json` with `NextLink`
+  or `useRouter`, even when that screen is not built yet.
 
 ## Keyboard and accessibility
 
@@ -89,8 +109,8 @@ already; a control you build yourself must too.
 
 ## When the design is wrong
 
-- The design may hold errors: a missing state, a wrong word, a control that
-  opens nothing, a step no control serves, a box that cannot fit.
+- The design may hold errors: a missing alternative, a wrong word, an
+  action that leads nowhere, a step no flow needs.
 - When something is wrong, make your own call. Build what the flow needs,
   keep the rest of the design, and list the call in your summary.
 
@@ -105,7 +125,7 @@ already; a control you build yourself must too.
 
 - Never write or change a test.
 - Write only inside the paths your stage's guidelines name, and in
-  `entities/` only for a blocker.
+  `entities/`.
 - Never change `packages/`, `tools/`, `.weave/`, `.muse/` or a config file.
 - Never install, add or remove a package (`pnpm install`, `pnpm add`): the
   app's packages are fixed. When a command fails because of the install,

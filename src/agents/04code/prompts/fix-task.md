@@ -8,7 +8,7 @@ Rank the issues. Every failed check is a blocker. Fix only the blockers, and kee
 ## How the checks ran
 
 - An issue that names a route, such as `/:`, comes from a browser check the runner ran on that route after you finished. `pnpm verify` does not run it, and you cannot run it yourself. Fix it from the code: start no dev server and write no browser scripts.
-- Each of those issues names its element by its `data-testid`, or by a CSS path from the nearest element that has one, such as `[data-testid="SH1.n05"] > a:nth-of-type(1)`. Find that node in your code.
+- Each of those issues names its element by a CSS path, such as `main > form > button:nth-of-type(2)`. Find that element in your code.
 - When you finish, the runner runs every check again.
 
 ## The issues

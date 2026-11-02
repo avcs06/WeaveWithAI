@@ -4,13 +4,18 @@ import type { Issue } from '../../../core/issues';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
 import type { Themed } from '../../02design/01theme/build';
-import type { WidgetScreens } from '../../02design/08assemble/assemble';
-import type { DesignNode } from '../../02design/schema';
+import {
+  dialogLines,
+  frameLines,
+  screenLines,
+} from '../../02design/02architect/render';
+import type { Architecture, Screen } from '../../02design/02architect/schema';
 import type { Contract } from '../../03contract/schema';
 
 // The coding sessions' inputs: one numbered folder per code stage under
 // .weave/, each with its guidelines and the slice of the run's artifacts its
-// stage builds. A page reads only its own folder of 05-pages.
+// stage builds: the frames in prose, and each screen in prose with its
+// dialogs and the operations that load it.
 
 export type KnownIssue = Issue & { stage: string };
 type QuestionRecord = { id: string; question: string; answer: string; from: string };
@@ -20,7 +25,7 @@ export type CodeInputs = {
   flows: Flows;
   themed: Themed;
   contract: Contract;
-  design: WidgetScreens;
+  architecture: Architecture;
   questions: QuestionRecord[];
   known: KnownIssue[];
   /** A folder name ('01-scaffold') to its guidelines, for the stages that have them. */
@@ -31,109 +36,60 @@ export type CodeInputs = {
 
 export const SCAFFOLD = '01-scaffold';
 export const CONTRACT = '02-contract';
-export const SHARED = '03-shared';
 export const FRAMES = '04-frames';
 export const PAGES = '05-pages';
 
-/** What two or more screens use: widgets placed on several screens, and dialogs opened from several pages. */
-export function sharedUnits(design: WidgetScreens): { widgets: Set<string>; dialogs: Set<string> } {
-  const screensOf = new Map<string, Set<string>>();
-  for (const p of design.placements) screensOf.set(p.widget, (screensOf.get(p.widget) ?? new Set()).add(p.screen));
-  const widgets = new Set([...screensOf].filter(([, screens]) => screens.size > 1).map(([widget]) => widget));
-  const openers = new Map<string, Set<string>>();
-  for (const node of design.nodes) {
-    const target = design.screens.find((s) => s.id === node.navigatesTo && s.type === 'dialog');
-    const screen = screenOfNode(design, node);
-    if (!target || !screen) continue;
-    openers.set(target.id, (openers.get(target.id) ?? new Set()).add(pageOf(design, screen)));
-  }
-  const dialogs = new Set([...openers].filter(([, pages]) => pages.size > 1).map(([dialog]) => dialog));
-  return { widgets, dialogs };
+const slug = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/\bframe\b/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+/** The route group of a frame's screens, from its name: "App frame" is `app`, "Public site frame" is `public-site`; its id when two names meet. */
+export function frameGroup(architecture: Architecture, frameId: string): string {
+  const frame = architecture.frames.find((f) => f.id === frameId);
+  if (!frame) return '';
+  const name = slug(frame.name);
+  const taken = architecture.frames.some((f) => f.id !== frame.id && slug(f.name) === name);
+  return name && !taken ? name : frame.id.toLowerCase();
 }
 
-/** A dialog's page is its parent; a page is its own. */
-function pageOf(design: WidgetScreens, screen: string): string {
-  const found = design.screens.find((s) => s.id === screen);
-  return found?.type === 'dialog' && found.parent ? found.parent : screen;
+/** A screen's route folder, inside its frame's route group. */
+export function screenFolder(architecture: Architecture, screen: Screen): string {
+  const group = frameGroup(architecture, screen.frame);
+  const route = screen.route === '/' ? '' : screen.route;
+  return `web/app/(routes)${group ? `/(${group})` : ''}${route}`;
 }
 
-/** The screen a node sits on, or undefined for a shell's node. */
-function screenOfNode(design: WidgetScreens, node: DesignNode): string | undefined {
-  return design.sections.find((s) => s.id === node.section)?.screen;
+/** The dialogs a screen opens. */
+export const dialogsOf = (architecture: Architecture, screen: Screen) =>
+  architecture.dialogs.filter((dialog) => dialog.openedFrom.includes(screen.id));
+
+/** The operations that load what a screen and its dialogs show, by the contract's `screens`. */
+export function screenReads(architecture: Architecture, contract: Contract, screen: Screen): string[] {
+  const ids = new Set([screen.id, ...dialogsOf(architecture, screen).map((dialog) => dialog.id)]);
+  return [...new Set(contract.screens.filter((entry) => ids.has(entry.screen)).flatMap((entry) => entry.reads))];
 }
 
-/** The folders an issue goes to, from the id its `at` names. */
-export function issueOwners(at: string | undefined, design: WidgetScreens, shared = sharedUnits(design)): string[] {
-  if (!at) return [SCAFFOLD];
-  const id = at.split(/[\s:]/)[0] ?? at;
-  if (/^SH\d+/.test(id)) return [FRAMES];
-  if (design.newComponents.some((c) => c.name === id)) return [SHARED];
-  if (design.widgets.some((w) => w.id === id)) return shared.widgets.has(id) ? [SHARED] : pagesPlacing(design, id);
-  const screen = id.split('.')[0] ?? '';
-  if (design.screens.some((s) => s.id === screen)) return [screenFolder(design, screen, shared)];
-  if (/^F\d+\.[SA]\d+$/.test(id)) {
-    const owners = design.nodes
-      .filter((node) => node.flowSteps.includes(id))
-      .map((node) => (node.id.startsWith('SH') ? FRAMES : screenFolder(design, screenOfNode(design, node) ?? '', shared)));
-    return owners.length ? [...new Set(owners)] : [SCAFFOLD];
-  }
-  return [SCAFFOLD];
-}
-
-function screenFolder(design: WidgetScreens, screen: string, shared: ReturnType<typeof sharedUnits>): string {
-  return shared.dialogs.has(screen) ? SHARED : `${PAGES}/${pageOf(design, screen)}`;
-}
-
-function pagesPlacing(design: WidgetScreens, widget: string): string[] {
-  const pages = design.placements.filter((p) => p.widget === widget).map((p) => `${PAGES}/${pageOf(design, p.screen)}`);
-  return pages.length ? [...new Set(pages)] : [SCAFFOLD];
-}
-
-/** The flows' steps and alternatives with these ids, grouped by their flow. */
-function stepsOf(flows: Flows, ids: Set<string>) {
-  return flows.flows
-    .map((flow) => ({
-      flow: flow.id,
-      name: flow.name,
-      steps: flow.steps.filter((step) => ids.has(step.id)),
-      alternatives: flow.alternatives.filter((alt) => ids.has(alt.id)),
-    }))
-    .filter((flow) => flow.steps.length || flow.alternatives.length);
-}
-
-/** Everything a group of screens draws: their sections, placements and nodes, the steps they serve and the operations their widgets read. */
-function screensSlice(inputs: CodeInputs, screens: string[], shared: ReturnType<typeof sharedUnits>) {
-  const { design, flows, contract } = inputs;
-  const ids = new Set(screens);
-  const sections = design.sections.filter((s) => ids.has(s.screen));
-  const sectionIds = new Set(sections.map((s) => s.id));
-  const placements = design.placements
-    .filter((p) => ids.has(p.screen))
-    .map((p) => ({ ...p, shared: shared.widgets.has(p.widget) }));
-  const widgets = new Set(placements.map((p) => p.widget));
-  const operations = new Set(contract.widgets.filter((w) => widgets.has(w.widget)).flatMap((w) => w.reads));
-  const drawn = design.screens.filter((s) => ids.has(s.id));
-  return {
-    screens: drawn,
-    sections,
-    placements,
-    widgets: design.widgets.filter((w) => widgets.has(w.id) && !shared.widgets.has(w.id)),
-    nodes: design.nodes.filter((n) => sectionIds.has(n.section)),
-    steps: stepsOf(flows, new Set(drawn.flatMap((s) => s.flowSteps))),
-    operations: contract.operations.filter((o) => operations.has(o.id)),
-  };
+/** The folder an issue goes to, from the id its `at` names: a frame's to the frames; a screen's, dialog's or flow's to the pages. */
+export function issueOwner(at: string | undefined): string {
+  const id = at?.split(/[\s:.]/)[0] ?? '';
+  if (/^FR\d+$/.test(id)) return FRAMES;
+  if (/^[SDF]\d+$/.test(id)) return PAGES;
+  return SCAFFOLD;
 }
 
 const json = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
+const text = (lines: string[]) => `${lines.join('\n').trim()}\n`;
 
 /** Every file under .weave/ for the code stages, by path. Pure. */
 export function weaveFolders(inputs: CodeInputs): Map<string, string> {
-  const { design, scope, flows, themed, contract } = inputs;
-  const shared = sharedUnits(design);
+  const { architecture, scope, flows, themed, contract } = inputs;
   const files = new Map<string, string>();
   const put = (file: string, value: unknown) => files.set(file, typeof value === 'string' ? value : json(value));
 
-  for (const [folder, text] of Object.entries(inputs.guidelines)) put(`${folder}/guidelines.md`, text);
+  for (const [folder, guidelines] of Object.entries(inputs.guidelines)) put(`${folder}/guidelines.md`, guidelines);
   put(`${SCAFFOLD}/scope.json`, scope);
   put(`${SCAFFOLD}/flows.json`, flows);
   put(`${SCAFFOLD}/theme.json`, themed);
@@ -141,50 +97,59 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
   put(`${SCAFFOLD}/recipes.md`, inputs.recipes);
   put(
     `${SCAFFOLD}/routes.json`,
-    design.screens.map(({ id, name, type, route, parent, access }) => ({ id, name, type, route, parent, access })),
+    architecture.screens.map((screen) => ({
+      id: screen.id,
+      title: screen.title,
+      route: screen.route,
+      folder: screenFolder(architecture, screen),
+    })),
   );
 
-  for (const component of design.newComponents) put(`${SHARED}/components/${component.name}.json`, component);
-  for (const widget of design.widgets.filter((w) => shared.widgets.has(w.id))) {
-    const placements = design.placements.filter((p) => p.widget === widget.id);
-    put(`${SHARED}/widgets/${widget.id}.json`, {
-      widget,
-      placements: placements.map((p) => ({ ...p, nodes: design.nodes.filter((n) => n.section === p.id) })),
-      operations: contract.widgets.find((w) => w.widget === widget.id)?.reads ?? [],
-    });
+  put(
+    `${FRAMES}/frames.md`,
+    text([
+      '# Frames',
+      ...architecture.frames.flatMap((frame) => {
+        const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
+        return [
+          '',
+          ...frameLines(frame),
+          '',
+          `Route group: \`web/app/(routes)/(${frameGroup(architecture, frame.id)})/\`. Screens inside it: ${screens.map((screen) => `${screen.id} ${screen.route}`).join(', ') || 'none'}.`,
+        ];
+      }),
+    ]),
+  );
+
+  for (const screen of architecture.screens) {
+    const reads = screenReads(architecture, contract, screen);
+    put(
+      `${PAGES}/${screen.id}.md`,
+      text([
+        ...screenLines(screen),
+        '',
+        `Route folder: \`${screenFolder(architecture, screen)}\`.`,
+        `Loads its records through: ${reads.join(', ') || 'nothing'}.`,
+        ...dialogsOf(architecture, screen).flatMap((dialog) => ['', ...dialogLines(dialog)]),
+      ]),
+    );
   }
-  for (const dialog of shared.dialogs) put(`${SHARED}/dialogs/${dialog}.json`, screensSlice(inputs, [dialog], shared));
 
-  for (const shell of design.shells)
-    put(`${FRAMES}/shells/${shell.id}.json`, {
-      shell,
-      nodes: design.nodes.filter((n) => n.id.startsWith(`${shell.id}.`)),
-      screens: design.screens.filter((s) => s.shell === shell.id).map((s) => s.id),
-    });
-  put(`${FRAMES}/navigation.json`, design.navigation);
-  put(`${FRAMES}/frame-changes.json`, design.frameChanges);
-
-  for (const page of design.screens.filter((s) => s.type !== 'dialog')) {
-    const own = design.screens.filter((s) => s.parent === page.id && s.type === 'dialog' && !shared.dialogs.has(s.id));
-    put(`${PAGES}/${page.id}/page.json`, {
-      ...screensSlice(inputs, [page.id, ...own.map((s) => s.id)], shared),
-      sharedDialogs: [...shared.dialogs].filter((d) => design.nodes.some((n) => n.navigatesTo === d && pageOf(design, screenOfNode(design, n) ?? '') === page.id)),
-    });
-  }
-
-  // Questions go to every session; each known issue to the folders its id names.
+  // Questions go to every session; each known issue to the folder its id names.
   const issues = new Map<string, KnownIssue[]>();
-  for (const issue of inputs.known)
-    for (const owner of issueOwners(issue.at, design, shared)) issues.set(owner, [...(issues.get(owner) ?? []), issue]);
+  for (const issue of inputs.known) {
+    const owner = issueOwner(issue.at);
+    issues.set(owner, [...(issues.get(owner) ?? []), issue]);
+  }
   put(`${SCAFFOLD}/issues.json`, { questions: inputs.questions, known: issues.get(SCAFFOLD) ?? [] });
   for (const [owner, known] of issues) if (owner !== SCAFFOLD) put(`${owner}/issues.json`, { questions: [], known });
   return files;
 }
 
 export function writeWeave(appDir: string, files: Map<string, string>): void {
-  for (const [file, text] of files) {
+  for (const [file, value] of files) {
     const full = path.join(appDir, '.weave', file);
     mkdirSync(path.dirname(full), { recursive: true });
-    writeFileSync(full, text);
+    writeFileSync(full, value);
   }
 }

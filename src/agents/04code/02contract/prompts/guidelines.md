@@ -17,5 +17,6 @@ operation. Use those names; never guess one.
   works. `useCurrentUser()` is the signed-in user, `null` for a visitor,
   or `undefined` until the saved session is read. Show nothing while it is
   `undefined`, and send a visitor to sign in only when it is `null`.
-- Never change anything in `web/app/entities/`, unless a blocker needs it;
-  then name the blocker in your summary.
+- When a screen needs an operation or a field the layer lacks, add it in
+  the entity's folder, written like the ones beside it, and list it in your
+  summary.

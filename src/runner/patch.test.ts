@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { assertWithinLimits, toJsonSchema } from '../core/schema';
-import { FlowsPatch } from '../agents/01flows/04reconcile/schema';
+import { CONTRACT_KEYS, Contract } from '../agents/03contract/schema';
 import { applyPatch, patchSchema } from './patch';
 
 const Doc = z.object({
@@ -38,9 +38,10 @@ describe('patchSchema', () => {
     expect(() => patchSchema(Doc, { title: 'id' })).toThrow(/not a list/);
   });
 
-  it('keeps the flows patch within the API limits', () => {
+  it('keeps the contract patch within the API limits', () => {
+    const ContractPatch = patchSchema(Contract, CONTRACT_KEYS);
     expect(() =>
-      assertWithinLimits(toJsonSchema(FlowsPatch, 'FlowsPatch')),
+      assertWithinLimits(toJsonSchema(ContractPatch, 'ContractPatch')),
     ).not.toThrow();
   });
 });

@@ -41,10 +41,7 @@ import {
 } from './core/run';
 import { runLog } from './core/log';
 import { PIPELINE, type StageContext, type StageDef, stageBatches, stages } from './agents/stages';
-import { skeleton } from './agents/02design/08assemble/skeleton/skeleton';
-import { makeScreensSchema } from './agents/02design/schema';
 import type { Themed } from './agents/02design/01theme/build';
-import { renderWireframes } from './agents/02design/08assemble/wireframes';
 import { writeJsonAtomic } from './core/utils';
 import { cleanAgentImages } from './engine/docker';
 
@@ -74,7 +71,6 @@ const USAGE = `usage:
   weave show <runId>
   weave golden <runId> <ideaName> [--stages scope,flows]
   weave ds
-  weave wireframes <screens.json> [--out <dir>]
   weave app <runId>
   weave bench <runId>
   weave docker-clean [--all]     remove the agent's old images; --all removes the current one too`;
@@ -318,36 +314,6 @@ export async function dsCommand(
   return lines;
 }
 
-/** Solves a screens file into 02-skeleton.json and 02-wireframes.html, by default in runs/wireframes/<file name>/. */
-export async function wireframesCommand(
-  file: string,
-  outDir?: string,
-  deps: InventoryOptions & Pick<CliDeps, 'out' | 'runsDir'> = {},
-): Promise<string[]> {
-  const out = deps.out ?? console.log;
-  const inv = await inventory(deps);
-  // A run's 08-assemble.json is an artifact envelope; a bare screens file is its data.
-  const raw = JSON.parse(readFileSync(file, 'utf8')) as { data?: unknown; meta?: unknown };
-  const screens = makeScreensSchema(inv).Screens.parse(raw.meta && raw.data ? raw.data : raw);
-  const name = path.basename(file).replace(/\.json$/, '');
-  const dest =
-    outDir ?? path.join(deps.runsDir ?? DEFAULT_RUNS_DIR, 'wireframes', name);
-  mkdirSync(dest, { recursive: true });
-  const solved = skeleton(screens, inv, 'picture');
-  const files = ['02-skeleton.json', '02-wireframes.html'].map((f) =>
-    path.join(dest, f),
-  );
-  writeJsonAtomic(files[0] as string, solved);
-  writeFileSync(files[1] as string, renderWireframes(solved, screens, name));
-  const rects = solved.screens.reduce((total, s) => total + s.rects.length, 0);
-  const lines = [
-    `${solved.screens.length} screens, ${rects} rectangles`,
-    ...files,
-  ];
-  for (const line of lines) out(line);
-  return lines;
-}
-
 /**
  * The run's theme applied to the run's own app, the one the code stages build
  * on (made by the scaffold on first use), and every component screenshotted in
@@ -428,10 +394,6 @@ export async function main(argv: string[]): Promise<number> {
         return 0;
       case 'ds':
         await dsCommand();
-        return 0;
-      case 'wireframes':
-        if (!first) throw new UsageError('wireframes needs a screens file');
-        await wireframesCommand(first, values.out);
         return 0;
       case 'app':
         if (!first) throw new UsageError('app needs a run id');

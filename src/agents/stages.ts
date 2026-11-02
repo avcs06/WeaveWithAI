@@ -12,7 +12,6 @@ import { architectStage, themeStage } from './02design/stages';
 import { contractStage } from './03contract/stage';
 import { scaffoldStage } from './04code/01scaffold/stage';
 import { contractCodeStage } from './04code/02contract/stage';
-import { sharedStage } from './04code/03shared/stage';
 import { framesStage } from './04code/04frames/stage';
 import { pagesStage } from './04code/05pages/stage';
 
@@ -42,7 +41,6 @@ export const PIPELINE: string[] = [
   'contract',
   'code-scaffold',
   'code-contract',
-  'code-shared',
   'code-frames',
   'code-pages',
   'bench',
@@ -74,7 +72,6 @@ export const stages: StageDef[] = [
   contractStage,
   scaffoldStage,
   contractCodeStage,
-  sharedStage,
   framesStage,
   pagesStage,
 ];

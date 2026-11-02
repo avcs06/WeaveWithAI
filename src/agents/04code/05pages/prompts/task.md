@@ -1,10 +1,10 @@
-<!-- The task of a page session: one page, or pages that open each other, built in one go (plan.ts). Placeholders: folders, pages (a line per page: screen, name, route, its .weave folder, its route folder and its verify command). -->
-Build the pages below. Each comes from its folder in `.weave/05-pages/` and goes in its route folder. Pages listed together open each other, so build them in one go. The other pages they open are built already.
+<!-- The task of the pages session: every screen, built in one go. Placeholder: pages (a line per screen: id, title, route, its .weave file, its route folder and its verify command). -->
+Build every screen below, each from its file in `.weave/05-pages/` into its route folder. You build them all in this session: build what two screens share once, in `web/app/blocks/` or `web/app/components/`, and use it on both.
 
-Read `.weave/01-scaffold/guidelines.md` first: it says what to read in each folder. Your folders are {{folders}}; follow every guideline in them.
+Read `.weave/01-scaffold/guidelines.md` first: it says what to read in each folder. Your folders are `.weave/01-scaffold/`, `.weave/02-contract/`, `.weave/04-frames/` and `.weave/05-pages/`; follow every guideline in them.
 
-Check each page with its command. The command checks the desktop width, since the app has no phone layout yet, and on a page behind sign-in it signs in as a member first.
+Build the screens in the order below, and check each with its command once it is built. The command checks the desktop width, and on a page behind sign-in it signs in as a member first.
 
-## The pages
+## The screens
 
 {{pages}}

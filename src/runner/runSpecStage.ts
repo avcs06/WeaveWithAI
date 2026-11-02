@@ -90,7 +90,7 @@ export type SpecStageOptions<T> = {
   compose?: Compose<T>;
   /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
-  /** A document to start from: round 1 validates it instead of generating one (reconciliation). */
+  /** A document to start from: round 1 validates it instead of generating one. */
   start?: Draft<T>;
   /** Issues found outside the stage's own validators, such as on the whole design; they join round 1's issues of `start`, so its first fix applies them. */
   seed?: Issue[];

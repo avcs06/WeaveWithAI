@@ -3,53 +3,20 @@ import path from 'node:path';
 import type { Contract } from '../agents/03contract/schema';
 import type { Check } from './session';
 
-// The app's own checks after a coding session: the route folder against
-// the screen's design and the contract. The guidelines ask for a data-testid
-// per node and for data through functions named after the operations, so a
-// missing name is a missing element or an unwired widget, not a style choice.
+// The app's own check after a coding session: each screen's route folder
+// against the contract. The guidelines ask for data through functions named
+// after the operations, so a missing name is a screen that does not load its
+// records, not a style choice.
 
-/** What a screen's route folder must name: its nodes' test ids and words, and the operations its widgets read. */
-export type ScreenExpect = { folder: string; testIds: string[]; words?: NodeWords[]; operations: string[] };
+/** What a screen's route folder must call: the operations that load what it and its dialogs show. */
+export type ScreenExpect = { folder: string; operations: string[] };
 
-/** A node's own words: its text or label as the design writes it. */
-export type NodeWords = { id: string; text: string };
-
-/**
- * The words of these nodes that code must show as written: none that holds a {Noun.attribute} value, and no
- * text of a node that shows data, since that text is a sample of the record's value.
- */
-export function nodeWords(nodes: { id: string; text: string; label: string; data: string[] }[]): NodeWords[] {
-  return nodes.flatMap((node) =>
-    [node.data.length ? '' : node.text, node.label].filter((text) => text.trim() && !text.includes('{')).map((text) => ({ id: node.id, text: text.trim() })),
-  );
-}
-
-type Design = {
-  screens: { id: string; route: string; parent: string }[];
-  nodes: { id: string; section: string; text: string; label: string; data: string[] }[];
-  sections: { id: string; screen: string }[];
-  placements: { screen: string; widget: string }[];
-};
-
-/** A page and its dialogs: their nodes' ids, and the operations that load their widgets. */
-export function screenExpect(design: Design, contract: Contract, screen: string): ScreenExpect {
-  const page = design.screens.find((s) => s.id === screen);
-  if (!page) throw new Error(`no screen ${screen} in the design`);
-  const ids = new Set([screen, ...design.screens.filter((s) => s.parent === screen).map((s) => s.id)]);
-  const sections = new Set(design.sections.filter((s) => ids.has(s.screen)).map((s) => s.id));
-  const widgets = new Set(design.placements.filter((p) => ids.has(p.screen)).map((p) => p.widget));
-  // Not every operation of the screen's steps: a step's effect may run inside another, as duplicating a dashboard copies its widgets.
-  const operations = new Set(contract.widgets.filter((w) => widgets.has(w.widget)).flatMap((w) => w.reads));
-  // A get is loaded already when the screen calls its entity's list: the list holds each record.
+/** A screen's folder and the operations that load it; a get drops out when the screen calls its entity's list, which holds each record. */
+export function screenExpect(contract: Contract, folder: string, reads: string[]): ScreenExpect {
+  const operations = new Set(reads);
   const listed = new Set(contract.operations.filter((op) => op.kind === 'list' && operations.has(op.id)).map((op) => op.entity));
   for (const op of contract.operations) if (op.kind === 'get' && listed.has(op.entity)) operations.delete(op.id);
-  const nodes = design.nodes.filter((n) => sections.has(n.section));
-  return {
-    folder: path.join('web/app/(routes)', page.route.replace(/^\//, '')),
-    testIds: nodes.map((n) => n.id),
-    words: nodeWords(nodes),
-    operations: [...operations],
-  };
+  return { folder, operations: [...operations] };
 }
 
 function sourcesIn(dir: string): string {
@@ -60,29 +27,14 @@ function sourcesIn(dir: string): string {
     .join('\n');
 }
 
-/** Code text as it shows: JSX entities read as their characters, runs of space as one. */
-const shown = (text: string) =>
-  text
-    .replace(/&apos;|&#39;|&rsquo;|&lsquo;/g, "'")
-    .replace(/&quot;|&ldquo;|&rdquo;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ');
-
 export function checkScreen(appDir: string, expect: ScreenExpect): Check {
   const code = sourcesIn(path.join(appDir, expect.folder));
-  const text = shown(code);
   const lines = [
-    ...(code || !(expect.testIds.length || expect.words?.length || expect.operations.length) ? [] : [`${expect.folder} has no code.`]),
-    ...expect.testIds.filter((id) => !code.includes(id)).map((id) => `No element has data-testid "${id}".`),
-    ...(expect.words ?? [])
-      .filter((w) => !text.includes(shown(w.text)))
-      .map((w) => `The words "${w.text}" of ${w.id} are nowhere in ${expect.folder}; show the node's text as the design writes it.`),
+    ...(code ? [] : [`${expect.folder} has no code.`]),
     // An operation is called by its function or its hook: listBooks() or useListBooks().
     ...expect.operations
       .filter((op) => !new RegExp(`\\b(${op}|use${op.charAt(0).toUpperCase()}${op.slice(1)})\\b`).test(code))
-      .map((op) => `Nothing in ${expect.folder} calls ${op}; load the widget's data through it.`),
+      .map((op) => `Nothing in ${expect.folder} calls ${op}; load the screen's records through it.`),
   ];
-  // Missing words are a warning: they never fail the check, only show in its output.
-  const failing = lines.filter((line) => !line.startsWith('The words '));
-  return { name: 'design', ok: failing.length === 0, output: lines.join('\n') };
+  return { name: 'design', ok: lines.length === 0, output: lines.join('\n') };
 }

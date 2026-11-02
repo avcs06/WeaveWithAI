@@ -19,7 +19,7 @@ import { git } from './setup';
 // fails a session whose diff touches a test or a path outside its own.
 
 export type Session = {
-  /** 'page:S04', 'component:WidgetBoard', 'repair:R03' */
+  /** 'frames', 'pages', 'repair:R03' */
   id: string;
   /** The short prompt: it names the `.weave/` input files and the guidelines. */
   task: string;

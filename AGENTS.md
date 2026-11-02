@@ -25,12 +25,12 @@ src/
   engine/                the Muse Code runner: app setup, one coding session, the gate after it
   agents/
     stages.ts            the pipeline order
-    01flows/             scope, catalog, expand, reconcile; the flow shapes and rules they share
-    02design/            theme (with its brief), architect, catalog, screen, invent, draw, frame,
-                         assemble; the shapes, config and DESIGN rules they share
-    03contract/          the contract: the records and operations behind every widget
-    04code/              scaffold, contract code, shared, frames, pages; the unit runner and the
-                         code reviewers they share
+    01flows/             scope, catalog, expand; the flow shapes and rules they share
+    02design/            theme (with its brief), architect (frames, screens and dialogs in prose);
+                         the config they share
+    03contract/          the contract: the records and operations behind every screen
+    04code/              scaffold, contract code, frames, pages; the unit runner and the code
+                         reviewers they share
 ```
 
 Each stage is a folder `<NN><name>` in its group, and a full pipeline stage
@@ -47,9 +47,8 @@ validation/    validation.ts (the rule list), helpers.ts, rules/ (one file per r
 ```
 
 Tests sit beside what they test. Code that several stages of a group share
-sits in the group folder, never in a stage of its own: `02design/schema.ts`,
-`02design/config.ts`, `02design/rules/`. Assembly code lives only in
-`02design/08assemble`; other stages import what they need from it.
+sits in the group folder, never in a stage of its own: `01flows/schema.ts`,
+`01flows/rules/`, `02design/config.ts`.
 
 ## How to work
 
@@ -111,8 +110,8 @@ restructure) stay as they are.
   entity stores inside the app, and a benchmark stage
   (`docs/specs/benchmark.md`) measures the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
-  its origin. A Muse Code session writes only its stage's paths, and the
-  entity layer only for a blocker. The runner records its git diff in the
+  its origin. A Muse Code session writes only its stage's paths and the
+  entity layer. The runner records its git diff in the
   ledger, commits it with a patch in the run whether it passed or not, and
   fails the session when the diff touches a test or a path outside its own.
 - Secrets only in `.env` (gitignored), loaded with `process.loadEnvFile()`.

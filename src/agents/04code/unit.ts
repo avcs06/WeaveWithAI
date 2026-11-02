@@ -15,7 +15,7 @@ import type { StageContext } from '../stages';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
 
-/** Code wrote the entity layer; a session may change it only for a blocker, as the guidelines say. */
+/** Code wrote the entity layer; a session adds to it when a screen needs an operation or a field it lacks. */
 export const ENTITIES = 'web/app/entities/**';
 
 /** What no session should read: the design system's and the tools' code, and the token and Tailwind files the MCP answers for. */

@@ -1,41 +1,35 @@
 import { readArtifact } from '../../../core/artifacts';
 import { loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
-import { nodeWords } from '../../../engine/conformance';
-import type { WidgetScreens } from '../../02design/08assemble/assemble';
+import type { Architecture } from '../../02design/02architect/schema';
 import type { StageContext, StageDef } from '../../stages';
+import { frameGroup } from '../01scaffold/weave';
 import { ENTITIES, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-frames';
 
-/** One session for every shell: its layout in a route group named after it, and its parts in components. */
-export function framesSpecs(design: WidgetScreens): Omit<UnitSpec, 'rendered'>[] {
-  if (!design.shells.length) return [];
-  const shellNodes = design.nodes.filter((n) => /^SH\d+\./.test(n.id));
+/** One session for every frame: its layout in its route group, and its parts in components. */
+export function framesSpecs(architecture: Architecture): Omit<UnitSpec, 'rendered'>[] {
+  if (!architecture.frames.length) return [];
   return [
     {
       id: 'frames',
       stage: STAGE,
       task: loadPrompt(pathBeside(import.meta.url, './prompts/task.md')),
-      folders: ['01-scaffold', '02-contract', '03-shared', '04-frames'],
-      // The shell folders' own files, a layout's styles included; the route folders inside are the pages'.
-      writes: [...design.shells.map((s) => `web/app/(routes)/(${s.name})/`), 'web/app/components/**', ENTITIES],
-      // No page sits in a shell yet, so no route renders a frame: the pages check the frames in place, in the browser.
-      expects: [
-        {
-          folder: 'web/app',
-          testIds: shellNodes.map((n) => n.id),
-          words: nodeWords(shellNodes),
-          operations: [],
-        },
+      folders: ['01-scaffold', '02-contract', '04-frames'],
+      // The route groups' own files, a layout's styles included; the route folders inside are the screens'.
+      writes: [
+        ...architecture.frames.map((frame) => `web/app/(routes)/(${frameGroup(architecture, frame.id)})/`),
+        'web/app/components/**',
+        ENTITIES,
       ],
     },
   ];
 }
 
 async function runFrames(ctx: StageContext): Promise<void> {
-  const design = readArtifact<WidgetScreens>(ctx.run, 'design-assemble').data;
-  await runUnits(ctx, STAGE, framesSpecs(design));
+  const architecture = readArtifact<Architecture>(ctx.run, 'design-architect').data;
+  await runUnits(ctx, STAGE, framesSpecs(architecture));
 }
 
 export const framesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runFrames(ctx) };
