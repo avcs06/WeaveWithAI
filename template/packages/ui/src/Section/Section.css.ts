@@ -5,6 +5,7 @@ const colors = tokens.color.surface;
 
 // One size at every heading level: the level is for the outline only.
 export const sectionTitle = style({
+  fontFamily: tokens.fontFamily.display,
   fontSize: tokens.fontSize.heading,
   fontWeight: tokens.fontWeight.heading,
   lineHeight: tokens.lineHeight.heading,

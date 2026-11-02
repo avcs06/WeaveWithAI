@@ -42,6 +42,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 
 ## Text
 
+- Numbers the user reads and compares, such as a counter, a total, a statistic or a table's figures, are set in the mono font with tabular figures (`font-mono tabular-nums`). A number inside a sentence stays in the sentence's font.
 - Any text that stays on one line is a `Truncate`, wherever it sits: a heading, a label, a cell, a breadcrumb, a status line. Whether or not its container has a set width, it cuts the text with an ellipsis and a tooltip where the room runs out, and changes nothing where it does not. A flex parent needs `min-w-0`.
 
 ## Spacing

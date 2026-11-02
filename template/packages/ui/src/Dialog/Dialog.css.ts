@@ -47,6 +47,7 @@ export const dialogHeader = style({
 });
 
 export const dialogTitle = style({
+  fontFamily: tokens.fontFamily.display,
   fontSize: tokens.fontSize.subheading,
   fontWeight: tokens.fontWeight.semibold,
   lineHeight: tokens.lineHeight.subheading,

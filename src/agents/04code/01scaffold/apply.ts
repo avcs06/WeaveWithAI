@@ -54,6 +54,7 @@ export function applyColors(text: string, theme: Theme): string {
     out = setStrings(out, within('surface'), {
       ...Object.fromEntries(PAGE_ROLES.map((role) => [role, colors.page[role]])),
       pageBackground: colors.page.pageBackground,
+      logo: theme.logo.colors[mode] ?? '',
     });
     for (const status of STATUSES) {
       const [open, close] = within('status');
@@ -69,9 +70,18 @@ export function applyColors(text: string, theme: Theme): string {
   return out;
 }
 
-/** tokens.ts with the theme's radius and focus ring. */
+/** tokens.ts with the theme's radius, focus ring and wordmark. */
 export function applyTokens(text: string, theme: Theme): string {
-  const out = setStrings(text, block(text, 'radius'), theme.radius);
+  let out = setStrings(text, block(text, 'radius'), theme.radius);
+  const role = (['ui', 'display', 'mono'] as const).find((role) => theme.fonts[role] === theme.logo.family);
+  if (!role) throw new Error(`Logo family ${theme.logo.family} is not a theme font`);
+  out = setStrings(out, block(out, 'logo'), {
+    fontWeight: theme.logo.weight,
+    textTransform: { 'as written': 'none', upper: 'uppercase', lower: 'lowercase' }[theme.logo.case],
+    letterSpacing: theme.logo.letterSpacing,
+  });
+  const [open, close] = block(out, 'logo');
+  out = out.slice(0, open) + out.slice(open, close).replace(/fontFamily: fontFamily\.\w+/, `fontFamily: fontFamily.${role}`) + out.slice(close);
   return out.replace(/(\n\s*focusRing: )'[^']*'/, `$1'${theme.focusRing}'`);
 }
 

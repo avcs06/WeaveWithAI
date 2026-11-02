@@ -35,6 +35,8 @@ export type ColorSet = {
 export type SurfaceColors = {
   /** The page's background as one CSS value: a color, or gradients of colors. */
   pageBackground: string;
+  /** The theme's wordmark color. */
+  logo: string;
   /** The page's solid color: shown until the background paints, and the color disabled states fade into. Color sets are for controls and containers. */
   pageBg: string;
   /** Header and footer background, framing the page content. */
@@ -85,6 +87,7 @@ export const colors = {
   surface: {
     light: {
       pageBackground: '#FFFFFF',
+      logo: '#18181B',
       pageBg: '#FFFFFF',
       frameBg: '#FAFAFA',
       pageFg: '#18181B',
@@ -95,6 +98,7 @@ export const colors = {
     } satisfies SurfaceColors,
     dark: {
       pageBackground: '#18181B',
+      logo: '#FAFAFA',
       pageBg: '#18181B',
       frameBg: '#1F1F23',
       pageFg: '#FAFAFA',

@@ -38,6 +38,9 @@ describe('applyColors', () => {
     // The page background is CSS, a gradient here, beside its solid pageBg.
     expect(after).toContain(`pageBackground: '${light.page.pageBackground}'`);
     expect(after).toContain(`pageBackground: '${theme.colors.dark!.page.pageBackground}'`);
+    for (const mode of theme.modes) {
+      expect(after).toContain(`logo: '${theme.logo.colors[mode]}'`);
+    }
   });
 
   it('escapes a quote in a page background inside its string', () => {
@@ -54,6 +57,24 @@ describe('applyColors', () => {
 });
 
 describe('applyTokens', () => {
+  it.each(['ui', 'display', 'mono'] as const)('maps the logo family to the %s token', (role) => {
+    const chosen = { ...theme, logo: { ...theme.logo, family: theme.fonts[role], weight: '600', case: 'upper' as const, letterSpacing: '0.12em' } };
+    const after = applyTokens(template('tokens.ts'), chosen);
+    expect(after).toContain(`fontFamily: fontFamily.${role}`);
+    expect(after).toContain("fontWeight: '600'");
+    expect(after).toContain("textTransform: 'uppercase'");
+    expect(after).toContain("letterSpacing: '0.12em'");
+    expect(applyTokens(after, chosen)).toBe(after);
+  });
+
+  it.each([['as written', 'none'], ['lower', 'lowercase']] as const)('maps logo case %s', (value, css) => {
+    expect(applyTokens(template('tokens.ts'), { ...theme, logo: { ...theme.logo, case: value } })).toContain(`textTransform: '${css}'`);
+  });
+
+  it('rejects a logo family outside the theme fonts', () => {
+    expect(() => applyTokens(template('tokens.ts'), { ...theme, logo: { ...theme.logo, family: 'Unknown' } })).toThrow('not a theme font');
+  });
+
   it('sets the radius of surfaces and controls and the focus ring', () => {
     const after = applyTokens(template('tokens.ts'), {
       ...theme,
