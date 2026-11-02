@@ -107,7 +107,6 @@ export type NumberInputProps<D extends number = never> = FormControlOwnProps &
 export type FieldButtonProps = {
   /** The button's name, also shown in its tooltip. */
   label: string;
-  size: FormControlOwnProps['size'];
   disabled?: boolean;
   'aria-pressed'?: boolean;
   onClick: () => void;

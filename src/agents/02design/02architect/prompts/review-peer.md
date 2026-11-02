@@ -38,7 +38,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 ## The practices
 
-The screens follow the practices below, the ones a screen's steps decide. Report a screen that breaks one: a value edited through a field added under it instead of in its place or in a dialog, a document screen with no view mode and edit mode, an action twice in one view, an empty state that repeats the action above it, or a row whose delete is louder than its other actions.
+The screens follow the practices below, the ones a screen's steps decide. Report a screen that breaks one: a value edited through a field added under it instead of in its place or in a dialog, a screen the user looks at or uses and can also change, such as a dashboard or an editor, with no view mode and edit mode, an action twice in one view, an empty state that repeats the action above it, or a row whose delete is louder than its other actions.
 
 {{ux}}
 

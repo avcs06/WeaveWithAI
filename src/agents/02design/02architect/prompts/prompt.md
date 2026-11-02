@@ -35,7 +35,7 @@ A screen is one URL. Make one for each place a flow needs: the landing page, eac
   - An edit of a value the screen shows says how: in its place, "Can rename the dashboard in place, which saves the name", or in a dialog, "which opens D04". A short value with no other fields is edited in place; several fields go in a dialog.
 - `alternatives`: what the screen shows in other situations, each with its own steps: an empty list and the action that fills it, a record that is gone, no access, the first visit, what the user sees after a save. Leave loading and a failed load out: the coding agent shows those the same way everywhere.
 
-A screen where the user reads a document and also changes it, such as an editor, has a view mode and an edit mode. Its steps are the viewing ones, with one action that enters editing: "Can choose "Edit", which shows the editing controls." The editing steps go under an alternative "When editing:", ending with the action that leaves it: "Can choose "Done", which shows the document as it is now." No editing control shows while the user only reads.
+A screen the user comes to look at or use, and can also change, has a view mode and an edit mode: a dashboard, a document, a board, a profile, a settings page, whatever the flows call it, an editor included. Its steps are the viewing ones, with one action that enters editing: "Can choose "Edit", which shows the editing controls." The editing steps go under an alternative "When editing:", ending with the action that leaves it: "Can choose "Done", which shows the dashboard as it is now." No editing control shows while the user only views. Using the content, such as ticking a checklist item or opening a link, is viewing and stays in the viewing steps.
 
 ## Dialogs
 

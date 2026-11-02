@@ -29,6 +29,7 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 
 - A screen where what the user came for does not come first and stand out: steps in another order than the design gives, a title and first steps quieter than later ones, or help text and secondary actions before them.
 - A view with more than one action styled as its main one, or whose main action looks like the others. Many secondary actions in a row where a menu belongs.
+- Sibling actions of equal weight as different elements, such as sign in as a link beside sign up as a button.
 - What belongs together set apart: a record's fields spread over several sections, or a list's search, filters and add action away from the list.
 - Groups set as close together as the items inside them, so the user cannot tell where one group ends.
 - Records the user compares shown as cards, or records the user opens one by one forced into a table.
@@ -37,10 +38,12 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 - An inline action in a row or a toolbar shown as text, or a menu action shown as an icon alone.
 - The same action twice in one view, such as an add action above an empty list and again in its empty state.
 - A value edited through a second field added under it, instead of in its place or in a dialog.
-- A document screen with no view mode: editing controls shown while the user only reads.
+- An in-place edit with a label or help text, or whose edit, save and cancel are not icon buttons beside the value.
+- A screen the user looks at or uses and can also change, such as a dashboard or a document, with no view mode: editing controls shown while the user only views.
+- A screen whose breadcrumbs or way back are not at the top, or whose page-level actions sit away from the title and the top.
 - Text meant for one line, wherever it sits, set without `Truncate`, so it wraps or overflows where the room runs out.
 
-A list's search, filters and add action together right above the list are what the guidelines ask, not a blocker.
+A list's search, filters and add action together right above the list, and the breadcrumbs, the way back and the page-level actions above the title, are what the guidelines ask, not a blocker.
 
 ## Frames
 

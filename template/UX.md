@@ -15,11 +15,19 @@ the coding agent builds to them, and the reviewers hold the work to them.
 - One main action per view, as the primary button. Every other action is secondary, or sits in a menu when there are many.
 - An action appears once per view. A frame's action, in the header or the sidebar, is not repeated on the screen inside it.
 - An empty list shows its add action once, in the empty state. The same action above the list is hidden while the list is empty.
+- Sibling actions of equal weight are the same element: two buttons, primary and secondary, or two links. A link beside a button says the link weighs less, as a quiet way out beside the main action does. Never a link and a button for two actions of equal weight, such as sign in and sign up.
 
 ## Editing
 
-- A value shown on the page is edited in its place or in a dialog. In place, the value itself becomes the field, with save and cancel, and nothing else on the page moves. Never a second field added under the value.
-- A screen where the user reads a document and also changes it has a view mode and an edit mode. Viewing shows the document and one "Edit" action. Editing shows the controls and a "Done" action.
+- A value shown on the page is edited in its place or in a dialog. In place, the value itself becomes the field, with no label and no help text, and nothing else on the page moves. Never a second field added under the value.
+- The actions of an in-place edit are icon buttons with tooltips beside the value: edit while viewing, then save and cancel while editing. Never text buttons under the field.
+- A screen the user comes to look at or use, and can also change, has a view mode and an edit mode: a dashboard, a document, a board, a profile, a settings page, whatever the flows call it. Viewing shows the content and one "Edit" action, and no editing control. Editing shows the editing controls and a "Done" action. Using the content, such as ticking an item or opening a link, is viewing.
+
+## Screens
+
+- The top of a screen holds the breadcrumbs or the way back first, then the title. The page-level actions sit in line with the title, or above it with the breadcrumbs. Nothing else comes before the title.
+- A link that works as a control, such as a breadcrumb, a way back or a navigation item, is `plain`. The dotted line is for a link inside text.
+- Centered content, such as a landing or sign-in page, is a centered column. Inside it, a section with several rows, such as a list, a form or a group of reasons, aligns its rows to the start, or to the end when that suits it, never to the center.
 
 ## Forms
 

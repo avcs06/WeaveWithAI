@@ -28,12 +28,11 @@ import type {
 /**
  * A button in the field's box, as tall as its line so the box keeps its height.
  */
-const FieldButton = ({ label, size, ...props }: FieldButtonProps) => (
+const FieldButton = ({ label, ...props }: FieldButtonProps) => (
   <IconButton
     {...props}
     variant="base"
     look="ghost"
-    size={size === 'md' ? 'sm' : 'xs'}
     tooltip={label}
     className={fieldButton}
   />
@@ -102,7 +101,6 @@ export const SearchInput = ({
         !isDisabled && (
           <FieldButton
             label="Clear search"
-            size={props.size}
             onClick={() => {
               search('');
               inputRef.current?.focus();
@@ -137,7 +135,6 @@ export const PasswordInput = (props: PasswordInputProps) => {
         // button often isn't announced.
         <FieldButton
           label="Show password"
-          size={props.size}
           disabled={isDisabled}
           aria-pressed={visible}
           onClick={() => setVisible(!visible)}
