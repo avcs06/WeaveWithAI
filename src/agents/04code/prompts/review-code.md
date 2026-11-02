@@ -8,29 +8,27 @@ Read the diff file by file: where each file sits, what it does, and what it impo
 
 The app's folders are `shared` for app-wide plumbing with no UI, `entities` for the data, `components` for reused basic components, `blocks` for reused complex components that combine design-system components with entity data, and `(routes)` for the screens. Imports go one way: shared, entities, components, blocks, then the screens. A frame's parts go in components, and those that load or change records in blocks, as the frames' guidelines say.
 
-- C01: An import against that order, such as a component that imports a block, or a block that imports from a screen's folder.
-- C02: A screen's own styles, parts or dialogs outside its route folder, such as in the app-wide components when only that screen uses them.
-- C03: A part or dialog that two screens use, built in each screen's folder or taken from one screen's folder by the other, instead of built once in blocks or components.
-- C04: A frame's part, such as its header, sidebar, navigation, account menu or footer, written into its layout instead of its own folder in components or blocks.
-- C05: A change to the root layout around every route. It stays as it is.
+- C01: Every import follows that order. A component never imports a block, and a block never imports from a screen's folder.
+- C02: Each screen's own styles, parts and dialogs sit in its route folder, not in the app-wide components when only that screen uses them. A part or dialog that two screens use is built once, in blocks or components. It is not built in each screen's folder, or taken by one screen from the other's folder.
+- C03: Each part of a frame, such as its header, sidebar, navigation, account menu or footer, has its own folder in components or blocks, rather than being written into its layout.
+- C04: The root layout around every route stays as it is.
 
 ## Data
 
-- C06: Records read or changed around the entity layer: rows or numbers written into a component, a fetch, browser storage, or an entity's store or inner files used directly.
-- C07: State that copies what an entity hook holds, such as records loaded into a component's state in an effect instead of read through the operation's hook.
-- C08: An operation or field added to the entity layer that is not written like the ones beside it, or that the summary does not list.
+- C05: Every record is read and changed through the entity layer. No component has rows or numbers written into it, and nothing reads or changes records through a fetch, browser storage, or an entity's store or inner files.
+- C06: Records are read through the operation's hook, and no state copies what the hook holds, such as records loaded into a component's state in an effect.
+- C07: Every operation or field added to the entity layer is written like the ones beside it, and the summary lists it.
 
 ## Building
 
-- C09: A component doing several jobs, such as loading records, holding a form's state and laying out the whole screen in one body.
-- C10: A name that does not say what the thing is or does.
-- C11: The same markup, state or logic in two places instead of one component or function, such as the same loading and failed-load markup on every screen.
-- C12: An element built by hand where the change already has a component for it.
-- C13: A component built in the app that the design system already has, such as a confirm dialog, a menu, a tooltip, a form layout or a sidebar navigation. The design system's components are: {{components}}.
-- C14: Dead code: unused props, branches, files or exports, or code the change replaced and left behind.
-- C15: A route opened by setting the window's location instead of through a link or the router.
-- C16: A hook called inside a condition or after an early return, such as after returning nothing while the signed-in user is undefined. Lint does not check this.
-- C17: A frame's layout or part that reads the signed-in user or the current route without being a client component. No check opens a frame in a browser until the screens are built.
+- C08: Each component does one job. One body that loads records, holds a form's state and lays out the whole screen does several.
+- C09: Every name says what the thing is or does.
+- C10: Markup, state or logic that two places need is written once, as one component or function, such as the loading and failed-load markup every screen shows.
+- C11: Each element uses the component that already exists for it: one the change already has, or the design system's, such as its confirm dialog, menu, tooltip, form layout or sidebar navigation. The design system's components are: {{components}}.
+- C12: The change has no dead code: every prop, branch, file and export is used, and code it replaced is removed.
+- C13: Every route opens through a link or the router, not by setting the window's location.
+- C14: Every hook is called outside any condition and before any early return, such as one that returns nothing while the signed-in user is undefined. Lint does not check this.
+- C15: Each layout or part of a frame that reads the signed-in user or the current route is a client component. No check opens a frame in a browser until the screens are built.
 
 When the known issues say the session did not finish, the summary is only the reason it stopped. Judge the diff alone and leave the summary checks out.
 

@@ -6,48 +6,40 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 ## Every flow can be finished
 
-- P01: A flow step with no place, or with two places that disagree.
-- P02: A flow the user cannot finish: the place of a step cannot be reached from the place of the step before it, or the user never sees the outcome.
-- P03: A flow alternative with no place: an empty list, a confirm or cancel, no access, or a record that is gone. Invalid input and a failed save need no place: forms show them the same way everywhere.
-- P04: A step placed on a screen its role never uses, such as a signed-in task on a public page.
+- P01: Every flow step has a place. When a step has two places, they agree. Every flow alternative has a place too: an empty list, a confirm or cancel, no access, or a record that is gone. Invalid input and a failed save need no place: forms show them the same way everywhere.
+- P02: The user can finish every flow. The place of each step can be reached from the place of the step before it, and the user sees the outcome.
+- P03: Every step placed on a screen is on one its role uses: a signed-in task is on a signed-in screen, not on a public page.
 
 ## The right places
 
-- P05: A place a flow needs with no screen of its own: the landing page, sign in and sign up, each list the frame does not hold, each record's details, each editor, each form with many fields, account, settings, and the screen each signed-in role lands on after signing in.
-- P06: Information the user comes to look at, such as a dashboard, a list or a record's details, squeezed into another screen where it gets lost.
-- P07: One screen doing two jobs the user does at different times, or two screens for the same job.
-- P08: A dialog holding a task that needs a page: many fields, or something the user wants to link to or come back to. A page for a task of one or two fields that keeps the user's place better as a dialog.
+- P04: Every place a flow needs has a screen of its own: the landing page, sign in and sign up, each list the frame does not hold, each record's details, each editor, each form with many fields, account, settings, and the screen each signed-in role lands on after signing in.
+- P05: Each screen does its own job, one no other screen does. A screen does two jobs only when the user does them at the same time. Information the user comes to look at, such as a dashboard, a list or a record's details, has a place of its own. Squeezed into another screen, it gets lost.
+- P06: A dialog holds a short task and keeps the user's place. A task with many fields, or one the user wants to link to or come back to, goes on a page instead. A task of one or two fields goes in a dialog when that keeps the user's place better than a page.
 
 ## Each screen says what it is for
 
-- P09: A title and first steps that don't say what the screen is for.
-- P10: What the user came for buried under secondary actions, filters, help text or promotions. The first steps carry what the `purpose` names, and secondary actions come after them.
-- P11: A landing page that does not first say what the app is, who it is for and what to do next.
-- P12: A landing page missing its headline, main action, preview of the app with sample records, or three or four reasons to join.
-- P13: Steps too vague to build: "Sees the details" instead of naming the fields, a list without what each item shows, an action without where it leads, or a choice without its options.
-- P14: A landing page or an empty state without its quoted words, or words that would fit any app, such as "Welcome to our app".
+- P07: Each screen's title and first steps say what it is for. The first steps carry what the user came for, as the `purpose` names it. Secondary actions, filters, help text and promotions come after them.
+- P08: The landing page first says what the app is, who it is for and what to do next. It has its headline, its main action, a preview of the app with sample records, and three or four reasons to join.
+- P09: Every step is concrete enough to build. A step names the fields it shows, rather than "Sees the details". A list says what each item shows. An action says where it leads, and a choice gives its options.
+- P10: The landing page and every empty state quote their words. The words are written for this app: words that would fit any app, such as "Welcome to our app", do not count.
 
 ## Getting around
 
-- P15: A frame that doesn't lead to a screen its role uses often, or leads to one the role cannot use.
-- P16: A signed-in role with no way to reach its account and settings, or to sign out.
-- P17: A screen, or a part of one, that repeats a list its frame holds, such as the list of dashboards the navigation already shows. Delete the repeat from the screen, even when a flow puts it there. When that leaves the screen with nothing of its own, ask for it to be built from what the role comes there for in the flows.
-- P18: A navigation with fewer than two destinations.
-- P19: A frame with the same action in two places, such as Create in the header and at the top of the sidebar, whatever the theme's layout slots say.
-- P20: A dead end: a screen with no way back or on, an empty list with no action that fills it, a dialog with no way out, or a record that is gone with no way on.
-- P21: A frame around signed-in screens that does not say what a visitor who is not signed in sees there.
-- P22: A frame that goes against the theme's page layouts.
+- P11: Each frame leads to every screen its role uses often, and only to screens the role can use. Every signed-in role can reach its account and settings, and can sign out.
+- P12: A list the frame holds, such as the list of dashboards the navigation already shows, appears only in the frame, even when a flow puts it on a screen. Delete any repeat of it from a screen or a part of one. When that leaves the screen with nothing of its own, ask for it to be built from what the role comes there for in the flows.
+- P13: Each frame follows the theme's page layouts. It holds each action once, even when a layout names it in two slots, such as Create in the header and at the top of the sidebar. A navigation holds two destinations or more.
+- P14: The user always has a way on. Every screen has a way back or on, and every dialog has a way out. Every empty list has an action that fills it, and a screen whose record is gone has a way on.
+- P15: Every frame around signed-in screens says what a visitor who is not signed in sees there.
 
 ## The practices
 
-- P23: The screens follow the practices below, the ones a screen's steps decide. Report a screen that breaks one: a value edited through a field added under it instead of in its place or in a dialog, a screen the user looks at or uses and can also change, such as a dashboard or an editor, with no view mode and edit mode, an action twice in one view, an empty state that repeats the action above it, or a row whose delete is louder than its other actions.
+- P16: Every screen follows the practices below, the ones a screen's steps decide. A value is edited in its place or in a dialog, never through a field added under it. A screen the user looks at or uses and can also change, such as a dashboard or an editor, has a view mode and an edit mode. Each action appears once in a view: an empty state does not repeat the action above it. A row's delete is as quiet as its other actions.
 
 {{ux}}
 
 ## Alternatives
 
-- P24: A screen missing an alternative it needs: an empty list with the action that fills it, a record that is gone, no access for a role, the first visit before any record exists, and what the user sees right after a save.
-- P25: An alternative for loading or a failed load. The coding agent shows those the same way on every screen.
+- P17: Every screen has the alternatives it needs: an empty list with the action that fills it, a record that is gone, no access for a role, the first visit before any record exists, and what the user sees right after a save. Loading and a failed load have no alternative: the coding agent shows those the same way on every screen.
 
 Taste is not a blocker. Another reviewer checks the output for errors in meaning; you judge the decisions. Leave out id formats.
 

@@ -6,65 +6,52 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 
 ## Building every step
 
-- A01: A frame, screen or dialog of this part that the change does not build, or builds as an empty shell.
-- A02: A step that is missing, or built so it shows or does something else: other fields than the step names, a list item without what the step says it shows, or an action that leads somewhere else.
-- A03: An alternative that is missing: invalid input, a failure, an empty list with the action that fills it, a cancel, a confirm, no access, or a record that is gone.
-- A04: An alternative that does not show when its situation happens, or shows when it does not, such as an empty list shown while the records still load.
-- A05: A control that does nothing, or leads somewhere other than its step says: a link to the wrong route, a step that opens a dialog but no dialog opens, or a way out of a dialog that does not lead where its step says.
-- A06: A list that would show no records with the seed data, such as one filtered on a fixed value the user did not choose.
-- A07: A form that does not save, or does not show the result its step gives after a save.
-- A08: A form that does not tell the user which field is invalid and why.
-- A09: A destructive action that runs without its confirm dialog, or before the user confirms. A cancel that changes anything.
-- A10: A screen with no loading state while its records load, or no error with a retry when loading fails. Screens that show loading or a failed load in different ways.
+- A01: Every frame, screen and dialog of this part is built, and none is an empty shell.
+- A02: Every step is built, and shows and does what it says. Its fields are the ones the step names, and each list item shows what the step says it shows.
+- A03: Every alternative is built: invalid input, a failure, an empty list with the action that fills it, a cancel, a confirm, no access, and a record that is gone. Each shows when its situation happens and only then, so an empty list never shows while the records still load.
+- A04: Every control works and leads where its step says. A link opens the route its step names, a step that opens a dialog opens it, and each way out of a dialog leads where its step says.
+- A05: Every list shows records with the seed data. None is left empty by a filter on a fixed value the user did not choose.
+- A06: Every form saves and then shows the result its step gives. It tells the user which field is invalid and why. When a save, change or delete fails, a message says so, and what the user typed is kept.
+- A07: Every destructive action opens its confirm dialog and runs only after the user confirms. A cancel changes nothing.
+- A08: Every screen shows a loading state while its records load, and an error with a retry when loading fails. All screens show loading and a failed load the same way.
 
 ## Data and words
 
-- A11: A save, change or delete that fails with no message, or loses what the user typed when it fails.
-- A12: Signing in that does not work as the guidelines say: a visitor who opens a signed-in page and is not sent to the landing page, a member sent to sign in before the saved session is read, or a sign-in that turns away an email it has not seen before.
-- A13: What the user sees that is not real: placeholder text, or another record than the route names.
-- A14: A value shown raw: a status key instead of its label, a record's id instead of its name, or a date in its stored form.
-- A15: A title, label, button or message in other words than the design gives, where the meaning changes.
+- A09: Signing in works as the guidelines say. A visitor who opens a signed-in page is sent to the landing page. A member is not sent to sign in before the saved session is read. Sign-in accepts any email, even one it has not seen before.
+- A10: What the user sees is real and in the design's words. A screen shows the record its route names and no placeholder text. Each title, label, button and message keeps the meaning of the words the design gives.
+- A11: Every value shows as the user reads it, never raw: a status by its label rather than its key, a record by its name rather than its id, and a date in a readable form rather than its stored form.
 
 ## Layout and emphasis
 
-- A16: A landing page that does not carry the theme: no hero, a headline not in the display font, no preview of the app, or the brief's signature missing.
-- A17: A screen where what the user came for does not come first and stand out: steps in another order than the design gives, a title and first steps quieter than later ones, or help text and secondary actions before them.
-- A18: A view with more than one action styled as its main one, or whose main action looks like the others. Many secondary actions in a row where a menu belongs.
-- A19: Sibling actions of equal weight as different elements, such as sign in as a link beside sign up as a button.
-- A20: What belongs together set apart: a record's fields spread over several sections, or a list's search, filters and add action away from the list.
-- A21: Groups set as close together as the items inside them, so the user cannot tell where one group ends.
-- A22: Records the user compares shown as cards, or records the user opens one by one forced into a table.
-- A23: A screen that does not line up on one left edge and one grid, or that stretches text and forms across the full desktop width.
-- A24: A row with a filled or loud destructive action. A row's actions are quiet icons with tooltips, and the filled `danger` button is the confirm dialog's.
-- A25: An inline action in a row or a toolbar shown as text, or a menu action shown as an icon alone.
-- A26: The same action twice in one view, such as an add action above an empty list and again in its empty state.
-- A27: A value edited through a second field added under it, instead of in its place or in a dialog.
-- A28: An in-place edit with a label or help text, or whose edit, save and cancel are not icon buttons beside the value.
-- A29: A screen the user looks at or uses and can also change, such as a dashboard or a document, with no view mode: editing controls shown while the user only views.
-- A30: A screen whose breadcrumbs or way back are not at the top, or whose page-level actions sit away from the title and the top.
-- A31: Text meant for one line, wherever it sits, set without `Truncate`, so it wraps or overflows where the room runs out.
+- A12: The landing page carries the theme: a hero, a headline in the display font, a preview of the app, and the brief's signature.
+- A13: On every screen, what the user came for comes first and stands out. The steps keep the order the design gives. Nothing later stands out more than the title and the first steps, and help text and secondary actions come after them.
+- A14: A view styles at most one action as its main one, and that action stands out from the others. Where a menu belongs, many secondary actions sit in it rather than in a row.
+- A15: Sibling actions of equal weight are the same element: never sign in as a link beside sign up as a button.
+- A16: What belongs together sits together: a record's fields in one section, and a list's search, filters and add action with the list. Groups sit further apart than the items inside them, so the user can tell where each group ends.
+- A17: Records the user compares sit in a table, and records the user opens one by one sit in cards or a list.
+- A18: Every screen lines up on one left edge and one grid, and its text and forms stay narrower than the full desktop width.
+- A19: A row's actions are quiet icon buttons with tooltips. A destructive one is as quiet as the rest, never filled or loud: the filled `danger` button is the confirm dialog's. An inline action in a toolbar shows an icon, not text, and an action in a menu shows its text, not an icon alone.
+- A20: Each action appears once in a view, so an empty list does not show its add action above the list and again in its empty state.
+- A21: A value is edited in its place or in a dialog, not through a second field added under it. An in-place edit has no label and no help text, and its edit, save and cancel are icon buttons beside the value.
+- A22: A screen the user looks at or uses and can also change, such as a dashboard or a document, has a view mode: while the user only views, it shows no editing controls.
+- A23: Each screen has its breadcrumbs or way back at the top, and its page-level actions by the title, at the top.
+- A24: Text meant for one line, wherever it sits, is a `Truncate`, so it neither wraps nor overflows where the room runs out.
 
 A list's search, filters and add action together right above the list, and the breadcrumbs, the way back and the page-level actions above the title, are what the guidelines ask, not a blocker.
 
-## Frames
+## Frames and screens
 
-- A32: The logo, a navigation item or the account menu missing, or not working, around the screens of its frame.
-- A33: Navigation that does not mark the item of the screen the user is on.
-- A34: A frame alternative that is missing: what a visitor who is not signed in sees.
-- A35: A layout that shows a screen's own content, or does not show its screens in its main region.
-- A36: A frame part with an H1, such as a logo set as one. Each screen's title is the page's only H1.
-- A37: A header or footer in the brand, status or entity colors instead of the frame's background. Those colors are for controls and containers.
+- A25: Each frame shows its logo, every navigation item and its account menu around its screens, and each of them works. The navigation marks the item of the screen the user is on.
+- A26: Every frame has its alternative: what a visitor who is not signed in sees.
+- A27: Each layout shows its screens in its main region, and none of a screen's own content. Each screen fills that region, with no header, navigation or footer of its own.
+- A28: Each screen has a title, and it is the page's only H1. A frame has no H1, not even its logo.
+- A29: Every header and footer has the frame's background, not the brand, status or entity colors. Those colors are for controls and containers.
 
 A link to a screen that is not built yet is not a blocker.
 
-## Screens
-
-- A38: A screen with its own header, navigation or footer inside its frame.
-- A39: A screen whose title is missing, or is not its only H1.
-
 ## The practices
 
-- A40: The change follows the UX practices below. A break you would not sign off is a blocker.
+- A30: The change follows every UX practice below, or breaks one only in a way you would sign off.
 
 {{ux}}
 
@@ -72,15 +59,14 @@ A link to a screen that is not built yet is not a blocker.
 
 The design may hold errors: a missing alternative, a wrong word, an action that leads nowhere, a step no flow needs. The agent was told to make its own call: build what the flow needs, keep the rest of the design, and list the call in its summary.
 
-- A41: A change that departs from the design with no call for it in the summary.
-- A42: A call that drops what a flow needs, or changes more of the design than the error.
+- A31: Every departure from the design is a call the summary lists. Each call keeps what the flows need and changes no more of the design than the error.
 
 A sound call the summary lists is not a blocker.
 
 ## Earlier issues and the summary
 
-- A43: An issue an earlier stage left, listed in the unit's inputs, that stops a step from working or shows wrong data or words, and is not fixed. Naming it as left is enough only when the summary says why this part cannot fix it.
-- A44: A summary that does not match the diff: it calls something built that the diff does not build, or its list of what was not built leaves out a step, alternative or screen the change does not build.
+- A32: Every issue an earlier stage left, listed in the unit's inputs, that stops a step from working or shows wrong data or words is fixed. Naming it as left is enough only when the summary says why this part cannot fix it.
+- A33: The summary matches the diff. Everything it calls built is in the diff, and its list of what was not built names every step, alternative and screen the change does not build.
 
 When the known issues say the session did not finish, the summary is only the reason it stopped. Judge the diff alone and leave the summary checks out.
 

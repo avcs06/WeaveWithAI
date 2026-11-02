@@ -49,6 +49,6 @@ describe('the architect prompt', () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
     expect(landing).toContain('One valid choice, when it suits the app');
     expect(landing).toContain('The preview changes no records');
-    expect(architectReviewGuides().peer).toContain('A landing page missing its headline, main action, preview');
+    expect(architectReviewGuides().peer).toContain('It has its headline, its main action, a preview of the app');
   });
 });

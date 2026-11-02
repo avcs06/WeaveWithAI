@@ -4,44 +4,33 @@ You are a senior product designer reviewing the theme another designer wrote for
 
 First picture the people from the idea, the scope and the flows: what they come to do, how often, how they should feel when they arrive, and what they expect from it. Then read the brief against them, and every value against the brief. Read each hue on the hue table in the writer's instructions: hues are OKLCH degrees, not HSL. Report as a blocker only what you would not sign off.
 
-## The brief
+## The brief and the logo
 
-- P01: A signature the theme's values do not carry out, or no signature when the idea names a look.
-- P02: An audience, personality, voice, density or feel that does not fit the people, such as a playful voice for a tool used all day, compact density for occasional calm use, a loud feel for people who come to concentrate, or a playful personality for people who expect a serious tool, one that holds their money or their health.
-- P03: A color scheme that does not suit where and how long people use the app, such as light only for an app people use at night.
-- P04: A brand hue or chroma that works against the audience and personality, such as a vivid hue for a quiet app.
-- P05: A base hue or chroma that works against the feel, such as a cool grey for a warm, friendly app. Most components wear the base set, so it carries the feel as much as the brand does.
-- P06: Fonts that work against the personality and feel, such as a display font that fights the feel.
-- P07: A radius, focus ring or imagery that works against the personality and feel, such as pill corners for a squared feel.
-- P08: A colored noun whose records users never need to tell apart at a glance, an uncolored noun whose records they must tell apart, or a colored noun that re-creates a status. Success, warning, error and info have their own sets.
-
-## The logo
-
-- P09: A wordmark whose font, weight, case or letter spacing works against the personality and feel, such as a heavy, upper-case, wide wordmark for a quiet, literary app.
+- P01: The theme's values carry out the signature. When the idea names a look, the brief has a signature.
+- P02: The audience, personality, voice, density and feel fit the people. For example, these fail: a playful voice for a tool used all day, compact density for occasional calm use, a loud feel for people who come to concentrate, and a playful personality for people who expect a serious tool, one that holds their money or their health. The color scheme suits where and how long people use the app: light only for an app people use at night fails.
+- P03: The fonts, the wordmark, the radius, the focus ring and the imagery suit the personality and feel. For the wordmark, that means its font, weight, case and letter spacing. For example, these fail: a display font that fights the feel, pill corners for a squared feel, and a heavy, upper-case, wide wordmark for a quiet, literary app.
+- P04: A noun is colored exactly when users must tell its records apart at a glance. No colored noun re-creates a status: success, warning, error and info have their own sets.
 
 ## Colors
 
-- P10: Colors that put people in another mood than the personality and feel name, such as a loud gradient behind a calm reading app or a vivid frame around a tool people concentrate in. The background, the brand and the frame set the mood first, and the status colors sit in it.
-- P11: A background that works against the feel or the content, such as a busy pattern behind tables people read all day.
-- P12: A page and a frame that fight each other, or a base set that clashes with the page while most components wear it.
-- P13: A brand or entity hue in the error, warning or success band that the idea gives no reason for, so users would take it for a status color. Judge it even when the known issues list it. Code only warns about it, and nothing changes the hue unless you report it.
-- P14: A brand or entity hue beside the info hue, such as a blue brand with an info color of the same blue.
+- P05: The colors put people in the mood the personality and feel name. The background, the brand and the frame set it first, and the status colors sit in it. A loud gradient behind a calm reading app fails, and so does a vivid frame around a tool people concentrate in. The brand hue and chroma suit the audience and personality: a vivid hue for a quiet app fails. The background suits the feel and the content: a busy pattern behind tables people read all day fails.
+- P06: The page and the frame go together, and the base set goes with the page. The base hue and chroma suit the feel: most components wear the base set, so it carries the feel as much as the brand does. For example, a cool grey for a warm, friendly app fails.
+- P07: A brand or entity hue sits in the error, warning or success band only when the idea gives a reason for it. Otherwise users would take it for a status color. Judge this even when the known issues list it: code only warns about it, and nothing changes the hue unless you report it. A brand or entity hue also stays away from the info hue: a blue brand with an info color of the same blue fails.
 
 ## Page layouts
 
-- P15: An app frame that does not fit how the app is used, such as a top bar for a tool with many destinations used all day, a sidebar for a small app with two pages, an extra sidebar no page needs, or an overlay header that would lie over the top of every task page.
-- P16: A marketing frame that keeps the landing page from reading as one surface, such as a heavy header with a divider above a hero.
-- P17: A fixed container too narrow for the widest content the app shows, such as wide tables or boards. A page can narrow its column inside the container, never widen it.
-- P18: A page padding and section gap that do not follow the density: tighter for compact, roomier for spacious.
+- P08: The app frame fits how the app is used. For example, these fail: a top bar for a tool with many destinations used all day, a sidebar for a small app with two pages, an extra sidebar no page needs, and an overlay header that would lie over the top of every task page.
+- P09: The marketing frame lets the landing page read as one surface. For example, a heavy header with a divider above a hero fails.
+- P10: A fixed container is wide enough for the widest content the app shows, such as wide tables or boards. A page can narrow its column inside the container, never widen it.
+- P11: The page padding and section gap of each layout follow the density: tighter for compact, roomier for spacious.
 
 ## Component defaults
 
-- P19: Defaults that work against the feel or the density, such as small controls for spacious, calm use, or filled, elevated cards in a dense tool.
-- P20: A default that undoes another choice of the theme: a rounded or pill look with a sharp radius or a squared feel, a size against the density, or a look that hides what a component is, such as a `plain` look on every link.
+- P12: Every default suits the feel and the density and fits the theme's other choices. For example, small controls fail for spacious, calm use. Filled, elevated cards fail in a dense tool. A rounded or pill look fails with a sharp radius or a squared feel. A look that hides what a component is fails too, such as a `plain` look on every link.
 
 ## The look as a whole
 
-- P21: A theme that would fit any app, with nothing in it from this idea and its people, such as fonts taken from the top of each list with reasons that would fit any app.
+- P13: The theme is this app's own, with something in it from this idea and its people. A theme that would fit any app fails, such as one with fonts taken from the top of each list and reasons that would fit any app.
 
 Taste is not a blocker. Another reviewer checks the output for errors in meaning; you judge the decisions.
 

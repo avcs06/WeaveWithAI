@@ -8,41 +8,33 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 
 ## The brief
 
-- O01: A brief that says opposite things: the personality, voice, density and feel contradict each other, such as a calm, quiet personality with a loud, punchy voice.
-- O02: An audience that contradicts the scope's audience or roles, or leaves out a main role, such as the sellers of a marketplace, so the look serves only some of the people who use the app.
-- O03: A style reference the idea names that is missing from `references`, or a reference the idea does not name.
-- O04: A choice against what the idea asks for about the look, such as a light-only color scheme for an idea that asks for dark mode.
-- O05: A hue that is not the color the idea names, read on the hue table, such as a `seedHue` of 30 for an orange brand: 30 is red, and orange is 53.
-- O06: Fonts out of order: a first candidate whose reason calls it a second choice, or a later candidate whose reason makes it the better fit. The first candidate of each role is the one the app uses.
+- O01: The brief's personality, voice, density and feel agree with each other. For example, a calm, quiet personality with a loud, punchy voice fails.
+- O02: The audience agrees with the scope's audience and roles. It covers every main role, such as the sellers of a marketplace, so the look serves all the people who use the app.
+- O03: The theme follows what the idea asks for about the look. For example, a light-only color scheme fails for an idea that asks for dark mode. `references` holds exactly the style references the idea names.
+- O04: Each hue matches the color the idea names for it, read on the hue table. For example, a `seedHue` of 30 for an orange brand fails: 30 is red, and orange is 53.
+- O05: Each role's font candidates are in order, best first, since the first candidate of each role is the one the app uses. A first candidate whose reason calls it a second choice fails, and so does a later candidate whose reason makes it the better fit.
 
 ## The logo
 
-- O07: A page layout whose needed parts have no slot for the wordmark. Every frame shows it.
-- O08: A slot that names a logo image or mark instead of the wordmark. The app ships no image files, so the logo is type alone.
+- O06: Each page layout has the wordmark in a slot of a needed part: every frame shows it. A slot that holds the logo names the wordmark, never a logo image or mark. The app ships no image files, so the logo is type alone.
 
 ## Colors
 
-- O09: A set whose backgrounds and text are swapped: `bg` or `hoverBg` on a high step and `fg` on a low one, so the subtle background is the strongest color. Every set counts: the brand's, the base, each status and each entity.
-- O10: A page whose background and text are swapped: `pageBg` on a high step and `pageFg` on a low one, so the light mode is dark or the dark mode is light.
-- O11: An `accentBg` on one of the lowest steps, close to the page, so a primary button, or the base set's strong neutral fill, does not read as filled.
-- O12: A `hoverBg` on the same step as `bg`, so hover and selection do not show on a filled item. `hoverBg` is also the selected fill.
-- O13: An `accentHoverBg` on the same step as `accentBg`, so hovering a primary button changes nothing.
-- O14: Muted text on a higher step than the text it supports, such as `fgMuted` on 12 and `fg` on 11, or `pageFgMuted` above `pageFg`. A higher step is stronger text.
-- O15: With a halo focus ring, an `accentFocus` on the same step as `accentBg`, so the ring around a filled control does not show. Offset and glow rings draw on the page around the control.
-- O16: A `divider` on a step as strong as text, though it is the quiet hairline between rows.
-- O17: A `pageBg` far from the main color of the background, such as a mid grey under a light gradient. It is the page's solid color, and disabled controls fade into it.
-- O18: In an app with both modes, a background that is not the same idea in each mode, such as a soft gradient in light mode and a flat grey in dark mode.
+- O07: In each set, `bg` and `hoverBg` are on lower steps than `fg`, so the subtle background stays subtle. Every set counts: the brand's, the base, each status and each entity. On the page, `pageBg` is on a lower step than `pageFg`, so the light mode is light and the dark mode is dark.
+- O08: Every `accentBg` sits above the lowest steps, away from the page, so a primary button, or the base set's strong neutral fill, reads as filled.
+- O09: `hoverBg` is on another step than `bg`, so hover and selection show on a filled item. `hoverBg` is also the selected fill. `accentHoverBg` is on another step than `accentBg`, so a primary button changes on hover. With a halo focus ring, `accentFocus` is on another step than `accentBg`, so the ring around a filled control shows. Offset and glow rings draw on the page around the control.
+- O10: Muted text sits at or below the step of the text it supports, since a higher step is stronger text. For example, `fgMuted` on 12 with `fg` on 11 fails, and so does `pageFgMuted` above `pageFg`. The `divider` is on a lower step than text, since it is the quiet hairline between rows.
+- O11: `pageBg` is close to the main color of the background. It is the page's solid color, and disabled controls fade into it. For example, a mid grey under a light gradient fails.
+- O12: In an app with both modes, the background is the same idea in each mode. For example, a soft gradient in light mode and a flat grey in dark mode fails.
 
 A border far from its background is not a blocker. A border can be any step of its ramp, such as a bright border on a dark button.
 
 ## Page layouts
 
-- O19: An account menu or a sign-out in a slot when no role signs in.
-- O20: A slot that holds what belongs on one screen, such as a form or a record's details. Every page of the frame shows its slots, and later calls design the screens.
-- O21: An app with several top-level destinations whose app layout has no needed part that holds the navigation.
-- O22: A signed-in app with no place in the app layout for the account or signing out.
-- O23: A part that is not needed but holds something no needed part holds, such as the only navigation in a sidebar that is not needed. A part that is not needed is not shown, so what it holds is lost.
-- O24: The same thing named in two slots, such as Create at the header's end and at the sidebar's top. Each action and each list has one place in the frame.
+- O13: A slot holds an account menu or a sign-out only when a role signs in. When a role signs in, the app layout has a place for the account or signing out.
+- O14: Every page of the frame shows its slots, so the slots leave what belongs on one screen, such as a form or a record's details, to the screens. Later calls design the screens.
+- O15: In an app with several top-level destinations, a needed part of the app layout holds the navigation. A part that is not needed is not shown, so whatever it holds, a needed part holds too. For example, the only navigation in a sidebar that is not needed fails.
+- O16: Each thing in a frame is named in one slot: each action and each list has one place in the frame. For example, Create at the header's end and at the sidebar's top fails.
 
 Leave out taste.
 
