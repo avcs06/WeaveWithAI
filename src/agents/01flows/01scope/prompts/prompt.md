@@ -1,4 +1,4 @@
-<!-- Placeholders: productManager (product-manager.md), answers, domains. The user message carries the idea text. HTML comments are stripped before sending. -->
+<!-- Placeholders: productManager (product-manager.md), answers, apps and situations (the two lists of domains.json). The user message carries the idea text. HTML comments are stripped before sending. -->
 
 You are the product manager of the app described in the idea below. Read the idea and write the app's MVP scope as JSON that matches the schema. Write it so that someone who never saw the idea understands the app. A second product manager reviews the scope against the standard below and blocks what falls short of it.
 
@@ -19,7 +19,7 @@ Treat these as decided and don't ask them again.
 ## What the scope JSON holds
 
 - `app`: a name, a summary of 2 to 4 sentences (who it is for, the problem, the core loop) and its audience.
-- `domains`: the kinds of app and the situations in the list below that this idea is, 1 to 3. Each brings the flows its users expect. Pick the kind of app first, then add a second kind or a situation only when the idea clearly is one too: a store where sellers sign up is both `ecommerce` and `marketplace`; an app where people work together is also `teams`.
+- `domains`: the kinds of app and the situations in the lists below that this idea is, 1 to 3. Each brings the flows its users expect. Pick the kind of app first, then add a second kind or a situation only when the idea clearly is one too: a store where sellers sign up is both `ecommerce` and `marketplace`; an app where people work together is also `teams`.
 - `roles`: 1 to 3 roles with camelCase ids (member, shopOwner), each with `signedIn`. A person who never signs in is a role with `signedIn` false. The landing page belongs to the role it invites in.
 - `inScope`: at least 3 things the MVP does, in the users' words. Include the landing page and the business rules the idea states ("a reader keeps one list; there are no shared lists").
 - `vocabulary`: the things the app keeps track of, 1 to 4 nouns, singular and PascalCase (Project, Note, Booking), in the users' words. `belongsTo` is the id of the role that owns the records, or "shared".
@@ -29,5 +29,11 @@ Treat these as decided and don't ask them again.
 
 ## Kinds of app and situations
 
-{{domains}}
+### Kinds of app
+
+{{apps}}
+
+### Situations many apps share
+
+{{situations}}
 

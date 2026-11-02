@@ -10,7 +10,8 @@ export function scopeSystemPrompt(answers: Answers): string {
   return fillPrompt(load('./prompt.md'), {
     productManager: productManager(),
     answers: answersBlock(answers),
-    domains: domainList(),
+    apps: domainList('app'),
+    situations: domainList('situation'),
   });
 }
 

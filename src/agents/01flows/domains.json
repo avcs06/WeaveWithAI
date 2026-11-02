@@ -2,7 +2,8 @@
   {
     "id": "editor",
     "name": "Editor or builder",
-    "fits": "Making documents piece by piece in an editor, where a document can be a piece of writing, a design, a dashboard, a site or a form.",
+    "type": "app",
+    "fits": "Making documents piece by piece in an editor, where a document can be a piece of writing, a design, a dashboard or a site.",
     "mustHave": [
       "home: a creator sees all their documents, last edited first, and opens one or starts a new one",
       "create: a creator starts a new document and begins editing it right away",
@@ -28,6 +29,7 @@
   {
     "id": "ecommerce",
     "name": "Online store",
+    "type": "app",
     "fits": "Selling products to shoppers online: a catalog, a cart, a checkout and orders to fulfill.",
     "mustHave": [
       "browse: a shopper finds products in the catalog, with search, categories and filters",
@@ -57,6 +59,7 @@
   {
     "id": "marketplace",
     "name": "Marketplace",
+    "type": "app",
     "fits": "Many sellers offering goods or services to buyers on one site: sellers sign up and post listings, and buyers find, order and review them.",
     "mustHave": [
       "browse: a buyer finds listings with search, categories and filters such as price",
@@ -86,6 +89,7 @@
   {
     "id": "booking",
     "name": "Booking and reservations",
+    "type": "app",
     "fits": "Booking time with a business or a person: appointments, table reservations, classes, rentals and stays.",
     "mustHave": [
       "browse: a customer picks a service and sees which times or dates are still open",
@@ -113,6 +117,7 @@
   {
     "id": "analytics-dashboard",
     "name": "Analytics dashboard",
+    "type": "app",
     "fits": "Showing data that people read and explore: key numbers, charts, trends over time and reports.",
     "mustHave": [
       "home: an analyst sees the key numbers at a glance, each compared with the previous period",
@@ -135,7 +140,8 @@
   {
     "id": "project-management",
     "name": "Project management",
-    "fits": "Planning and tracking work: projects, and tasks with statuses, priorities and due dates, often on a board.",
+    "type": "app",
+    "fits": "Planning and tracking one's own or a team's work: to-do lists and projects, with tasks that have statuses, priorities and due dates, often on a board.",
     "mustHave": [
       "home: a member sees their open tasks across all projects, with overdue ones first",
       "browse: a member sees every project with how many tasks are still open",
@@ -161,6 +167,7 @@
   {
     "id": "crm",
     "name": "Client management",
+    "type": "app",
     "fits": "Keeping track of clients and the work around them: contacts, notes, follow-ups, deals and invoices, for a freelancer or a small sales team.",
     "mustHave": [
       "home: a freelancer sees which follow-ups are due, overdue ones first, and the deals in progress",
@@ -187,6 +194,7 @@
   {
     "id": "social",
     "name": "Social network",
+    "type": "app",
     "fits": "People sharing posts and following each other: profiles, a feed, comments and likes.",
     "mustHave": [
       "account: a member sets up a public profile with a photo, a display name and a bio",
@@ -213,6 +221,7 @@
   {
     "id": "informational",
     "name": "Articles and docs",
+    "type": "app",
     "fits": "Publishing articles for readers: a blog, a news site, documentation or a knowledge base.",
     "mustHave": [
       "landing: a reader sees featured and latest articles and picks one to read",
@@ -238,6 +247,7 @@
   {
     "id": "promotional",
     "name": "Promotional site",
+    "type": "app",
     "fits": "Presenting a product, a business or a person to win visitors over: a landing page, a product site, a portfolio or an agency site.",
     "mustHave": [
       "landing: a visitor learns what is on offer and who it is for, and sees what to do next",
@@ -260,7 +270,8 @@
   {
     "id": "education",
     "name": "Online courses",
-    "fits": "Teaching through courses: lessons, quizzes and progress, for learners and the instructors who make the courses.",
+    "type": "app",
+    "fits": "Teaching through self-paced online courses that learners find and enroll in: lessons, quizzes and progress, for learners and the instructors who make the courses.",
     "mustHave": [
       "browse: a learner finds courses by topic or level, with search",
       "view: a learner reads a course's outline, length and instructor before enrolling",
@@ -288,6 +299,7 @@
   {
     "id": "gaming",
     "name": "Game hub",
+    "type": "app",
     "fits": "Playing games and competing: matches, scores, leaderboards and achievements, in one game or a hub of games.",
     "mustHave": [
       "account: a player picks a unique player name and an avatar that others see",
@@ -313,6 +325,7 @@
   {
     "id": "gambling",
     "name": "Betting and casino",
+    "type": "app",
     "fits": "Casino games or sports betting with a simulated wallet: deposits, bets, payouts and responsible-gambling safeguards.",
     "mustHave": [
       "auth: a player gives their date of birth when signing up, and anyone under the legal age is turned away",
@@ -342,7 +355,8 @@
   {
     "id": "finance",
     "name": "Personal finance",
-    "fits": "People tracking their own money: bank accounts, transactions, budgets and where the money goes.",
+    "type": "app",
+    "fits": "People tracking their own day-to-day money: bank accounts and cards, spending and income, and monthly budgets.",
     "mustHave": [
       "home: a user sees their total balance, this month's spending and how each budget is doing",
       "create: a user adds a bank account, a card or cash, with its current balance",
@@ -368,6 +382,7 @@
   {
     "id": "health-fitness",
     "name": "Health and fitness",
+    "type": "app",
     "fits": "People tracking their body and routines: workouts, habits, measurements and goals.",
     "mustHave": [
       "home: a user sees today's planned workouts and habits, and their progress this week",
@@ -392,6 +407,7 @@
   {
     "id": "events",
     "name": "Events and tickets",
+    "type": "app",
     "fits": "Organizers running events that attendees find, get tickets for and check into: meetups, conferences, concerts and workshops.",
     "mustHave": [
       "browse: an attendee finds upcoming events by date, place or category",
@@ -421,6 +437,7 @@
   {
     "id": "job-board",
     "name": "Job board",
+    "type": "app",
     "fits": "Employers posting jobs that job seekers find and apply to, with each application tracked on both sides.",
     "mustHave": [
       "browse: a job seeker finds jobs by keyword, location, remote option and job type",
@@ -449,6 +466,7 @@
   {
     "id": "food-ordering",
     "name": "Food ordering",
+    "type": "app",
     "fits": "Ordering food from one restaurant or many, for delivery or pickup: menus, a cart, orders and their status.",
     "mustHave": [
       "browse: a customer finds a restaurant by cuisine, rating or delivery time",
@@ -477,7 +495,8 @@
   {
     "id": "listings",
     "name": "Listings and classifieds",
-    "fits": "Posting things for sale or rent that buyers and renters browse and ask about: real estate, cars or classified ads, with contact instead of checkout.",
+    "type": "app",
+    "fits": "Owners posting things for sale or long-term rent that buyers and renters browse and ask about, with contact instead of checkout: homes and flats, cars or classified ads.",
     "mustHave": [
       "browse: a buyer finds listings with filters such as price, location, type and size, sorted as they choose",
       "view: a buyer looks at a listing's photos, price, key details and location",
@@ -503,6 +522,7 @@
   {
     "id": "tracker",
     "name": "Personal tracker",
+    "type": "app",
     "fits": "One person keeping their own lists and logs: reading lists, collections, recipes, watchlists or journals.",
     "mustHave": [
       "home: a user sees their list at a glance, with how many items are in each status",
@@ -527,6 +547,7 @@
   {
     "id": "messaging",
     "name": "Messaging",
+    "type": "app",
     "fits": "People messaging each other: one-on-one conversations and group chats.",
     "mustHave": [
       "home: a user sees their conversations, latest first, with unread ones marked",
@@ -549,8 +570,417 @@
     ]
   },
   {
+    "id": "ai-chat",
+    "name": "AI chat assistant",
+    "type": "app",
+    "fits": "Talking with an AI assistant in a chat that answers questions and helps with a task, as the whole app or beside another app's features: a tutor, a coach, a support bot, or answers drawn from documents the user adds.",
+    "mustHave": [
+      "home: a user sees their past chats, latest first, and opens one or starts a new one",
+      "create: a user starts a new chat by asking a question, and the chat is saved under a title taken from that question",
+      "create: a user asks a follow-up in the same chat, and the assistant answers with the whole chat in mind",
+      "view: a user opens a past chat and reads every question and answer in it",
+      "act: a user asks for a different answer to their last question, and the new answer replaces the old one",
+      "act: a user rates an answer as helpful or not, and can change or take back the rating",
+      "delete: a user deletes a chat after confirming, and it is gone from their chats"
+    ],
+    "often": [
+      "create: a user adds a document, such as a reading or their notes, and the assistant answers from it",
+      "view: a user opens the part of a document that an answer cites, to check the answer",
+      "create: a user asks about their own records in the app, such as their tasks or their spending, and the assistant answers from them",
+      "create: a user picks a topic for a new chat, such as a subject to study or a job to practice for, and the assistant asks the first question",
+      "settings: a user says how they like answers, such as shorter, simpler or in another language, and the assistant follows it in every chat",
+      "act: a user asks to talk to a person, and the owner takes over the chat with everything said so far",
+      "edit: an owner sets the assistant's instructions and the common questions and answers it draws on",
+      "browse: an owner looks through users' chats and finds the answers rated not helpful"
+    ]
+  },
+  {
+    "id": "ai-generator",
+    "name": "AI generator",
+    "type": "app",
+    "fits": "Getting an AI to make something from what the user gives it, to regenerate, refine and keep: a cover letter writer, a resume reviewer, a story maker or an image maker, or an AI helper that drafts inside another kind of app.",
+    "mustHave": [
+      "landing: a visitor sees what the generator makes, with examples, and tries it",
+      "create: a creator describes what they want, with the inputs and options it takes, and gets a result after a short wait",
+      "act: a creator generates again to get a different result, and can go back to an earlier one",
+      "edit: a creator refines a result with an instruction, such as shorter or more formal, and gets a new version",
+      "edit: a creator changes a result by hand before keeping it",
+      "act: a creator copies or downloads a result",
+      "browse: a creator finds their past results, newest first, and opens one",
+      "delete: a creator deletes a past result after confirming"
+    ],
+    "often": [
+      "act: a creator rates a result as good or bad",
+      "create: a creator starts from a template or an example input",
+      "act: a creator shares a result with a link",
+      "view: a creator sees how many generations they have left today or this month",
+      "settings: a creator sets defaults, such as tone, length or language",
+      "act: a creator saves a result to a named collection"
+    ]
+  },
+  {
+    "id": "tool",
+    "name": "Online tool",
+    "type": "app",
+    "fits": "A single tool that a visitor uses at once for one job, usually without signing in, and that works out a result from what they enter: a calculator, a converter, a timer, a checker or a password generator.",
+    "mustHave": [
+      "landing: a visitor arrives straight at the tool and can use it without signing up, with a result for typical values already showing",
+      "edit: a visitor changes any input and the result updates at once, and a refresh keeps what they entered",
+      "edit: a visitor enters a value the tool cannot use, such as a negative amount, and is told what is allowed instead of seeing a wrong result",
+      "view: a visitor sees the result with its unit and the figures that explain it, such as how much of a payment is interest",
+      "view: a visitor reads how the result is worked out, where its numbers come from and what it leaves out",
+      "act: a visitor starts over in one step, and every input goes back to its starting value"
+    ],
+    "often": [
+      "act: a visitor copies the result in one step to paste it elsewhere",
+      "act: a visitor shares a link that opens the tool with the same inputs and result",
+      "settings: a visitor switches between units, such as metric and imperial, and every input and result converts",
+      "view: a visitor sees how the result plays out over time, such as the loan balance left after each year",
+      "view: a visitor compares the results of two sets of inputs, such as two rates or two terms",
+      "view: a visitor gets tips that fit their result, such as the changes that would lower it most",
+      "edit: a visitor fills in a long set of inputs in steps, such as home, travel and food, and sees how far along they are",
+      "act: a visitor starts, pauses and resumes a timer, and hears a sound when the time is up, even while doing something else"
+    ]
+  },
+  {
+    "id": "directory",
+    "name": "Directory and reviews",
+    "type": "app",
+    "fits": "A guide to places, businesses, services or products that people look up, compare, rate and review, with nothing bought or sold on the site: a city guide, a directory of local services, a review site or a list of tools.",
+    "mustHave": [
+      "landing: a visitor sees what the directory covers and searches it right away",
+      "browse: a visitor finds entries by search, category and location, sorted by rating or distance",
+      "view: a visitor opens an entry to see its details, its average rating and its reviews",
+      "browse: a visitor sorts an entry's reviews by newest or by rating",
+      "create: a member rates an entry and writes a review, one per entry",
+      "edit: a member changes their own review, and the average rating updates",
+      "delete: a member deletes their own review",
+      "create: a member suggests a new entry with its name, category and details"
+    ],
+    "often": [
+      "act: a member marks a review as helpful",
+      "act: an owner claims their entry and answers reviews on it",
+      "edit: an owner updates their entry's details, hours and photos",
+      "act: a member saves an entry to their favorites",
+      "browse: a visitor finds entries on a map",
+      "act: a member reports a review that breaks the rules",
+      "view: a visitor compares two or three entries side by side"
+    ]
+  },
+  {
+    "id": "forms",
+    "name": "Forms, surveys and polls",
+    "type": "app",
+    "fits": "Collecting answers from people through a shared link, often without an account: forms, surveys, polls and votes, quizzes, sign-up sheets and finding a date that suits everyone.",
+    "mustHave": [
+      "home: an organizer sees their forms, each with whether it is open or closed and how many answers it has",
+      "create: an organizer creates a form with a title, a description and questions, each a text, choice or rating question, and marks the required ones",
+      "edit: an organizer changes a form's title, description or questions, adding, moving or removing questions",
+      "act: an organizer shares a form's link, and people who open it can answer",
+      "create: a respondent opens a form's link, answers it and sees that their answer was received, and the same person cannot answer twice",
+      "edit: an organizer sets a closing date or a maximum number of answers, and the form closes on its own when either is reached",
+      "act: an organizer closes a form so it takes no more answers, and can reopen it later",
+      "view: an organizer sees a summary for each question, such as how many picked each choice, the average rating and what people wrote",
+      "browse: an organizer goes through a form's answers one by one, reading each in full with when it was sent",
+      "delete: an organizer deletes an answer, such as a test or a duplicate, and the summary stops counting it",
+      "delete: an organizer deletes a form after confirming, and its answers go with it"
+    ],
+    "often": [
+      "view: a respondent sees the results, such as the votes for each choice, right after answering or once the form closes, as the organizer chose",
+      "edit: a respondent changes their answer before the form closes, and only the new answer counts",
+      "edit: an organizer limits how many people can pick each choice, and a full choice shows as taken and cannot be picked",
+      "edit: an organizer makes a form anonymous, so no answer shows who sent it, while each person still answers only once",
+      "view: an organizer narrows the summary to the people who picked one choice, such as one course",
+      "act: an organizer exports a form's answers as a file",
+      "edit: an organizer marks the right answer to each question to make a quiz, and each respondent sees their score after sending it",
+      "act: an organizer picks the final date from the dates offered, usually the one most people can make, and respondents see it"
+    ]
+  },
+  {
+    "id": "helpdesk",
+    "name": "Help desk and support",
+    "type": "app",
+    "fits": "People reporting a problem or asking for help, and staff working through each request until it is resolved while the sender follows its status: customer support, an IT help desk, tenants' repair requests, complaints or bug reports.",
+    "mustHave": [
+      "create: a requester sends a request with a subject, a category, a description and optional photos, and gets a request number",
+      "browse: a requester sees their requests and the status of each, open ones first",
+      "view: a requester opens a request to see its status and every reply so far",
+      "create: a requester replies to a request to add details or answer a question, and the agent working on it is told",
+      "act: a requester reopens a resolved request when the problem is still there, and the agent sees it open again",
+      "home: an agent sees the open requests assigned to them and the new ones nobody has taken yet, most urgent first",
+      "browse: an agent looks through all requests, filtered by status, priority, category or assigned agent, with search",
+      "view: an agent opens a request to see the problem, every reply so far and the requester's contact details",
+      "create: an agent replies to a request, and the requester is told",
+      "act: an agent assigns a request to themselves or another agent, and it shows among that agent's open requests",
+      "act: an agent moves a request through its statuses, such as in progress, waiting on the requester and resolved, and the requester sees each change",
+      "edit: an agent changes a request's priority or category"
+    ],
+    "often": [
+      "act: a requester closes their own request when they no longer need help",
+      "create: a requester rates how their request was handled, once it is resolved",
+      "create: a requester sends a request without an account, and gets a link by email to follow it",
+      "create: an agent writes a note on a request that only agents can see",
+      "create: an agent saves a reply to a common question, to send it again in one step",
+      "create: an agent logs a request for someone who called or came by, and it shows among that person's requests",
+      "edit: an agent sets who handles each category, and new requests in it go to that person automatically",
+      "view: an agent sees how many requests came in and were resolved over a chosen period, and how fast they were answered"
+    ]
+  },
+  {
+    "id": "trip-planning",
+    "name": "Trip planning",
+    "type": "app",
+    "fits": "Planning a trip day by day, alone or with fellow travelers: places to go, a schedule for each day, bookings kept in one place, costs and a packing list.",
+    "mustHave": [
+      "home: a traveler sees their trips, upcoming ones first, and opens one or starts a new one",
+      "create: a traveler starts a trip with a destination and dates, and gets an empty day to plan for each date",
+      "view: a traveler opens a trip to see its dates, who is coming and each day's places and bookings in time order",
+      "create: a traveler adds a place to a day, such as a sight, a restaurant or a stop along the way, with a time and a note",
+      "create: a traveler adds a booking, such as a flight, a place to stay or a rental car, with its times and confirmation number, and it shows on the days it covers",
+      "browse: a traveler sees all of a trip's bookings in one place, in date order, each with its confirmation number",
+      "edit: a traveler changes the day, time or details of a place or a booking, and the trip's schedule updates to match",
+      "delete: a traveler removes a place or a booking from the trip",
+      "act: a traveler invites fellow travelers to a trip, who then see it among their trips and can plan it with them",
+      "delete: a traveler removes someone who is no longer coming, and they lose access to the trip",
+      "edit: a traveler changes a trip's destination or dates, and days are added or removed to fit the new dates",
+      "delete: a traveler deletes a trip they made after confirming, and it is gone for everyone on it"
+    ],
+    "often": [
+      "create: a traveler saves a place they might visit to the trip's ideas, to fit it into a day later",
+      "act: a traveler votes for the trip's ideas they like, and the ones with the most votes show first",
+      "view: a traveler sees the trip's places on a map, day by day, in the order they visit them",
+      "view: a traveler sees where they sleep each night, and which nights have no place to stay yet",
+      "create: a traveler sets a budget for a trip, and sees the prices of its bookings and places add up against it",
+      "create: a traveler makes a packing list for a trip and ticks items off as they pack",
+      "view: a traveler opens today's plan during the trip, to see what comes next and when",
+      "act: a traveler shares a read-only link to a trip with people who are not coming"
+    ]
+  },
+  {
+    "id": "forum",
+    "name": "Forum and Q&A",
+    "type": "app",
+    "fits": "People discussing topics in threads grouped by subject rather than by who they follow: a community forum, a Q&A site where the best answer is voted up and marked, or a discussion board.",
+    "mustHave": [
+      "home: a member sees the categories and the most recently active threads across all of them",
+      "browse: a member opens a category to see its threads, the most recently active first, with how many replies each has",
+      "browse: a member searches threads and replies for a word or a phrase",
+      "view: a member opens a thread to read its first post and every reply, in the order they were posted",
+      "create: a member starts a thread in a category with a title and a first post, and is told when someone replies",
+      "create: a member replies to a thread, and the thread moves up to first as the most recently active",
+      "edit: a member changes a thread or a reply they posted, and it shows as edited",
+      "delete: a member deletes a thread or a reply they posted after confirming, and a thread's replies go with it",
+      "act: a member votes up a thread or a reply, and can take the vote back",
+      "act: a member follows a thread to hear about each new reply, and can stop following it",
+      "account: a member sets the name and photo that others see on their threads and replies"
+    ],
+    "often": [
+      "act: a member marks one reply to their own thread as the accepted answer, and the thread shows as answered",
+      "browse: a member sorts a thread's replies so the ones with the most votes come first",
+      "browse: a member finds the threads that have no replies yet",
+      "view: a visitor reads threads without an account, and is asked to sign up only to post or vote",
+      "create: a member replies to one reply by quoting it, and readers see which reply it answers",
+      "view: a member opens another member's profile to see when they joined and the threads and replies they posted",
+      "create: an admin sets up the categories that threads go in, each with a name and what it is for",
+      "act: a member adds photos to a thread or a reply"
+    ]
+  },
+  {
+    "id": "matching",
+    "name": "Dating and matching",
+    "type": "app",
+    "fits": "People looking for someone to date or team up with, who can talk only once both say yes: dating, roommates, mentors, co-founders, or study and language partners.",
+    "mustHave": [
+      "account: a member sets up a profile with photos, a short bio and the details they are matched on, before they see any suggestions",
+      "settings: a member says what they look for, such as an age range, a distance or a budget, and only people who fit are suggested",
+      "home: a member sees people suggested for them, best fit first, leaving out anyone they already said yes or no to",
+      "view: a member opens a person's profile to see their photos, their bio and what the two have in common",
+      "act: a member says yes or no to a suggested person, and once both said yes, the two are told they matched and a chat opens",
+      "browse: a member sees their matches, most recent first, with new matches and unread messages marked",
+      "view: a member opens the chat with a match, reads its history and sees new messages as they arrive",
+      "create: a member sends a message to a match and sees it in the chat right away",
+      "act: a member unmatches someone, which ends the chat for both and keeps them out of each other's suggestions"
+    ],
+    "often": [
+      "browse: a member sees who already said yes to them, and a yes back makes a match right away",
+      "act: a member adds a short note when saying yes, and the other person reads it before deciding",
+      "act: a member pauses their profile to stop being suggested to others, and keeps their matches and chats",
+      "browse: a member searches everyone with filters, such as area or interests, to find people beyond their suggestions",
+      "auth: a member signs up as one of two sides, such as a mentor or a mentee, and only people from the other side are suggested to them",
+      "act: a member verifies who they are, such as with a school email or a selfie, and their profile shows them as verified",
+      "auth: a member gives their date of birth when signing up, and anyone under 18 is turned away",
+      "create: a member suggests a time and place to meet a match, and the match accepts or offers another time"
+    ]
+  },
+  {
+    "id": "media",
+    "name": "Video, music and podcasts",
+    "type": "app",
+    "fits": "Watching or listening to a library of videos, films, music, podcasts or audiobooks that creators publish: a streaming site, a podcast platform or a music site.",
+    "mustHave": [
+      "browse: a listener finds something to play in the catalog, by genre or by searching for a title, a show or an artist",
+      "view: a listener opens a show or an artist to see their description and everything they released, newest first",
+      "view: a listener plays a track, an episode or a video, and next time it picks up where they stopped",
+      "act: a listener follows a show or an artist to see their new releases, and can unfollow them later",
+      "home: a listener sees new releases from the shows and artists they follow, and continues what they stopped partway through",
+      "act: a listener adds a track, an episode or a video to one of their playlists, or starts a new playlist with it",
+      "view: a listener opens one of their playlists and plays it in order, from the start or from any item in it",
+      "edit: a listener renames a playlist, changes its order or removes items from it",
+      "home: a creator sees their uploads, newest first, with the plays of each, and how many people follow them",
+      "create: a creator uploads a track, an episode or a video with a title, a description, a genre and a cover image, and listeners can find and play it",
+      "edit: a creator changes the title, description, genre or cover image of one of their uploads",
+      "delete: a creator deletes one of their uploads after confirming, and it is gone from the catalog and from every playlist"
+    ],
+    "often": [
+      "act: a listener likes a track, an episode or a video, and finds it again among their likes",
+      "act: a listener lines up a track, an episode or a video to play next, and it starts on its own when the current one ends",
+      "act: a listener turns on alerts for a show or an artist they follow, and is told about each new release",
+      "create: a listener comments on a track, an episode or a video, and the creator and other listeners see it",
+      "browse: a listener sees what is most played this week, overall and by genre",
+      "settings: a listener picks a playback speed, and it stays for what they play next",
+      "create: a creator groups their uploads into an album, a season or a series, in the order to play them",
+      "view: a creator sees plays for a chosen period, overall and for each upload"
+    ]
+  },
+  {
+    "id": "fundraising",
+    "name": "Fundraising and petitions",
+    "type": "app",
+    "fits": "Campaigns that raise money or signatures for a cause toward a goal, with progress shown and updates for supporters: donations, monthly giving, crowdfunding with rewards or petitions.",
+    "mustHave": [
+      "landing: a supporter sees featured campaigns and how close each is to its goal, and picks one to give to or sign",
+      "browse: a supporter finds open campaigns by category or with search, and sees how close each is to its goal",
+      "view: a supporter reads a campaign's story and sees its goal, the progress toward it, how many people have given or signed, and the time left",
+      "create: a supporter gives an amount with a payment step, or signs with their name and email, and sees a thank-you and the campaign's new total",
+      "browse: a supporter reads a campaign's updates from its organizer, newest first",
+      "home: an organizer sees their campaigns, each with its progress toward the goal, and the newest gifts or signatures",
+      "create: an organizer starts a campaign with a title, a story, an image, a goal in money or signatures and an optional end date",
+      "edit: an organizer changes a campaign's title, story, image or goal",
+      "browse: an organizer looks through a campaign's supporters, newest first, with each gift or signature and its date",
+      "create: an organizer posts an update on a campaign, such as news or a thank-you, and every supporter is told",
+      "act: an organizer ends a campaign, and it stops taking gifts or signatures but keeps showing its final total",
+      "delete: an organizer deletes a campaign that has no gifts or signatures yet, after confirming"
+    ],
+    "often": [
+      "create: a supporter chooses to give monthly instead of once, and is charged the same amount each month until they stop",
+      "act: a supporter stops their monthly gift, and no later charges are made",
+      "view: a supporter gets a tax receipt for each gift, with the charity's details, the amount and the date",
+      "create: a supporter adds a message of support when giving or signing, and it shows on the campaign",
+      "browse: a supporter with an account sees their past gifts and signatures, newest first",
+      "create: a supporter picks a reward tier and gives at least its amount, and the tier closes when none are left",
+      "create: an organizer adds reward tiers to a campaign, each with a minimum amount, what supporters get and how many are available",
+      "act: an organizer sends a petition's signatures to whoever it is addressed to, such as a council, and its supporters are told"
+    ]
+  },
+  {
+    "id": "classroom",
+    "name": "Classroom",
+    "type": "app",
+    "fits": "A teacher running their own class of known students at a school, a college or a tutoring center: students join with a code, get announcements and homework, hand in work and see grades and attendance, with parents following along.",
+    "mustHave": [
+      "create: a teacher creates a class and gets a code students join with",
+      "act: a student joins a class with its code and sees it among their classes",
+      "home: a student sees the work due soon across their classes, overdue first",
+      "create: a teacher posts an assignment with instructions and a due date",
+      "act: a student hands in an assignment, and the teacher sees it as handed in, or late after the due date",
+      "act: a teacher grades a handed-in assignment with a score and feedback, and the student sees it",
+      "view: a teacher sees for each assignment who has handed in, who is late and who is missing",
+      "create: a teacher posts an announcement that every student in the class sees",
+      "view: a student sees their grades and feedback in a class"
+    ],
+    "often": [
+      "act: a teacher takes attendance for a class session",
+      "view: a parent follows their child's assignments, grades and attendance",
+      "edit: a teacher changes an assignment's instructions or due date, and students are told",
+      "act: a teacher removes a student from a class",
+      "create: a student asks a question on an assignment, and the teacher answers",
+      "act: a teacher returns an assignment for the student to redo",
+      "view: a teacher sees a gradebook with every student's scores in a class"
+    ]
+  },
+  {
+    "id": "flashcards",
+    "name": "Flashcards and practice",
+    "type": "app",
+    "fits": "A learner practicing on their own until they remember: flashcard decks, vocabulary drills, practice questions or mock tests, with what they got wrong coming back sooner.",
+    "mustHave": [
+      "home: a learner sees the cards due today in each deck, and starts studying",
+      "create: a learner makes a deck with a name and a subject",
+      "create: a learner adds a card with a front and a back",
+      "edit: a learner changes a card's front or back",
+      "delete: a learner deletes a card or a whole deck after confirming",
+      "act: a learner studies a deck card by card, says how well they knew each one, and hard cards come back sooner",
+      "view: a learner sees a deck's progress: cards new, learning and mastered",
+      "browse: a learner finds a card in a deck by searching its text"
+    ],
+    "often": [
+      "create: a learner imports cards from a file or pasted text",
+      "act: a learner takes a practice test on one topic and sees the score and the right answers",
+      "view: a learner sees their weak topics, the ones they get wrong most",
+      "act: a learner keeps a daily study streak, with a reminder on days they have not studied",
+      "browse: a learner finds decks others shared and copies one",
+      "settings: a learner sets how many new cards to learn each day"
+    ]
+  },
+  {
+    "id": "inventory",
+    "name": "Inventory and stock",
+    "type": "app",
+    "fits": "A business keeping count of the goods it holds: stock coming in and going out, counts, low-stock alerts, locations and suppliers, for a shop, a kitchen, a warehouse, a pharmacy or a lab.",
+    "mustHave": [
+      "home: a manager sees the items below their reorder level and the latest stock changes",
+      "create: a manager adds an item with a name, a unit, a location, a starting quantity and a reorder level",
+      "browse: a staff member finds items by name, category or location, and filters those running low",
+      "view: a staff member opens an item to see its quantity and every change to it, with who made it and why",
+      "act: a staff member records stock coming in, such as a delivery, and the quantity goes up",
+      "act: a staff member records stock going out with a reason, such as used, sold or spoiled, and the quantity goes down",
+      "act: a staff member records a count, and the quantity is corrected to match with the difference logged",
+      "edit: a manager changes an item's details or reorder level",
+      "delete: a manager removes an item that is no longer stocked, after confirming"
+    ],
+    "often": [
+      "create: a manager adds a supplier and the items it supplies",
+      "create: a manager orders low items from a supplier, and receiving the order adds the stock",
+      "act: a staff member moves stock from one location to another",
+      "view: a manager sees the items close to their expiry date",
+      "view: a manager sees stock value and usage over a chosen period",
+      "act: a manager exports the stock list as a file"
+    ]
+  },
+  {
+    "id": "shared-expenses",
+    "name": "Shared expenses",
+    "type": "app",
+    "fits": "A group splitting what they spend and settling up: who paid for what and who owes whom, for housemates, a couple, friends or a trip.",
+    "mustHave": [
+      "home: a member sees how much they owe and are owed in total, and their balance in each group",
+      "create: a member starts a group, such as a household or a trip, with a name and the people who share its costs",
+      "edit: a member adds people to a group or removes someone whose balance is settled",
+      "act: a member invites people to join a group, and whoever joins sees the expenses already split with them",
+      "create: a member adds an expense with what it was for, the amount, who paid and who shares it, split equally among them",
+      "create: a member adds an expense split unevenly, by exact amounts, shares or percentages, and the parts must add up to the total",
+      "browse: a member looks through a group's expenses and payments, newest first, with who paid and their own part of each expense",
+      "view: a member opens an expense to see who paid it and each person's part",
+      "edit: a member corrects an expense, even one someone else added, and every balance updates to match",
+      "delete: a member deletes an expense after confirming, and every balance updates to match",
+      "view: a member sees each member's balance in a group, and who should pay whom to settle up in the fewest payments",
+      "act: a member records a payment to someone they owe, in full or in part, and both balances update"
+    ],
+    "often": [
+      "create: a member sets up an expense that repeats every month, such as rent, and it is added on its own each month",
+      "create: a member adds an expense paid in another currency, and it is converted into the group's currency",
+      "act: a member attaches a photo of the receipt to an expense",
+      "act: a member reminds someone who owes them, and that person is told how much they owe",
+      "act: a member pays someone they owe with a payment step, and the payment is recorded on its own",
+      "view: a member sees what the group spent, this month or overall, by category and by who paid",
+      "act: a member archives a settled group, such as a finished trip, to keep it out of the way",
+      "act: a member exports a group's expenses and payments as a file"
+    ]
+  },
+  {
     "id": "teams",
     "name": "Teams and workspaces",
+    "type": "situation",
     "fits": "Any app where people work together in a shared workspace: invites, members and roles that decide who can do what.",
     "mustHave": [
       "create: a user creates a workspace for their team and becomes its owner",
@@ -574,6 +1004,7 @@
   {
     "id": "subscriptions",
     "name": "Plans and subscriptions",
+    "type": "situation",
     "fits": "Any app that charges a recurring fee: plans with different limits, upgrades, downgrades and billing history.",
     "mustHave": [
       "view: a visitor compares the plans, their prices and what each one includes",
@@ -599,6 +1030,7 @@
   {
     "id": "user-content",
     "name": "User content and moderation",
+    "type": "situation",
     "fits": "Any app where users post content that others see: reports, moderation and rules that keep it safe.",
     "mustHave": [
       "view: a member reads the rules for what they may post",
@@ -623,6 +1055,7 @@
   {
     "id": "admin",
     "name": "Admin console",
+    "type": "situation",
     "fits": "Any app where the people who run it manage users and content from a console of their own.",
     "mustHave": [
       "home: an admin sees the app's key numbers, such as new sign-ups, active users and open reports",
@@ -650,6 +1083,7 @@
   {
     "id": "notifications",
     "name": "Notifications",
+    "type": "situation",
     "fits": "Any app that tells users when something concerns them: in-app notifications and email preferences.",
     "mustHave": [
       "act: a user gets a notification when something concerns them, such as a reply, a mention or a status change",
