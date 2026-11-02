@@ -30,7 +30,7 @@ The contract has one job. Every screen and dialog knows where its data comes fro
 - `id`: camelCase verb and entity, such as listBooks, createBook or completeTask.
 - `entity`: the name of the entity it acts on, such as Book.
 - `summary`: what it does, in one sentence. The coding agent reads it beside the function.
-- `flowSteps`: every step and alternative it serves. Every step with effects is served by an operation of the matching kind on that noun's entity.
+- `flowSteps`: every step it serves. Every step with effects is served by an operation of the matching kind on that noun's entity.
 - `inputs`: each field the users fill in for it. `field` is the id of the flow field. `as` is the entity field it sets. On a list, `as` is the field it filters by, or `q` for a free-text search. A get or a delete takes no inputs.
 - Every field a screen or dialog asks for is an input of an operation that serves the same flow. A form filled in at one step and saved at the next is the input of the operation that saves it.
 - Sign-up and sign-in fields go to the built-in operations. Give them no operation.

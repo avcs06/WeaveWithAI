@@ -44,12 +44,14 @@ Treat these as decided. A scope question not answered here keeps its default ans
    - `kind`: "user", or "system" for a step the system starts on its own (a deadline passes). A system step has a `websiteResponse` and an empty `userAction`.
 5. Every field is defined once, in the document's `fields`, with an id (FD01, FD02, ...). A field has:
    - `noun`: the vocabulary noun whose records keep the value, spelled as the scope spells it ("Book" for a book's title). "" when no record keeps it, such as a password, a sign-in email or a search.
-   - A label and a business meaning. No technical name: the engineers name the field later from these.
+   - A label and a business meaning. The label is what the user reads beside the value, without the noun the field belongs to: "Title", not "Book title". No technical name: the engineers name the field later from these.
    - A type and `required`.
    - `min` and `max`: lengths for text, values for numbers, `null` when there are none.
    - `options`: a fixed list of at least 2 for singleChoice and multiChoice, `[]` for every other type.
    - `optionsFrom`: when a choice offers records the app keeps, the vocabulary noun of those records, and `options` is `[]`. Otherwise "".
    - A realistic `example`, written as text in quotes even for a number, a date or a yes or no: "60", "2026-11-03", "yes".
+
+   A field is a value the user types or picks. A record's place among others, such as a widget's position, is not one: the user moves the record earlier or later, and the website keeps the order.
 
    A step asks for fields by id in `fields`, or for a whole `form`, and asks for each field once. A form holds the fields one screen asks for, when more than one flow shows that screen. Forms are in `forms` with an id (FM01, ...).
 6. `effects` name the vocabulary nouns a step creates, lists, reads, updates or deletes, spelled exactly as the scope spells them. A step that stores or loads nothing has `[]`. A noun that some step creates is also listed or read by some step. It can also be updated and deleted, unless an assumption names the noun and says why not.

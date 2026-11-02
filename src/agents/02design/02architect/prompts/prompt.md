@@ -32,7 +32,6 @@ A screen is one URL. Make one for each place a flow needs: the landing page, eac
   - Start each step with what the user does: "Sees ...", "Reads ...", "Can ...", "Fills in ...", "Chooses ...".
   - Name exactly what is shown: "Sees each dashboard's name, owner and last edited date (FD01, FD02, FD07)." Name forms and fields by their ids.
   - Say where an action leads: "Can choose New dashboard, which opens D01." "Can open a dashboard, which goes to /dashboards/[dashboardId]."
-  - Say where something sits only when it matters to the task: "Beside the canvas, sees the settings of the selected widget."
 - `alternatives`: what the screen shows in other situations, each with its own steps: an empty list and the action that fills it, a record that is gone, no access, the first visit, what the user sees after a save. Leave loading and a failed load out: the coding agent shows those the same way everywhere.
 
 ## Dialogs
@@ -58,4 +57,4 @@ Frames are FR01, FR02, ...; screens are S01, S02, ...; dialogs are D01, D02, ...
 
 ## No design system details
 
-Don't name components, colors, sizes or pixels: the coding agent picks them. Say what the user sees and does, in the order they meet it.
+Say what the user sees and does, in the order they meet it. The coding agent decides how it looks and where it sits. Write "Sees the settings of the selected widget", never "Beside the canvas, sees the settings" or "In the header, on the right, sees the menu". Don't name components, colors, sizes, pixels or positions: left, right, center, top, bottom, beside, above, below, in the header or in a sidebar.

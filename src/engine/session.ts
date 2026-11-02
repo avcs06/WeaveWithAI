@@ -10,6 +10,7 @@ import { checkScreen, type ScreenExpect } from './conformance';
 import { dockerArgs, ensureAgentImage, museDir } from './docker';
 import { appendLedger } from './ledger';
 import { savePatch } from './patches';
+import { freeAppPort } from './server';
 import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
@@ -136,6 +137,7 @@ export function protectedOf(changed: string[], session: Pick<Session, 'writes'>)
 
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
   const [cmd = 'pnpm', ...rest] = args;
+  if (rest[0] === 'verify') await freeAppPort(appDir);
   const result = await execa(cmd, rest, { cwd: appDir, reject: false, all: true });
   // pnpm warns that the host's Node is older than a package wants; the line says nothing about the app and crowds out what does.
   const lines = String(result.all ?? '').split('\n').filter((line) => !/WARN\s+Unsupported engine/.test(line));

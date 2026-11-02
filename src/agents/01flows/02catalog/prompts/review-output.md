@@ -39,6 +39,7 @@ No code reads what a description says, so you also check the form and field ids 
 - One value defined as two fields, such as a book's title as FD03 and again as FD09. A field two flows use is one entry.
 - A field whose `noun` is not the vocabulary noun whose records keep the value. A value no record keeps, such as a password, a sign-in email or a search, has noun "".
 - A field whose type does not fit its value, such as a price or a date as text.
+- A record's place among others, such as a widget's position, as a field the user types. The user moves the record earlier or later instead.
 - A field whose limits refuse realistic values, such as a title of at most 10 characters, or a minimum above its maximum.
 - A choice among records the app keeps, such as a task's project, written as a fixed list of options instead of `optionsFrom` naming that noun.
 - A label that is a technical name, such as dueAt or user_id, or a meaning that does not say what the value means to the business.

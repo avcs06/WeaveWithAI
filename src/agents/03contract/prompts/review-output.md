@@ -25,7 +25,6 @@ Read each field against the flow field it comes from, each operation against the
 - A `summary` that goes against the flows or the screens, such as oldest first where the screen lists the newest first.
 - A `flowSteps` id that is no step or alternative of the flows.
 - A step in `flowSteps` that has effects, but none this operation serves, such as a create that lists a step that only deletes.
-- An alternative where the change happens, such as a confirm that deletes, missing from the `flowSteps` of the operation that makes the change.
 - A field a screen or dialog asks for that a record keeps, and that no operation serving the same flow takes as an input.
 - A form filled in at one step and saved at the next, whose fields are not inputs of the operation that saves it.
 - A flow field for a search that is not an input of the list it searches, as `q`.

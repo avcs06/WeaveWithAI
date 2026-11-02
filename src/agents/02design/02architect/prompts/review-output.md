@@ -25,6 +25,6 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 - `roles` that leave out a role with a step here, or name a role that cannot use the screen, such as a role that never signs in on a signed-in screen.
 - A `title` that is not the words the user reads at the top, or a `purpose` the steps don't carry out.
 - Two alternatives for the same situation, or an alternative whose steps contradict the screen's own.
-- Design system details in a step: component names, colors, sizes or pixels.
+- Design system details in a step: component names, colors, sizes, pixels, or where something sits, such as left, right, center, beside or in the header.
 
 Leave out id formats and taste.
