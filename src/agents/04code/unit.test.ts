@@ -84,25 +84,29 @@ describe('a coding unit', () => {
     expect(user).toContain('CODE-002');
   });
 
-  it('records what is left after round 3 as known, and returns', async () => {
-    const { ctx, spec, deps } = setup('known', false, (name) => name === 'typecheck');
+  it('records what is left after the fifth round as known, and returns', async () => {
+    const { ctx, spec, deps, reviews } = setup('known', false, (name) => name === 'typecheck');
     process.env.FAKE_VARY = '1';
     process.env.FAKE_ARGS = runPath(ctx.run, 'muse-args.log');
     const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
-    expect(result.rounds).toBe(3);
+    expect(result.rounds).toBe(5);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
-    // The three sessions are one Muse session; another attempt at the unit starts its own.
+    // Both reviewers read every round, the last one included.
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
+    // The five sessions are one Muse session; another attempt at the unit starts its own.
     const ids = () => readFileSync(runPath(ctx.run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
-    expect(ids()).toHaveLength(3);
+    expect(ids()).toHaveLength(5);
     expect(new Set(ids()).size).toBe(1);
     // Each session is its own commit, failed or not, and a patch; the inputs commits touch only .weave/ and make none.
     const appDir = runPath(ctx.run, 'app');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
-    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-fix-2 (failed: typecheck)');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-fix-4 (failed: typecheck)');
     expect(readdirSync(runPath(ctx.run, 'patches', 'code-pages-S04'))).toEqual([
       '001-page-S04-failed-typecheck.patch',
       '002-page-S04-fix-1-failed-typecheck.patch',
       '003-page-S04-fix-2-failed-typecheck.patch',
+      '004-page-S04-fix-3-failed-typecheck.patch',
+      '005-page-S04-fix-4-failed-typecheck.patch',
     ]);
     await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_ARGS);
     expect(new Set(ids()).size).toBe(2);

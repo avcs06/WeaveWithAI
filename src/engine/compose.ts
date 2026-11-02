@@ -16,11 +16,18 @@ import { git } from './setup';
 // Code sessions, its validators are the checks after each session, and its
 // reviewers read the unit's whole diff.
 
-/** Round 1: the session, the checks, both reviewers. Round 2: a fix and both again. Round 3: a final fix. */
+/**
+ * Five rounds, as many as a spec stage, with both reviewers in every one: the session and its checks, then a fix
+ * after each round that leaves something pending. What the last round's reviewers find is recorded as known.
+ * `output` is the runner's slot, not one reviewer: a code unit fills it with two named guides, code and adherence
+ * (unit.ts), and the runner makes one call for each. Code units have no peer reviewer.
+ */
 export const CODE_SCHEDULE: Round[] = [
   { fix: false, reviewers: ['output'] },
   { fix: true, reviewers: ['output'] },
-  { fix: true, reviewers: [] },
+  { fix: true, reviewers: ['output'] },
+  { fix: true, reviewers: ['output'] },
+  { fix: true, reviewers: ['output'] },
 ];
 
 export type Unit = {
