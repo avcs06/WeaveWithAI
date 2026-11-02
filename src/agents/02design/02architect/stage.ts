@@ -51,6 +51,8 @@ async function runArchitect(ctx: StageContext): Promise<void> {
     maxTokens: ARCHITECT_MAX_TOKENS,
     reasoningEffort: ARCHITECT_EFFORT,
     temperature: 0.2,
+    // The architect sets the design's direction, so its first draft runs on the strong model, like the scope.
+    draftModel: 'strong',
     patchKeys: ARCHITECTURE_KEYS,
   });
   writeArtifact(run, 'design-architect', result.output, {
