@@ -8,7 +8,6 @@ import {
   contrastCheck,
   firstViewport,
   overflowCheck,
-  proximity,
   targetSizes,
   typography,
 } from './collectors';
@@ -24,10 +23,6 @@ export type RouteSample = {
   url: string;
   screen: string;
   entry: boolean;
-  /** `data-testid`s of the page's primary actions. */
-  primaryTestIds: string[];
-  /** `data-testid`s of controls that open a dialog. */
-  dialogTriggers?: string[];
   /** localStorage entries written before the route loads: a member's session on a page behind sign-in. */
   storage?: Record<string, string>;
 };
@@ -51,7 +46,6 @@ const EMPTY_WALK: Omit<KeyboardReport, 'findings'> = {
   focusVisible: 0,
   inversions: 0,
   trap: false,
-  dialogs: { opened: 0, escaped: 0, focusReturned: 0 },
   activation: { buttons: 0, enterOk: 0, spaceOk: 0 },
   skipLink: false,
 };
@@ -81,14 +75,13 @@ export async function checkRoute(
     const targets = await guard('DESIGN-R-004', { findings: [], small24: 0 }, () => targetSizes(page));
     const rest = [
       ...(await guard('DESIGN-R-005', [], () => overflowCheck(page))),
-      ...(sample.entry ? await guard('DESIGN-R-006', [], () => firstViewport(page, sample.primaryTestIds)) : []),
+      ...(sample.entry ? await guard('DESIGN-R-006', [], () => firstViewport(page)) : []),
       ...(await guard('DESIGN-R-007', [], () => typography(page))),
       ...(await guard('DESIGN-R-008', [], () => colorVariables(page, theme))),
-      ...(await guard('DESIGN-R-009', [], () => proximity(page))),
     ];
     // Last: the walk presses keys and may open and close things.
     const { findings: walked, ...keyboard } = await guard('DESIGN-R-003', { ...EMPTY_WALK, findings: [] }, () =>
-      keyboardWalk(page, { blockMutations: true, dialogTriggers: sample.dialogTriggers ?? [] }),
+      keyboardWalk(page, { blockMutations: true }),
     );
     return {
       route: sample.route,

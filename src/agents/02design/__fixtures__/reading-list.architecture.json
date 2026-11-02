@@ -4,24 +4,18 @@
       "id": "FR01",
       "name": "Public site frame",
       "purpose": "Around the landing, sign-up and sign-in pages, for a reader who is not signed in.",
+      "flows": [],
       "steps": [
         "Sees the logo, which leads to /.",
         "Can choose Sign in, which goes to /sign-in, or Get started, which goes to /sign-up."
       ],
-      "alternatives": [
-        {
-          "when": "the screen is as narrow as a phone",
-          "steps": [
-            "Sees the logo and a menu button.",
-            "Can open the menu to choose Sign in or Get started."
-          ]
-        }
-      ]
+      "alternatives": []
     },
     {
       "id": "FR02",
       "name": "App frame",
       "purpose": "Around every page a signed-in reader uses.",
+      "flows": ["F06"],
       "steps": [
         "Sees the logo, which leads to /books.",
         "Can open the account menu, which shows their email and lets them sign out (F06)."

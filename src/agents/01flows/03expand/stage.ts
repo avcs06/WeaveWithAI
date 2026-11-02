@@ -4,6 +4,7 @@ import {
   readArtifact,
   writeArtifact,
 } from '../../../core/artifacts';
+import { writeReport } from '../../../core/issues';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { StageContext, StageDef } from '../../stages';
@@ -15,6 +16,7 @@ import { Flows } from '../schema';
 import {
   assemble,
   batchesOf,
+  dropUnused,
   EXPAND_BATCH_SIZE,
   expandCompose,
 } from './compose';
@@ -66,13 +68,20 @@ async function runExpand(ctx: StageContext): Promise<void> {
     }),
   );
   const flows = Flows.parse(
-    assemble(
-      catalog,
-      results.map((result) => result.output),
+    dropUnused(
+      assemble(
+        catalog,
+        results.map((result) => result.output),
+      ),
     ),
   );
+  // What code cannot fix in the whole document, such as a record no flow shows, goes to the code stages as known issues.
+  const issues = validateFlows(flows, scope);
+  writeReport(run, 'flows-expand', 1, issues);
   const rounds = results.reduce((sum, result) => sum + result.rounds, 0);
-  const known = results.reduce((sum, result) => sum + result.known.length, 0);
+  const known =
+    results.reduce((sum, result) => sum + result.known.length, 0) +
+    issues.filter((issue) => issue.severity === 'mandatory').length;
   writeArtifact(run, 'flows-expand', flows, {
     stage: 'flows-expand',
     model: results[0]?.model ?? 'none',

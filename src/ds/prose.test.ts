@@ -22,25 +22,25 @@ describe('inventoryProse', () => {
     expect(prose).toMatch(/^Toast: A short message after an action/m);
   });
 
-  it('states variants with defaults, looks and boxes on short lines, and no props or recipe contents', () => {
+  it('states variants with defaults and looks on short lines, and no props or recipe contents', () => {
     expect(prose).toContain(
       'Variants: size sm|md|icon-xs|icon-sm|icon-md (default sm); variant base|default|danger (default default).',
     );
     expect(prose).toContain('Looks: ghost, rounded, rounded ghost; default none.');
     expect(prose).toContain('Looks: outline (default), outline ghost,');
     expect(prose).not.toMatch(/^\s*(Shows|Contains):/m);
-    expect(prose).toContain('Boxes: sm 32 tall, padding 6 8, gap 8; md 40 tall, padding 8 12, gap 10.');
-    expect(prose).toContain('Boxes: xs 24 square, padding 4; sm 32 square, padding 7; md 40 square, padding 8.');
-    expect(prose).toContain('sm box 80 tall, at least 32, padding 8 16, gap 8');
-    expect(prose).toContain('Boxes: 30 tall, padding 8 10, gap 10.');
-    expect(prose).toContain('Boxes: padding 16 20, gap 12.');
-    expect(prose).toContain('Boxes: padding 20, gap 20; header 52 tall, gap 4; content gap 16.');
-    expect(prose).toContain('md body 520 wide, padding 20 24 24 24;');
   });
 
-  it('says a state\'s part once when it equals the part without the state', () => {
-    expect(prose).toContain('sm with error 104 tall, gap 8; sm with error message 16 tall, padding 0 4;');
-    expect(prose).not.toContain('sm with error box');
+  it('states the heights of Button alone', () => {
+    expect(prose).toContain(
+      [
+        'Button: An action the user takes: submit a form, save, publish, delete, open a menu.',
+        '  Variants: size sm|md|icon-xs|icon-sm|icon-md (default sm); variant base|default|danger (default default).',
+        '  Looks: ghost, rounded, rounded ghost; default none.',
+        '  Heights: sm 32, md 40.',
+      ].join('\n'),
+    );
+    expect(prose.match(/Heights: /g)).toHaveLength(1);
   });
 
   it('stays small enough for a prompt', () => {

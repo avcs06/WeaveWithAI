@@ -80,7 +80,7 @@ stage registry. Find each piece by searching; don't assume a folder.
 - An exception bolted onto a rule where the rule itself should change. A rule
   that conflicts with a newer one is deleted, not narrowed.
 - Review guides ask only for major blockers that no rule can check. A blocker
-  a pure function could check becomes a rule.
+  a pure function could check is a missing rule, noted for later.
 - The fix prompt and the review prompts match the current issue and review
   shapes.
 
@@ -89,10 +89,8 @@ stage registry. Find each piece by searching; don't assume a folder.
 - Table: each checkable rule a prompt states, next to its rule id. Checkable
   means decidable by a pure function from the artifact, the inventory, scope
   and flows.
-- Missing rule: add one rule file with `defineRule` and the next free number
-  of its prefix, beside the other rules. Register it in its validator list and
-  add its mutation to the fixture mutations. The reading-list fixture still
-  passes every rule, warnings included.
+- Missing rule: list it in the report as noted for later. Don't add it. New
+  validators are on hold until a real run proves the design.
 - Stale rule, for a case that no longer exists: delete its file, its
   registration, its mutation and any helper only it used. Its number stays
   unused.

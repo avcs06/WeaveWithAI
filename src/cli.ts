@@ -33,7 +33,7 @@ import {
   watchEvents,
 } from './core/run';
 import { runLog } from './core/log';
-import { PIPELINE, type StageContext, type StageDef, stageBatches, stages } from './agents/stages';
+import { PIPELINE, type StageContext, stages } from './agents/stages';
 import type { Themed } from './agents/02design/01theme/build';
 import { cleanAgentImages } from './engine/docker';
 
@@ -113,37 +113,29 @@ export async function runCommand(
   try {
     let forced = false;
     const order = PIPELINE.slice(0, to ? PIPELINE.indexOf(to) + 1 : undefined);
-    for (const batch of stageBatches(order)) {
-      const due: StageDef[] = [];
-      for (const name of batch) {
-        if (name === args.from) forced = true;
-        const def = stages.find((stage) => stage.name === name);
-        if (!def) continue;
-        const before = readState(run).stages[name];
-        const upToDate =
-          before?.status === 'done' &&
-          def.produces.every(
-            (artifact) => hasArtifact(run, artifact) && !isStale(run, artifact),
-          );
-        if (upToDate && !forced) log.line(name, `up to date (v${before.version ?? '?'})`);
-        else due.push(def);
+    for (const name of order) {
+      if (name === args.from) forced = true;
+      const def = stages.find((stage) => stage.name === name);
+      if (!def) continue;
+      const before = readState(run).stages[name];
+      const upToDate =
+        before?.status === 'done' &&
+        def.produces.every(
+          (artifact) => hasArtifact(run, artifact) && !isStale(run, artifact),
+        );
+      if (upToDate && !forced) {
+        log.line(name, `up to date (v${before.version ?? '?'})`);
+        continue;
       }
-      // Every stage of a batch finishes before the first failure ends the run, so none writes after it.
-      const settled = await Promise.allSettled(
-        due.map(async (def) => {
-          log.line(def.name, 'running');
-          await def.run(ctx);
-          const after = readState(run).stages[def.name];
-          const version = after?.version ? ` v${after.version}` : '';
-          const rounds = after?.rounds ? `, ${after.rounds} rounds` : '';
-          const known = after?.known
-            ? `, ${after.known} known ${after.known === 1 ? 'issue' : 'issues'}`
-            : '';
-          log.line(def.name, `${after?.status ?? 'done'}${version}${rounds}${known}`);
-        }),
-      );
-      const failed = settled.find((s) => s.status === 'rejected');
-      if (failed) throw failed.reason;
+      log.line(name, 'running');
+      await def.run(ctx);
+      const after = readState(run).stages[name];
+      const version = after?.version ? ` v${after.version}` : '';
+      const rounds = after?.rounds ? `, ${after.rounds} rounds` : '';
+      const known = after?.known
+        ? `, ${after.known} known ${after.known === 1 ? 'issue' : 'issues'}`
+        : '';
+      log.line(name, `${after?.status ?? 'done'}${version}${rounds}${known}`);
     }
   } finally {
     stopLog();

@@ -78,7 +78,7 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
 
 /** How the browser checks open a screen: the landing page also checks its first viewport, and a page behind sign-in loads with a member's session. */
 const pageSample = (screen: Screen, route: CheckedRoute): RouteSample =>
-  routeSample(route.url, screen.id, screen.route === '/', [], route.signedIn ? SIGNED_IN : undefined);
+  routeSample(route.url, screen.id, screen.route === '/', route.signedIn ? SIGNED_IN : undefined);
 
 async function runPages(ctx: StageContext): Promise<void> {
   const scope = readArtifact<Scope>(ctx.run, 'flows-scope').data;

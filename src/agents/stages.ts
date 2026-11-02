@@ -48,21 +48,6 @@ export const PIPELINE: string[] = [
   'repair',
 ];
 
-/** Stages that read nothing of each other's, so they run side by side. None at the moment. */
-export const SIDE_BY_SIDE: string[][] = [];
-
-/** `order` in runs of stages that start together: each side-by-side group as one batch, every other stage alone. */
-export function stageBatches(order: string[], groups = SIDE_BY_SIDE): string[][] {
-  const batches: string[][] = [];
-  for (const name of order) {
-    const last = batches.at(-1);
-    const group = groups.find((g) => g.includes(name));
-    if (group && last?.length && group.includes(last[0] ?? '')) last.push(name);
-    else batches.push([name]);
-  }
-  return batches;
-}
-
 export const stages: StageDef[] = [
   scopeStage,
   catalogStage,

@@ -1,61 +1,8 @@
-import type { Box, Inventory, InventoryComponent } from './inventory';
+import type { Inventory, InventoryComponent } from './inventory';
 
 function firstSentence(text: string): string {
   const flat = text.replace(/\s+/g, ' ').trim();
   return flat.split(/(?<=[^\s][.!?])\s+(?=[A-Z`])/)[0] ?? '';
-}
-
-function dims({ height, width, minHeight }: Box): string {
-  let text = '';
-  if (height !== undefined && width !== undefined)
-    text =
-      height === width ? `${height} square` : `${width} wide and ${height} tall`;
-  else if (height !== undefined) text = `${height} tall`;
-  else if (width !== undefined) text = `${width} wide`;
-  if (minHeight === undefined) return text;
-  return text ? `${text}, at least ${minHeight}` : `at least ${minHeight} tall`;
-}
-
-/** Padding as CSS writes it: one value when all sides match, two for block and inline. */
-function spacing({ padding, gap }: Box): string[] {
-  const parts: string[] = [];
-  if (padding) {
-    const [top, right, bottom, left] = padding;
-    const sides =
-      top === bottom && right === left
-        ? top === right
-          ? [top]
-          : [top, right]
-        : padding;
-    parts.push(`padding ${sides.join(' ')}`);
-  }
-  if (gap !== undefined) parts.push(`gap ${gap}`);
-  return parts;
-}
-
-/** A part of a state (`sm+error/box`) equal to the same part without it (`sm/box`). */
-function repeated(box: Record<string, Box>, key: string): boolean {
-  const base = key.replace(/\+[^/]*/, '');
-  return (
-    base !== key &&
-    key.includes('/') &&
-    JSON.stringify(box[base]) === JSON.stringify(box[key])
-  );
-}
-
-/** `sm/box` reads as `sm box`, `sm+error` as `sm with error`, `default` says nothing. */
-function boxes(box: Record<string, Box>): string {
-  return Object.entries(box)
-    .filter(([key]) => !repeated(box, key))
-    .map(([key, value]) => {
-      const label =
-        key === 'default'
-          ? ''
-          : `${key.replace(/\//g, ' ').replace(/\+/g, ' with ')} `;
-      const said = [dims(value), ...spacing(value)].filter(Boolean);
-      return `${label}${said.join(', ')}`;
-    })
-    .join('; ');
 }
 
 function facts(component: InventoryComponent): string[] {
@@ -73,7 +20,13 @@ function facts(component: InventoryComponent): string[] {
       .map((look) => (look === fallback ? `${look} (default)` : look));
     lines.push(`Looks: ${named.join(', ')}${fallback === '' ? '; default none' : ''}.`);
   }
-  if (component.box) lines.push(`Boxes: ${boxes(component.box)}.`);
+  // The theme fits a header or footer to a default-size button; it needs no other size.
+  if (component.name === 'Button' && component.box)
+    lines.push(
+      `Heights: ${Object.entries(component.box)
+        .map(([size, box]) => `${size} ${box.height}`)
+        .join(', ')}.`,
+    );
   return lines;
 }
 

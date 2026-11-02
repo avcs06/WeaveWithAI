@@ -8,7 +8,8 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 
 - A step that contradicts its flow: a different field, form, result or next place than the flow's step says.
 - A field (FD01), form (FM01), flow (F01) or role id that the flows or the scope don't have, or the wrong one for what the step shows.
-- A flow id that is in no screen's or dialog's `flows`, or a screen or dialog that lists a flow none of its steps carries.
+- A flow id that is in no frame's, screen's or dialog's `flows`, or a frame, screen or dialog that lists a flow none of its steps carries.
+- Quoted words that contradict the flows: a field label or a message worded otherwise than the flows have it.
 - A step that saves, changes or deletes something no flow does, or that skips a confirm the flow has.
 
 ## Links between places

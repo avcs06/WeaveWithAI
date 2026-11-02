@@ -4,7 +4,7 @@ import { type RouteSample, runRenderedChecks, type ThemeColors } from '../../che
 import { APP_URL, withDevServer } from '../../engine/server';
 import type { Theme } from '../02design/01theme/build';
 
-// The rendered checks of a code unit (DESIGN-R-001 to 009): axe, contrast,
+// The rendered checks of a code unit (DESIGN-R-001 to 008): axe, contrast,
 // target sizes, the keyboard walk and the rest, on its routes, after its session.
 
 /** The brand's accent fills; accentFg is the text on them, often the page's own white. */
@@ -30,10 +30,9 @@ export function routeSample(
   route: string,
   screen: string,
   entry: boolean,
-  primaryTestIds: string[] = [],
   storage?: Record<string, string>,
 ): RouteSample {
-  return { route, url: `${APP_URL}${route}`, screen, entry, primaryTestIds, ...(storage && { storage }) };
+  return { route, url: `${APP_URL}${route}`, screen, entry, ...(storage && { storage }) };
 }
 
 /** The checks on `routes`, with the app's dev server up for them. */

@@ -2,7 +2,7 @@
 # Frames
 
 - `frames.md` lists each frame: what it shows around its screens, as steps
-  in reading order, its alternatives (a phone, signed out), and its route
+  in reading order, its alternatives (signed out), and its route
   group with the screens inside it.
 - Each frame is a layout, `web/app/(routes)/(<route group>)/layout.tsx`,
   such as `web/app/(routes)/(app)/layout.tsx`. Its parts (header, sidebar,

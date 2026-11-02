@@ -20,16 +20,18 @@ const contract = JSON.parse(
   readFileSync(new URL('./__fixtures__/reading-list.contract.json', import.meta.url), 'utf8'),
 ) as Contract;
 
-/** Answers the contract call with the reading-list contract. */
+/** Answers by schema: the reading-list contract, and nothing for the reviewers to block. */
 function fakeLlm() {
   const inputs: GenerateInput<unknown>[] = [];
   const llm: Llm = {
     async generateStructured(input) {
       inputs.push(input as GenerateInput<unknown>);
-      if (input.schemaName !== 'Contract') throw new Error(`unexpected schema ${input.schemaName}`);
+      const answers: Record<string, unknown> = { Contract: contract, Review: { blockers: [] } };
+      const data = answers[input.schemaName];
+      if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
       return {
-        data: contract as never,
-        raw: JSON.stringify(contract),
+        data: data as never,
+        raw: JSON.stringify(data),
         usage: { input: 10, cachedInput: 0, output: 5 },
         costUsd: 0.001,
         replayed: false,
@@ -43,7 +45,7 @@ function fakeLlm() {
 }
 
 describe('the contract stage', () => {
-  it('writes the contract from the scope, the flows and the screens in one clean call', async () => {
+  it('writes the contract from the scope, the flows and the screens in one clean call that both reviewers pass', async () => {
     const run = createRun({ idea, runsDir: root, id: 'contract' });
     const meta = { model: null, rounds: 1 };
     writeArtifact(run, 'flows-scope', scope, { ...meta, stage: 'flows-scope', inputs: [] });
@@ -62,8 +64,11 @@ describe('the contract stage', () => {
       },
       data: contract,
     });
+    // A clean draft ends after round 2's two reviews.
     expect(inputs.map((input) => [input.stage, input.reasoningEffort, input.maxTokens])).toEqual([
       ['contract', 'medium', 32_768],
+      ['contract-review-peer', 'medium', 8192],
+      ['contract-review-output', 'medium', 8192],
     ]);
     expect(inputs[0]?.messages.at(-1)?.content).toContain('# Frames, screens and dialogs');
     expect(readFileSync(path.join(run.dir, '03-contract.md'), 'utf8')).toContain('## What each screen loads');

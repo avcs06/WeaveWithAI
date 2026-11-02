@@ -3,7 +3,7 @@ import type { Page } from 'playwright-core';
 import { inPage } from './page';
 import { type Finding, finding } from './types';
 
-// DESIGN-R-001, 002 and 004 to 009: each
+// DESIGN-R-001, 002 and 004 to 008: each
 // measures one open page and returns findings plus the numbers behind them,
 // so the coding gate, the app MCP and the benchmark read the same
 // collectors. The keyboard walk, R-003, is keyboard.ts.
@@ -96,16 +96,12 @@ export async function overflowCheck(page: Page): Promise<Finding[]> {
   );
 }
 
-/** R-006: on an entry page the H1 and a primary action end inside the first viewport. */
-export async function firstViewport(
-  page: Page,
-  primaryTestIds: string[],
-): Promise<Finding[]> {
+/** R-006: on an entry page the H1 ends inside the first viewport. */
+export async function firstViewport(page: Page): Promise<Finding[]> {
   const found = await inPage<{
     height: number;
     h1: number | null;
-    primaries: { id: string; bottom: number | null }[];
-  }>(page, 'firstViewport', primaryTestIds);
+  }>(page, 'firstViewport');
   const findings: Finding[] = [];
   if (found.h1 === null)
     findings.push(finding('DESIGN-R-006', 'mandatory', 'the page has no h1'));
@@ -116,17 +112,6 @@ export async function firstViewport(
         'mandatory',
         `the h1 ends at ${Math.round(found.h1)}, below the first ${found.height}`,
         'h1',
-      ),
-    );
-  const shown = found.primaries.filter(
-    (p) => p.bottom !== null && p.bottom <= found.height,
-  );
-  if (primaryTestIds.length && !shown.length)
-    findings.push(
-      finding(
-        'DESIGN-R-006',
-        'mandatory',
-        `no primary action (${primaryTestIds.join(', ')}) in the first ${found.height}`,
       ),
     );
   return findings;
@@ -187,21 +172,4 @@ export async function colorVariables(
       ),
     );
   return findings;
-}
-
-/** R-009: sections stand further apart than the blocks inside them. */
-export async function proximity(page: Page): Promise<Finding[]> {
-  const pairs = await inPage<
-    { sections: [string, string]; between: number; inside: number }[]
-  >(page, 'proximity');
-  return pairs
-    .filter((p) => p.between <= p.inside)
-    .map((p) =>
-      finding(
-        'DESIGN-R-009',
-        'warning',
-        `${p.sections[1]} is ${p.between} below ${p.sections[0]}, not more than the ${p.inside} inside them`,
-        p.sections[1],
-      ),
-    );
 }

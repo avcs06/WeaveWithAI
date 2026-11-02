@@ -24,6 +24,7 @@ export function renderArchitecture(
 export const frameLines = (frame: Frame): string[] => [
   `## ${frame.id} ${frame.name} (frame)`,
   frame.purpose,
+  ...(frame.flows.length ? [`Flows: ${frame.flows.join(', ')}`] : []),
   '',
   ...numbered(frame.steps),
   ...alternativeLines(frame.alternatives),

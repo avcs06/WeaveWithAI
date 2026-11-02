@@ -1,5 +1,6 @@
 import { fillPrompt, json, loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
+import type { ReviewGuides } from '../../../runner/runSpecStage';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
 import type { Architecture } from '../../02design/02architect/schema';
@@ -26,3 +27,12 @@ export function contractUserMessage(
     architecture: json(architecture),
   });
 }
+
+/** A review guide beside this file: `review-peer` or `review-output`. */
+const guide = (name: string) => fillPrompt(load(`./${name}.md`), {});
+
+/** The contract's two review guides: the senior engineer peer, then the output reviewer. */
+export const contractReviewGuides = (): ReviewGuides => ({
+  peer: guide('review-peer'),
+  output: guide('review-output'),
+});

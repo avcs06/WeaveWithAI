@@ -6,7 +6,7 @@ import type { Scope } from '../01flows/01scope/schema';
 import type { Flows } from '../01flows/schema';
 import type { Architecture } from '../02design/02architect/schema';
 import type { StageDef } from '../stages';
-import { contractSystemPrompt, contractUserMessage } from './prompts/index';
+import { contractReviewGuides, contractSystemPrompt, contractUserMessage } from './prompts/index';
 import { renderContract } from './render';
 import { CONTRACT_KEYS, Contract } from './schema';
 import { validateContract } from './validation/validation';
@@ -31,6 +31,7 @@ export const contractStage: StageDef = {
       system: contractSystemPrompt(),
       user: contractUserMessage(scope, flows, architecture),
       validate: (contract) => validateContract(contract, { scope, flows }),
+      review: contractReviewGuides(),
       maxTokens: CONTRACT_MAX_TOKENS,
       reasoningEffort: CONTRACT_EFFORT,
       patchKeys: CONTRACT_KEYS,

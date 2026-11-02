@@ -18,7 +18,7 @@ A frame is what surrounds the screens: the logo, the navigation, the account men
 - "Can open Dashboards, Data sources and Settings from the navigation, in that order."
 - "Can open the account menu, which shows their name and lets them sign out."
 
-Its alternatives cover a phone, where the navigation collapses into a menu, and anything that changes when the user is signed out. Follow the theme's page layouts: the app layout and the marketing layout say where the navigation lives.
+`flows` lists the flows with a step in the frame, such as signing out from the account menu. A frame's alternatives cover what changes when the user is signed out. The app is built for desktop screens only, so write no phone layout. Follow the theme's page layouts: the app layout and the marketing layout say where the navigation lives.
 
 ## Screens
 
@@ -41,6 +41,16 @@ A dialog holds a short task that keeps the user's place: confirming a delete, a 
 
 - "Can choose Delete, which deletes the dashboard and goes back to /dashboards."
 - "Can choose Cancel, which closes the dialog and changes nothing."
+
+## Words on the page
+
+The coding agent uses the words you quote as they are, and writes the rest itself. Quote the words that carry the app's message, in the brief's voice and the users' words:
+
+- On the landing page: the headline, the line under it, what each reason to join says, and the main action: "Reads the headline "Never lose track of a book again"."
+- The label of each screen's main action: "Can choose "Add a book", which opens D01."
+- What an empty state says, and its action: "Reads "No books yet. Add the first one to start your list."".
+
+Field labels and the website's messages come from the flows: use them as they are.
 
 ## Ids
 

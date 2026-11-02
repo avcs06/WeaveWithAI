@@ -88,6 +88,10 @@ looks. Build every screen so a user sees at a glance what it is for:
   after the user confirms.
 - A step that leads to a route opens it from `routes.json` with `NextLink`
   or `useRouter`, even when that screen is not built yet.
+- Use the words the design quotes exactly as they are. Write every other
+  word for this app, in the voice the brief in `theme.json` names: never
+  placeholder text or words that would fit any app.
+- The app is built for desktop screens only: write no phone layout.
 
 ## Keyboard and accessibility
 
@@ -100,7 +104,7 @@ already; a control you build yourself must too.
 - Buttons act on Enter and Space. Use a design-system button or a native
   `button`, never a clickable `div`.
 - A dialog closes on Escape and gives focus back to the control that opened
-  it.
+  it. No check tries this, so use the design system's dialog, which does both.
 - Every control has an accessible name: its visible label, or `aria-label`
   when it shows only an icon.
 - Text has a contrast of at least 4.5:1, or 3:1 for large text.

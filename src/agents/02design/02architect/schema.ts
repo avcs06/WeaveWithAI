@@ -21,6 +21,9 @@ export const Frame = z.object({
   id: z.string().describe('FR01, FR02, ...'),
   name: z.string().describe('"App frame", "Public site frame"'),
   purpose: z.string().describe('Which screens sit in it and why'),
+  flows: z
+    .array(z.string())
+    .describe('Ids of the flows with a step in this frame, such as signing out'),
   steps: z
     .array(z.string())
     .describe(
@@ -28,7 +31,7 @@ export const Frame = z.object({
     ),
   alternatives: z
     .array(Alternative)
-    .describe('The frame on a phone, signed out, and other situations'),
+    .describe('The frame when the user is signed out, and other situations'),
 });
 
 export const Screen = z.object({

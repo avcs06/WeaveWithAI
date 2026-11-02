@@ -22,7 +22,7 @@ Treat these as decided and don't ask them again.
 - `domains`: the kinds of app and the situations in the lists below that this idea is, 1 to 3. Each brings the flows its users expect. Pick the kind of app first, then add a second kind or a situation only when the idea clearly is one too: a store where sellers sign up is both `ecommerce` and `marketplace`; an app where people work together is also `teams`.
 - `roles`: 1 to 3 roles with camelCase ids (member, shopOwner), each with `signedIn`. A person who never signs in is a role with `signedIn` false. The landing page belongs to the role it invites in.
 - `inScope`: at least 3 things the MVP does, in the users' words. Include the landing page and the business rules the idea states ("a reader keeps one list; there are no shared lists").
-- `vocabulary`: the things the app keeps track of, 1 to 4 nouns, singular and PascalCase (Project, Note, Booking), in the users' words. `belongsTo` is the id of the role that owns the records, or "shared".
+- `vocabulary`: the things the app keeps track of, 1 to 5 nouns, singular and PascalCase (Project, Note, Booking), in the users' words. `belongsTo` is the id of the role that owns the records, or "shared".
 - `outOfScope`: anything the idea mentions or implies that the MVP will not do, each with the `item`, the `reason`, and a `placeholder` saying what the app does instead. Empty when nothing is left out.
 - `assumptions`: where the idea is silent, numbered A01, A02, ..., each with a kind.
 - `questions`: numbered Q01, Q02, ..., each with the default answer you will assume. At most 5 are blocking. Presentation choices are never questions.

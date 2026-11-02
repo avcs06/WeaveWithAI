@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { architecture, flows, scope } from '../../02design/__fixtures__/chain';
-import { contractSystemPrompt, contractUserMessage } from './index';
+import { contractReviewGuides, contractSystemPrompt, contractUserMessage } from './index';
 
 describe('the contract prompt', () => {
   it('fills the record fields, a line each, and keeps the notes out', () => {
@@ -23,5 +23,12 @@ describe('the contract prompt', () => {
     expect(message).toContain('"id": "F03"');
     expect(message).toContain('"route": "/books"');
     expect(message).toContain('"FD03"');
+  });
+
+  it('has a peer and an output reviewer', () => {
+    const { peer, output } = contractReviewGuides();
+    expect(peer).toContain('an operation for everything a step loads or changes');
+    expect(output).toContain('It does not check `screens` at all.');
+    expect(`${peer}${output}`).not.toContain('{{');
   });
 });

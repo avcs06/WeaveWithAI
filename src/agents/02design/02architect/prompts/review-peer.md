@@ -8,7 +8,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 - A flow step with no place, or with two places that disagree.
 - A flow the user cannot finish: the place of a step cannot be reached from the place of the step before it, or the user never sees the outcome.
-- A flow alternative with no place: invalid input, a failure, an empty list, a confirm or cancel, no access, or a record that is gone.
+- A flow alternative with no place: an empty list, a confirm or cancel, no access, or a record that is gone. Invalid input and a failed save need no place: forms show them the same way everywhere.
 - A step placed on a screen its role never uses, such as a signed-in task on a public page.
 
 ## The right places
@@ -24,6 +24,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 - What the user came for buried under secondary actions, filters, help text or promotions. The first steps carry what the `purpose` names, and secondary actions come after them.
 - A landing page that does not first say what the app is, who it is for and what to do next.
 - Steps too vague to build: "Sees the details" instead of naming the fields, a list without what each item shows, an action without where it leads, or a choice without its options.
+- A landing page or an empty state without its quoted words, or words that would fit any app, such as "Welcome to our app".
 
 ## Getting around
 
@@ -31,7 +32,7 @@ First walk every flow, as its role, from its start to its outcome through the sc
 - A signed-in role with no way to reach its account and settings, or to sign out.
 - A dead end: a screen with no way back or on, an empty list with no action that fills it, a dialog with no way out, or a record that is gone with no way on.
 - A frame around signed-in screens that does not say what a visitor who is not signed in sees there.
-- A frame with no phone alternative when its navigation holds more than the logo and the account menu, or a frame that goes against the theme's page layouts.
+- A frame that goes against the theme's page layouts.
 
 ## Alternatives
 

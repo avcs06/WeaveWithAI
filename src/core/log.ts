@@ -2,7 +2,7 @@ import type { Event } from './run';
 
 // The live log of a run: each group of stages, each stage
 // under its group, and each part's rounds under its stage, every line named
-// by its part. Stages and parts run side by side, so the headers repeat when a
+// by its part. Parts run side by side, so the headers repeat when a
 // line belongs to another stage than the line before it.
 
 export type RunLog = {

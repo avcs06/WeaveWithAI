@@ -20,7 +20,6 @@ import {
   contrastCheck,
   firstViewport,
   overflowCheck,
-  proximity,
   targetSizes,
   typography,
 } from './collectors';
@@ -118,7 +117,6 @@ describe('rendered checks on the fixture pages', () => {
     expect(bad.inversions).toBe(1);
     const clean = await keyboardWalk(await open('clean.html'), {
       blockMutations: true,
-      dialogTriggers: ['add-book'],
     });
     expect(clean.findings).toEqual([]);
     expect(clean).toMatchObject({
@@ -128,7 +126,6 @@ describe('rendered checks on the fixture pages', () => {
       trap: false,
       skipLink: true,
       activation: { buttons: 1, enterOk: 1, spaceOk: 1 },
-      dialogs: { opened: 1, escaped: 1, focusReturned: 1 },
     });
   });
 
@@ -156,7 +153,7 @@ describe('rendered checks on the fixture pages', () => {
 
   it("never tests the design system's own markup, and tests what the app put in a design-system slot", async () => {
     const context = await browser.newContext();
-    const sample = { route: '/', url: `${base}design-system.html`, screen: 'S01', entry: false, primaryTestIds: [] };
+    const sample = { route: '/', url: `${base}design-system.html`, screen: 'S01', entry: false };
     const report = await checkRoute(sample, theme, (url) => openRoute(context, url));
     const of = (rule: string) => report.findings.filter((f) => f.rule === rule);
     // All three buttons are unnamed and 12px; nothing filters findings, so only the two the app made were tested.
@@ -171,7 +168,7 @@ describe('rendered checks on the fixture pages', () => {
 
   it('turns a check that breaks into a warning on its rule, and finishes the route', async () => {
     const report = await checkRoute(
-      { route: '/', url: `${base}clean.html`, screen: 'S01', entry: true, primaryTestIds: [] },
+      { route: '/', url: `${base}clean.html`, screen: 'S01', entry: true },
       theme,
       async (url) => {
         const page = await (await browser.newContext()).newPage();
@@ -205,7 +202,7 @@ describe('rendered checks on the fixture pages', () => {
         message: expect.stringMatching(/^page is \d+px wide$/),
       }),
     ]);
-    expect(await firstViewport(page, ['primary'])).toEqual([
+    expect(await firstViewport(page)).toEqual([
       expect.objectContaining({
         element: 'h1',
         message: expect.stringContaining('below the first 900'),
@@ -213,10 +210,10 @@ describe('rendered checks on the fixture pages', () => {
     ]);
     const clean = await open('clean.html');
     expect(await overflowCheck(clean)).toEqual([]);
-    expect(await firstViewport(clean, ['add-book'])).toEqual([]);
+    expect(await firstViewport(clean)).toEqual([]);
   });
 
-  it('R-007 typography, R-008 colors, R-009 proximity', async () => {
+  it('R-007 typography, R-008 colors', async () => {
     const page = await open('defects.html');
     expect(rules(await typography(page))).toEqual(
       expect.arrayContaining([
@@ -234,15 +231,9 @@ describe('rendered checks on the fixture pages', () => {
         'color #333333 is not a theme color',
       ]),
     );
-    expect(rules(await proximity(page))).toEqual([
-      expect.stringMatching(
-        /is 8 below .*, not more than the \d+ inside them$/,
-      ),
-    ]);
     const clean = await open('clean.html');
     expect(await typography(clean)).toEqual([]);
     expect(await colorVariables(clean, theme)).toEqual([]);
-    expect(await proximity(clean)).toEqual([]);
   });
 });
 
@@ -259,7 +250,6 @@ describe('runRenderedChecks', () => {
       url: `${base}${name}.html`,
       screen: 'S01',
       entry: true,
-      primaryTestIds: [name === 'clean' ? 'add-book' : 'primary'],
     });
     const { issues, perRoute } = await runRenderedChecks({
       run,

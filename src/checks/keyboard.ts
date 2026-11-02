@@ -4,8 +4,7 @@ import { type Finding, finding } from './types';
 
 // DESIGN-R-003: a keyboard walk. Every control is reached by Tab in reading
 // order, shows its focus, and does not trap it; buttons act on Enter and
-// Space; a dialog closes on Escape and gives focus back. Requests that could
-// change data are aborted while it walks.
+// Space. Requests that could change data are aborted while it walks.
 
 type Focusable = { element: string; app: boolean; button: boolean; skip: boolean };
 type Active = { element: string; style: string };
@@ -16,7 +15,6 @@ export type KeyboardReport = {
   focusVisible: number;
   inversions: number;
   trap: boolean;
-  dialogs: { opened: number; escaped: number; focusReturned: number };
   activation: { buttons: number; enterOk: number; spaceOk: number };
   skipLink: boolean;
   findings: Finding[];
@@ -26,7 +24,7 @@ const R = 'DESIGN-R-003';
 
 export async function keyboardWalk(
   page: Page,
-  opts: { blockMutations: true; dialogTriggers?: string[] },
+  opts: { blockMutations: true },
 ): Promise<KeyboardReport> {
   if (opts.blockMutations)
     await page.route('**/*', (route) =>
@@ -128,57 +126,9 @@ export async function keyboardWalk(
             button.element,
           ),
         );
-      if ((await inPage<string | null>(page, 'openDialog')) !== null)
+      if (await inPage<boolean>(page, 'dialogOpen'))
         await page.keyboard.press('Escape');
     }
-
-  await inPage(page, 'releaseClicks');
-  const dialogs = { opened: 0, escaped: 0, focusReturned: 0 };
-  const triggers = await inPage<string[]>(
-    page,
-    'appMadeOf',
-    (opts.dialogTriggers ?? []).map((t) => `[data-testid="${t}"]`),
-  );
-  for (const selector of triggers) {
-    await inPage(page, 'focus', selector);
-    await page.keyboard.press('Enter');
-    const label = await inPage<string | null>(page, 'openDialog');
-    if (label === null) {
-      findings.push(
-        finding(R, 'mandatory', 'Enter does not open its dialog', selector),
-      );
-      continue;
-    }
-    dialogs.opened += 1;
-    if (!label)
-      findings.push(
-        finding(
-          R,
-          'mandatory',
-          'the dialog it opens has no accessible name',
-          selector,
-        ),
-      );
-    await page.keyboard.press('Escape');
-    if ((await inPage<string | null>(page, 'openDialog')) !== null) {
-      findings.push(
-        finding(R, 'mandatory', 'Escape does not close its dialog', selector),
-      );
-      continue;
-    }
-    dialogs.escaped += 1;
-    if ((await inPage<Active>(page, 'active')).element === selector)
-      dialogs.focusReturned += 1;
-    else
-      findings.push(
-        finding(
-          R,
-          'mandatory',
-          'focus does not return to it when its dialog closes',
-          selector,
-        ),
-      );
-  }
   if (opts.blockMutations) await page.unroute('**/*');
 
   return {
@@ -187,7 +137,6 @@ export async function keyboardWalk(
     focusVisible,
     inversions,
     trap,
-    dialogs,
     activation,
     skipLink,
     findings,
