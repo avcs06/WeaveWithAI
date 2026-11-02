@@ -142,8 +142,6 @@ export function use${upper(op.id)}(id: string): Read<${entity} | undefined> {
   await mockCall('${op.id}');
   ${store}.setState(({ records }) => ({ records: records.filter((record) => record.id !== id) }));
 }`;
-    case 'action':
-      throw new Error(`${op.id}: the code stages write list, get, create, update and delete only`);
   }
 }
 

@@ -55,7 +55,11 @@ export function renderContract(
     '',
     '## What each screen loads',
     '',
-    ...[...architecture.screens, ...architecture.dialogs].map(
+    ...[
+      ...architecture.frames.map((frame) => ({ id: frame.id, title: frame.name })),
+      ...architecture.screens,
+      ...architecture.dialogs,
+    ].map(
       (place) =>
         `- ${place.id} ${place.title}: ${list(contract.screens.filter((entry) => entry.screen === place.id).flatMap((entry) => entry.reads))}`,
     ),

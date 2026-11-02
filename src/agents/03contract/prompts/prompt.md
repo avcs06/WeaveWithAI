@@ -26,7 +26,7 @@ The contract has one job. Every screen and dialog knows where its data comes fro
 
 ## Operations
 
-- One operation for each thing a flow step loads or changes. Its `kind` follows the step's effect: list is list, read is get, create is create, update is update or action, delete is delete.
+- One operation for each thing a flow step loads or changes. Its `kind` follows the step's effect: list is list, read is get, create is create, update is update, delete is delete. A one-step action on a record, such as completing a task, is an update named after it (completeTask).
 - `id`: camelCase verb and entity, such as listBooks, createBook or completeTask.
 - `entity`: the name of the entity it acts on, such as Book.
 - `summary`: what it does, in one sentence. The coding agent reads it beside the function.
@@ -37,7 +37,7 @@ The contract has one job. Every screen and dialog knows where its data comes fro
 
 ## Screens
 
-- `screens`: one entry for each screen or dialog that shows records. `screen` is its id (S03, D01).
+- `screens`: one entry for each frame, screen or dialog that shows records. `screen` is its id (FR02, S03, D01). A frame that shows records around every screen, such as the user's projects beside them, reads them like a screen.
 - `reads`: the list and get operations that load what it shows. Every noun it shows is loaded by one of them.
 - A screen that lists records reads the list of that noun. A screen that shows one record reads the get of that record, or the list it was picked from.
 - A form that adds a record shows what the user types in, so it reads nothing for that record. A form that edits a record shows the current values, so it reads the record.

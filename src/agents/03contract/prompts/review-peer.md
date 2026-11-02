@@ -6,10 +6,10 @@ First walk every flow step and alternative, and find the operation that does eac
 
 ## Entities
 
-- A vocabulary noun whose records a screen or dialog shows, with no entity.
-- A value a screen or dialog shows, or a value the users fill in that a record keeps, with no field on that record's entity. A count or another value worked out from records needs no field.
+- A vocabulary noun whose records a frame, screen or dialog shows, with no entity.
+- A value a frame, screen or dialog shows, or a value the users fill in that a record keeps, with no field on that record's entity. A count or another value worked out from records needs no field.
 - A record that belongs to another record, such as a task of a project, with no `ref` field to it. Without it, no screen can show only one project's tasks.
-- An entity, a field or an enum that no flow, screen or dialog needs.
+- An entity, a field or an enum that no flow, frame, screen or dialog needs.
 
 ## Operations
 
@@ -20,8 +20,8 @@ First walk every flow step and alternative, and find the operation that does eac
 
 ## Screens
 
-- A screen or dialog that shows records, with no entry in `screens`.
-- A record a screen or dialog shows that none of its reads loads. That includes the records a choice offers, such as the projects to pick for a task, and a record shown through a `ref`, such as each task's project name.
+- A frame, screen or dialog that shows records, with no entry in `screens`.
+- A record a frame, screen or dialog shows that none of its reads loads. That includes the records a choice offers, such as the projects to pick for a task, and a record shown through a `ref`, such as each task's project name.
 - A screen that lists records and does not read the list of that noun.
 - A screen for one record that reads neither the get of that record nor the list it was picked from.
 - A form that edits a record and does not read it.

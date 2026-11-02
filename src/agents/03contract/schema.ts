@@ -60,7 +60,7 @@ export const Input = z.object({
 
 export const Operation = z.object({
   id: z.string().describe('camelCase verb + noun, such as createProject or completeTask'),
-  kind: z.enum(['list', 'get', 'create', 'update', 'delete', 'action']),
+  kind: z.enum(['list', 'get', 'create', 'update', 'delete']),
   entity: z.string(),
   summary: z.string(),
   inputs: z.array(Input).describe('What the user fills in that it takes; []'),
@@ -68,7 +68,7 @@ export const Operation = z.object({
 });
 
 export const ScreenSource = z.object({
-  screen: z.string().describe('A screen or dialog id, such as S03 or D01'),
+  screen: z.string().describe('A frame, screen or dialog id, such as FR02, S03 or D01'),
   reads: z
     .array(z.string())
     .describe('The ids of the list and get operations that load the records it shows'),
@@ -80,7 +80,7 @@ export const Contract = z.object({
   operations: z.array(Operation),
   screens: z
     .array(ScreenSource)
-    .describe('One entry for each screen or dialog that shows records'),
+    .describe('One entry for each frame, screen or dialog that shows records'),
 });
 
 /** The key of each list's items, for patches in the fix rounds. */

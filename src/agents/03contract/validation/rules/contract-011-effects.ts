@@ -5,7 +5,7 @@ import { allSteps, type ContractInput } from '../helpers';
 /**
  * CONTRACT-011 · mandatory
  * A step's effect is served by an operation of the matching kind on the
- * noun's entity: create, list, read by get, update by update or action, delete.
+ * noun's entity: create, list, read by get, update, delete.
  * Pass: F05.S01 reads Book through getBook.
  * Fail: F05.S01 served by listBooks only.
  */
@@ -13,7 +13,7 @@ const KINDS = {
   create: ['create'],
   list: ['list'],
   read: ['get'],
-  update: ['update', 'action'],
+  update: ['update'],
   delete: ['delete'],
 } as const;
 

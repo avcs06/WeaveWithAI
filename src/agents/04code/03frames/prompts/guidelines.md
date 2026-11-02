@@ -17,6 +17,8 @@
   marketing layout. Build each frame on the one that fits its screens.
 - A layout shows its frame, and `children` in its main region. No screen
   content.
+- A frame loads the records it shows through the operations `frames.md`
+  names for it: call them in its layout and pass the records to its parts.
 - A frame has no H1, not even its logo: each screen's title is the page's
   only H1.
 - Keep `web/app/(routes)/layout.tsx` as it is.

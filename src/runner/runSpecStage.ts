@@ -88,6 +88,8 @@ export type SpecStageOptions<T> = {
   draftModel?: ModelChoice;
   /** How the document is produced; the default is one conversation with the model. */
   compose?: Compose<T>;
+  /** A document to start from: round 1 validates it instead of generating one, and the fixes patch it. */
+  start?: Draft<T>;
   /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
   llm: Llm;
@@ -134,7 +136,7 @@ const reviewInput = loadPrompt(
 
 /**
  * Produce, validate, review on schedule, fix what is pending; whatever is left at the end is known, never fatal.
- * The document comes from `compose.draft`; every later generation is `compose.fix`.
+ * The document comes from `start`, or from `compose.draft`; every later generation is `compose.fix`.
  */
 export async function runSpecStage<T>(
   o: SpecStageOptions<T>,
@@ -184,7 +186,9 @@ export async function runSpecStage<T>(
     appendEvent(o.run, { type: 'stage:answers', stage: o.stage, count });
   };
 
-  let last = await produce(1, (call) => compose.draft(call), 0);
+  let last = o.start
+    ? { draft: o.start, issues: o.validate(o.start.data) }
+    : await produce(1, (call) => compose.draft(call), 0);
   await askAbout(last.draft.data);
 
   let pending: Issue[] = [];
@@ -204,11 +208,11 @@ export async function runSpecStage<T>(
       );
       await askAbout(last.draft.data);
     }
-    // Round 1 always produced; later rounds only when something was pending.
-    const produced = round === 1 || hasPendingIssues;
+    // Round 1 produced unless it started from a given document; later rounds only when something was pending.
+    const produced = round === 1 ? !o.start : hasPendingIssues;
 
     const { mandatory, warnings } = splitIssues(last.issues);
-    if (produced)
+    if (round === 1 || produced)
       appendEvent(o.run, {
         type: 'round:validated',
         stage: o.stage,

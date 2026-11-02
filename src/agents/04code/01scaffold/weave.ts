@@ -116,6 +116,7 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
           ...frameLines(frame),
           '',
           `Route group: \`web/app/(routes)/(${frameGroup(architecture, frame.id)})/\`. Screens inside it: ${screens.map((screen) => `${screen.id} ${screen.route}`).join(', ') || 'none'}.`,
+          `Loads its records through: ${contract.screens.filter((entry) => entry.screen === frame.id).flatMap((entry) => entry.reads).join(', ') || 'nothing'}.`,
         ];
       }),
     ]),

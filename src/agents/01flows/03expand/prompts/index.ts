@@ -15,6 +15,14 @@ export const expandReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });
 
+/** The user message of the assembly round: the idea and the scope; the document follows as the assistant's turn. */
+export function assembleUserMessage(idea: string, scope: Scope): string {
+  return fillPrompt(load('./assemble.md'), {
+    idea: stripComments(idea),
+    scope: fenced('Scope (01-flows/01-scope.json)', scope),
+  });
+}
+
 /** The user message of one expansion call: the idea, the scope, the whole catalog, and the flow to expand. */
 export function expandUserMessage(
   idea: string,

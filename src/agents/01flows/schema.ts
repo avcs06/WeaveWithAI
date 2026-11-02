@@ -23,6 +23,9 @@ export const FIELD_TYPES = [
 
 export const CHANGES = ['create', 'list', 'read', 'update', 'delete'] as const;
 
+/** The key of each list's items, for patches in the assembly round's fixes. */
+export const FLOWS_KEYS = { flows: 'id', fields: 'id', forms: 'id', assumptions: 'id', questions: 'id' };
+
 /** What a flow does for its role; the catalog walks every role, noun and kind so none is left out. */
 export const FLOW_KINDS = [
   'landing',

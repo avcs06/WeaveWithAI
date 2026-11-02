@@ -4,7 +4,6 @@ import {
   readArtifact,
   writeArtifact,
 } from '../../../core/artifacts';
-import { writeReport } from '../../../core/issues';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { StageContext, StageDef } from '../../stages';
@@ -12,7 +11,7 @@ import { Scope } from '../01scope/schema';
 import { Catalog } from '../02catalog/schema';
 import { inputs } from '../produce';
 import { flowsSystemPrompt } from '../prompts/index';
-import { Flows } from '../schema';
+import { Flows, FLOWS_KEYS } from '../schema';
 import {
   assemble,
   batchesOf,
@@ -20,13 +19,18 @@ import {
   EXPAND_BATCH_SIZE,
   expandCompose,
 } from './compose';
-import { expandReviewGuides, expandUserMessage } from './prompts/index';
+import {
+  assembleUserMessage,
+  expandReviewGuides,
+  expandUserMessage,
+} from './prompts/index';
 import { renderFlows } from './render';
 import { FlowBatch } from './schema';
 import { validateBatch, validateFlows } from './validation/validation';
 
 // The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
+const ASSEMBLE_MAX_TOKENS = 16_384;
 
 /** Expand: each catalog flow expanded by its own call, all in parallel, assembled into the flows document. */
 async function runExpand(ctx: StageContext): Promise<void> {
@@ -67,7 +71,7 @@ async function runExpand(ctx: StageContext): Promise<void> {
       });
     }),
   );
-  const flows = Flows.parse(
+  const assembled = Flows.parse(
     dropUnused(
       assemble(
         catalog,
@@ -75,13 +79,27 @@ async function runExpand(ctx: StageContext): Promise<void> {
       ),
     ),
   );
-  // What code cannot fix in the whole document, such as a record no flow shows, goes to the code stages as known issues.
-  const issues = validateFlows(flows, scope);
-  writeReport(run, 'flows-expand', 1, issues);
+  // The whole-document rules find what no single call could see, such as a record no flow shows; a fix patches the document.
+  const whole = await runSpecStage<Flows>({
+    run,
+    stage: 'flows-expand-assemble',
+    schema: Flows,
+    schemaName: 'Flows',
+    system,
+    user: assembleUserMessage(idea, scope),
+    validate: (doc) => validateFlows(doc, scope),
+    start: { data: assembled, raw: JSON.stringify(assembled), model: 'none' },
+    patchKeys: FLOWS_KEYS,
+    maxTokens: ASSEMBLE_MAX_TOKENS,
+    reasoningEffort: FLOWS_EFFORT,
+    llm: ctx.llm,
+  });
+  updateStage(run, 'flows-expand-assemble', { status: 'done' });
+  const flows = whole.output;
   const rounds = results.reduce((sum, result) => sum + result.rounds, 0);
   const known =
     results.reduce((sum, result) => sum + result.known.length, 0) +
-    issues.filter((issue) => issue.severity === 'mandatory').length;
+    whole.known.length;
   writeArtifact(run, 'flows-expand', flows, {
     stage: 'flows-expand',
     model: results[0]?.model ?? 'none',

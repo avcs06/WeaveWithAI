@@ -32,6 +32,8 @@ Implements Book.
 
 ## What each screen loads
 
+- FR01 Public site frame: none
+- FR02 App frame: none
 - S01 Keep track of what to read next: none
 - S02 Create your account: none
 - S03 Sign in: none

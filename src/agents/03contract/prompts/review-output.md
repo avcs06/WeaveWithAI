@@ -35,7 +35,7 @@ Read each field against the flow field it comes from, each operation against the
 
 ## Screens
 
-- An entry whose `screen` is not the id of a screen or dialog, so its reads reach no place.
+- An entry whose `screen` is not the id of a frame, screen or dialog, so its reads reach no place.
 - A read that names no operation of the contract, or one that is not a list or a get.
 
 Leave out taste. Leave to the validators, which check:

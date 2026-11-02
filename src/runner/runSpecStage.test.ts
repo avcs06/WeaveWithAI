@@ -698,6 +698,29 @@ describe('runSpecStage with compose', () => {
     expect(rounds.map((event) => event.generated)).toEqual([true, true]);
   });
 
+  it('start: round 1 validates the given document with no call, and a fix patches it', async () => {
+    const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
+    const run = createRun({ idea, runsDir: root, id: 'started' });
+    const result = await runSpecStage({
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: requireTitle,
+      start: { data: { title: '' }, raw: '{"title":""}', model: 'none' },
+      llm,
+    });
+
+    expect(result).toMatchObject({ output: { title: 'Cats' }, known: [], rounds: 2 });
+    expect(inputs).toHaveLength(1);
+    const rounds = readEvents(run).filter(
+      (event) => event.type === 'stage:round',
+    );
+    expect(rounds.map((event) => event.generated)).toEqual([false, true]);
+  });
+
   it('compose: every call is logged, and the draft text reaches the reviewers', async () => {
     const { llm, inputs } = fakeLlm([
       { title: 'A' },
