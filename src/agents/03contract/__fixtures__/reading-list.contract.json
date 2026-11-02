@@ -58,10 +58,8 @@
       "flowSteps": ["F05.S02", "F05.A02", "STD01.A01"]
     }
   ],
-  "widgets": [
-    { "widget": "W06", "reads": ["listBooks"] },
-    { "widget": "W08", "reads": ["getBook"] },
-    { "widget": "W09", "reads": ["listBooks"] },
-    { "widget": "W10", "reads": ["getBook"] }
+  "screens": [
+    { "screen": "S04", "reads": ["listBooks"] },
+    { "screen": "S05", "reads": ["getBook"] }
   ]
 }

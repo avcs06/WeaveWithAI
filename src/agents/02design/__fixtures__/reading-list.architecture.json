@@ -1,0 +1,185 @@
+{
+  "frames": [
+    {
+      "id": "FR01",
+      "name": "Public site frame",
+      "purpose": "Around the landing, sign-up and sign-in pages, for a reader who is not signed in.",
+      "steps": [
+        "Sees the logo, which leads to /.",
+        "Can choose Sign in, which goes to /sign-in, or Get started, which goes to /sign-up."
+      ],
+      "alternatives": [
+        {
+          "when": "the screen is as narrow as a phone",
+          "steps": [
+            "Sees the logo and a menu button.",
+            "Can open the menu to choose Sign in or Get started."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FR02",
+      "name": "App frame",
+      "purpose": "Around every page a signed-in reader uses.",
+      "steps": [
+        "Sees the logo, which leads to /books.",
+        "Can open the account menu, which shows their email and lets them sign out (F06)."
+      ],
+      "alternatives": []
+    }
+  ],
+  "screens": [
+    {
+      "id": "S01",
+      "route": "/",
+      "title": "Keep track of what to read next",
+      "purpose": "A visitor learns what Shelf does and starts using it.",
+      "roles": ["reader"],
+      "frame": "FR01",
+      "flows": ["F01", "F02"],
+      "steps": [
+        "Reads the title and a sentence on what Shelf does: one private list of the books to read, being read and finished.",
+        "Can choose Get started, which goes to /sign-up.",
+        "Can choose Sign in, which goes to /sign-in."
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "S02",
+      "route": "/sign-up",
+      "title": "Create your account",
+      "purpose": "A visitor creates an account to keep a private reading list.",
+      "roles": ["reader"],
+      "frame": "FR01",
+      "flows": ["F01"],
+      "steps": [
+        "Fills in the email (FD01) and the password (FD02).",
+        "Can choose Create account, which signs them in and goes to /books.",
+        "Can choose Sign in instead, which goes to /sign-in."
+      ],
+      "alternatives": [
+        {
+          "when": "the email already has an account",
+          "steps": [
+            "Sees that the email already has an account.",
+            "Can choose Sign in, which goes to /sign-in."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "route": "/sign-in",
+      "title": "Sign in",
+      "purpose": "A reader gets back to their reading list.",
+      "roles": ["reader"],
+      "frame": "FR01",
+      "flows": ["F02"],
+      "steps": [
+        "Fills in the email (FD01) and the password (FD02).",
+        "Can choose Sign in, which goes to /books."
+      ],
+      "alternatives": [
+        {
+          "when": "the email and password match no account",
+          "steps": [
+            "Sees that they don't match an account, with the email kept.",
+            "Can try again."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "route": "/books",
+      "title": "Reading list",
+      "purpose": "The reader sees every book they keep and finds the one they want.",
+      "roles": ["reader"],
+      "frame": "FR02",
+      "flows": ["F03", "F04", "F05"],
+      "steps": [
+        "Sees the title \"Reading list\" and how many books it holds.",
+        "Can search the list by title or author.",
+        "Sees each book's title, author and shelf (FD03, FD04, FD05), newest first.",
+        "Can choose Add a book, which opens D01.",
+        "Can open a book, which goes to /books/[bookId]."
+      ],
+      "alternatives": [
+        {
+          "when": "the reader has no books yet",
+          "steps": [
+            "Reads that the list is empty and that books they add show up here.",
+            "Can choose Add a book, which opens D01."
+          ]
+        },
+        {
+          "when": "a search finds nothing",
+          "steps": [
+            "Reads that no book matches the search.",
+            "Can clear the search."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "route": "/books/[bookId]",
+      "title": "The book's title",
+      "purpose": "The reader looks at one book and can delete it.",
+      "roles": ["reader"],
+      "frame": "FR02",
+      "flows": ["F05"],
+      "steps": [
+        "Sees the book's title, author and shelf (FD03, FD04, FD05).",
+        "Can choose Delete, which opens D02.",
+        "Can go back to /books."
+      ],
+      "alternatives": [
+        {
+          "when": "the book was deleted in the meantime",
+          "steps": [
+            "Reads that the book is gone.",
+            "Can go back to /books."
+          ]
+        }
+      ]
+    }
+  ],
+  "dialogs": [
+    {
+      "id": "D01",
+      "title": "Add a book",
+      "purpose": "The reader adds a book to the reading list.",
+      "openedFrom": ["S04"],
+      "flows": ["F03"],
+      "steps": [
+        "Fills in the Book form (FM01): the title, the author and the shelf.",
+        "Can choose Save, which adds the book and shows it first in the reading list.",
+        "Can choose Cancel, which closes the dialog and saves nothing."
+      ],
+      "alternatives": [
+        {
+          "when": "saving fails",
+          "steps": [
+            "Sees that the book wasn't saved, with the values kept.",
+            "Can choose Save again."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "Delete this book?",
+      "purpose": "The reader confirms deleting a book.",
+      "openedFrom": ["S05"],
+      "flows": ["F05"],
+      "steps": [
+        "Reads that the book will be removed from the reading list.",
+        "Can choose Delete, which deletes the book and goes back to /books.",
+        "Can choose Cancel, which closes the dialog and changes nothing."
+      ],
+      "alternatives": []
+    }
+  ]
+}

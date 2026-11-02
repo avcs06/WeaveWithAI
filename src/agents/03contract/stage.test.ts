@@ -6,7 +6,7 @@ import { readArtifact, writeArtifact } from '../../core/artifacts';
 import type { Config } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
 import { createRun, readState } from '../../core/run';
-import { catalog, flows, scope } from '../02design/__fixtures__/chain';
+import { architecture, flows, scope } from '../02design/__fixtures__/chain';
 import type { StageContext } from '../stages';
 import type { Contract } from './schema';
 import { contractStage } from './stage';
@@ -43,12 +43,12 @@ function fakeLlm() {
 }
 
 describe('the contract stage', () => {
-  it('writes the contract from the scope, the flows and the catalog in one clean call', async () => {
+  it('writes the contract from the scope, the flows and the screens in one clean call', async () => {
     const run = createRun({ idea, runsDir: root, id: 'contract' });
     const meta = { model: null, rounds: 1 };
     writeArtifact(run, 'flows-scope', scope, { ...meta, stage: 'flows-scope', inputs: [] });
-    writeArtifact(run, 'flows-reconcile', flows, { ...meta, stage: 'flows-reconcile', inputs: ['flows-scope'] });
-    writeArtifact(run, 'design-catalog', catalog, { ...meta, stage: 'design-catalog', inputs: ['flows-reconcile'] });
+    writeArtifact(run, 'flows-expand', flows, { ...meta, stage: 'flows-expand', inputs: ['flows-scope'] });
+    writeArtifact(run, 'design-architect', architecture, { ...meta, stage: 'design-architect', inputs: ['flows-expand'] });
     const { llm, inputs } = fakeLlm();
     const ctx: StageContext = { run, config: { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config, llm, interactive: false, backend: 'meta' };
 
@@ -58,15 +58,15 @@ describe('the contract stage', () => {
       meta: {
         version: 1,
         stage: 'contract',
-        inputs: { 'flows-scope': { version: 1 }, 'flows-reconcile': { version: 1 }, 'design-catalog': { version: 1 } },
+        inputs: { 'flows-scope': { version: 1 }, 'flows-expand': { version: 1 }, 'design-architect': { version: 1 } },
       },
       data: contract,
     });
     expect(inputs.map((input) => [input.stage, input.reasoningEffort, input.maxTokens])).toEqual([
       ['contract', 'medium', 32_768],
     ]);
-    expect(inputs[0]?.messages.at(-1)?.content).toContain('# Widgets');
-    expect(readFileSync(path.join(run.dir, '03-contract.md'), 'utf8')).toContain('## Widgets');
+    expect(inputs[0]?.messages.at(-1)?.content).toContain('# Frames, screens and dialogs');
+    expect(readFileSync(path.join(run.dir, '03-contract.md'), 'utf8')).toContain('## What each screen loads');
     expect(readState(run).stages.contract).toMatchObject({ status: 'done', known: 0 });
   });
 });

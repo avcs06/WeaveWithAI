@@ -1,20 +1,20 @@
-<!-- User message of the contract. Placeholders: vocabulary, flows, widgets. -->
+<!-- User message of the contract. Placeholders: vocabulary, flows, architecture. -->
 # Vocabulary
 
 {{vocabulary}}
 
 # Flows
 
-Fields, forms and subflows are defined once, and steps refer to them by id.
+Fields and forms are defined once, and steps refer to them by id.
 
 {{flows}}
 
-# Widgets
+# Frames, screens and dialogs
 
-Every widget of the screens. Each has the steps it serves, the values it shows as Noun.attribute, the noun it repeats over, and the ids of the fields it asks for.
+What the user sees and does in each place, in reading order. Steps name the fields they show or ask for by id.
 
-{{widgets}}
+{{architecture}}
 
 # Your job in this call: the contract
 
-Write the entities, enums and operations the flows and the widgets need. Then say which operations load each widget's data.
+Write the entities, enums and operations the flows and the screens need. Then say which operations load the records each screen and dialog shows.

@@ -2,7 +2,7 @@ import { fillPrompt, json, loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
-import type { Defined } from '../../02design/03catalog/process';
+import type { Architecture } from '../../02design/02architect/schema';
 import { RECORD_FIELDS } from '../schema';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
@@ -14,21 +14,15 @@ export function contractSystemPrompt(): string {
   });
 }
 
-/** The contract's user message: the vocabulary, the flows, and what the contract reads of each widget. */
-export function contractUserMessage(scope: Scope, flows: Flows, widgets: Defined[]): string {
+/** The contract's user message: the vocabulary, the flows, and the frames, screens and dialogs. */
+export function contractUserMessage(
+  scope: Scope,
+  flows: Flows,
+  architecture: Architecture,
+): string {
   return fillPrompt(load('./input.md'), {
     vocabulary: json(scope.vocabulary),
     flows: json(flows),
-    widgets: json(
-      widgets.map(({ id, name, holds, flowSteps, data, repeat, fields }) => ({
-        id,
-        name,
-        holds,
-        flowSteps,
-        data,
-        repeat,
-        fields,
-      })),
-    ),
+    architecture: json(architecture),
   });
 }

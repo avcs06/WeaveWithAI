@@ -9,8 +9,6 @@ import { rule as contract004 } from './rules/contract-004-reserved';
 import { rule as contract007 } from './rules/contract-007-inputs';
 import { rule as contract010 } from './rules/contract-010-coverage';
 import { rule as contract011 } from './rules/contract-011-effects';
-import { rule as contract012 } from './rules/contract-012-widget-inputs';
-import { rule as contract020 } from './rules/contract-020-widget-data';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to the list.
 
@@ -24,8 +22,6 @@ export const contractRules: readonly Rule<ContractInput>[] = [
   contract007,
   contract010,
   contract011,
-  contract012,
-  contract020,
 ];
 
 export function validateContract(contract: Contract, ctx: ContractContext): Issue[] {

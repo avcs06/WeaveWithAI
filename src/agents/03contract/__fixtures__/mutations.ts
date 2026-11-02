@@ -38,6 +38,4 @@ export const contractMutations: Record<string, (contract: Contract) => Contract>
     op(c, 'getBook').flowSteps = ['F05.A01'];
     op(c, 'listBooks').flowSteps.push('F05.S01');
   }),
-  'CONTRACT-012': edit((c) => op(c, 'createBook').inputs.shift()),
-  'CONTRACT-020': edit((c) => (c.widgets = c.widgets.filter((w) => w.widget !== 'W06'))),
 };

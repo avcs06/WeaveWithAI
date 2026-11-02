@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`the contract markdown > reads as entities, enums, operations, then every widget 1`] = `
+exports[`the contract markdown > reads as entities, enums, operations, then what each screen loads 1`] = `
 "# Shelf: contract
 
-The records the app keeps, the operations its widgets call, and what covers each widget. Every record also has id, createdAt, updatedAt. Sign up, sign in and sign out are built in.
+The records the app keeps, the operations its screens call, and what each screen and dialog loads. Every record also has id, createdAt, updatedAt. Sign up, sign in and sign out are built in.
 
 ## Entities
 
@@ -30,61 +30,14 @@ Implements Book.
 | createBook | create | Book | Adds a book to the reader's list. | FD03 Title as title, FD04 Author as author, FD05 Shelf as shelf | F03.S02, F03.A01, F03.A02 |
 | deleteBook | delete | Book | Deletes one of the reader's books for good. | none | F05.S02, F05.A02, STD01.A01 |
 
-## Widgets
+## What each screen loads
 
-### W01 Keep every book you mean to read (hero)
-
-- Opens other screens or shows fixed content; it calls nothing.
-
-### W02 Why readers use Shelf (feature-grid)
-
-- Opens other screens or shows fixed content; it calls nothing.
-
-### W03 Sign in (auth-form)
-
-- Asks for FD01 Email, which goes to the built-in sign in.
-- Asks for FD02 Password, which goes to the built-in sign in.
-
-### W04 Sign up (auth-form)
-
-- Asks for FD01 Email, which goes to the built-in sign up.
-- Asks for FD02 Password, which goes to the built-in sign up.
-
-### W05 Your shelf (page-header)
-
-- Opens other screens or shows fixed content; it calls nothing.
-
-### W06 Books (table)
-
-- Shows a list of Book (Book.title, Book.author, Book.shelf), loaded by listBooks.
-- At F04.S02, lists Book: listBooks.
-- At F04.S01, lists Book: listBooks.
-- At F05.S01, reads Book: getBook.
-
-### W07 Book (form)
-
-- Asks for FD03 Title, which goes to createBook.
-- Asks for FD04 Author, which goes to createBook.
-- Asks for FD05 Shelf, which goes to createBook.
-- At F03.S02, creates Book: createBook.
-
-### W08 Book (detail)
-
-- Shows Book (Book.title, Book.author, Book.createdAt), loaded by getBook.
-- At F05.S01, reads Book: getBook.
-- At F05.S02, deletes Book: deleteBook.
-
-### W09 Shelf (side-panel)
-
-- Shows Book (Book.title, Book.author, Book.shelf), loaded by listBooks.
-
-### W10 Confirm (custom)
-
-- Shows Book (Book.title), loaded by getBook.
-- Part of STD01, which runs for F05.S02 (deleteBook).
-
-### W11 Actions (custom)
-
-- Part of STD01, which runs for F05.S02 (deleteBook).
+- S01 Keep track of what to read next: none
+- S02 Create your account: none
+- S03 Sign in: none
+- S04 Reading list: listBooks
+- S05 The book's title: getBook
+- D01 Add a book: none
+- D02 Delete this book?: none
 "
 `;
