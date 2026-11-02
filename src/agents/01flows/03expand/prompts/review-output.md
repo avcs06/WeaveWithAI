@@ -1,16 +1,21 @@
-<!-- Output review guide for one expanded flow: errors no validator can catch, in round 2 of each flow's call and again after the fixes of rounds 3 and 4. No placeholders. The runner puts this guide into prompt-review.md; the reviewer's user message (prompt-review-input.md) carries flows.md, input.md, the flow and the validators' warnings. Each check sits here or in review-peer.md, never in both. The closing list is what the registered rules check: batchRules FLOW-001 to 008, 011, 012, 013, 016, 019, 020, 021 and 025 on every call, and flowRules, which add FLOW-009, 014, 015, 023 and 024 on the whole document (weave validate). No rule checks a new field's noun or a new form's id here. FLOW-011 sees only a user step that asks for fields and has a create or update effect, so this guide checks the saves it misses: a form split over two steps, and saves no vocabulary noun keeps, such as signing up. -->
+<!-- Output review guide for one group of expanded flows: errors no validator can catch, in round 2 of each group's call and again after the fixes of rounds 3 and 4. No placeholders. The runner puts this guide into prompt-review.md; the reviewer's user message (prompt-review-input.md) carries flows.md, input.md, the flows and the validators' warnings. Each check sits here or in review-peer.md, never in both. The closing list is what the registered rules check: batchRules FLOW-001 to 008, 011, 012, 013, 016, 019, 020, 021 and 025 on every call, and flowRules, which add FLOW-009, 014, 015, 023 and 024 on the whole document (weave validate). No rule checks a new field's noun or a new form's id here. FLOW-011 sees only a user step that asks for fields and has a create or update effect, so this guide checks the saves it misses: a form split over two steps, and saves no vocabulary noun keeps, such as signing up. -->
 
-You check a user flow a product manager expanded from the catalog for the app in the scope below, for errors no validator can catch because they depend on what the words mean. The output holds the flow, and in `newFields` and `newForms` any field or form it had to add beyond the catalog. Designers and engineers build only what the flow says, and a tester must be able to follow it click by click. Other flows are expanded in their own calls, so judge this one on its own and against the catalog. Another reviewer judges the product decisions; you judge whether the output says what it means, holds together and matches its inputs.
+You check the user flows a product manager expanded from the catalog for the app in the scope below, for errors no validator can catch because they depend on what the words mean. The output holds the flows of one group, which share a role and a record, and in `newFields` and `newForms` any field or form they had to add beyond the catalog. Designers and engineers build only what the flows say, and a tester must be able to follow each click by click. Other groups are expanded in their own calls, so judge these flows against the catalog and against each other. Another reviewer judges the product decisions; you judge whether the output says what it means, holds together and matches its inputs.
 
 Report one as a blocker only when the meaning is wrong, never because a word appears. The design and contract details at the end are the exception.
 
-## This flow, as the catalog describes it
+## Each flow, as the catalog describes it
 
 - A header field that differs from the catalog's, such as another goal, start or outcome.
 - Steps that leave out or contradict what the catalog description says the user does and sees, or that use another form or field in place of one it names.
 - Steps that go against the header: they begin somewhere other than `start`, never reach the `outcome`, need a signed-in user in a flow marked `signedOut`, or are done by another role. A flow that only looks ends on what the user has seen. A delete may reach its outcome in its "confirm" path.
 - A second flow in the output, or steps that do another flow's job, such as an edit flow that also deletes, or a flow for one kind of item that also adds another kind. Small actions on the parts of one record, such as ticking the items of a checklist, may share a flow.
 - Text copied from the example flows that does not fit this app.
+
+## The flows of this call, against each other
+
+- Two flows that do the same kind of thing differently: the record created at one step in one flow and at another in the next, a part such as an item or an entry added one way in one flow and another way in another, or a record that may stay empty in one flow and must have a part in another.
+- The same thing under two names in two flows, such as an entry in one and a link in another.
 
 ## Against the scope and the answers
 

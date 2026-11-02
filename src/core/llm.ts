@@ -116,7 +116,7 @@ const STEP_UP: Partial<Record<ReasoningEffort, ReasoningEffort>> = {
   high: 'xhigh',
 };
 const DEFAULT_MAX_TOKENS = 8192;
-const MAX_OUTPUT_TOKENS = 65_536;
+const MAX_OUTPUT_TOKENS = 98_304;
 const MAX_ATTEMPTS = 5;
 const MAX_BACKOFF_MS = 30_000;
 // A server asking for a longer wait is treated as down; the run fails and says so.

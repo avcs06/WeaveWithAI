@@ -103,7 +103,8 @@ describe('user messages', () => {
 
     const expand = expandUserMessage(idea, scope, catalog, ['F03']);
     expect(expand).toContain('# Catalog (01-flows/02-catalog.json)');
-    expect(expand).toContain('Write the full flow F03 as the catalog describes it.');
+    expect(expand).toContain('expand these flows');
+    expect(expand).toContain('- F03 Add a book to the reading list');
     expect(expand).not.toContain('{{');
   });
 });

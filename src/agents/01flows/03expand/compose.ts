@@ -1,69 +1,20 @@
-import type { ChatMessage, ReasoningEffort } from '../../../core/llm';
-import {
-  type Compose,
-  type Draft,
-  fixMessage,
-} from '../../../runner/runSpecStage';
-import type { Scope } from '../01scope/schema';
 import type { Catalog } from '../02catalog/schema';
 import type { Field, Flow, Flows, Form } from '../schema';
-import { expandUserMessage } from './prompts/index';
-import { type FlowBatch, FlowBatch as FlowBatchSchema } from './schema';
+import type { FlowBatch } from './schema';
 
-// One call per flow, so every flow gets the model's full attention; reasoning tokens count toward the 16k budget.
-export const EXPAND_BATCH_SIZE = 1;
-
-const EXPAND_MAX_TOKENS = 16_384;
-
-export const batchesOf = <T>(items: T[], size: number): T[][] =>
-  Array.from({ length: Math.ceil(items.length / size) }, (_, i) =>
-    items.slice(i * size, (i + 1) * size),
-  );
-
-type FlowsContext = {
-  system: string;
-  idea: string;
-  scope: Scope;
-  reasoningEffort?: ReasoningEffort;
-};
-
-/** One expansion call: the named flow written in full, reusing the catalog's parts; a fix resends the issues in the same conversation. */
-export function expandCompose(
-  ctx: FlowsContext,
-  catalog: Catalog,
-  flowIds: string[],
-  stage: string,
-): Compose<FlowBatch> {
-  const messages: ChatMessage[] = [
-    { role: 'system', content: ctx.system },
-    {
-      role: 'user',
-      content: expandUserMessage(ctx.idea, ctx.scope, catalog, flowIds),
-    },
-  ];
-  const generate = async (
-    call: Parameters<Compose<FlowBatch>['draft']>[0],
-  ): Promise<Draft<FlowBatch>> => {
-    const result = await call({
-      stage,
-      schema: FlowBatchSchema,
-      schemaName: 'FlowBatch',
-      messages,
-      maxTokens: EXPAND_MAX_TOKENS,
-      reasoningEffort: ctx.reasoningEffort,
-    });
-    return { data: result.data, raw: result.raw, model: result.model };
-  };
-  return {
-    draft: generate,
-    fix(call, current, pending, answers) {
-      messages.push(
-        { role: 'assistant', content: current.raw },
-        { role: 'user', content: fixMessage(pending, answers) },
-      );
-      return generate(call);
-    },
-  };
+/**
+ * The flow ids of each call, in catalog order: the flows that share a role and a record, so one call writes
+ * every flow that must work like the others, such as the add flows of each kind of a record.
+ */
+export function groupsOf(catalog: Catalog): string[][] {
+  const groups = new Map<string, string[]>();
+  for (const flow of catalog.flows) {
+    const key = `${flow.role}\n${flow.noun}`;
+    const group = groups.get(key);
+    if (group) group.push(flow.id);
+    else groups.set(key, [flow.id]);
+  }
+  return [...groups.values()];
 }
 
 /**

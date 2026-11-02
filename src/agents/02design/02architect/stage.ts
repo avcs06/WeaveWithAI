@@ -20,9 +20,9 @@ import { renderArchitecture } from './render';
 import { Architecture } from './schema';
 
 // The architect writes every frame, screen and dialog in one call, at high
-// reasoning; it starts at the client's 64k cap, so no
+// reasoning; it starts at the client's 96k cap, so no
 // cut is billed before a doubling.
-const ARCHITECT_MAX_TOKENS = 65_536;
+const ARCHITECT_MAX_TOKENS = 98_304;
 const ARCHITECT_EFFORT = 'high';
 
 /** A fix returns only the frames, screens and dialogs it changes. */

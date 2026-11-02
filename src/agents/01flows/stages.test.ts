@@ -57,10 +57,9 @@ function fakeLlm() {
         Scope: () => scopeFixture,
         FlowCatalog: () => catalogFixture,
         FlowBatch: () => {
-          const ids =
-            /Write the full flow ((?:F\d{2,}(?:, )?)+)/
-              .exec(user)?.[1]
-              ?.split(', ') ?? [];
+          const ids = [...user.matchAll(/^- (F\d{2,}) /gm)].map(
+            (match) => match[1],
+          );
           return {
             flows: flowsFixture.flows.filter((flow) => ids.includes(flow.id)),
             newFields: [],
@@ -87,7 +86,7 @@ function fakeLlm() {
 }
 
 describe('the three stages', () => {
-  it('scope, catalog and one expansion per flow write their artifacts, markdown and state', async () => {
+  it('scope, catalog and one expansion per group of flows write their artifacts, markdown and state', async () => {
     const run = createRun({ idea, runsDir: root, id: 'all' });
     const { llm, inputs } = fakeLlm();
     const ctx: StageContext = {
@@ -127,7 +126,7 @@ describe('the three stages', () => {
     const stages = readState(run).stages;
     expect(stages['flows-expand']).toMatchObject({
       status: 'done',
-      batches: 6,
+      batches: 2,
       known: 0,
     });
     expect(stages['flows-expand-1']).toMatchObject({
@@ -145,9 +144,9 @@ describe('the three stages', () => {
       'flows-catalog-review-peer',
       'flows-catalog-review-output',
     ]);
-    // The six expansions run side by side, so their calls interleave.
+    // The two groups, auth and Book, run side by side, so their calls interleave.
     expect(calls.slice(6).sort()).toEqual(
-      [1, 2, 3, 4, 5, 6]
+      [1, 2]
         .flatMap((i) => [
           `flows-expand-${i}`,
           `flows-expand-${i}-review-peer`,
@@ -156,9 +155,9 @@ describe('the three stages', () => {
         .sort(),
     );
     expect(
-      inputs.find((input) => input.stage === 'flows-expand-3')?.messages[1]
+      inputs.find((input) => input.stage === 'flows-expand-2')?.messages[1]
         ?.content,
-    ).toContain('Write the full flow F03 as the catalog describes it.');
+    ).toContain('- F03 Add a book to the reading list\n- F04 Browse and search the shelf\n- F05 Delete a book');
   });
 
   it('validate reruns the rules on the stored artifacts', () => {

@@ -5,6 +5,7 @@ import {
   writeArtifact,
 } from '../../../core/artifacts';
 import { appendEvent, runPath, updateStage } from '../../../core/run';
+import type { PatchKeys } from '../../../runner/patch';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { StageContext, StageDef } from '../../stages';
 import { Scope } from '../01scope/schema';
@@ -12,13 +13,7 @@ import { Catalog } from '../02catalog/schema';
 import { inputs } from '../produce';
 import { flowsSystemPrompt } from '../prompts/index';
 import { Flows, FLOWS_KEYS } from '../schema';
-import {
-  assemble,
-  batchesOf,
-  dropUnused,
-  EXPAND_BATCH_SIZE,
-  expandCompose,
-} from './compose';
+import { assemble, dropUnused, groupsOf } from './compose';
 import {
   assembleUserMessage,
   expandReviewGuides,
@@ -30,9 +25,15 @@ import { validateBatch, validateFlows } from './validation/validation';
 
 // The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
+// A call writes every flow of a role and a record at once; the largest group so far, nine widget flows,
+// answered in under 40k with its reasoning. 48k doubles once to the client's 96k cap when a group runs long.
+const EXPAND_MAX_TOKENS = 49_152;
 const ASSEMBLE_MAX_TOKENS = 16_384;
 
-/** Expand: each catalog flow expanded by its own call, all in parallel, assembled into the flows document. */
+/** A fix returns only the flows, fields and forms it changes. */
+const EXPAND_KEYS: PatchKeys = { flows: 'id', newFields: 'id', newForms: 'id' };
+
+/** Expand: the catalog's flows grouped by role and record, each group expanded by its own call, all in parallel, assembled into the flows document. */
 async function runExpand(ctx: StageContext): Promise<void> {
   const { run } = ctx;
   const { idea, scope, answers } = inputs(ctx);
@@ -41,10 +42,7 @@ async function runExpand(ctx: StageContext): Promise<void> {
   appendEvent(run, { type: 'stage:start', stage: 'flows-expand' });
   updateStage(run, 'flows-expand', { status: 'running' });
 
-  const batches = batchesOf(
-    catalog.flows.map((flow) => flow.id),
-    EXPAND_BATCH_SIZE,
-  );
+  const batches = groupsOf(catalog);
   const results = await Promise.all(
     batches.map((flowIds, i) => {
       const stage = `flows-expand-${i + 1}`;
@@ -57,12 +55,9 @@ async function runExpand(ctx: StageContext): Promise<void> {
         user: expandUserMessage(idea, scope, catalog, flowIds),
         validate: (batch) => validateBatch(batch, catalog, scope),
         review: expandReviewGuides(),
-        compose: expandCompose(
-          { system, idea, scope, reasoningEffort: FLOWS_EFFORT },
-          catalog,
-          flowIds,
-          stage,
-        ),
+        maxTokens: EXPAND_MAX_TOKENS,
+        reasoningEffort: FLOWS_EFFORT,
+        patchKeys: EXPAND_KEYS,
         llm: ctx.llm,
       }).then((result) => {
         // The runner leaves the status to its caller; a batch has no artifact of its own, so it is done here.

@@ -23,7 +23,7 @@ export function assembleUserMessage(idea: string, scope: Scope): string {
   });
 }
 
-/** The user message of one expansion call: the idea, the scope, the whole catalog, and the flow to expand. */
+/** The user message of one expansion call: the idea, the scope, the whole catalog, and the flows to expand, one line each. */
 export function expandUserMessage(
   idea: string,
   scope: Scope,
@@ -34,6 +34,11 @@ export function expandUserMessage(
     idea: stripComments(idea),
     scope: fenced('Scope (01-flows/01-scope.json)', scope),
     catalog: fenced('Catalog (01-flows/02-catalog.json)', catalog),
-    flowIds: flowIds.join(', '),
+    flows: flowIds
+      .map((id) => {
+        const flow = catalog.flows.find((candidate) => candidate.id === id);
+        return flow ? `- ${id} ${flow.name}` : `- ${id}`;
+      })
+      .join('\n'),
   });
 }

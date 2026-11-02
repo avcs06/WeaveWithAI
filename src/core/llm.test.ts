@@ -263,7 +263,7 @@ describe('generateStructured', () => {
     );
   });
 
-  it('retries a truncated answer once with max_tokens doubled, capped at 65536', async () => {
+  it('retries a truncated answer once with max_tokens doubled, capped at 98304', async () => {
     const doubled = harness([
       completion('{"title":"We', 'length'),
       completion('{"title":"Weave"}'),
@@ -275,9 +275,9 @@ describe('generateStructured', () => {
       completion('{"title":"We', 'length'),
       completion('{"title":"Weave"}'),
     ]);
-    await capped.llm.generateStructured({ ...input(), maxTokens: 40_000 });
+    await capped.llm.generateStructured({ ...input(), maxTokens: 60_000 });
     expect(capped.calls.map((call) => call.max_tokens)).toEqual([
-      40_000, 65_536,
+      60_000, 98_304,
     ]);
   });
 
