@@ -14,6 +14,17 @@ describe('ARCH-001', () => {
     expect(at(() => {})).toEqual([]);
   });
 
+  it("passes a step told in the words of the flows' alternative paths or of a record's statuses", () => {
+    expect(
+      at((a) =>
+        a.screens[0]!.alternatives.push({
+          when: 'saving fails',
+          steps: ['Reads that saving failed and sees the typed values kept.', 'Reads that it is finished.'],
+        }),
+      ),
+    ).toEqual([]);
+  });
+
   it('fails a step that names only what no flow gives the user, in a frame or in an alternative', () => {
     expect(at((a) => a.frames[1]!.steps.push('Can open Help, which shows help information.'))).toEqual([
       [
