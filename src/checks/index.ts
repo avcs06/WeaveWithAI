@@ -8,6 +8,7 @@ import {
   containerSpacing,
   contrastCheck,
   firstViewport,
+  numerals,
   overflowCheck,
   targetGaps,
   targetSizes,
@@ -82,6 +83,7 @@ export async function checkRoute(
       ...(await guard('DESIGN-R-008', [], () => colorVariables(page, theme))),
       ...(await guard('DESIGN-R-009', [], () => targetGaps(page))),
       ...(await guard('DESIGN-R-010', [], () => containerSpacing(page))),
+      ...(await guard('DESIGN-R-012', [], () => numerals(page))),
     ];
     // Last: the walk presses keys and may open and close things.
     const { findings: walked, ...keyboard } = await guard('DESIGN-R-003', { ...EMPTY_WALK, findings: [] }, () =>

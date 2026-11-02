@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defects</title>
 <style>
+  :root { --font-mono: "Courier New"; }
   body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
   section { display: flex; flex-direction: column; gap: 24px; padding: 0 24px; }
   button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
@@ -36,6 +37,7 @@
   <div class="tight" data-testid="tight"><button type="button">Save</button><button type="button">Cancel</button></div>
   <div class="loose" data-testid="loose"><span>Inside a group</span><span>spaced wider than the groups</span></div>
   <div class="cramped" data-testid="cramped"><span>Padding</span><span>under the gap</span></div>
+  <div><span>Pages read</span> <span data-testid="plain-number">1,834</span></div>
 </section>
 <div class="wide"></div>
 <div style="height:1000px"></div>

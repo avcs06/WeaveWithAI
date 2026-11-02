@@ -4,7 +4,7 @@ import { type RouteSample, runRenderedChecks, type ThemeColors } from '../../che
 import { APP_URL, withDevServer } from '../../engine/server';
 import type { Theme } from '../02design/01theme/build';
 
-// The rendered checks of a code unit (DESIGN-R-001 to 011): axe, contrast,
+// The rendered checks of a code unit (DESIGN-R-001 to 012): axe, contrast,
 // target sizes, the keyboard walk, the spacing and the rest, on its routes, after its session.
 
 /** The brand's accent fills; accentFg is the text on them, often the page's own white. */

@@ -20,6 +20,7 @@ import {
   containerSpacing,
   contrastCheck,
   firstViewport,
+  numerals,
   overflowCheck,
   targetGaps,
   targetSizes,
@@ -229,6 +230,13 @@ describe('rendered checks on the fixture pages', () => {
     expect(await containerSpacing(clean)).toEqual([]);
   });
 
+  it('R-012 numerals: a standalone number in the text font on the defects page; a Numeral and a number in a sentence pass', async () => {
+    expect(rules(await numerals(await open('defects.html')))).toEqual([
+      'mandatory [data-testid="plain-number"] wrap the number "1,834" in Numeral from @packages/ui/Numeral: a number the user reads and compares is set in the mono font',
+    ]);
+    expect(await numerals(await open('clean.html'))).toEqual([]);
+  });
+
   it('R-007 typography, R-008 colors', async () => {
     const page = await open('defects.html');
     expect(rules(await typography(page))).toEqual(
@@ -287,6 +295,7 @@ describe('runRenderedChecks', () => {
       'DESIGN-R-009',
       'DESIGN-R-010',
       'DESIGN-R-011',
+      'DESIGN-R-012',
     ]);
     const written = JSON.parse(
       readFileSync(path.join(run.dir, 'reports', 'rendered.json'), 'utf8'),

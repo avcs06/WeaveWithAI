@@ -1,5 +1,5 @@
 // Runs inside the page (Chromium): the measurements the rendered checks need
-// (DESIGN-R-001 to 011). Plain browser JavaScript, installed by page.ts as
+// (DESIGN-R-001 to 012). Plain browser JavaScript, installed by page.ts as
 // globalThis.__weaveChecks, so the generator's TypeScript, which has no DOM
 // types, never compiles it.
 (() => {
@@ -259,6 +259,31 @@
         if (sides.length && Math.min(...sides) < gap) padding.push({ element: name(element), padding: Math.min(...sides), gap });
       }
       return { nesting, padding };
+    },
+
+    /** R-012: a number that stands alone, such as a count, a total or a statistic, set in the text font instead of the mono one. */
+    numerals() {
+      const NUMBER = /^[+\-−]?[$€£¥₹]?\s?\d[\d.,\s]*%?$/u;
+      // A number on a control is its label.
+      const CONTROL = 'a, button, label, input, select, textarea, option, svg, [role="button"], [role="link"], [role="tab"], [role="option"], [role="menuitem"]';
+      const probe = document.createElement('span');
+      probe.style.fontFamily = 'var(--font-mono), monospace';
+      document.body.append(probe);
+      const defined = getComputedStyle(probe).getPropertyValue('--font-mono').trim() !== '';
+      const mono = getComputedStyle(probe).fontFamily;
+      probe.remove();
+      // Without the theme's mono font there is nothing to ask for.
+      if (!defined) return [];
+      return textElements()
+        .filter(
+          (element) =>
+            NUMBER.test(ownText(element)) &&
+            !element.closest(CONTROL) &&
+            // Inside a sentence, the number is part of the text.
+            !(element.parentElement && ownText(element.parentElement)) &&
+            getComputedStyle(element).fontFamily !== mono,
+        )
+        .map((element) => ({ element: name(element), text: ownText(element) }));
     },
 
     /** R-003: the controls Tab should reach, in document order. */

@@ -190,6 +190,19 @@ export async function targetGaps(page: Page): Promise<Finding[]> {
   );
 }
 
+/** R-012: a number that stands alone in the text font. */
+export async function numerals(page: Page): Promise<Finding[]> {
+  const found = await inPage<{ element: string; text: string }[]>(page, 'numerals');
+  return found.map((n) =>
+    finding(
+      'DESIGN-R-012',
+      'mandatory',
+      `wrap the number "${n.text}" in Numeral from @packages/ui/Numeral: a number the user reads and compares is set in the mono font`,
+      n.element,
+    ),
+  );
+}
+
 /** R-010: a container's gap over the gap of the container around it. R-011: a container's padding under its own gap. */
 export async function containerSpacing(page: Page): Promise<Finding[]> {
   const { nesting, padding } = await inPage<{

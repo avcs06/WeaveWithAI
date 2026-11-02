@@ -95,5 +95,6 @@ Code checks these, and what failed after this session is in the known issues. Le
 - The landing page's title in the first view, text size and theme colors.
 - Spacing from the tokens, and a reason on each variant off its default.
 - Spacing measured on the page: two controls closer than 8px, a container's gap over the gap of the container around it, and a container's padding under its own gap.
+- A number that stands alone in the text font instead of a `Numeral`.
 
 Taste is not a blocker. Another reviewer reads the code for quality; you judge what the change builds for its users.

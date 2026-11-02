@@ -119,6 +119,8 @@ already; a control you build yourself must too.
   at least 8 px apart.
 - A container's gap is at most the gap of the container around it, and its
   padding is at least its own gap.
+- A number that stands alone, such as a count, a total or a statistic, is a
+  `Numeral`. A number inside a sentence stays plain text.
 - axe finds no serious or critical violation.
 
 ## When the design is wrong
