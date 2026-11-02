@@ -1,4 +1,3 @@
-<!-- Sent after a round that left mandatory issues or blockers, to a stage whose document has no keyed lists, such as the scope or the theme; the expand calls send it too (fixMessage). Placeholders: issues, one "- RULE at ID: message" line each; answers, the user's answers since the last generation as one "- Q01 "question": answer" line each, or "None.". -->
 Fix each problem below and apply each answer below.
 
 - Apply each answer everywhere it affects the document.

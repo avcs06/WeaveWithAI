@@ -1,5 +1,3 @@
-<!-- The product standard shared by 01scope/prompts/prompt.md, prompts/flows.md and the peer review guides of scope, catalog and expand through {{productManager}}. MVP decisions only: nothing about keeping users, growth or operations. HTML comments are stripped before sending. -->
-
 ## What a product manager decides for an MVP
 
 Each numbered line is a decision the scope and the flows make and a reviewer checks. Keeping users, growth and operations are not decided here.

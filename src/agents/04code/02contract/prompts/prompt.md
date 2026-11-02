@@ -1,4 +1,3 @@
-<!-- System prompt of the seed call. No placeholders. -->
 You write the seed data of a web app that has no backend yet. The app shows these rows the first time someone opens it, so they must look like real use of this product.
 
 Write four to six rows for every entity:

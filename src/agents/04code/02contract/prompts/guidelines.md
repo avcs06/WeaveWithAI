@@ -1,4 +1,3 @@
-<!-- Guidelines of the contract's folder, written to .weave/02-contract/guidelines.md. No placeholders, and no idea's own names: entities.md carries those. -->
 # The entity layer
 
 Code wrote `web/app/entities/` from the contract. `entities.md` beside this

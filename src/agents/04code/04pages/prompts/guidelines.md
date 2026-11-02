@@ -1,4 +1,5 @@
-<!-- Guidelines of the pages folder, written to .weave/04-pages/guidelines.md. No placeholders. CODE-006 (src/engine/conformance.ts) looks for each operation that loads a screen and its dialogs in the screen's route folder only, so a call made in a shared block fails it. -->
+<!-- CODE-006 (src/engine/conformance.ts) looks for each operation that loads a screen and its dialogs in the screen's route folder only, so a call made in a shared block fails it. -->
+
 # Screens
 
 - Each file here is one screen: its title, its purpose, its steps in

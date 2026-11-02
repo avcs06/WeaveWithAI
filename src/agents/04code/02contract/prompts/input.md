@@ -1,4 +1,3 @@
-<!-- User message of the seed call. Placeholders: app, vocabulary, fields, entities. -->
 # The product
 
 {{app}}

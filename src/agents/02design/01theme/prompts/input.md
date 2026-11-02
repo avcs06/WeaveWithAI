@@ -1,5 +1,3 @@
-<!-- The theme call's user message. Placeholders: idea, scope, flows. -->
-
 # Idea
 
 {{idea}}

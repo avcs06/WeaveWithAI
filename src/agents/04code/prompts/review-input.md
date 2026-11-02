@@ -1,4 +1,3 @@
-<!-- The code reviewers' user message. Placeholders: system, user, output, known. -->
 Review the code change below.
 
 ## What the coding agent was told

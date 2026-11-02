@@ -1,4 +1,3 @@
-<!-- User message of the contract. Placeholders: vocabulary, flows, architecture. -->
 # Vocabulary
 
 {{vocabulary}}

@@ -1,4 +1,4 @@
-<!-- User message of one expansion call, which writes one group of flows: the catalog's flows that share a role and a record. Placeholders: idea, scope, catalog, flows (one "- F01 Name" line per flow). The system prompt is flows.md. FlowBatch has no assumptions or questions, so this call decides open rules in its steps; review-peer.md holds it to that. -->
+<!-- FlowBatch has no assumptions or questions, so this call decides open rules in its steps. -->
 
 # Idea
 

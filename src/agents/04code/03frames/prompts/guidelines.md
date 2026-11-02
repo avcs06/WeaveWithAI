@@ -1,4 +1,5 @@
-<!-- Guidelines of the frames folder, written to .weave/03-frames/guidelines.md. No placeholders. The pages session reads it too (its folders include 03-frames), so the paths bullet names the frames' paths, not the reader's. -->
+<!-- The pages session reads this guide too, so the paths bullet names the frames' paths, not the reader's. -->
+
 # Frames
 
 - `frames.md` lists each frame: what it shows around its screens, as steps

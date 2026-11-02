@@ -1,5 +1,3 @@
-<!-- User message of the catalog call. Placeholders: idea, scope, expected (the flows users expect of the scope's domains, domains.json). The system prompt is flows.md. -->
-
 # Idea
 
 {{idea}}

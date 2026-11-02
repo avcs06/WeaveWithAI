@@ -1,5 +1,3 @@
-<!-- User message of the architect call. Placeholders: scope, flows, brief, layouts. -->
-
 # Scope (01-flows/01-scope.json)
 
 {{scope}}

@@ -1,5 +1,3 @@
-<!-- User message of the assembly round: the whole flows document, after the expansion calls, when the whole-document rules find what code cannot fix. Placeholders: idea, scope. The system prompt is flows.md. The document follows as the assistant's turn, and the runner's patch message after it lists the issues. -->
-
 # Idea
 
 {{idea}}

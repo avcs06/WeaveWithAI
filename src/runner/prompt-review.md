@@ -1,4 +1,5 @@
-<!-- The reviewer's system prompt. Placeholder: guide, the stage's prompts/review-peer.md or review-output.md, or a coding unit's review-code.md or review-adherence.md (src/agents/04code/prompts). The guide sets the persona, what to look for, where `at` points, and what it leaves to the validators or the checks. What to leave out comes from each guide, not from this frame: the architect has no validators, so its guides check ids and references themselves. HTML comments are stripped before sending. -->
+<!-- A stage's two guides split the checks: the peer judges decisions, the output reviewer meaning, and a check sits in one of them. Each guide ends with what its validators cover, so what to leave out comes from the guide, not from this frame; the architect has no validators, so its guides check ids and references themselves. -->
+
 {{guide}}
 
 ## What to report
