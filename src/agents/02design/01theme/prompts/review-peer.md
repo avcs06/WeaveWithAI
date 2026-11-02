@@ -6,6 +6,7 @@ First picture the people from the idea, the scope and the flows: what they come 
 
 ## The brief
 
+- A signature the theme's values do not carry out, or no signature when the idea names a look.
 - An audience, personality, voice, density or feel that does not fit the people, such as a playful voice for a tool used all day, compact density for occasional calm use, a loud feel for people who come to concentrate, or a playful personality for people who expect a serious tool, one that holds their money or their health.
 - A color scheme that does not suit where and how long people use the app, such as light only for an app people use at night.
 - A brand hue or chroma that works against the audience and personality, such as a vivid hue for a quiet app.

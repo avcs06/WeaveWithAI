@@ -9,6 +9,7 @@ First picture the people who will use the app: what they come to do, how often, 
 - `voice`: how the copy talks to users.
 - `density`: compact for tools used all day with a lot of data; comfortable for most apps; spacious for occasional, calm use.
 - `feel`: 1 or 2 words for the site's style, such as curved or squared, minimal or designer, metro or retro.
+- `signature`: one or two moves that make this app recognizable at a glance, made only from what the theme sets: the page background, frame color, display font, mono figures, radius and focus ring. For example, "a faint neon grid behind every page, and teal figures in the mono font". The values must carry it out.
 - `colorScheme`: light, dark or both: the modes the app ships in.
 - `seedHue` and `seedChroma`: the brand color, chosen for the audience and personality. `seedHue` is an OKLCH hue in degrees on the color wheel, 0 to 360, never a color name. OKLCH is not HSL, so take a color's degrees from the hue table below. Avoid hues that read as error (red, 0 to 45), warning (amber, 65 to 100) or success (green, 135 to 180) unless the brand clearly needs one, because the status colors take those bands and must stay distinct.
 - `frameHue` and `frameChroma`: the color of the frame around the page: the header, sidebars and footer. The hue is in OKLCH degrees, like `seedHue`. Chroma `neutral` is white or grey with no tint, `muted` a faint tint, `balanced` and `vivid` a clear color. The frame can match the page or set itself off from it.

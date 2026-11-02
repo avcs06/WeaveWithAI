@@ -3,7 +3,7 @@ import { converter } from 'culori';
 import { describe, expect, it } from 'vitest';
 import { runRules } from '../../../core/rules';
 import type { Inventory } from '../../../ds/inventory';
-import { buildTheme, Theme } from './build';
+import { buildTheme, themed, Theme } from './build';
 import { ramp, rampsOf } from './ramps';
 import { makeThemeSchema } from './schema';
 import { themeRules } from './validation/validation';
@@ -45,6 +45,11 @@ describe('makeThemeSchema', () => {
 });
 
 describe('buildTheme', () => {
+  it('preserves the brief signature for the coding agents', () => {
+    expect(themed(call).brief.signature).toBe(brief.signature);
+    expect(brief.signature).toContain('Playfair Display');
+  });
+
   it('turns the call into a valid theme with the brief fonts, mono included, and each mode its own background', () => {
     expect(Theme.parse(theme)).toEqual(theme);
     expect(theme.modes).toEqual(['light', 'dark']);
@@ -95,6 +100,7 @@ describe('theme rules', () => {
     'THEME-008': (t) => (t.defaults.Button!.size = 'icon-sm'),
     'THEME-009': (t) => (t.colors.light!.page.divider = t.colors.light!.page.pageBg),
     'THEME-011': (t) => (t.logo.colors.light = t.colors.light!.page.frameBg),
+    'THEME-014': (t) => (t.colors.dark!.page.pageBackground = 'linear-gradient(#0B1111, #0E1818)'),
   };
 
   it('pairs each theme rule with one mutation', () => {

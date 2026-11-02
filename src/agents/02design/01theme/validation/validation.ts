@@ -23,6 +23,7 @@ import { rule as theme010 } from './rules/theme-010-modes-entities';
 import { rule as theme011 } from './rules/theme-011-logo';
 import { rule as theme012 } from './rules/theme-012-shadow';
 import { rule as theme013 } from './rules/theme-013-slot-trace';
+import { rule as theme014 } from './rules/theme-014-background-visible';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
@@ -50,6 +51,7 @@ export const themeRules: readonly Rule<ThemeInput>[] = [
   theme008,
   theme009,
   theme011,
+  theme014,
 ];
 
 /** The theme call's answer: the brief against the scope, the layouts against the scope and flows, the colors against the brief, and the theme they build. */

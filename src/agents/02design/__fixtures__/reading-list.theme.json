@@ -9,6 +9,7 @@
     ],
     "voice": "plain, warm, second person",
     "density": "comfortable",
+    "signature": "Bookish Playfair Display headings over a warm paper gradient in each mode.",
     "feel": [
       "minimal",
       "bookish"
@@ -96,7 +97,7 @@
   "colors": [
     {
       "mode": "light",
-      "background": "linear-gradient(180deg, #FDFBF7 0%, #F6F1E8 100%)",
+      "background": "linear-gradient(180deg, #FDFBF7 0%, #F4EFE6 100%)",
       "theme": {
         "bg": 2,
         "hoverBg": 3,
@@ -236,7 +237,7 @@
     },
     {
       "mode": "dark",
-      "background": "linear-gradient(180deg, #1B1A18 0%, #22201C 100%)",
+      "background": "linear-gradient(180deg, #1B1A18 0%, #282622 100%)",
       "theme": {
         "bg": 2,
         "hoverBg": 3,

@@ -38,6 +38,9 @@ export const Brief = z.object({
     .string()
     .describe('Tone of the copy, e.g. "plain, warm, second person"'),
   density: z.enum(['compact', 'comfortable', 'spacious']),
+  signature: z
+    .string()
+    .describe("One or two moves that make this app recognizable at a glance, made only from the page background, frame color, display font, mono figures, radius and focus ring. For example: a faint neon grid behind every page, and teal figures in the mono font."),
   feel: z
     .array(z.string())
     .describe("1 or 2 words for the site's style, e.g. minimal, retro"),
