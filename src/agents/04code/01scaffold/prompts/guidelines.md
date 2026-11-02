@@ -101,7 +101,7 @@ glance what it is for:
   placeholder text or words that would fit any app.
 - The app is built for desktop screens only: write no phone layout.
 
-## Keyboard and accessibility
+## Keyboard, accessibility and spacing
 
 The checks after your session load each page in a browser and hold it to
 these. Build to them from the start. The design-system components meet them
@@ -116,7 +116,10 @@ already; a control you build yourself must too.
 - Every control has an accessible name: its visible label, or `aria-label`
   when it shows only an icon.
 - Text has a contrast of at least 4.5:1, or 3:1 for large text.
-- Click and touch targets are at least 24 by 24 px.
+- Click and touch targets are at least 24 by 24 px, and two controls sit
+  at least 8 px apart.
+- A container's gap is at most the gap of the container around it, and its
+  padding is at least its own gap.
 - axe finds no serious or critical violation.
 
 ## When the design is wrong

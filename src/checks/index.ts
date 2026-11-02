@@ -5,9 +5,11 @@ import { openRoute, withBrowser } from './browser';
 import {
   axeCheck,
   colorVariables,
+  containerSpacing,
   contrastCheck,
   firstViewport,
   overflowCheck,
+  targetGaps,
   targetSizes,
   typography,
 } from './collectors';
@@ -78,6 +80,8 @@ export async function checkRoute(
       ...(sample.entry ? await guard('DESIGN-R-006', [], () => firstViewport(page)) : []),
       ...(await guard('DESIGN-R-007', [], () => typography(page))),
       ...(await guard('DESIGN-R-008', [], () => colorVariables(page, theme))),
+      ...(await guard('DESIGN-R-009', [], () => targetGaps(page))),
+      ...(await guard('DESIGN-R-010', [], () => containerSpacing(page))),
     ];
     // Last: the walk presses keys and may open and close things.
     const { findings: walked, ...keyboard } = await guard('DESIGN-R-003', { ...EMPTY_WALK, findings: [] }, () =>

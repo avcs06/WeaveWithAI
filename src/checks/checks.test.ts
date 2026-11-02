@@ -17,9 +17,11 @@ import { HEIGHT, openRoute, WIDTH } from './browser';
 import {
   axeCheck,
   colorVariables,
+  containerSpacing,
   contrastCheck,
   firstViewport,
   overflowCheck,
+  targetGaps,
   targetSizes,
   typography,
 } from './collectors';
@@ -213,6 +215,20 @@ describe('rendered checks on the fixture pages', () => {
     expect(await firstViewport(clean)).toEqual([]);
   });
 
+  it('R-009 target gaps, R-010 nesting and R-011 padding: planted on the defects page, none on the clean page', async () => {
+    const page = await open('defects.html');
+    expect(rules(await targetGaps(page))).toEqual([
+      'mandatory [data-testid="tight"] > button:nth-of-type(1) [data-testid="tight"] > button:nth-of-type(1) and [data-testid="tight"] > button:nth-of-type(2) are 4px apart; controls sit at least 8px apart',
+    ]);
+    expect((await containerSpacing(page)).map((f) => [f.rule, f.severity, f.element, f.message])).toEqual([
+      ['DESIGN-R-010', 'mandatory', '[data-testid="loose"]', expect.stringMatching(/^gap 32px inside body > section:nth-of-type\(3\), whose gap is 24px/)],
+      ['DESIGN-R-011', 'mandatory', '[data-testid="cramped"]', 'padding 4px with a gap of 16px; a container\'s padding is at least its gap'],
+    ]);
+    const clean = await open('clean.html');
+    expect(await targetGaps(clean)).toEqual([]);
+    expect(await containerSpacing(clean)).toEqual([]);
+  });
+
   it('R-007 typography, R-008 colors', async () => {
     const page = await open('defects.html');
     expect(rules(await typography(page))).toEqual(
@@ -268,6 +284,9 @@ describe('runRenderedChecks', () => {
       'DESIGN-R-004',
       'DESIGN-R-005',
       'DESIGN-R-006',
+      'DESIGN-R-009',
+      'DESIGN-R-010',
+      'DESIGN-R-011',
     ]);
     const written = JSON.parse(
       readFileSync(path.join(run.dir, 'reports', 'rendered.json'), 'utf8'),

@@ -1,5 +1,5 @@
 // Runs inside the page (Chromium): the measurements the rendered checks need
-// (DESIGN-R-001 to 008). Plain browser JavaScript, installed by page.ts as
+// (DESIGN-R-001 to 011). Plain browser JavaScript, installed by page.ts as
 // globalThis.__weaveChecks, so the generator's TypeScript, which has no DOM
 // types, never compiles it.
 (() => {
@@ -194,6 +194,71 @@
         }
       }
       return { stray, accentShare: accentArea / (window.innerWidth * window.innerHeight) };
+    },
+
+    /**
+     * R-009: pairs of visible targets closer than 8px, edge to edge. Inline links in text, nested targets, pairs
+     * inside one design-system component, and targets outside the page are left out.
+     */
+    targetGaps() {
+      const topDs = (element) => {
+        let top = null;
+        for (let at = element; at; at = at.parentElement) if (at.hasAttribute('data-ds')) top = at;
+        return top;
+      };
+      const targets = [...document.querySelectorAll(`${FOCUSABLE}, [role="button"], [role="link"]`)]
+        .filter((element) => visible(element) && getComputedStyle(element).display !== 'inline')
+        .map((element) => ({ element, box: element.getBoundingClientRect(), ds: topDs(element) }))
+        .filter(({ box }) => box.right > 0 && box.bottom > 0);
+      const close = [];
+      for (let i = 0; i < targets.length; i += 1)
+        for (let j = i + 1; j < targets.length; j += 1) {
+          const a = targets[i];
+          const b = targets[j];
+          if (a.element.contains(b.element) || b.element.contains(a.element)) continue;
+          if (a.ds && a.ds === b.ds) continue;
+          const dx = Math.max(0, b.box.left - a.box.right, a.box.left - b.box.right);
+          const dy = Math.max(0, b.box.top - a.box.bottom, a.box.top - b.box.bottom);
+          const gap = Math.round(Math.hypot(dx, dy));
+          if (gap < 8) close.push({ a: name(a.element), b: name(b.element), gap });
+        }
+      return close;
+    },
+
+    /**
+     * R-010 and R-011: each app-made container (flex or grid, two or more visible children, a gap) against the
+     * nearest container around it, whose gap it may not exceed, and against its own padding, which is at least
+     * its gap on every side that has one.
+     */
+    containerSpacing() {
+      const isContainer = (element) =>
+        visible(element) &&
+        /flex|grid/.test(getComputedStyle(element).display) &&
+        [...element.children].filter(visible).length >= 2;
+      const gapOf = (element) => {
+        const style = getComputedStyle(element);
+        const row = Number.parseFloat(style.rowGap) || 0;
+        const column = Number.parseFloat(style.columnGap) || 0;
+        if (style.display.includes('grid')) return Math.max(row, column);
+        return style.flexDirection.startsWith('column') ? row : column;
+      };
+      const parentOf = (element) => {
+        for (let at = element.parentElement; at && at !== document.body; at = at.parentElement) if (isContainer(at)) return at;
+        return null;
+      };
+      const nesting = [];
+      const padding = [];
+      for (const element of [...document.body.querySelectorAll('*')].filter((e) => appMade(e) && isContainer(e))) {
+        const gap = gapOf(element);
+        if (!gap) continue;
+        const parent = parentOf(element);
+        const outer = parent ? gapOf(parent) : 0;
+        if (parent && outer && gap > outer) nesting.push({ element: name(element), gap, parent: name(parent), outer });
+        const style = getComputedStyle(element);
+        const sides = ['Top', 'Right', 'Bottom', 'Left'].map((side) => Number.parseFloat(style[`padding${side}`]) || 0).filter((v) => v > 0);
+        if (sides.length && Math.min(...sides) < gap) padding.push({ element: name(element), padding: Math.min(...sides), gap });
+      }
+      return { nesting, padding };
     },
 
     /** R-003: the controls Tab should reach, in document order. */

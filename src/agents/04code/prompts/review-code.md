@@ -42,6 +42,7 @@ Code checks these, and what failed after this session is in the known issues. Le
 - Type errors.
 - Lint: import order, deep imports into a package, and a reason on each disabled control.
 - Writes outside the session's paths, and changes to tests, packages, tools, config or the installed packages.
+- A design-system component used in a file without its recipe read first.
 - File length.
 - Whether each screen opens in a browser without a runtime or hydration error. This check opens the screens, so it finds a frame's errors only once the screens are built.
 

@@ -6,12 +6,15 @@
 <title>Defects</title>
 <style>
   body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
-  section { display: flex; flex-direction: column; gap: 24px; padding: 0 16px; }
+  section { display: flex; flex-direction: column; gap: 24px; padding: 0 24px; }
   button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
   :focus-visible { outline: 3px solid #3d63b8; }
   .no-ring:focus, .no-ring:focus-visible { outline: none; }
   .tiny { width: 12px; height: 12px; min-height: 0; padding: 0; }
   .wide { width: 2000px; height: 8px; background: #ffffff; }
+  .tight { display: flex; gap: 4px; }
+  .loose { display: flex; flex-direction: column; gap: 32px; }
+  .cramped { display: flex; gap: 16px; padding: 4px; }
 </style>
 </head>
 <body>
@@ -28,6 +31,11 @@
   <button type="button" class="no-ring" tabindex="2">No ring</button>
   <a href="/more" tabindex="-1">More</a>
   <div role="button" tabindex="0" data-testid="fake" onclick="this.dataset.clicked = '1'">Fake button</div>
+</section>
+<section style="margin-top: 24px">
+  <div class="tight" data-testid="tight"><button type="button">Save</button><button type="button">Cancel</button></div>
+  <div class="loose" data-testid="loose"><span>Inside a group</span><span>spaced wider than the groups</span></div>
+  <div class="cramped" data-testid="cramped"><span>Padding</span><span>under the gap</span></div>
 </section>
 <div class="wide"></div>
 <div style="height:1000px"></div>

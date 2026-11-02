@@ -2,7 +2,7 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 // Room for an email or a name at the body size; every field width is a
 // multiple of it, so the fields of one form line up.
-export const fieldWidth = '320px';
+const fieldWidth = '320px';
 
 const widths: Record<string, number> = {
   '0.5x': 0.5,

@@ -6,7 +6,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Lists and records
 
 - In a list, the record's name is the link that opens it, and it looks like a link.
-- A row's actions are quiet: an `IconButton` with a tooltip for each, or one row menu when there are more than two. Never a filled button on every row.
+- A row's actions are quiet: an icon button with a tooltip for each, or one row menu when there are more than two. Never a filled button on every row.
 - A delete on a row is as quiet as the row's other actions. The filled `danger` button belongs to the confirm dialog's Delete only.
 - An inline action, in a row or a toolbar, shows an icon alone with a tooltip. An action in a menu shows an icon and its text.
 
