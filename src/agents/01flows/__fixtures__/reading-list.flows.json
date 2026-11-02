@@ -49,8 +49,7 @@
               "userAction": "",
               "websiteResponse": "The website marks the field and keeps what was typed.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F01.S02"
@@ -67,8 +66,7 @@
               "userAction": "",
               "websiteResponse": "The website keeps the values and offers to try again.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F01.S02"
@@ -85,8 +83,7 @@
               "userAction": "",
               "websiteResponse": "The website says so and offers to sign in instead.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             },
             {
               "id": "F01.A03.S02",
@@ -94,8 +91,7 @@
               "userAction": "The visitor chooses to sign in.",
               "websiteResponse": "The website shows the sign-in form.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""
@@ -153,8 +149,7 @@
               "userAction": "",
               "websiteResponse": "The website marks the field and keeps what was typed.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F02.S02"
@@ -171,8 +166,7 @@
               "userAction": "",
               "websiteResponse": "The website says so and keeps the email typed.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F02.S02"
@@ -231,8 +225,7 @@
               "userAction": "",
               "websiteResponse": "The website marks the field and keeps what was typed.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F03.S02"
@@ -249,8 +242,7 @@
               "userAction": "",
               "websiteResponse": "The website keeps the values and offers to retry.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F03.S02"
@@ -267,8 +259,7 @@
               "userAction": "",
               "websiteResponse": "Nothing is saved; the website shows the reading list as it was.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""
@@ -332,8 +323,7 @@
               "userAction": "",
               "websiteResponse": "The website says the list is empty and offers to add a book.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""
@@ -350,8 +340,7 @@
               "userAction": "",
               "websiteResponse": "The website says nothing matched and offers to clear the search.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": "F04.S01"
@@ -416,8 +405,7 @@
               "userAction": "",
               "websiteResponse": "The website says the book is gone and shows the reading list.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""
@@ -434,8 +422,7 @@
               "userAction": "",
               "websiteResponse": "The website shows the reading list without the book.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""
@@ -452,8 +439,7 @@
               "userAction": "",
               "websiteResponse": "The website shows the book again, unchanged.",
               "fields": [],
-              "form": "",
-              "effects": []
+              "form": ""
             }
           ],
           "resumesAt": ""

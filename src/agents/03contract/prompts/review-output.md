@@ -23,7 +23,7 @@ Read each field against the flow field it comes from, each operation against the
 
 - An `id`, `entity`, `kind` and `summary` that don't say the same thing, such as `deleteTask` whose kind is update, or `listTasks` whose entity is Project.
 - A `summary` that goes against the flows or the screens, such as oldest first where the screen lists the newest first.
-- A `flowSteps` id that is no step of the flows, the alternatives' steps included.
+- A `flowSteps` id that is no step or alternative of the flows.
 - A step in `flowSteps` that has effects, but none this operation serves, such as a create that lists a step that only deletes.
 - A field a screen or dialog asks for that a record keeps, and that no operation serving the same flow takes as an input.
 - A form filled in at one step and saved at the next, whose fields are not inputs of the operation that saves it.

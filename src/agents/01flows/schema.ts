@@ -134,15 +134,18 @@ export const Step = z.object({
   effects: z.array(Effect).describe('[] when nothing is stored or loaded'),
 });
 
+/** A step of an alternative's path. A path changes no records: the flow's own steps carry the effects. */
+export const PathStep = Step.omit({ effects: true });
+
 export const Alternative = z.object({
   id: z.string().describe('F01.A01'),
   from: z.string().describe('The step ID it branches from'),
   kind: z.enum(ALTERNATIVE_KINDS),
   condition: z.string(),
   steps: z
-    .array(Step)
+    .array(PathStep)
     .describe(
-      "The path from there: one or more steps written like the flow's, numbered F01.A01.S01, F01.A01.S02, ...",
+      "The path from there: one or more steps written like the flow's, without effects, numbered F01.A01.S01, F01.A01.S02, ...",
     ),
   resumesAt: z
     .string()
@@ -202,13 +205,15 @@ export type Effect = z.infer<typeof Effect>;
 
 export type Step = z.infer<typeof Step>;
 
+export type PathStep = z.infer<typeof PathStep>;
+
 export type Alternative = z.infer<typeof Alternative>;
 
 export type Flow = z.infer<typeof Flow>;
 
 /** The fields a step asks for: its form's fields first, then its own, looked up by id. */
 export function stepFields(
-  step: Step,
+  step: Pick<Step, 'fields' | 'form'>,
   flows: Pick<Flows, 'fields' | 'forms'>,
 ): Field[] {
   const ids = [

@@ -6,6 +6,7 @@ import {
   type Flow,
   type Flows,
   type Form,
+  type PathStep,
   type Question,
   type Step,
   stepFields,
@@ -35,7 +36,12 @@ function stepsLines(flow: Flow, doc: Flows): string[] {
   return lines;
 }
 
-function stepLines(step: Step, i: number, doc: Flows, indent = ''): string[] {
+function stepLines(
+  step: Step | PathStep,
+  i: number,
+  doc: Flows,
+  indent = '',
+): string[] {
   const lines: string[] = [];
   const number = `${indent}${i + 1}.`;
   const detail = `${indent}   `;
@@ -52,7 +58,7 @@ function stepLines(step: Step, i: number, doc: Flows, indent = ''): string[] {
       `${detail}${step.websiteResponse}`,
     );
   }
-  if (step.effects.length > 0) {
+  if ('effects' in step && step.effects.length > 0) {
     lines.push(
       `${detail}Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
     );
