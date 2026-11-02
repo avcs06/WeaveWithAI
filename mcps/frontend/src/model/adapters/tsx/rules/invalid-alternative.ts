@@ -16,6 +16,8 @@ interface Compound {
    * with `ignoreCase`.
    */
   attributes: { name: string; value?: string; contains?: boolean; ignoreCase?: boolean }[];
+  /** `:has(…)` parts: for each, one of its tags must be a direct JSX element child. */
+  has: string[][];
 }
 
 /** One parsed element selector, e.g. `button`, `div.flex`, `Input[type="password"]` or `a:not([href])`. */
@@ -67,10 +69,11 @@ const SELECTOR_TAG = /^(?:[A-Z][\w-]*(?:\.[A-Z]\w*)*|[a-z][\w-]*)/;
 /**
  * One `.class` (a `-[...]` arbitrary value stays part of it),
  * `[name]` / `[name="value"]` / `[name*="value"]` segment, optionally ending in
- * ` i` to ignore case, or `:not(…)` holding classes and attributes.
+ * ` i` to ignore case, `:not(…)` holding classes and attributes, or `:has(…)`
+ * holding tags.
  */
 const SELECTOR_PART =
-  /\.((?:-\[[^\]]*\]|(?!:not\()[^.[\]\s])+)|\[\s*([A-Za-z_][\w:.-]*)\s*(?:(\*?=)\s*(?:"([^"]*)"|'([^']*)'|([^\]\s"']+)))?(?:\s+(i))?\s*\]|:not\(([^()]*)\)/y;
+  /\.((?:-\[[^\]]*\]|(?!:(?:not|has)\()[^.[\]\s])+)|\[\s*([A-Za-z_][\w:.-]*)\s*(?:(\*?=)\s*(?:"([^"]*)"|'([^']*)'|([^\]\s"']+)))?(?:\s+(i))?\s*\]|:not\(([^()]*)\)|:has\(([^()]*)\)/y;
 /** Attributes whose values HTML compares in any case. */
 const CASE_INSENSITIVE = new Set(['type', 'role', 'inputMode', 'popover']);
 
@@ -88,8 +91,13 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
         contains: match[3] === '*=',
         ignoreCase: match[7] === 'i',
       });
-    else {
-      const negated: Compound = { classNames: [], attributes: [] };
+    else if (match[9] !== undefined) {
+      // `:has(nav, ul)`: tags only, any one of them among the children.
+      const tags = match[9].split(',').map((tag) => tag.trim());
+      if (!tags.length || tags.some((tag) => SELECTOR_TAG.exec(tag)?.[0] !== tag)) return false;
+      into.has.push(tags);
+    } else {
+      const negated: Compound = { classNames: [], attributes: [], has: [] };
       const inner = match[8]!.trim();
       if (!not || !inner || !parseParts(inner, negated)) return false;
       not.push(negated);
@@ -115,6 +123,8 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  *                             an Input whose placeholder contains "search",
  *                             in any case
  *   `a:not([href])`           an <a> with no href
+ *   `aside:has(nav, ul)`      an <aside> with a <nav> or a <ul> among its
+ *                             direct JSX children
  *
  * Tags are case-sensitive, as in JSX: `input` is the native element and
  * `Input` a component. An attribute value matches a literal written on the
@@ -125,10 +135,10 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
 function parseAlternative(source: string, owner: string): AlternativeMatcher | undefined {
   const text = source.trim().replace(/[<>]/g, '');
   const tag = SELECTOR_TAG.exec(text)?.[0];
-  const matcher: AlternativeMatcher = { tag, classNames: [], attributes: [], not: [], source: text, owner };
+  const matcher: AlternativeMatcher = { tag, classNames: [], attributes: [], has: [], not: [], source: text, owner };
 
   if (!parseParts(text.slice(tag?.length ?? 0), matcher, matcher.not)) return undefined;
-  if (!tag && matcher.classNames.length === 0 && matcher.attributes.length === 0) return undefined;
+  if (!tag && matcher.classNames.length === 0 && matcher.attributes.length === 0 && matcher.has.length === 0) return undefined;
   return matcher;
 }
 
@@ -144,12 +154,13 @@ function specifierMatcher(pattern: string): (specifier: string) => boolean {
   return (specifier) => regExp.test(specifier);
 }
 
-function describeCompound({ classNames, attributes }: Compound): string[] {
+function describeCompound({ classNames, attributes, has }: Compound): string[] {
   const parts = classNames.length ? [`className="${classNames.join(' ')}"`] : [];
   for (const { name, value, contains } of attributes)
     parts.push(
       value === undefined ? name : contains ? `${name} containing "${value}"` : `${name}="${value}"`,
     );
+  for (const tags of has) parts.push(`holding <${tags.join('> or <')}>`);
   return parts;
 }
 
@@ -181,7 +192,7 @@ function unreadable(source: string): string {
   if (source.startsWith('@')) return "write a package as import('…')";
   if (source.startsWith('import'))
     return "expected import('package') or import('package'){Name, …} with export names";
-  return 'expected a tag, then .class, [attribute] and :not(…) parts';
+  return 'expected a tag, then .class, [attribute], :has(Tag) and :not(…) parts';
 }
 
 /**
@@ -282,6 +293,7 @@ function attributeHolds(element: JsxElement, test: Compound['attributes'][number
 /** Whether every test of a compound holds, with the same three answers as `attributeHolds`. */
 function compoundHolds(element: JsxElement, compound: Compound): boolean | undefined {
   if (compound.classNames.some((name) => !element.classes?.has(name))) return false;
+  if (compound.has.some((tags) => !tags.some((tag) => element.children.includes(tag)))) return false;
   let known = true;
   for (const test of compound.attributes) {
     const holds = attributeHolds(element, test);
@@ -291,7 +303,7 @@ function compoundHolds(element: JsxElement, compound: Compound): boolean | undef
   return known || undefined;
 }
 
-const weight = ({ classNames, attributes }: Compound) => classNames.length + attributes.length;
+const weight = ({ classNames, attributes, has }: Compound) => classNames.length + attributes.length + has.length;
 
 /**
  * Classes and attributes the element has, then those it lacks, then the

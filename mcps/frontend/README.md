@@ -125,6 +125,7 @@ can apply in one pass.
    | `Input[type="password"]`               | the `Input` component with `type="password"`                  |
    | `input[disabled]`                      | an `<input>` with a `disabled` attribute                      |
    | `input:not([type="hidden"])`           | an `<input>` unless it is `type="hidden"`                     |
+   | `aside:has(nav, ul)`                   | an `<aside>` with a `<nav>` or a `<ul>` among its direct children |
    | `Form.Item`                            | a dotted component, `<Form.Item>`                             |
    | `import('@radix-ui/react-tabs')`       | anything imported from that package                           |
    | `import('@mui/material'){Button, Tab}` | only those named imports, and `<Button>` or `<M.Button>`      |
@@ -139,7 +140,8 @@ can apply in one pass.
    Tags are case-sensitive, as in JSX: `input` is the native element, `Input` a component. In a
    dotted tag a capitalized segment is a member (`Form.Item`, `Input.Password`) and a lowercase
    one is a class (`div.flex`). `:not()` takes classes and attributes only, no tag and no
-   nesting. In `import('pkg'){A, B}`, `*` stands for any characters, and a leading `*/` means
+   nesting. `:has()` takes tags only, commas for alternatives, and looks at the direct JSX
+   element children: a child behind an expression, like `{items.map(…)}`, is not seen. In `import('pkg'){A, B}`, `*` stands for any characters, and a leading `*/` means
    any prefix or none.
 
    Files inside the owning component's folder are exempt, since they implement it; so is every
@@ -187,6 +189,13 @@ can apply in one pass.
    fails the build on it, so the page doesn't render. `'&:hover'`, `` `${parent} &` `` and
    `'&:not([data-disabled])'` are fine, and so is any selector in `globalStyle()`, which the
    message names as the fix. A `${...}` in a computed key counts as another class.
+6. **A required prop left out** (`required-prop`): a component whose `@requiredProp` JSDoc tag
+   names a prop every use must set, like a group's `className` for its layout, used without it in
+   app code. A spread of unknown props may carry it; design-system code and recipes choose for
+   themselves.
+7. **A field sized by a class inside a Form** (`field-width`): a component with a `width` prop of
+   multiples (`0.5x`, `1x`, `2x`, …) carrying a `w-*`, `min-w-*`, `max-w-*`, `basis-*` or grow
+   class while a `Form` element encloses it. Fields take their width from the Form.
 
 **Recipes are app code.** A recipe sits in its component's folder but shows how an app uses the
 component, so `validate` checks it with the general rules and without the folder's leave to use

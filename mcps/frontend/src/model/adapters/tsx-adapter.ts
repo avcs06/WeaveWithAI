@@ -7,12 +7,14 @@ import * as classNameAdapter from './classname-adapter.js';
 import * as stylesAdapter from './styles-adapter.js';
 import { moduleReference, type ModuleReference } from './tsx/modules.js';
 import { fieldOutsideController } from './tsx/rules/field-outside-controller.js';
+import { fieldWidth } from './tsx/rules/field-width.js';
 import {
   invalidAlternativeElement,
   invalidAlternativeImport,
   type InvalidAlternativeOwners,
 } from './tsx/rules/invalid-alternative.js';
 import { manualFormState } from './tsx/rules/manual-form-state.js';
+import { requiredProp } from './tsx/rules/required-prop.js';
 import { unknownVariant } from './tsx/rules/unknown-variant.js';
 import { unlinkedControllerField } from './tsx/rules/unlinked-controller-field.js';
 
@@ -44,6 +46,10 @@ export interface JsxElement {
   openSpread: boolean;
   /** The classes its `className` could produce, when it has one. */
   classes?: Set<string>;
+  /** The tags of its direct JSX element children; a child behind an expression is not among them. */
+  children: string[];
+  /** The tags of the JSX elements around it, nearest first. */
+  ancestors: string[];
   owners: InvalidAlternativeOwners;
   designSystem: boolean;
   /** A recipe file: app code that shows each case of a component on purpose. */
@@ -69,7 +75,7 @@ export interface JsxImport extends ModuleReference {
 /** Each known scenario is one file under `tsx/rules/`, listed in the registry it applies to. */
 const fileRules: Rule<JsxFile>[] = [manualFormState, fieldOutsideController, unlinkedControllerField];
 const importRules: Rule<JsxImport>[] = [invalidAlternativeImport];
-const elementRules: Rule<JsxElement>[] = [invalidAlternativeElement, unknownVariant];
+const elementRules: Rule<JsxElement>[] = [invalidAlternativeElement, unknownVariant, requiredProp, fieldWidth];
 
 function findAttributeValue(node: JSXOpeningElement, name: string): Expression | undefined {
   for (const attr of node.attributes) {
@@ -160,6 +166,21 @@ function tagName(name: JSXOpeningElement['name']): string | undefined {
   return object && `${object}.${name.property.name}`;
 }
 
+/** The tags of an opening element's direct JSX element children, and of the elements around it, nearest first. */
+function surroundings(nodePath: NodePath<JSXOpeningElement>): Pick<JsxElement, 'children' | 'ancestors'> {
+  const element = nodePath.parentPath;
+  const children = element?.isJSXElement()
+    ? element.node.children.flatMap((child) => (child.type === 'JSXElement' ? (tagName(child.openingElement.name) ?? []) : []))
+    : [];
+  const ancestors: string[] = [];
+  for (let at: NodePath | null | undefined = element?.parentPath; at; at = at.parentPath) {
+    if (!at.isJSXElement()) continue;
+    const tag = tagName(at.node.openingElement.name);
+    if (tag) ancestors.push(tag);
+  }
+  return { children, ancestors };
+}
+
 /**
  * Runs `fileRules` on the whole file, then walks it once: runtime imports,
  * re-exports, `require()` and `import()` through `importRules`, JSX opening
@@ -202,6 +223,7 @@ export function validateJsx(
           component: /^[a-z]/.test(tag) ? undefined : system.component(tag),
           ...readAttributes(node),
           classes: classNameValue ? classNameAdapter.classNameTokens(classNameValue) : undefined,
+          ...surroundings(nodePath),
           owners,
           designSystem,
           recipe,

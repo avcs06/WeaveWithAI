@@ -70,6 +70,12 @@ export interface ComponentContract {
    */
   invalidAlternatives: string[];
   /**
+   * Props every use must set, from `@requiredProp`: a layout the component
+   * leaves to its caller, like a group's `className`. Leaving one out in app
+   * code is an error.
+   */
+  requiredProps?: string[];
+  /**
    * Whether it passes any other HTML attribute, `data-testid` and `aria-*`
    * included, to the element it renders. False: one set on it is lost.
    * Unknown for a component read from a package's types.

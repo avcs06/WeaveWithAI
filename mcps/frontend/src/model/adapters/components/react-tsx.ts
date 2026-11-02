@@ -61,6 +61,14 @@ function declaredInvalidAlternatives(doc: ComponentDoc): string[] {
     .filter(Boolean);
 }
 
+/** The props a component's `@requiredProp` tag names, separated by commas or spaces. */
+function declaredRequiredProps(doc: ComponentDoc): string[] {
+  return (doc.tags?.requiredProp ?? '')
+    .split(/[\s,]+/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
 /** A `!`-prefixed glob excludes files the other globs include. */
 const isExclusion = (pattern: string) => pattern.startsWith('!');
 
@@ -129,6 +137,7 @@ function toContract(doc: ComponentDoc, filePath: string, checker: ts.TypeChecker
     props,
     variantProps: props.filter((p) => p.allowedValues).map((p) => p.name),
     invalidAlternatives: declaredInvalidAlternatives(doc),
+    requiredProps: declaredRequiredProps(doc),
     passesHtmlAttributes: passesHtmlAttributes(doc, checker),
     filePath,
   };

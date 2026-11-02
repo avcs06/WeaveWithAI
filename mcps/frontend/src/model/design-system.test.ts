@@ -485,3 +485,36 @@ describe('validate — file types', () => {
     });
   });
 });
+
+describe('validate — :has() and required props', () => {
+  it('flags an element holding the child tag a component names with :has(), and not one without it', () => {
+    const [finding] = system.validate('<nav><Button /></nav>', 'app/page.tsx').findings;
+    expect(finding).toMatchObject({ rule: 'invalid-alternative', suggestion: 'Toolbar' });
+    expect(finding?.message).toContain('holding <Button>');
+    expect(system.validate('<nav><span /></nav>', 'app/page.tsx').findings).toEqual([]);
+    // A child behind an expression is not seen.
+    expect(system.validate('<nav>{actions.map((a) => <Button key={a} />)}</nav>', 'app/page.tsx').findings).toEqual([]);
+  });
+
+  it('flags a component used without a prop its @requiredProp names, unless a spread may carry it', () => {
+    const [finding] = system.validate('<Toolbar><span /></Toolbar>', 'app/page.tsx').findings;
+    expect(finding).toMatchObject({ rule: 'required-prop' });
+    expect(finding?.message).toBe(
+      'Toolbar takes `gap` on every use: The room between the actions; the toolbar lays out nothing without it.',
+    );
+    expect(system.validate('<Toolbar gap="sm"><span /></Toolbar>', 'app/page.tsx').findings).toEqual([]);
+    expect(system.validate('<Toolbar {...props} />', 'app/page.tsx').findings).toEqual([]);
+    expect(system.validate('<Toolbar />', 'components/Toolbar.recipe.tsx').findings).toEqual([]);
+  });
+});
+
+describe('validate — field-width', () => {
+  it('flags a field sized by a class inside a Form, and leaves one outside, or sized by width, alone', () => {
+    const [finding] = system.validate('<Form><TextField label="Email" className="w-64" /></Form>', 'app/page.tsx').findings;
+    expect(finding).toMatchObject({ rule: 'field-width' });
+    expect(finding?.message).toContain('"w-64"');
+    expect(finding?.message).toContain('0.5x | 1x | 2x');
+    expect(system.validate('<Form><TextField label="Email" width="2x" /></Form>', 'app/page.tsx').findings).toEqual([]);
+    expect(system.validate('<header><TextField label="Search" className="w-64" /></header>', 'app/page.tsx').findings).toEqual([]);
+  });
+});
