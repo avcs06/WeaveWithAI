@@ -8,6 +8,7 @@ Challenge, and report as a blocker only when you would not sign it off:
 
 - A decision of the standard that the scope gets wrong or leaves unmade. Read the roles, in-scope items, out-of-scope entries and assumptions against each numbered decision, and estimate the measures from them.
 - The core loop: can a user do the thing the idea is about, end to end, with what is in scope?
+- Kinds of app: a kind or situation from the list that the idea clearly is but `domains` leaves out, or one that does not fit the idea.
 - A question whose default would make the app wrong for its users is not marked blocking.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators: ids, counts, name formats, the length of the summary.

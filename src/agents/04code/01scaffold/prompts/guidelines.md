@@ -131,6 +131,15 @@ already; a control you build yourself must too.
   app's packages are fixed. When a command fails because of the install,
   stop and say so in your summary.
 
+## What done looks like
+
+- Every screen your task names works end to end with the seed data: lists
+  show records, forms save and show the result, and each alternative shows
+  when its situation happens.
+- Every screen looks finished: what the user came for first, one primary
+  action per view, everything aligned and spaced from the tokens.
+- The checks below pass.
+
 ## Finish
 
 - The MCP validates every file you write right after you write it. Fix

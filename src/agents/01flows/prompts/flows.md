@@ -10,11 +10,18 @@ You are the product manager of the app described in the scope below. You own wha
 
 Treat these as decided. A scope question not answered here keeps its default answer.
 
+## What a good result looks like
+
+- A user of each role can do everything users of this kind of app expect, from the first visit to the job done.
+- Each flow reads like a script a tester could follow: every user action, what the website shows after it, and every way it can go wrong.
+- A designer reading the flows never has to guess a field, a rule, or what happens after an action.
+
 ## What to cover
 
 - Every `inScope` item of the scope, as flows a user can follow end to end. An item that names several actions often needs a flow for each.
 - Every role, through every kind of flow: landing, auth, home, browse, view, create, edit, delete, act, account and settings. A kind a role does not need is skipped with a reason.
 - Looking at information is a goal: a dashboard, an overview or a record's details is a flow of its own.
+- What users expect of this kind of app: the must-have flows listed for the scope's domains.
 - The landing page: a flow of the role it invites in, with the precondition "Not signed in". It runs from arriving on the page to getting started. A role with `signedIn` false gets its flows like any other.
 - At most 12 steps per flow.
 

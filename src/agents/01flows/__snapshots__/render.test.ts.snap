@@ -14,6 +14,8 @@ exports[`render > catalog lists every flow with its description, the skipped pai
 ## Skipped
 - Reader, home: The reading list is where a signed-in reader lands; F04 covers it.
 - Reader, edit Book: A book is typed once; a wrong entry is deleted and added again.
+- Reader, view Book: A book has only a title, an author and a shelf; F05 opens it before deleting it.
+- Reader, act Book: The MVP sets a book's shelf when it is added; moving it waits for a later version.
 - Reader, account: The reader has only an email and a password, and the MVP has no profile.
 
 ## Fields
@@ -152,6 +154,8 @@ exports[`render > scope reads as a short spec page 1`] = `
 Shelf is a reading list for one reader at a time. You add the books you mean to read, keep each on a shelf that says where you are with it, and find them again by title or author. Nothing else gets in the way.
 
 Audience: People who read a lot and lose track of what they wanted to read next.
+
+Kinds of app: tracker
 
 ## Roles
 - Reader (reader, signs in): Keeps a private reading list.

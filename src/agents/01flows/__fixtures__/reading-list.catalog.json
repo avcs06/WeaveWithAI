@@ -202,6 +202,18 @@
     },
     {
       "role": "reader",
+      "noun": "Book",
+      "kind": "view",
+      "reason": "A book has only a title, an author and a shelf; F05 opens it before deleting it."
+    },
+    {
+      "role": "reader",
+      "noun": "Book",
+      "kind": "act",
+      "reason": "The MVP sets a book's shelf when it is added; moving it waits for a later version."
+    },
+    {
+      "role": "reader",
       "noun": "",
       "kind": "account",
       "reason": "The reader has only an email and a password, and the MVP has no profile."

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DOMAIN_IDS } from '../domains';
 import { Assumption, Question } from '../schema';
 
 export const Scope = z.object({
@@ -9,6 +10,11 @@ export const Scope = z.object({
       .describe('Who it is for, the problem, the core loop: 2 to 4 sentences'),
     audience: z.string(),
   }),
+  domains: z
+    .array(z.enum(DOMAIN_IDS))
+    .describe(
+      'The kinds of app and the situations from the list that this idea is, 1 to 4',
+    ),
   roles: z.array(
     z.object({
       id: z.string().describe('camelCase, e.g. member'),

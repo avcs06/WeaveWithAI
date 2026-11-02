@@ -17,11 +17,13 @@ const catalog = Catalog.parse(load('reading-list.catalog.json'));
 const standard = '## What a product manager decides for an MVP';
 
 describe('system prompts', () => {
-  it('scope: every placeholder filled and the standard present', () => {
+  it('scope: every placeholder filled, the standard and the kinds of app present', () => {
     const prompt = scopeSystemPrompt({});
     expect(prompt).not.toContain('{{');
     expect(prompt).not.toContain('<!--');
     expect(prompt).toContain(standard);
+    expect(prompt).toContain('## Kinds of app and situations');
+    expect(prompt).toMatch(/^- `tracker`: /m);
     expect(prompt).toContain('None yet.');
   });
 
@@ -96,6 +98,7 @@ describe('user messages', () => {
       /# Scope \(01-flows\/01-scope\.json\)\n\n```json\n\{\n\s+"app": \{\n\s+"name": "Shelf"/,
     );
     expect(cat).toContain('# Your job in this call: the catalog');
+    expect(cat).toMatch(/# What users expect of this kind of app\n\n## .+\n\nMust have:\n- /);
     expect(cat).not.toContain('{{');
 
     const expand = expandUserMessage(idea, scope, catalog, ['F03']);

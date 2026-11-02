@@ -19,6 +19,10 @@ import { ENTITIES, READS_DENIED, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
 
+// One session builds every screen, so it gets for each screen the budget a session had when it built one page.
+const STEPS_PER_SCREEN = 60;
+const MINUTES_PER_SCREEN = 30;
+
 /** A route the browser can open: each `[xId]` the first seed row of entity X, any other param `demo`. */
 export function concreteRoute(route: string, contract: Contract): string {
   return route.replace(/\[(\w+?)\]/g, (_, param: string) => {
@@ -67,6 +71,8 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
     routes: parts.map(({ route }) => route),
     expects: parts.map(({ expect }) => expect),
     reads: { deny: READS_DENIED },
+    maxSteps: STEPS_PER_SCREEN * parts.length,
+    timeoutMs: MINUTES_PER_SCREEN * 60_000 * parts.length,
   };
 }
 

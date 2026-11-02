@@ -9,6 +9,8 @@ export function renderScope(scope: Scope): string {
     '',
     `Audience: ${scope.app.audience}`,
     '',
+    `Kinds of app: ${scope.domains.join(', ')}`,
+    '',
     '## Roles',
     ...scope.roles.map(
       (role) =>

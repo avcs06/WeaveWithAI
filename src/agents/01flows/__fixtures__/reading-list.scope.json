@@ -4,6 +4,7 @@
     "summary": "Shelf is a reading list for one reader at a time. You add the books you mean to read, keep each on a shelf that says where you are with it, and find them again by title or author. Nothing else gets in the way.",
     "audience": "People who read a lot and lose track of what they wanted to read next."
   },
+  "domains": ["tracker"],
   "roles": [
     { "id": "reader", "name": "Reader", "description": "Keeps a private reading list.", "signedIn": true }
   ],

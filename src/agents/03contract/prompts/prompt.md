@@ -4,6 +4,12 @@ You write the contract of the app: the records it keeps and the operations its s
 
 The contract has one job. Every screen and dialog knows where its data comes from. Every flow step that loads or changes data knows which operation it calls. Write only what that needs.
 
+## What a good contract looks like
+
+- Every screen and dialog loads everything it shows through its `reads`.
+- Every flow step that saves, changes or deletes data is served by one operation.
+- A value has one field name everywhere it appears, made from the label the flows gave it.
+
 ## Entities
 
 - `entities`: one for each vocabulary noun that a flow changes or a screen shows. `noun` names the noun. `name` is its PascalCase singular, usually the noun itself.

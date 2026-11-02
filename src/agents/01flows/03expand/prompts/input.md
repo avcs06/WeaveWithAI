@@ -10,7 +10,7 @@
 
 # Your job in this call: expand this flow
 
-Write the full flow {{flowIds}} as the catalog describes it. Keep its header fields as the catalog has them, and add `steps` and `alternatives` in place of the `description`. Refer to the catalog's parts by id: a step's `fields` are field ids and its `form` is a form id. Add a new field or form only when none in the catalog fits, defined in full in `newFields` or `newForms`. Other calls expand the other flows at the same time, so write only this flow.
+Write the full flow {{flowIds}} as the catalog describes it. Keep its header fields as the catalog has them, and add `steps` and `alternatives` in place of the `description`. Refer to the catalog's parts by id: a step's `fields` are field ids and its `form` is a form id. Add a new field or form only when none in the catalog fits, defined in full in `newFields` or `newForms`. Other calls expand the other flows at the same time, so write only this flow. When you are done, a tester can follow the flow click by click: every user action, what the website shows after it, and every way it can go wrong.
 
 Before you answer, check the flow against this list. First drafts miss these most often:
 

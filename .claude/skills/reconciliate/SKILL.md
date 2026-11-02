@@ -1,7 +1,7 @@
 ---
 name: reconciliate
 description: End-to-end review of a Weave stage chain (design, flows, or whatever the working-tree diff touches) after a series of patches and decision changes. Finds and fixes stale prompts, code, docs and tests, contradictions, prompts that don't hand off to each other, validator coverage gaps, and prompt wording that is hard to follow. Not the pipeline's reconcile stage. Use when the user runs /reconciliate.
-argument-hint: "[design | flows]"
+argument-hint: "[design | flows | code]"
 ---
 
 # Reconciliate
@@ -14,12 +14,12 @@ fix that damage, and leave every change unstaged.
 
 The argument names the chain:
 
-- `design`: brief, theme, architect, catalog, screen, then invent, draw and
-  frame (all three carry the shared node guide), then assemble and layout.
-  Also the processing steps of the architect and the catalog, the
-  design-system inventory and prose, and the design and font config.
-- `flows`: scope, flows-catalog, flows-expand, flows. Also the subflow and
-  capability config.
+- `design`: brief, theme, architect. Also the design-system inventory and
+  prose, and the design and font config.
+- `flows`: scope, flows-catalog, flows-expand, flows. Also the domain
+  checklist (`domains.json`).
+- `code`: contract, scaffold, contract code, frames, pages. Also the coding
+  guidelines, the fix task and the code reviewers.
 - empty: every chain that `git status --short` touches, each reviewed whole.
 
 Every chain also covers: the core code it calls (the stage runner, the review

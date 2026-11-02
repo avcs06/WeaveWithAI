@@ -1,6 +1,7 @@
 import { fillPrompt, loadPrompt, stripComments } from '../../../../core/prompt';
 import { pathBeside } from '../../../../core/utils';
 import type { Answers, ReviewGuides } from '../../../../runner/runSpecStage';
+import { domainList } from '../../domains';
 import { answersBlock, productManager } from '../../prompts/index';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
@@ -9,6 +10,7 @@ export function scopeSystemPrompt(answers: Answers): string {
   return fillPrompt(load('./prompt.md'), {
     productManager: productManager(),
     answers: answersBlock(answers),
+    domains: domainList(),
   });
 }
 

@@ -40,6 +40,9 @@ export type Unit = {
   expects?: ScreenExpect[];
   /** The rendered checks on the unit's routes, once its app builds. */
   rendered?: () => Promise<Issue[]>;
+  /** The session's model-step cap and time limit; the session's defaults when unset. */
+  maxSteps?: number;
+  timeoutMs?: number;
 };
 
 export type UnitResult = {
@@ -82,6 +85,8 @@ export function sessionCompose(
         reads: unit.reads,
         stage: unit.stage,
         museSession,
+        maxSteps: unit.maxSteps,
+        timeoutMs: unit.timeoutMs,
       },
       deps,
     );
