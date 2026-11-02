@@ -36,8 +36,8 @@ describe('the architect prompt', () => {
 
   it('has a peer and an output reviewer', () => {
     const { peer, output } = architectReviewGuides();
-    expect(peer).toContain('Challenge, and report as a blocker');
-    expect(output).toContain('no validator can catch');
+    expect(peer).toContain('Report as a blocker only what you would not sign off');
+    expect(output).toContain('you also check that its parts point at each other');
     expect(`${peer}${output}`).not.toContain('{{');
   });
 });
