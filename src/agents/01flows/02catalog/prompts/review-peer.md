@@ -8,59 +8,37 @@ First walk every role of the scope through every kind of flow, and through each 
 
 Challenge, and report as a blocker only what you would not sign off.
 
-## The job, the core loop and the first success
+## The job and the first success
 
-- P01: A part of the core loop with no flow, so the main role cannot do the job the idea is about from start to finish. Flows for side jobs don't make up for it.
-- P02: More than five user steps from the landing page to the first visible result, sign up included, where the extra steps are not ones the idea requires.
-- P03: Something mandatory before the first success that the idea does not require, such as a profile to fill in or preferences to pick.
-- P04: A field marked required that the idea does not require, above all one a new user fills in before the first success.
-- P05: A field the idea requires, marked optional.
+- P01: The main role can do the job the idea is about from start to finish: every part of the core loop has a flow. Flows for side jobs don't make up for a missing part.
+- P02: A new user of the main role reaches the first visible result in five user steps or fewer from the landing page, sign up included. On the way they do only what the idea requires: a profile to fill in or preferences to pick come later, unless the idea asks for them first. Each step beyond five is one the idea requires.
+- P03: The fields marked required are exactly the ones the idea requires. Check first the fields a new user fills in before the first success.
 
 ## What to cover
 
-- P06: A pair of the walk that needs a flow and has none. A pair is a role and a kind, and for browse, view, create, edit, delete and act also a noun the role works with. Roles that never sign in are walked too. A pair that needs no flow and has no skip is not a blocker.
-- P07: An in-scope item with no flow a user can follow end to end, or an item that names several actions with a flow for only one of them.
-- P08: No landing flow that takes the role the page invites in from arriving on the public page to getting started.
-- First drafts most often miss these. Each needs a flow, or a skip or an assumption whose reason holds:
-  - P09: The home each signed-in role sees first, such as a dashboard or an overview.
-  - P10: One record's details.
-  - P11: Account for a role that signs in, and settings when the app has preferences.
-  - P12: Editing and deleting what a role creates.
-- P13: A browse flow of a list that can grow, with no search or filters.
-- P14: A dashboard, an overview or a record's details folded into another flow. Looking at information is a goal, so it is a flow of its own.
-- P15: Records a role creates that no flow lists or shows.
-- P16: Records a flow lists or uses that no flow creates, with no assumption saying where they come from. Such a list stays empty and is a dead end.
-- P17: A skip whose reason does not hold: the idea or the scope asks for the flow, or another flow needs it to start.
+- P04: Every pair of the walk that needs a flow has one. A pair is a role and a kind, plus a noun the role works with for browse, view, create, edit, delete and act. Walk the roles that never sign in too. First drafts most often miss the home each signed-in role sees first, one record's details, account for a role that signs in, settings when the app has preferences, editing and deleting what a role creates, and a list or view of every record a role creates.
+- P05: Every in-scope item has a flow a user can follow end to end, with a flow for each action the item names.
+- P06: A landing flow takes the role the page invites in from arriving on the public page to getting started.
+- P07: Every record a flow lists or uses is created by a flow, or an assumption says where it comes from. Otherwise the list stays empty and is a dead end.
 
 ## What users expect of this kind of app
 
-- P18: A must-have from the list in the input with neither a flow nor a skip.
-- P19: A must-have whose flow leaves out what the list says it does, such as a cancel that does not open the time up for others, or a home without the counts the list names.
-- P20: A must-have skipped for a reason other than the idea ruling it out, such as "not needed for the MVP". A must-have the scope leaves out, or one no role of the scope can do, may stay skipped for that reason.
-- P21: An "often" flow the idea hints at, with no flow.
-- P22: A flow that neither the idea, the standard nor the list calls for, such as an act flow nothing implies. An "often" flow needs a hint in the idea.
-- P23: A public view or a way to share that the idea does not imply and that does not clearly help the product.
+- P08: Every must-have in the list in the input has a flow or a skip, and every "often" flow the idea hints at has a flow.
+- P09: Every must-have flow does everything its line in the list says. Compare the flow with the line, part by part: a home shows every count the line names, and a cancel frees the time for others when the line says so.
+- P10: Every skip has a reason that holds. A reason fails when the idea or the scope asks for the flow, or when another flow needs it to start. A must-have is skipped only because the idea rules it out, the scope leaves it out, or no role of the scope can do it; "not needed for the MVP" is no reason. A pair that needs no flow may also have no skip.
+- P11: Every flow is called for by the idea, the standard or the list. An act flow and an "often" flow need something in the idea that implies them. A public view or a way to share needs the idea to imply it, or clearly helps the product.
 
 ## One goal of one role
 
-- P24: Two flows for one goal, such as a home that is the same list a browse flow shows. Keep one, delete the other, and skip its pair with a reason that names the flow kept.
-- P25: A flow that bundles goals a user reaches on their own, such as editing and deleting a record, two actions on a record, or two kinds of item, even when they share a page. Small actions on the parts of one record, such as adding, ticking and removing the items of a checklist, may share a flow.
-- P26: A flow in which two roles act, such as one inviting and another accepting.
-- P27: A flow that lets the user choose between two goals, such as "signs up or signs in". It takes the one its goal needs, and the other is a flow of its own.
-- P28: A flow too long to fit in 12 steps, because it bundles goals.
+- P12: Each goal has one flow. When two flows share a goal, such as a home that is the same list a browse flow shows, keep one, delete the other, and skip its pair with a reason that names the flow kept.
+- P13: Each flow is one goal of one role, in 12 steps or fewer. Editing and deleting a record, two actions on a record, two kinds of item, and looking at a dashboard, an overview or a record's details are separate flows, even when they share a page. Where the user could choose between two goals, such as signing up or signing in, the flow takes the one its goal needs. One role inviting and another accepting are two flows. Small actions on the parts of one record, such as adding, ticking and removing the items of a checklist, may share a flow.
 
-## Business rules and ownership
+## Business rules and open points
 
-- P29: A rule the idea states or implies that no description, field or assumption carries. Look for who may do what, limits and maximums, statuses and how they change, what deleting removes, and what counts as full, sold out, due or overdue.
-- P30: A flow that lets a role see or change records another user created, when neither the idea nor the scope makes them shared.
-
-## Open points
-
-- P31: A rule the idea leaves open that no assumption or question decides, in the scope or here.
-- P32: A risky guess written as an assumption: if it is wrong, the app is wrong for its users. That needs a question.
-- P33: A new blocking question whose answer changes none of scope, permissions, business rules or data. That is an assumption.
-- P34: A new question whose wrong default would make the app wrong for its users, not marked blocking.
-- P35: An assumption that a role's account is made outside the app, such as an owner account set up in advance, so the role has no sign-up. No one makes accounts outside the app: the fix drops the assumption and keeps the sign-up flow.
+- P14: Every rule the idea states or implies is carried by a description, a field or an assumption, and every rule it leaves open is decided by an assumption or a question, in the scope or here. Look for who may do what, limits and maximums, statuses and how they change, what deleting removes, and what counts as full, sold out, due or overdue.
+- P15: A role sees and changes only the records it created, unless the idea or the scope makes them shared.
+- P16: Every open point is in the right place. A safe guess is an assumption. A guess that would make the app wrong for its users if it were wrong is a question marked blocking. A question whose answer changes none of scope, permissions, business rules or data is an assumption.
+- P17: Every role that signs in signs up in the app. An assumption that a role's account is made outside the app, such as an owner account set up in advance, is wrong: the fix drops the assumption and keeps the sign-up flow.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators, which already check these:
 
