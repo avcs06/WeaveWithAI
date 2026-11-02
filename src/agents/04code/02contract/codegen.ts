@@ -1,3 +1,4 @@
+import type { Run } from '../../../core/run';
 import type { Contract, Entity, EntityField, Operation } from '../../03contract/schema';
 import type { SeedRows } from './schema';
 
@@ -92,7 +93,7 @@ export const ${lower(entity.name)}Seed: ${entity.name}[] = ${JSON.stringify(reco
 `;
 }
 
-function storeModule(entity: Entity): string {
+function storeModule(entity: Entity, prefix: string): string {
   const name = entity.name;
   return `import { createPersistentStore } from '@packages/utils/state';
 
@@ -105,7 +106,7 @@ type ${name}State = { records: ${name}[] };
 /** Every ${name}, saved in the browser so a reload keeps what the user changed. */
 export const use${name}Store = createPersistentStore<${name}State>(
   () => ({ records: ${lower(name)}Seed }),
-  'weave:${lower(name)}',
+  '${prefix}:${lower(name)}',
 );
 `;
 }
@@ -218,15 +219,18 @@ export function useRead<T>(operation: string, data: T): Read<T> {
 }
 `;
 
+/** The browser storage keys of one run's app: no two apps on the same origin share records or a session. */
+export const storagePrefix = (run: Pick<Run, 'id'>): string => `weave:${run.id}`;
+
 /** Where the auth store keeps the signed-in user in the browser. */
-const AUTH_KEY = 'weave:auth';
+const authKey = (prefix: string) => `${prefix}:auth`;
 
 /** A signed-in member's browser storage, as the auth store saves it: the checks write it before a signed-in page loads. */
-export const SIGNED_IN: Record<string, string> = {
-  [AUTH_KEY]: JSON.stringify({ state: { user: { email: 'member@example.com' } }, version: 0 }),
-};
+export const signedIn = (prefix: string): Record<string, string> => ({
+  [authKey(prefix)]: JSON.stringify({ state: { user: { email: 'member@example.com' } }, version: 0 }),
+});
 
-const AUTH = `import { createPersistentStore } from '@packages/utils/state';
+const auth = (prefix: string) => `import { createPersistentStore } from '@packages/utils/state';
 import { useSyncExternalStore } from 'react';
 
 import { mockCall } from '../mock';
@@ -237,7 +241,7 @@ export type User = { email: string };
 
 type AuthState = { user: User | null };
 
-const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), '${AUTH_KEY}');
+const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), '${authKey(prefix)}');
 
 export async function signUp(email: string): Promise<User> {
   await mockCall('signUp');
@@ -277,20 +281,20 @@ function barrel(entity: Entity, operations: Operation[]): string {
   return names.length ? `${types}export { ${names.join(', ')} } from './operations';\n` : types;
 }
 
-/** Every file of the entity layer, by path in the app. Pure. */
-export function entityFiles(contract: Contract, seed: SeedRows): Map<string, string> {
+/** Every file of the entity layer, by path in the app, its stores keyed under `prefix`. Pure. */
+export function entityFiles(contract: Contract, seed: SeedRows, prefix: string): Map<string, string> {
   const reserved = contract.entities.filter((e) => ['Auth', 'Mock', 'Enums'].includes(e.name));
   if (reserved.length) throw new Error(`entity names ${reserved.map((e) => e.name).join(', ')} clash with the generated auth, mock and enums folders`);
   const files = new Map<string, string>();
   files.set('web/app/entities/mock/index.ts', MOCK);
-  files.set('web/app/entities/auth/index.ts', AUTH);
+  files.set('web/app/entities/auth/index.ts', auth(prefix));
   if (contract.enums.length) files.set('web/app/entities/enums/index.ts', enumsModule(contract));
   for (const entity of contract.entities) {
     const folder = entityFolder(entity.name);
     const operations = contract.operations.filter((op) => op.entity === entity.name);
     files.set(`${folder}/types.ts`, typesModule(entity, contract));
     files.set(`${folder}/seed.ts`, seedModule(entity, seed[entity.name] ?? []));
-    files.set(`${folder}/store.ts`, storeModule(entity));
+    files.set(`${folder}/store.ts`, storeModule(entity, prefix));
     if (operations.length) files.set(`${folder}/operations.ts`, operationsModule(entity, operations));
     files.set(`${folder}/index.ts`, barrel(entity, operations));
   }

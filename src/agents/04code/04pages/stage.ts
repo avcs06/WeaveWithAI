@@ -2,7 +2,7 @@ import type { RouteSample } from '../../../checks';
 import { readArtifact } from '../../../core/artifacts';
 import { writeReport } from '../../../core/issues';
 import { fillPrompt, loadPrompt } from '../../../core/prompt';
-import { appendEvent, runPath } from '../../../core/run';
+import { appendEvent, type Run, runPath } from '../../../core/run';
 import { pathBeside } from '../../../core/utils';
 import { screenExpect } from '../../../engine/conformance';
 import { appCheck, type CheckedRoute, verifyCommand } from '../../../engine/session';
@@ -13,7 +13,7 @@ import type { Architecture, Screen } from '../../02design/02architect/schema';
 import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
 import { screenFolder, screenReads } from '../01scaffold/weave';
-import { SIGNED_IN, seedId } from '../02contract/codegen';
+import { seedId, signedIn, storagePrefix } from '../02contract/codegen';
 import { renderedOn, routeSample } from '../rendered';
 import { ENTITIES, READS_DENIED, runUnits, type UnitSpec } from '../unit';
 
@@ -77,8 +77,8 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
 }
 
 /** How the browser checks open a screen: the landing page also checks its first viewport, and a page behind sign-in loads with a member's session. */
-const pageSample = (screen: Screen, route: CheckedRoute): RouteSample =>
-  routeSample(route.url, screen.id, screen.route === '/', route.signedIn ? SIGNED_IN : undefined);
+const pageSample = (run: Run, screen: Screen, route: CheckedRoute): RouteSample =>
+  routeSample(route.url, screen.id, screen.route === '/', route.signedIn ? signedIn(storagePrefix(run)) : undefined);
 
 async function runPages(ctx: StageContext): Promise<void> {
   const scope = readArtifact<Scope>(ctx.run, 'flows-scope').data;
@@ -88,7 +88,7 @@ async function runPages(ctx: StageContext): Promise<void> {
   const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
   const appDir = runPath(ctx.run, 'app');
   const spec = pagesSpec(architecture, contract, flows, scope);
-  const samples = architecture.screens.map((screen, i) => pageSample(screen, spec.routes![i]!));
+  const samples = architecture.screens.map((screen, i) => pageSample(ctx.run, screen, spec.routes![i]!));
   await runUnits(ctx, STAGE, [{ ...spec, rendered: renderedOn(ctx.run, appDir, samples, theme) }]);
   // CODE-008: one production build once every page is in; what fails is known, the run goes on.
   const build = await appCheck(appDir, 'build', ['pnpm', 'build']);
