@@ -8,57 +8,57 @@ Challenge, and report as a blocker only when you would not sign it off. The answ
 
 ## The job and the core loop
 
-- The wrong job at the center: a job the idea is not about, or a main role whose job the idea is not about, such as an admin when the idea is about the people who use the app.
-- A core loop a user cannot finish end to end with what is in scope: a step of it missing, or out of scope with a placeholder that leaves the user no next action.
-- Several loops half done instead of one done well: a job with some of its steps in scope and the rest left out.
-- A name the idea does not give, made from how the idea says the app should look or feel, such as a glowing look turned into the name, instead of from what the app does for its users.
+- P01: The wrong job at the center: a job the idea is not about, or a main role whose job the idea is not about, such as an admin when the idea is about the people who use the app.
+- P02: A core loop a user cannot finish end to end with what is in scope: a step of it missing, or out of scope with a placeholder that leaves the user no next action.
+- P03: Several loops half done instead of one done well: a job with some of its steps in scope and the rest left out.
+- P04: A name the idea does not give, made from how the idea says the app should look or feel, such as a glowing look turned into the name, instead of from what the app does for its users.
 
 ## The first success
 
-- A first success a new user cannot reach in the first session, cannot see on screen, or no longer finds after a refresh.
-- Something mandatory before the first success that the idea does not require, such as an approval, a profile to complete, a payment, a tour or the setup of several records.
-- More than five user steps from the landing page to the first visible result, sign up included, where the extra steps are not ones the idea requires.
-- A required input before the first success that the idea does not require, such as a phone number, an address or preferences asked at sign up.
+- P05: A first success a new user cannot reach in the first session, cannot see on screen, or no longer finds after a refresh.
+- P06: Something mandatory before the first success that the idea does not require, such as an approval, a profile to complete, a payment, a tour or the setup of several records.
+- P07: More than five user steps from the landing page to the first visible result, sign up included, where the extra steps are not ones the idea requires.
+- P08: A required input before the first success that the idea does not require, such as a phone number, an address or preferences asked at sign up.
 
 ## Scope
 
-- Something the idea asks for that the scope leaves out: missing, or out of scope with a placeholder that does not give users what they asked for.
-- Something the idea mentions or implies that the MVP will not do, with no out-of-scope entry. The flows then neither build it nor say what the app does instead.
-- An in-scope item the idea never implies, that this standard does not require and users of the picked kinds of app do not expect. Features to keep users, grow the app or run it, such as rewards, referrals or usage reports, are the usual ones.
+- P09: Something the idea asks for that the scope leaves out: missing, or out of scope with a placeholder that does not give users what they asked for.
+- P10: Something the idea mentions or implies that the MVP will not do, with no out-of-scope entry. The flows then neither build it nor say what the app does instead.
+- P11: An in-scope item the idea never implies, that this standard does not require and users of the picked kinds of app do not expect. Features to keep users, grow the app or run it, such as rewards, referrals or usage reports, are the usual ones.
 
 ## Roles and ownership
 
-- A person the idea names who uses the app, with no role. That includes someone who never signs in, like someone who books a slot.
-- A role the idea does not need: two roles that do the same things, or a visitor role whose only job is the landing page. The landing page belongs to the role it invites in.
-- A role that signs in with no data or actions of its own to protect.
-- A noun owned by the wrong role, or marked "shared" when each user keeps their own. Records belong to the signed-in role that creates them, unless the idea says otherwise.
+- P12: A person the idea names who uses the app, with no role. That includes someone who never signs in, like someone who books a slot.
+- P13: A role the idea does not need: two roles that do the same things, or a visitor role whose only job is the landing page. The landing page belongs to the role it invites in.
+- P14: A role that signs in with no data or actions of its own to protect.
+- P15: A noun owned by the wrong role, or marked "shared" when each user keeps their own. Records belong to the signed-in role that creates them, unless the idea says otherwise.
 
 ## Entry
 
-- No public landing page in scope. Every app has one that says what it is for and how to start.
-- Public pages or sharing that the idea does not imply and that do not clearly help the product.
+- P16: No public landing page in scope. Every app has one that says what it is for and how to start.
+- P17: Public pages or sharing that the idea does not imply and that do not clearly help the product.
 
 ## Business rules
 
-- A rule the idea states or implies that no in-scope item or assumption writes down, so the flows cannot follow it. Look for who may do what, limits and maximums, statuses and how they change, what deleting removes, and what counts as full, sold out, due or overdue.
+- P18: A rule the idea states or implies that no in-scope item or assumption writes down, so the flows cannot follow it. Look for who may do what, limits and maximums, statuses and how they change, what deleting removes, and what counts as full, sold out, due or overdue.
 
 ## Data
 
-- A thing the app keeps with no noun, so the catalog finds no flows for it, such as the record the core loop creates.
-- A noun that is not a thing the app keeps, such as a page or an action: Home, Search, Checkout.
+- P19: A thing the app keeps with no noun, so the catalog finds no flows for it, such as the record the core loop creates.
+- P20: A noun that is not a thing the app keeps, such as a page or an action: Home, Search, Checkout.
 
 ## Open points
 
-- A point the idea is silent on that changes scope, permissions, business rules or data, with no assumption or question deciding it.
-- A guess written as an assumption that would make the app wrong for its users if it is wrong. That needs a blocking question.
-- A question whose answer changes none of scope, permissions, business rules or data, such as a presentation choice. Presentation choices are never questions.
-- A question whose wrong default would make the app wrong for its users, not marked blocking.
+- P21: A point the idea is silent on that changes scope, permissions, business rules or data, with no assumption or question deciding it.
+- P22: A guess written as an assumption that would make the app wrong for its users if it is wrong. That needs a blocking question.
+- P23: A question whose answer changes none of scope, permissions, business rules or data, such as a presentation choice. Presentation choices are never questions.
+- P24: A question whose wrong default would make the app wrong for its users, not marked blocking.
 
 ## Kinds of app and situations
 
-- `domains` with no kind of app in it, only situations or nothing. The kind of app comes first.
-- A kind of app or a situation the idea clearly is, missing from `domains`. A store where sellers sign up is also `marketplace`. An app where people work together is also `teams`.
-- A kind of app or a situation the idea is not clearly. Each one brings flows the catalog must build or skip, so a wrong one adds flows nobody asked for.
+- P25: `domains` with no kind of app in it, only situations or nothing. The kind of app comes first.
+- P26: A kind of app or a situation the idea clearly is, missing from `domains`. A store where sellers sign up is also `marketplace`. An app where people work together is also `teams`.
+- P27: A kind of app or a situation the idea is not clearly. Each one brings flows the catalog must build or skip, so a wrong one adds flows nobody asked for.
 
 Taste is not a blocker. Another reviewer checks the output for errors in meaning; you judge the decisions.
 

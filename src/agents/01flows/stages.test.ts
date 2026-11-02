@@ -13,6 +13,7 @@ import { readArtifact } from '../../core/artifacts';
 import type { Config } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
 import { createRun, readState, runPath } from '../../core/run';
+import { guideIds } from '../../runner/review';
 import type { StageContext } from '../stages';
 import { Scope } from './01scope/schema';
 import { scopeStage } from './01scope/stage';
@@ -66,7 +67,7 @@ function fakeLlm() {
             newForms: [],
           };
         },
-        Review: () => ({ checked: 0, blockers: [] }),
+        Review: () => ({ checked: guideIds(input.messages[0]?.content ?? ''), blockers: [] }),
       };
       const data = answers[input.schemaName]?.();
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);

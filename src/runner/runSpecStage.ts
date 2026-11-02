@@ -20,7 +20,7 @@ import {
 import { costUsd, isPriced } from '../core/prices';
 import { fillPrompt, loadPrompt } from '../core/prompt';
 import { applyPatch, type PatchKeys, patchFormat, patchSchema } from './patch';
-import { Review, toIssues } from './review';
+import { guideIds, Review, toIssues } from './review';
 import { appendEvent, type Run, updateStage } from '../core/run';
 import { pathBeside } from '../core/utils';
 
@@ -132,6 +132,9 @@ const reviewPrompt = loadPrompt(
 );
 const reviewInput = loadPrompt(
   pathBeside(import.meta.url, './prompt-review-input.md'),
+);
+const recheckPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review-recheck.md'),
 );
 
 /**
@@ -439,29 +442,49 @@ async function review<T>(
   });
   const reviews = await Promise.all(
     calls.map(async ([reviewer, guide]) => {
-      const stage = `${o.stage}-review-${reviewer}`;
-      const system = fillPrompt(reviewPrompt, { guide });
-      appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
-      const result = await o.llm.generateStructured({
-        stage,
-        round,
-        schema: Review,
-        schemaName: 'Review',
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: user },
-        ],
-        model: 'default',
-        reasoningEffort: REVIEW_EFFORT,
-        maxTokens: REVIEW_MAX_TOKENS,
-        runDir: o.run.dir,
-      });
-      const blockers = toIssues(result.data);
-      logCall(o.run, stage, round, result, { reviewer, blockers: blockers.length });
-      return blockers;
+      const messages: ChatMessage[] = [
+        { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
+        { role: 'user', content: user },
+      ];
+      const first = await reviewCall(o, round, reviewer, messages, guideIds(guide));
+      if (first.missed.length === 0) return toIssues(first.data);
+      // One more turn for the points it left unchecked; what it still leaves is only logged.
+      messages.push(
+        { role: 'assistant', content: first.raw },
+        { role: 'user', content: fillPrompt(recheckPrompt, { missed: first.missed.map((id) => `- ${id}`).join('\n') }) },
+      );
+      const second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
+      return [...toIssues(first.data), ...toIssues(second.data)];
     }),
   );
   return reviews.flat();
+}
+
+/** One reviewer call, logged with its blockers and the points of `points` it did not list as checked. */
+async function reviewCall<T>(
+  o: SpecStageOptions<T>,
+  round: number,
+  reviewer: string,
+  messages: ChatMessage[],
+  points: string[],
+) {
+  const stage = `${o.stage}-review-${reviewer}`;
+  appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
+  const result = await o.llm.generateStructured({
+    stage,
+    round,
+    schema: Review,
+    schemaName: 'Review',
+    messages: [...messages],
+    model: 'default',
+    reasoningEffort: REVIEW_EFFORT,
+    maxTokens: REVIEW_MAX_TOKENS,
+    runDir: o.run.dir,
+  });
+  const checked = new Set(result.data.checked);
+  const missed = points.filter((id) => !checked.has(id));
+  logCall(o.run, stage, round, result, { reviewer, blockers: result.data.blockers.length, missed });
+  return { ...result, missed };
 }
 
 /** One `- Q01 "question": answer` line per answer, the way answers go to the model. */
@@ -486,7 +509,7 @@ function logCall(
   stage: string,
   round: number,
   result: GenerateResult<unknown>,
-  review?: { reviewer: string; blockers: number },
+  review?: { reviewer: string; blockers: number; missed: string[] },
 ): void {
   if (!result.replayed) warnUnpriced(run, stage, result.model);
   appendEvent(run, {

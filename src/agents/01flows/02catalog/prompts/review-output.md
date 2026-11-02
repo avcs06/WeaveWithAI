@@ -6,56 +6,56 @@ Read the idea, the scope and the answers already given first. Then read each flo
 
 ## Against the idea, the scope and the answers
 
-- A flow, field or assumption that says the opposite of the idea, an in-scope item or an assumption of the scope.
-- A flow, a field or a skip that goes against an answer already given, or leaves out what the answer adds.
-- A flow, a field or a skip that goes against the default answer of a scope question nobody answered.
-- A new question that asks again what an answer or a scope question already settles.
-- A flow for something the scope leaves out, or one that does not do what its out-of-scope entry says the app does instead.
-- A field, status or option the idea names that is missing or renamed, or a field whose type, options or limits differ from what the idea says.
-- A flow, field or form copied from the example flows in the instructions that does not fit this app.
+- O01: A flow, field or assumption that says the opposite of the idea, an in-scope item or an assumption of the scope.
+- O02: A flow, a field or a skip that goes against an answer already given, or leaves out what the answer adds.
+- O03: A flow, a field or a skip that goes against the default answer of a scope question nobody answered.
+- O04: A new question that asks again what an answer or a scope question already settles.
+- O05: A flow for something the scope leaves out, or one that does not do what its out-of-scope entry says the app does instead.
+- O06: A field, status or option the idea names that is missing or renamed, or a field whose type, options or limits differ from what the idea says.
+- O07: A flow, field or form copied from the example flows in the instructions that does not fit this app.
 
 ## Each flow's header
 
-- A `kind` that is not what the flow does, such as deleting a book filed as edit.
-- A browse, view, create, edit, delete or act flow whose `noun` is not the vocabulary noun of the records it works on.
-- A flow that signs up, signs in or signs out without kind "auth" and the matching `authKind`.
-- A flow of a kind other than "auth" whose `authKind` is not "none".
-- `signedOut` that is wrong for the flow: false on the landing flow, or true on a flow the user must be signed in for, such as one on the user's own records.
-- A `start` or a precondition that no other flow leads to or sets up, such as needing an approved request when no flow approves one. Arriving at the website and not being signed in need no flow.
-- An outcome a tester cannot check. An outcome says what changed and what a refresh still shows. For a flow that only looks, it says what the user has seen.
+- O08: A `kind` that is not what the flow does, such as deleting a book filed as edit.
+- O09: A browse, view, create, edit, delete or act flow whose `noun` is not the vocabulary noun of the records it works on.
+- O10: A flow that signs up, signs in or signs out without kind "auth" and the matching `authKind`.
+- O11: A flow of a kind other than "auth" whose `authKind` is not "none".
+- O12: `signedOut` that is wrong for the flow: false on the landing flow, or true on a flow the user must be signed in for, such as one on the user's own records.
+- O13: A `start` or a precondition that no other flow leads to or sets up, such as needing an approved request when no flow approves one. Arriving at the website and not being signed in need no flow.
+- O14: An outcome a tester cannot check. An outcome says what changed and what a refresh still shows. For a flow that only looks, it says what the user has seen.
 
 ## Descriptions
 
 No code reads what a description says, so you also check the form and field ids it names.
 
-- A description that does not run from the flow's `start` to its outcome: it starts elsewhere, stops short, or ends in another outcome.
-- A description too vague to expand into steps: it leaves out what the user does, what the website shows after it, or where the user ends up.
-- A description in which the user enters values without naming the form or the fields by id, or enters a value no field defines.
-- A description that names a form or a field the catalog does not define, or the wrong one for what the user enters there.
-- A description that contradicts its own header, another flow or a field it uses, such as moving an order to Shipped when the status field has no Shipped option.
+- O15: A description that does not run from the flow's `start` to its outcome: it starts elsewhere, stops short, or ends in another outcome.
+- O16: A description too vague to expand into steps: it leaves out what the user does, what the website shows after it, or where the user ends up.
+- O17: A description in which the user enters values without naming the form or the fields by id, or enters a value no field defines.
+- O18: A description that names a form or a field the catalog does not define, or the wrong one for what the user enters there.
+- O19: A description that contradicts its own header, another flow or a field it uses, such as moving an order to Shipped when the status field has no Shipped option.
 
 ## Fields and forms
 
-- One value defined as two fields, such as a book's title as FD03 and again as FD09. A field two flows use is one entry.
-- A field whose `noun` is not the vocabulary noun whose records keep the value. A value no record keeps, such as a password, a sign-in email or a search, has noun "".
-- A field whose type does not fit its value, such as a price or a date as text.
-- A record's place among others, such as a widget's position, as a field the user types. The user moves the record earlier or later instead.
-- A field whose limits refuse realistic values, such as a title of at most 10 characters, or a minimum above its maximum.
-- A choice among records the app keeps, such as a task's project, written as a fixed list of options instead of `optionsFrom` naming that noun.
-- A label that is a technical name, such as dueAt or user_id, or a meaning that does not say what the value means to the business.
-- An example that is not a realistic value of its field, or that its own limits or options would refuse.
-- A form that holds the fields of two screens, or leaves out a field its screen asks for.
-- A screen that more than one flow shows, such as the form to add and to edit a record, whose fields are not one form.
+- O20: One value defined as two fields, such as a book's title as FD03 and again as FD09. A field two flows use is one entry.
+- O21: A field whose `noun` is not the vocabulary noun whose records keep the value. A value no record keeps, such as a password, a sign-in email or a search, has noun "".
+- O22: A field whose type does not fit its value, such as a price or a date as text.
+- O23: A record's place among others, such as a widget's position, as a field the user types. The user moves the record earlier or later instead.
+- O24: A field whose limits refuse realistic values, such as a title of at most 10 characters, or a minimum above its maximum.
+- O25: A choice among records the app keeps, such as a task's project, written as a fixed list of options instead of `optionsFrom` naming that noun.
+- O26: A label that is a technical name, such as dueAt or user_id, or a meaning that does not say what the value means to the business.
+- O27: An example that is not a realistic value of its field, or that its own limits or options would refuse.
+- O28: A form that holds the fields of two screens, or leaves out a field its screen asks for.
+- O29: A screen that more than one flow shows, such as the form to add and to edit a record, whose fields are not one form.
 
 ## New assumptions and questions
 
-- A new question whose default answer does not answer it, such as "to be decided".
-- An assumption that a role's account is made outside the app, such as an owner account set up in advance, so the role has no sign-up. No one makes accounts outside the app: the fix drops the assumption and keeps the sign-up flow.
+- O30: A new question whose default answer does not answer it, such as "to be decided".
+- O31: An assumption that a role's account is made outside the app, such as an owner account set up in advance, so the role has no sign-up. No one makes accounts outside the app: the fix drops the assumption and keeps the sign-up flow.
 
 ## No design or contract details
 
-- A flow's header or description, a field or a form that decides the design: a component such as a modal, dialog, dropdown, tab or sidebar, a position, a color or a size in pixels. "Page", "screen" and "clicks" are fine.
-- A flow's header or description, a field or a form that decides the contract: an endpoint, an API, a database, JSON, SQL, REST, GraphQL or an HTTP verb.
+- O32: A flow's header or description, a field or a form that decides the design: a component such as a modal, dialog, dropdown, tab or sidebar, a position, a color or a size in pixels. "Page", "screen" and "clicks" are fine.
+- O33: A flow's header or description, a field or a form that decides the contract: an endpoint, an API, a database, JSON, SQL, REST, GraphQL or an HTTP verb.
 
 Leave to the validators, which already check these:
 

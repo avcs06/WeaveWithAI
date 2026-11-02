@@ -7,10 +7,15 @@ export const Blocker = z.object({
   fix: z.string().describe('What the output must say instead'),
 });
 export const Review = z.object({
-  checked: z.number().int().describe('How many points of the guide were checked'),
+  checked: z.array(z.string()).describe('The id of every guide point checked, such as P01'),
   blockers: z.array(Blocker),
 });
 export type Review = z.infer<typeof Review>;
+
+/** The ids of a guide's points, in order: each point starts with one, as in `- P01: A flow that...`. */
+export function guideIds(guide: string): string[] {
+  return [...guide.matchAll(/^\s*- ([A-Z]\d{2}): /gm)].flatMap((match) => (match[1] ? [match[1]] : []));
+}
 
 export const REVIEW_RULE = 'REVIEW';
 

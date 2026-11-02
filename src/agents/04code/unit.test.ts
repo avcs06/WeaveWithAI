@@ -8,6 +8,7 @@ import { createRun, readEvents, runPath } from '../../core/run';
 import { pathBeside } from '../../core/utils';
 import type { Check } from '../../engine/session';
 import { git, prepareApp } from '../../engine/setup';
+import { guideIds } from '../../runner/review';
 import type { StageContext } from '../stages';
 import { runUnit, runUnits, type UnitSpec } from './unit';
 
@@ -25,7 +26,7 @@ function fakeReviewers(blockFirst: boolean) {
     async generateStructured(input) {
       reviews.push(input as GenerateInput<unknown>);
       const blocking = blockFirst && input.stage.endsWith('-review-code') && input.round === 1;
-      const data = { checked: 0, blockers: blocking ? [{ at: 'web/app/(routes)/books/page.tsx', problem: 'The page does two jobs.', fix: 'Split the list out.' }] : [] };
+      const data = { checked: guideIds(input.messages[0]?.content ?? ''), blockers: blocking ? [{ at: 'web/app/(routes)/books/page.tsx', problem: 'The page does two jobs.', fix: 'Split the list out.' }] : [] };
       return { data: data as never, raw: JSON.stringify(data), usage: { input: 1, cachedInput: 0, output: 1 }, costUsd: 0, replayed: false, backend: 'meta', model: 'muse-spark-1.3', durationMs: 1 };
     },
   };

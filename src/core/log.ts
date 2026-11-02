@@ -51,11 +51,13 @@ export function runLog(
             `${round} started${n('fixing') ? `, fixing ${count(n('fixing'), 'issue')}` : ''}`,
           );
         case 'llm:call': {
-          if (typeof event.reviewer === 'string')
+          if (typeof event.reviewer === 'string') {
+            const missed = (event.missed as string[] | undefined) ?? [];
             return line(
               event.stage.slice(0, -`-review-${event.reviewer}`.length),
-              `${round} review ${event.reviewer} found ${count(n('blockers'), 'blocker')} (${stats(event)})`,
+              `${round} review ${event.reviewer} found ${count(n('blockers'), 'blocker')}${missed.length ? `, missed ${missed.join(', ')}` : ''} (${stats(event)})`,
             );
+          }
           const what = event.invalid
             ? 'answer did not match the schema'
             : event.truncated

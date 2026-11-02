@@ -6,6 +6,7 @@ import { readArtifact, writeArtifact } from '../../core/artifacts';
 import type { Config } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
 import { createRun, readState } from '../../core/run';
+import { guideIds } from '../../runner/review';
 import { architecture, flows, scope } from '../02design/__fixtures__/chain';
 import type { StageContext } from '../stages';
 import type { Contract } from './schema';
@@ -26,7 +27,7 @@ function fakeLlm() {
   const llm: Llm = {
     async generateStructured(input) {
       inputs.push(input as GenerateInput<unknown>);
-      const answers: Record<string, unknown> = { Contract: contract, Review: { checked: 0, blockers: [] } };
+      const answers: Record<string, unknown> = { Contract: contract, Review: { checked: guideIds(input.messages[0]?.content ?? ''), blockers: [] } };
       const data = answers[input.schemaName];
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
       return {

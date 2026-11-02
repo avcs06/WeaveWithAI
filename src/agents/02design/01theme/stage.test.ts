@@ -7,6 +7,7 @@ import type { Config } from '../../../core/env';
 import type { GenerateInput, Llm } from '../../../core/llm';
 import { createRun, readState } from '../../../core/run';
 import type { Inventory } from '../../../ds/inventory';
+import { guideIds } from '../../../runner/review';
 import { Scope } from '../../01flows/01scope/schema';
 import { Flows } from '../../01flows/schema';
 import type { StageContext } from '../../stages';
@@ -36,7 +37,7 @@ function fakeLlm() {
       inputs.push(input as GenerateInput<unknown>);
       const answers: Record<string, unknown> = {
         Theme: call,
-        Review: { checked: 0, blockers: [] },
+        Review: { checked: guideIds(input.messages[0]?.content ?? ''), blockers: [] },
       };
       const data = answers[input.schemaName];
       if (!data) throw new Error(`unexpected schema ${input.schemaName}`);

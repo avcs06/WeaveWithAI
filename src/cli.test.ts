@@ -15,6 +15,7 @@ import { readArtifact } from './core/artifacts';
 import type { Config } from './core/env';
 import type { Llm } from './core/llm';
 import { readState, type Run, runPath } from './core/run';
+import { guideIds } from './runner/review';
 
 const runsDir = mkdtempSync(path.join(tmpdir(), 'weave-cli-'));
 afterAll(() => rmSync(runsDir, { recursive: true, force: true }));
@@ -51,12 +52,14 @@ const load = (name: string): unknown =>
   );
 const byScheme: Record<string, unknown> = {
   Scope: load('reading-list.scope.json'),
-  Review: { checked: 0, blockers: [] },
 };
 /** The fixtures for the stages, an empty review for the reviewers; 10 tokens in, 5 out, $0.001 per call. */
 const llm: Llm = {
   async generateStructured(input) {
-    const data = byScheme[input.schemaName];
+    const data =
+      input.schemaName === 'Review'
+        ? { checked: guideIds(input.messages[0]?.content ?? ''), blockers: [] }
+        : byScheme[input.schemaName];
     if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
     return {
       data: data as never,

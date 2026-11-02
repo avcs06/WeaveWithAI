@@ -34,9 +34,9 @@ const longTitle: Issue = {
   severity: 'warning',
   message: 'title is long',
 };
-const clean: Review = { checked: 1, blockers: [] };
+const clean: Review = { checked: [], blockers: [] };
 const generic: Review = {
-  checked: 1,
+  checked: [],
   blockers: [
     { at: 'title', problem: 'Title is generic.', fix: 'Name the breed.' },
   ],
@@ -995,5 +995,46 @@ describe('runSpecStage with patch keys', () => {
     await promise;
     expect(inputs[1]?.schemaName).toBe('Doc');
     expect(lastUser(inputs[1])).toContain('Return the complete corrected document as JSON');
+  });
+});
+
+describe('runSpecStage with a guide whose points have ids', () => {
+  const pointed: ReviewGuides = {
+    output: '- O01: A title that says nothing.\n- O02: A title about dogs.\n- O03: A title in capitals.',
+  };
+  const lastRound: Partial<SpecStageOptions<Doc>> = {
+    schedule: [
+      { fix: false, reviewers: [] },
+      { fix: true, reviewers: ['output'] },
+    ],
+  };
+
+  it('asks once more for the points the reviewer left unchecked, keeps the blockers of both answers, and only logs what is still unchecked', async () => {
+    const first: Review = { checked: ['O01'], blockers: [] };
+    const recheck: Review = { checked: ['O02'], blockers: generic.blockers };
+    const { llm, inputs } = fakeLlm([{ title: 'Cats' }, first, recheck]);
+    const { run, promise } = stage('recheck', llm, () => [], pointed, lastRound);
+    const result = await promise;
+
+    expect(inputs.map((input) => input.stage)).toEqual(['doc', 'doc-review-output', 'doc-review-output-recheck']);
+    const messages = inputs[2]?.messages ?? [];
+    expect(messages.slice(0, 2)).toEqual(inputs[1]?.messages);
+    expect(messages[2]).toEqual({ role: 'assistant', content: JSON.stringify(first) });
+    expect(messages[3]?.content).toContain('- O02\n- O03');
+    expect(result.known).toEqual([genericIssue]);
+    expect(
+      readEvents(run)
+        .filter((event) => event.type === 'llm:call' && event.reviewer)
+        .map((event) => [event.reviewer, event.missed]),
+    ).toEqual([
+      ['output', ['O02', 'O03']],
+      ['output-recheck', ['O03']],
+    ]);
+  });
+
+  it('asks nothing more when every point was checked', async () => {
+    const { llm, inputs } = fakeLlm([{ title: 'Cats' }, { checked: ['O01', 'O02', 'O03'], blockers: [] }]);
+    await stage('all-checked', llm, () => [], pointed, lastRound).promise;
+    expect(inputs.map((input) => input.stage)).toEqual(['doc', 'doc-review-output']);
   });
 });

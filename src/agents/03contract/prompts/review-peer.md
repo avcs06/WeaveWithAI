@@ -6,26 +6,26 @@ First walk every flow step and alternative, and find the operation that does eac
 
 ## Entities
 
-- A vocabulary noun whose records a frame, screen or dialog shows, with no entity.
-- A value a frame, screen or dialog shows, or a value the users fill in that a record keeps, with no field on that record's entity. A count or another value worked out from records needs no field.
-- A record that belongs to another record, such as a task of a project, with no `ref` field to it. Without it, no screen can show only one project's tasks.
-- An entity, a field or an enum that no flow, frame, screen or dialog needs.
+- P01: A vocabulary noun whose records a frame, screen or dialog shows, with no entity.
+- P02: A value a frame, screen or dialog shows, or a value the users fill in that a record keeps, with no field on that record's entity. A count or another value worked out from records needs no field.
+- P03: A record that belongs to another record, such as a task of a project, with no `ref` field to it. Without it, no screen can show only one project's tasks.
+- P04: An entity, a field or an enum that no flow, frame, screen or dialog needs.
 
 ## Operations
 
-- A step or an alternative that loads, saves, changes or deletes records, with no operation that does it. The validators only see a step's effects. Read its words and the place that holds it too, such as a step that marks a task done but has no effect for it.
-- Two operations that do the same job, such as `updateTask` and `editTask`.
-- An operation no step or alternative needs, such as a delete no flow offers.
-- An operation for signing up, signing in or signing out, or one that takes the email or password they ask for. The app builds those in.
+- P05: A step or an alternative that loads, saves, changes or deletes records, with no operation that does it. The validators only see a step's effects. Read its words and the place that holds it too, such as a step that marks a task done but has no effect for it.
+- P06: Two operations that do the same job, such as `updateTask` and `editTask`.
+- P07: An operation no step or alternative needs, such as a delete no flow offers.
+- P08: An operation for signing up, signing in or signing out, or one that takes the email or password they ask for. The app builds those in.
 
 ## Screens
 
-- A frame, screen or dialog that shows records, with no entry in `screens`.
-- A record a frame, screen or dialog shows that none of its reads loads. That includes the records a choice offers, such as the projects to pick for a task, and a record shown through a `ref`, such as each task's project name.
-- A screen that lists records and does not read the list of that noun.
-- A screen for one record that reads neither the get of that record nor the list it was picked from.
-- A form that edits a record and does not read it.
-- A read of records the place never shows, such as an add form that reads the record it adds, or a public page that reads a signed-in user's records.
+- P09: A frame, screen or dialog that shows records, with no entry in `screens`.
+- P10: A record a frame, screen or dialog shows that none of its reads loads. That includes the records a choice offers, such as the projects to pick for a task, and a record shown through a `ref`, such as each task's project name.
+- P11: A screen that lists records and does not read the list of that noun.
+- P12: A screen for one record that reads neither the get of that record nor the list it was picked from.
+- P13: A form that edits a record and does not read it.
+- P14: A read of records the place never shows, such as an add form that reads the record it adds, or a public page that reads a signed-in user's records.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave out naming and taste. Leave to the validators, which check:
 

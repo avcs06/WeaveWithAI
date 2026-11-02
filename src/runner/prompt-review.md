@@ -16,7 +16,7 @@ Leave these out:
 
 ## How to report
 
-1. Walk the guide. Check the output against each point of the guide, one by one, in the guide's order, and decide whether it has the major problem the point describes. Leave out the points the guide leaves to the validators. `checked` is how many points you checked.
+1. Walk the guide. Each point of the guide starts with its id, such as P01. Check the output against each point, one by one, in the guide's order, and decide whether it has the major problem the point describes. The points the guide leaves to the validators have no id: leave them out. `checked` lists the id of every point you checked.
 2. Look past the guide. Its points are the problems seen most often, not every problem, and finding the others is part of your job. Read the output again against the instructions and the input the model was given, as the people who build from it would, and find every other major problem.
 3. Write `blockers`: one for each point the output fails, and one for each problem step 2 found. Give each one:
    - `at`: where it is, as an ID, a file or a JSON path in the output.

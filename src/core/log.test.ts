@@ -24,7 +24,9 @@ describe('the run log', () => {
         { type: 'stage:round', stage: 'flows-expand-2', round: 1, mandatory: 3, warnings: 1, blockers: 0 },
         { type: 'round:start', stage: 'flows-expand-2', round: 2, fixing: 3 },
         { type: 'review:start', stage: 'flows-expand-2', round: 2, reviewer: 'peer' },
-        { type: 'llm:call', stage: 'flows-expand-2-review-peer', round: 2, reviewer: 'peer', blockers: 1, ...call },
+        { type: 'llm:call', stage: 'flows-expand-2-review-peer', round: 2, reviewer: 'peer', blockers: 1, missed: ['P07', 'P12'], ...call },
+        { type: 'review:start', stage: 'flows-expand-2', round: 2, reviewer: 'peer-recheck' },
+        { type: 'llm:call', stage: 'flows-expand-2-review-peer-recheck', round: 2, reviewer: 'peer-recheck', blockers: 0, missed: [], ...call },
         { type: 'stage:done', stage: 'flows-expand-2', rounds: 3, known: 1 },
         { type: 'stage:done', stage: 'flows-expand' },
       ]),
@@ -38,7 +40,9 @@ describe('the run log', () => {
       '    expand-2 round 1 finished: 3 pending (3 mandatory, 0 blockers)',
       '    expand-2 round 2 started, fixing 3 issues',
       '    expand-2 round 2 review peer started',
-      '    expand-2 round 2 review peer found 1 blocker (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
+      '    expand-2 round 2 review peer found 1 blocker, missed P07, P12 (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
+      '    expand-2 round 2 review peer-recheck started',
+      '    expand-2 round 2 review peer-recheck found 0 blockers (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
       '    expand-2 done: 3 rounds, 1 known issue',
     ]);
   });

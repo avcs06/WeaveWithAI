@@ -6,36 +6,36 @@ Read each field against the flow field it comes from, each operation against the
 
 ## Entities
 
-- Two entities for the same `noun`, or an entity that names another noun than the one whose records it keeps.
-- A field on another entity than the one for its flow field's `noun`, such as a task's due date on Project.
-- A field made from a flow field whose `noun` is "", such as a password, a sign-in email or a search. No record keeps those.
-- A field whose name is not made from its flow field's label, such as `deadline` for "Due date".
-- One value under two fields: two names on one entity, such as `dueDate` and `deadline`, or a copy on another entity where a `ref` belongs, such as `projectName` on Task.
-- A `kind` that does not fit the flow field's type, such as a price, a count or a date whose kind is string.
-- A choice from fixed `options` whose kind is not enum.
-- A choice whose `optionsFrom` names a noun, with a kind other than a ref to that noun's entity.
-- A `ref` to another entity than the one whose record the value points at.
-- A `list` that is false for a multiChoice field, or true for a single value.
-- A `required` that differs from the flow field's `required`.
-- An enum whose labels are not the flow field's `options` word for word, or that leaves one out or adds one.
+- O01: Two entities for the same `noun`, or an entity that names another noun than the one whose records it keeps.
+- O02: A field on another entity than the one for its flow field's `noun`, such as a task's due date on Project.
+- O03: A field made from a flow field whose `noun` is "", such as a password, a sign-in email or a search. No record keeps those.
+- O04: A field whose name is not made from its flow field's label, such as `deadline` for "Due date".
+- O05: One value under two fields: two names on one entity, such as `dueDate` and `deadline`, or a copy on another entity where a `ref` belongs, such as `projectName` on Task.
+- O06: A `kind` that does not fit the flow field's type, such as a price, a count or a date whose kind is string.
+- O07: A choice from fixed `options` whose kind is not enum.
+- O08: A choice whose `optionsFrom` names a noun, with a kind other than a ref to that noun's entity.
+- O09: A `ref` to another entity than the one whose record the value points at.
+- O10: A `list` that is false for a multiChoice field, or true for a single value.
+- O11: A `required` that differs from the flow field's `required`.
+- O12: An enum whose labels are not the flow field's `options` word for word, or that leaves one out or adds one.
 
 ## Operations
 
-- An `id`, `entity`, `kind` and `summary` that don't say the same thing, such as `deleteTask` whose kind is update, or `listTasks` whose entity is Project.
-- A `summary` that goes against the flows or the screens, such as oldest first where the screen lists the newest first.
-- A `flowSteps` id that is no step or alternative of the flows.
-- A step in `flowSteps` that has effects, but none this operation serves, such as a create that lists a step that only deletes.
-- A field a screen or dialog asks for that a record keeps, and that no operation serving the same flow takes as an input.
-- A form filled in at one step and saved at the next, whose fields are not inputs of the operation that saves it.
-- A flow field for a search that is not an input of the list it searches, as `q`.
-- An input the users do not fill in for this operation, such as a field of another form.
-- An input whose `as` names another field than the one it fills in or filters by, such as the title set as `author`.
-- On a list, a filter by one field whose `as` is `q`.
+- O13: An `id`, `entity`, `kind` and `summary` that don't say the same thing, such as `deleteTask` whose kind is update, or `listTasks` whose entity is Project.
+- O14: A `summary` that goes against the flows or the screens, such as oldest first where the screen lists the newest first.
+- O15: A `flowSteps` id that is no step or alternative of the flows.
+- O16: A step in `flowSteps` that has effects, but none this operation serves, such as a create that lists a step that only deletes.
+- O17: A field a screen or dialog asks for that a record keeps, and that no operation serving the same flow takes as an input.
+- O18: A form filled in at one step and saved at the next, whose fields are not inputs of the operation that saves it.
+- O19: A flow field for a search that is not an input of the list it searches, as `q`.
+- O20: An input the users do not fill in for this operation, such as a field of another form.
+- O21: An input whose `as` names another field than the one it fills in or filters by, such as the title set as `author`.
+- O22: On a list, a filter by one field whose `as` is `q`.
 
 ## Screens
 
-- An entry whose `screen` is not the id of a frame, screen or dialog, so its reads reach no place.
-- A read that names no operation of the contract, or one that is not a list or a get.
+- O23: An entry whose `screen` is not the id of a frame, screen or dialog, so its reads reach no place.
+- O24: A read that names no operation of the contract, or one that is not a list or a get.
 
 Leave out taste. Leave to the validators, which check:
 

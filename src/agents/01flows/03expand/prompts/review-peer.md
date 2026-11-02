@@ -6,31 +6,31 @@ Walk each flow as its role, from its start to its outcome, then through every al
 
 ## What the user gets
 
-- A flow the user cannot tell is done: no step or "confirm" path shows them the result, such as the saved record or the changed status.
-- A flow that does less than users of this kind of app expect of it, such as a list that can grow with no way to find a record in it.
-- A flow for looking at information, such as a home page, a dashboard or a record's details, that leaves out what the user comes to see.
+- P01: A flow the user cannot tell is done: no step or "confirm" path shows them the result, such as the saved record or the changed status.
+- P02: A flow that does less than users of this kind of app expect of it, such as a list that can grow with no way to find a record in it.
+- P03: A flow for looking at information, such as a home page, a dashboard or a record's details, that leaves out what the user comes to see.
 
 ## The job, the core loop and the first success
 
-- A step that does not serve the flow's goal, or a detour the user does not need, such as a page to review a form before a simple save.
-- A step or a required field the idea does not require on the way to the first success, such as a profile to fill in, an email to confirm or a phone number to give. That way runs from the landing page through signing up to the first result the user sees.
+- P04: A step that does not serve the flow's goal, or a detour the user does not need, such as a page to review a form before a simple save.
+- P05: A step or a required field the idea does not require on the way to the first success, such as a profile to fill in, an email to confirm or a phone number to give. That way runs from the landing page through signing up to the first result the user sees.
 
 ## Scope, roles and entry
 
-- A step, field or option the idea never implies and users of this kind of app do not expect, such as comments, an export or inviting friends.
-- A step that shows or changes records that belong to another user, such as other people's notes in a list, unless the idea or the scope makes them shared.
-- A step that makes records public or shareable when the idea does not imply it and it does not clearly help the product.
-- A landing flow whose page does not say what the app is for and how to start, or that does not end with the visitor getting started.
+- P06: A step, field or option the idea never implies and users of this kind of app do not expect, such as comments, an export or inviting friends.
+- P07: A step that shows or changes records that belong to another user, such as other people's notes in a list, unless the idea or the scope makes them shared.
+- P08: A step that makes records public or shareable when the idea does not imply it and it does not clearly help the product.
+- P09: A landing flow whose page does not say what the app is for and how to start, or that does not end with the visitor getting started.
 
 ## Business rules and data
 
-- A rule the idea states or implies that applies to a step here and is not written there: who may do what, a limit or a maximum, a status and how it changes, what deleting removes, or what counts as full, sold out, due or overdue.
-- A new field, status or option the idea names, under another name or with other options than the idea gives it.
-- A new field marked required that the idea does not require.
+- P10: A rule the idea states or implies that applies to a step here and is not written there: who may do what, a limit or a maximum, a status and how it changes, what deleting removes, or what counts as full, sold out, due or overdue.
+- P11: A new field, status or option the idea names, under another name or with other options than the idea gives it.
+- P12: A new field marked required that the idea does not require.
 
 ## Dead ends
 
-- A step or an alternative that leaves the user with no next action: an empty list with no way to add the first record, or a denied or not-found path with no way on.
+- P13: A step or an alternative that leaves the user with no next action: an empty list with no way to add the first record, or a denied or not-found path with no way on.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators, which check:
 

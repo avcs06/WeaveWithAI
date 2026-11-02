@@ -6,64 +6,64 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 
 ## Each flow, as the catalog describes it
 
-- A header field that differs from the catalog's, such as another goal, start or outcome.
-- Steps that leave out or contradict what the catalog description says the user does and sees, or that use another form or field in place of one it names.
-- Steps that go against the header: they begin somewhere other than `start`, never reach the `outcome`, need a signed-in user in a flow marked `signedOut`, or are done by another role. A flow that only looks ends on what the user has seen. A delete may reach its outcome in its "confirm" path.
-- A second flow in the output, or steps that do another flow's job, such as an edit flow that also deletes, or a flow for one kind of item that also adds another kind. Small actions on the parts of one record, such as ticking the items of a checklist, may share a flow.
-- Text copied from the example flows that does not fit this app.
+- O01: A header field that differs from the catalog's, such as another goal, start or outcome.
+- O02: Steps that leave out or contradict what the catalog description says the user does and sees, or that use another form or field in place of one it names.
+- O03: Steps that go against the header: they begin somewhere other than `start`, never reach the `outcome`, need a signed-in user in a flow marked `signedOut`, or are done by another role. A flow that only looks ends on what the user has seen. A delete may reach its outcome in its "confirm" path.
+- O04: A second flow in the output, or steps that do another flow's job, such as an edit flow that also deletes, or a flow for one kind of item that also adds another kind. Small actions on the parts of one record, such as ticking the items of a checklist, may share a flow.
+- O05: Text copied from the example flows that does not fit this app.
 
 ## The flows of this call, against each other
 
-- Two flows that do the same kind of thing differently: the record created at one step in one flow and at another in the next, a part such as an item or an entry added one way in one flow and another way in another, or a record that may stay empty in one flow and must have a part in another.
-- The same thing under two names in two flows, such as an entry in one and a link in another.
+- O06: Two flows that do the same kind of thing differently: the record created at one step in one flow and at another in the next, a part such as an item or an entry added one way in one flow and another way in another, or a record that may stay empty in one flow and must have a part in another.
+- O07: The same thing under two names in two flows, such as an entry in one and a link in another.
 
 ## Against the scope and the answers
 
-- A step that does something the scope leaves out, instead of what its out-of-scope entry says the app does.
-- A step that goes against an assumption of the scope or the catalog, or against an answer already given. A question nobody answered keeps its default answer.
+- O08: A step that does something the scope leaves out, instead of what its out-of-scope entry says the app does.
+- O09: A step that goes against an assumption of the scope or the catalog, or against an answer already given. A question nobody answered keeps its default answer.
 
 ## Steps
 
-- A step the user cannot take from where the step before it left them, such as saving a form no step opened.
-- A step with two actions, or with a choice between two, such as "signs up or signs in". The step takes the action this flow's goal needs, and the other starts its own flow.
-- A form filled in at one step and submitted at the next. Filling it in and submitting it is one step, which asks for the fields and saves them.
-- A website response that does not answer its step's action, or that says only what the system does, such as "the book is stored", and not what the user sees.
-- A step a designer would have to guess at: a list that does not say what each item shows, or a page that shows "the details" or "the stats" without naming them.
-- A system step for something the user starts, or a user step for something the system starts on its own, such as a deadline passing.
+- O10: A step the user cannot take from where the step before it left them, such as saving a form no step opened.
+- O11: A step with two actions, or with a choice between two, such as "signs up or signs in". The step takes the action this flow's goal needs, and the other starts its own flow.
+- O12: A form filled in at one step and submitted at the next. Filling it in and submitting it is one step, which asks for the fields and saves them.
+- O13: A website response that does not answer its step's action, or that says only what the system does, such as "the book is stored", and not what the user sees.
+- O14: A step a designer would have to guess at: a list that does not say what each item shows, or a page that shows "the details" or "the stats" without naming them.
+- O15: A system step for something the user starts, or a user step for something the system starts on its own, such as a deadline passing.
 
 ## Fields and forms
 
-- A step whose words ask for a value its `fields` and `form` leave out, or whose `fields` and `form` hold a value the step does not ask for.
-- A new field or form where a catalog one fits: a new field that means the same as a catalog field, or a new form that copies a catalog form.
-- A new field whose `noun` is not a vocabulary noun spelled as the scope spells it, or names a noun whose records do not keep the value. The `noun` is "" when no record keeps the value, such as a password or a search.
-- A new field whose label is a technical name, or whose meaning does not say what the value means to the business.
-- A new field whose type does not fit the value, such as a price as text.
-- A new field whose example is not a realistic value of it.
-- A new choice field with fixed options for records the app keeps, such as the user's own shelves, instead of `optionsFrom` naming those records.
+- O16: A step whose words ask for a value its `fields` and `form` leave out, or whose `fields` and `form` hold a value the step does not ask for.
+- O17: A new field or form where a catalog one fits: a new field that means the same as a catalog field, or a new form that copies a catalog form.
+- O18: A new field whose `noun` is not a vocabulary noun spelled as the scope spells it, or names a noun whose records do not keep the value. The `noun` is "" when no record keeps the value, such as a password or a search.
+- O19: A new field whose label is a technical name, or whose meaning does not say what the value means to the business.
+- O20: A new field whose type does not fit the value, such as a price as text.
+- O21: A new field whose example is not a realistic value of it.
+- O22: A new choice field with fixed options for records the app keeps, such as the user's own shelves, instead of `optionsFrom` naming those records.
 
 ## Effects
 
-- Effects that do not match the step: a step that saves, changes, deletes, lists or shows records with no effect for it, or an effect for something the step does not do. A step that stores or loads nothing has none. So does a step that saves only values no vocabulary noun keeps, such as signing up or changing the password. The step that asks to confirm a delete carries the delete effect.
-- A delete whose words also remove what belongs to the record, with no effect for those records.
+- O23: Effects that do not match the step: a step that saves, changes, deletes, lists or shows records with no effect for it, or an effect for something the step does not do. A step that stores or loads nothing has none. So does a step that saves only values no vocabulary noun keeps, such as signing up or changing the password. The step that asks to confirm a delete carries the delete effect.
+- O24: A delete whose words also remove what belongs to the record, with no effect for those records.
 
 The validators find the steps that need an alternative from the fields and effects of one step. A missing effect, or fields asked for at one step and saved at the next, also hides a missing alternative.
 
 ## Alternatives
 
-- An alternative whose steps do not say what the website shows, or whose `resumesAt` goes against its last step, such as "back to the form" where the flow ends.
-- An "invalid" path that does not say what the website marks as wrong, or that loses what the user typed.
-- A "failure" path that loses what the user typed or offers no retry.
-- A step that saves values no vocabulary noun keeps, with no "failure" path, or no "invalid" path for a value that can be typed wrong. Signing up is one, and so is changing the password or a setting. The validators only see saves that have an effect.
-- An "empty" path that does not say what the user sees when there is nothing yet.
-- A delete the user cannot back out of: the record is gone before they confirm, or cancelling still removes it.
-- A step the role may be refused, such as an action past a limit or on a record only its owner may change, with no "denied" path.
-- Signing up with no path for an email that already has an account, or signing in with no path for an email and password that match no account.
-- A step that opens one record, from a list or a link, with no "notFound" path for a record that is gone.
+- O25: An alternative whose steps do not say what the website shows, or whose `resumesAt` goes against its last step, such as "back to the form" where the flow ends.
+- O26: An "invalid" path that does not say what the website marks as wrong, or that loses what the user typed.
+- O27: A "failure" path that loses what the user typed or offers no retry.
+- O28: A step that saves values no vocabulary noun keeps, with no "failure" path, or no "invalid" path for a value that can be typed wrong. Signing up is one, and so is changing the password or a setting. The validators only see saves that have an effect.
+- O29: An "empty" path that does not say what the user sees when there is nothing yet.
+- O30: A delete the user cannot back out of: the record is gone before they confirm, or cancelling still removes it.
+- O31: A step the role may be refused, such as an action past a limit or on a record only its owner may change, with no "denied" path.
+- O32: Signing up with no path for an email that already has an account, or signing in with no path for an email and password that match no account.
+- O33: A step that opens one record, from a list or a link, with no "notFound" path for a record that is gone.
 
 ## No design or contract details
 
-- Design details in a step or an alternative: component names such as modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast or tooltip, positions such as left, right, top or bottom, colors, pixels, or the look, such as "in the dark glowing style". The flow says what the website shows, not where or with what. "Page", "screen" and "clicks" are fine.
-- Contract details: endpoints, APIs, databases, JSON, SQL, REST, GraphQL, HTTP and its verbs, or a named technology, such as a payment provider.
+- O34: Design details in a step or an alternative: component names such as modal, dialog, popup, dropdown, drawer, tab, sidebar, navbar, toast or tooltip, positions such as left, right, top or bottom, colors, pixels, or the look, such as "in the dark glowing style". The flow says what the website shows, not where or with what. "Page", "screen" and "clicks" are fine.
+- O35: Contract details: endpoints, APIs, databases, JSON, SQL, REST, GraphQL, HTTP and its verbs, or a named technology, such as a payment provider.
 
 Leave to the validators, which check:
 
