@@ -60,6 +60,7 @@ Challenge, and report as a blocker only what you would not sign off.
 - A risky guess written as an assumption: if it is wrong, the app is wrong for its users. That needs a question.
 - A new blocking question whose answer changes none of scope, permissions, business rules or data. That is an assumption.
 - A new question whose wrong default would make the app wrong for its users, not marked blocking.
+- An assumption that a role's account is made outside the app, such as an owner account set up in advance, so the role has no sign-up. No one makes accounts outside the app: the fix drops the assumption and keeps the sign-up flow.
 
 Another reviewer checks the output for errors in meaning; you judge the decisions. Leave to the validators, which already check these:
 

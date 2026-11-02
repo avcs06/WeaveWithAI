@@ -50,6 +50,7 @@ No code reads what a description says, so you also check the form and field ids 
 ## New assumptions and questions
 
 - A new question whose default answer does not answer it, such as "to be decided".
+- An assumption that a role's account is made outside the app, such as an owner account set up in advance, so the role has no sign-up. No one makes accounts outside the app: the fix drops the assumption and keeps the sign-up flow.
 
 ## No design or contract details
 
