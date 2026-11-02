@@ -1,4 +1,4 @@
-<!-- Output review guide `adherence` of every coding unit, the frames and the pages: the app's product designer and product manager check that the change builds what the design and the flows say, with the layout and emphasis the guidelines ask. unit.ts loads it beside review-code.md; the runner fills it into prompt-review.md as {{guide}} and runs it in round 1, after the session and its checks, and again in round 2, after the first fix (CODE_SCHEDULE in src/engine/compose.ts). No placeholders. Its user message is review-input.md: the guidelines of the unit's folders and its task, the unit's own .weave folder (frames.md, or each screen's file with its dialogs, and the folder's issues.json), the unit's whole diff and the last session's summary (compose.ts), and the checks' mandatory issues as known issues (reviewersSeeMandatory): a warning reaches neither the reviewers nor a fix. It does not see flows.json, routes.json, theme.json, the app's AGENTS.md or the questions in 01-scaffold/issues.json: the steps carry the flows, and the Frames section states the AGENTS.md rule on the header's and footer's color. The last section lists only what the unit's checks cover: CODE-005 and CODE-006 (each screen's folder has code and calls its operations), CODE-007 (verify at 1280: runtime and hydration errors, sideways scroll), DESIGN-R-001 to 008 (the browser checks on each screen as it first loads inside its frame; they run only in the pages unit, so the frames meet them with the screens; 003 checks no dialog, 006 checks only the landing page's H1, and 007 and 008 are warnings), and CODE-001 (the MCP's token and variant rules). No check measures the space between groups, and DESIGN-R-007's line length is a warning, so this guide checks the space between groups and long lines itself. -->
+<!-- Output review guide `adherence` of every coding unit, the frames and the pages: the app's product designer and product manager check that the change builds what the design and the flows say, with the layout and emphasis the guidelines ask. unit.ts loads it beside review-code.md; the runner fills it into prompt-review.md as {{guide}} and runs it in round 1, after the session and its checks, and again in round 2, after the first fix (CODE_SCHEDULE in src/engine/compose.ts). No placeholders. Its user message is review-input.md: the guidelines of the unit's folders and its task, the unit's own .weave folder (frames.md, or each screen's file with its dialogs, and the folder's issues.json), the unit's whole diff and the last session's summary (compose.ts), and the checks' mandatory issues as known issues (reviewersSeeMandatory): a warning reaches neither the reviewers nor a fix. It does not see flows.json, routes.json, theme.json, the app's AGENTS.md or the questions in 01-scaffold/issues.json: the steps carry the flows, and the Frames section states the AGENTS.md rule on the header's and footer's color. The last section lists only what the unit's checks cover: CODE-005 and CODE-006 (each screen's folder has code and calls its operations), CODE-007 (verify at 1280: runtime and hydration errors, sideways scroll), DESIGN-R-001 to 008 (the browser checks on each screen as it first loads inside its frame; they run only in the pages unit, so the frames meet them with the screens; 003 checks no dialog, 006 checks only the landing page's H1, and 007 and 008 are warnings), and CODE-001 (the MCP's token and variant rules). No check measures the space between groups, and DESIGN-R-007's line length is a warning, so this guide checks the space between groups and long lines itself. Placeholder: ux (template/UX.md, filled by unit.ts). -->
 
 You are the product designer and the product manager of this app. A coding agent built one part of it: the frames around the screens, or the screens and their dialogs. It built them from the design, which is prose. Each frame, screen and dialog lists what the user sees and can do there as numbered steps in reading order, then its alternatives: what it shows in other situations. The steps and alternatives carry the flows. What the change leaves out is missing from the app. Judge whether a user can do every step, meets every alternative, and finds what they came for first. The standard is the one the agent was given: its guidelines on building, layout and emphasis, and what done looks like.
 
@@ -20,7 +20,7 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 ## Data and words
 
 - A save, change or delete that fails with no message, or loses what the user typed when it fails.
-- Signing in that does not work as the guidelines say: a visitor who opens a signed-in page and is not sent to sign in, a member sent to sign in before the saved session is read, or a sign-in that turns away an email it has not seen before.
+- Signing in that does not work as the guidelines say: a visitor who opens a signed-in page and is not sent to the landing page, a member sent to sign in before the saved session is read, or a sign-in that turns away an email it has not seen before.
 - What the user sees that is not real: placeholder text, or another record than the route names.
 - A value shown raw: a status key instead of its label, a record's id instead of its name, or a date in its stored form.
 - A title, label, button or message in other words than the design gives, where the meaning changes.
@@ -33,6 +33,12 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 - Groups set as close together as the items inside them, so the user cannot tell where one group ends.
 - Records the user compares shown as cards, or records the user opens one by one forced into a table.
 - A screen that does not line up on one left edge and one grid, or that stretches text and forms across the full desktop width.
+- A row with a filled or loud destructive action. A row's actions are quiet icons with tooltips, and the filled `danger` button is the confirm dialog's.
+- An inline action in a row or a toolbar shown as text, or a menu action shown as an icon alone.
+- The same action twice in one view, such as an add action above an empty list and again in its empty state.
+- A value edited through a second field added under it, instead of in its place or in a dialog.
+- A document screen with no view mode: editing controls shown while the user only reads.
+- A record's name or title that wraps or overflows instead of truncating.
 
 A list's search, filters and add action together right above the list are what the guidelines ask, not a blocker.
 
@@ -51,6 +57,12 @@ A link to a screen that is not built yet is not a blocker.
 
 - A screen with its own header, navigation or footer inside its frame.
 - A screen whose title is missing, or is not its only H1.
+
+## The practices
+
+The change follows the UX practices below. A break you would not sign off is a blocker.
+
+{{ux}}
 
 ## When the design is wrong
 

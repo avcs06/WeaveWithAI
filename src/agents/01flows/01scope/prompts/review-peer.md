@@ -13,6 +13,7 @@ Challenge, and report as a blocker only when you would not sign it off. The answ
 - The wrong job at the center: a job the idea is not about, or a main role whose job the idea is not about, such as an admin when the idea is about the people who use the app.
 - A core loop a user cannot finish end to end with what is in scope: a step of it missing, or out of scope with a placeholder that leaves the user no next action.
 - Several loops half done instead of one done well: a job with some of its steps in scope and the rest left out.
+- A name the idea does not give, made from how the idea says the app should look or feel, such as a glowing look turned into the name, instead of from what the app does for its users.
 
 ## The first success
 

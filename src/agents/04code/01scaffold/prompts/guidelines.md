@@ -15,6 +15,8 @@ weave-design-system MCP gives when it connects.
 - Read your task first. Then read this file, then the `guidelines.md` of
   each folder your task names, in number order. Read only the folders your
   task names.
+- Read `UX.md` at the app's root: the practices every screen follows. Build
+  to them; the reviewers hold your change to them.
 - In `01-scaffold/`, read `guidelines.md`, `routes.json`, `issues.json` and
   `recipes.md`. Your own folder holds your part of the flows, the design and
   the contract. Look something up in `flows.json`, `contract.json`,
@@ -33,13 +35,16 @@ weave-design-system MCP gives when it connects.
 
 - Every file you read stays in your context for the rest of the session and
   is paid for again on every step. Read only what your task needs.
-- For each component you use, call `get_recipe` for its cases and
+- Before you use a component, call `get_recipe` for it: its cases are the
+  supported usage, and the one that fits is what you copy. A file you write
+  that imports a component whose recipe you have not asked for in this
+  session is refused; ask for the recipe, then write the file to it. Call
   `get_component` for its props, their types and defaults. Read a file in
-  `packages/` only
-  when neither answers your question, and then only that file, never a
-  folder.
-- `recipes.md` lists the state and hook recipes with what each is for. Call
-  `get_recipe` for the ones you use; never read `packages/recipes`.
+  `packages/` only when neither answers your question, and then only that
+  file, never a folder.
+- `recipes.md` lists every recipe with what it is for: the design-system
+  components' and the state and hook recipes. Never read `packages/ui` or
+  `packages/recipes` for them.
 - Token names, and the class that applies each, come from `list_tokens` and
   `search_tokens`. Never read `tokens.ts`, `colors.ts`, the Tailwind config
   or `tools/`.
@@ -55,7 +60,8 @@ weave-design-system MCP gives when it connects.
 ## Layout and emphasis
 
 The design says what each screen holds and in what order; you decide how it
-looks. Build every screen so a user sees at a glance what it is for:
+looks. Build every screen to the practices in `UX.md`, so a user sees at a
+glance what it is for:
 
 - What the user came for comes first and stands out. The step order is the
   reading order and the order of importance: the title and the first steps
@@ -82,7 +88,9 @@ looks. Build every screen so a user sees at a glance what it is for:
 - Loading and a failed load look the same on every screen: show the
   loading state while records load, and an error with a retry when loading
   fails.
-- Forms use the Form recipe and show the flow's messages for invalid
+- Every form is the `Form` component, its fields under `Controller`, as the
+  Form recipe shows: it lays out the fields, the form's error and the
+  actions, and sets the fields' widths. Show the flow's messages for invalid
   fields.
 - A destructive action opens its confirm dialog. The operation runs only
   after the user confirms.

@@ -53,9 +53,9 @@ function recipeLine(file: string): string {
   return first.replace(/\s+/g, ' ').trim();
 }
 
-/** `.weave/01-scaffold/recipes.md`: every recipe of the app's packages/recipes by name, with what it is for. */
+/** `.weave/01-scaffold/recipes.md`: every recipe of the app's packages/ui and packages/recipes by name, with what it is for. */
 function recipeIndex(appDir: string): string {
-  const files = globSync('packages/recipes/src/**/*.recipe.tsx', { cwd: appDir }).sort();
+  const files = globSync(['packages/ui/src/*/*.recipe.tsx', 'packages/recipes/src/**/*.recipe.tsx'], { cwd: appDir }).sort();
   const lines = files.map((file) => {
     const name = path.basename(file, '.recipe.tsx');
     // Most headers open with their own name; the index already gives it.

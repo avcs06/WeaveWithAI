@@ -113,7 +113,7 @@ Frame this app, not a template: a tool used all day may want a sidebar, a small 
 
 ## Component defaults
 
-For every component in `defaults`, pick the variant values and the look the app uses unless a page says otherwise, from that component's own values. Choose them for the brief's feel and density, such as ghost buttons and rounded chips for a soft, minimal app, or outlined cards for a dense tool. Keep the defaults that carry meaning as the design system sets them: a status, a danger or status variant, an icon-only size, and a dialog's size.
+For every component in `defaults`, pick the variant values and the look the app uses unless a page says otherwise, from that component's own values. Choose them for the brief's feel and density, such as ghost buttons and rounded chips for a soft, minimal app, or outlined cards for a dense tool. Keep the defaults that carry meaning as the design system sets them: a status, a danger or status variant, an icon-only size, and a dialog's size. A default never undoes another choice of the theme: no rounded or pill look with a sharp radius or a squared feel, no small size with a spacious density, and no `plain` look on links app-wide, since it hides every link.
 
 The app is built from this design system:
 

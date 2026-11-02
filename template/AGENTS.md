@@ -1,5 +1,9 @@
 # Agent rules
 
+## UX practices
+
+`UX.md` at the root holds the practices every screen follows: lists, actions, editing, forms, frames and spacing. Build to them.
+
 ## Colors
 
 - `base`, status, and the surface's `divider`, `backdrop` and `skeleton` stay the same in every project.

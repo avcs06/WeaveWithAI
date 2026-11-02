@@ -4,6 +4,7 @@ import { formatIssues } from '../../core/issues';
 import { fillPrompt, loadPrompt } from '../../core/prompt';
 import { appendEvent, runPath, updateStage } from '../../core/run';
 import { pathBeside } from '../../core/utils';
+import { uxPractices } from '../../ds/ux';
 import { CODE_SCHEDULE, sessionCompose, type Unit, type UnitResult, UnitResultSchema, unitIssues } from '../../engine/compose';
 import { saveStagePatch, startStage } from '../../engine/patches';
 import type { SessionDeps } from '../../engine/session';
@@ -21,9 +22,22 @@ export const ENTITIES = 'web/app/entities/**';
 /** What no session should read: the design system's and the tools' code, and the token and Tailwind files the MCP answers for. */
 export const READS_DENIED = ['packages/**', 'tools/**', 'tokens.ts', 'colors.ts', 'tailwind.preset.cjs', 'web/tailwind.config.js'];
 
-/** The two output reviewers of every coding unit. */
-function codeReviewGuides(): Record<string, string> {
-  return { code: load('review-code.md'), adherence: load('review-adherence.md') };
+/** The design system's components in the app, by folder, as the MCP lists them. */
+function designSystemComponents(appDir: string): string {
+  const root = path.join(appDir, 'packages', 'ui', 'src');
+  if (!existsSync(root)) return 'none';
+  // The folders the MCP config leaves out of the inventory.
+  const internal = new Set(['Selectable', 'utils']);
+  const names = readdirSync(root).filter((name) => !internal.has(name) && statSync(path.join(root, name)).isDirectory());
+  return names.sort().join(', ') || 'none';
+}
+
+/** The two output reviewers of every coding unit: the code reviewer knows the components, the adherence reviewer the UX practices. */
+function codeReviewGuides(appDir: string): Record<string, string> {
+  return {
+    code: fillPrompt(load('review-code.md'), { components: designSystemComponents(appDir) }),
+    adherence: fillPrompt(load('review-adherence.md'), { ux: uxPractices() }),
+  };
 }
 
 /** A unit as its stage describes it: the runner's stage name and the .weave folders its session reads. */
@@ -71,7 +85,7 @@ export async function runUnit(
     system: [...guidelines.filter(Boolean), `## The task\n\n${spec.task}`].join('\n\n'),
     user: folderText(appDir, own),
     validate: unitIssues,
-    review: { output: codeReviewGuides() },
+    review: { output: codeReviewGuides(appDir) },
     reviewInput: load('review-input.md'),
     reviewersSeeMandatory: true,
     schedule: CODE_SCHEDULE,

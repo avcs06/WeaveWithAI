@@ -5,8 +5,9 @@
  *
  * When not to use:
  * - A picture that isn't a person (an event cover, a venue): a plain image.
- * - An avatar that opens something: put it in a Link or Button, don't give
- *   the Avatar an `onClick`.
+ * - An avatar that opens something: put it in a Link, or in a PlainButton as
+ *   the account menu below does. Never inside an IconButton, which is sized
+ *   for an icon, and never an `onClick` on the Avatar.
  *
  * Pitfalls:
  * - It is hidden from assistive tech by default, since the name beside it

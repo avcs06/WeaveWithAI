@@ -18,7 +18,7 @@ Treat these as decided and don't ask them again.
 
 ## What the scope JSON holds
 
-- `app`: a name, a summary of 2 to 4 sentences (who it is for, the problem, the core loop) and its audience.
+- `app`: a name, a summary of 2 to 4 sentences (who it is for, the problem, the core loop) and its audience. The name is the one the idea gives. When the idea gives none, make one from what the app does for its users, never from how the idea says the app should look: an idea that asks for a dark, glowing look is not named after the glow.
 - `domains`: the kinds of app and the situations in the lists below that this idea is, 1 to 3. Each brings the flows its users expect. Pick the kind of app first, then add a second kind or a situation only when the idea clearly is one too: a store where sellers sign up is both `ecommerce` and `marketplace`; an app where people work together is also `teams`.
 - `roles`: 1 to 3 roles with camelCase ids (member, shopOwner), each with `signedIn`. A person who never signs in is a role with `signedIn` false. The landing page belongs to the role it invites in.
 - `inScope`: at least 3 things the MVP does, in the users' words. Include the landing page and the business rules the idea states ("a reader keeps one list; there are no shared lists").

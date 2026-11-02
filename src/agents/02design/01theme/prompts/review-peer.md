@@ -36,6 +36,7 @@ First picture the people from the idea, the scope and the flows: what they come 
 ## Component defaults
 
 - Defaults that work against the feel or the density, such as small controls for spacious, calm use, or filled, elevated cards in a dense tool.
+- A default that undoes another choice of the theme: a rounded or pill look with a sharp radius or a squared feel, a size against the density, or a look that hides what a component is, such as a `plain` look on every link.
 
 ## The look as a whole
 

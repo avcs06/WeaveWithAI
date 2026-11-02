@@ -6,11 +6,20 @@
   group with the screens inside it.
 - Each frame is a layout, `web/app/(routes)/(<route group>)/layout.tsx`,
   such as `web/app/(routes)/(app)/layout.tsx`. Its parts (header, sidebar,
-  navigation, account menu, footer) go in `web/app/components/<Name>/`.
+  navigation, account menu, footer) go in `web/app/components/<Name>/`, and
+  a part that loads or changes records, such as the list of dashboards or a
+  Create action, in `web/app/blocks/<Name>/`.
 - A step that leads somewhere opens that route from
   `.weave/01-scaffold/routes.json` with `NextLink`, even when the screen is
   not built yet. The navigation marks the item of the screen the user is on.
-- A frame around signed-in screens sends a visitor to sign in: read
+- A sidebar's navigation is a `SidebarMenu`: its `header` holds the frame's
+  action there, such as Create, its `footer` the account and sign out, and
+  each destination is a `SidebarMenuItem` around a `NextLink`. The sidebar
+  fills the height under the header, and the list scrolls inside it.
+- The header's height and the sidebar's top are one value: export it once
+  from the layout's `layout.css.ts` and use it for both, so the sidebar
+  touches the header.
+- A frame around signed-in screens sends a visitor to the landing page: read
   `useCurrentUser()` from `@app/entities/auth`, and redirect only when it is
   `null`. It is `undefined` until the saved session is read.
 - The theme's `layouts` in `theme.json` give the app layout and the
@@ -23,5 +32,6 @@
   only H1.
 - Keep `web/app/(routes)/layout.tsx` as it is.
 - The frames' paths are the files of each route group's folder, such as
-  `layout.tsx` and its `layout.css.ts`, and `web/app/components/`. The route
+  `layout.tsx` and its `layout.css.ts`, `web/app/components/` and
+  `web/app/blocks/`. The route
   folders inside a route group belong to the screens.

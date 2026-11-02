@@ -42,6 +42,7 @@ A border far from its background is not a blocker. A border can be any step of i
 - An app with several top-level destinations whose app layout has no needed part that holds the navigation.
 - A signed-in app with no place in the app layout for the account or signing out.
 - A part that is not needed but holds something no needed part holds, such as the only navigation in a sidebar that is not needed. A part that is not needed is not shown, so what it holds is lost.
+- The same thing named in two slots, such as Create at the header's end and at the sidebar's top. Each action and each list has one place in the frame.
 
 Leave out taste.
 

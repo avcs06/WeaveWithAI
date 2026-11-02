@@ -1,10 +1,12 @@
 /**
  * Button: an action the user takes: save, publish, delete, open a menu.
  * `default` is the main action of a view (one per view), `base` a secondary
- * one, `danger` one that deletes or can't be undone. `look="ghost"` makes
- * any of them quiet, for toolbars and rows. IconButton is an action shown as
- * an icon alone; PlainButton makes a non-button element, like an info icon
- * or an avatar, act as a button.
+ * one, `danger` one that deletes or can't be undone: filled, it is the
+ * confirm dialog's button, and on a list row a delete is as quiet as the
+ * row's other actions. `look="ghost"` makes any of them quiet, for toolbars
+ * and rows, where an action is an IconButton with a tooltip. IconButton is
+ * an action shown as an icon alone; PlainButton makes a non-button element,
+ * like an info icon or an avatar, act as a button.
  *
  * When not to use:
  * - Going to another page: Link. In the Next app, a route is the app's
