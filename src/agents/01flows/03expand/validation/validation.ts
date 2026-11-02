@@ -44,7 +44,9 @@ export const batchRules: readonly Rule<FlowInput>[] = [
   flow013,
   flow016,
   flow019,
+  flow020,
   flow021,
+  flow025,
 ];
 
 /** Every rule, for the assembled document; `weave validate` runs them. */

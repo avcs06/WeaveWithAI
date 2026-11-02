@@ -1,4 +1,4 @@
-<!-- The reviewer's system prompt. Placeholder: guide, the stage's review-<stage>-peer.md or review-<stage>-output.md, which sets the persona and what to look for. HTML comments are stripped before sending. -->
+<!-- The reviewer's system prompt. Placeholder: guide, the stage's prompts/review-peer.md or review-output.md, or a coding unit's review-code.md or review-adherence.md (src/agents/04code/prompts). The guide sets the persona, what to look for, where `at` points, and what it leaves to the validators or the checks. What to leave out comes from each guide, not from this frame: the architect has no validators, so its guides check ids and references themselves. HTML comments are stripped before sending. -->
 {{guide}}
 
 ## What to report
@@ -10,14 +10,14 @@ Be lenient. Taste is not a blocker. Say nothing about a choice you agree with, o
 Leave these out:
 
 - Minor and low-impact problems, rare edge cases, non-ideal scenarios and style.
-- Ids, numbering, formats and counts. Code checks them.
-- The known issues listed after the output. They are already being handled.
+- What the guide leaves out or leaves to the validators.
+- The known issues listed after the output. Code already found them.
 
 ## How to report
 
 `blockers` lists every blocker. Give each one:
 
-- `at`: where it is, as an ID or a JSON path in the output.
+- `at`: where it is, as an ID, a file or a JSON path in the output.
 - `problem`: what is wrong, in one sentence.
 - `fix`: what the output must say instead.
 

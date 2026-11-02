@@ -55,7 +55,7 @@
       "entity": "Book",
       "summary": "Deletes one of the reader's books for good.",
       "inputs": [],
-      "flowSteps": ["F05.S02", "F05.A02", "STD01.A01"]
+      "flowSteps": ["F05.S02", "F05.A02"]
     }
   ],
   "screens": [

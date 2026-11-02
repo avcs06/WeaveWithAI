@@ -14,7 +14,7 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const { container, step } of eachStep(flows)) {
+    for (const { flow, step } of eachStep(flows)) {
       const saves = step.effects.some(
         (effect) => effect.change === 'create' || effect.change === 'update',
       );
@@ -25,7 +25,7 @@ export const rule = defineRule<FlowInput>(
       )
         continue;
       const kinds = new Set(
-        alternativesFrom(container, step.id).map(
+        alternativesFrom(flow, step.id).map(
           (alternative) => alternative.kind,
         ),
       );
@@ -33,7 +33,7 @@ export const rule = defineRule<FlowInput>(
         if (!kinds.has(kind)) {
           issues.push(
             fail(
-              `${step.id} saves fields but has no "${kind}" alternative; add ${container.id}.A0n with kind ${kind} from ${step.id}.`,
+              `${step.id} saves fields but has no "${kind}" alternative; add ${flow.id}.A0n with kind ${kind} from ${step.id}.`,
               step.id,
             ),
           );

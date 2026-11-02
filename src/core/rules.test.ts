@@ -4,7 +4,6 @@ import {
   duplicates,
   isCamel,
   isPascal,
-  levenshtein,
   runRules,
 } from './rules';
 
@@ -32,12 +31,5 @@ describe('rule helpers', () => {
       'a',
       'b',
     ]);
-  });
-
-  it('computes edit distance', () => {
-    expect(levenshtein('dueDate', 'dueDate')).toBe(0);
-    expect(levenshtein('dueDate', 'duedate')).toBe(1);
-    expect(levenshtein('kitten', 'sitting')).toBe(3);
-    expect(levenshtein('', 'abc')).toBe(3);
   });
 });

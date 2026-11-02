@@ -88,12 +88,12 @@ describe('applyPatch', () => {
   });
 
   it("keeps a list inside an item that an update sends empty, as a model means it unchanged, and takes one it fills", () => {
-    const widgets = { widgets: [{ widget: 'W07', gap: '4', nodes: [{ id: 'W07.n01' }] }] };
-    const patch = (nodes: { id: string }[]) => ({ widgets: { upsert: [{ widget: 'W07', gap: '6', nodes }], remove: [] } });
-    // From a run: a spacing fix that sent W07 with no nodes.
-    expect(applyPatch(widgets, patch([]), { widgets: 'widget' }).widgets).toEqual([
-      { widget: 'W07', gap: '6', nodes: [{ id: 'W07.n01' }] },
+    const screens = { screens: [{ id: 'S03', title: 'Shelf', steps: ['Sees every book on the shelf.'] }] };
+    const patch = (steps: string[]) => ({ screens: { upsert: [{ id: 'S03', title: 'My shelf', steps }], remove: [] } });
+    // A fix of the title alone that sends S03 with no steps.
+    expect(applyPatch(screens, patch([]), { screens: 'id' }).screens).toEqual([
+      { id: 'S03', title: 'My shelf', steps: ['Sees every book on the shelf.'] },
     ]);
-    expect(applyPatch(widgets, patch([{ id: 'W07.n02' }]), { widgets: 'widget' }).widgets[0]?.nodes).toEqual([{ id: 'W07.n02' }]);
+    expect(applyPatch(screens, patch(['Sees the books by title.']), { screens: 'id' }).screens[0]?.steps).toEqual(['Sees the books by title.']);
   });
 });

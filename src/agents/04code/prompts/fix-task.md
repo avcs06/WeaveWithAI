@@ -1,9 +1,9 @@
-<!-- The task of a fix session, sent into the Muse session that built the unit, so it still holds what it read and wrote. Placeholders: folders, issues. -->
-The checks after your work found the issues below. Fix them in the code you wrote for this unit.
+<!-- The task of a fix session, sent into the Muse session that built the unit, so it still holds what it read and wrote. Placeholders: folders, issues (the checks' mandatory issues and the code reviewers' blockers, rule REVIEW: the runner's pending list, which AGENTS.md treats alike). -->
+The checks after your work, and the two reviewers who read your change, found the issues below. Fix them in the code you wrote for this unit.
 
 You built this unit earlier in this session, so you know what you changed: you need no git history. Your guidelines are in `.weave/01-scaffold/guidelines.md` and in these folders: {{folders}}. Read one again only when you need a detail you no longer have.
 
-Rank the issues. Every failed check is a blocker. Fix only the blockers, and keep everything else as it is. End with the summary the guidelines ask for.
+Every issue below is a blocker: a failed check, or a reviewer's finding with the fix it asks for. Fix each one, and keep everything else as it is. End with the summary the guidelines ask for.
 
 ## How the checks ran
 

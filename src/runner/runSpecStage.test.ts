@@ -655,20 +655,20 @@ describe('runSpecStage without a review guide', () => {
   });
 });
 
-describe('runSpecStage with start and compose', () => {
-  it('start: round 1 validates the given document without generating; a fix uses compose.fix', async () => {
+describe('runSpecStage with compose', () => {
+  it('compose: round 1 validates the draft; a fix uses compose.fix with the pending issues', async () => {
     const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
-    const run = createRun({ idea, runsDir: root, id: 'started' });
+    const run = createRun({ idea, runsDir: root, id: 'composed-fix' });
     const fixes: Issue[][] = [];
     const compose: Compose<Doc> = {
-      draft: () => Promise.reject(new Error('must not draft')),
+      draft: async () => ({ data: { title: '' }, raw: '{"title":""}', model: 'none' }),
       async fix(call, _current, pending) {
         fixes.push(pending);
         const result = await call({
-          stage: 'doc-patch',
+          stage: 'doc-fix',
           schema: Doc,
           schemaName: 'Doc',
-          messages: [{ role: 'user', content: 'patch' }],
+          messages: [{ role: 'user', content: 'fix' }],
         });
         return { data: result.data, raw: result.raw, model: result.model };
       },
@@ -682,7 +682,6 @@ describe('runSpecStage with start and compose', () => {
       user: 'About cats.',
       validate: requireTitle,
       compose,
-      start: { data: { title: '' }, raw: '{"title":""}', model: 'none' },
       llm,
     });
 
@@ -692,44 +691,11 @@ describe('runSpecStage with start and compose', () => {
       rounds: 2,
     });
     expect(fixes).toEqual([[missingTitle]]);
-    expect(inputs.map((input) => input.stage)).toEqual(['doc-patch']);
+    expect(inputs.map((input) => input.stage)).toEqual(['doc-fix']);
     const rounds = readEvents(run).filter(
       (event) => event.type === 'stage:round',
     );
-    expect(rounds.map((event) => event.generated)).toEqual([false, true]);
-  });
-
-  it('seed: issues found outside the stage join round 1, so a valid start is fixed once and not checked for them again', async () => {
-    const { llm, inputs } = fakeLlm([{ title: 'Siamese cats' }]);
-    const run = createRun({ idea, runsDir: root, id: 'seeded' });
-    const outside: Issue = {
-      rule: 'WHOLE-001',
-      severity: 'mandatory',
-      message: 'name the breed',
-      at: 'title',
-    };
-    const result = await runSpecStage({
-      run,
-      stage: 'doc',
-      schema: Doc,
-      schemaName: 'Doc',
-      system: 'Write a doc.',
-      user: 'About cats.',
-      validate: requireTitle,
-      start: { data: { title: 'Cats' }, raw: '{"title":"Cats"}', model: 'none' },
-      seed: [outside],
-      llm,
-    });
-
-    expect(result).toMatchObject({ output: { title: 'Siamese cats' }, known: [], rounds: 2 });
-    expect(inputs).toHaveLength(1);
-    expect(lastUser(inputs[0])).toContain('- WHOLE-001 at title: name the breed');
-    expect(inputs[0]?.messages.map((message) => message.role)).toEqual([
-      'system',
-      'user',
-      'assistant',
-      'user',
-    ]);
+    expect(rounds.map((event) => event.generated)).toEqual([true, true]);
   });
 
   it('compose: every call is logged, and the draft text reaches the reviewers', async () => {

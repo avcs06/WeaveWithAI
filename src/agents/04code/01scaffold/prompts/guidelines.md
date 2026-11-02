@@ -120,6 +120,7 @@ already; a control you build yourself must too.
   the issues earlier stages left. Rank them before you build.
 - A blocker stops a flow step from working, shows wrong data or wrong
   words, or breaks a check. Fix only blockers, and say which you left.
+  For a blocker you left, say why your part cannot fix it.
 
 ## Never
 
@@ -148,7 +149,7 @@ already; a control you build yourself must too.
   command your task names, when it names one. Fix until they pass.
 - End with a summary in four parts:
   - `## Priorities`: each question and known issue, blocker or not, fixed
-    or left.
+    or left, and why for each blocker you left.
   - `## Calls`: each design error you found and what you built instead.
   - `## Files`: the files you wrote.
   - `## Not built`: anything you could not build, and why.

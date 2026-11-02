@@ -57,8 +57,6 @@ describe('buildTheme', () => {
     expect(Object.keys(theme.colors.light!.entity)).toEqual(['shelf']);
     expect(theme.layouts).toEqual(call.layouts);
     expect(theme.defaults).toEqual(call.defaults);
-    // Per mode: 4 page pairs and 4 quiet ones, 6 on the page and the frame for each of the theme and base sets, then 7 pairs for the theme, base, shelf and four status sets.
-    expect(theme.contrast).toHaveLength(2 * (4 + 4 + 2 * 6 + 7 * 7));
     expect(validateTheme(theme, inventory)).toEqual([]);
     expect(theme.colors.light!.page.pageBackground).toBe(call.colors[0]!.background);
     expect(theme.colors.dark!.page.pageBackground).toBe(call.colors[1]!.background);
@@ -73,7 +71,6 @@ describe('buildTheme', () => {
     const light = buildTheme({ ...call, brief: { ...brief, colorScheme: 'light' } });
     expect(light.modes).toEqual(['light']);
     expect(light.colors.dark).toBeUndefined();
-    expect(light.contrast.every((row) => row.mode === 'light')).toBe(true);
   });
 
   it('stays the same for the same input', () => {

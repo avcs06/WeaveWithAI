@@ -2,7 +2,6 @@ import { existsSync, globSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
 import { pathBeside, sha256, writeJsonAtomic } from '../core/utils';
-import { composition } from './compose';
 import { componentLooks, type Defaults, readRecipes } from './looks';
 import { projectSettings, type ProjectSettings } from './project';
 
@@ -18,10 +17,6 @@ export type InventoryComponent = {
   looks?: string[];
   /** Fixed dimensions, padding and gap in px by size or part: `sm`, `trigger`, `md/header`, `default`. Dynamic ones are absent. */
   box?: Record<string, Box>;
-  /** The content it shows, by prop: `title`, `label`, `content`, `leftIcon`. */
-  slots?: string[];
-  /** The components that go inside it, from the recipes: `Tab`, `Accordion.Item`. */
-  contains?: string[];
 };
 
 /**
@@ -74,9 +69,8 @@ type Exported = {
   tokens: InventoryToken[];
 };
 
-/** Hand-written beside this file: what each component shows, and entries the exporter cannot see (toast). */
+/** Hand-written beside this file: entries the exporter cannot see (toast). */
 type Curated = {
-  slots: Record<string, string[]>;
   extra: Pick<
     InventoryComponent,
     'name' | 'category' | 'description' | 'variants' | 'defaults'
@@ -192,11 +186,6 @@ export async function inventory(
       !INTERNAL.has(component.name) &&
       !/^Config component\b/.test(component.description),
   );
-  const contains = composition(
-    templateDir,
-    kept.map((component) => component.name),
-  );
-  const { slots, extra } = curated();
   const components: InventoryComponent[] = [
     ...kept.map(({ name, category, description, props }) => ({
       name,
@@ -208,13 +197,8 @@ export async function inventory(
         ),
       ),
       ...componentLooks(recipes, { name, category, props }),
-      ...(slots[name] && { slots: slots[name] }),
-      ...(contains[name] && { contains: contains[name] }),
     })),
-    ...extra.map((component) => ({
-      ...component,
-      ...(slots[component.name] && { slots: slots[component.name] }),
-    })),
+    ...curated().extra,
   ];
   attachBoxes(components, boxes);
   const result: Inventory = {
@@ -226,32 +210,16 @@ export async function inventory(
   return result;
 }
 
-function nonEmpty(values: string[], what: string): [string, ...string[]] {
-  const [first, ...rest] = values;
-  if (first === undefined) throw new Error(`inventory has no ${what}`);
-  return [first, ...rest];
-}
-
-export function dsNames(inv: Inventory): [string, ...string[]] {
-  return nonEmpty(
-    inv.components.map((component) => component.name).sort(),
-    'components',
-  );
-}
-
-/** The keys of a token group, numeric ones first in order, then the named ones as listed. */
-function groupKeys(inv: Inventory, group: string): [string, ...string[]] {
+/** The spacing token keys, numeric ones first in order, then the named ones as listed. */
+export function spacingKeys(inv: Inventory): [string, ...string[]] {
   const keys = inv.tokens
-    .filter((token) => token.group === group)
-    .map((token) => token.name.slice(group.length + 1));
+    .filter((token) => token.group === 'spacing')
+    .map((token) => token.name.slice('spacing.'.length));
   const numeric = keys
     .filter((key) => !Number.isNaN(Number(key)))
     .sort((a, b) => Number(a) - Number(b));
   const named = keys.filter((key) => Number.isNaN(Number(key)));
-  return nonEmpty([...numeric, ...named], `${group} tokens`);
+  const [first, ...rest] = [...numeric, ...named];
+  if (first === undefined) throw new Error('inventory has no spacing tokens');
+  return [first, ...rest];
 }
-
-export const spacingKeys = (inv: Inventory) => groupKeys(inv, 'spacing');
-export const radiusKeys = (inv: Inventory) => groupKeys(inv, 'radius');
-/** The type sizes: display, title, heading, subheading, body, label, caption, micro. */
-export const typeScaleKeys = (inv: Inventory) => groupKeys(inv, 'fontSize');

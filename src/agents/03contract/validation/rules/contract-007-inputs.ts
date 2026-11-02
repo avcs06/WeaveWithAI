@@ -1,6 +1,6 @@
 import type { Issue } from '../../../../core/issues';
 import { defineRule } from '../../../../core/rules';
-import { type ContractInput, entityOf } from '../helpers';
+import type { ContractInput } from '../helpers';
 
 /**
  * CONTRACT-007 · mandatory
@@ -23,7 +23,7 @@ export const rule = defineRule<ContractInput>(
             op.id,
           ),
         );
-      const entity = entityOf(contract, op.entity);
+      const entity = contract.entities.find((e) => e.name === op.entity);
       for (const input of op.inputs) {
         if (!fields.has(input.field))
           issues.push(

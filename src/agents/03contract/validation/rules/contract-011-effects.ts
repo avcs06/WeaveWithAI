@@ -1,6 +1,6 @@
 import type { Issue } from '../../../../core/issues';
 import { defineRule } from '../../../../core/rules';
-import { allSteps, type ContractInput, serving } from '../helpers';
+import { allSteps, type ContractInput } from '../helpers';
 
 /**
  * CONTRACT-011 · mandatory
@@ -25,11 +25,15 @@ export const rule = defineRule<ContractInput>(
     for (const step of allSteps(flows))
       for (const effect of step.effects) {
         const entity = contract.entities.find((e) => e.noun === effect.noun);
+        if (!entity) continue;
         const kinds: readonly string[] = KINDS[effect.change];
-        const match = serving(contract, step.id).some(
-          (op) => op.entity === entity?.name && kinds.includes(op.kind),
+        const match = contract.operations.some(
+          (op) =>
+            op.flowSteps.includes(step.id) &&
+            op.entity === entity.name &&
+            kinds.includes(op.kind),
         );
-        if (entity && !match)
+        if (!match)
           issues.push(
             fail(
               `${step.id} ${effect.change}s ${effect.noun}, but no ${kinds.join(' or ')} operation on ${entity.name} serves it.`,

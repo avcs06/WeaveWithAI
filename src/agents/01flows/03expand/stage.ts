@@ -23,10 +23,10 @@ import { renderFlows } from './render';
 import { FlowBatch } from './schema';
 import { validateBatch, validateFlows } from './validation/validation';
 
-// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON (D1.13).
+// The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
 
-/** Stage 2: each catalog flow expanded by its own call, all in parallel, assembled into the flows document. */
+/** Expand: each catalog flow expanded by its own call, all in parallel, assembled into the flows document. */
 async function runExpand(ctx: StageContext): Promise<void> {
   const { run } = ctx;
   const { idea, scope, answers } = inputs(ctx);

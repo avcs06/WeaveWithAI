@@ -15,7 +15,7 @@ const CATALOG_MAX_TOKENS = 32_768;
 // The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON.
 const FLOWS_EFFORT = 'medium';
 
-/** Stage 1: every flow's header and description plus the fields and forms, through the runner like scope. */
+/** The catalog: every flow's header and description plus the fields and forms, through the runner like scope. */
 async function runCatalog(ctx: StageContext): Promise<void> {
   const { idea, scope, answers } = inputs(ctx);
   await produce(

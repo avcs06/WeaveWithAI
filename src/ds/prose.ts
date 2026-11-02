@@ -1,9 +1,5 @@
 import type { Box, Inventory, InventoryComponent } from './inventory';
 
-/** `helpText` reads as `help text`. */
-const words = (name: string) =>
-  name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
-
 function firstSentence(text: string): string {
   const flat = text.replace(/\s+/g, ' ').trim();
   return flat.split(/(?<=[^\s][.!?])\s+(?=[A-Z`])/)[0] ?? '';
@@ -77,10 +73,6 @@ function facts(component: InventoryComponent): string[] {
       .map((look) => (look === fallback ? `${look} (default)` : look));
     lines.push(`Looks: ${named.join(', ')}${fallback === '' ? '; default none' : ''}.`);
   }
-  if (component.slots?.length)
-    lines.push(`Shows: ${component.slots.map(words).join(', ')}.`);
-  if (component.contains?.length)
-    lines.push(`Contains: ${component.contains.join(', ')}.`);
   if (component.box) lines.push(`Boxes: ${boxes(component.box)}.`);
   return lines;
 }

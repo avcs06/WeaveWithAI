@@ -90,10 +90,6 @@ export type SpecStageOptions<T> = {
   compose?: Compose<T>;
   /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
-  /** A document to start from: round 1 validates it instead of generating one. */
-  start?: Draft<T>;
-  /** Issues found outside the stage's own validators, such as on the whole design; they join round 1's issues of `start`, so its first fix applies them. */
-  seed?: Issue[];
   llm: Llm;
 };
 
@@ -138,7 +134,7 @@ const reviewInput = loadPrompt(
 
 /**
  * Produce, validate, review on schedule, fix what is pending; whatever is left at the end is known, never fatal.
- * The document comes from `start`, or from `compose.draft`; every later generation is `compose.fix`.
+ * The document comes from `compose.draft`; every later generation is `compose.fix`.
  */
 export async function runSpecStage<T>(
   o: SpecStageOptions<T>,
@@ -188,12 +184,7 @@ export async function runSpecStage<T>(
     appendEvent(o.run, { type: 'stage:answers', stage: o.stage, count });
   };
 
-  let last = o.start
-    ? {
-        draft: o.start,
-        issues: [...o.validate(o.start.data), ...(o.seed ?? [])],
-      }
-    : await produce(1, (call) => compose.draft(call), 0);
+  let last = await produce(1, (call) => compose.draft(call), 0);
   await askAbout(last.draft.data);
 
   let pending: Issue[] = [];
@@ -213,11 +204,11 @@ export async function runSpecStage<T>(
       );
       await askAbout(last.draft.data);
     }
-    // Round 1 always produced (or started from a given document); later rounds only when something was pending.
-    const produced = round === 1 ? !o.start : hasPendingIssues;
+    // Round 1 always produced; later rounds only when something was pending.
+    const produced = round === 1 || hasPendingIssues;
 
     const { mandatory, warnings } = splitIssues(last.issues);
-    if (round === 1 || produced)
+    if (produced)
       appendEvent(o.run, {
         type: 'round:validated',
         stage: o.stage,

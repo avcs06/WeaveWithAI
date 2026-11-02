@@ -51,7 +51,6 @@ const load = (name: string): unknown =>
   );
 const byScheme: Record<string, unknown> = {
   Scope: load('reading-list.scope.json'),
-  Flows: load('reading-list.flows.json'),
   Review: { blockers: [] },
 };
 /** The fixtures for the stages, an empty review for the reviewers; 10 tokens in, 5 out, $0.001 per call. */

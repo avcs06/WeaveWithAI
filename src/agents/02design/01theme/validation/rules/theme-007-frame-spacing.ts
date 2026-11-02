@@ -5,10 +5,10 @@ import { spacingPx, type ThemeInput } from '../helpers';
 
 /**
  * THEME-007 · mandatory
- * The spacing a layout gives every page of its kind, which no later call can
- * change: sections 24 to 32 apart on app pages and 24 to 48 on marketing pages
- * (H-08), and the main area and each needed part padded at least as much as
- * the gap inside them (H-06).
+ * The spacing a layout gives every page of its kind: sections 24 to 32 apart
+ * on app pages and 24 to 48 on marketing pages, and the main area and each
+ * needed part padded at least as much as the gap inside them, unless the
+ * padding is 0.
  * Pass: the reading-list layouts, sections 24 apart in a padding of 24.
  * Fail: app sections 16 apart.
  */

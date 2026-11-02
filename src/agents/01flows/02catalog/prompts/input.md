@@ -1,4 +1,4 @@
-<!-- Stage 1 of the flows, user message. Placeholders: idea, scope, expected (the flows users expect of the scope's domains, domains.json). The system prompt is flows.md. -->
+<!-- User message of the catalog call. Placeholders: idea, scope, expected (the flows users expect of the scope's domains, domains.json). The system prompt is flows.md. -->
 
 # Idea
 
@@ -20,7 +20,7 @@ Write the catalog: the fields, the forms, and a header and a description for eve
    - act: each other action on a record that the idea implies, such as sharing, publishing, duplicating, exporting or reordering. One flow per action.
    - account: the user's own profile and password.
    - settings: the user's preferences, when the app has any.
-2. Check the flows against what users expect of this kind of app, listed below. Every must-have gets a flow, or an entry in `skipped` with the reason the idea rules it out. Add an "often" flow when the idea hints at it.
+2. Check the flows against what users expect of this kind of app, listed below. Every must-have gets a flow, or an entry in `skipped` for the pair closest to it. Its reason names the must-have and says why it has no flow: the idea rules it out, the scope leaves it out, or no role of the scope can do it. Add an "often" flow when the idea hints at it.
 3. For each flow, write:
    - `id`, `name`, `role`, `kind`, and `noun` ("" for landing, auth, home, account and settings).
    - `authKind` and `signedOut`.

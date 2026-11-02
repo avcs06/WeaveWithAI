@@ -13,18 +13,18 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const { container, step } of eachStep(flows)) {
+    for (const { flow, step } of eachStep(flows)) {
       const lists = step.effects.filter((effect) => effect.change === 'list');
       if (lists.length === 0) continue;
       if (
-        !alternativesFrom(container, step.id).some(
+        !alternativesFrom(flow, step.id).some(
           (alternative) => alternative.kind === 'empty',
         )
       ) {
         const nouns = lists.map((effect) => effect.noun).join(', ');
         issues.push(
           fail(
-            `${step.id} lists ${nouns} but has no "empty" alternative; add ${container.id}.A0n with kind empty from ${step.id} saying what the user sees when there is nothing yet.`,
+            `${step.id} lists ${nouns} but has no "empty" alternative; add ${flow.id}.A0n with kind empty from ${step.id} saying what the user sees when there is nothing yet.`,
             step.id,
           ),
         );

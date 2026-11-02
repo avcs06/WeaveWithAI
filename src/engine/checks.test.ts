@@ -50,7 +50,7 @@ describe('the warnings that never start a fix', () => {
     ]);
   });
 
-  it('none for a file at 300 lines or a check with every word shown', () => {
+  it('none when no file is over 300 lines', () => {
     expect(checkIssues({ ...passing, longFiles: [] })).toEqual([]);
   });
 });

@@ -148,5 +148,3 @@ export function totals(run: Run): {
 function asNumber(value: unknown): number {
   return typeof value === 'number' ? value : 0;
 }
-
-/** Writes `<file>.tmp` then renames, so a reader never sees a half-written file. */

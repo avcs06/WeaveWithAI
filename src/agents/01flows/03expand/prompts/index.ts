@@ -15,7 +15,7 @@ export const expandReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });
 
-/** Stage 2's user message for one call: the idea, the scope, the whole catalog, and the flow to expand. */
+/** The user message of one expansion call: the idea, the scope, the whole catalog, and the flow to expand. */
 export function expandUserMessage(
   idea: string,
   scope: Scope,

@@ -1,6 +1,6 @@
 ---
 name: reconciliate
-description: End-to-end review of a Weave stage chain (design, flows, or whatever the working-tree diff touches) after a series of patches and decision changes. Finds and fixes stale prompts, code, docs and tests, contradictions, prompts that don't hand off to each other, validator coverage gaps, and prompt wording that is hard to follow. Not the pipeline's reconcile stage. Use when the user runs /reconciliate.
+description: End-to-end review of a Weave stage chain (design, flows, code, or whatever the working-tree diff touches) after a series of patches and decision changes. Finds and fixes stale prompts, code, docs and tests, contradictions, prompts that don't hand off to each other, validator coverage gaps, and prompt wording that is hard to follow. Use when the user runs /reconciliate.
 argument-hint: "[design | flows | code]"
 ---
 

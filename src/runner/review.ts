@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { Issue } from '../core/issues';
 
 export const Blocker = z.object({
-  at: z.string().describe('Where it is: an ID or a JSON path in the output'),
+  at: z.string().describe('Where it is: an ID, a file or a JSON path in the output'),
   problem: z.string().describe('What is wrong, in one sentence'),
   fix: z.string().describe('What the output must say instead'),
 });

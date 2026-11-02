@@ -1,24 +1,19 @@
 import type { Scope } from '../01scope/schema';
 import type { Catalog } from '../02catalog/schema';
-import type { Alternative, Flows, Step, StepContainer } from '../schema';
+import type { Alternative, Flow, Flows, Step } from '../schema';
 
 export type FlowInput = { flows: Flows; scope: Scope };
 
 /** Every step of every flow, with the flow it belongs to. */
 export function* eachStep(
   flows: Flows,
-): Generator<{ container: StepContainer; step: Step }> {
-  for (const container of containers(flows))
-    for (const step of container.steps) yield { container, step };
+): Generator<{ flow: Flow; step: Step }> {
+  for (const flow of flows.flows)
+    for (const step of flow.steps) yield { flow, step };
 }
 
-export const containers = (flows: Flows): StepContainer[] => flows.flows;
-
-export const alternativesFrom = (
-  container: StepContainer,
-  stepId: string,
-): Alternative[] =>
-  container.alternatives.filter((alternative) => alternative.from === stepId);
+export const alternativesFrom = (flow: Flow, stepId: string): Alternative[] =>
+  flow.alternatives.filter((alternative) => alternative.from === stepId);
 
 export const idNumber = (id: string): number => Number(id.replace(/^\D+/, ''));
 

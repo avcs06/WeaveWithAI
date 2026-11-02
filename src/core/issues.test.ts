@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
-  formatForModel,
   formatForTerminal,
+  formatIssues,
   type Issue,
   readReport,
   splitIssues,
@@ -28,7 +28,7 @@ const issues: Issue[] = [
   {
     rule: 'SCOPE-002',
     severity: 'mandatory',
-    message: 'unsupported capability',
+    message: 'noun book is not PascalCase',
   },
 ];
 
@@ -44,11 +44,11 @@ describe('splitIssues', () => {
 });
 
 describe('formatting', () => {
-  it('sends the model only mandatory issues, one per line, with the location when known', () => {
-    expect(formatForModel(issues)).toBe(
-      '- FLOW-001 at F03: needs a start screen\n- SCOPE-002: unsupported capability',
+  it('writes the issues for the model one per line, with the location when known', () => {
+    expect(formatIssues(splitIssues(issues).mandatory)).toBe(
+      '- FLOW-001 at F03: needs a start screen\n- SCOPE-002: noun book is not PascalCase',
     );
-    expect(formatForModel([])).toBe('');
+    expect(formatIssues([])).toBe('');
   });
 
   it('prints counts first and groups by severity for the terminal', () => {

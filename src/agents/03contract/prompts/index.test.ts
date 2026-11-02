@@ -12,7 +12,7 @@ describe('the contract prompt', () => {
 
   it('names every field of the contract it asks for', () => {
     const prompt = contractSystemPrompt();
-    for (const field of ['entities', 'noun', 'fields', 'kind', 'enums', 'inputs', 'flowSteps', 'screens', 'reads'])
+    for (const field of ['entities', 'noun', 'fields', 'kind', 'required', 'enums', 'entity', 'summary', 'inputs', 'flowSteps', 'screens', 'reads'])
       expect(prompt).toContain(`\`${field}\``);
   });
 

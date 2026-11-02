@@ -3,14 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
-import {
-  dsNames,
-  type Inventory,
-  inventory,
-  radiusKeys,
-  spacingKeys,
-  typeScaleKeys,
-} from './inventory';
+import { type Inventory, inventory, spacingKeys } from './inventory';
 
 const fixturePath = fileURLToPath(
   new URL('./__fixtures__/inventory.json', import.meta.url),
@@ -22,10 +15,9 @@ const byName = Object.fromEntries(
 
 describe('inventory fixture', () => {
   it('names every design-system component, no web app or config component', () => {
-    const names = dsNames(fixture);
+    const names = fixture.components.map((component) => component.name);
     expect(names).toContain('Button');
     expect(names).toContain('Table');
-    expect(names).toHaveLength(fixture.components.length);
     expect(names).not.toContain('PageLayout');
     expect(names).not.toContain('NextLink');
     expect(names).not.toContain('Table.Sort');
@@ -35,7 +27,7 @@ describe('inventory fixture', () => {
     expect(names).not.toContain('CheckIcon');
   });
 
-  it('keeps variants, defaults, looks, boxes, slots and contents per component', () => {
+  it('keeps variants, defaults, looks and boxes per component', () => {
     expect(Object.keys(byName.Button ?? {}).sort()).toEqual([
       'box',
       'category',
@@ -43,22 +35,13 @@ describe('inventory fixture', () => {
       'description',
       'looks',
       'name',
-      'slots',
       'variants',
     ]);
-    expect(byName.Button?.slots).toEqual(['label', 'icon']);
-    expect(byName.Dialog?.slots).toEqual(
-      expect.arrayContaining(['title', 'description', 'footer actions']),
-    );
     expect(byName.Toast).toMatchObject({
       category: 'Toast',
       variants: { status: ['success', 'error', 'warning', 'info'] },
       defaults: { status: 'info' },
-      slots: ['title', 'description', 'status', 'action'],
     });
-    expect(byName.Tabs?.contains).toEqual(['Tab']);
-    expect(byName.Accordion?.contains).toEqual(['Accordion.Item']);
-    expect(byName.Button?.contains).toBeUndefined();
     expect(byName.Button?.variants).toEqual({
       size: expect.arrayContaining(['sm', 'md']),
       variant: expect.arrayContaining(['default', 'base', 'danger']),
@@ -114,23 +97,10 @@ describe('inventory fixture', () => {
     expect(box('FormControl', 'sm')).toMatchObject({ height: 80, gap: 8 });
   });
 
-  it('lists spacing and radius keys, numeric ones in order', () => {
+  it('lists the spacing keys, numeric ones in order', () => {
     expect(spacingKeys(fixture).slice(0, 4)).toEqual(['0', '0.25', '0.5', '0.75']);
     expect(spacingKeys(fixture)).toContain('4');
     expect(spacingKeys(fixture).at(-1)).toBe('16');
-    expect(radiusKeys(fixture)).toEqual(
-      expect.arrayContaining(['1', 'full', 'surface', 'control']),
-    );
-    expect(typeScaleKeys(fixture)).toEqual([
-      'display',
-      'title',
-      'heading',
-      'subheading',
-      'body',
-      'label',
-      'caption',
-      'micro',
-    ]);
   });
 
   it('records the per-project settings', () => {

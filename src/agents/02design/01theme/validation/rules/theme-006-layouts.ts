@@ -7,7 +7,7 @@ import { spacingPx, type ThemeInput } from '../helpers';
  * In each page layout, a needed header, sidebar or footer holds something and
  * a needed sidebar has a width; the two sidebars sit on different sides; a
  * fixed container has a width; a header or footer of fixed height fits a
- * button of the default size and its padding (LAYOUT-071 measures the rest).
+ * button of the default size and its padding.
  * Pass: the reading-list app layout, a header with the wordmark and the shelf.
  * Fail: a needed sidebar 0 wide.
  */

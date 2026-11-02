@@ -28,7 +28,7 @@ Implements Book.
 | listBooks | list | Book | The reader's books, newest first, searchable by title or author. | none | F04.S01, F04.S02, F04.A01, F04.A02 |
 | getBook | get | Book | One of the reader's books. | none | F05.S01, F05.A01 |
 | createBook | create | Book | Adds a book to the reader's list. | FD03 Title as title, FD04 Author as author, FD05 Shelf as shelf | F03.S02, F03.A01, F03.A02 |
-| deleteBook | delete | Book | Deletes one of the reader's books for good. | none | F05.S02, F05.A02, STD01.A01 |
+| deleteBook | delete | Book | Deletes one of the reader's books for good. | none | F05.S02, F05.A02 |
 
 ## What each screen loads
 

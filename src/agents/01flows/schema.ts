@@ -197,13 +197,6 @@ export type Alternative = z.infer<typeof Alternative>;
 
 export type Flow = z.infer<typeof Flow>;
 
-/** Something with steps and alternatives, for rules and renderers. */
-export type StepContainer = {
-  id: string;
-  steps: Step[];
-  alternatives: Alternative[];
-};
-
 /** The fields a step asks for: its form's fields first, then its own, looked up by id. */
 export function stepFields(
   step: Step,

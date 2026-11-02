@@ -78,7 +78,6 @@ export function sessionCompose(
       {
         id,
         task,
-        inputs: {},
         routes: unit.routes,
         expects: unit.expects,
         writes: unit.writes,

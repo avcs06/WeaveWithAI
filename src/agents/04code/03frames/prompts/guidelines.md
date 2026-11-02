@@ -1,4 +1,4 @@
-<!-- Guidelines of the frames folder, written to .weave/03-frames/guidelines.md. No placeholders. -->
+<!-- Guidelines of the frames folder, written to .weave/03-frames/guidelines.md. No placeholders. The pages session reads it too (its folders include 03-frames), so the paths bullet names the frames' paths, not the reader's. -->
 # Frames
 
 - `frames.md` lists each frame: what it shows around its screens, as steps
@@ -17,7 +17,9 @@
   marketing layout. Build each frame on the one that fits its screens.
 - A layout shows its frame, and `children` in its main region. No screen
   content.
+- A frame has no H1, not even its logo: each screen's title is the page's
+  only H1.
 - Keep `web/app/(routes)/layout.tsx` as it is.
-- Your paths are the files of each route group's folder, such as
+- The frames' paths are the files of each route group's folder, such as
   `layout.tsx` and its `layout.css.ts`, and `web/app/components/`. The route
   folders inside a route group belong to the screens.

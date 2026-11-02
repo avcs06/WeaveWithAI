@@ -19,7 +19,7 @@ export const rule = defineRule<FlowInput>(
       for (const id of form.fields.filter((id) => !fieldIds.has(id))) {
         issues.push(
           fail(
-            `Form ${form.id} lists field ${id}, which is not in the catalog; define it in fields or fix the id.`,
+            `Form ${form.id} lists field ${id}, which no field defines; define that field or fix the id.`,
             `forms[${i}]`,
           ),
         );
@@ -29,7 +29,7 @@ export const rule = defineRule<FlowInput>(
       for (const id of step.fields.filter((id) => !fieldIds.has(id))) {
         issues.push(
           fail(
-            `${step.id} asks for field ${id}, which is not in the catalog; define it in fields or fix the id.`,
+            `${step.id} asks for field ${id}, which no field defines; define that field or fix the id.`,
             step.id,
           ),
         );
@@ -37,7 +37,7 @@ export const rule = defineRule<FlowInput>(
       if (step.form !== '' && !formIds.has(step.form)) {
         issues.push(
           fail(
-            `${step.id} uses form ${step.form}, which is not in the catalog; define it in forms or fix the id.`,
+            `${step.id} uses form ${step.form}, which no form defines; define that form or fix the id.`,
             step.id,
           ),
         );

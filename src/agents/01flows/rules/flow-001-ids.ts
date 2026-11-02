@@ -6,7 +6,7 @@
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule, duplicates } from '../../../core/rules';
-import { containers, type FlowInput } from './helpers';
+import type { FlowInput } from './helpers';
 
 export const FLOW_ID = /^F\d{2,}$/;
 
@@ -29,18 +29,18 @@ export const rule = defineRule<FlowInput>(
           fail(`Flow id "${flow.id}" is malformed; use F01, F02, ...`, flow.id),
         );
     }
-    for (const container of containers(flows)) {
+    for (const flow of flows.flows) {
       const groups: { items: { id: string }[]; letter: string }[] = [
-        { items: container.steps, letter: 'S' },
-        { items: container.alternatives, letter: 'A' },
+        { items: flow.steps, letter: 'S' },
+        { items: flow.alternatives, letter: 'A' },
       ];
       for (const { items, letter } of groups) {
-        const childId = new RegExp(`^${container.id}\\.${letter}\\d{2,}$`);
+        const childId = new RegExp(`^${flow.id}\\.${letter}\\d{2,}$`);
         for (const item of items) {
           if (!childId.test(item.id)) {
             issues.push(
               fail(
-                `Id "${item.id}" in ${container.id} is malformed; use ${container.id}.${letter}01, ${container.id}.${letter}02, ...`,
+                `Id "${item.id}" in ${flow.id} is malformed; use ${flow.id}.${letter}01, ${flow.id}.${letter}02, ...`,
                 item.id,
               ),
             );
@@ -49,7 +49,7 @@ export const rule = defineRule<FlowInput>(
         for (const id of duplicates(items, (item) => item.id)) {
           issues.push(
             fail(
-              `Id "${id}" appears twice in ${container.id}; renumber so every id is unique.`,
+              `Id "${id}" appears twice in ${flow.id}; renumber so every id is unique.`,
               id,
             ),
           );

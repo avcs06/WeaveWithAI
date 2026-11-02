@@ -53,12 +53,15 @@ Treat these as decided. A scope question not answered here keeps its default ans
 
    A step asks for fields by id in `fields`, or for a whole `form`, and asks for each field once. A form holds the fields one screen asks for, when more than one flow shows that screen. Forms are in `forms` with an id (FM01, ...).
 6. `effects` name the vocabulary nouns a step creates, lists, reads, updates or deletes, spelled exactly as the scope spells them. A step that stores or loads nothing has `[]`. A noun that some step creates is also listed or read by some step. It can also be updated and deleted, unless an assumption names the noun and says why not.
-7. Alternatives (F01.A01, ...) branch `from` a step of the same flow. Each says what the website shows and where the user goes next: `resumesAt` is a step of the same flow, or "" when the flow ends. No alternative leaves the user without a next action. These steps need these alternatives:
+7. Alternatives (F01.A01, ...) branch `from` a step of the same flow. Each says when it happens in `condition` ("The title is empty."), what the website shows, and where the user goes next: `resumesAt` is a step of the same flow, or "" when the flow ends. No alternative leaves the user without a next action. These steps need these alternatives:
    - A step that saves fields: an "invalid" path (the website marks what is wrong and keeps the typed values) and a "failure" path (saving fails, the values are kept, and a retry is offered).
    - A step that lists records: an "empty" path saying what the user sees and can do next.
    - A delete: a "confirm" or "cancel" path.
-   - Something a role may not do: a "denied" path.
+   - Something a role may not do: a "denied" path. Signing in with an email and password that match no account is one.
    - A record that may be gone: a "notFound" path.
+   - A save that clashes with a record that already exists, such as signing up with an email that already has an account: a "conflict" path.
+
+   Any other path has kind "other".
 8. New assumptions and questions continue the scope's numbering (a scope ending at A02 and Q01 continues at A03 and Q02) and never reuse an id. Every question has a default answer.
 
 ## No design or contract details

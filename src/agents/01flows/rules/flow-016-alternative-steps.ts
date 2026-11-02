@@ -6,20 +6,20 @@
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import { containers, type FlowInput } from './helpers';
+import type { FlowInput } from './helpers';
 
 export const rule = defineRule<FlowInput>(
   'FLOW-016',
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const container of containers(flows)) {
-      const stepIds = new Set(container.steps.map((step) => step.id));
-      for (const alternative of container.alternatives) {
+    for (const flow of flows.flows) {
+      const stepIds = new Set(flow.steps.map((step) => step.id));
+      for (const alternative of flow.alternatives) {
         if (!stepIds.has(alternative.from)) {
           issues.push(
             fail(
-              `${alternative.id} branches from "${alternative.from}", which is not a step of ${container.id}; use one of its step ids.`,
+              `${alternative.id} branches from "${alternative.from}", which is not a step of ${flow.id}; use one of its step ids.`,
               alternative.id,
             ),
           );
@@ -30,7 +30,7 @@ export const rule = defineRule<FlowInput>(
         ) {
           issues.push(
             fail(
-              `${alternative.id} resumes at "${alternative.resumesAt}", which is not a step of ${container.id}; use a step id or "" when the flow ends.`,
+              `${alternative.id} resumes at "${alternative.resumesAt}", which is not a step of ${flow.id}; use a step id or "" when the flow ends.`,
               alternative.id,
             ),
           );

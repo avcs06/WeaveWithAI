@@ -76,7 +76,7 @@ restructure) stay as they are.
   makes its own calls; the runner reads their usage from its JSONL events.
   Product runs use Meta's
   models only: the Meta Model API by default, or Meta open-weight models (Muse
-  Spark Open, Muse Glimmer) served on Modal or locally, chosen with
+  Spark Open, Muse Glimmer) served on Modal or Baseten, chosen with
   `LLM_BACKEND`. Meta tooling is 25% of the score and the open-weight
   run qualifies for a bonus prize. Another vendor's models are allowed only
   behind env vars for local experiments, never as a default.
@@ -107,8 +107,8 @@ restructure) stay as they are.
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
 - Generated apps have no backend and no deployment: the contract becomes
-  entity stores inside the app, and a benchmark stage
-  (`docs/specs/benchmark.md`) measures the frontend.
+  entity stores inside the app, and a planned benchmark stage
+  (`docs/specs/benchmark.md`) will measure the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session writes only its stage's paths and the
   entity layer. The runner records its git diff in the

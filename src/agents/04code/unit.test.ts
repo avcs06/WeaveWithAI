@@ -111,8 +111,8 @@ describe('a coding unit', () => {
   it('logs a stage start and done once, whether its unit carries its name or units have their own', async () => {
     const { ctx, spec, deps } = setup('events', false, () => false);
     const count = (type: string, stage: string) => readEvents(ctx.run).filter((e) => e.type === type && e.stage === stage).length;
-    await withWrites(page, () => runUnits(ctx, 'code-shared', [{ ...spec, id: 'shared', stage: 'code-shared' }], deps));
-    expect([count('stage:start', 'code-shared'), count('stage:done', 'code-shared')]).toEqual([1, 1]);
+    await withWrites(page, () => runUnits(ctx, 'code-frames', [{ ...spec, id: 'frames', stage: 'code-frames' }], deps));
+    expect([count('stage:start', 'code-frames'), count('stage:done', 'code-frames')]).toEqual([1, 1]);
     await withWrites(page, () => runUnits(ctx, 'code-pages', [spec], deps));
     expect([count('stage:start', 'code-pages'), count('stage:done', 'code-pages')]).toEqual([1, 1]);
   });

@@ -28,7 +28,7 @@ export const ROLES = [
   'shadow',
 ] as const;
 export type Role = (typeof ROLES)[number];
-/** The page's own colors; divider, backdrop and skeleton follow no hue and only have to show on the page (THEME-009). */
+/** The page's own colors; divider, backdrop and skeleton carry no text, so they only have to show on the page (THEME-009). */
 export const PAGE_ROLES = [
   'pageBg',
   'pageFg',
@@ -188,7 +188,6 @@ export function pageLayoutSchema<S extends z.ZodType<string>>(spacing: S) {
   });
 }
 const AnyLayout = pageLayoutSchema(z.string());
-export type PageLayout = z.infer<typeof AnyLayout>;
 export const Layouts = z.object({ app: AnyLayout, marketing: AnyLayout });
 export type Layouts = z.infer<typeof Layouts>;
 

@@ -24,7 +24,7 @@ Its alternatives cover a phone, where the navigation collapses into a menu, and 
 
 A screen is one URL. Make one for each place a flow needs: the landing page, each list, each record's details, each editor, each form that needs a page of its own, and the account and settings pages.
 
-- `route`: kebab-case; a plural noun for a list (/dashboards); a [param] for one record (/dashboards/[dashboardId]); /new or /edit only when a form needs a page of its own. The landing page is /, signing in is /sign-in, and signing up is /sign-up.
+- `route`: kebab-case; a plural noun for a list (/dashboards); a [param] named after the record's noun for one record (/dashboards/[dashboardId]); /new or /edit only when a form needs a page of its own. The landing page is /, signing in is /sign-in, and signing up is /sign-up.
 - `title`: the words at the top of the page, as the user reads them.
 - `purpose`: why the user comes here and what they leave with.
 - `roles`, `frame` and `flows`: who uses it, the frame it sits in, and the flows with a step here.

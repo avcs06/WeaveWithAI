@@ -1,11 +1,4 @@
-import {
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -42,7 +35,6 @@ import {
 import { runLog } from './core/log';
 import { PIPELINE, type StageContext, type StageDef, stageBatches, stages } from './agents/stages';
 import type { Themed } from './agents/02design/01theme/build';
-import { writeJsonAtomic } from './core/utils';
 import { cleanAgentImages } from './engine/docker';
 
 export class UsageError extends Error {}
@@ -69,7 +61,7 @@ const USAGE = `usage:
   weave run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
   weave validate <runId> [stage]
   weave show <runId>
-  weave golden <runId> <ideaName> [--stages scope,flows]
+  weave golden <runId> <ideaName> [--stages flows-scope,flows-expand]
   weave ds
   weave app <runId>
   weave bench <runId>
@@ -207,7 +199,7 @@ export function showCommand(runId: string, deps: CliDeps = {}): string {
       ],
     ];
   };
-  // A stage that ran its work as child stages (flows-expand-1, design-draw-W01-W02-fix) lists them indented under it.
+  // A stage that ran its work as child stages, such as flows-expand-1, lists them indented under it.
   const rows = PIPELINE.flatMap((name) => [
     ...row(name, name),
     ...Object.keys(state.stages)
@@ -368,7 +360,6 @@ export async function main(argv: string[]): Promise<number> {
         replay: { type: 'boolean' },
         backend: { type: 'string' },
         stages: { type: 'string' },
-        out: { type: 'string' },
         all: { type: 'boolean' },
       },
     });

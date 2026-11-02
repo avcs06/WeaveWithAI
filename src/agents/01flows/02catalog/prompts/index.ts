@@ -15,7 +15,7 @@ export const catalogReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });
 
-/** Stage 1's user message: the idea, the scope, and the job. */
+/** The catalog's user message: the idea, the scope, the job and the flows users expect of the scope's domains. */
 export function catalogUserMessage(idea: string, scope: Scope): string {
   return fillPrompt(load('./input.md'), {
     idea: stripComments(idea),

@@ -7,7 +7,6 @@ import {
   type Flows,
   type Form,
   type Question,
-  type StepContainer,
   stepFields,
 } from './schema';
 
@@ -19,21 +18,16 @@ export function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   ];
   if (flow.preconditions.length > 0)
     lines.push(`Before: ${flow.preconditions.join('; ')}`);
-  lines.push('', ...stepsLines(flow, doc, ''));
+  lines.push('', ...stepsLines(flow, doc));
   lines.push('', `Outcome: ${flow.outcome}`);
   return lines;
 }
 
 /** Numbered steps, then the other paths. */
-function stepsLines(
-  container: StepContainer,
-  doc: Flows,
-  indent: string,
-  ends = 'Flow ends.',
-): string[] {
+function stepsLines(flow: Flow, doc: Flows): string[] {
   const lines: string[] = [];
-  container.steps.forEach((step, i) => {
-    const number = `${indent}${i + 1}.`;
+  flow.steps.forEach((step, i) => {
+    const number = `${i + 1}.`;
     const fields = stepFields(step, doc);
     const form = doc.forms.find((candidate) => candidate.id === step.form);
     if (step.kind === 'system')
@@ -43,23 +37,22 @@ function stepsLines(
     else {
       lines.push(
         `${number} ${step.userAction}${form ? ` (${form.name})` : ''}`,
-        ...fields.map((field) => `${indent}   - ${fieldLine(field)}`),
-        `${indent}   ${step.websiteResponse}`,
+        ...fields.map((field) => `   - ${fieldLine(field)}`),
+        `   ${step.websiteResponse}`,
       );
     }
     if (step.effects.length > 0) {
       lines.push(
-        `${indent}   Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
+        `   Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
       );
     }
   });
-  if (container.alternatives.length > 0) {
+  if (flow.alternatives.length > 0) {
     lines.push(
       '',
-      `${indent}Other paths`,
-      ...container.alternatives.map(
-        (alternative) =>
-          `${indent}- ${alternativeLine(container, alternative, ends)}`,
+      'Other paths',
+      ...flow.alternatives.map(
+        (alternative) => `- ${alternativeLine(flow, alternative)}`,
       ),
     );
   }
@@ -90,17 +83,13 @@ export function fieldLine(field: Field): string {
   return `${field.label} (${rules.join(', ')}), e.g. "${field.example}"`;
 }
 
-function alternativeLine(
-  container: StepContainer,
-  alternative: Alternative,
-  ends: string,
-): string {
+function alternativeLine(flow: Flow, alternative: Alternative): string {
   const position = (id: string) =>
-    container.steps.findIndex((step) => step.id === id) + 1;
+    flow.steps.findIndex((step) => step.id === id) + 1;
   const condition = alternative.condition.replace(/\.$/, '');
   const back =
     alternative.resumesAt === ''
-      ? ends
+      ? 'Flow ends.'
       : `Back to ${position(alternative.resumesAt)}.`;
   return `${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
 }

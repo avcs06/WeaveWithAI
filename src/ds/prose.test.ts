@@ -22,14 +22,13 @@ describe('inventoryProse', () => {
     expect(prose).toMatch(/^Toast: A short message after an action/m);
   });
 
-  it('states variants with defaults, looks, slots, contents and boxes on short lines', () => {
+  it('states variants with defaults, looks and boxes on short lines, and no props or recipe contents', () => {
     expect(prose).toContain(
       'Variants: size sm|md|icon-xs|icon-sm|icon-md (default sm); variant base|default|danger (default default).',
     );
     expect(prose).toContain('Looks: ghost, rounded, rounded ghost; default none.');
     expect(prose).toContain('Looks: outline (default), outline ghost,');
-    expect(prose).toContain('Shows: title, description, content, footer actions, trigger button.');
-    expect(prose).toContain('Contains: Tab.');
+    expect(prose).not.toMatch(/^\s*(Shows|Contains):/m);
     expect(prose).toContain('Boxes: sm 32 tall, padding 6 8, gap 8; md 40 tall, padding 8 12, gap 10.');
     expect(prose).toContain('Boxes: xs 24 square, padding 4; sm 32 square, padding 7; md 40 square, padding 8.');
     expect(prose).toContain('sm box 80 tall, at least 32, padding 8 16, gap 8');

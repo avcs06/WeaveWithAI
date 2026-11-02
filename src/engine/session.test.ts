@@ -48,7 +48,7 @@ function withWrites<T>(writes: Record<string, string>, fn: () => Promise<T>): Pr
 }
 
 const page = 'web/app/(routes)/books/page.tsx';
-const session = { id: 'page:S04', task: 'Build S04 from `.weave/screens/S04.json`.', inputs: { 'screens/S04.json': { id: 'S04' } }, routes: [{ url: '/books', signedIn: false }] };
+const session = { id: 'pages', task: 'Build S04 from `.weave/04-pages/S04.md`.', routes: [{ url: '/books', signedIn: false }] };
 
 describe('prepareApp', () => {
   it('writes the MCP and hook config and the hook, and commits a baseline', () => {
@@ -75,13 +75,12 @@ describe('runSession', () => {
     expect(result.costUsd).toBeCloseTo((10000 * 1.25 + 20000 * 0.15 + 1000 * 4.25) / 1e6);
     expect(result.checks.map((c) => c.name)).toEqual(['validate', 'typecheck', 'lint', 'verify']);
     const ledger = JSON.parse(readFileSync(path.join(appDir, '.weave/ledger.json'), 'utf8'));
-    expect(ledger).toEqual([{ status: 'A', path: page, origin: 'model', session: 'page:S04' }]);
-    expect(readFileSync(path.join(appDir, '.weave/screens/S04.json'), 'utf8')).toContain('"S04"');
+    expect(ledger).toEqual([{ status: 'A', path: page, origin: 'model', session: 'pages' }]);
     expect(git(appDir, 'status', '--porcelain')).toBe('');
     expect(totals(run).calls).toBe(3);
     // The inputs and the session are a commit each, named for the stage; only the session's touches the app, so only it is a patch.
-    expect(git(appDir, 'log', '-2', '--format=%s')).toBe('session: page:S04\nsession: inputs for page:S04');
-    expect(readdirSync(runPath(run, 'patches', 'session'))).toEqual(['001-page-S04.patch']);
+    expect(git(appDir, 'log', '-2', '--format=%s')).toBe('session: pages\nsession: inputs for pages');
+    expect(readdirSync(runPath(run, 'patches', 'session'))).toEqual(['001-pages.patch']);
     expect(readEvents(run).map((e) => e.type)).toEqual(['session:start', 'llm:call', 'session:end']);
   });
 
@@ -132,7 +131,7 @@ describe('runSession', () => {
     expect(result.protectedHits.sort()).toEqual(['packages/ui/x.ts', 'web/app/(routes)/books/page.test.tsx']);
     // Committed anyway, so the next session starts clean and the hit is there to review.
     expect(git(appDir, 'status', '--porcelain')).toBe('');
-    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('session: page:S04 (protected)');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('session: pages (protected)');
   });
 
   it('fails a session whose gate fails, whatever the agent says', async () => {

@@ -82,8 +82,9 @@ export function runLog(
             `${round} finished: ${pending ? `${pending} pending (${n('mandatory')} mandatory, ${count(n('blockers'), 'blocker')})` : 'nothing pending'}`,
           );
         }
+        // The scaffold fails outside any round.
         case 'stage:failed':
-          return line(event.stage, `failed in ${round}: ${String(event.error)}`);
+          return line(event.stage, `failed${event.round === undefined ? '' : ` in ${round}`}: ${String(event.error)}`);
         case 'stage:answers':
           return line(event.stage, `${count(n('count'), 'answer')} given`);
         case 'warning':
@@ -123,7 +124,7 @@ function stats(event: Event): string {
   ].join(', ');
 }
 
-/** Each rule once, with how often it failed: `DESIGN-028 ×2, LAYOUT-011`. */
+/** Each rule once, with how often it failed: `FLOW-007 ×2, FLOW-012`. */
 function tally(rules: string[]): string {
   const counts = new Map<string, number>();
   for (const rule of rules) counts.set(rule, (counts.get(rule) ?? 0) + 1);

@@ -21,9 +21,8 @@ import {
 
 // The theme: the theme call picks every color as a step of a
 // ramp, the logo, the page layouts and the component defaults; code
-// turns the steps into hex and adds the brief's fonts, radius, focus ring and
-// density, the logo's family and spacing, and the contrast table the THEME
-// rules check.
+// turns the steps into hex and adds the brief's fonts, radius and focus ring,
+// and the logo's family and spacing.
 
 export type { ColorSet, Mode } from './schema';
 
@@ -44,7 +43,6 @@ export const Theme = z.object({
   fonts: z.object({ ui: z.string(), display: z.string(), mono: z.string() }),
   radius: z.object({ surface: z.string(), control: z.string() }),
   focusRing: z.enum(['halo', 'offset', 'glow']),
-  density: z.enum(['compact', 'comfortable', 'spacious']),
   /** The wordmark: its family, weight, case, letter spacing in em, and its color in each mode. */
   logo: z.object({
     family: z.string(),
@@ -55,14 +53,6 @@ export const Theme = z.object({
   }),
   layouts: Layouts,
   defaults: z.record(z.string(), z.record(z.string(), z.string())),
-  contrast: z.array(
-    z.object({
-      set: z.string(),
-      mode: z.enum(['light', 'dark']),
-      pair: z.string(),
-      ratio: z.number(),
-    }),
-  ),
 });
 export type Theme = z.infer<typeof Theme>;
 
@@ -131,40 +121,6 @@ export function colorSets(
       ...STATUSES.map((name) => ({ name, mode, colors: colors.status[name] })),
     ];
   });
-}
-
-/** Every checked pair of every set and mode with its ratio, for the validator and the demo. */
-export function contrastTable(
-  theme: Pick<Theme, 'modes' | 'colors'>,
-): Theme['contrast'] {
-  const row = (set: string, mode: Mode, fg: string, bg: string, a: string, b: string) => ({
-    set,
-    mode,
-    pair: `${fg} on ${bg}`,
-    ratio: Math.round((ratio(a, b) || 0) * 100) / 100,
-  });
-  return [
-    ...theme.modes.flatMap((mode) => {
-      const colors = theme.colors[mode];
-      if (!colors) return [];
-      const { page } = colors;
-      return [
-        ...[...PAGE_PAIRS, ...QUIET_PAIRS].map(([fg, bg]) =>
-          row('page', mode, fg, bg, page[fg], page[bg]),
-        ),
-        ...SURFACE_SETS.flatMap((name) =>
-          [...SURFACE_TEXT_PAIRS, ...SURFACE_EDGE_PAIRS].map(([fg, bg]) =>
-            row(name, mode, fg, bg, colors[name][fg], page[bg]),
-          ),
-        ),
-      ];
-    }),
-    ...colorSets(theme).flatMap(({ name, mode, colors }) =>
-      [...TEXT_PAIRS, ...EDGE_PAIRS].map(([fg, bg]) =>
-        row(name, mode, fg, bg, colors[fg], colors[bg]),
-      ),
-    ),
-  ];
 }
 
 /** Letter spacing presets for the wordmark, in em. */
@@ -250,7 +206,6 @@ export function buildTheme(call: ThemeCall): Theme {
     fonts,
     radius: { surface, control },
     focusRing: brief.focusRing,
-    density: brief.density,
     logo: {
       family: fonts[call.logo.font],
       weight: call.logo.weight,
@@ -260,6 +215,5 @@ export function buildTheme(call: ThemeCall): Theme {
     },
     layouts: call.layouts,
     defaults,
-    contrast: contrastTable({ modes, colors }),
   };
 }

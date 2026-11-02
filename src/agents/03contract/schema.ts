@@ -86,11 +86,7 @@ export const Contract = z.object({
 /** The key of each list's items, for patches in the fix rounds. */
 export const CONTRACT_KEYS = { enums: 'name', entities: 'name', operations: 'id', screens: 'screen' };
 
-export type FieldKind = (typeof FIELD_KINDS)[number];
 export type EntityField = z.infer<typeof EntityField>;
 export type Entity = z.infer<typeof Entity>;
-export type Enum = z.infer<typeof Enum>;
-export type Input = z.infer<typeof Input>;
 export type Operation = z.infer<typeof Operation>;
-export type ScreenSource = z.infer<typeof ScreenSource>;
 export type Contract = z.infer<typeof Contract>;

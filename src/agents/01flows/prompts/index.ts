@@ -6,7 +6,7 @@ import { Flows } from '../schema';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** The standard both prompts and both review guides share. */
+/** The standard the two system prompts and the three peer guides share. */
 export const productManager = () => load('./product-manager.md');
 
 export function answersBlock(answers: Answers): string {

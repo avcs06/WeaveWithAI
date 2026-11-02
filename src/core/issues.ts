@@ -51,11 +51,6 @@ export function formatIssues(issues: Issue[]): string {
   return issues.map((issue) => `- ${describe(issue)}`).join('\n');
 }
 
-/** Mandatory issues only. */
-export function formatForModel(issues: Issue[]): string {
-  return formatIssues(splitIssues(issues).mandatory);
-}
-
 export function formatForTerminal(issues: Issue[]): string {
   const { mandatory, warnings } = splitIssues(issues);
   const lines = [

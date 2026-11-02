@@ -23,8 +23,6 @@ export type Session = {
   id: string;
   /** The short prompt: it names the `.weave/` input files and the guidelines. */
   task: string;
-  /** Written to `.weave/<name>` before the run; strings as is, anything else as JSON. */
-  inputs: Record<string, unknown>;
   /** The routes `pnpm verify` checks. */
   routes?: CheckedRoute[];
   /** What each screen's route folder must name, from its design and the contract. */
@@ -156,10 +154,6 @@ export async function runSession(
   const stage = session.stage ?? 'session';
   const at = (...parts: string[]) => path.join(appDir, ...parts);
 
-  for (const [name, value] of Object.entries(session.inputs)) {
-    mkdirSync(path.dirname(at('.weave', name)), { recursive: true });
-    writeFileSync(at('.weave', name), typeof value === 'string' ? value : `${JSON.stringify(value, null, 2)}\n`);
-  }
   const promptFile = `.weave/tasks/${slug}.md`;
   mkdirSync(at('.weave', 'tasks'), { recursive: true });
   writeFileSync(at(promptFile), `${session.task}\n`);

@@ -61,6 +61,12 @@ describe('the run log', () => {
     ]);
   });
 
+  it('names a failure outside any round without a round', () => {
+    expect(
+      logged([{ type: 'stage:failed', stage: 'code-scaffold', error: 'typecheck failed in the app' }]).at(-1),
+    ).toBe('    scaffold failed: typecheck failed in the app');
+  });
+
   it('names a retried answer and leaves the time out when the call has none', () => {
     const { durationMs: _, ...paid } = call;
     expect(
@@ -82,7 +88,7 @@ describe('a step committed in the app', () => {
   it('names its patch file under its stage', () => {
     const lines: string[] = [];
     const log = runLog(['code-scaffold', 'code-pages'], (line) => lines.push(line));
-    log.event({ ts: '', type: 'stage:patch', stage: 'code-pages-S04', file: 'runs/x/patches/003-weave-page-S04.patch' });
-    expect(lines).toEqual(['code', '  pages', '    pages-S04 patch runs/x/patches/003-weave-page-S04.patch']);
+    log.event({ ts: '', type: 'stage:patch', stage: 'code-pages', file: 'runs/x/patches/code-pages.patch' });
+    expect(lines).toEqual(['code', '  pages', '    pages patch runs/x/patches/code-pages.patch']);
   });
 });

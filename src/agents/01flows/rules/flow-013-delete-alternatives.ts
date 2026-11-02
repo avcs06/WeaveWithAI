@@ -6,7 +6,7 @@
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
-import { alternativesFrom, containers, type FlowInput } from './helpers';
+import { alternativesFrom, type FlowInput } from './helpers';
 
 const BACK_OUT = new Set(['confirm', 'cancel']);
 
@@ -15,13 +15,13 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const container of containers(flows)) {
-      for (const step of container.steps) {
+    for (const flow of flows.flows) {
+      for (const step of flow.steps) {
         const deletes = step.effects.filter(
           (effect) => effect.change === 'delete',
         );
         if (deletes.length === 0) continue;
-        const backsOut = alternativesFrom(container, step.id).some(
+        const backsOut = alternativesFrom(flow, step.id).some(
           (alternative) => BACK_OUT.has(alternative.kind),
         );
         if (!backsOut) {
