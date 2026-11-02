@@ -113,6 +113,25 @@ describe('choices from records', () => {
   });
 });
 
+describe('picks only', () => {
+  it('FLOW-011 asks a step that saves only a pick for a "failure" path, not an "invalid" one', () => {
+    const shelfOnly = structuredClone(flows);
+    const addBook = shelfOnly.flows.find((flow) => flow.id === 'F03');
+    if (!addBook) throw new Error('fixture changed');
+    addBook.steps[1]!.form = '';
+    addBook.steps[1]!.fields = ['FD05'];
+    addBook.alternatives = addBook.alternatives.filter(
+      (alternative) => alternative.kind !== 'invalid',
+    );
+    expect(ruleIds(validateFlows(shelfOnly, scope))).not.toContain('FLOW-011');
+
+    addBook.alternatives = addBook.alternatives.filter(
+      (alternative) => alternative.kind !== 'failure',
+    );
+    expect(ruleIds(validateFlows(shelfOnly, scope))).toContain('FLOW-011');
+  });
+});
+
 describe('one expansion call', () => {
   it('checks its flow with the catalog behind it: the delete flow and its own confirm pass', () => {
     const batch = {

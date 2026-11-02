@@ -41,7 +41,7 @@ Another reviewer checks the output for errors in meaning; you judge the decision
 - A choice field lists at least two options or takes them from a vocabulary noun. Other fields list none. Every field has a meaning and an example.
 - Effects name vocabulary nouns, spelled as the scope spells them.
 - An alternative branches from a step of its own flow, and resumes at one or ends the flow.
-- A step that asks for fields and has a create or update effect has an "invalid" and a "failure" path. A step with a list effect has an "empty" path. A step with a delete effect has a "confirm" or "cancel" path.
+- A step that asks for fields and has a create or update effect has a "failure" path, and an "invalid" path when a field can be typed wrong. A step with a list effect has an "empty" path. A step with a delete effect has a "confirm" or "cancel" path.
 - The number of steps in the flow.
 - `signedOut` is true when signing up or signing in and on every flow of a role that never signs in, and false when signing out.
 - On the whole document: the sign-up, sign-in and sign-out flows, a flow for every role, records that are created but never shown, and fields and forms no step uses.

@@ -53,7 +53,7 @@ The validators find the steps that need an alternative from the fields and effec
 - An alternative whose steps do not say what the website shows, or whose `resumesAt` goes against its last step, such as "back to the form" where the flow ends.
 - An "invalid" path that does not say what the website marks as wrong, or that loses what the user typed.
 - A "failure" path that loses what the user typed or offers no retry.
-- A step that saves values no vocabulary noun keeps, with no "invalid" path or no "failure" path. Signing up is one, and so is changing the password or a setting. The validators only see saves that have an effect.
+- A step that saves values no vocabulary noun keeps, with no "failure" path, or no "invalid" path for a value that can be typed wrong. Signing up is one, and so is changing the password or a setting. The validators only see saves that have an effect.
 - An "empty" path that does not say what the user sees when there is nothing yet.
 - A delete the user cannot back out of: the record is gone before they confirm, or cancelling still removes it.
 - A step the role may be refused, such as an action past a limit or on a record only its owner may change, with no "denied" path.
@@ -74,7 +74,7 @@ Leave to the validators, which check:
 - A choice field lists at least two options or takes them from a vocabulary noun. Other fields list none. Every field has a meaning and an example.
 - Effects name vocabulary nouns, spelled as the scope spells them.
 - An alternative branches from a step of its own flow, and resumes at one or ends the flow.
-- A step that asks for fields and has a create or update effect has an "invalid" and a "failure" path. A step with a list effect has an "empty" path. A step with a delete effect has a "confirm" or "cancel" path.
+- A step that asks for fields and has a create or update effect has a "failure" path, and an "invalid" path when a field can be typed wrong. A step with a list effect has an "empty" path. A step with a delete effect has a "confirm" or "cancel" path.
 - The number of steps in the flow.
 - `signedOut` is true when signing up or signing in and on every flow of a role that never signs in, and false when signing out.
 - On the whole document: the sign-up, sign-in and sign-out flows, a flow for every role, records that are created but never shown, and fields and forms no step uses.
