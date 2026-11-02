@@ -177,7 +177,7 @@ describe('weave run', () => {
       'flows-catalog: no artifact to validate',
       'flows-expand: no artifact to validate',
       'design-theme: no artifact to validate',
-      'design-architect: no validators registered',
+      'design-architect: no artifact to validate',
       'contract: no validators registered',
       'code-scaffold: no validators registered',
       'code-contract: no validators registered',

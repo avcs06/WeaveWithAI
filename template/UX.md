@@ -27,7 +27,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 
 - The top of a screen holds the breadcrumbs or the way back first, then the title. The page-level actions sit in line with the title, or above it with the breadcrumbs. Nothing else comes before the title.
 - A link that works as a control, such as a breadcrumb, a way back or a navigation item, is `plain`. The dotted line is for a link inside text.
-- Centered content, such as a landing or sign-in page, is a centered column. Inside it, a section with several rows, such as a list, a form or a group of reasons, aligns its rows to the start, or to the end when that suits it, never to the center.
+- In a flex layout, items align to the center when each is one line, such as a row of action buttons. When an item runs to several lines, such as a list, a form or a group of reasons, the layout aligns to the start, or to the end when that suits it, never to the center.
 
 ## Forms
 

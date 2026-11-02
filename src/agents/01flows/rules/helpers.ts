@@ -4,12 +4,15 @@ import type { Alternative, Flow, Flows, Step } from '../schema';
 
 export type FlowInput = { flows: Flows; scope: Scope };
 
-/** Every step of every flow, with the flow it belongs to. */
+/** Every step of every flow, the alternatives' included, with its flow, and its alternative when it is a step of one. */
 export function* eachStep(
   flows: Flows,
-): Generator<{ flow: Flow; step: Step }> {
-  for (const flow of flows.flows)
+): Generator<{ flow: Flow; step: Step; alternative?: Alternative }> {
+  for (const flow of flows.flows) {
     for (const step of flow.steps) yield { flow, step };
+    for (const alternative of flow.alternatives)
+      for (const step of alternative.steps) yield { flow, step, alternative };
+  }
 }
 
 export const alternativesFrom = (flow: Flow, stepId: string): Alternative[] =>

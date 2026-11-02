@@ -37,7 +37,7 @@ A border far from its background is not a blocker. A border can be any step of i
 
 ## Page layouts
 
-- A slot that names something the scope and flows do not have, such as search in an app with no search, a cart in an app that sells nothing, or an account menu where no role signs in.
+- An account menu or a sign-out in a slot when no role signs in.
 - A slot that holds what belongs on one screen, such as a form or a record's details. Every page of the frame shows its slots, and later calls design the screens.
 - An app with several top-level destinations whose app layout has no needed part that holds the navigation.
 - A signed-in app with no place in the app layout for the account or signing out.
@@ -47,6 +47,8 @@ A border far from its background is not a blocker. A border can be any step of i
 Leave out taste.
 
 Leave to the validators, which check:
+
+- A slot that names something the scope and the flows do not have, such as search in an app with no search or a cart in an app that sells nothing.
 
 - The brief's counts and ranges, every vocabulary noun once in the entities, colored hues at least 30 degrees apart, and each status hue inside its band.
 - Three different fonts for each role, and a wordmark weight its font ships.

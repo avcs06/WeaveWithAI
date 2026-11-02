@@ -23,6 +23,7 @@ import { rule as flow021 } from '../../rules/flow-021-field-meaning-example';
 import { rule as flow023 } from '../../rules/flow-023-new-ids';
 import { rule as flow024 } from '../../rules/flow-024-unused-parts';
 import { rule as flow025 } from '../../rules/flow-025-signed-out';
+import { rule as flow026 } from '../../rules/flow-026-alternative-path';
 import type { FlowInput } from '../../rules/helpers';
 import type { Flows } from '../../schema';
 import type { FlowBatch } from '../schema';
@@ -47,6 +48,7 @@ export const batchRules: readonly Rule<FlowInput>[] = [
   flow020,
   flow021,
   flow025,
+  flow026,
 ];
 
 /** Every rule, for the assembled document; `weave validate` runs them. */
@@ -72,6 +74,7 @@ export const flowRules: readonly Rule<FlowInput>[] = [
   flow023,
   flow024,
   flow025,
+  flow026,
 ];
 
 /** One call's flows with the whole catalog behind it, so references resolve: the catalog's parts plus the ones it added. */

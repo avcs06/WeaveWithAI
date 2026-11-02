@@ -142,4 +142,12 @@ describe('hand-broken flows', () => {
       'FLOW-011',
     ]);
   });
+
+  it("check an alternative's steps too: an unknown field in one fails FLOW-007", () => {
+    const broken = structuredClone(flows);
+    const signUp = broken.flows.find((flow) => flow.id === 'F01');
+    if (!signUp) throw new Error('fixture changed');
+    signUp.alternatives[0]!.steps[0]!.fields = ['FD99'];
+    expect(ruleIds(validateFlows(broken, scope))).toContain('FLOW-007');
+  });
 });

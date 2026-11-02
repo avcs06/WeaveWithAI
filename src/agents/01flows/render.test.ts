@@ -31,10 +31,13 @@ describe('render', () => {
     );
     expect(text).toContain('   Changes: creates Book.');
     expect(text).toContain(
-      '- F03.A01 (from 2, invalid) The title is empty: The website marks the field and keeps what was typed. Back to 2.',
+      '- F03.A01 (from 2, invalid) The title is empty:\n  1. (system) The website marks the field and keeps what was typed.\n  Back to 2.',
     );
     expect(text).toContain(
-      '- F03.A03 (from 1, cancel) The reader cancels: Nothing is saved; the website shows the reading list as it was. Flow ends.',
+      '- F03.A03 (from 1, cancel) The reader cancels:\n  1. (system) Nothing is saved; the website shows the reading list as it was.\n  Flow ends.',
+    );
+    expect(text).toContain(
+      '- F01.A03 (from 2, conflict) The email already has an account:\n  1. (system) The website says so and offers to sign in instead.\n  2. The visitor chooses to sign in. The website shows the sign-in form.\n  Flow ends.',
     );
     expect(text).toContain(
       '2. The reader fills in the book and saves it. (Book form)',

@@ -52,9 +52,16 @@ Before: Not signed in.
    The website creates the account, signs the reader in and shows their start page.
 
 Other paths
-- F01.A01 (from 2, invalid) The email is not an address or the password is shorter than 8 characters: The website marks the field and keeps what was typed. Back to 2.
-- F01.A02 (from 2, failure) Creating the account fails: The website keeps the values and offers to try again. Back to 2.
-- F01.A03 (from 2, conflict) The email already has an account: The website says so and offers to sign in instead. Flow ends.
+- F01.A01 (from 2, invalid) The email is not an address or the password is shorter than 8 characters:
+  1. (system) The website marks the field and keeps what was typed.
+  Back to 2.
+- F01.A02 (from 2, failure) Creating the account fails:
+  1. (system) The website keeps the values and offers to try again.
+  Back to 2.
+- F01.A03 (from 2, conflict) The email already has an account:
+  1. (system) The website says so and offers to sign in instead.
+  2. The visitor chooses to sign in. The website shows the sign-in form.
+  Flow ends.
 
 Outcome: The reader has an account and is signed in; after a refresh they are still signed in.
 
@@ -70,8 +77,12 @@ Before: Has an account.; Not signed in.
    The website signs the reader in and takes them to their reading list.
 
 Other paths
-- F02.A01 (from 2, invalid) A field is empty: The website marks the field and keeps what was typed. Back to 2.
-- F02.A02 (from 2, denied) The email and password do not match an account: The website says so and keeps the email typed. Back to 2.
+- F02.A01 (from 2, invalid) A field is empty:
+  1. (system) The website marks the field and keeps what was typed.
+  Back to 2.
+- F02.A02 (from 2, denied) The email and password do not match an account:
+  1. (system) The website says so and keeps the email typed.
+  Back to 2.
 
 Outcome: The reader is signed in and stays signed in after a refresh.
 
@@ -89,9 +100,15 @@ Before: Signed in.
    Changes: creates Book.
 
 Other paths
-- F03.A01 (from 2, invalid) The title is empty: The website marks the field and keeps what was typed. Back to 2.
-- F03.A02 (from 2, failure) Saving fails: The website keeps the values and offers to retry. Back to 2.
-- F03.A03 (from 1, cancel) The reader cancels: Nothing is saved; the website shows the reading list as it was. Flow ends.
+- F03.A01 (from 2, invalid) The title is empty:
+  1. (system) The website marks the field and keeps what was typed.
+  Back to 2.
+- F03.A02 (from 2, failure) Saving fails:
+  1. (system) The website keeps the values and offers to retry.
+  Back to 2.
+- F03.A03 (from 1, cancel) The reader cancels:
+  1. (system) Nothing is saved; the website shows the reading list as it was.
+  Flow ends.
 
 Outcome: The book is saved and is still there after a refresh.
 
@@ -106,8 +123,12 @@ Before: Signed in.
    Changes: lists Book.
 
 Other paths
-- F04.A01 (from 1, empty) The reader has no books yet: The website says the list is empty and offers to add a book. Flow ends.
-- F04.A02 (from 2, empty) No book matches: The website says nothing matched and offers to clear the search. Back to 1.
+- F04.A01 (from 1, empty) The reader has no books yet:
+  1. (system) The website says the list is empty and offers to add a book.
+  Flow ends.
+- F04.A02 (from 2, empty) No book matches:
+  1. (system) The website says nothing matched and offers to clear the search.
+  Back to 1.
 
 Outcome: Nothing changed; the reader has found the book they were after.
 
@@ -122,9 +143,15 @@ Before: Signed in.; At least one book on the list.
    Changes: deletes Book.
 
 Other paths
-- F05.A01 (from 1, notFound) The book was deleted in the meantime: The website says the book is gone and shows the reading list. Flow ends.
-- F05.A02 (from 2, confirm) The reader confirmed the deletion: The website shows the reading list without the book. Flow ends.
-- F05.A03 (from 2, cancel) The reader cancelled: The website shows the book again, unchanged. Flow ends.
+- F05.A01 (from 1, notFound) The book was deleted in the meantime:
+  1. (system) The website says the book is gone and shows the reading list.
+  Flow ends.
+- F05.A02 (from 2, confirm) The reader confirmed the deletion:
+  1. (system) The website shows the reading list without the book.
+  Flow ends.
+- F05.A03 (from 2, cancel) The reader cancelled:
+  1. (system) The website shows the book again, unchanged.
+  Flow ends.
 
 Outcome: The book is gone and stays gone after a refresh.
 

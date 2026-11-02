@@ -14,7 +14,9 @@ export const rule = defineRule<FlowInput>(
   'mandatory',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    for (const { flow, step } of eachStep(flows)) {
+    for (const { flow, step, alternative } of eachStep(flows)) {
+      // An alternative's steps branch nowhere: only the flow's own steps need alternatives.
+      if (alternative) continue;
       const saves = step.effects.some(
         (effect) => effect.change === 'create' || effect.change === 'update',
       );

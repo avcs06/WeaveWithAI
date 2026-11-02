@@ -7,6 +7,7 @@ import {
   type Flows,
   type Form,
   type Question,
+  type Step,
   stepFields,
 } from './schema';
 
@@ -23,37 +24,37 @@ export function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   return lines;
 }
 
-/** Numbered steps, then the other paths. */
+/** Numbered steps, then the other paths, each a numbered path of its own. */
 function stepsLines(flow: Flow, doc: Flows): string[] {
-  const lines: string[] = [];
-  flow.steps.forEach((step, i) => {
-    const number = `${i + 1}.`;
-    const fields = stepFields(step, doc);
-    const form = doc.forms.find((candidate) => candidate.id === step.form);
-    if (step.kind === 'system')
-      lines.push(`${number} (system) ${step.websiteResponse}`);
-    else if (fields.length === 0)
-      lines.push(`${number} ${step.userAction} ${step.websiteResponse}`);
-    else {
-      lines.push(
-        `${number} ${step.userAction}${form ? ` (${form.name})` : ''}`,
-        ...fields.map((field) => `   - ${fieldLine(field)}`),
-        `   ${step.websiteResponse}`,
-      );
-    }
-    if (step.effects.length > 0) {
-      lines.push(
-        `   Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
-      );
-    }
-  });
+  const lines = flow.steps.flatMap((step, i) => stepLines(step, i, doc));
   if (flow.alternatives.length > 0) {
+    lines.push('', 'Other paths');
+    for (const alternative of flow.alternatives)
+      lines.push(...alternativeLines(flow, alternative, doc));
+  }
+  return lines;
+}
+
+function stepLines(step: Step, i: number, doc: Flows, indent = ''): string[] {
+  const lines: string[] = [];
+  const number = `${indent}${i + 1}.`;
+  const detail = `${indent}   `;
+  const fields = stepFields(step, doc);
+  const form = doc.forms.find((candidate) => candidate.id === step.form);
+  if (step.kind === 'system')
+    lines.push(`${number} (system) ${step.websiteResponse}`);
+  else if (fields.length === 0)
+    lines.push(`${number} ${step.userAction} ${step.websiteResponse}`);
+  else {
     lines.push(
-      '',
-      'Other paths',
-      ...flow.alternatives.map(
-        (alternative) => `- ${alternativeLine(flow, alternative)}`,
-      ),
+      `${number} ${step.userAction}${form ? ` (${form.name})` : ''}`,
+      ...fields.map((field) => `${detail}- ${fieldLine(field)}`),
+      `${detail}${step.websiteResponse}`,
+    );
+  }
+  if (step.effects.length > 0) {
+    lines.push(
+      `${detail}Changes: ${step.effects.map((effect) => `${effect.change}s ${effect.noun}`).join(', ')}.`,
     );
   }
   return lines;
@@ -83,7 +84,12 @@ export function fieldLine(field: Field): string {
   return `${field.label} (${rules.join(', ')}), e.g. "${field.example}"`;
 }
 
-function alternativeLine(flow: Flow, alternative: Alternative): string {
+/** A path: where it branches from and when, its steps indented under it, and where it merges back. */
+function alternativeLines(
+  flow: Flow,
+  alternative: Alternative,
+  doc: Flows,
+): string[] {
   const position = (id: string) =>
     flow.steps.findIndex((step) => step.id === id) + 1;
   const condition = alternative.condition.replace(/\.$/, '');
@@ -91,7 +97,11 @@ function alternativeLine(flow: Flow, alternative: Alternative): string {
     alternative.resumesAt === ''
       ? 'Flow ends.'
       : `Back to ${position(alternative.resumesAt)}.`;
-  return `${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}: ${alternative.websiteResponse} ${back}`;
+  return [
+    `- ${alternative.id} (from ${position(alternative.from)}, ${alternative.kind}) ${condition}:`,
+    ...alternative.steps.flatMap((step, i) => stepLines(step, i, doc, '  ')),
+    `  ${back}`,
+  ];
 }
 
 /** The reusable parts, once per document: the fields noun by noun, those no record keeps last, then the forms. */

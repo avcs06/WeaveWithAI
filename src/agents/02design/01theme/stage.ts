@@ -14,7 +14,7 @@ import {
   themeUserMessage,
 } from './prompts/index';
 import { makeThemeSchema } from './schema';
-import { briefRules, validateTheme } from './validation/validation';
+import { briefRules, layoutRules, validateTheme } from './validation/validation';
 
 // One call sets the direction and every value: the
 // brief, every color, both page layouts and the component defaults.
@@ -45,7 +45,7 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
     system: themeSystemPrompt(inv),
     user: themeUserMessage(idea, scope, flows),
     // The rules read the built theme, so a failing contrast pair goes back to this call.
-    validate: (call) => validateTheme(call, scope, inv),
+    validate: (call) => validateTheme(call, scope, flows, inv),
     review: themeReviewGuides(),
     maxTokens: THEME_MAX_TOKENS,
     reasoningEffort: THEME_EFFORT,
@@ -64,10 +64,14 @@ export const themeStage: StageDef = {
   name: 'design-theme',
   produces: ['design-theme'],
   run: async (ctx) => runTheme(ctx, await inventory()),
-  // The brief's rules; the theme's need the inventory, which `weave validate` does not load.
-  validate: (run) =>
-    runRules(briefRules, {
-      brief: readArtifact<Themed>(run, 'design-theme').data.brief,
-      scope: readArtifact<Scope>(run, 'flows-scope').data,
-    }),
+  // The brief's and the layouts' rules; the theme's need the inventory, which `weave validate` does not load.
+  validate: (run) => {
+    const { brief, theme } = readArtifact<Themed>(run, 'design-theme').data;
+    const scope = readArtifact<Scope>(run, 'flows-scope').data;
+    const flows = readArtifact<Flows>(run, 'flows-expand').data;
+    return [
+      ...runRules(briefRules, { brief, scope }),
+      ...runRules(layoutRules, { layouts: theme.layouts, scope, flows }),
+    ];
+  },
 };

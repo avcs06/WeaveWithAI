@@ -50,7 +50,7 @@ The validators find the steps that need an alternative from the fields and effec
 
 ## Alternatives
 
-- An alternative that does not say what the website shows, or whose `resumesAt` goes against its words, such as "back to the form" where the flow ends.
+- An alternative whose steps do not say what the website shows, or whose `resumesAt` goes against its last step, such as "back to the form" where the flow ends.
 - An "invalid" path that does not say what the website marks as wrong, or that loses what the user typed.
 - A "failure" path that loses what the user typed or offers no retry.
 - A step that saves values no vocabulary noun keeps, with no "invalid" path or no "failure" path. Signing up is one, and so is changing the password or a setting. The validators only see saves that have an effect.

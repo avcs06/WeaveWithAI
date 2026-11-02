@@ -2,9 +2,10 @@ import type { Issue } from '../../../../core/issues';
 import { type Rule, runRules } from '../../../../core/rules';
 import type { Inventory } from '../../../../ds/inventory';
 import type { Scope } from '../../../01flows/01scope/schema';
+import type { Flows } from '../../../01flows/schema';
 import { buildTheme } from '../build';
 import type { ThemeCall } from '../schema';
-import type { BriefInput, CallInput, ThemeInput } from './helpers';
+import type { BriefInput, CallInput, LayoutsInput, ThemeInput } from './helpers';
 import { rule as brief001 } from './rules/brief-001-ranges';
 import { rule as brief002 } from './rules/brief-002-entities';
 import { rule as brief003 } from './rules/brief-003-hues-apart';
@@ -21,6 +22,7 @@ import { rule as theme009 } from './rules/theme-009-quiet-colors';
 import { rule as theme010 } from './rules/theme-010-modes-entities';
 import { rule as theme011 } from './rules/theme-011-logo';
 import { rule as theme012 } from './rules/theme-012-shadow';
+import { rule as theme013 } from './rules/theme-013-slot-trace';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
@@ -33,6 +35,9 @@ export const briefRules: readonly Rule<BriefInput>[] = [
 ];
 
 export const callRules: readonly Rule<CallInput>[] = [theme010, theme012];
+
+/** The page layouts against the scope and the flows; `weave validate` runs them too. */
+export const layoutRules: readonly Rule<LayoutsInput>[] = [theme013];
 
 /** THEME-003 checks an applied app, so the scaffold stage runs it. */
 export const themeRules: readonly Rule<ThemeInput>[] = [
@@ -47,10 +52,11 @@ export const themeRules: readonly Rule<ThemeInput>[] = [
   theme011,
 ];
 
-/** The theme call's answer: the brief against the scope, the colors against the brief, and the theme they build. */
-export function validateTheme(call: ThemeCall, scope: Scope, inventory: Inventory): Issue[] {
+/** The theme call's answer: the brief against the scope, the layouts against the scope and flows, the colors against the brief, and the theme they build. */
+export function validateTheme(call: ThemeCall, scope: Scope, flows: Flows, inventory: Inventory): Issue[] {
   return [
     ...runRules(briefRules, { brief: call.brief, scope }),
+    ...runRules(layoutRules, { layouts: call.layouts, scope, flows }),
     ...runRules(callRules, { call }),
     ...runRules(themeRules, { theme: buildTheme(call), inventory }),
   ];

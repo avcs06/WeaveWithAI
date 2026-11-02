@@ -42,7 +42,17 @@
           "from": "F01.S02",
           "kind": "invalid",
           "condition": "The email is not an address or the password is shorter than 8 characters.",
-          "websiteResponse": "The website marks the field and keeps what was typed.",
+          "steps": [
+            {
+              "id": "F01.A01.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website marks the field and keeps what was typed.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F01.S02"
         },
         {
@@ -50,7 +60,17 @@
           "from": "F01.S02",
           "kind": "failure",
           "condition": "Creating the account fails.",
-          "websiteResponse": "The website keeps the values and offers to try again.",
+          "steps": [
+            {
+              "id": "F01.A02.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website keeps the values and offers to try again.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F01.S02"
         },
         {
@@ -58,7 +78,26 @@
           "from": "F01.S02",
           "kind": "conflict",
           "condition": "The email already has an account.",
-          "websiteResponse": "The website says so and offers to sign in instead.",
+          "steps": [
+            {
+              "id": "F01.A03.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website says so and offers to sign in instead.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            },
+            {
+              "id": "F01.A03.S02",
+              "kind": "user",
+              "userAction": "The visitor chooses to sign in.",
+              "websiteResponse": "The website shows the sign-in form.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         }
       ],
@@ -107,7 +146,17 @@
           "from": "F02.S02",
           "kind": "invalid",
           "condition": "A field is empty.",
-          "websiteResponse": "The website marks the field and keeps what was typed.",
+          "steps": [
+            {
+              "id": "F02.A01.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website marks the field and keeps what was typed.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F02.S02"
         },
         {
@@ -115,7 +164,17 @@
           "from": "F02.S02",
           "kind": "denied",
           "condition": "The email and password do not match an account.",
-          "websiteResponse": "The website says so and keeps the email typed.",
+          "steps": [
+            {
+              "id": "F02.A02.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website says so and keeps the email typed.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F02.S02"
         }
       ],
@@ -165,7 +224,17 @@
           "from": "F03.S02",
           "kind": "invalid",
           "condition": "The title is empty.",
-          "websiteResponse": "The website marks the field and keeps what was typed.",
+          "steps": [
+            {
+              "id": "F03.A01.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website marks the field and keeps what was typed.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F03.S02"
         },
         {
@@ -173,7 +242,17 @@
           "from": "F03.S02",
           "kind": "failure",
           "condition": "Saving fails.",
-          "websiteResponse": "The website keeps the values and offers to retry.",
+          "steps": [
+            {
+              "id": "F03.A02.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website keeps the values and offers to retry.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F03.S02"
         },
         {
@@ -181,7 +260,17 @@
           "from": "F03.S01",
           "kind": "cancel",
           "condition": "The reader cancels.",
-          "websiteResponse": "Nothing is saved; the website shows the reading list as it was.",
+          "steps": [
+            {
+              "id": "F03.A03.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "Nothing is saved; the website shows the reading list as it was.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         }
       ],
@@ -236,7 +325,17 @@
           "from": "F04.S01",
           "kind": "empty",
           "condition": "The reader has no books yet.",
-          "websiteResponse": "The website says the list is empty and offers to add a book.",
+          "steps": [
+            {
+              "id": "F04.A01.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website says the list is empty and offers to add a book.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         },
         {
@@ -244,7 +343,17 @@
           "from": "F04.S02",
           "kind": "empty",
           "condition": "No book matches.",
-          "websiteResponse": "The website says nothing matched and offers to clear the search.",
+          "steps": [
+            {
+              "id": "F04.A02.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website says nothing matched and offers to clear the search.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": "F04.S01"
         }
       ],
@@ -300,7 +409,17 @@
           "from": "F05.S01",
           "kind": "notFound",
           "condition": "The book was deleted in the meantime.",
-          "websiteResponse": "The website says the book is gone and shows the reading list.",
+          "steps": [
+            {
+              "id": "F05.A01.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website says the book is gone and shows the reading list.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         },
         {
@@ -308,7 +427,17 @@
           "from": "F05.S02",
           "kind": "confirm",
           "condition": "The reader confirmed the deletion.",
-          "websiteResponse": "The website shows the reading list without the book.",
+          "steps": [
+            {
+              "id": "F05.A02.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website shows the reading list without the book.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         },
         {
@@ -316,7 +445,17 @@
           "from": "F05.S02",
           "kind": "cancel",
           "condition": "The reader cancelled.",
-          "websiteResponse": "The website shows the book again, unchanged.",
+          "steps": [
+            {
+              "id": "F05.A03.S01",
+              "kind": "system",
+              "userAction": "",
+              "websiteResponse": "The website shows the book again, unchanged.",
+              "fields": [],
+              "form": "",
+              "effects": []
+            }
+          ],
           "resumesAt": ""
         }
       ],

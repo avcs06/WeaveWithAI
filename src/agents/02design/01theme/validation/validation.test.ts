@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { runRules } from '../../../../core/rules';
 import type { Scope } from '../../../01flows/01scope/schema';
-import { brief, inventory, scope, themeCall } from '../../__fixtures__/chain';
+import { brief, flows, inventory, scope, themeCall } from '../../__fixtures__/chain';
 import { briefMutations } from '../../__fixtures__/mutations';
 import { Brief, type ThemeCall } from '../schema';
 import { briefRules, validateTheme } from './validation';
@@ -11,14 +11,14 @@ const ruleIds = (issues: { rule: string }[]) =>
 
 describe('the theme call', () => {
   it('passes every rule on the reading-list answer, warnings included', () => {
-    expect(validateTheme(themeCall, scope, inventory)).toEqual([]);
+    expect(validateTheme(themeCall, scope, flows, inventory)).toEqual([]);
   });
 
   it('THEME-010 wants each mode of the color scheme once, and a set for each colored entity in each', () => {
     const at = (change: (call: ThemeCall) => void) => {
       const call = structuredClone(themeCall);
       change(call);
-      return validateTheme(call, scope, inventory)
+      return validateTheme(call, scope, flows, inventory)
         .filter((i) => i.rule === 'THEME-010')
         .map((i) => i.at);
     };
@@ -32,7 +32,7 @@ describe('the theme call', () => {
     const call = structuredClone(themeCall);
     call.colors[0]!.theme.shadow = 9;
     expect(
-      validateTheme(call, scope, inventory)
+      validateTheme(call, scope, flows, inventory)
         .filter((i) => i.rule === 'THEME-012')
         .map((i) => [i.severity, i.at]),
     ).toEqual([['warning', 'theme.light.shadow']]);

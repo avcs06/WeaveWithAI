@@ -18,6 +18,7 @@ import {
 } from './prompts/index';
 import { renderArchitecture } from './render';
 import { Architecture } from './schema';
+import { validateArchitecture } from './validation/validation';
 
 // The architect writes every frame, screen and dialog in one call, at high
 // reasoning; it starts at the client's 96k cap, so no
@@ -32,7 +33,7 @@ const ARCHITECTURE_KEYS: PatchKeys = {
   dialogs: 'id',
 };
 
-/** The architect's call: the frames, screens and dialogs, in prose, from the flows. No validators yet: the reviewers catch what is wrong. */
+/** The architect's call: the frames, screens and dialogs, in prose, from the flows. One validator; the reviewers catch the rest. */
 async function runArchitect(ctx: StageContext): Promise<void> {
   const { run, llm } = ctx;
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
@@ -46,7 +47,7 @@ async function runArchitect(ctx: StageContext): Promise<void> {
     schemaName: 'Architecture',
     system: architectSystemPrompt(),
     user: architectUserMessage(scope, flows, brief, theme.layouts),
-    validate: () => [],
+    validate: (output) => validateArchitecture(output, scope, flows),
     review: architectReviewGuides(),
     maxTokens: ARCHITECT_MAX_TOKENS,
     reasoningEffort: ARCHITECT_EFFORT,
@@ -71,4 +72,10 @@ export const architectStage: StageDef = {
   name: 'design-architect',
   produces: ['design-architect'],
   run: runArchitect,
+  validate: (run) =>
+    validateArchitecture(
+      readArtifact<Architecture>(run, 'design-architect').data,
+      readArtifact<Scope>(run, 'flows-scope').data,
+      readArtifact<Flows>(run, 'flows-expand').data,
+    ),
 };

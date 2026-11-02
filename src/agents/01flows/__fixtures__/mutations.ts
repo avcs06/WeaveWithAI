@@ -89,4 +89,5 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
     f.fields.push({ ...field(f, 'FD03'), id: 'FD06', label: 'ISBN' }),
   ),
   'FLOW-025': edit((f) => (flow(f, 'F02').signedOut = false)),
+  'FLOW-026': edit((f) => (flow(f, 'F03').alternatives[0]!.steps = [])),
 };

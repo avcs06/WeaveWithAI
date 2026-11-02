@@ -1,8 +1,8 @@
 /**
  * FLOW-001 · mandatory
- * Flow ids are F01, F02, ...; step ids F01.S01 and alternative ids F01.A01 start with their flow's id; no id is used twice.
- * Pass: { id: 'F03', steps: [{ id: 'F03.S01' }], alternatives: [{ id: 'F03.A01' }] }
- * Fail: { id: 'F3' } · step 'F01-S01' · step 'F02.S01' inside flow F03 · 'F03.S01' used twice
+ * Flow ids are F01, F02, ...; step ids F01.S01 and alternative ids F01.A01 start with their flow's id, and an alternative's step ids F01.A01.S01 with the alternative's; no id is used twice.
+ * Pass: { id: 'F03', steps: [{ id: 'F03.S01' }], alternatives: [{ id: 'F03.A01', steps: [{ id: 'F03.A01.S01' }] }] }
+ * Fail: { id: 'F3' } · step 'F01-S01' · step 'F02.S01' inside flow F03 · 'F03.S01' used twice · step 'F03.S01' inside F03.A01
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule, duplicates } from '../../../core/rules';
@@ -30,17 +30,24 @@ export const rule = defineRule<FlowInput>(
         );
     }
     for (const flow of flows.flows) {
-      const groups: { items: { id: string }[]; letter: string }[] = [
-        { items: flow.steps, letter: 'S' },
-        { items: flow.alternatives, letter: 'A' },
+      const groups: { items: { id: string }[]; parent: string; letter: string }[] = [
+        { items: flow.steps, parent: flow.id, letter: 'S' },
+        { items: flow.alternatives, parent: flow.id, letter: 'A' },
+        ...flow.alternatives.map((alternative) => ({
+          items: alternative.steps,
+          parent: alternative.id,
+          letter: 'S',
+        })),
       ];
-      for (const { items, letter } of groups) {
-        const childId = new RegExp(`^${flow.id}\\.${letter}\\d{2,}$`);
+      for (const { items, parent, letter } of groups) {
+        const childId = new RegExp(
+          `^${parent.replaceAll('.', '\\.')}\\.${letter}\\d{2,}$`,
+        );
         for (const item of items) {
           if (!childId.test(item.id)) {
             issues.push(
               fail(
-                `Id "${item.id}" in ${flow.id} is malformed; use ${flow.id}.${letter}01, ${flow.id}.${letter}02, ...`,
+                `Id "${item.id}" in ${parent} is malformed; use ${parent}.${letter}01, ${parent}.${letter}02, ...`,
                 item.id,
               ),
             );
@@ -49,7 +56,7 @@ export const rule = defineRule<FlowInput>(
         for (const id of duplicates(items, (item) => item.id)) {
           issues.push(
             fail(
-              `Id "${id}" appears twice in ${flow.id}; renumber so every id is unique.`,
+              `Id "${id}" appears twice in ${parent}; renumber so every id is unique.`,
               id,
             ),
           );

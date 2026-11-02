@@ -121,7 +121,7 @@ export const Effect = z.object({
 });
 
 export const Step = z.object({
-  id: z.string().describe('F01.S01'),
+  id: z.string().describe('F01.S01; F01.A01.S01 inside an alternative'),
   kind: z.enum(['user', 'system']),
   userAction: z.string().describe('"" for system steps'),
   websiteResponse: z.string().describe('What the user can see, or what changes'),
@@ -139,10 +139,16 @@ export const Alternative = z.object({
   from: z.string().describe('The step ID it branches from'),
   kind: z.enum(ALTERNATIVE_KINDS),
   condition: z.string(),
-  websiteResponse: z.string(),
+  steps: z
+    .array(Step)
+    .describe(
+      "The path from there: one or more steps written like the flow's, numbered F01.A01.S01, F01.A01.S02, ...",
+    ),
   resumesAt: z
     .string()
-    .describe('Step ID the user returns to, or "" if the flow ends'),
+    .describe(
+      'Step ID the flow continues at after the last step, or "" if the flow ends there',
+    ),
 });
 
 export const Flow = z.object({

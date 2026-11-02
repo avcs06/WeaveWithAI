@@ -64,7 +64,7 @@ export const Operation = z.object({
   entity: z.string(),
   summary: z.string(),
   inputs: z.array(Input).describe('What the user fills in that it takes; []'),
-  flowSteps: z.array(z.string()).describe('The ids of the steps and alternatives it serves'),
+  flowSteps: z.array(z.string()).describe("The ids of the steps it serves, an alternative's steps included (F01.A01.S01)"),
 });
 
 export const ScreenSource = z.object({

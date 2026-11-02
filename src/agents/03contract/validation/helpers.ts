@@ -6,4 +6,9 @@ import type { Contract } from '../schema';
 
 export type ContractInput = { contract: Contract; scope: Scope; flows: Flows };
 
-export const allSteps = (flows: Flows): Step[] => flows.flows.flatMap((flow) => flow.steps);
+/** Every step of every flow, the alternatives' included. */
+export const allSteps = (flows: Flows): Step[] =>
+  flows.flows.flatMap((flow) => [
+    ...flow.steps,
+    ...flow.alternatives.flatMap((alternative) => alternative.steps),
+  ]);
