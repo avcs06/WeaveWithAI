@@ -75,4 +75,7 @@ export type CheckboxProps = Omit<
   CheckboxName;
 
 /** The checked boxes' values are its `value`; the caller lays them out. */
-export type CheckboxGroupProps = SelectableMultipleGroupProps;
+export type CheckboxGroupProps = SelectableMultipleGroupProps & {
+  /** The layout of the boxes, such as `flex-col-gap-2`: the group lays out nothing itself. */
+  className?: string;
+};

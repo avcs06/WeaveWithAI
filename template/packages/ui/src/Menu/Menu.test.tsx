@@ -176,6 +176,26 @@ describe('Menu', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('puts a footer below the list, outside the menu, and leaves it out when there is none', () => {
+    const { container, rerender } = renderUI(
+      <Menu role="menu" aria-label="Pages" data-testid="menu" footer={<span>member@example.com</span>}>
+        <MenuItem role="menuitem">Rename</MenuItem>
+      </Menu>,
+    );
+    const footer = slot(screen.getByTestId('menu'), 'footer');
+    expect(footer).toContainElement(screen.getByText('member@example.com'));
+    expect(screen.getByRole('menu')).not.toContainElement(footer);
+    const list = slot(screen.getByTestId('menu'), 'list')!;
+    expect(list.compareDocumentPosition(footer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    rerender(
+      <Menu role="menu" aria-label="Pages" data-testid="menu">
+        <MenuItem role="menuitem">Rename</MenuItem>
+      </Menu>,
+    );
+    expect(slot(screen.getByTestId('menu'), 'footer')).toBeNull();
+    expect(container.querySelector('[data-slot="footer"]')).toBeNull();
+  });
+
   it('forwards refs and props to every part', () => {
     const refs = {
       menu: createRef<HTMLDivElement>(),

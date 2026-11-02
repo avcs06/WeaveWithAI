@@ -32,7 +32,7 @@
  */
 import { Button } from '@packages/ui/Button';
 import { Chip, ChipGroup } from '@packages/ui/Chip';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Star, Ticket } from 'lucide-react';
 import React, { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -237,10 +237,9 @@ const InterestsForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Save</Button>}
     >
       <Controller
         name="tracks"
@@ -265,9 +264,8 @@ const InterestsForm = () => {
           </ChipGroup>
         )}
       </Controller>
-      <Button type="submit">Save</Button>
       <p role="status">{status}</p>
-    </form>
+    </Form>
   );
 };
 

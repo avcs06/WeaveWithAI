@@ -31,7 +31,7 @@
 import { classNames } from '@packages/styles/classNames';
 import { Button } from '@packages/ui/Button';
 import { Card, CardGroup } from '@packages/ui/Card';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Link } from '@packages/ui/Link';
 import React, { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -225,10 +225,9 @@ const TicketForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Register</Button>}
     >
       <Controller
         name="ticket"
@@ -253,9 +252,8 @@ const TicketForm = () => {
           </CardGroup>
         )}
       </Controller>
-      <Button type="submit">Register</Button>
       <p role="status">{status}</p>
-    </form>
+    </Form>
   );
 };
 

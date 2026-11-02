@@ -173,3 +173,45 @@ export async function colorVariables(
     );
   return findings;
 }
+
+/** R-009: two targets closer than 8px, edge to edge. */
+export async function targetGaps(page: Page): Promise<Finding[]> {
+  const pairs = await inPage<{ a: string; b: string; gap: number }[]>(
+    page,
+    'targetGaps',
+  );
+  return pairs.map((pair) =>
+    finding(
+      'DESIGN-R-009',
+      'mandatory',
+      `${pair.a} and ${pair.b} are ${pair.gap}px apart; controls sit at least 8px apart`,
+      pair.a,
+    ),
+  );
+}
+
+/** R-010: a container's gap over the gap of the container around it. R-011: a container's padding under its own gap. */
+export async function containerSpacing(page: Page): Promise<Finding[]> {
+  const { nesting, padding } = await inPage<{
+    nesting: { element: string; gap: number; parent: string; outer: number }[];
+    padding: { element: string; padding: number; gap: number }[];
+  }>(page, 'containerSpacing');
+  return [
+    ...nesting.map((n) =>
+      finding(
+        'DESIGN-R-010',
+        'mandatory',
+        `gap ${n.gap}px inside ${n.parent}, whose gap is ${n.outer}px; a group's gap is at most its parent's`,
+        n.element,
+      ),
+    ),
+    ...padding.map((p) =>
+      finding(
+        'DESIGN-R-011',
+        'mandatory',
+        `padding ${p.padding}px with a gap of ${p.gap}px; a container's padding is at least its gap`,
+        p.element,
+      ),
+    ),
+  ];
+}

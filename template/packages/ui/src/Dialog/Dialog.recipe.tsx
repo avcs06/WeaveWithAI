@@ -32,7 +32,7 @@ import {
   DialogResult,
   openConfirmationDialog,
 } from '@packages/ui/Dialog';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Input } from '@packages/ui/Input';
 import { Tag } from '@packages/ui/Tag';
 import { Pencil } from 'lucide-react';
@@ -122,7 +122,7 @@ const InviteSpeaker = () => {
           </>
         }
       >
-        <form id="invite-speaker" noValidate onSubmit={invite}>
+        <Form id="invite-speaker" onSubmit={invite} fill>
           <Controller
             name="email"
             control={control}
@@ -132,7 +132,7 @@ const InviteSpeaker = () => {
               <Input label="Email" type="email" autoComplete="off" {...field} />
             )}
           </Controller>
-        </form>
+        </Form>
       </Dialog>
     </>
   );

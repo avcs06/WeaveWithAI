@@ -23,7 +23,7 @@
  */
 import { Avatar } from '@packages/ui/Avatar';
 import { Button } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import {
   MultiSelect,
   Select,
@@ -141,10 +141,16 @@ const RegistrationForm = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(registerAttendee)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Registering…' : undefined}
+        >
+          Register
+        </Button>
+      }
     >
       <Controller
         name="ticketType"
@@ -187,13 +193,7 @@ const RegistrationForm = () => {
           </MultiSelect>
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Registering…' : undefined}
-      >
-        Register
-      </Button>
-    </form>
+    </Form>
   );
 };
 

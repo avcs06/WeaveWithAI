@@ -13,7 +13,7 @@ import { CheckIcon } from '../Icons';
 import { FlexScrollArea } from '../ScrollArea';
 import { Tooltip } from '../Tooltip';
 import { useTruncation } from '../Truncate';
-import { useIconAddon } from '../utils';
+import { hasContent, useIconAddon } from '../utils';
 
 import {
   menu,
@@ -37,7 +37,8 @@ import type {
 
 /**
  * The shell; its list scrolls inside the shell's max height. A `header`, like
- * a search field, sits above the list, outside the menu.
+ * a search field, sits above the list and a `footer` below it, both outside
+ * the menu.
  *
  * @internal
  */
@@ -45,13 +46,15 @@ export const Menu = ({
   availableHeight,
   loading,
   header,
+  footer,
   style,
   className,
   children,
   ...props
 }: MenuProps) => {
-  // With a header, the menu's role, id and name move to the list, which holds
-  // only the rows: a menu can't hold a field.
+  // With a header or a footer, the menu's role, id and name move to the list,
+  // which holds only the rows: a menu can't hold a field or a button.
+  const outside = hasContent(header) || hasContent(footer);
   const {
     role,
     id,
@@ -72,7 +75,7 @@ export const Menu = ({
 
   return (
     <div
-      {...(header
+      {...(outside
         ? shellProps
         : { ...props, 'aria-busy': loading || undefined })}
       data-ds=""
@@ -107,7 +110,7 @@ export const Menu = ({
         })}
       >
         <div
-          {...(header && listSemantics)}
+          {...(outside && listSemantics)}
           data-ds=""
           data-slot="list"
           className={classNames(menuList, 'flex-col-gap-0.5')}
@@ -115,6 +118,11 @@ export const Menu = ({
           {children}
         </div>
       </FlexScrollArea>
+      {hasContent(footer) && (
+        <div data-slot="footer" data-ds="" className="shrink-0">
+          {footer}
+        </div>
+      )}
     </div>
   );
 };

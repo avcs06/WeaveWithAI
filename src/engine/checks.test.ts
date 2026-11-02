@@ -61,3 +61,12 @@ describe('a session that reinstalls the packages', () => {
     expect(issues.map((i) => [i.rule, i.severity])).toEqual([['CODE-013', 'mandatory']]);
   });
 });
+
+describe('a component used without its recipe', () => {
+  it('fails CODE-014, naming the file and the recipe to read', () => {
+    const issues = checkIssues({ ...passing, unreadRecipes: [{ component: 'Avatar', file: 'web/app/components/AccountMenu/AccountMenu.tsx' }] });
+    expect(issues).toEqual([
+      expect.objectContaining({ rule: 'CODE-014', severity: 'mandatory', at: 'web/app/components/AccountMenu/AccountMenu.tsx', message: expect.stringContaining('get_recipe Avatar') }),
+    ]);
+  });
+});

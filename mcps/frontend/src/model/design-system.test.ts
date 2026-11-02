@@ -518,3 +518,15 @@ describe('validate — field-width', () => {
     expect(system.validate('<header><TextField label="Search" className="w-64" /></header>', 'app/page.tsx').findings).toEqual([]);
   });
 });
+
+describe('validate — an ancestor tag before a space', () => {
+  it('flags the element only inside that ancestor, at any depth', () => {
+    const inside = '<Form><section><div><TextField label="City" /></div></section></Form>';
+    const [finding] = system.validate(inside, 'app/page.tsx').findings;
+    expect(finding).toMatchObject({ rule: 'invalid-alternative', suggestion: 'FieldRow' });
+    expect(finding?.message).toContain('holding <TextField>');
+    expect(finding?.message).toContain('inside <Form>');
+    const outside = '<header><div><TextField label="Search" /></div></header>';
+    expect(system.validate(outside, 'app/page.tsx').findings).toEqual([]);
+  });
+});

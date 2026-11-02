@@ -87,6 +87,8 @@ const EXPORTER = { file: 'node', args: ['tools/export-design-system.mjs'] };
 const INTERNAL = new Set([
   'MenuItem',
   'MenuGroup',
+  'SidebarMenuItem',
+  'FormRow',
   'UIRoot',
   'Controller',
   'ControlBox',
@@ -191,9 +193,10 @@ export async function inventory(
       name,
       category,
       description,
+      // A field's `width` is a Form layout multiple, not a look the theme sets.
       variants: Object.fromEntries(
         props.flatMap((prop) =>
-          prop.allowedValues?.length ? [[prop.name, prop.allowedValues]] : [],
+          prop.allowedValues?.length && prop.name !== 'width' ? [[prop.name, prop.allowedValues]] : [],
         ),
       ),
       ...componentLooks(recipes, { name, category, props }),

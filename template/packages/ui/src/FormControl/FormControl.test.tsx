@@ -496,3 +496,36 @@ describe('controlAttributes', () => {
     });
   });
 });
+
+describe('a field with an action, and its width', () => {
+  it('puts the action beside the box, under the label and above the messages', () => {
+    const { container } = renderUI(
+      <Field
+        label="Invite"
+        helpText="One address"
+        error="Not an email"
+        action={<button type="button">Send</button>}
+      />,
+    );
+    const row = container.querySelector('[data-slot="action-row"]')!;
+    expect(row).toContainElement(box(container));
+    expect(row).toContainElement(screen.getByRole('button', { name: 'Send' }));
+    expect(row).not.toContainElement(message(container));
+    const label = screen.getByText('Invite').closest('label')!;
+    expect(
+      label.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      row.compareDocumentPosition(message(container)) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('carries its width for the Form, and none when left out', () => {
+    const { container, rerender } = renderUI(<Field label="Code" width="0.5x" />);
+    const root = () => container.querySelector('[data-slot="form-control"]');
+    expect(root()).toHaveAttribute('data-width', '0.5x');
+    rerender(<Field label="Code" />);
+    expect(root()).not.toHaveAttribute('data-width');
+  });
+});

@@ -1,23 +1,31 @@
 /**
- * Form: Controller, useController and useCanSubmitForm put the design system's
- * fields under react-hook-form. Call `useForm`, render every field through
- * `Controller`, and spread `{...field}` on the control: it carries the name,
- * value, `onChange`, `onBlur`, a ref that focuses the first invalid field on
- * submit, the `required` mark from `rules`, and the `error` message.
+ * Form: a form's layout, with Controller, useController and useCanSubmitForm
+ * putting the design system's fields under react-hook-form. Form lays out
+ * the fields in a column at the form's field width, then its own `error` and
+ * its `actions`, the main one last. Call `useForm`, render every field
+ * through `Controller`, and spread `{...field}` on the control: it carries
+ * the name, value, `onChange`, `onBlur`, a ref that focuses the first invalid
+ * field on submit, the `required` mark from `rules`, and the `error` message.
  *
  * When not to use:
  * - A live filter or a setting saved as it changes is not a form: keep the
  *   value in `useState` and use the control on its own.
- * - Never keep field values in `useState` next to a `<form>`.
+ * - Never keep field values in `useState` next to a Form.
  *
  * Pitfalls:
- * - Validation goes in `rules`, which also sets `required`. Use `noValidate` on
- *   the `<form>` so the browser's bubbles don't replace the messages.
+ * - Validation goes in `rules`, which also sets `required`. Form turns the
+ *   browser's own validation off, so the fields show the messages.
+ * - Every field is 1x wide, the form's field width. A field whose content
+ *   needs another sets `width` (0.5x, 0.75x, 1.5x, 2x), never a width class,
+ *   so the fields of one form line up. In a Dialog, `fill` gives every field
+ *   the dialog's width.
+ * - Fields side by side go in a FormRow. A button beside a field goes in the
+ *   field's `action`.
  * - `{...field}` overwrites `required` and `error` given before it.
  * - A rule without a message sets `error` to `true`, which only styles the
  *   field: give every rule a message.
- * - Report a server's error with `setError`, on the field or on `root`. A
- *   `root` error stays until `clearErrors('root')`.
+ * - Report a server's error with `setError`, on the field or on `root`; a
+ *   `root` error is the Form's `error`. It stays until `clearErrors('root')`.
  * - Validation runs on submit by default: errors show after the first submit,
  *   then update as the user edits. `mode: 'onBlur'` validates earlier.
  * - A gated submit button does nothing on Enter either, so gate it only when
@@ -27,13 +35,15 @@ import { Button } from '@packages/ui/Button';
 import { Checkbox } from '@packages/ui/Checkbox';
 import {
   Controller,
+  Form,
+  FormRow,
   useCanSubmitForm,
   useController,
   type UseControllerProps,
 } from '@packages/ui/Form';
 import { Input, NumberInput, PasswordInput } from '@packages/ui/Input';
 import { MultiSelect, Select, SelectOption } from '@packages/ui/Select';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { type Control, useForm, type FieldValues } from 'react-hook-form';
 
 // Setup: stand-ins for your app's data and requests, not part of the pattern.
@@ -54,6 +64,7 @@ const registerAttendee = (registration: Registration) =>
   wait(400).then(() => registration);
 const sendInvites = (invites: Invites) => wait(400).then(() => invites);
 const saveLimits = (tickets: Tickets) => wait(400).then(() => tickets);
+const saveAddress = (address: Address) => wait(400).then(() => address);
 
 // Usage: the patterns to copy.
 type NewEvent = {
@@ -95,10 +106,16 @@ const NewEventForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(save)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Saving the event' : undefined}
+        >
+          Save event
+        </Button>
+      }
     >
       <Controller
         name="title"
@@ -156,6 +173,7 @@ const NewEventForm = () => {
           <PasswordInput
             label="Organizer pin"
             autoComplete="off"
+            width="0.5x"
             disabledWithReason="Set a pin after the first save"
             {...field}
           />
@@ -168,13 +186,7 @@ const NewEventForm = () => {
           </Checkbox>
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Saving the event' : undefined}
-      >
-        Save event
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -182,8 +194,8 @@ type Publish = { title: string };
 
 /**
  * A server's rejection: `setError` on a field shows under it, on `root.server`
- * in a `role="alert"` paragraph. The root error outlives edits, so clear it
- * when the user changes a field.
+ * as the Form's `error`. The root error outlives edits, so clear it when the
+ * user changes a field.
  */
 const ServerErrors = () => {
   const {
@@ -211,10 +223,17 @@ const ServerErrors = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(publish)}
-      className="flex-col-gap-4 items-start"
+      error={errors.root?.server?.message}
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Publishing the event' : undefined}
+        >
+          Publish
+        </Button>
+      }
     >
       <Controller
         name="title"
@@ -223,14 +242,7 @@ const ServerErrors = () => {
       >
         {({ field }) => <Input label="Title" autoComplete="off" {...field} />}
       </Controller>
-      {errors.root?.server && <p role="alert">{errors.root.server.message}</p>}
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Publishing the event' : undefined}
-      >
-        Publish
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -250,10 +262,16 @@ const GatedSubmit = () => {
   const canSubmit = useCanSubmitForm(control);
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(registerAttendee)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          disabledWithReason={canSubmit ? undefined : 'Fix the errors above'}
+        >
+          Register
+        </Button>
+      }
     >
       <Controller
         name="name"
@@ -277,13 +295,7 @@ const GatedSubmit = () => {
           <Input label="Email" type="email" autoComplete="email" {...field} />
         )}
       </Controller>
-      <Button
-        type="submit"
-        disabledWithReason={canSubmit ? undefined : 'Fix the errors above'}
-      >
-        Register
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -324,15 +336,13 @@ const InviteForm = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(sendInvites)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Invite</Button>}
     >
       <EmailField control={control} name="host" />
       <EmailField control={control} name="cohost" />
-      <Button type="submit">Invite</Button>
-    </form>
+    </Form>
   );
 };
 
@@ -348,10 +358,9 @@ const TicketLimits = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(saveLimits)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Save limits</Button>}
     >
       <Controller
         name="capacity"
@@ -383,8 +392,7 @@ const TicketLimits = () => {
           />
         )}
       </Controller>
-      <Button type="submit">Save limits</Button>
-    </form>
+    </Form>
   );
 };
 
@@ -401,10 +409,9 @@ const BlurValidatedForm = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(registerAttendee)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Continue</Button>}
     >
       <Controller
         name="name"
@@ -413,8 +420,60 @@ const BlurValidatedForm = () => {
       >
         {({ field }) => <Input label="Name" autoComplete="name" {...field} />}
       </Controller>
-      <Button type="submit">Continue</Button>
-    </form>
+    </Form>
+  );
+};
+
+type Address = { city: string; postcode: string };
+
+/**
+ * A form that is a section of its own: `title` and `description` put it in
+ * a Section. Fields side by side go in a FormRow, each at its own `width`;
+ * the postcode is short, so 0.5x.
+ */
+const AddressForm = () => {
+  const [saved, setSaved] = useState('');
+  const { control, handleSubmit } = useForm<Address>({
+    defaultValues: { city: '', postcode: '' },
+  });
+
+  return (
+    <Form
+      title="Venue address"
+      description="Where attendees find the event."
+      onSubmit={handleSubmit(async (address) => {
+        await saveAddress(address);
+        setSaved(`Saved ${address.city}`);
+      })}
+      actions={<Button type="submit">Save address</Button>}
+    >
+      <FormRow>
+        <Controller
+          name="city"
+          control={control}
+          rules={{ required: 'Enter the city' }}
+        >
+          {({ field }) => (
+            <Input label="City" autoComplete="address-level2" {...field} />
+          )}
+        </Controller>
+        <Controller
+          name="postcode"
+          control={control}
+          rules={{ required: 'Enter the postcode' }}
+        >
+          {({ field }) => (
+            <Input
+              label="Postcode"
+              width="0.5x"
+              autoComplete="postal-code"
+              {...field}
+            />
+          )}
+        </Controller>
+      </FormRow>
+      <p role="status">{saved}</p>
+    </Form>
   );
 };
 
@@ -427,6 +486,7 @@ export default function FormRecipe() {
       <InviteForm />
       <TicketLimits />
       <BlurValidatedForm />
+      <AddressForm />
     </div>
   );
 }

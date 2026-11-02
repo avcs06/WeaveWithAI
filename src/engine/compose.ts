@@ -4,10 +4,11 @@ import type { Issue } from '../core/issues';
 import type { Compose, Draft, Round } from '../runner/runSpecStage';
 import type { StageContext } from '../agents/stages';
 import { randomUUID } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { checkIssues, type LongFile, MAX_LINES } from './checks';
 import type { ScreenExpect } from './conformance';
+import { UNIT_MARKER, type UnreadRecipe, unreadInFiles } from './recipes';
 import { type CheckedRoute, protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
@@ -46,7 +47,10 @@ export type Unit = {
 };
 
 export type UnitResult = {
-  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed' | 'readsOutside'> & { longFiles: LongFile[] };
+  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed' | 'readsOutside'> & {
+    longFiles: LongFile[];
+    unreadRecipes: UnreadRecipe[];
+  };
   rendered: Issue[];
   diff: string;
 };
@@ -72,6 +76,9 @@ export function sessionCompose(
   const run = async (task: string): Promise<Draft<UnitResult>> => {
     sessions += 1;
     const id = sessions === 1 ? unit.id : `${unit.id}-fix-${sessions - 1}`;
+    // The recipe gate counts reads from here: the unit's fixes continue its Muse session, which holds what it read.
+    if (sessions === 1)
+      appendFileSync(path.join(appDir, '.weave', 'tools.log'), `${JSON.stringify({ at: new Date().toISOString(), tool: UNIT_MARKER, unit: unit.id })}\n`);
     const result = await runSession(
       ctx,
       appDir,
@@ -96,13 +103,18 @@ export function sessionCompose(
     // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
     const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
     const protectedHits = protectedOf(touched, unit);
-    const longFiles = touched
-      .filter((file) => /\.(tsx?|css\.ts)$/.test(file) && existsSync(path.join(appDir, file)))
-      .map((file) => ({ path: file, lines: readFileSync(path.join(appDir, file), 'utf8').split('\n').length }))
+    const sources = touched
+      .filter((file) => /\.tsx?$/.test(file) && existsSync(path.join(appDir, file)))
+      .map((file) => ({ file, text: readFileSync(path.join(appDir, file), 'utf8') }));
+    const longFiles = sources
+      .map(({ file, text }) => ({ path: file, lines: text.split('\n').length }))
       .filter((file) => file.lines > MAX_LINES);
+    // The recipe gate's leftovers, over the unit's whole diff: reads count from the unit's marker.
+    const log = path.join(appDir, '.weave', 'tools.log');
+    const unreadRecipes = unreadInFiles(sources, existsSync(log) ? readFileSync(log, 'utf8') : '');
     const { status, summary, checks, changed, readsOutside } = result;
     return {
-      data: { session: { status, summary, checks, protectedHits, changed, readsOutside, longFiles }, rendered, diff },
+      data: { session: { status, summary, checks, protectedHits, changed, readsOutside, unreadRecipes, longFiles }, rendered, diff },
       raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
       model: resolveBackend(ctx.config, ctx.backend).model,
     };

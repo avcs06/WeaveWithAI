@@ -1,6 +1,7 @@
 import { AtSign, Search } from 'lucide-react';
 import React, { type ReactNode, useState } from 'react';
 
+import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
 import { Link } from '../Link';
 import { StoryPage, StorySection } from '../StoryLayout';
@@ -166,6 +167,17 @@ const FormControlStories = () => {
           <TextField
             label="Loading"
             loadingWithReason="Checking availability"
+          />
+        </Row>
+      </StorySection>
+
+      <StorySection title="Beside a button">
+        <Row label="The action lines up with the box; the label stays above both, the message below both">
+          <TextField
+            label="Invite by email"
+            placeholder="name@example.com"
+            error="Enter an email like name@example.com"
+            action={<Button>Send</Button>}
           />
         </Row>
       </StorySection>

@@ -29,7 +29,7 @@
  *   `allowNegative={false}`: number keypads have no minus key.
  */
 import { Button, IconButton } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import {
   Input,
   NumberInput,
@@ -82,10 +82,16 @@ const ContactForm = () => {
   } = useForm<Contact>({ defaultValues: { name: '', email: '', phone: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(saveContact)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Saving your contact' : undefined}
+        >
+          Save
+        </Button>
+      }
     >
       <Controller
         name="name"
@@ -127,13 +133,7 @@ const ContactForm = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Saving your contact' : undefined}
-      >
-        Save
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -329,10 +329,16 @@ const EventAddressField = () => {
   } = useForm<Address>({ mode: 'onChange', defaultValues: { address: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(reserveAddress)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Reserving the address' : undefined}
+        >
+          Reserve
+        </Button>
+      }
     >
       <Controller
         name="address"
@@ -360,13 +366,7 @@ const EventAddressField = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Reserving the address' : undefined}
-      >
-        Reserve
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -506,10 +506,16 @@ const GuestCount = () => {
   } = useForm<Guests>({ defaultValues: { guests: null } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(addGuests)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Adding your guests' : undefined}
+        >
+          Add guests
+        </Button>
+      }
     >
       <Controller
         name="guests"
@@ -529,13 +535,7 @@ const GuestCount = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Adding your guests' : undefined}
-      >
-        Add guests
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -561,10 +561,16 @@ const SignInForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
+        >
+          Sign in
+        </Button>
+      }
     >
       <Controller
         name="password"
@@ -582,13 +588,7 @@ const SignInForm = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
-      >
-        Sign in
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -608,10 +608,16 @@ const SignUpPassword = () => {
   } = useForm<SignUp>({ defaultValues: { password: '', confirm: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(createAccount)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Creating your account' : undefined}
+        >
+          Create account
+        </Button>
+      }
     >
       <Controller
         name="password"
@@ -648,13 +654,7 @@ const SignUpPassword = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Creating your account' : undefined}
-      >
-        Create account
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -733,10 +733,45 @@ const VenueSearch = () => {
   );
 };
 
+/**
+ * A button beside the field: `action` lines it up with the box, so the label
+ * stays above both and a message below both. The button says why it waits.
+ */
+const InviteByEmail = () => {
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState('');
+  const invalid = email !== '' && !email.includes('@');
+
+  return (
+    <div className="flex-col-gap-2">
+      <Input
+        label="Invite by email"
+        type="email"
+        autoComplete="off"
+        value={email}
+        onChange={setEmail}
+        error={invalid ? 'Enter an email like name@example.com' : undefined}
+        action={
+          <Button
+            disabledWithReason={
+              email === '' || invalid ? 'Enter an email first' : undefined
+            }
+            onClick={() => setSent(`Invited ${email}`)}
+          >
+            Send
+          </Button>
+        }
+      />
+      <p role="status">{sent}</p>
+    </div>
+  );
+};
+
 export default function InputRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContactForm />
+      <InviteByEmail />
       <AutosavedTitle />
       <PromoCode />
       <Tagline />

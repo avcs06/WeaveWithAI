@@ -9,6 +9,8 @@ export type MenuProps = ComponentPropsWithRef<'div'> &
     loading?: boolean;
     /** Above the list and outside the menu, like a search field. */
     header?: ReactNode;
+    /** Below the list and outside the menu, like a sidebar's account row; it keeps its place while the list scrolls. */
+    footer?: ReactNode;
   };
 
 export type MenuItemProps = ComponentPropsWithRef<'div'> &

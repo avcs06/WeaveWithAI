@@ -51,6 +51,8 @@ export const FormControl = ({
   variant,
   look,
   tooltip,
+  action,
+  width,
   ref,
   leftIcon,
   rightIcon,
@@ -142,9 +144,16 @@ export const FormControl = ({
   };
 
   const control = children(controlProps);
+  const boxed = withControlBox ? (
+    <ControlBox {...box}>{control}</ControlBox>
+  ) : (
+    // The control is its own box: it gets the box's props.
+    <Slot {...box}>{control}</Slot>
+  );
   return (
     <div
       data-slot="form-control"
+      data-width={width}
       className={classNames('flex-col-gap-2', className)}
       data-ds=""
     >
@@ -157,11 +166,20 @@ export const FormControl = ({
         rightAddOn={labelRightSlot}
         onClick={focusFromLabel}
       />
-      {withControlBox ? (
-        <ControlBox {...box}>{control}</ControlBox>
+      {hasContent(action) ? (
+        // Beside the box, not the label, so a message below moves neither.
+        <div
+          data-slot="action-row"
+          className="flex-row-gap-2 items-start"
+          data-ds=""
+        >
+          <div className="flex-fill-x" data-ds="">
+            {boxed}
+          </div>
+          {action}
+        </div>
       ) : (
-        // The control is its own box: it gets the box's props.
-        <Slot {...box}>{control}</Slot>
+        boxed
       )}
       {hasContent(helpText) && (
         <div id={helpId} data-slot="help" className={controlMessage} data-ds="">

@@ -142,3 +142,18 @@ describe('a coding unit', () => {
     expect(result.known.map((i) => i.rule)).toContain('CODE-004');
   });
 });
+
+describe('the recipe gate', () => {
+  const file = 'web/app/(routes)/books/page.tsx';
+  const code = "import { Dialog } from '@packages/ui/Dialog';\nexport default function Page() { return <Dialog title=\"Books\" />; }\n";
+  const read = `${JSON.stringify({ tool: 'mcp__weave_design_system__get_recipe', name: 'Dialog' })}\n`;
+
+  it('fails CODE-014 for a component used without its recipe read, and not once it was read', async () => {
+    const unread = setup('unread-recipe', false, () => false);
+    const result = await withWrites({ [file]: code, '.weave/tools.log': '' }, () => runUnit(unread.ctx, unread.spec, unread.deps));
+    expect(result.known.map((i) => [i.rule, i.at])).toContainEqual(['CODE-014', file]);
+    const done = setup('read-recipe', false, () => false);
+    const clean = await withWrites({ [file]: code, '.weave/tools.log': read }, () => runUnit(done.ctx, done.spec, done.deps));
+    expect(clean.known.filter((i) => i.rule === 'CODE-014')).toEqual([]);
+  });
+});

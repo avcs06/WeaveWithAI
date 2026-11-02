@@ -27,6 +27,8 @@ interface AlternativeMatcher extends Compound {
    * member), or `undefined` for a selector with no tag (`.flex`).
    */
   tag?: string;
+  /** A tag one of the elements around it must have, written before a space: `Form div`. */
+  within?: string;
   /** `:not(…)` parts: the element matches only when the code shows none of them holds. */
   not: Compound[];
   /** The declaration as written, for the finding's message. */
@@ -125,6 +127,8 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  *   `a:not([href])`           an <a> with no href
  *   `aside:has(nav, ul)`      an <aside> with a <nav> or a <ul> among its
  *                             direct JSX children
+ *   `Form div:has(Input)`     a <div> holding an <Input>, anywhere inside a
+ *                             <Form>: a tag before a space names an ancestor
  *
  * Tags are case-sensitive, as in JSX: `input` is the native element and
  * `Input` a component. An attribute value matches a literal written on the
@@ -134,12 +138,28 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  */
 function parseAlternative(source: string, owner: string): AlternativeMatcher | undefined {
   const text = source.trim().replace(/[<>]/g, '');
-  const tag = SELECTOR_TAG.exec(text)?.[0];
-  const matcher: AlternativeMatcher = { tag, classNames: [], attributes: [], has: [], not: [], source: text, owner };
+  const split = topLevelSpace(text);
+  const within = split === -1 ? undefined : text.slice(0, split);
+  if (within !== undefined && SELECTOR_TAG.exec(within)?.[0] !== within) return undefined;
+  const rest = split === -1 ? text : text.slice(split + 1).trim();
+  const tag = SELECTOR_TAG.exec(rest)?.[0];
+  const matcher: AlternativeMatcher = { tag, within, classNames: [], attributes: [], has: [], not: [], source: text, owner };
 
-  if (!parseParts(text.slice(tag?.length ?? 0), matcher, matcher.not)) return undefined;
+  if (!parseParts(rest.slice(tag?.length ?? 0), matcher, matcher.not)) return undefined;
   if (!tag && matcher.classNames.length === 0 && matcher.attributes.length === 0 && matcher.has.length === 0) return undefined;
   return matcher;
+}
+
+/** The first space outside `[…]` and `(…)`, which separates an ancestor tag from the element; -1 without one. */
+function topLevelSpace(text: string): number {
+  let depth = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    if (char === '[' || char === '(') depth += 1;
+    else if (char === ']' || char === ')') depth -= 1;
+    else if (depth === 0 && /\s/.test(char!)) return i;
+  }
+  return -1;
 }
 
 /** `import('*\/components/ui/button')` matches under any alias or relative prefix; `import('@radix-ui/react-*')` any package of the scope. */
@@ -168,7 +188,8 @@ function describeCompound({ classNames, attributes, has }: Compound): string[] {
 function describeMatcher(matcher: AlternativeMatcher): string {
   const element = `<${[matcher.tag ?? '*', ...describeCompound(matcher)].join(' ')}>`;
   const without = matcher.not.map((compound) => describeCompound(compound).join(' '));
-  return without.length ? `${element} without ${without.join(' or ')}` : element;
+  const described = without.length ? `${element} without ${without.join(' or ')}` : element;
+  return matcher.within ? `${described} inside <${matcher.within}>` : described;
 }
 
 /** How a message names the owner: `the Button component`, `the useController hook`. */
@@ -192,7 +213,7 @@ function unreadable(source: string): string {
   if (source.startsWith('@')) return "write a package as import('…')";
   if (source.startsWith('import'))
     return "expected import('package') or import('package'){Name, …} with export names";
-  return 'expected a tag, then .class, [attribute], :has(Tag) and :not(…) parts';
+  return 'expected an ancestor tag and a space (optional), a tag, then .class, [attribute], :has(Tag) and :not(…) parts';
 }
 
 /**
@@ -312,7 +333,7 @@ const weight = ({ classNames, attributes, has }: Compound) => classNames.length 
  */
 function moreSpecific(a: AlternativeMatcher, b: AlternativeMatcher): boolean {
   const rank = (matcher: AlternativeMatcher) => [
-    weight(matcher),
+    weight(matcher) + (matcher.within ? 1 : 0),
     matcher.not.reduce((total, compound) => total + weight(compound), 0),
     matcher.tag ? 1 : 0,
   ];
@@ -336,6 +357,7 @@ function bestMatch(element: JsxElement): AlternativeMatcher | undefined {
     // replace `X` with `X`.
     if (matcher.owner === tag) continue;
     if (isOwnerFile(owners, matcher.owner, filePath)) continue;
+    if (matcher.within && !element.ancestors.includes(matcher.within)) continue;
     if (compoundHolds(element, matcher) !== true) continue;
     if (matcher.not.some((compound) => compoundHolds(element, compound) !== false)) continue;
 

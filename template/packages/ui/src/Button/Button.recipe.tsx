@@ -28,7 +28,7 @@
  */
 import { Avatar } from '@packages/ui/Avatar';
 import { Button, IconButton, PlainButton } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Input } from '@packages/ui/Input';
 import { Copy, Info, Play, Plus, Settings, Trash2 } from 'lucide-react';
 import React, { useEffect, useId, useRef, useState } from 'react';
@@ -53,13 +53,25 @@ const SaveForm = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(async (draft) => {
         const result = await saveEvent(draft);
         setSaved(`Saved "${result.title}"`);
       })}
-      className="flex-col-gap-3 items-start"
+      actions={
+        <>
+          <Button variant="base" onClick={() => reset()}>
+            Reset
+          </Button>
+          <Button
+            type="submit"
+            // Saving takes a moment and the status above reports the result.
+            loading={formState.isSubmitting}
+          >
+            Save
+          </Button>
+        </>
+      }
     >
       <Controller
         name="title"
@@ -70,20 +82,8 @@ const SaveForm = () => {
           <Input label="Event title" autoComplete="off" {...field} />
         )}
       </Controller>
-      <div className="flex-row-gap-2 flex-wrap">
-        <Button variant="base" onClick={() => reset()}>
-          Reset
-        </Button>
-        <Button
-          type="submit"
-          // Saving takes a moment and the status below reports the result.
-          loading={formState.isSubmitting}
-        >
-          Save
-        </Button>
-      </div>
       <p role="status">{saved}</p>
-    </form>
+    </Form>
   );
 };
 

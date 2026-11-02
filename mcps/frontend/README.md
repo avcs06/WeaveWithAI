@@ -126,6 +126,7 @@ can apply in one pass.
    | `input[disabled]`                      | an `<input>` with a `disabled` attribute                      |
    | `input:not([type="hidden"])`           | an `<input>` unless it is `type="hidden"`                     |
    | `aside:has(nav, ul)`                   | an `<aside>` with a `<nav>` or a `<ul>` among its direct children |
+   | `Form div:has(Input)`                  | a `<div>` holding an `<Input>`, anywhere inside a `<Form>`    |
    | `Form.Item`                            | a dotted component, `<Form.Item>`                             |
    | `import('@radix-ui/react-tabs')`       | anything imported from that package                           |
    | `import('@mui/material'){Button, Tab}` | only those named imports, and `<Button>` or `<M.Button>`      |
@@ -141,7 +142,8 @@ can apply in one pass.
    dotted tag a capitalized segment is a member (`Form.Item`, `Input.Password`) and a lowercase
    one is a class (`div.flex`). `:not()` takes classes and attributes only, no tag and no
    nesting. `:has()` takes tags only, commas for alternatives, and looks at the direct JSX
-   element children: a child behind an expression, like `{items.map(…)}`, is not seen. In `import('pkg'){A, B}`, `*` stands for any characters, and a leading `*/` means
+   element children: a child behind an expression, like `{items.map(…)}`, is not seen. A tag
+   before a space names an ancestor the element must sit inside, at any depth, one level only. In `import('pkg'){A, B}`, `*` stands for any characters, and a leading `*/` means
    any prefix or none.
 
    Files inside the owning component's folder are exempt, since they implement it; so is every

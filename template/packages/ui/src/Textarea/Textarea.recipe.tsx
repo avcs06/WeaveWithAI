@@ -20,7 +20,7 @@
  * - It takes no icons or add-ons.
  */
 import { Button } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Section } from '@packages/ui/Section';
 import { Textarea } from '@packages/ui/Textarea';
 import React, { useState } from 'react';
@@ -56,10 +56,9 @@ const DescriptionForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Save</Button>}
     >
       <Controller
         name="description"
@@ -77,14 +76,13 @@ const DescriptionForm = () => {
             label="Description"
             helpText="Shown on the event page, above the schedule."
             labelRightSlot={`${field.value.length}/${MAX_DESCRIPTION}`}
+            width="2x"
             {...field}
-            className="w-full"
           />
         )}
       </Controller>
-      <Button type="submit">Save</Button>
       <p role="status">{status}</p>
-    </form>
+    </Form>
   );
 };
 

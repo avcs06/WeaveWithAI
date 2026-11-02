@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { axe, renderUI } from '../test-utils';
 
-import { Controller, useCanSubmitForm, useController } from '.';
+import { Controller, Form, FormRow, useCanSubmitForm, useController } from '.';
 
 // Takes the whole field, as the design system's text controls do.
 type FieldProps = ComponentProps<'input'> & {
@@ -185,5 +185,67 @@ describe('useCanSubmitForm', () => {
     expect(result.current.canSubmit).toBe(false);
     act(() => result.current.form.clearErrors('name'));
     expect(result.current.canSubmit).toBe(true);
+  });
+});
+
+describe('Form', () => {
+  it('lays out the fields, then the error and the actions, with the browser validation off', async () => {
+    const { container } = renderUI(
+      <Form
+        error="Could not save"
+        actions={
+          <>
+            <button type="button">Cancel</button>
+            <button type="submit">Save</button>
+          </>
+        }
+        onSubmit={(event) => event.preventDefault()}
+      >
+        <Field label="Email" />
+      </Form>,
+    );
+    const form = container.querySelector('form')!;
+    expect(form).toHaveAttribute('novalidate');
+    const order = Array.from(
+      form.querySelectorAll('input, [data-slot="message"], [data-slot="actions"]'),
+      (element) => element.getAttribute('data-slot') ?? element.tagName.toLowerCase(),
+    );
+    expect(order).toEqual(['input', 'message', 'actions']);
+    expect(form.querySelector('[data-slot="message"]')).toHaveTextContent(
+      'Could not save',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Save' }).closest('[data-slot="actions"]'),
+    ).not.toBeNull();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('is a Section with its title, and fills its container when asked', () => {
+    const { container } = renderUI(
+      <Form title="New event" headingAs="h2" fill>
+        <Field label="Title" />
+      </Form>,
+    );
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'New event' }),
+    ).toBeInTheDocument();
+    expect(container.querySelector('section')).toContainElement(
+      container.querySelector('form'),
+    );
+    expect(container.querySelector('form')).toHaveAttribute('data-fill');
+  });
+
+  it('puts fields side by side in a FormRow', () => {
+    const { container } = renderUI(
+      <Form>
+        <FormRow>
+          <Field label="A" />
+          <Field label="B" />
+        </FormRow>
+      </Form>,
+    );
+    expect(
+      container.querySelector('[data-slot="row"]')!.querySelectorAll('input'),
+    ).toHaveLength(2);
   });
 });

@@ -101,10 +101,12 @@ export const Radio = ({
 
 /**
  * Radios for one choice from a few visible ones, like a ticket type. A form
- * field with label, help text and error; no layout: lay out with `className`.
+ * field with label, help text and error; no layout: lay out with `className`,
+ * which every use sets.
  *
  * @invalidAlternative [role="radiogroup"]
  * @invalidAlternative import('@radix-ui/react-radio-group')
+ * @requiredProp className
  */
 export const RadioGroup = (props: RadioGroupProps) => (
   <SelectableGroup {...props} mode="single" />

@@ -193,7 +193,9 @@ export async function runSession(
   });
   mkdirSync(runPath(run, 'sessions'), { recursive: true });
   writeFileSync(runPath(run, 'sessions', `${slug}.jsonl`), exec.stdout);
-  const tools = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)).subarray(toolsFrom).toString('utf8') : '';
+  // A log shorter than before was rewritten under the session: all of it is the session's.
+  const wholeLog = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)) : Buffer.alloc(0);
+  const tools = wholeLog.subarray(wholeLog.length < toolsFrom ? 0 : toolsFrom).toString('utf8');
   writeFileSync(runPath(run, 'sessions', `${slug}.tools.jsonl`), tools);
   const { deny = [], allow = [] } = session.reads ?? {};
   // A folder listed on the way to an allowed file is no read of what the rules keep the agent from.

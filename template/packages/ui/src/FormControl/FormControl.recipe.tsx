@@ -22,7 +22,7 @@
  *   and the keyboard: arrows, Home and End.
  */
 import { Button } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import {
   ControlBox,
   FormControl,
@@ -102,10 +102,9 @@ const EventDate = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(saveEventDate)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Save date</Button>}
     >
       <Controller
         name="date"
@@ -135,8 +134,7 @@ const EventDate = () => {
           </FormControl>
         )}
       </Controller>
-      <Button type="submit">Save date</Button>
-    </form>
+    </Form>
   );
 };
 
@@ -216,10 +214,9 @@ const EventRating = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(sendReview)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Send</Button>}
     >
       <Controller
         name="rating"
@@ -247,8 +244,7 @@ const EventRating = () => {
           </FormControl>
         )}
       </Controller>
-      <Button type="submit">Send</Button>
-    </form>
+    </Form>
   );
 };
 

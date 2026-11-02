@@ -1,4 +1,5 @@
 import type { Issue } from '../core/issues';
+import type { UnreadRecipe } from './recipes';
 import type { SessionResult } from './session';
 
 // The checks after a coding session as issues, so the rounds, the
@@ -23,14 +24,18 @@ export type LongFile = { path: string; lines: number };
 const issue = (rule: string, message: string, at?: string): Issue =>
   at === undefined ? { rule, severity: 'mandatory', message } : { rule, severity: 'mandatory', message, at };
 
-/** A failed session check, a write outside the session's paths, or a session that never finished, each a mandatory issue; a read the guidelines rule out, a warning. */
+/** A failed session check, a write outside the session's paths, a component used without its recipe, or a session that never finished, each a mandatory issue; a read the guidelines rule out, a warning. */
 export function checkIssues(
   result: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits'> &
-    Partial<Pick<SessionResult, 'readsOutside'>> & { longFiles?: LongFile[] },
+    Partial<Pick<SessionResult, 'readsOutside'>> & { longFiles?: LongFile[]; unreadRecipes?: UnreadRecipe[] },
 ): Issue[] {
   const issues: Issue[] = result.protectedHits.map((file) =>
     issue('CODE-004', `${file} is outside this session's paths, or a test. Undo the change to it.`, file),
   );
+  for (const { component, file } of result.unreadRecipes ?? [])
+    issues.push(
+      issue('CODE-014', `${file} uses ${component} without its recipe read. Call get_recipe ${component}, then build it as the case that fits.`, file),
+    );
   for (const { path, lines } of result.longFiles ?? [])
     issues.push({
       rule: 'CODE-012',
