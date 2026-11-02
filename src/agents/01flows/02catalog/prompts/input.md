@@ -8,7 +8,7 @@
 
 Write the catalog: the fields, the forms, and a header and a description for every flow the MVP needs. Another call expands each flow into steps from your description. When you are done, a designer reading only this catalog knows every task each user does in the app, and the fields each task needs.
 
-1. Find the flows by walking every role of the scope through every kind below. For browse, view, create, edit, delete and act, walk each vocabulary noun the role works with. Each pair gets a flow, or an entry in `skipped` with the reason it has none. A pair in neither list is a gap.
+1. Find the flows by walking every role of the scope through every kind below. For browse, view, create, edit, delete and act, walk each vocabulary noun the role works with. Each pair gets a flow, or an entry in `skipped` with the reason it has none. A pair in neither list is a gap. Two pairs with one goal get one flow, such as a home that is the same list a browse flow would show. The other pair goes in `skipped`, with a reason that names the flow kept.
    - landing: arriving on the public page and getting started, for the role the page invites in.
    - auth: signing up, signing in and signing out, one flow each, for a role that signs in.
    - home: what the role sees first after signing in, such as a dashboard or an overview, and what it does from there.

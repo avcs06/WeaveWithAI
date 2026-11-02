@@ -43,7 +43,7 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 
 ## Effects
 
-- Effects that do not match the step: a step that saves, changes, deletes, lists or shows records with no effect for it, or an effect for something the step does not do. A step that stores or loads nothing has none. So does a step that saves only values no vocabulary noun keeps, such as signing up or changing the password.
+- Effects that do not match the step: a step that saves, changes, deletes, lists or shows records with no effect for it, or an effect for something the step does not do. A step that stores or loads nothing has none. So does a step that saves only values no vocabulary noun keeps, such as signing up or changing the password. The step that asks to confirm a delete carries the delete effect.
 - A delete whose words also remove what belongs to the record, with no effect for those records.
 
 The validators find the steps that need an alternative from the fields and effects of one step. A missing effect, or fields asked for at one step and saved at the next, also hides a missing alternative.

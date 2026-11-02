@@ -1,7 +1,7 @@
 /**
  * FLOW-011 · mandatory
  * A user step with fields (its own or its form's) whose effects create or update has a 'failure' alternative branching from it,
- * and an 'invalid' one when a field can be typed wrong. A pick from fixed choices or a yes or no cannot.
+ * and an 'invalid' one when a field can be typed wrong. A pick from a list of choices, or a yes or no, cannot.
  * Pass: F03.S02 saves form FM01; alternatives { id: 'F03.A01', kind: 'invalid', from: 'F03.S02' } and { id: 'F03.A02', kind: 'failure', from: 'F03.S02' }
  * Fail: the same step with only the 'invalid' alternative
  */
