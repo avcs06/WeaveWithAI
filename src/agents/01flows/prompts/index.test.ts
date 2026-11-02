@@ -27,13 +27,16 @@ describe('system prompts', () => {
     expect(prompt).toContain('None yet.');
   });
 
-  it('flows: every placeholder filled, answers listed with their question, the examples are the fixture add and delete flows', () => {
+  it('flows: every placeholder filled, answers listed with their question, the examples are the fixture sign-up, add and delete flows', () => {
     const prompt = flowsSystemPrompt({
       Q01: { question: 'Ratings?', answer: 'yes' },
     });
     expect(prompt).not.toContain('{{');
     expect(prompt).toContain(standard);
     expect(prompt).toContain('- Q01 "Ratings?": yes');
+    // The sign-up flow shows a path of two steps, the second one the user's.
+    expect(prompt).toContain('"id": "F01"');
+    expect(prompt).toContain('"id": "F01.A03.S02"');
     expect(prompt).toContain('"id": "F03"');
     expect(prompt).toContain('"name": "Add a book to the reading list"');
     // The delete flow shows its own confirm path.

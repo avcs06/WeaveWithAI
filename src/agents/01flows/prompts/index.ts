@@ -23,7 +23,7 @@ export function flowsSystemPrompt(answers: Answers): string {
   });
 }
 
-/** The "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one fills a form, one confirms a delete. Never a reference idea's flow. */
+/** The "sign up", "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one takes a path of two steps, one fills a form, one confirms a delete. Never a reference idea's flow. */
 function exampleFlows(): string {
   const fixture = Flows.parse(
     JSON.parse(
@@ -33,7 +33,7 @@ function exampleFlows(): string {
       ),
     ),
   );
-  const flows = ['F03', 'F05'].map((id) => {
+  const flows = ['F01', 'F03', 'F05'].map((id) => {
     const flow = fixture.flows.find((candidate) => candidate.id === id);
     if (!flow) throw new Error(`The reading-list fixture has no flow ${id}`);
     return flow;
