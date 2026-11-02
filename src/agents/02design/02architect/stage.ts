@@ -20,7 +20,7 @@ import { renderArchitecture } from './render';
 import { Architecture } from './schema';
 
 // The architect writes every frame, screen and dialog in one call, at high
-// reasoning, its first draft at 0.7; it starts at the client's 64k cap, so no
+// reasoning; it starts at the client's 64k cap, so no
 // cut is billed before a doubling.
 const ARCHITECT_MAX_TOKENS = 65_536;
 const ARCHITECT_EFFORT = 'high';
@@ -50,7 +50,7 @@ async function runArchitect(ctx: StageContext): Promise<void> {
     review: architectReviewGuides(),
     maxTokens: ARCHITECT_MAX_TOKENS,
     reasoningEffort: ARCHITECT_EFFORT,
-    temperature: 0.7,
+    temperature: 0.2,
     patchKeys: ARCHITECTURE_KEYS,
   });
   writeArtifact(run, 'design-architect', result.output, {
