@@ -28,16 +28,16 @@
   marketing layout. Build each frame on the one that fits its screens.
 - A layout shows its frame, and `children` in its main region. No screen
   content.
-- On the landing page, the header offers only sign-in when the hero offers
-  sign-up, or only sign-up when the hero offers sign-in. Follow the
-  architect's choice and keep each action once across the entire view.
+- The design may have the header offer only signing in, because the
+  landing page's hero offers signing up. Build it as the design says.
 - A frame loads the records it shows through the operations `frames.md`
   names for it: call them in its layout and pass the records to its parts.
 - A frame has no H1, not even its logo: each screen's title is the page's
   only H1.
 - The wordmark is `Wordmark` from `@app/components/Wordmark`, with the app
-  name as its children. Never style the app name by hand. Wrap it in
-  `NextLink` when it leads home; `Wordmark` is not itself a link.
+  name as its children. Never style the app name by hand. When it leads
+  home, wrap it in `NextLink` with `look="plain"`: its place already says
+  it is a link, so it needs no dotted line. `Wordmark` is not itself a link.
 - Keep `web/app/(routes)/layout.tsx` as it is.
 - A frame is the files of its route group's folder, such as `layout.tsx`
   and its `layout.css.ts`, with its parts in `web/app/components/` and

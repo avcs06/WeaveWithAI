@@ -99,6 +99,14 @@ describe('fonts', () => {
     expect(module).toContain('  inter.className,\n  inter.variable,');
   });
 
+  it("loads the wordmark's weight with the family that sets it", () => {
+    const heavy = { ...theme, logo: { ...theme.logo, family: theme.fonts.display, weight: '800' } };
+    expect(fontsModule(heavy)).toContain(
+      "weight: ['400', '500', '600', '700', '800'],\n  variable: '--font-display',",
+    );
+    expect(previewHead(heavy)).toContain('family=Playfair+Display:wght@400;500;600;700;800');
+  });
+
   it("gives Storybook the same families from Google Fonts, since next/font runs only in Next", () => {
     const head = previewHead(theme);
     expect(head).toContain('family=Playfair+Display:wght@400;500;600;700');

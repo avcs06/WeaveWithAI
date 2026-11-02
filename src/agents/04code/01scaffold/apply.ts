@@ -91,18 +91,23 @@ const ROLES_BY_USE = [
   ['mono', '--font-mono'],
 ] as const;
 
-/** The family, its next/font export and the weights the design system uses, where it has them. */
-function family(name: string) {
+/** The family, its next/font export and the weights the design system uses, where it has them, plus the wordmark's. */
+function family(name: string, logoWeight?: string) {
   const found = googleFont(name);
   if (!found) throw new Error(`${name} is not in the font catalog`);
-  const text = TEXT_WEIGHTS.filter((weight) => found.weights.includes(weight));
+  const wanted = logoWeight ? [...TEXT_WEIGHTS, logoWeight] : [...TEXT_WEIGHTS];
+  const text = [...new Set(wanted)].filter((weight) => found.weights.includes(weight)).sort();
   return { ...found, use: text.length ? text : found.weights };
 }
+
+/** The wordmark's weight, for the family that sets it. */
+const logoWeight = (theme: Theme, use: (typeof ROLES_BY_USE)[number][0]) =>
+  theme.fonts[use] === theme.logo.family ? theme.logo.weight : undefined;
 
 /** packages/styles/src/fonts.ts loading the theme's three families with next/font. */
 export function fontsModule(theme: Theme): string {
   const fonts = ROLES_BY_USE.map(([use, variable]) => {
-    const font = family(theme.fonts[use]);
+    const font = family(theme.fonts[use], logoWeight(theme, use));
     const id = font.googleName.charAt(0).toLowerCase() + font.googleName.slice(1).replace(/_(\w)/g, (_, c: string) => c.toUpperCase());
     return { ...font, id, variable };
   });
@@ -117,7 +122,7 @@ export function fontsModule(theme: Theme): string {
 
 /** Storybook's head: the same three families from Google Fonts, since next/font only runs inside Next. */
 export function previewHead(theme: Theme): string {
-  const fonts = ROLES_BY_USE.map(([use, variable]) => ({ ...family(theme.fonts[use]), variable }));
+  const fonts = ROLES_BY_USE.map(([use, variable]) => ({ ...family(theme.fonts[use], logoWeight(theme, use)), variable }));
   const query = fonts
     .map((font) => `family=${font.name.replaceAll(' ', '+')}:wght@${font.use.join(';')}`)
     .join('&');

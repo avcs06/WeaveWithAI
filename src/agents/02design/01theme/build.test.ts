@@ -47,7 +47,6 @@ describe('makeThemeSchema', () => {
 describe('buildTheme', () => {
   it('preserves the brief signature for the coding agents', () => {
     expect(themed(call).brief.signature).toBe(brief.signature);
-    expect(brief.signature).toContain('Playfair Display');
   });
 
   it('turns the call into a valid theme with the brief fonts, mono included, and each mode its own background', () => {

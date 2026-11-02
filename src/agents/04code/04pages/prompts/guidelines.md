@@ -35,10 +35,9 @@
 - The headline is the page's only H1, in `tokens.fontFamily.display` at
   `tokens.fontSize.display`, `tokens.lineHeight.display` and
   `tokens.fontWeight.display`.
-- Keep actions once per view. When the hero offers sign-up, the landing
-  page's header offers only sign-in; when the hero offers sign-in, the
-  header offers only sign-up. Follow the architect's choice, and do not
-  repeat either action in the preview or the reasons.
+- Each action appears once in the view, the header included. When the
+  design gives the hero signing up and the header only signing in, build
+  it that way. The preview and the reasons repeat neither action.
 - Build the preview from the app's own components and blocks, with records
   from the seed data. It is read-only: nothing in it saves. The app ships
   no images, so this preview is the landing page's picture.

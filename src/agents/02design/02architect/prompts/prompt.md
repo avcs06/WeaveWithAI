@@ -42,7 +42,7 @@ A screen the user comes to look at or use, and can also change, has a view mode 
 Write the landing screen's steps in this order:
 
 1. The headline and the line under it, with their exact words.
-2. The main action and where it leads. Signing up and signing in are each offered once across the landing screen and its frame: when the screen offers sign-up, the frame offers only sign-in; when the screen offers sign-in, the frame offers only sign-up. State that choice in the frame's steps, so people who already have an account can sign in without repeating an action on the screen.
+2. The main action and where it leads, and a way to sign in for people who already have an account. Each action appears once in the view, the frame included. One valid choice, when it suits the app: the screen offers signing up as its main action, and the frame offers only signing in. The frame's steps then say so.
 3. A preview of the app at work. Say what it shows, with sample records from the app's work, such as "Sees a preview of a dashboard with a note called 'Launch plan', a counter showing 12 tasks and a checklist with 'Review the draft' checked." The preview changes no records.
 4. Three or four reasons to join, each with a short title and one line. Give the exact words and connect each reason to what the app lets people do.
 

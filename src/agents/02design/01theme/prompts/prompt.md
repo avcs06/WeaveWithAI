@@ -60,7 +60,8 @@ Code builds a ramp of twelve steps for each set from the brief: the brand's (`th
 
 - `mode`: light or dark.
 - `background`: the page background, as one CSS background value.
-  - It is not limited to one flat color. Choose whatever the feel needs: a calm tint, a soft or bold gradient, or a pattern drawn with repeating gradients.
+  - It is not limited to one flat color. Choose whatever the feel needs: a flat tint, a gradient, or a pattern drawn with repeating gradients.
+  - A gradient or a pattern must show, as the checks below say. For a calm page, use a flat tint.
   - Use colors and gradients only. The app ships no image files.
   - Page text sits on every color in it, so keep each of them readable under `pageFg`.
   - In an app with both modes, each mode has its own: the same idea in that mode's colors.
@@ -93,6 +94,7 @@ Code checks these contrasts:
 - 4.5:1 for the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit.
 - 3:1 for `border` and `focus` on `bg`, and for the theme's and base's `border` and `focus` on `pageBg` and `frameBg`.
 - 3:1 for the `logo` on `frameBg` and `pageBg`.
+- 1.1:1 between the lightest and darkest colors of a page background that has more than one color.
 - 1.1:1 for `divider` on `pageBg`, `frameBg` and every color of the page background, and for `skeleton` on `pageBg`, `frameBg` and the base set's `bg`. A `backdrop` darker than the page and the frame.
 
 Keep the brand and entity colors clearly apart from the status colors.

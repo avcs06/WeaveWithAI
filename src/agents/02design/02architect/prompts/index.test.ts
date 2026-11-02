@@ -47,8 +47,7 @@ describe('the architect prompt', () => {
     const positions = steps.map((step) => landing.indexOf(step));
     expect(positions.every((position) => position >= 0)).toBe(true);
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
-    expect(landing).toContain('when the screen offers sign-up, the frame offers only sign-in');
-    expect(landing).toContain('when the screen offers sign-in, the frame offers only sign-up');
+    expect(landing).toContain('One valid choice, when it suits the app');
     expect(landing).toContain('The preview changes no records');
     expect(architectReviewGuides().peer).toContain('A landing page missing its headline, main action, preview');
   });
