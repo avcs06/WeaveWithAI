@@ -43,6 +43,7 @@ Challenge, and report as a blocker only what you would not sign off.
 
 ## One goal of one role
 
+- Two flows for one goal, such as a home that is the same list a browse flow shows. Keep one, delete the other, and skip its pair with a reason that names the flow kept.
 - A flow that bundles goals a user reaches on their own, such as editing and deleting a record, two actions on a record, or two kinds of item, even when they share a page. Small actions on the parts of one record, such as adding, ticking and removing the items of a checklist, may share a flow.
 - A flow in which two roles act, such as one inviting and another accepting.
 - A flow that lets the user choose between two goals, such as "signs up or signs in". It takes the one its goal needs, and the other is a flow of its own.
