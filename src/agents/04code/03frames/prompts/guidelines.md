@@ -1,4 +1,4 @@
-<!-- The pages session reads this guide too, so the paths bullet names the frames' paths, not the reader's. -->
+<!-- The pages session reads this guide too, so the bullet on where a frame lives names the frames' files, not the reader's. -->
 
 # Frames
 
@@ -33,7 +33,7 @@
 - A frame has no H1, not even its logo: each screen's title is the page's
   only H1.
 - Keep `web/app/(routes)/layout.tsx` as it is.
-- The frames' paths are the files of each route group's folder, such as
-  `layout.tsx` and its `layout.css.ts`, `web/app/components/` and
-  `web/app/blocks/`. The route
-  folders inside a route group belong to the screens.
+- A frame is the files of its route group's folder, such as `layout.tsx`
+  and its `layout.css.ts`, with its parts in `web/app/components/` and
+  `web/app/blocks/`. The route folders inside a route group are the
+  screens'.

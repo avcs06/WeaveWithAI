@@ -139,8 +139,6 @@ already; a control you build yourself must too.
 ## Never
 
 - Never write or change a test.
-- Write only inside the paths your stage's guidelines name, and in
-  `entities/`.
 - Never change `packages/`, `tools/`, `.weave/`, `.muse/` or a config file.
 - Never install, add or remove a package (`pnpm install`, `pnpm add`): the
   app's packages are fixed. When a command fails because of the install,

@@ -30,7 +30,7 @@ export function checkIssues(
     Partial<Pick<SessionResult, 'readsOutside'>> & { longFiles?: LongFile[]; unreadRecipes?: UnreadRecipe[] },
 ): Issue[] {
   const issues: Issue[] = result.protectedHits.map((file) =>
-    issue('CODE-004', `${file} is outside this session's paths, or a test. Undo the change to it.`, file),
+    issue('CODE-004', `${file} is a test or a protected path (packages, tools, config, .weave). Undo the change to it.`, file),
   );
   for (const { component, file } of result.unreadRecipes ?? [])
     issues.push(

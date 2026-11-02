@@ -38,8 +38,6 @@ export type Unit = {
   task: string;
   /** The fix session's task for the pending issues. */
   fixTask: (pending: Issue[]) => string;
-  /** The paths the unit may write: `folder/` for a folder's own files, or `folder/**`. */
-  writes: string[];
   /** The paths its guidelines keep it from reading, measured after the session. */
   reads?: ReadRules;
   /** The routes `pnpm verify` checks after each session. */
@@ -94,7 +92,6 @@ export function sessionCompose(
         task,
         routes: unit.routes,
         expects: unit.expects,
-        writes: unit.writes,
         reads: unit.reads,
         stage: unit.stage,
         museSession,
@@ -109,7 +106,7 @@ export function sessionCompose(
     const diff = git(appDir, 'diff', baseline, '--', '.', ':(exclude).weave');
     // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
     const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
-    const protectedHits = protectedOf(touched, unit);
+    const protectedHits = protectedOf(touched);
     const sources = touched
       .filter((file) => /\.tsx?$/.test(file) && existsSync(path.join(appDir, file)))
       .map((file) => ({ file, text: readFileSync(path.join(appDir, file), 'utf8') }));

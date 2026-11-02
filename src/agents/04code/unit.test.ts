@@ -54,7 +54,6 @@ function setup(id: string, blockFirst: boolean, failing: (name: string, session:
     stage: 'code-pages-S04',
     task: 'Build S04 from .weave/04-pages/S04/.',
     folders: ['04-pages', '04-pages/S04'],
-    writes: ['web/app/(routes)/books/**'],
   };
   const tasks = () => sessionsRun;
   return { run, ctx, spec, reviews, deps: { bin: fakeMuse, runCheck }, tasks };
@@ -139,9 +138,9 @@ describe('a coding unit', () => {
     expect(result.warnings.filter((i) => i.rule === 'CODE-010').map((i) => i.at)).toEqual(['web/app/(routes)/other/page.tsx']);
   });
 
-  it('fails a write outside the unit paths with CODE-004', async () => {
+  it('fails a write to a test with CODE-004', async () => {
     const { ctx, spec, deps } = setup('outside', false, () => false);
-    const writes = { ...page, 'web/app/blocks/Header/Header.tsx': 'export {};\n' };
+    const writes = { ...page, 'web/app/(routes)/books/page.test.tsx': 'export {};\n' };
     const result = await withWrites(writes, () => runUnit(ctx, spec, deps));
     expect(result.known.map((i) => i.rule)).toContain('CODE-004');
   });

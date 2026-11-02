@@ -17,7 +17,7 @@ import { git } from './setup';
 // One coding session on Muse Code headless. The agent can read
 // anything in the app; this code judges the result: it reruns the checks,
 // records the diff in the ledger, measures the reads its rules rule out, and
-// fails a session whose diff touches a test or a path outside its own.
+// fails a session whose diff touches a test or a protected path.
 
 export type Session = {
   /** 'frames', 'pages', 'repair:R03' */
@@ -28,8 +28,6 @@ export type Session = {
   routes?: CheckedRoute[];
   /** What each screen's route folder must name, from its design and the contract. */
   expects?: ScreenExpect[];
-  /** The only paths the diff may touch, when given: each code stage writes its own folders. */
-  writes?: string[];
   /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
   reads?: ReadRules;
   /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
@@ -86,7 +84,6 @@ const TOOLS_LOG = '.weave/tools.log';
 /**
  * A path rule: `folder/**` covers everything under the folder, `folder/` the
  * files directly in it and none of its subfolders, anything else one file.
- * Write rules are folders, so a file's `.css.ts` beside it is always allowed.
  * Literal, not a glob: route folders such as `[clientId]` and `(routes)` are
  * names, not patterns.
  */
@@ -127,12 +124,9 @@ function installState(appDir: string): string {
   return existsSync(file) ? readFileSync(file, 'utf8') : '';
 }
 
-/** The changed files a session may not touch: tests, `PROTECTED`, and anything outside its write paths. */
-export function protectedOf(changed: string[], session: Pick<Session, 'writes'>): string[] {
-  const outside = (file: string) => session.writes !== undefined && !session.writes.some((rule) => inPath(file, rule));
-  return changed.filter(
-    (file) => TESTS.test(file) || PROTECTED.some((rule) => inPath(file, rule)) || outside(file),
-  );
+/** The changed files a session may not touch: tests and `PROTECTED`. */
+export function protectedOf(changed: string[]): string[] {
+  return changed.filter((file) => TESTS.test(file) || PROTECTED.some((rule) => inPath(file, rule)));
 }
 
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
@@ -235,7 +229,7 @@ export async function runSession(
     })
     .filter((change) => !OURS.has(change.path));
   const changed = changes.map((change) => change.path);
-  const protectedHits = protectedOf(changed, session);
+  const protectedHits = protectedOf(changed);
 
   const runCheck = deps.runCheck ?? appCheck;
   const sources = changes.filter((c) => c.status !== 'D' && /\.tsx?$/.test(c.path)).map((c) => c.path);

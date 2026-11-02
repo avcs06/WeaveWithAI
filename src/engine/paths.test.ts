@@ -8,7 +8,6 @@ describe('path rules', () => {
     expect(inPath(`${folder}/components/Notes.tsx`, `${folder}/components/**`)).toBe(true);
     expect(inPath(`${folder}/components`, `${folder}/components/**`)).toBe(true);
     expect(inPath('web/app/(routes)/(app)/clients/c/page.tsx', `${folder}/page.tsx`)).toBe(false);
-    expect(protectedOf([`${folder}/page.tsx`], { writes: [`${folder}/page.tsx`] })).toEqual([]);
   });
 
   it('take a folder/ rule as the files directly in the folder, its styles included, and none of its subfolders', () => {
@@ -16,9 +15,12 @@ describe('path rules', () => {
     expect(inPath('web/app/(routes)/(app)/layout.tsx', shell)).toBe(true);
     expect(inPath('web/app/(routes)/(app)/layout.css.ts', shell)).toBe(true);
     expect(inPath('web/app/(routes)/(app)/dashboards/page.tsx', shell)).toBe(false);
-    expect(protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/dashboards/page.tsx'], { writes: [shell] })).toEqual([
-      'web/app/(routes)/(app)/dashboards/page.tsx',
-    ]);
+  });
+
+  it('flag a test or a protected path as a change a session may not make, and nothing else', () => {
+    expect(
+      protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']),
+    ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']);
   });
 });
 

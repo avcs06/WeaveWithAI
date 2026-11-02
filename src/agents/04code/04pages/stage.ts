@@ -15,7 +15,7 @@ import type { StageContext, StageDef } from '../../stages';
 import { screenFolder, screenReads } from '../01scaffold/weave';
 import { seedId, signedIn, storagePrefix } from '../02contract/codegen';
 import { renderedOn, routeSample } from '../rendered';
-import { ENTITIES, READS_DENIED, runUnits, type UnitSpec } from '../unit';
+import { READS_DENIED, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
 
@@ -59,15 +59,6 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
     stage: STAGE,
     task: fillPrompt(loadPrompt(pathBeside(import.meta.url, './prompts/task.md')), { pages: lines.join('\n') }),
     folders: ['01-scaffold', '02-contract', '03-frames', '04-pages'],
-    // Each route folder's own files and components, what screens share, and the entity layer. The screen at / replaces
-    // the template's starter page, so the routes folder's own files are writable too.
-    writes: [
-      ...parts.flatMap(({ folder }) => [`${folder}/`, `${folder}/components/**`]),
-      'web/app/blocks/**',
-      'web/app/components/**',
-      ENTITIES,
-      'web/app/(routes)/',
-    ],
     routes: parts.map(({ route }) => route),
     expects: parts.map(({ expect }) => expect),
     reads: { deny: READS_DENIED },
