@@ -106,10 +106,5 @@ function covers(widget: Widget, contract: Contract, flows: Flows, label: Map<str
     lines.push(`- At ${id}, ${changes}: ${names(serving(id))}.`);
   }
 
-  for (const sub of new Set(widget.flowSteps.map(flowOf).filter((f) => flows.subflows.some((s) => s.id === f)))) {
-    const callers = allSteps(flows).filter((s) => s.subflow === sub);
-    lines.push(`- Part of ${sub}, which runs for ${list(callers.map((s) => `${s.id} (${names(serving(s.id))})`))}.`);
-  }
-
   return lines.length ? lines : ['- Opens other screens or shows fixed content; it calls nothing.'];
 }

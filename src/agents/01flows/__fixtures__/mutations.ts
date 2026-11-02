@@ -42,7 +42,6 @@ export const scopeMutations: Record<string, (scope: Scope) => Scope> = {
 export const catalogMutations: Record<string, (catalog: Catalog) => Catalog> = {
   'CAT-001': edit((c) => (flow(c, 'F03').description = '')),
   'CAT-002': edit((c) => (c.forms[0]!.fields = [])),
-  'CAT-003': edit((c) => (c.subflows[0]!.steps = [])),
 };
 
 export const flowMutations: Record<string, (flows: Flows) => Flows> = {
@@ -63,9 +62,7 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
   }),
   'FLOW-011': edit((f) => flow(f, 'F03').alternatives.splice(0, 1)),
   'FLOW-012': edit((f) => flow(f, 'F04').alternatives.splice(0, 1)),
-  // The deleting step backs out through the subflow it runs or its own paths; both go.
   'FLOW-013': edit((f) => {
-    f.subflows[0]!.alternatives = [];
     const remove = flow(f, 'F05');
     remove.alternatives = remove.alternatives.filter(
       (alternative) => alternative.from !== 'F05.S02',
@@ -75,7 +72,7 @@ export const flowMutations: Record<string, (flows: Flows) => Flows> = {
     (f) => (f.flows = f.flows.filter((candidate) => candidate.id !== 'F06')),
   ),
   'FLOW-015': edit((f) => {
-    for (const candidate of f.flows) candidate.category = 'auth';
+    for (const candidate of f.flows) candidate.kind = 'auth';
   }),
   'FLOW-016': edit((f) => (flow(f, 'F03').alternatives[0]!.from = 'F03.S09')),
   'FLOW-019': edit((f) => (flow(f, 'F03').outcome = '')),

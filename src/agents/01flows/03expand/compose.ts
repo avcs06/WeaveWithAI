@@ -10,8 +10,8 @@ import type { Flows } from '../schema';
 import { expandUserMessage } from './prompts/index';
 import { type FlowBatch, FlowBatch as FlowBatchSchema } from './schema';
 
-// Reasoning tokens count toward the budget. A batch of eight flows fits well inside 16k.
-export const EXPAND_BATCH_SIZE = 8;
+// One call per flow, so every flow gets the model's full attention; reasoning tokens count toward the 16k budget.
+export const EXPAND_BATCH_SIZE = 1;
 
 const EXPAND_MAX_TOKENS = 16_384;
 
@@ -27,7 +27,7 @@ type FlowsContext = {
   reasoningEffort?: ReasoningEffort;
 };
 
-/** One expansion batch: the named flows written in full, reusing the catalog's parts; a fix resends the issues in the same conversation. */
+/** One expansion call: the named flow written in full, reusing the catalog's parts; a fix resends the issues in the same conversation. */
 export function expandCompose(
   ctx: FlowsContext,
   catalog: Catalog,
@@ -66,7 +66,7 @@ export function expandCompose(
   };
 }
 
-/** The batches become one document: flows in catalog order, parts deduplicated with the catalog's definition first. */
+/** The calls become one document: flows in catalog order, parts deduplicated with the catalog's definition first. */
 export function assemble(catalog: Catalog, batches: FlowBatch[]): Flows {
   const written = new Map(
     batches.flatMap((batch) =>
@@ -89,10 +89,6 @@ export function assemble(catalog: Catalog, batches: FlowBatch[]): Flows {
     forms: dedupe(
       [...catalog.forms, ...batches.flatMap((batch) => batch.newForms)],
       (form) => form.id,
-    ),
-    subflows: dedupe(
-      [...catalog.subflows, ...batches.flatMap((batch) => batch.newSubflows)],
-      (subflow) => subflow.id,
     ),
     assumptions: catalog.assumptions,
     questions: catalog.questions,

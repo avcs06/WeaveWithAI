@@ -21,7 +21,7 @@ export const PARALLEL = 3;
 /** The scope, the flows, the brief and the theme, the shells the theme's layouts make, and the context the rules read. */
 export function designInputs(run: Run, inv: Inventory) {
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
-  const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
+  const flows = readArtifact<Flows>(run, 'flows-expand').data;
   const { brief, theme } = readArtifact<Themed>(run, 'design-theme').data;
   const shells = layoutShells(theme.layouts);
   const context: DesignContext = {

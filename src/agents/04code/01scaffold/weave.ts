@@ -91,7 +91,7 @@ function pagesPlacing(design: WidgetScreens, widget: string): string[] {
 
 /** The flows' steps and alternatives with these ids, grouped by their flow. */
 function stepsOf(flows: Flows, ids: Set<string>) {
-  return [...flows.flows, ...flows.subflows]
+  return flows.flows
     .map((flow) => ({
       flow: flow.id,
       name: flow.name,

@@ -12,8 +12,7 @@ Each numbered line is a decision the scope and the flows make and a reviewer che
 6. Entry: every app has a public landing page that says what it is for and how to start. Public views and sharing are added only where the idea implies them or they clearly help the product.
 7. Business rules: every rule the idea states or implies is decided and written where it applies: who may do what, limits and maximums, statuses and their transitions, what deleting removes, what counts as full, sold out, due or overdue. A rule the idea leaves open gets an assumption with a default, or a question when the default is risky.
 8. Data: the things the app keeps are named in the users' words. The fields, statuses and options the idea names are there exactly as named. Required fields are only the ones the idea requires.
-9. Capabilities: a simulated capability keeps its full UI and ends in its placeholder. A skipped capability is out of scope, with a placeholder the user can live with. Neither pretends to do the real thing.
-10. Open points: anything the idea is silent on gets an assumption. A question is asked only when the answer changes scope, permissions, business rules or data, always with the default that will be used. It is blocking only when a wrong default would make the app wrong for its users.
+9. Open points: anything the idea is silent on gets an assumption. A question is asked only when the answer changes scope, permissions, business rules or data, always with the default that will be used. It is blocking only when a wrong default would make the app wrong for its users.
 
 Not decided here: screens, layouts, colors, components, endpoints, tables or technologies. Those belong to the designers and engineers.
 

@@ -23,6 +23,21 @@ export const FIELD_TYPES = [
 
 export const CHANGES = ['create', 'list', 'read', 'update', 'delete'] as const;
 
+/** What a flow does for its role; the catalog walks every role, noun and kind so none is left out. */
+export const FLOW_KINDS = [
+  'landing',
+  'auth',
+  'home',
+  'browse',
+  'view',
+  'create',
+  'edit',
+  'delete',
+  'act',
+  'account',
+  'settings',
+] as const;
+
 export const ALTERNATIVE_KINDS = [
   'invalid',
   'failure',
@@ -98,32 +113,21 @@ export const Effect = z.object({
 });
 
 export const Step = z.object({
-  id: z.string().describe('F01.S01, or SF01.S01 inside a subflow'),
+  id: z.string().describe('F01.S01'),
   kind: z.enum(['user', 'system']),
-  userAction: z
-    .string()
-    .describe(
-      '"" for system steps; for a subflow step, what triggers the subflow',
-    ),
-  websiteResponse: z
-    .string()
-    .describe('What the user can see, or what changes; "" for subflow steps'),
+  userAction: z.string().describe('"" for system steps'),
+  websiteResponse: z.string().describe('What the user can see, or what changes'),
   fields: z
     .array(z.string())
     .describe('Ids of catalog fields the user fills in here; [] if none'),
   form: z
     .string()
     .describe('A form id whose fields the user fills in here, or ""'),
-  subflow: z
-    .string()
-    .describe(
-      'A subflow id this step runs instead of its own websiteResponse, or ""',
-    ),
   effects: z.array(Effect).describe('[] when nothing is stored or loaded'),
 });
 
 export const Alternative = z.object({
-  id: z.string().describe('F01.A01, or SF01.A01 inside a subflow'),
+  id: z.string().describe('F01.A01'),
   from: z.string().describe('The step ID it branches from'),
   kind: z.enum(ALTERNATIVE_KINDS),
   condition: z.string(),
@@ -133,31 +137,21 @@ export const Alternative = z.object({
     .describe('Step ID the user returns to, or "" if the flow ends'),
 });
 
-/** A step sequence two or more flows share, such as confirming a delete; a flow step runs it by id. */
-export const Subflow = z.object({
-  id: z.string().describe('SF01, SF02, ...'),
-  name: z.string(),
-  steps: z.array(Step),
-  alternatives: z.array(Alternative),
-});
-
 export const Flow = z.object({
   id: z.string().describe('F01'),
   name: z.string(),
   role: z.string().describe('A role id from the scope'),
-  category: z.enum([
-    'auth',
-    'onboarding',
-    'core',
-    'manage',
-    'browse',
-    'settings',
-    'admin',
-  ]),
+  kind: z.enum(FLOW_KINDS),
+  noun: z
+    .string()
+    .describe(
+      'The vocabulary noun the flow works on; "" for landing, auth, home, account and settings',
+    ),
   authKind: z.enum(['none', 'signUp', 'signIn', 'signOut']),
   signedOut: z
     .boolean()
     .describe('True when the user is not signed in during the flow'),
+  start: z.string().describe('Where the user is when the flow begins'),
   goal: z.string(),
   preconditions: z.array(z.string()),
   steps: z.array(Step),
@@ -172,7 +166,6 @@ export const Flows = z.object({
   flows: z.array(Flow),
   fields: z.array(Field).describe('Every field, defined once'),
   forms: z.array(Form),
-  subflows: z.array(Subflow),
   assumptions: z
     .array(Assumption)
     .describe('New assumptions made while writing flows'),
@@ -191,8 +184,6 @@ export type Field = z.infer<typeof Field>;
 
 export type Form = z.infer<typeof Form>;
 
-export type Subflow = z.infer<typeof Subflow>;
-
 export type Effect = z.infer<typeof Effect>;
 
 export type Step = z.infer<typeof Step>;
@@ -201,7 +192,7 @@ export type Alternative = z.infer<typeof Alternative>;
 
 export type Flow = z.infer<typeof Flow>;
 
-/** Flows and subflows alike: something with steps and alternatives, for rules and renderers. */
+/** Something with steps and alternatives, for rules and renderers. */
 export type StepContainer = {
   id: string;
   steps: Step[];

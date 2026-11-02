@@ -4,7 +4,7 @@ import type { Alternative, Flows, Step, StepContainer } from '../schema';
 
 export type FlowInput = { flows: Flows; scope: Scope };
 
-/** Every step of every flow and every subflow, with the container it belongs to. */
+/** Every step of every flow, with the flow it belongs to. */
 export function* eachStep(
   flows: Flows,
 ): Generator<{ container: StepContainer; step: Step }> {
@@ -12,11 +12,7 @@ export function* eachStep(
     for (const step of container.steps) yield { container, step };
 }
 
-/** Flows first, then subflows: both have steps and alternatives. */
-export const containers = (flows: Flows): StepContainer[] => [
-  ...flows.flows,
-  ...flows.subflows,
-];
+export const containers = (flows: Flows): StepContainer[] => flows.flows;
 
 export const alternativesFrom = (
   container: StepContainer,

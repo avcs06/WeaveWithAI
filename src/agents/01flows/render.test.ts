@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { renderScope } from './01scope/render';
 import { renderCatalog } from './02catalog/render';
-import { renderFlows } from './04reconcile/render';
+import { renderFlows } from './03expand/render';
 import { Scope } from './01scope/schema';
 import { Catalog } from './02catalog/schema';
 import { Flows } from './schema';
@@ -24,7 +24,7 @@ describe('render', () => {
     const text = renderFlows(flows, scope);
     expect(text).toContain('## F03 Add a book to the reading list');
     expect(text).toContain(
-      'Reader · core · Goal: Remember a book to read later.',
+      'Reader · create Book · Goal: Remember a book to read later.',
     );
     expect(text).toContain(
       '   - Title (required, up to 200 characters), e.g. "The Left Hand of Darkness"',
@@ -40,7 +40,7 @@ describe('render', () => {
       '2. The reader fills in the book and saves it. (Book form)',
     );
     expect(text).toContain(
-      '2. The reader chooses Delete on the book. Confirm deletion (subflow STD01):',
+      '2. The reader chooses Delete on the book. The website asks the reader to confirm deleting the book.',
     );
     expect(text).toContain('## Fields');
     expect(text).toMatchSnapshot();
@@ -65,13 +65,13 @@ describe('render', () => {
     );
   });
 
-  it('catalog lists every flow with its description and the reusable parts', () => {
+  it('catalog lists every flow with its description, the skipped pairs and the reusable parts', () => {
     const text = renderCatalog(catalog, scope);
     expect(text).toContain(
-      '- F03 Add a book to the reading list (Reader, core): The reader adds a book',
+      '- F03 Add a book to the reading list (Reader, create Book, starts On the reading list): The reader adds a book',
     );
+    expect(text).toContain('- Reader, edit Book: A book is typed once;');
     expect(text).toContain('- FM01 Book form: FD03, FD04, FD05');
-    expect(text).toContain('## STD01 Confirm deletion (standard subflow)');
     expect(text).toMatchSnapshot();
   });
 });

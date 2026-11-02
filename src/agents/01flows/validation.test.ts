@@ -11,8 +11,11 @@ import { Catalog } from './02catalog/schema';
 import { Flows } from './schema';
 import { scopeRules, validateScope } from './01scope/validation/validation';
 import { catalogFlowRules, catalogRules, validateCatalog } from './02catalog/validation/validation';
-import { validateBatch } from './03expand/validation/validation';
-import { flowRules, validateFlows } from './04reconcile/validation/validation';
+import {
+  flowRules,
+  validateBatch,
+  validateFlows,
+} from './03expand/validation/validation';
 
 const load = (name: string): unknown =>
   JSON.parse(
@@ -110,27 +113,14 @@ describe('choices from records', () => {
   });
 });
 
-describe('one expansion batch', () => {
-  const batch = (flowIds: string[]) => ({
-    flows: flows.flows.filter((flow) => flowIds.includes(flow.id)),
-    newFields: [],
-    newForms: [],
-    newSubflows: [],
-  });
-
-  it('resolves the standard subflow its delete step runs, and leaves the catalog subflows to the catalog', () => {
-    expect(validateBatch(batch(['F05']), catalog, scope)).toEqual([]);
-
-    const brokenCatalog = structuredClone(catalog);
-    brokenCatalog.subflows[0]!.steps[0]!.websiteResponse = '';
-    expect(
-      ruleIds(validateBatch(batch(['F01']), brokenCatalog, scope)),
-    ).not.toContain('FLOW-004');
-    expect(
-      ruleIds(
-        validateFlows({ ...flows, subflows: brokenCatalog.subflows }, scope),
-      ),
-    ).toContain('FLOW-004');
+describe('one expansion call', () => {
+  it('checks its flow with the catalog behind it: the delete flow and its own confirm pass', () => {
+    const batch = {
+      flows: flows.flows.filter((flow) => flow.id === 'F05'),
+      newFields: [],
+      newForms: [],
+    };
+    expect(validateBatch(batch, catalog, scope)).toEqual([]);
   });
 });
 

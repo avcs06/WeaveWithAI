@@ -1,5 +1,4 @@
 import type { Scope } from './01scope/schema';
-import { isStandardSubflowId } from './config/subflows';
 import {
   type Alternative,
   type Assumption,
@@ -15,7 +14,8 @@ import {
 export function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   const lines = [
     `## ${flow.id} ${flow.name}`,
-    `${roleName} · ${flow.category} · Goal: ${flow.goal}`,
+    `${roleName} · ${flow.noun === '' ? flow.kind : `${flow.kind} ${flow.noun}`} · Goal: ${flow.goal}`,
+    `Starts: ${flow.start}`,
   ];
   if (flow.preconditions.length > 0)
     lines.push(`Before: ${flow.preconditions.join('; ')}`);
@@ -24,9 +24,7 @@ export function flowLines(flow: Flow, roleName: string, doc: Flows): string[] {
   return lines;
 }
 
-const HANDS_BACK = 'Back to the calling flow.';
-
-/** Numbered steps, then the other paths; a subflow step shows the subflow's steps indented under it. */
+/** Numbered steps, then the other paths. */
 function stepsLines(
   container: StepContainer,
   doc: Flows,
@@ -36,17 +34,9 @@ function stepsLines(
   const lines: string[] = [];
   container.steps.forEach((step, i) => {
     const number = `${indent}${i + 1}.`;
-    const subflow = doc.subflows.find(
-      (candidate) => candidate.id === step.subflow,
-    );
     const fields = stepFields(step, doc);
     const form = doc.forms.find((candidate) => candidate.id === step.form);
-    if (subflow)
-      lines.push(
-        `${number} ${step.userAction === '' ? '' : `${step.userAction} `}${subflow.name} (subflow ${subflow.id}):`,
-        ...stepsLines(subflow, doc, `${indent}   `, HANDS_BACK),
-      );
-    else if (step.kind === 'system')
+    if (step.kind === 'system')
       lines.push(`${number} (system) ${step.websiteResponse}`);
     else if (fields.length === 0)
       lines.push(`${number} ${step.userAction} ${step.websiteResponse}`);
@@ -116,9 +106,7 @@ function alternativeLine(
 }
 
 /** The reusable parts, once per document. */
-export function partLines(
-  doc: Pick<Flows, 'fields' | 'forms' | 'subflows'>,
-): string[] {
+export function partLines(doc: Pick<Flows, 'fields' | 'forms'>): string[] {
   const lines: string[] = [];
   if (doc.fields.length > 0)
     lines.push(
@@ -136,30 +124,8 @@ export function partLines(
         (form: Form) => `- ${form.id} ${form.name}: ${form.fields.join(', ')}`,
       ),
     );
-  for (const subflow of doc.subflows) {
-    lines.push(
-      '',
-      `## ${subflow.id} ${subflow.name} (${isStandardSubflowId(subflow.id) ? 'standard subflow' : 'subflow'})`,
-      '',
-      ...stepsLines(
-        subflow,
-        { ...emptyDoc, ...doc, subflows: [] } as Flows,
-        '',
-        HANDS_BACK,
-      ),
-    );
-  }
   return lines;
 }
-
-const emptyDoc: Flows = {
-  flows: [],
-  fields: [],
-  forms: [],
-  subflows: [],
-  assumptions: [],
-  questions: [],
-};
 
 export function assumptionLines(
   assumptions: Assumption[],

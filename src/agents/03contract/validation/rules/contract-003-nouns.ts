@@ -24,7 +24,7 @@ export const rule = defineRule<ContractInput>(
         );
     const implemented = new Set(contract.entities.map((e) => e.noun));
     const affected = new Set(
-      [...flows.flows, ...flows.subflows].flatMap((f) =>
+      flows.flows.flatMap((f) =>
         f.steps.flatMap((s) => s.effects.map((e) => e.noun)),
       ),
     );

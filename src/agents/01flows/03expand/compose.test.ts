@@ -64,13 +64,11 @@ describe('assemble', () => {
       flows: [flow('F03'), flow('F01')],
       newFields: [dupField],
       newForms: [],
-      newSubflows: [],
     };
     const batch2 = {
       flows: [flow('F02'), flow('F04'), flow('F05'), flow('F06')],
       newFields: [extraField],
       newForms: [],
-      newSubflows: [],
     };
     const doc = assemble(catalog, [batch1, batch2]);
 
@@ -87,7 +85,6 @@ describe('assemble', () => {
     );
     expect(doc.fields.map((field) => field.id)).toContain('FD06');
     expect(doc.forms).toEqual(catalog.forms);
-    expect(doc.subflows).toEqual(catalog.subflows);
     expect(Flows.parse(doc)).toBeTruthy();
   });
 
@@ -98,7 +95,6 @@ describe('assemble', () => {
         flows: [...flows.flows, extra],
         newFields: [],
         newForms: [],
-        newSubflows: [],
       },
     ]);
     expect(doc.flows.map((candidate) => candidate.id)).toEqual([
@@ -119,7 +115,6 @@ describe('expandCompose', () => {
       flows: [flow('F03')],
       newFields: [],
       newForms: [],
-      newSubflows: [],
     };
     const { call, inputs } = fakeCall([batch, batch]);
     const compose = expandCompose(
@@ -133,7 +128,7 @@ describe('expandCompose', () => {
     expect(draft.data).toEqual(batch);
     expect(inputs[0]?.schemaName).toBe('FlowBatch');
     expect(inputs[0]?.messages[0]?.content).toBe('SYSTEM');
-    expect(inputs[0]?.messages[1]?.content).toContain('expand these flows');
+    expect(inputs[0]?.messages[1]?.content).toContain('expand this flow');
     expect(inputs[0]?.messages[1]?.content).toContain('F03');
     expect(inputs[0]?.messages[1]?.content).toContain('"id": "FM01"');
 

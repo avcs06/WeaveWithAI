@@ -3,35 +3,25 @@ import { describe, expect, it } from 'vitest';
 import { scopeReviewGuides, scopeSystemPrompt, scopeUserMessage } from '../01scope/prompts/index';
 import { catalogReviewGuides, catalogUserMessage } from '../02catalog/prompts/index';
 import { expandReviewGuides, expandUserMessage } from '../03expand/prompts/index';
-import { patchUserMessage } from '../04reconcile/prompts/index';
 import { answersBlock, flowsSystemPrompt } from './index';
 import { Scope } from '../01scope/schema';
 import { Catalog } from '../02catalog/schema';
-import { Flows } from '../schema';
 
 const load = (name: string): unknown =>
   JSON.parse(
     readFileSync(new URL(`../__fixtures__/${name}`, import.meta.url), 'utf8'),
   );
 const scope = Scope.parse(load('reading-list.scope.json'));
-const flows = Flows.parse(load('reading-list.flows.json'));
 const catalog = Catalog.parse(load('reading-list.catalog.json'));
 
 const standard = '## What a product manager decides for an MVP';
 
 describe('system prompts', () => {
-  it('scope: every placeholder filled, the standard and all three capability lists present', () => {
+  it('scope: every placeholder filled and the standard present', () => {
     const prompt = scopeSystemPrompt({});
     expect(prompt).not.toContain('{{');
     expect(prompt).not.toContain('<!--');
     expect(prompt).toContain(standard);
-    expect(prompt).toContain(
-      'accounts (email and password sign up, sign in, sign out)',
-    );
-    expect(prompt).toContain(
-      'payments (payments): a checkout form validates its fields',
-    );
-    expect(prompt).toContain('maps (geolocation)');
     expect(prompt).toContain('None yet.');
   });
 
@@ -44,17 +34,12 @@ describe('system prompts', () => {
     expect(prompt).toContain('- Q01 "Ratings?": yes');
     expect(prompt).toContain('"id": "F03"');
     expect(prompt).toContain('"name": "Add a book to the reading list"');
-    // The delete flow shows a step that runs the standard subflow.
+    // The delete flow shows its own confirm path.
     expect(prompt).toContain('"id": "F05"');
-    expect(prompt).toContain('"subflow": "STD01"');
+    expect(prompt).toContain('"kind": "confirm"');
     // The example carries the parts the flow uses, defined once.
     expect(prompt).toContain('"id": "FM01"');
     expect(prompt).toContain('"id": "FD05"');
-    expect(prompt).toContain('accounts (');
-    expect(prompt).toContain(
-      'emailSending (notifications, password reset by email): the website shows the email as sent',
-    );
-    expect(prompt).toContain('i18n (translations)');
   });
 
   it('answersBlock lists one answer per line, with the question as asked', () => {
@@ -102,7 +87,7 @@ describe('user messages', () => {
     );
   });
 
-  it('catalog, expand and patch: each carries the idea and the scope, then its own job', () => {
+  it('catalog and expand: each carries the idea and the scope, then its own job', () => {
     const cat = catalogUserMessage(idea, scope);
     expect(cat.startsWith('# Idea\n\nA reading list for one reader.')).toBe(
       true,
@@ -113,20 +98,9 @@ describe('user messages', () => {
     expect(cat).toContain('# Your job in this call: the catalog');
     expect(cat).not.toContain('{{');
 
-    const expand = expandUserMessage(idea, scope, catalog, ['F03', 'F04']);
+    const expand = expandUserMessage(idea, scope, catalog, ['F03']);
     expect(expand).toContain('# Catalog (01-flows/02-catalog.json)');
-    expect(expand).toContain('Write the full flows F03, F04');
+    expect(expand).toContain('Write the full flow F03 as the catalog describes it.');
     expect(expand).not.toContain('{{');
-
-    const patch = patchUserMessage(
-      idea,
-      scope,
-      flows,
-      '- FLOW-014 at flows: x',
-      'None.',
-    );
-    expect(patch).toContain('# Current flows (01-flows/03-expand.json)');
-    expect(patch).toContain('- FLOW-014 at flows: x');
-    expect(patch).not.toContain('{{');
   });
 });

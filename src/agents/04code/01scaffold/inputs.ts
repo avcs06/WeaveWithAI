@@ -68,7 +68,7 @@ function recipeIndex(appDir: string): string {
 /** The run's artifacts, answers and known issues, as the .weave folders need them. */
 export function readCodeInputs(run: Run): CodeInputs {
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
-  const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
+  const flows = readArtifact<Flows>(run, 'flows-expand').data;
   const design = readArtifact<WidgetScreens>(run, 'design-assemble').data;
   const answers = readAnswers(run);
   const asked = (from: string, questions: Question[]) =>

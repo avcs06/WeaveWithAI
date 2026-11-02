@@ -19,7 +19,6 @@ import { scopeStage } from './01scope/stage';
 import { Catalog } from './02catalog/schema';
 import { catalogStage } from './02catalog/stage';
 import { expandStage } from './03expand/stage';
-import { reconcileStage } from './04reconcile/stage';
 import { readAnswers } from './answers';
 import { Flows } from './schema';
 
@@ -44,17 +43,7 @@ const catalogFixture = Catalog.parse(load('reading-list.catalog.json'));
 
 const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
 
-const none = { upsert: [], remove: [] };
-const emptyPatch = {
-  flows: none,
-  fields: none,
-  forms: none,
-  subflows: none,
-  assumptions: none,
-  questions: none,
-};
-
-/** Answers by schema: the fixtures for scope and catalog, the fixture flows named in the message for a batch, nothing to review or patch. */
+/** Answers by schema: the fixtures for scope and catalog, the fixture flow named in the message for an expansion, nothing to review. */
 function fakeLlm() {
   const inputs: GenerateInput<unknown>[] = [];
   const llm: Llm = {
@@ -69,17 +58,15 @@ function fakeLlm() {
         FlowCatalog: () => catalogFixture,
         FlowBatch: () => {
           const ids =
-            /Write the full flows ((?:F\d{2,}(?:, )?)+)/
+            /Write the full flow ((?:F\d{2,}(?:, )?)+)/
               .exec(user)?.[1]
               ?.split(', ') ?? [];
           return {
             flows: flowsFixture.flows.filter((flow) => ids.includes(flow.id)),
             newFields: [],
             newForms: [],
-            newSubflows: [],
           };
         },
-        FlowsPatch: () => emptyPatch,
         Review: () => ({ blockers: [] }),
       };
       const data = answers[input.schemaName]?.();
@@ -99,8 +86,8 @@ function fakeLlm() {
   return { llm, inputs };
 }
 
-describe('the four stages', () => {
-  it('scope, catalog, expansion in batches and reconciliation write their artifacts, markdown and state', async () => {
+describe('the three stages', () => {
+  it('scope, catalog and one expansion per flow write their artifacts, markdown and state', async () => {
     const run = createRun({ idea, runsDir: root, id: 'all' });
     const { llm, inputs } = fakeLlm();
     const ctx: StageContext = {
@@ -114,7 +101,6 @@ describe('the four stages', () => {
     await scopeStage.run(ctx);
     await catalogStage.run(ctx);
     await expandStage.run(ctx);
-    await reconcileStage.run(ctx);
 
     expect(readArtifact<Catalog>(run, 'flows-catalog').meta).toMatchObject({
       version: 1,
@@ -126,22 +112,22 @@ describe('the four stages', () => {
         (flow) => flow.id,
       ),
     ).toEqual(['F01', 'F02', 'F03', 'F04', 'F05', 'F06']);
-    expect(readArtifact<Flows>(run, 'flows-reconcile').meta).toMatchObject({
+    expect(readArtifact<Flows>(run, 'flows-expand').meta).toMatchObject({
       version: 1,
-      inputs: { 'flows-expand': { version: 1 } },
+      inputs: { 'flows-catalog': { version: 1 } },
     });
     expect(
       readFileSync(runPath(run, '01-flows/02-catalog.md'), 'utf8'),
     ).toContain('## Flows');
     expect(
-      readFileSync(runPath(run, '01-flows/04-reconcile.md'), 'utf8'),
+      readFileSync(runPath(run, '01-flows/03-expand.md'), 'utf8'),
     ).toContain('## F03 Add a book to the reading list');
     expect(readAnswers(run)).toEqual({});
 
     const stages = readState(run).stages;
     expect(stages['flows-expand']).toMatchObject({
       status: 'done',
-      batches: 1,
+      batches: 6,
       known: 0,
     });
     expect(stages['flows-expand-1']).toMatchObject({
@@ -149,28 +135,30 @@ describe('the four stages', () => {
       rounds: 2,
       known: 0,
     });
-    // Reconciliation starts from the draft: one validation round, nothing generated, no reviewers.
-    expect(stages['flows-reconcile']).toMatchObject({
-      status: 'done',
-      rounds: 1,
-      known: 0,
-    });
 
     const calls = inputs.map((input) => input.stage);
-    expect(calls).toEqual([
+    expect(calls.slice(0, 6)).toEqual([
       'flows-scope',
       'flows-scope-review-peer',
       'flows-scope-review-output',
       'flows-catalog',
       'flows-catalog-review-peer',
       'flows-catalog-review-output',
-      'flows-expand-1',
-      'flows-expand-1-review-peer',
-      'flows-expand-1-review-output',
     ]);
-    expect(inputs[6]?.messages[1]?.content).toContain(
-      'Write the full flows F01, F02, F03, F04, F05, F06',
+    // The six expansions run side by side, so their calls interleave.
+    expect(calls.slice(6).sort()).toEqual(
+      [1, 2, 3, 4, 5, 6]
+        .flatMap((i) => [
+          `flows-expand-${i}`,
+          `flows-expand-${i}-review-peer`,
+          `flows-expand-${i}-review-output`,
+        ])
+        .sort(),
     );
+    expect(
+      inputs.find((input) => input.stage === 'flows-expand-3')?.messages[1]
+        ?.content,
+    ).toContain('Write the full flow F03 as the catalog describes it.');
   });
 
   it('validate reruns the rules on the stored artifacts', () => {
@@ -186,7 +174,7 @@ describe('the four stages', () => {
       JSON.stringify({ meta: {}, data: catalogFixture }),
     );
     writeFileSync(
-      runPath(run, '01-flows/04-reconcile.json'),
+      runPath(run, '01-flows/03-expand.json'),
       JSON.stringify({ meta: {}, data: flowsFixture }),
     );
     expect(scopeStage.validate?.(run)).toEqual([]);
@@ -196,7 +184,7 @@ describe('the four stages', () => {
         ?.filter((issue) => issue.severity === 'mandatory'),
     ).toEqual([]);
     expect(
-      reconcileStage
+      expandStage
         .validate?.(run)
         ?.filter((issue) => issue.severity === 'mandatory'),
     ).toEqual([]);

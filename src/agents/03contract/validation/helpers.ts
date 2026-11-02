@@ -12,16 +12,11 @@ export type ContractInput = { contract: Contract; scope: Scope; flows: Flows; wi
 
 export type FlowStep = Step & { flow: string; authKind: string };
 
-/** Every step of the flows and their subflows, with the flow's id and auth kind. */
+/** Every step of the flows, with the flow's id and auth kind. */
 export function allSteps(flows: Flows): FlowStep[] {
-  return [
-    ...flows.flows.flatMap((flow) =>
-      flow.steps.map((step) => ({ ...step, flow: flow.id, authKind: flow.authKind })),
-    ),
-    ...flows.subflows.flatMap((subflow) =>
-      subflow.steps.map((step) => ({ ...step, flow: subflow.id, authKind: 'none' })),
-    ),
-  ];
+  return flows.flows.flatMap((flow) =>
+    flow.steps.map((step) => ({ ...step, flow: flow.id, authKind: flow.authKind })),
+  );
 }
 
 export const entityOf = (contract: Contract, name: string): Entity | undefined =>

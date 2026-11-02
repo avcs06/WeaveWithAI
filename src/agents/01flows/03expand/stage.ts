@@ -1,10 +1,14 @@
-import { readArtifact, writeArtifact } from '../../../core/artifacts';
-import { appendEvent, updateStage } from '../../../core/run';
+import { writeFileSync } from 'node:fs';
+import {
+  markdownOf,
+  readArtifact,
+  writeArtifact,
+} from '../../../core/artifacts';
+import { appendEvent, runPath, updateStage } from '../../../core/run';
 import { runSpecStage } from '../../../runner/runSpecStage';
 import type { StageContext, StageDef } from '../../stages';
 import { Scope } from '../01scope/schema';
 import { Catalog } from '../02catalog/schema';
-import { validateFlows } from '../04reconcile/validation/validation';
 import { inputs } from '../produce';
 import { flowsSystemPrompt } from '../prompts/index';
 import { Flows } from '../schema';
@@ -15,13 +19,14 @@ import {
   expandCompose,
 } from './compose';
 import { expandReviewGuides, expandUserMessage } from './prompts/index';
+import { renderFlows } from './render';
 import { FlowBatch } from './schema';
-import { validateBatch } from './validation/validation';
+import { validateBatch, validateFlows } from './validation/validation';
 
 // The model's own reasoning level overran even the catalog's budget on the freelancer idea; medium keeps room for the JSON (D1.13).
 const FLOWS_EFFORT = 'medium';
 
-/** Stage 2: the catalog's flows in batches, each batch a stage of its own run in parallel, assembled into the draft. */
+/** Stage 2: each catalog flow expanded by its own call, all in parallel, assembled into the flows document. */
 async function runExpand(ctx: StageContext): Promise<void> {
   const { run } = ctx;
   const { idea, scope, answers } = inputs(ctx);
@@ -60,7 +65,7 @@ async function runExpand(ctx: StageContext): Promise<void> {
       });
     }),
   );
-  const draft = Flows.parse(
+  const flows = Flows.parse(
     assemble(
       catalog,
       results.map((result) => result.output),
@@ -68,12 +73,16 @@ async function runExpand(ctx: StageContext): Promise<void> {
   );
   const rounds = results.reduce((sum, result) => sum + result.rounds, 0);
   const known = results.reduce((sum, result) => sum + result.known.length, 0);
-  writeArtifact(run, 'flows-expand', draft, {
+  writeArtifact(run, 'flows-expand', flows, {
     stage: 'flows-expand',
     model: results[0]?.model ?? 'none',
     rounds,
     inputs: ['flows-scope', 'flows-catalog'],
   });
+  writeFileSync(
+    runPath(run, markdownOf('flows-expand')),
+    renderFlows(flows, scope),
+  );
   updateStage(run, 'flows-expand', { rounds, known, batches: batches.length });
   appendEvent(run, {
     type: 'stage:done',

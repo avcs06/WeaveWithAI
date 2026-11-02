@@ -27,11 +27,10 @@ import {
 import type { Catalog } from '../schema';
 import { rule as cat001 } from './rules/cat-001-descriptions';
 import { rule as cat002 } from './rules/cat-002-forms';
-import { rule as cat003 } from './rules/cat-003-subflows';
 
 // One file per rule in ./rules. To add a rule: create its file, import it here, add it to its list.
 
-/** The catalog has headers and subflow steps: the header rules, and the within-flow rules for the subflows. */
+/** The catalog has headers and no steps yet: the flow rules that hold for headers. */
 export const catalogFlowRules: readonly Rule<FlowInput>[] = [
   flow001,
   flow002,
@@ -53,11 +52,7 @@ export const catalogFlowRules: readonly Rule<FlowInput>[] = [
   flow025,
 ];
 
-export const catalogRules: readonly Rule<CatalogInput>[] = [
-  cat001,
-  cat002,
-  cat003,
-];
+export const catalogRules: readonly Rule<CatalogInput>[] = [cat001, cat002];
 
 export const validateCatalog = (catalog: Catalog, scope: Scope): Issue[] => [
   ...runRules(catalogFlowRules, { flows: catalogAsFlows(catalog), scope }),

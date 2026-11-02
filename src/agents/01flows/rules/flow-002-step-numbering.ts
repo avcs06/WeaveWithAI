@@ -1,6 +1,6 @@
 /**
  * FLOW-002 · mandatory
- * Steps are numbered S01, S02, ... in order, without gaps, in flows and subflows alike.
+ * Steps are numbered S01, S02, ... in order, without gaps.
  * Pass: steps: [{ id: 'F06.S01' }, { id: 'F06.S02' }]
  * Fail: steps: [{ id: 'F06.S02' }] · [{ id: 'F06.S01' }, { id: 'F06.S03' }]
  */

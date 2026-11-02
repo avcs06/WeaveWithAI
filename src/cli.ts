@@ -250,7 +250,7 @@ export function goldenCommand(
 ): string[] {
   const out = deps.out ?? console.log;
   const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
-  const names = (stageList ?? 'flows-scope,flows-catalog,flows-reconcile')
+  const names = (stageList ?? 'flows-scope,flows-catalog,flows-expand')
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);

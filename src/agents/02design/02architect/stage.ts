@@ -37,7 +37,7 @@ export async function runArchitect(ctx: StageContext, inv: Inventory): Promise<v
     stage: 'design-architect',
     model: result.model,
     rounds: result.rounds,
-    inputs: ['flows-scope', 'flows-reconcile', 'design-theme'],
+    inputs: ['flows-scope', 'flows-expand', 'design-theme'],
   });
 }
 

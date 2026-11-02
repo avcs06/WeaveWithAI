@@ -1,15 +1,13 @@
 /**
  * FLOW-020 · warning
- * 4 to 20 flows, and at most 12 steps in any flow (user, 2026-11-01: was 24 and 16).
- * Pass: 6 flows of 2 to 5 steps each
- * Fail: 3 flows · a flow with 13 steps
+ * At most 12 steps in any flow.
+ * Pass: a flow of 2 to 5 steps
+ * Fail: a flow with 13 steps
  */
 import type { Issue } from '../../../core/issues';
 import { defineRule } from '../../../core/rules';
 import type { FlowInput } from './helpers';
 
-const MIN_FLOWS = 4;
-const MAX_FLOWS = 20;
 const MAX_STEPS = 12;
 
 export const rule = defineRule<FlowInput>(
@@ -17,15 +15,6 @@ export const rule = defineRule<FlowInput>(
   'warning',
   ({ flows }, fail) => {
     const issues: Issue[] = [];
-    const count = flows.flows.length;
-    if (count < MIN_FLOWS || count > MAX_FLOWS) {
-      issues.push(
-        fail(
-          `${count} flows; an MVP has ${MIN_FLOWS} to ${MAX_FLOWS}. ${count < MIN_FLOWS ? 'Cover the core loop end to end.' : 'Merge or drop flows that are not the core loop.'}`,
-          'flows',
-        ),
-      );
-    }
     for (const flow of flows.flows) {
       if (flow.steps.length > MAX_STEPS) {
         issues.push(

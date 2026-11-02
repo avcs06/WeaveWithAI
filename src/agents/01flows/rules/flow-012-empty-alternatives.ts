@@ -1,6 +1,6 @@
 /**
  * FLOW-012 · mandatory
- * A step that lists a noun has an 'empty' alternative branching from it, in flows and subflows alike.
+ * A step that lists a noun has an 'empty' alternative branching from it.
  * Pass: F04.S01 lists Book; { id: 'F04.A01', kind: 'empty', from: 'F04.S01' }
  * Fail: the listing step with no 'empty' alternative
  */

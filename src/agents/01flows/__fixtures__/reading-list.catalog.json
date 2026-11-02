@@ -4,9 +4,11 @@
       "id": "F01",
       "name": "Sign up",
       "role": "reader",
-      "category": "auth",
+      "kind": "auth",
+      "noun": "",
       "authKind": "signUp",
       "signedOut": true,
+      "start": "On the landing page",
       "goal": "Create an account to keep a private reading list.",
       "preconditions": [
         "Not signed in."
@@ -18,9 +20,11 @@
       "id": "F02",
       "name": "Sign in",
       "role": "reader",
-      "category": "auth",
+      "kind": "auth",
+      "noun": "",
       "authKind": "signIn",
       "signedOut": true,
+      "start": "On the landing page",
       "goal": "Get back to the reading list.",
       "preconditions": [
         "Has an account.",
@@ -33,9 +37,11 @@
       "id": "F03",
       "name": "Add a book to the reading list",
       "role": "reader",
-      "category": "core",
+      "kind": "create",
+      "noun": "Book",
       "authKind": "none",
       "signedOut": false,
+      "start": "On the reading list",
       "goal": "Remember a book to read later.",
       "preconditions": [
         "Signed in."
@@ -47,9 +53,11 @@
       "id": "F04",
       "name": "Browse and search the shelf",
       "role": "reader",
-      "category": "browse",
+      "kind": "browse",
+      "noun": "Book",
       "authKind": "none",
       "signedOut": false,
+      "start": "On the reading list",
       "goal": "Find a book on the list.",
       "preconditions": [
         "Signed in."
@@ -61,9 +69,11 @@
       "id": "F05",
       "name": "Delete a book",
       "role": "reader",
-      "category": "manage",
+      "kind": "delete",
+      "noun": "Book",
       "authKind": "none",
       "signedOut": false,
+      "start": "On the reading list",
       "goal": "Remove a book the reader no longer wants on the list.",
       "preconditions": [
         "Signed in.",
@@ -76,9 +86,11 @@
       "id": "F06",
       "name": "Sign out",
       "role": "reader",
-      "category": "auth",
+      "kind": "auth",
+      "noun": "",
       "authKind": "signOut",
       "signedOut": false,
+      "start": "Anywhere in the app, signed in",
       "goal": "Leave the reading list private on a shared device.",
       "preconditions": [
         "Signed in."
@@ -164,42 +176,6 @@
       ]
     }
   ],
-  "subflows": [
-    {
-      "id": "STD01",
-      "name": "Confirm deletion",
-      "steps": [
-        {
-          "id": "STD01.S01",
-          "kind": "system",
-          "userAction": "",
-          "websiteResponse": "The website asks to confirm the deletion and says what else will be removed with it.",
-          "fields": [],
-          "form": "",
-          "subflow": "",
-          "effects": []
-        }
-      ],
-      "alternatives": [
-        {
-          "id": "STD01.A01",
-          "from": "STD01.S01",
-          "kind": "confirm",
-          "condition": "The user confirms.",
-          "websiteResponse": "The website deletes the record and what belongs to it.",
-          "resumesAt": ""
-        },
-        {
-          "id": "STD01.A02",
-          "from": "STD01.S01",
-          "kind": "cancel",
-          "condition": "The user cancels.",
-          "websiteResponse": "Nothing is deleted; the record stays as it was.",
-          "resumesAt": ""
-        }
-      ]
-    }
-  ],
   "assumptions": [
     {
       "id": "A03",
@@ -210,5 +186,25 @@
       ]
     }
   ],
-  "questions": []
+  "questions": [],
+  "skipped": [
+    {
+      "role": "reader",
+      "noun": "",
+      "kind": "home",
+      "reason": "The reading list is where a signed-in reader lands; F04 covers it."
+    },
+    {
+      "role": "reader",
+      "noun": "Book",
+      "kind": "edit",
+      "reason": "A book is typed once; a wrong entry is deleted and added again."
+    },
+    {
+      "role": "reader",
+      "noun": "",
+      "kind": "account",
+      "reason": "The reader has only an email and a password, and the MVP has no profile."
+    }
+  ]
 }

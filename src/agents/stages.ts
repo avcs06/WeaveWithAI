@@ -6,7 +6,6 @@ import type { Run } from '../core/run';
 import {
   catalogStage,
   expandStage,
-  reconcileStage,
   scopeStage,
 } from './01flows/stages';
 import {
@@ -47,7 +46,6 @@ export const PIPELINE: string[] = [
   'flows-scope',
   'flows-catalog',
   'flows-expand',
-  'flows-reconcile',
   'design-theme',
   'design-architect',
   'design-catalog',
@@ -88,7 +86,6 @@ export const stages: StageDef[] = [
   scopeStage,
   catalogStage,
   expandStage,
-  reconcileStage,
   themeStage,
   architectStage,
   designCatalogStage,

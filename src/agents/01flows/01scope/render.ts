@@ -1,4 +1,3 @@
-import { capability } from '../config/capabilities';
 import { assumptionLines, questionLines } from '../render';
 import type { Scope } from './schema';
 
@@ -21,11 +20,6 @@ export function renderScope(scope: Scope): string {
       (entry) =>
         `- ${entry.noun} (${owner(scope, entry.belongsTo)}): ${entry.description}`,
     ),
-    '',
-    '## Capabilities',
-    ...scope.capabilities
-      .filter((entry) => entry.needed)
-      .map((entry) => `- ${entry.id}${modeNote(entry.id)}: ${entry.note}`),
     '',
     '## In scope',
     ...scope.inScope.map((item) => `- ${item}`),
@@ -51,12 +45,3 @@ const owner = (scope: Scope, belongsTo: string): string =>
   belongsTo === 'shared'
     ? 'shared'
     : `owned by ${scope.roles.find((role) => role.id === belongsTo)?.name ?? belongsTo}`;
-
-function modeNote(id: string): string {
-  const mode = capability(id)?.mode;
-  return mode === 'simulate'
-    ? ' (simulated)'
-    : mode === 'skip'
-      ? ' (skipped)'
-      : '';
-}

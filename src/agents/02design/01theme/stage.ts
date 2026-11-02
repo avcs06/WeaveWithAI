@@ -35,7 +35,7 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
   const { run, llm } = ctx;
   const idea = readFileSync(runPath(run, 'input', 'idea.md'), 'utf8');
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
-  const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
+  const flows = readArtifact<Flows>(run, 'flows-expand').data;
   const result = await runSpecStage({
     run,
     llm,
@@ -56,7 +56,7 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
     stage: 'design-theme',
     model: result.model,
     rounds: result.rounds,
-    inputs: ['flows-scope', 'flows-reconcile'],
+    inputs: ['flows-scope', 'flows-expand'],
   });
 }
 

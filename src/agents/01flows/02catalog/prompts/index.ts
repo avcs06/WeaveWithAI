@@ -2,7 +2,6 @@ import { fillPrompt, loadPrompt, stripComments } from '../../../../core/prompt';
 import { pathBeside } from '../../../../core/utils';
 import type { ReviewGuides } from '../../../../runner/runSpecStage';
 import type { Scope } from '../../01scope/schema';
-import { standardSubflowList } from '../../config/subflows';
 import { fenced, productManager } from '../../prompts/index';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
@@ -20,6 +19,5 @@ export function catalogUserMessage(idea: string, scope: Scope): string {
   return fillPrompt(load('./input.md'), {
     idea: stripComments(idea),
     scope: fenced('Scope (01-flows/01-scope.json)', scope),
-    standardSubflows: standardSubflowList(),
   });
 }

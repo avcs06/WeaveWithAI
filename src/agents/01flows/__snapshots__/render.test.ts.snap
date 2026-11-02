@@ -1,15 +1,20 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`render > catalog lists every flow with its description and the reusable parts 1`] = `
+exports[`render > catalog lists every flow with its description, the skipped pairs and the reusable parts 1`] = `
 "# Shelf: flows catalog
 
 ## Flows
-- F01 Sign up (Reader, auth): A new reader creates an account with an email and a password and lands on their empty reading list.
-- F02 Sign in (Reader, auth): A returning reader signs in with their email and password and sees their reading list.
-- F03 Add a book to the reading list (Reader, core): The reader adds a book with its title, author and shelf; the book appears first in the list.
-- F04 Browse and search the shelf (Reader, browse): The reader browses the list, newest first, and narrows it by typing part of a title or author.
-- F05 Delete a book (Reader, manage): The reader picks a book and deletes it after confirming; the list no longer shows it.
-- F06 Sign out (Reader, auth): The reader signs out and sees the landing page.
+- F01 Sign up (Reader, auth, starts On the landing page): A new reader creates an account with an email and a password and lands on their empty reading list.
+- F02 Sign in (Reader, auth, starts On the landing page): A returning reader signs in with their email and password and sees their reading list.
+- F03 Add a book to the reading list (Reader, create Book, starts On the reading list): The reader adds a book with its title, author and shelf; the book appears first in the list.
+- F04 Browse and search the shelf (Reader, browse Book, starts On the reading list): The reader browses the list, newest first, and narrows it by typing part of a title or author.
+- F05 Delete a book (Reader, delete Book, starts On the reading list): The reader picks a book and deletes it after confirming; the list no longer shows it.
+- F06 Sign out (Reader, auth, starts Anywhere in the app, signed in): The reader signs out and sees the landing page.
+
+## Skipped
+- Reader, home: The reading list is where a signed-in reader lands; F04 covers it.
+- Reader, edit Book: A book is typed once; a wrong entry is deleted and added again.
+- Reader, account: The reader has only an email and a password, and the MVP has no profile.
 
 ## Fields
 - FD01 Email (required, up to 254 characters), e.g. "ana@example.com". How the reader signs in and can be reached
@@ -21,14 +26,6 @@ exports[`render > catalog lists every flow with its description and the reusable
 ## Forms
 - FM01 Book form: FD03, FD04, FD05
 
-## STD01 Confirm deletion (standard subflow)
-
-1. (system) The website asks to confirm the deletion and says what else will be removed with it.
-
-Other paths
-- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
-- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
-
 ## New assumptions
 - A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.
 "
@@ -39,6 +36,7 @@ exports[`render > flows read as numbered steps, fields with rules, changes, othe
 
 ## F01 Sign up
 Reader · auth · Goal: Create an account to keep a private reading list.
+Starts: On the landing page
 Before: Not signed in.
 
 1. The visitor chooses to sign up. The website shows the sign-up form.
@@ -56,6 +54,7 @@ Outcome: The reader has an account and is signed in; after a refresh they are st
 
 ## F02 Sign in
 Reader · auth · Goal: Get back to the reading list.
+Starts: On the landing page
 Before: Has an account.; Not signed in.
 
 1. The reader chooses to sign in. The website shows the sign-in form.
@@ -71,7 +70,8 @@ Other paths
 Outcome: The reader is signed in and stays signed in after a refresh.
 
 ## F03 Add a book to the reading list
-Reader · core · Goal: Remember a book to read later.
+Reader · create Book · Goal: Remember a book to read later.
+Starts: On the reading list
 Before: Signed in.
 
 1. The reader chooses to add a book. The website shows an empty book form.
@@ -90,7 +90,8 @@ Other paths
 Outcome: The book is saved and is still there after a refresh.
 
 ## F04 Browse and search the shelf
-Reader · browse · Goal: Find a book on the list.
+Reader · browse Book · Goal: Find a book on the list.
+Starts: On the reading list
 Before: Signed in.
 
 1. The reader opens their reading list. The website lists the reader's books, newest first, each with its title, author and shelf.
@@ -105,17 +106,13 @@ Other paths
 Outcome: Nothing changed; the reader has found the book they were after.
 
 ## F05 Delete a book
-Reader · manage · Goal: Remove a book the reader no longer wants on the list.
+Reader · delete Book · Goal: Remove a book the reader no longer wants on the list.
+Starts: On the reading list
 Before: Signed in.; At least one book on the list.
 
 1. The reader opens a book from the list. The website shows the book's title, author and shelf.
    Changes: reads Book.
-2. The reader chooses Delete on the book. Confirm deletion (subflow STD01):
-   1. (system) The website asks to confirm the deletion and says what else will be removed with it.
-
-   Other paths
-   - STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
-   - STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
+2. The reader chooses Delete on the book. The website asks the reader to confirm deleting the book.
    Changes: deletes Book.
 
 Other paths
@@ -127,6 +124,7 @@ Outcome: The book is gone and stays gone after a refresh.
 
 ## F06 Sign out
 Reader · auth · Goal: Leave the reading list private on a shared device.
+Starts: Anywhere in the app, signed in
 Before: Signed in.
 
 1. The reader chooses to sign out. The website signs the reader out and shows the public start page.
@@ -142,14 +140,6 @@ Outcome: The reader is signed out; a refresh still shows the public start page.
 
 ## Forms
 - FM01 Book form: FD03, FD04, FD05
-
-## STD01 Confirm deletion (standard subflow)
-
-1. (system) The website asks to confirm the deletion and says what else will be removed with it.
-
-Other paths
-- STD01.A01 (from 1, confirm) The user confirms: The website deletes the record and what belongs to it. Back to the calling flow.
-- STD01.A02 (from 1, cancel) The user cancels: Nothing is deleted; the record stays as it was. Back to the calling flow.
 
 ## New assumptions
 - A03 (presentation, affects F04): Books are listed newest first; there is no manual ordering.
@@ -169,12 +159,6 @@ Audience: People who read a lot and lose track of what they wanted to read next.
 ## Vocabulary
 - Book (owned by Reader): A book the reader wants to read, is reading or has finished.
 - Shelf (owned by Reader): Where a book stands: to read, reading or finished.
-
-## Capabilities
-- accounts: Each reader signs in to see their own list.
-- userOwnedData: Books belong to the reader who added them.
-- crud: Add, browse and delete books.
-- search: Find a book by title or author.
 
 ## In scope
 - Sign up and sign in with email and password

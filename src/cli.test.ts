@@ -161,8 +161,8 @@ describe('weave run', () => {
         `golden ${ideaName}: 01-flows/01-scope.json, 01-flows/01-scope.md ->`,
       );
       expect(() =>
-        goldenCommand(run.id, ideaName, 'flows-reconcile', deps),
-      ).toThrow(/no flows-reconcile artifact/);
+        goldenCommand(run.id, ideaName, 'flows-expand', deps),
+      ).toThrow(/no flows-expand artifact/);
       expect(() => goldenCommand(run.id, ideaName, 'nope', deps)).toThrow(
         UsageError,
       );
@@ -178,7 +178,6 @@ describe('weave run', () => {
       'flows-scope: 0 mandatory, 0 warnings',
       'flows-catalog: no artifact to validate',
       'flows-expand: no artifact to validate',
-      'flows-reconcile: no artifact to validate',
       'design-theme: no artifact to validate',
       'design-architect: no validators registered',
       'design-catalog: no validators registered',

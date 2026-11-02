@@ -1,6 +1,6 @@
 /**
  * FLOW-016 · mandatory
- * An alternative's from is a step of its own flow or subflow; resumesAt is "" (the flow ends) or a step of the same one.
+ * An alternative's from is a step of its own flow; resumesAt is "" (the flow ends) or a step of the same flow.
  * Pass: { id: 'F03.A01', from: 'F03.S02', resumesAt: 'F03.S02' } · resumesAt: ''
  * Fail: from: 'F04.S01' inside F03 · resumesAt: 'F03.S09' when F03 has 3 steps
  */

@@ -2,19 +2,12 @@ import { readFileSync } from 'node:fs';
 import { fillPrompt, loadPrompt } from '../../../core/prompt';
 import { pathBeside } from '../../../core/utils';
 import { type Answers, formatAnswers } from '../../../runner/runSpecStage';
-import { buildList, simulatedList, skippedList } from '../config/capabilities';
 import { Flows } from '../schema';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
 /** The standard both prompts and both review guides share. */
 export const productManager = () => load('./product-manager.md');
-
-export const capabilityLists = () => ({
-  capabilitiesBuild: buildList(),
-  capabilitiesSimulated: simulatedList(),
-  capabilitiesSkipped: skippedList(),
-});
 
 export function answersBlock(answers: Answers): string {
   return Object.keys(answers).length === 0
@@ -25,13 +18,12 @@ export function answersBlock(answers: Answers): string {
 export function flowsSystemPrompt(answers: Answers): string {
   return fillPrompt(load('./flows.md'), {
     productManager: productManager(),
-    ...capabilityLists(),
     answers: answersBlock(answers),
     exampleFlows: exampleFlows(),
   });
 }
 
-/** The "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one fills a form, one runs the standard delete subflow. Never a reference idea's flow. */
+/** The "add a book" and "delete a book" flows from the reading-list fixture with the parts they use: one fills a form, one confirms a delete. Never a reference idea's flow. */
 function exampleFlows(): string {
   const fixture = Flows.parse(
     JSON.parse(

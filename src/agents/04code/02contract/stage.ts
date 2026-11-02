@@ -29,7 +29,7 @@ async function seedRows(ctx: StageContext, contract: Contract): Promise<SeedRows
   if (hasArtifact(run, 'code-contract') && !isStale(run, 'code-contract'))
     return readArtifact<SeedRows>(run, 'code-contract').data;
   const scope = readArtifact<Scope>(run, 'flows-scope').data;
-  const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
+  const flows = readArtifact<Flows>(run, 'flows-expand').data;
   const result = await runSpecStage({
     run,
     llm,
@@ -45,7 +45,7 @@ async function seedRows(ctx: StageContext, contract: Contract): Promise<SeedRows
     stage: STAGE,
     model: result.model,
     rounds: result.rounds,
-    inputs: ['contract', 'flows-scope', 'flows-reconcile'],
+    inputs: ['contract', 'flows-scope', 'flows-expand'],
   });
   return result.output;
 }

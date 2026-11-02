@@ -6,7 +6,6 @@ export type ArtifactName =
   | 'flows-scope'
   | 'flows-catalog'
   | 'flows-expand'
-  | 'flows-reconcile'
   | 'design-theme'
   | 'design-architect'
   | 'design-catalog'
@@ -43,7 +42,6 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'flows-scope': '01-flows/01-scope.json',
   'flows-catalog': '01-flows/02-catalog.json',
   'flows-expand': '01-flows/03-expand.json',
-  'flows-reconcile': '01-flows/04-reconcile.json',
   'design-theme': '02-design/01-theme.json',
   'design-architect': '02-design/02-architect.json',
   'design-catalog': '02-design/03-catalog.json',

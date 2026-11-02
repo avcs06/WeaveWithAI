@@ -11,7 +11,7 @@ const idea = path.join(root, 'idea.md');
 writeFileSync(idea, '# Idea\n');
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
-const meta = { stage: 'flows-reconcile', model: 'muse-spark-1.3', rounds: 1 };
+const meta = { stage: 'flows-expand', model: 'muse-spark-1.3', rounds: 1 };
 
 describe('writeArtifact', () => {
   it('increments the version and records the inputs it was made from', () => {
@@ -31,24 +31,24 @@ describe('writeArtifact', () => {
     expect([scope1.meta.version, scope2.meta.version]).toEqual([1, 2]);
     expect(scope2.meta).toMatchObject({
       artifact: 'flows-scope',
-      stage: 'flows-reconcile',
+      stage: 'flows-expand',
       model: 'muse-spark-1.3',
       hash: hashOf({ name: 'v2' }),
     });
 
     const flows = writeArtifact(
       run,
-      'flows-reconcile',
+      'flows-expand',
       { flows: [] },
       { ...meta, inputs: ['flows-scope'] },
     );
     expect(flows.meta.inputs).toEqual({
       'flows-scope': { version: 2, hash: scope2.meta.hash },
     });
-    expect(readArtifact<{ flows: [] }>(run, 'flows-reconcile').data).toEqual({
+    expect(readArtifact<{ flows: [] }>(run, 'flows-expand').data).toEqual({
       flows: [],
     });
-    expect(readState(run).stages['flows-reconcile']).toMatchObject({
+    expect(readState(run).stages['flows-expand']).toMatchObject({
       status: 'done',
       version: 1,
       hash: flows.meta.hash,
@@ -64,7 +64,7 @@ describe('writeArtifact', () => {
     expect(() =>
       writeArtifact(
         run,
-        'flows-reconcile',
+        'flows-expand',
         {},
         { ...meta, inputs: ['flows-scope'] },
       ),
@@ -78,22 +78,22 @@ describe('isStale', () => {
     writeArtifact(run, 'flows-scope', { name: 'a' }, { ...meta, inputs: [] });
     writeArtifact(
       run,
-      'flows-reconcile',
+      'flows-expand',
       { flows: [] },
       { ...meta, inputs: ['flows-scope'] },
     );
-    expect(isStale(run, 'flows-reconcile')).toBe(false);
+    expect(isStale(run, 'flows-expand')).toBe(false);
 
     writeArtifact(run, 'flows-scope', { name: 'b' }, { ...meta, inputs: [] });
-    expect(isStale(run, 'flows-reconcile')).toBe(true);
+    expect(isStale(run, 'flows-expand')).toBe(true);
 
     writeArtifact(
       run,
-      'flows-reconcile',
+      'flows-expand',
       { flows: [] },
       { ...meta, inputs: ['flows-scope'] },
     );
     writeArtifact(run, 'flows-scope', { name: 'b' }, { ...meta, inputs: [] });
-    expect(isStale(run, 'flows-reconcile')).toBe(false);
+    expect(isStale(run, 'flows-expand')).toBe(false);
   });
 });

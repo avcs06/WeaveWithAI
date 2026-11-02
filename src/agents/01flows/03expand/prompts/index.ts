@@ -3,7 +3,6 @@ import { pathBeside } from '../../../../core/utils';
 import type { ReviewGuides } from '../../../../runner/runSpecStage';
 import type { Scope } from '../../01scope/schema';
 import type { Catalog } from '../../02catalog/schema';
-import { standardSubflowList } from '../../config/subflows';
 import { fenced, productManager } from '../../prompts/index';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
@@ -16,7 +15,7 @@ export const expandReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });
 
-/** Stage 2's user message for one batch: the idea, the scope, the whole catalog, and the flow ids to expand. */
+/** Stage 2's user message for one call: the idea, the scope, the whole catalog, and the flow to expand. */
 export function expandUserMessage(
   idea: string,
   scope: Scope,
@@ -28,6 +27,5 @@ export function expandUserMessage(
     scope: fenced('Scope (01-flows/01-scope.json)', scope),
     catalog: fenced('Catalog (01-flows/02-catalog.json)', catalog),
     flowIds: flowIds.join(', '),
-    standardSubflows: standardSubflowList(),
   });
 }

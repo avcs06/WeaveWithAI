@@ -20,7 +20,7 @@ export const contractStage: StageDef = {
   produces: ['contract'],
   async run({ run, llm }) {
     const scope = readArtifact<Scope>(run, 'flows-scope').data;
-    const flows = readArtifact<Flows>(run, 'flows-reconcile').data;
+    const flows = readArtifact<Flows>(run, 'flows-expand').data;
     const { widgets } = readArtifact<Catalog>(run, 'design-catalog').data;
     const result = await runSpecStage({
       run,
@@ -39,7 +39,7 @@ export const contractStage: StageDef = {
       stage: 'contract',
       model: result.model,
       rounds: result.rounds,
-      inputs: ['flows-scope', 'flows-reconcile', 'design-catalog'],
+      inputs: ['flows-scope', 'flows-expand', 'design-catalog'],
     });
     writeFileSync(runPath(run, markdownOf('contract')), renderContract(result.output, { scope, flows, widgets }));
   },

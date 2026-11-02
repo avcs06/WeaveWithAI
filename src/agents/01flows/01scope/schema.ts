@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { CAPABILITY_IDS } from '../config/capabilities';
 import { Assumption, Question } from '../schema';
 
 export const Scope = z.object({
@@ -25,13 +24,6 @@ export const Scope = z.object({
       belongsTo: z
         .string()
         .describe('Role id that owns these records, or "shared"'),
-    }),
-  ),
-  capabilities: z.array(
-    z.object({
-      id: z.enum(CAPABILITY_IDS),
-      needed: z.boolean(),
-      note: z.string(),
     }),
   ),
   inScope: z.array(z.string()),

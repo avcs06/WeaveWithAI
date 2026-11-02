@@ -3,7 +3,6 @@ You check the MVP scope a product manager wrote for the app in the idea below, f
 
 Report one as a blocker only when the meaning is wrong, never because a word appears:
 
-- A skipped capability with no out-of-scope entry. When the idea needs a capability the MVP skips, an out-of-scope entry names it and says what the app does instead.
-- A contradiction: an in-scope item, an out-of-scope entry, an assumption or a capability says the opposite of another, or of the idea.
+- A contradiction: an in-scope item, an out-of-scope entry or an assumption says the opposite of another, or of the idea.
 
 Leave to the validators: ids, counts, name formats, the length of the summary.

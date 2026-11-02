@@ -65,11 +65,12 @@ export function themeUserMessage(idea: string, scope: Scope, flows: Flows): stri
     idea: stripComments(idea),
     scope: json(scope),
     flows: json(
-      flows.flows.map(({ id, name, role, category, authKind, goal }) => ({
+      flows.flows.map(({ id, name, role, kind, noun, authKind, goal }) => ({
         id,
         name,
         role,
-        category,
+        kind,
+        noun,
         authKind,
         goal,
       })),
