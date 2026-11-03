@@ -35,10 +35,10 @@ import {
 import React from 'react';
 
 // Setup: stand-ins for your app's data, not part of the pattern.
-const order = [
-  { label: 'Placed', value: '2 Nov 2026' },
-  { label: 'Delivery', value: 'Courier, 3 to 5 days' },
-  { label: 'Paid with', value: 'UPI' },
+const record = [
+  { label: 'Created', value: '2 Nov 2026' },
+  { label: 'Status', value: 'Active' },
+  { label: 'Owner', value: 'Alex Morgan' },
 ];
 const setup = `pnpm install
 pnpm dev`;
@@ -48,20 +48,20 @@ pnpm dev`;
 const Text = () => (
   <div className="flex-col-gap-3">
     <Paragraph>
-      Each piece is thrown and glazed by hand, so no two are quite alike.
+      A paragraph of body text, which wraps to the width of its column.
     </Paragraph>
-    <Paragraph color="muted">Orders ship within three working days.</Paragraph>
+    <Paragraph color="muted">A muted paragraph for a detail.</Paragraph>
   </div>
 );
 
 /** Points in any order, bulleted. An item may hold a list of its own. */
 const Points = () => (
   <List>
-    <ListItem>Free pickup from the studio</ListItem>
+    <ListItem>First point</ListItem>
     <ListItem>
-      Courier anywhere in India
+      Second point
       <List>
-        <ListItem>Tracked from dispatch</ListItem>
+        <ListItem>A point under it</ListItem>
       </List>
     </ListItem>
   </List>
@@ -70,25 +70,25 @@ const Points = () => (
 /** Steps the reader follows in order, numbered. */
 const Steps = () => (
   <List ordered>
-    <ListItem>Choose a glaze</ListItem>
-    <ListItem>Pick a size</ListItem>
-    <ListItem>Check out</ListItem>
+    <ListItem>Fill in the form</ListItem>
+    <ListItem>Check the details</ListItem>
+    <ListItem>Confirm</ListItem>
   </List>
 );
 
 /** A record's fields as label and value pairs, one pair a row. */
 const Fields = () => (
   <DescriptionList>
-    {order.map(({ label, value }) => (
+    {record.map(({ label, value }) => (
       <div key={label}>
         <DescriptionTerm>{label}</DescriptionTerm>
         <DescriptionDetails>{value}</DescriptionDetails>
       </div>
     ))}
     <div>
-      <DescriptionTerm>Total</DescriptionTerm>
+      <DescriptionTerm>Items</DescriptionTerm>
       <DescriptionDetails>
-        <Numeral>₹1,300</Numeral>
+        <Numeral>1,300</Numeral>
       </DescriptionDetails>
     </div>
   </DescriptionList>
@@ -96,8 +96,8 @@ const Fields = () => (
 
 /** Someone's words, with who said them. Without `source`, just the quote. */
 const Testimonial = () => (
-  <Quote source="Priya, Bengaluru" font="display">
-    The mug keeps my chai warm, and the glaze is lovelier than the photos.
+  <Quote source="Alex Morgan" font="display">
+    Someone's words, as they said them.
   </Quote>
 );
 
