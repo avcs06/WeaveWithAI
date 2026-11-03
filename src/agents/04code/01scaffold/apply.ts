@@ -10,8 +10,8 @@ import { PAGE_ROLES, ROLES } from '../../02design/01theme/schema';
 // 02-design/01-theme.json written into an app's own files: the brand, base, page
 // (divider, backdrop and skeleton included), entity and status colors into
 // colors.ts, radius and focus ring into tokens.ts, the three families into
-// fonts.ts and Storybook's head, and the component defaults into each
-// recipe's defaultVariants.
+// fonts.ts and Storybook's head, the page layouts into PageLayout's
+// layouts.ts, and the component defaults into each recipe's defaultVariants.
 
 /** The braces of the object after `key: {`, searched within [from, to). */
 function block(text: string, key: string, from = 0, to = text.length): [number, number] {
@@ -178,6 +178,13 @@ function readRecipe(source: ts.SourceFile, name: string): Recipe | undefined {
   return undefined;
 }
 
+/** The file PageLayout reads its layouts from: the theme's app and marketing layouts. */
+export const LAYOUTS_FILE = 'web/app/components/PageLayout/layouts.ts';
+
+export function layoutsModule(theme: Theme): string {
+  return `import type { PageLayoutConfig } from './PageLayout.types';\n\n// The theme's page layouts: the scaffold writes the run's theme over these.\nexport const layouts: Record<'app' | 'marketing', PageLayoutConfig> = ${JSON.stringify(theme.layouts, null, 2)};\n`;
+}
+
 /** A theme default as recipe variants: variant props as they are, a look as its tokens, following `createLook`. */
 export function variantValues(
   variants: Record<string, string[]>,
@@ -238,6 +245,7 @@ export function applyTheme(appDir: string, theme: Theme): { changed: string[]; s
   write('tokens.ts', (text) => applyTokens(text, theme));
   write('packages/styles/src/fonts.ts', () => fontsModule(theme));
   write('packages/ui/.storybook/preview-head.html', () => previewHead(theme));
+  write(LAYOUTS_FILE, () => layoutsModule(theme));
   for (const [component, preset] of Object.entries(theme.defaults)) {
     // A default belongs to the recipe named after its component; one that only borrows another's would change that component everywhere.
     const file = `packages/ui/src/${component}/${component}.recipes.css.ts`;

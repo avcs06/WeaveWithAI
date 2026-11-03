@@ -62,8 +62,10 @@ export type SessionDeps = {
 };
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
-/** What the guidelines tell the agent never to change. */
-const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**'];
+/** What the guidelines tell the agent never to change: the design system, the config, and the frames code wrote. */
+const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**', 'web/app/components/PageLayout/**'];
+/** A frame's layout in its route group, which the frames stage writes by code. */
+const FRAME_LAYOUT = /^web\/app\/\(routes\)\/\([^/]+\)\/layout\.tsx$/;
 
 /** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
 export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
@@ -124,9 +126,9 @@ function installState(appDir: string): string {
   return existsSync(file) ? readFileSync(file, 'utf8') : '';
 }
 
-/** The changed files a session may not touch: tests and `PROTECTED`. */
+/** The changed files a session may not touch: tests, `PROTECTED` and the frames' layouts. */
 export function protectedOf(changed: string[]): string[] {
-  return changed.filter((file) => TESTS.test(file) || PROTECTED.some((rule) => inPath(file, rule)));
+  return changed.filter((file) => TESTS.test(file) || FRAME_LAYOUT.test(file) || PROTECTED.some((rule) => inPath(file, rule)));
 }
 
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {

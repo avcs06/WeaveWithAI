@@ -21,6 +21,15 @@ describe('path rules', () => {
     expect(
       protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']),
     ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']);
+    // Code writes the frames' layouts and PageLayout; a session fills only the parts in blocks.
+    expect(
+      protectedOf([
+        'web/app/(routes)/(app)/layout.tsx',
+        'web/app/(routes)/(app)/dashboards/layout.tsx',
+        'web/app/components/PageLayout/PageLayout.tsx',
+        'web/app/blocks/AppHeader/AppHeader.tsx',
+      ]),
+    ).toEqual(['web/app/(routes)/(app)/layout.tsx', 'web/app/components/PageLayout/PageLayout.tsx']);
   });
 });
 

@@ -13,6 +13,9 @@
   `web/app/(routes)/page.tsx`.
 - A screen fills its frame's main region: no header, navigation or footer
   of its own. Its title is the page's only H1.
+- The frame's container already sets the page padding, the width and the
+  gap between sections. A page returns its sections, with no padding, max
+  width or outer gap of its own.
 - Build every step in the order its file gives them, and every
   alternative. A step that leads to a route opens it; a step that opens a
   dialog opens it.
@@ -26,8 +29,10 @@
 
 ## The landing page
 
-- Build a full-width hero using the marketing layout's `main.fullBleed`:
-  its background spans the width while its content stays in the container.
+- When the marketing layout's `main.fullBleed` is true, build the hero as a
+  `Bleed` from `@app/components/PageLayout`: its background runs the full
+  width while its content stays in the container. As the first section
+  under an overlay header, it runs under the header too.
   Draw the background from the theme's brand colors through tokens, such
   as a gradient from `tokens.color.primary.bg` into
   `tokens.color.surface.pageBg`. Keep all text at 4.5:1 against every

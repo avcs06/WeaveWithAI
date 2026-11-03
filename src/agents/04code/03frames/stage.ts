@@ -3,8 +3,11 @@ import path from 'node:path';
 import { readArtifact } from '../../../core/artifacts';
 import type { Issue } from '../../../core/issues';
 import { loadPrompt } from '../../../core/prompt';
-import { runPath } from '../../../core/run';
+import { appendEvent, type Run, runPath } from '../../../core/run';
 import { pathBeside } from '../../../core/utils';
+import { appendLedger } from '../../../engine/ledger';
+import { appCheck } from '../../../engine/session';
+import { git } from '../../../engine/setup';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
 import type { Themed } from '../../02design/01theme/build';
@@ -14,6 +17,7 @@ import { frameGroup } from '../01scaffold/weave';
 import { signedIn, storagePrefix } from '../02contract/codegen';
 import { behindSignIn, renderedOn, routeSample } from '../rendered';
 import { runUnits, type UnitSpec } from '../unit';
+import { frameSkeletons } from './skeleton';
 
 const STAGE = 'code-frames';
 
@@ -63,6 +67,28 @@ export function withProbes(appDir: string, probes: Probe[], check: () => Promise
   };
 }
 
+/** The frames' layouts and empty parts, by code, committed before the session so its diff holds only what it fills in. */
+async function writeSkeletons(run: Run, appDir: string, files: Map<string, string>): Promise<void> {
+  for (const [file, text] of files) {
+    mkdirSync(path.dirname(path.join(appDir, file)), { recursive: true });
+    writeFileSync(path.join(appDir, file), text);
+  }
+  appendLedger(appDir, [...files.keys()].map((file) => ({ path: file, status: 'A', origin: 'code', stage: STAGE })));
+  const checks: [string, string[]][] = [
+    ['validate', ['node', 'tools/validate-files.mjs', ...files.keys()]],
+    ['typecheck', ['pnpm', 'typecheck']],
+    ['lint', ['pnpm', 'nx', 'lint', 'web']],
+  ];
+  for (const [name, args] of checks) {
+    const result = await appCheck(appDir, name, args);
+    appendEvent(run, { type: 'check:run', stage: STAGE, name, ok: result.ok });
+    // Code wrote every file here, so a failing check is a generator bug.
+    if (!result.ok) throw new Error(`${STAGE}: ${name} failed on the frame layouts:\n${result.output}`);
+  }
+  git(appDir, 'add', '-A');
+  git(appDir, 'commit', '-q', '-m', `${STAGE}: frame layouts by code`);
+}
+
 async function runFrames(ctx: StageContext): Promise<void> {
   const architecture = readArtifact<Architecture>(ctx.run, 'design-architect').data;
   const flows = readArtifact<Flows>(ctx.run, 'flows-expand').data;
@@ -74,7 +100,14 @@ async function runFrames(ctx: StageContext): Promise<void> {
     routeSample(probe.route, probe.frame, false, probe.signedIn ? signedIn(storagePrefix(ctx.run)) : undefined),
   );
   const rendered = samples.length ? withProbes(appDir, probes, renderedOn(ctx.run, appDir, samples, theme)) : undefined;
-  await runUnits(ctx, STAGE, framesSpecs(architecture).map((spec) => ({ ...spec, ...(rendered && { rendered }) })));
+  const skeletons = frameSkeletons(architecture, flows, scope, theme);
+  await runUnits(
+    ctx,
+    STAGE,
+    framesSpecs(architecture).map((spec) => ({ ...spec, ...(rendered && { rendered }) })),
+    {},
+    (dir) => writeSkeletons(ctx.run, dir, skeletons),
+  );
 }
 
 export const framesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runFrames(ctx) };

@@ -93,14 +93,24 @@ export async function runUnit(
   });
 }
 
-/** A code stage's units, one after another: they share the app's git tree and its dev server port. */
-export async function runUnits(ctx: StageContext, stage: string, specs: UnitSpec[], deps: SessionDeps = {}): Promise<void> {
+/**
+ * A code stage's units, one after another: they share the app's git tree and its dev server port. `prepare` writes
+ * what code makes for the stage, after the stage's reset and before its first session.
+ */
+export async function runUnits(
+  ctx: StageContext,
+  stage: string,
+  specs: UnitSpec[],
+  deps: SessionDeps = {},
+  prepare?: (appDir: string) => Promise<void>,
+): Promise<void> {
   // A unit named after its stage logs the stage's start and done itself.
   const own = !specs.some((spec) => spec.stage === stage);
   if (own) appendEvent(ctx.run, { type: 'stage:start', stage });
   updateStage(ctx.run, stage, { status: 'running' });
   const appDir = runPath(ctx.run, 'app');
   startStage(ctx.run, appDir, stage);
+  await prepare?.(appDir);
   let known = 0;
   let rounds = 0;
   for (const spec of specs) {

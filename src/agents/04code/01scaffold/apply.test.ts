@@ -7,6 +7,7 @@ import {
   applyRecipeDefaults,
   applyTokens,
   fontsModule,
+  layoutsModule,
   previewHead,
   variantValues,
 } from './apply';
@@ -111,6 +112,15 @@ describe('fonts', () => {
     const head = previewHead(theme);
     expect(head).toContain('family=Playfair+Display:wght@400;500;600;700');
     expect(head).toContain("--font-display: 'Playfair Display';");
+  });
+});
+
+describe('layouts', () => {
+  it("writes the theme's app and marketing layouts as PageLayout's typed layouts", () => {
+    const module = layoutsModule(theme);
+    expect(module).toContain("export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {");
+    const literal = module.slice(module.indexOf('= ') + 2, module.lastIndexOf(';'));
+    expect(JSON.parse(literal)).toEqual(theme.layouts);
   });
 });
 

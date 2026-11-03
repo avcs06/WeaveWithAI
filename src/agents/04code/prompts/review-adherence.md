@@ -43,9 +43,11 @@ A list's search, filters and add action together right above the list, and the b
 
 - A25: Each frame shows its logo, every navigation item and its account menu around its screens, and each of them works. The navigation marks the item of the screen the user is on.
 - A26: Every frame has its alternative: what a visitor who is not signed in sees.
-- A27: Each layout shows its screens in its main region, and none of a screen's own content. Each screen fills that region, with no header, navigation or footer of its own.
+- A27: Each screen sits in its frame's container, with no header, navigation or footer of its own, and no page padding or max width of its own.
 - A28: Each screen has a title, and it is the page's only H1. A frame has no H1, not even its logo.
-- A29: Every header and footer has the frame's background, not the brand, status or entity colors. Those colors are for controls and containers.
+- A29: Each header, sidebar and footer holds what its part's comment says the theme puts at its start, center and end, or its top and bottom, in that place.
+
+Code writes each frame's layout and `PageLayout`: the bars' sizes, what stays in view, the separations and the container. They are not the agent's to judge.
 
 A link to a screen that is not built yet is not a blocker.
 

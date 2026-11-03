@@ -38,7 +38,6 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Frames
 
 - The sidebar's navigation is a `SidebarMenu`: every item has the same padding and hover, the current item is marked, a fixed top and bottom hold what sits above and below the list, such as a logo, a search or a Create button, and the account, and the list between them scrolls.
-- The sidebar fills the height under the header. The header's height and the sidebar's top come from one value.
 
 ## Text
 
