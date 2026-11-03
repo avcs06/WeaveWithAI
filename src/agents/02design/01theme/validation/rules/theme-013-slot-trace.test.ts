@@ -17,14 +17,16 @@ describe('THEME-013', () => {
     expect(at(() => {})).toEqual([]);
   });
 
-  it('fails a slot that names what no flow gives the user, in a needed part only', () => {
+  it('fails a header or sidebar slot that names what no flow gives the user, in a needed part only, and never in a footer', () => {
     expect(at((l) => (l.app.header.end = 'Help, the Shelf link'))).toEqual([
       [
         'app.header.end',
         'The app header end names "Help", which the scope and the flows do not have. Name only what a flow gives the user, or leave it out.',
       ],
     ]);
-    expect(at((l) => Object.assign(l.app.footer, { start: 'Product links' }))).toEqual([]);
+    expect(
+      at((l) => Object.assign(l.marketing.footer, { needed: true, content: 'the site links in columns, then a line of small print' })),
+    ).toEqual([]);
     expect(at((l) => (l.marketing.header.center = 'Search'))).toEqual([]);
   });
 });

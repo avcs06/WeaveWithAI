@@ -20,12 +20,17 @@ When you finish, write `.weave/replies.json` with one reply per issue:
 - `closed` when you fixed it. Say what you changed.
 - `open` when you did not fix it. Give your reason in one or two sentences.
 
-## When you do not fix an issue
+## When you leave an issue open
 
-- Two issues may ask for opposite changes, such as one that moves a link and one that keeps it where it is. Decide which one serves the user better. Fix that one. Answer the other `open`, and name the one you fixed.
-- A reviewer may ask for something you believe is not an issue, such as a change your guidelines or the design rule out. Answer it `open` with your reason.
-- A failed check you answer `open` with a reason is not sent to you again. Leave a check open only when fixing it would break something the user needs.
-- The reviewers read your replies when they review this fix. They accept a sound reason, or answer it `open` and say why it fails.
+Fix every issue. Leave an issue `open` only in one of three cases:
+
+- Its fix would break an instruction you were given: your task, the guidelines, `UX.md` or the design. Quote that instruction in your reason.
+- It asks for the opposite of another issue, such as one that moves a link and one that keeps it where it is. Fix the one that serves the user better. In the other's reason, name the one you fixed.
+- Its fix would bring in a new error, such as a failed check, a step that stops working or a screen that breaks. Name what would break.
+
+Taste, or a fix that is hard or long, is no reason to leave an issue open. For example, "The guidelines say the way up to a list is the breadcrumb, so I added no back link" is a reason. "The current layout looks cleaner" is not: fix the issue.
+
+A failed check you answer `open` is not sent to you again. The reviewers read your replies when they review this fix. They accept a reason that quotes an instruction, names the opposite issue you fixed, or names what the fix would break. They answer any other reason `open`.
 
 ## How the checks ran
 

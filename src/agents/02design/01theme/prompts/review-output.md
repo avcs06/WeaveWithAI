@@ -40,7 +40,7 @@ Leave out taste.
 
 Leave to the validators, which check:
 
-- A slot that names something the scope and the flows do not have, such as search in an app with no search or a cart in an app that sells nothing.
+- A header or sidebar slot that names something the scope and the flows do not have, such as search in an app with no search or a cart in an app that sells nothing.
 
 - The brief's counts and ranges, every vocabulary noun once in the entities, colored hues at least 30 degrees apart, and each status hue inside its band.
 - Three different fonts for each role, and a wordmark weight its font ships.

@@ -12,7 +12,15 @@ In `replies`, answer each problem by its id:
 - `closed` when you fixed it. Say what you changed.
 - `open` when you did not fix it. Give your reason in one or two sentences.
 
-Fix a problem unless it asks for something that is not a problem. When two problems ask for opposite changes, fix the one that serves the document better. Answer the other `open`, and name the one you fixed. A problem from a check that you answer `open` with a reason is not sent to you again.
+Fix every problem. Leave a problem `open` only in one of three cases:
+
+- Its fix would break an instruction you were given. Quote that instruction in your reason.
+- It asks for the opposite of another problem. Fix the one that serves the document better. In the other's reason, name the one you fixed.
+- Its fix would bring in a new error, such as breaking another rule or a part of the document that is correct now. Name what would break.
+
+Taste, or a fix that is hard or long, is no reason to leave a problem open. For example, "The instructions say each flow has one goal, and this fix gives F19 two" is a reason. "The current wording reads better" is not: fix the problem.
+
+A problem from a check that you answer `open` is not sent to you again.
 
 The problems:
 {{issues}}

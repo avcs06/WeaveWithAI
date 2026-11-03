@@ -23,8 +23,8 @@ Leave these out:
    - `problem`: what is wrong, in one sentence.
    - `fix`: what the output must say instead.
 4. Write `replies`. The input lists the threads you raised that the fixer left open: each problem's id, and the fixer's reason. Each line under a problem is one reply, oldest first: its round, who gave it (`fix` is the fixer), its status and its reason. Answer each one by its id:
-   - `closed` when it is fixed, or when the fixer's reason for leaving it holds.
-   - `open` when it is not fixed, or when the fixer's reason does not hold. Say why.
+   - `closed` when it is fixed, or when the fixer's reason holds. A reason holds only when it quotes an instruction the model was given that rules the fix out, names the opposite problem the fixer fixed instead, or names a new error the fix would bring in.
+   - `open` when it is not fixed and the reason does none of these, such as a reason of taste. Say why.
    A thread you answer is no blocker: never report its problem again in `blockers`.
 
 When nothing major is wrong, `blockers` is []. When the input lists no threads, `replies` is [].
