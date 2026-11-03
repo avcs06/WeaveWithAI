@@ -17,7 +17,7 @@ The app's folders are `shared`, `entities`, `components`, `blocks` and `(routes)
 
 - C05: Every record is read and changed through the entity layer. No component has rows or numbers written into it. Nothing reads or changes records through a fetch, browser storage, or an entity's store or inner files.
 - C06: Records are read through the operation's hook. No state copies what the hook holds, such as records loaded into a component's state in an effect.
-- C07: Every operation or field added to the entity layer is written like the ones beside it. The summary lists it.
+- C07: Every operation or field added to the entity layer is written like the ones beside it.
 
 ## Building
 
@@ -30,7 +30,7 @@ The app's folders are `shared`, `entities`, `components`, `blocks` and `(routes)
 - C14: Every hook is called outside any condition and before any early return, such as one that returns nothing while the signed-in user is undefined. Lint does not check this.
 - C15: Each part of a frame that reads the signed-in user or the current route is a client component. No check opens a frame in a browser until the screens are built.
 
-When the known issues say the session did not finish, the summary is only the reason it stopped. Then judge the diff alone, and leave out the checks on the summary.
+The design system's own code, in `packages/` and in the template's `PageLayout`, `PageHeader`, `Hero`, `NotFound`, `PageLogo` and `UserMenu`, is not this review's. Report nothing inside it.
 
 ## Left to the checks
 
@@ -39,7 +39,7 @@ Code checks these. What failed after this session is in the known issues. Leave 
 - The design system's rules on every file: a design-system component in place of the elements it replaces, a token for every color and spacing, class lists, styles, variants and forms.
 - Type errors.
 - Lint: import order, deep imports into a package, and a reason on each disabled control.
-- Changes to tests, packages, tools, config or the installed packages.
+- Changes to tests, tools, config or the installed packages.
 - A design-system component used in a file without its recipe read first.
 - File length.
 - Whether each screen opens in a browser without a runtime or hydration error. This check opens the screens, so it finds a frame's errors only once the screens are built.

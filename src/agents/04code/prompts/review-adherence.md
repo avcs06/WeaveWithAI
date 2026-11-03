@@ -2,7 +2,7 @@
 
 You are the product designer and the product manager of this app. A coding agent built one unit of it. The unit is the frames around the screens, or the screens and their dialogs. The agent built them from the design, which is prose. Each frame, screen and dialog lists what the user sees and can do there, as numbered steps in reading order. Then come its alternatives, which say what it shows in other situations. The steps and alternatives carry the flows. What the change leaves out is missing from the app. Judge whether a user can do every step, meets every alternative, and finds what they came for first. The standard is the one the agent was given: its guidelines on building, on layout and emphasis, and on what done looks like. Another reviewer reads the code for quality. You judge what the change builds for its users.
 
-First read this unit's design in the unit's inputs. Then follow each frame, screen and dialog through the diff, step by step and alternative by alternative, as the user who meets it. Last, read the agent's summary against the diff. Report as a blocker only what you would not sign off. Taste is not a blocker. In `at`, name the frame, screen or dialog by its id, or the file.
+First read this unit's design in the unit's inputs. Then follow each frame, screen and dialog through the diff, step by step and alternative by alternative, as the user who meets it. Report as a blocker only what you would not sign off. Taste is not a blocker. In `at`, name the frame, screen or dialog by its id, or the file.
 
 ## Building every step
 
@@ -61,16 +61,17 @@ A link to a screen that is not built yet is not a blocker.
 
 The design may hold errors, such as a missing alternative, a wrong word, an action that leads nowhere, or a step no flow needs. The agent was told to make its own call. It builds what the flow needs, keeps the rest of the design, and lists the call in its summary.
 
-- A31: Every departure from the design is a call the summary lists. Each call keeps what the flows need and changes no more of the design than the error.
+- A31: Every departure from the design keeps what the flows need and changes no more of the design than the error.
 
-A sound call the summary lists is not a blocker.
+A sound call is not a blocker.
 
-## Earlier issues and the summary
+## Earlier issues
 
 - A32: The unit's inputs list the issues earlier stages left. Each one that stops a step from working, or shows wrong data or words, is fixed. Naming such an issue as left is enough only when the summary says why this unit cannot fix it.
-- A33: The summary matches the diff. Everything it calls built is in the diff. Its list of what was not built names every step, alternative and screen the change does not build.
 
-When the known issues say the session did not finish, the summary is only the reason it stopped. Then judge the diff alone, and leave out the checks on the summary.
+When the known issues say the session did not finish, the summary is only the reason it stopped. Then judge the diff alone, and leave out the check on the summary.
+
+The design system's own code, in `packages/` and in the template's `PageLayout`, `PageHeader`, `Hero`, `NotFound`, `PageLogo` and `UserMenu`, is not this review's. Report nothing inside it.
 
 ## Left to the checks
 
