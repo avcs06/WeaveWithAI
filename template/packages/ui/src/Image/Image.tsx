@@ -45,7 +45,7 @@ export const Image = ({
       <div
         {...props}
         data-ds=""
-        className={classNames(styles.box, background, className)}
+        className={classNames('max-w-full', styles.box, background, className)}
         style={{ ...vars, ...style }}
       >
         {alt && (
@@ -67,7 +67,7 @@ export const Image = ({
       aria-label={named ? alt : undefined}
       data-ds=""
       className={classNames(
-        'relative overflow-hidden',
+        'relative overflow-hidden max-w-full',
         !shown && 'flex items-center justify-center',
         styles.box,
         className,

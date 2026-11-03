@@ -12,8 +12,9 @@ export const width = createVar();
 export const ratio = createVar();
 export const picture = createVar();
 
+// Its own width, narrowed by a narrower parent; a percentage alone would collapse in a parent sized by its content.
 export const box = style({
-  width: `min(100%, ${width})`,
+  width,
   aspectRatio: ratio,
   background: tokens.color.base.hoverBg,
 });

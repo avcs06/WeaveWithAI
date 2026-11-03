@@ -91,6 +91,7 @@ const DropdownStories = () => {
   const [subMenu, setSubMenu] = useState(true);
   const [icons, setIcons] = useState(true);
   const [alignStart, setAlignStart] = useState(false);
+  const [sideRight, setSideRight] = useState(false);
   const [modal, setModal] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [reason, setReason] = useState(false);
@@ -262,6 +263,9 @@ const DropdownStories = () => {
           <Checkbox checked={alignStart} onCheckedChange={setAlignStart}>
             align start
           </Checkbox>
+          <Checkbox checked={sideRight} onCheckedChange={setSideRight}>
+            side right
+          </Checkbox>
           <Checkbox checked={modal} onCheckedChange={setModal}>
             modal
           </Checkbox>
@@ -286,6 +290,7 @@ const DropdownStories = () => {
         </div>
         <Row label="The menu with the features above">
           <Dropdown
+            side={sideRight ? 'right' : 'bottom'}
             align={alignStart ? 'start' : 'end'}
             modal={modal}
             disableWhileLoading={disableWhileLoading}

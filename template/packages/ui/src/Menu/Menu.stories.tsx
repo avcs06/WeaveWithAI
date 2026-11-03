@@ -99,6 +99,16 @@ const MenuStories = () => {
             ))}
           </Menu>
         </Row>
+        <Row label="Links (as): the selected one is the current page, with no check">
+          <Menu>
+            <MenuItem as="a" href="#overview" selected checkmark={false}>
+              Overview
+            </MenuItem>
+            <MenuItem as="a" href="#activity">
+              Activity
+            </MenuItem>
+          </Menu>
+        </Row>
       </StorySection>
 
       <StorySection title="Features">

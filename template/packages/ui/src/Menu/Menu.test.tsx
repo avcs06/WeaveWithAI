@@ -1,7 +1,7 @@
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Link } from 'lucide-react';
-import React, { createRef } from 'react';
+import React, { type ComponentPropsWithRef, createRef } from 'react';
 
 import { axe, renderUI } from '../test-utils';
 
@@ -239,7 +239,51 @@ describe('Menu', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('as an aside, the shell keeps its own role and the list takes the role and name', async () => {
+    const { container } = renderUI(
+      <Menu as="aside" role="navigation" aria-label="Pages" data-testid="menu">
+        <MenuItem as="a" href="/home">
+          Home
+        </MenuItem>
+      </Menu>,
+    );
+    const shell = screen.getByTestId('menu');
+    expect(shell.tagName).toBe('ASIDE');
+    expect(shell).not.toHaveAttribute('role');
+    expect(shell).not.toHaveAttribute('aria-label');
+    expect(screen.getByRole('navigation', { name: 'Pages' })).toBe(
+      slot(shell, 'list'),
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   describe('MenuItem', () => {
+    it('as a link, an anchor or a link component keeps its href, and a selected one is the current page', () => {
+      const PageLink = ({ children, ...props }: ComponentPropsWithRef<'a'>) => (
+        <a {...props} data-kind="page-link">
+          {children}
+        </a>
+      );
+      renderUI(
+        <>
+          <MenuItem as="a" href="/a" selected checkmark={false}>
+            A
+          </MenuItem>
+          <MenuItem as={PageLink} href="/b">
+            B
+          </MenuItem>
+        </>,
+      );
+      const current = screen.getByRole('link', { name: 'A' });
+      expect(current).toHaveAttribute('href', '/a');
+      expect(current).toHaveAttribute('aria-current', 'page');
+      expect(current).toHaveAttribute('data-slot', 'item');
+      const other = screen.getByRole('link', { name: 'B' });
+      expect(other).toHaveAttribute('href', '/b');
+      expect(other).toHaveAttribute('data-kind', 'page-link');
+      expect(other).not.toHaveAttribute('aria-current');
+    });
+
     it('puts the icon, the label, the add-on, then the check in their slots', async () => {
       const { container } = renderUI(
         <MenuItem
