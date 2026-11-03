@@ -1,4 +1,4 @@
-<!-- CODE-006 (src/engine/conformance.ts) looks for each operation that loads a screen and its dialogs in the screen's route folder only, so a call made in a shared block fails it. -->
+<!-- CODE-006 (src/engine/conformance.ts) looks for each operation that loads a screen and its dialogs in the screen's route folder and in the blocks it imports, so a call made in a shared component fails it. -->
 
 # Screens
 
@@ -30,10 +30,11 @@
   alternative. A step that leads to a route opens that route. A step that
   opens a dialog opens that dialog.
 - Load the records through the operations the screen's file names,
-  including its dialogs' operations. Call each one inside the screen's
-  route folder, where a check looks for it. A dialog or a part from
-  `web/app/blocks/` or `web/app/components/` gets its records from the
-  screen.
+  including its dialogs' operations. Call each one in the screen's route
+  folder, or in a block from `web/app/blocks/` that the screen uses. A
+  check looks for each call in both places. A block that two screens use
+  may load the records it shows. A part from `web/app/components/` gets
+  its records from the screen.
 - To find a component a step needs, ask the MCP. Call `search_components`,
   then `get_component` and `get_recipe`. When nothing fits, build it
   yourself in `components/` beside the page.

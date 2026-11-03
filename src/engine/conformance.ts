@@ -27,10 +27,25 @@ function sourcesIn(dir: string): string {
     .join('\n');
 }
 
+/**
+ * The code of each block that `code` imports, and of the blocks those import: a block shared by two screens
+ * may load the records it shows. A route folder imports a block by its alias, a block a sibling by `../`.
+ */
+function blockSources(appDir: string, code: string, seen: Set<string>, inBlock = false): string[] {
+  const from = inBlock ? /from\s+['"](?:@app\/blocks\/|\.\.\/)([^'"/]+)['"]/g : /from\s+['"]@app\/blocks\/([^'"/]+)['"]/g;
+  return [...code.matchAll(from)].flatMap(([, name = '']) => {
+    if (seen.has(name)) return [];
+    seen.add(name);
+    const text = sourcesIn(path.join(appDir, 'web/app/blocks', name));
+    return [text, ...blockSources(appDir, text, seen, true)];
+  });
+}
+
 export function checkScreen(appDir: string, expect: ScreenExpect): Check {
-  const code = sourcesIn(path.join(appDir, expect.folder));
+  const own = sourcesIn(path.join(appDir, expect.folder));
+  const code = [own, ...blockSources(appDir, own, new Set())].join('\n');
   const lines = [
-    ...(code ? [] : [`${expect.folder} has no code.`]),
+    ...(own ? [] : [`${expect.folder} has no code.`]),
     // An operation is called by its function or its hook: listBooks() or useListBooks().
     ...expect.operations
       .filter((op) => !new RegExp(`\\b(${op}|use${op.charAt(0).toUpperCase()}${op.slice(1)})\\b`).test(code))

@@ -24,4 +24,22 @@ describe('the screen check after a coding session', () => {
     const expected = { folder: 'web/app/(routes)/books', operations: ['listBooks', 'createBook'] };
     expect(checkScreen(path.join(root, 'app'), expected)).toEqual({ name: 'design', ok: true, output: '' });
   });
+
+  it('counts a call in a block the screen imports, and in the blocks that block imports, but not in a block it does not', () => {
+    const app = path.join(root, 'blocks');
+    const write = (file: string, text: string) => {
+      mkdirSync(path.dirname(path.join(app, file)), { recursive: true });
+      writeFileSync(path.join(app, file), text);
+    };
+    write('web/app/(routes)/orders/[orderId]/page.tsx', "import { OrderLines } from '@app/blocks/OrderLines';\nuseGetOrder();\n");
+    write('web/app/blocks/OrderLines/OrderLines.tsx', "import { LinePhoto } from '../LinePhoto';\n");
+    write('web/app/blocks/LinePhoto/LinePhoto.tsx', 'useGetPiece();\n');
+    write('web/app/blocks/Unused/Unused.tsx', 'useListPieces();\n');
+    const expected = { folder: 'web/app/(routes)/orders/[orderId]', operations: ['getOrder', 'getPiece', 'listPieces'] };
+    expect(checkScreen(app, expected)).toEqual({
+      name: 'design',
+      ok: false,
+      output: "Nothing in web/app/(routes)/orders/[orderId] calls listPieces; load the screen's records through it.",
+    });
+  });
 });
