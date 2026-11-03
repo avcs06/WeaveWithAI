@@ -7,7 +7,9 @@ import { Button } from '../Button';
 import { Controller } from '../Form';
 import { axe, renderUI } from '../test-utils';
 
+import { CardList } from './auxiliary';
 import { Card, CardGroup } from './Card';
+import { cardGrid } from './Card.css';
 import { cardRecipe } from './Card.recipes.css';
 
 const { variants } = cardRecipe.classNames;
@@ -44,8 +46,9 @@ describe('Card', () => {
         <Button size="sm">Edit event</Button>
       </Card>,
     );
-    const card = screen.getByRole('heading', { name: 'Frontend summit' })
-      .parentElement!;
+    const card = screen.getByRole('heading', {
+      name: 'Frontend summit',
+    }).parentElement!;
     expect(card).not.toHaveAttribute('role');
     expect(card).not.toHaveAttribute('tabindex');
     expect(
@@ -176,9 +179,7 @@ describe('Card', () => {
     const card = screen.getByRole('button', { name: 'Copy event' });
     expect(card).toHaveAttribute('aria-disabled', 'true');
     expect(card).toHaveAttribute('tabindex', '0');
-    expect(card).toHaveAccessibleDescription(
-      "Archived events can't be copied",
-    );
+    expect(card).toHaveAccessibleDescription("Archived events can't be copied");
 
     await userEvent.tab();
     expect(card).toHaveFocus();
@@ -187,9 +188,7 @@ describe('Card', () => {
     expect(onClick).not.toHaveBeenCalled();
 
     await userEvent.hover(card);
-    expect(await tooltipEntries()).toEqual([
-      "Archived events can't be copied",
-    ]);
+    expect(await tooltipEntries()).toEqual(["Archived events can't be copied"]);
     expect(await axe(document.body)).toHaveNoViolations();
     expect(container).toBeInTheDocument();
   });
@@ -206,9 +205,7 @@ describe('Card', () => {
     );
     const card = screen.getByRole('button', { name: 'Change venue' });
     expect(card).toHaveAttribute('aria-disabled', 'true');
-    expect(card).toHaveAccessibleDescription(
-      'Only organizers can change this',
-    );
+    expect(card).toHaveAccessibleDescription('Only organizers can change this');
 
     await userEvent.tab();
     expect(card).toHaveFocus();
@@ -322,6 +319,90 @@ describe('Card', () => {
   });
 });
 
+describe('stretchLink', () => {
+  // jsdom can't navigate: the spy stands in for the link's own handler, as
+  // NextLink's router push does.
+  const renderEventCard = (stretchLink = true) => {
+    const follow = jest.fn((event: React.MouseEvent) => event.preventDefault());
+    const register = jest.fn();
+    renderUI(
+      <Card stretchLink={stretchLink}>
+        <h3>
+          <a href="/events/42" onClick={follow}>
+            Design systems meetup
+          </a>
+        </h3>
+        <p>Thursday 18:00 at Hall B.</p>
+        <Button onClick={register}>Register</Button>
+      </Card>,
+    );
+    return { follow, register };
+  };
+
+  it("follows the card's link from anywhere on it, its controls aside", async () => {
+    const { follow, register } = renderEventCard();
+    await userEvent.click(screen.getByText('Thursday 18:00 at Hall B.'));
+    expect(follow).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Register' }));
+    expect(register).toHaveBeenCalledTimes(1);
+    expect(follow).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(screen.getByRole('link'));
+    expect(follow).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps Ctrl and Cmd, so the link can open a new tab', async () => {
+    const { follow } = renderEventCard();
+    // One instance, so the held key reaches the click.
+    const user = userEvent.setup();
+    await user.keyboard('{Control>}');
+    await user.click(screen.getByText('Thursday 18:00 at Hall B.'));
+    await user.keyboard('{/Control}');
+    expect(follow.mock.calls[0]?.[0].ctrlKey).toBe(true);
+  });
+
+  it('without it, the card is static: a click on its text follows nothing', async () => {
+    const { follow } = renderEventCard(false);
+    await userEvent.click(screen.getByText('Thursday 18:00 at Hall B.'));
+    expect(follow).not.toHaveBeenCalled();
+  });
+
+  it('CardList passes it to every card and lays them in a grid on request', async () => {
+    const follow = jest.fn((event: React.MouseEvent) => event.preventDefault());
+    const events = [
+      { id: '42', name: 'Design systems meetup' },
+      { id: '43', name: 'Frontend summit' },
+    ];
+    const { container } = renderUI(
+      <CardList
+        aria-label="Events"
+        items={events}
+        layout="grid"
+        stretchLink
+        renderItem={(event) => (
+          <>
+            <h3>
+              <a href={`/events/${event.id}`} onClick={follow}>
+                {event.name}
+              </a>
+            </h3>
+            <p>{`Hall for ${event.name}`}</p>
+          </>
+        )}
+      />,
+    );
+    expect(screen.getByRole('list', { name: 'Events' })).toHaveClass(cardGrid);
+    await userEvent.click(screen.getByText('Hall for Frontend summit'));
+    expect(follow).toHaveBeenCalledTimes(1);
+    expect(follow.mock.calls[0]?.[0].target).toHaveAttribute(
+      'href',
+      '/events/43',
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
 describe('CardGroup', () => {
   it('selects one card in single mode, outlined whatever the selection prop', async () => {
     const onChange = jest.fn();
@@ -347,7 +428,9 @@ describe('CardGroup', () => {
       );
     };
     const { container } = renderUI(<Plans />);
-    expect(screen.getByRole('radiogroup', { name: 'Plan' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('radiogroup', { name: 'Plan' }),
+    ).toBeInTheDocument();
     const pro = screen.getByRole('radio', { name: 'Pro' });
     await userEvent.click(pro);
     expect(onChange).toHaveBeenLastCalledWith('pro');
@@ -622,7 +705,9 @@ describe('CardGroup', () => {
       );
     };
     const { container } = renderUI(<Plans />);
-    expect(screen.getByRole('radiogroup', { name: 'Plan' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('radiogroup', { name: 'Plan' }),
+    ).toBeInTheDocument();
 
     await userEvent.click(screen.getByText('Plan'));
     expect(screen.getByRole('radio', { name: 'Pro' })).toHaveFocus();

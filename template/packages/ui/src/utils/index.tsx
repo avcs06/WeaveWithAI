@@ -9,5 +9,11 @@ export {
   type LoadingState,
   type ReadOnlyState,
 } from './useIsDisabled';
-export { hasContent, joinIds, mergeRefs, tabbable } from './helpers';
+export {
+  hasContent,
+  isAreaClick,
+  joinIds,
+  mergeRefs,
+  tabbable,
+} from './helpers';
 export type { AccessibleName, SetByComponent } from './types';

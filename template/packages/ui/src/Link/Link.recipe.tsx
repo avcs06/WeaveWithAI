@@ -10,7 +10,7 @@
  * - An action (save, delete, open a menu): Button. A link goes somewhere.
  * - A route of the Next app: its NextLink. One that must look like a button
  *   is `Button as={NextLink}`.
- * - A whole card that opens a page: Card.
+ * - A whole card that opens a page: Card with `stretchLink`.
  *
  * Pitfalls:
  * - The dotted line is for a link inside text only. A link that stands on its

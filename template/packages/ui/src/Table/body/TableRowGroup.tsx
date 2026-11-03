@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { isAreaClick } from '../../utils';
 import { ExpandedRow, ExpansionCell } from '../expansion';
 import * as Primitives from '../primitives';
 import { DragHandleCell, type GroupRef, useSortableRow } from '../reorder';
@@ -36,19 +37,6 @@ export type TableRowGroupProps = {
   measureRef?: GroupRef;
   /** `Table`'s `onRowClick`; ignored with `Table.Expansion`. */
   onRowClick?: (row: unknown, event: MouseEvent<HTMLTableRowElement>) => void;
-};
-
-// Clicks on controls inside the row (its own or a cell's) stay theirs.
-const CONTROLS =
-  'a, button, input, select, textarea, label, [role="button"], [role="checkbox"], [contenteditable="true"]';
-
-const isRowClick = (event: MouseEvent<HTMLTableRowElement>) => {
-  // A cell's portalled menu or popover bubbles here through React, not the DOM.
-  if (!event.currentTarget.contains(event.target as Node)) return false;
-  const control = (event.target as Element).closest(CONTROLS);
-  if (control && event.currentTarget.contains(control)) return false;
-  // Selecting text ends in a click; it isn't one.
-  return !window.getSelection()?.toString();
 };
 
 const selectRowState =
@@ -255,7 +243,7 @@ export const TableRowGroup = memo(
 
     const onClick = clickable
       ? (event: MouseEvent<HTMLTableRowElement>) => {
-          if (!isRowClick(event)) return;
+          if (!isAreaClick(event)) return;
           if (state.expansionEnabled) store('toggleRowExpansion')(props.rowKey);
           else onRowClick?.(props.row, event);
         }

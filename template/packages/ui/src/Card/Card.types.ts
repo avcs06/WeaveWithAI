@@ -34,6 +34,13 @@ type CardOwnProps = Pick<CardRecipeVariants, 'variant'> & {
    * picks one), `elevated`, `ghost`.
    */
   look?: string;
+  /**
+   * A click anywhere on the card, outside its own links and buttons, follows
+   * its first link, as a Table row's click does: for a card of a record with
+   * a page of its own, whose name is that link. Ctrl and Cmd open a new tab.
+   * Not with `onClick` or in a CardGroup.
+   */
+  stretchLink?: boolean;
 } & DisabledState &
   ReadOnlyState &
   Pick<SelectableProps, 'value'> &
@@ -79,5 +86,13 @@ export type CardListProps<T extends { id: Key }> = {
    * shows.
    */
   pagination?: { itemName?: readonly [string, string]; pageSize?: number };
+  /**
+   * `column` (default): one full-width card per row, for records read one by
+   * one. `grid`: as many cards side by side as fit at 280px or more, for
+   * records the user browses, such as products with photos.
+   */
+  layout?: 'column' | 'grid';
+  /** Each card opens its record from anywhere on it: Card's `stretchLink`. */
+  stretchLink?: boolean;
   className?: string;
 };

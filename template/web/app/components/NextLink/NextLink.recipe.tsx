@@ -7,7 +7,8 @@
  * When not to use:
  * - Another site, an email, a phone number or a file: Link.
  * - An action (save, delete, open a menu): Button. A link goes somewhere.
- * - A whole card that opens a page: Card, with a NextLink on its title.
+ * - A whole card that opens a page: Card with `stretchLink`, and a plain
+ *   NextLink on its title.
  *
  * Pitfalls:
  * - The dotted line is for a link inside text only. A link that stands on its

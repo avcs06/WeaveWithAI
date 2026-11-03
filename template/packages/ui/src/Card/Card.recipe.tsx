@@ -2,13 +2,14 @@
  * Card: a bordered container with padding and gap, for one item's content (an
  * event in a gallery), as a whole-card button, or, in a CardGroup, as a large
  * selectable option with room for a description. CardList lays records out
- * as a column of full-width cards, with its own Pagination when asked.
+ * as a column of full-width cards or a grid, with its own Pagination when
+ * asked; with `stretchLink`, each card opens its record's page.
  *
  * When not to use:
  * - A short toggle or filter: Chip. A yes/no setting: Checkbox.
  * - A group of fields or a page section with no item behind it: plain markup.
- * - A card that opens a page: put a Link on its title (link card). Do not
- *   make the card a button that navigates.
+ * - A card that opens a page: `stretchLink`, with the name on its title as
+ *   the link it follows (link card). Never `onClick` that navigates.
  *
  * Pitfalls:
  * - CardList draws the card: `renderItem` returns the card's content, never a
@@ -24,8 +25,9 @@
  * - `onClick` and `asChild` don't mix: a list item can't be a button.
  * - Name a button or selectable card with `aria-labelledby` on its title and
  *   `aria-describedby` on its details; its whole text is its name otherwise.
- * - A grid of cards is a list: `<ul role="list">` of `<Card asChild><li>`, with
- *   `<h3>` titles. Columns go in a colocated .css.ts: `gridTemplateColumns:
+ * - Records in a grid are `CardList layout="grid"`. Other cards in a grid
+ *   are a list: `<ul role="list">` of `<Card asChild><li>`, with `<h3>`
+ *   titles. Columns go in a colocated .css.ts: `gridTemplateColumns:
  *   'repeat(auto-fill, minmax(min(100%, 280px), 1fr))'`, with Tailwind `grid
  *   gap-4` beside it.
  * - A card in a group takes the group's `disabled` or `disabledWithReason`; a
@@ -77,17 +79,27 @@ const ContentCards = () => (
 );
 
 /**
- * Link card: the title is the link and the card stays static, so the link is a
- * normal tab stop read by its text.
+ * Link card: `stretchLink` opens the card's first link, the title, from
+ * anywhere on the card, as a Table row's click does. The title stays the tab
+ * stop, read by its text, and is `plain`: the whole card shows it opens. A
+ * button inside keeps its own click.
  */
-const LinkCard = () => (
-  <Card>
-    <h3>
-      <Link href="/events/42">Design systems meetup</Link>
-    </h3>
-    <p>Thursday 18:00 at Hall B.</p>
-  </Card>
-);
+const LinkCard = () => {
+  const [saved, setSaved] = useState(false);
+  return (
+    <Card stretchLink>
+      <h3>
+        <Link look="plain" href="/events/42">
+          Design systems meetup
+        </Link>
+      </h3>
+      <p>Thursday 18:00 at Hall B.</p>
+      <Button variant="base" onClick={() => setSaved(!saved)}>
+        {saved ? 'Saved' : 'Save for later'}
+      </Button>
+    </Card>
+  );
+};
 
 /**
  * A card with its own actions: keep it static and put Buttons in it. Adding
@@ -337,19 +349,45 @@ const ToggleCard = () => {
   );
 };
 
-/** A record's card content, for CardList to draw the card around. */
+/**
+ * A record's card content, for CardList to draw the card around. Its name is
+ * the link to the record's page.
+ */
 const ProjectCard = ({ project }: { project: Project }) => (
   <>
-    <h3>{project.name}</h3>
+    <h3>
+      <Link look="plain" href={`/projects/${project.id}`}>
+        {project.name}
+      </Link>
+    </h3>
     <p>{project.owner}</p>
   </>
 );
 
-/** Records as full-width cards, every one shown. */
+/**
+ * Records as full-width cards, every one shown, even for a few: the card's
+ * border keeps a record's details together across a wide screen.
+ * `stretchLink` opens each record's page from anywhere on its card.
+ */
 const RecordCards = () => (
   <CardList
     aria-label="Projects"
     items={projects.slice(0, 3)}
+    stretchLink
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
+/**
+ * Records the user browses side by side, such as products with photos:
+ * `layout="grid"` fits as many columns as there is room for at 280px each.
+ */
+const RecordGrid = () => (
+  <CardList
+    aria-label="Featured projects"
+    items={projects.slice(0, 6)}
+    layout="grid"
+    stretchLink
     renderItem={(project) => <ProjectCard project={project} />}
   />
 );
@@ -359,6 +397,7 @@ const PagedRecordCards = () => (
   <CardList
     aria-label="All projects"
     items={projects}
+    stretchLink
     pagination={{ itemName: ['project', 'projects'], pageSize: 5 }}
     renderItem={(project) => <ProjectCard project={project} />}
   />
@@ -378,6 +417,7 @@ export default function CardRecipe() {
       <UnavailableOptions />
       <ToggleCard />
       <RecordCards />
+      <RecordGrid />
       <PagedRecordCards />
     </div>
   );

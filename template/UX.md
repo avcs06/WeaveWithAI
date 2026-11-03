@@ -5,7 +5,8 @@ the coding agent builds to them, and the reviewers hold the work to them.
 
 ## Lists and records
 
-- In a list, the record's name is the link that opens it, and it looks like a link.
+- A list of records shows each record in a table row or a card, even a short list, never as rows of bare text: the row's line or the card's border keeps one record's details together across a wide screen. A table holds records the user scans and compares, such as an admin's orders or products. Cards hold rich records, with a photo, a description or several lines each.
+- In a list, the record's name is the link that opens it, and a click anywhere on its row or card opens it too.
 - A row's actions are quiet: an icon button with a tooltip for each, or one row menu when there are more than two. Never a filled button on every row.
 - A delete on a row is as quiet as the row's other actions. The filled `danger` button belongs to the confirm dialog's Delete only.
 - An inline action, in a row or a toolbar, shows an icon alone with a tooltip. An action in a menu shows an icon and its text.
@@ -13,7 +14,6 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Actions
 
 - One main action per view, as the primary button. Every other action is secondary, or sits in a menu when there are many.
-- A button that acts on a field's value, such as Send, Apply or Move, goes in that field's `action` slot, in a form or out of one, such as a filter bar or a toolbar. There it lines up with the field's box, not its label. A Select clears with its own clear button: no Clear button beside it.
 - An action appears once per view. A frame's action, in the header or the sidebar, is not repeated on the screen inside it.
 - An empty list shows its add action once, in the empty state. The same action above the list is hidden while the list is empty.
 - Sibling actions of equal weight are the same element: two buttons, primary and secondary, or two links. A link beside a button says the link weighs less, as a quiet way out beside the main action does. Never a link and a button for two actions of equal weight, such as sign in and sign up.
@@ -33,7 +33,13 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Forms
 
 - Every form is a `Form`: it lays out the fields, the form's own error and the actions. Fields take their width from it, 1x by default; a field sets `width` to 0.5x, 0.75x, 1.5x or 2x when its content needs another, and fields in one form share these widths.
+- A button that acts on a field's value, such as Send, Apply or Move, goes in that field's `action` slot, in a form or out of one, such as a filter bar or a toolbar. There it lines up with the field's box, not its label. A Select clears with its own clear button: no Clear button beside it.
 - The form's main action comes last in its actions, as the primary button. Cancel is secondary, before it.
+
+## Tables and cards
+
+- A list of records is a `Table` or a `CardList`. A Table for records the user scans and compares; a CardList for rich records, its `layout` set to fit them: `column` for records read one by one, `grid` for records browsed side by side.
+- In a Table, the record's name keeps the dotted line, and `onRowClick` follows its link from the whole row. In a CardList, `stretchLink` follows it from the whole card, and the name is `look="plain"`.
 
 ## Frames
 

@@ -71,3 +71,9 @@ export const card = style({
     },
   },
 });
+
+// As many columns as fit at 280px, the width a card's title and a photo need;
+// one column on a narrower screen.
+export const cardGrid = style({
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
+});
