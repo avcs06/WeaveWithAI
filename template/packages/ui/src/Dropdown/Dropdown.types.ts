@@ -75,6 +75,8 @@ export type DropdownProps = DropdownStateProps &
      */
     children: ReactElement<DisabledProps>;
     menu: ReactNode;
+    /** The trigger's side it opens on. Defaults to `bottom`; `right` beside a sidebar. */
+    side?: 'bottom' | 'right';
     /** Defaults to `end`. */
     align?: 'start' | 'end';
   };

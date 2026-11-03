@@ -22,12 +22,15 @@ import type { DropdownItemProps, DropdownProps } from './Dropdown.types';
 const DropdownInner = ({
   children,
   menu,
+  side,
   align,
   ...rootProps
 }: DropdownProps) => (
   <DropdownRoot {...rootProps} closeOnTab>
     <DropdownTrigger>{children}</DropdownTrigger>
-    <DropdownContent align={align}>{menu}</DropdownContent>
+    <DropdownContent side={side} align={align}>
+      {menu}
+    </DropdownContent>
   </DropdownRoot>
 );
 
