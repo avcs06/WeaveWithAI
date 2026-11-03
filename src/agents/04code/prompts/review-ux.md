@@ -13,7 +13,7 @@ You are the UX designer of this app. A coding agent built one unit of it: the fr
 
 - U01: The screen uses the width it has. Content the user reads together sits side by side in columns when both fit, such as a record's photo beside its details, a form beside its summary or total, the details of a selected item beside its list, or short cards in a grid. One narrow column down a wide screen, with empty space beside it, is a blocker when two columns fit what it shows.
 - U02: Columns appear only where they help. A sequence of steps, a long form, or text read in order stays in one column. Columns never split one record or one task into two places.
-- U03: Related controls sit in one row. Two or more buttons for the same record, list or form, such as Edit and Remove, Save and Cancel, or Checkout and Continue shopping, sit side by side, never stacked one under the other. A form's actions sit in one row at its end.
+- U03: Related controls sit in one row. Two or more buttons for the same record, list or form, such as Edit and Remove, or Save and Cancel, sit side by side, never stacked one under the other. A form's actions sit in one row at its end.
 - U04: Each group lines up. Cards in a set share their size. Fields in a form share their edges. Labels and values line up with each other. Items in a row sit on one line, and no item is offset, wider or taller than its siblings without a reason.
 - U05: What belongs together sits together, and each group reads apart from the next. A record's details sit in one section. A list's search, filters and add action sit with the list.
 - U06: The sections come in the order the user needs them, and what the user came for comes first. A secondary section never sits above the main one.

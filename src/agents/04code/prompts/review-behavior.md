@@ -7,8 +7,8 @@ Read the diff file by file. Then follow each action a user can take through the 
 ## State
 
 - B01: Each value has one owner. A value that follows from records or other state, such as a total, a count or a filtered list, is worked out while rendering. It is not kept in state of its own and synced in an effect.
-- B02: State that must outlive the view, such as the cart, lives in the entity layer's store. State that belongs to one view, such as an open dialog, a filter or a form's step, stays in that view.
-- B03: A change shows everywhere at once. After a save, every screen and frame part that shows the record shows the new value without a reload, such as the cart's count in the header after an add.
+- B02: State that must outlive the view lives in the entity layer's persistent store, so a reload keeps it. State that belongs to one view, such as an open dialog, a filter or a form's step, stays in that view.
+- B03: A change shows everywhere at once. After a save, every screen and frame part that shows the record shows the new value without a reload, such as a count in the header after an add.
 
 ## Behavior
 
@@ -20,8 +20,8 @@ Read the diff file by file. Then follow each action a user can take through the 
 
 ## Reliability
 
-- B09: A change across several records leaves them consistent when one step fails, such as placing an order that creates it, takes the stock and empties the cart. Either every step happens, or the user is told what did not.
-- B10: Money and quantities add up. Amounts round once, when shown, so a total equals the sum of its lines. A quantity stays above zero and within the stock.
+- B09: A change across several records leaves them consistent when one step fails, such as a save that creates one record and changes another. Either every step happens, or the user is told what did not.
+- B10: Money and quantities add up. Amounts round once, when shown, so a total equals the sum of its lines. A quantity stays within its limits, such as above zero and within what is available.
 - B11: Dates compare as dates, never as text in two formats. A date the user picks is stored as the day they picked.
 
 ## Security

@@ -58,8 +58,6 @@ globalStyle('svg', {
   verticalAlign: 'middle',
   shapeRendering: 'auto',
   textRendering: 'optimizeLegibility',
-  width: 'auto',
-  height: 'auto',
 });
 
 // Focus rings are box-shadows, which forced-colors mode (Windows High

@@ -15,7 +15,7 @@ The app's folders are `shared`, `entities`, `components`, `blocks` and `(routes)
 
 ## Data
 
-- C05: Every record is read and changed through the entity layer. No component has rows or numbers written into it. Nothing reads or changes records through a fetch, browser storage, or an entity's store or inner files.
+- C05: Screens, frames and blocks read and change records only through the entity layer's hooks and functions. No component has rows or numbers written into it. No component calls a fetch or browser storage itself, or imports an entity's store or inner files. Inside the entity layer, each entity keeps its records in a store made with `createPersistentStore`, so a reload keeps them. A new entity that the contract lacks is written the same way.
 - C06: Records are read through the operation's hook. No state copies what the hook holds, such as records loaded into a component's state in an effect.
 - C07: Every operation or field added to the entity layer is written like the ones beside it.
 

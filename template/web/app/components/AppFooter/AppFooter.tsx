@@ -12,8 +12,8 @@
  * items: no `footer` element, height, padding, background or border.
  *
  * Never put here:
- * - The logo, the navigation, the account or the main action. The header
- *   or the sidebar holds them.
+ * - The navigation, the account or the main action. The header or the
+ *   sidebar holds them.
  *
  * The line "The theme puts here" below names this app's items. Build those
  * and nothing else.
