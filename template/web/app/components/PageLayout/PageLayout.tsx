@@ -90,6 +90,8 @@ const Sidebar = ({
  * A frame from the theme's page layout: header, sidebars and footer around
  * the page's container. The layout's sizes, sticking and separations are its
  * own; the slots hold only what sits in each bar.
+ *
+ * @invalidAlternative main
  */
 export const PageLayout = ({
   layout,

@@ -67,7 +67,11 @@ export const List = ({
   );
 };
 
-/** One item of a `List`. */
+/**
+ * One item of a `List`.
+ *
+ * @invalidAlternative List li
+ */
 export const ListItem = ({
   font,
   color,
@@ -112,7 +116,11 @@ export const DescriptionList = ({
   />
 );
 
-/** A field's label in a `DescriptionList`: muted unless `color` says otherwise. */
+/**
+ * A field's label in a `DescriptionList`: muted unless `color` says otherwise.
+ *
+ * @invalidAlternative dt
+ */
 export const DescriptionTerm = ({
   font,
   color = 'muted',
@@ -131,7 +139,11 @@ export const DescriptionTerm = ({
   />
 );
 
-/** A field's value in a `DescriptionList`, beside its term. */
+/**
+ * A field's value in a `DescriptionList`, beside its term.
+ *
+ * @invalidAlternative dd
+ */
 export const DescriptionDetails = ({
   font,
   color,
