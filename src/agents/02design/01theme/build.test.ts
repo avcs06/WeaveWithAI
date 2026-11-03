@@ -269,11 +269,6 @@ describe('theme rules', () => {
         }),
       ),
     ).toEqual(['marketing.footer.padding']);
-    // The header's gap runs across, against the 16 code fixes at its sides.
-    expect(at((t) => (t.layouts.marketing.header.gap = '4'))).toEqual([]);
-    expect(at((t) => (t.layouts.marketing.header.gap = '6'))).toEqual([
-      'marketing.header.gap',
-    ]);
     // A part that is not needed, or a box with no padding, has nothing to check.
     expect(at((t) => (t.layouts.app.footer.gap = '6'))).toEqual([]);
     expect(at((t) => (t.layouts.app.main.padding = '0'))).toEqual([]);

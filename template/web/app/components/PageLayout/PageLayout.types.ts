@@ -8,13 +8,12 @@ export type SpacingKey = `${keyof typeof tokens.spacing}`;
 /** How a region sets off from the content: the frame background, a divider line, a shadow, or nothing. */
 export type Separation = 'background' | 'divider' | 'shadow' | 'none';
 
-/** A header. `start`, `center` and `end` say what its component shows there; "" for nothing. Its padding is fixed. */
+/** A header. `start`, `center` and `end` say what its component shows there; "" for nothing. Its padding and gap are fixed. */
 export type PageBar = {
   needed: boolean;
   start: string;
   center: string;
   end: string;
-  gap: SpacingKey;
   separation: Separation;
 };
 

@@ -344,7 +344,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       "header": {
         "center": "",
         "end": "Shelf link, account",
-        "gap": "3",
         "needed": true,
         "overlay": false,
         "separation": "divider",
@@ -382,7 +381,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       "header": {
         "center": "",
         "end": "account",
-        "gap": "4",
         "needed": true,
         "overlay": true,
         "separation": "none",

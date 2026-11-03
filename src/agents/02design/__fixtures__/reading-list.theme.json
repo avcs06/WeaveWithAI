@@ -386,7 +386,6 @@
         "end": "Shelf link, account",
         "sticky": true,
         "overlay": false,
-        "gap": "3",
         "separation": "divider"
       },
       "sidebar": {
@@ -442,7 +441,6 @@
         "end": "account",
         "sticky": false,
         "overlay": true,
-        "gap": "4",
         "separation": "none"
       },
       "sidebar": {
