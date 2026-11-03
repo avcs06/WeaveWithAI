@@ -12,35 +12,44 @@ describe('scaffold layouts', () => {
 
   it('keep the parts the theme needs and drop the rest', () => {
     expect([...files.keys()]).toEqual([
-      'web/app/components/AppHeader/AppHeader.tsx',
+      'web/app/components/AppHeaderLeftSlot/AppHeaderLeftSlot.tsx',
+      'web/app/components/AppHeaderRightSlot/AppHeaderRightSlot.tsx',
       'web/app/(routes)/(app)/layout.tsx',
-      'web/app/components/MarketingHeader/MarketingHeader.tsx',
+      'web/app/components/MarketingHeaderLeftSlot/MarketingHeaderLeftSlot.tsx',
+      'web/app/components/MarketingHeaderRightSlot/MarketingHeaderRightSlot.tsx',
       'web/app/(routes)/(marketing)/layout.tsx',
     ]);
     expect(removed).toEqual([
+      'web/app/components/AppHeaderCenterSlot',
       'web/app/components/AppSidebarHeader',
       'web/app/components/AppSidebar',
       'web/app/components/AppSidebarFooter',
       'web/app/components/AppFooter',
+      'web/app/components/MarketingHeaderCenterSlot',
       'web/app/components/MarketingFooter',
     ]);
   });
 
-  it('keep the template guidance in a part, with the theme line, the logo and the account', () => {
-    const header = files.get('web/app/components/AppHeader/AppHeader.tsx')!;
-    expect(header).toContain('Code places `PageLogo` and `UserMenu` here');
-    expect(header).toContain(' * The theme puts here: Start: the logo. End: the Shelf link and the account.\n */');
-    expect(header).toContain('<PageLogo />');
-    expect(header).toContain('<UserMenu placement="header" signInHref="/sign-in" />');
-    expect(header).not.toContain('useThemeMode');
+  it('keep the template guidance in a slot, with the theme line, and place the logo and the account', () => {
+    const left = files.get('web/app/components/AppHeaderLeftSlot/AppHeaderLeftSlot.tsx')!;
+    expect(left).toContain('Code places `PageLogo` here');
+    expect(left).toContain(' * The theme puts here: It holds: logo.\n */');
+    expect(left).toContain('<PageLogo />');
+    const right = files.get('web/app/components/AppHeaderRightSlot/AppHeaderRightSlot.tsx')!;
+    expect(right).toContain('<UserMenu placement="header" signInHref="/sign-in" />');
+    expect(right).not.toContain('useThemeMode');
   });
 
   it('render only the kept parts, and send a visitor of the app home', () => {
     const app = files.get('web/app/(routes)/(app)/layout.tsx')!;
-    expect(app).toContain('<PageLayout layout={layouts.app} kind="app" header={<AppHeader />}>');
+    expect(app).toContain(
+      '<PageLayout layout={layouts.app} kind="app" headerLeft={<AppHeaderLeftSlot />} headerRight={<AppHeaderRightSlot />}>',
+    );
     expect(app).toContain("if (user === null) router.replace('/');");
     const marketing = files.get('web/app/(routes)/(marketing)/layout.tsx')!;
-    expect(marketing).toContain('<PageLayout layout={layouts.marketing} kind="marketing" header={<MarketingHeader />}>');
+    expect(marketing).toContain(
+      '<PageLayout layout={layouts.marketing} kind="marketing" headerLeft={<MarketingHeaderLeftSlot />} headerRight={<MarketingHeaderRightSlot />}>',
+    );
     expect(marketing).not.toContain('useCurrentUser');
   });
 
@@ -53,7 +62,8 @@ describe('scaffold layouts', () => {
           ...theme.layouts.app,
           logo: 'sidebar' as const,
           account: 'sidebar' as const,
-          sidebar: { ...theme.layouts.app.sidebar, needed: true, top: 'the logo', items: 'the shelves', bottom: 'the account' },
+          header: { ...theme.layouts.app.header, start: '', end: 'Create button' },
+          sidebar: { ...theme.layouts.app.sidebar, needed: true, top: 'logo', items: 'shelves', bottom: 'account' },
         },
       },
     };
@@ -62,6 +72,6 @@ describe('scaffold layouts', () => {
     expect(sidebar.get('web/app/components/AppSidebarFooter/AppSidebarFooter.tsx')).toContain(
       '<UserMenu placement="sidebar" signInHref="/sign-in" />',
     );
-    expect(sidebar.get('web/app/components/AppHeader/AppHeader.tsx')).not.toContain('<PageLogo />');
+    expect(sidebar.has('web/app/components/AppHeaderLeftSlot/AppHeaderLeftSlot.tsx')).toBe(false);
   });
 });

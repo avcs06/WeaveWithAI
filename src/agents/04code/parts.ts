@@ -8,9 +8,11 @@ import { ACCOUNT, type BarPosition, LOGO, positionIn } from '../02design/config'
 
 type Layout = Theme['layouts']['app'];
 export type Kind = 'app' | 'marketing';
-type Slot = 'header' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
-/** A sidebar's header and footer hold the logo or the account at the start. */
+type Slot = 'headerLeft' | 'headerCenter' | 'headerRight' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
+/** Where an item sits in its part: the footer's by the slot that names it; elsewhere the logo first and the account last. */
 type Position = BarPosition;
+
+const SIDES = { start: 'Left', center: 'Center', end: 'Right' } as const;
 
 export type Part = {
   slot: Slot;
@@ -25,8 +27,16 @@ export type Part = {
 
 /** The part files the template ships for each kind, by name. */
 export const TEMPLATE_PARTS: Record<Kind, string[]> = {
-  app: ['AppHeader', 'AppSidebarHeader', 'AppSidebar', 'AppSidebarFooter', 'AppFooter'],
-  marketing: ['MarketingHeader', 'MarketingFooter'],
+  app: [
+    'AppHeaderLeftSlot',
+    'AppHeaderCenterSlot',
+    'AppHeaderRightSlot',
+    'AppSidebarHeader',
+    'AppSidebar',
+    'AppSidebarFooter',
+    'AppFooter',
+  ],
+  marketing: ['MarketingHeaderLeftSlot', 'MarketingHeaderCenterSlot', 'MarketingHeaderRightSlot', 'MarketingFooter'],
 };
 
 export const layoutPath = (group: string) => `web/app/(routes)/(${group})/layout.tsx`;
@@ -44,14 +54,40 @@ const said = (where: string, what: string) => (what ? `${where}: ${what}.` : '')
 
 /** The parts a layout needs, each with what the theme puts in it and whether the logo or the account sits there. */
 export function layoutParts(base: string, layout: Layout): Part[] {
-  const bar = (slot: 'header' | 'footer', suffix: string): Part[] => {
-    const { needed, start, center, end } = layout[slot];
-    const holds = [said('Start', start), said('Center', center), said('End', end)].filter(Boolean).join(' ');
-    // A slot that names the logo or the account places it; THEME-006 asks for one.
-    const logo = layout.logo === slot ? (positionIn(layout[slot], LOGO) ?? 'start') : undefined;
-    const account = layout.account === slot ? (positionIn(layout[slot], ACCOUNT) ?? 'end') : undefined;
-    return needed ? [{ slot, name: `${base}${suffix}`, holds, logo, account }] : [];
-  };
+  // A slot that names the logo or the account places it; THEME-006 asks for one.
+  const logoAt = (bar: 'header' | 'footer') => (layout.logo === bar ? (positionIn(layout[bar], LOGO) ?? 'start') : undefined);
+  const accountAt = (bar: 'header' | 'footer') =>
+    layout.account === bar ? (positionIn(layout[bar], ACCOUNT) ?? 'end') : undefined;
+  // The header's three slots are parts of their own, kept where the theme names something or code places an item.
+  const header: Part[] = layout.header.needed
+    ? (['start', 'center', 'end'] as const).flatMap((position) => {
+        const text = layout.header[position];
+        const logo = logoAt('header') === position;
+        const account = accountAt('header') === position;
+        if (!text && !logo && !account) return [];
+        return [
+          {
+            slot: `header${SIDES[position]}` as const,
+            name: `${base}Header${SIDES[position]}Slot`,
+            holds: said('It holds', text),
+            ...(logo && { logo: 'start' as const }),
+            ...(account && { account: 'end' as const }),
+          },
+        ];
+      })
+    : [];
+  const { start, center, end } = layout.footer;
+  const footer: Part[] = layout.footer.needed
+    ? [
+        {
+          slot: 'footer',
+          name: `${base}Footer`,
+          holds: [said('Start', start), said('Center', center), said('End', end)].filter(Boolean).join(' '),
+          logo: logoAt('footer'),
+          account: accountAt('footer'),
+        },
+      ]
+    : [];
   const { needed, top, items, bottom } = layout.sidebar;
   const logo = layout.logo === 'sidebar';
   const account = layout.account === 'sidebar';
@@ -62,7 +98,7 @@ export function layoutParts(base: string, layout: Layout): Part[] {
         ...(bottom || account ? [{ slot: 'sidebarFooter' as const, name: `${base}SidebarFooter`, holds: said('It holds', bottom), ...(account && { account: 'start' as const }) }] : []),
       ]
     : [];
-  return [...bar('header', 'Header'), ...sidebar, ...bar('footer', 'Footer')];
+  return [...header, ...sidebar, ...footer];
 }
 
 /** The doc comment over a part's export in its file, or undefined. */
@@ -75,6 +111,7 @@ export function partDoc(text: string | undefined, name: string): string | undefi
 }
 
 const ROW = 'PageLayout lays its items in a row with the theme\'s gap. Return its items, not a bar of your own.';
+const SLOT = 'PageLayout keeps it at its place in the header and lays its items in a row. Return its items, not a bar of your own.';
 const ROWS = 'They are the rows of the sidebar\'s SidebarMenu: return SidebarMenuItems, not a menu or a bar of your own.';
 const FIXED = 'The sidebar\'s SidebarMenu keeps it fixed beside its rows. Return its items, not a bar of your own.';
 
@@ -84,7 +121,7 @@ function partComment(part: Part, doc: string | undefined): string {
   // A part written before keeps one theme line: the new one.
   const guidance = doc?.replace(/\n \*\n \* The theme (puts here:[^\n]*|names nothing more here\.)(?=\n \*\/)/, '');
   if (guidance) return guidance.replace(/\n?\s*\*\/$/, `\n *\n * ${theme}\n */`);
-  const flow = part.slot === 'sidebar' ? ROWS : part.slot === 'header' || part.slot === 'footer' ? ROW : FIXED;
+  const flow = part.slot === 'sidebar' ? ROWS : part.slot === 'footer' ? ROW : part.slot.startsWith('header') ? SLOT : FIXED;
   return `/**\n * ${theme}\n * ${flow}\n */`;
 }
 
@@ -100,12 +137,15 @@ export function partSource(part: Part, doc: string | undefined, wiring?: Account
   const at: Record<Position, string[][]> = { start: [], center: [], end: [] };
   if (part.logo) at[part.logo].push(['<PageLogo />']);
   if (userMenu && part.account) at[part.account].push(userMenu);
-  // Spacers push the center and the end over, as the agent's own items will be.
+  // In the footer, spacers push the center and the end over; a header slot sits where PageLayout keeps it.
   const spacer = ['<div className="flex-1" />'];
+  const bar = part.slot === 'footer';
   const items = [
     ...at.start,
-    ...(at.center.length ? [spacer, ...at.center, spacer] : []),
-    ...(at.end.length && !at.center.length ? [spacer] : []),
+    ...(bar && at.center.length ? [spacer] : []),
+    ...at.center,
+    ...(bar && at.center.length ? [spacer] : []),
+    ...(bar && at.end.length && !at.center.length ? [spacer] : []),
     ...at.end,
   ];
   const comment = partComment(part, doc);

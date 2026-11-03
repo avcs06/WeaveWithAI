@@ -44,8 +44,11 @@ const bar = {
   gap,
 } as const;
 
+// Three slots: the left and right at the bar's ends, the center in its middle whatever the sides hold.
 export const header = style({
   ...bar,
+  display: 'grid',
+  gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
   gridArea: 'header',
   // Solid, so content never shows through a sticky header.
   background: surface.pageBg,
@@ -55,6 +58,17 @@ export const header = style({
     '&[data-overlay]': { background: 'transparent', alignSelf: 'start' },
   },
 });
+
+const headerSlot = {
+  display: 'flex',
+  alignItems: 'center',
+  minWidth: 0,
+  gap,
+} as const;
+
+export const headerLeft = style({ ...headerSlot, justifySelf: 'start' });
+export const headerCenter = style({ ...headerSlot, justifySelf: 'center' });
+export const headerRight = style({ ...headerSlot, justifySelf: 'end' });
 
 export const footer = style({
   ...bar,

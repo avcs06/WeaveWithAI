@@ -15,16 +15,19 @@
   sends a visitor to the landing page there. Never change the layout or
   `PageLayout`: a session that does fails.
 - The layout imports one part for each area its layout needs, such as
-  `web/app/components/AppHeader/AppHeader.tsx` and
+  `web/app/components/AppHeaderRightSlot/AppHeaderRightSlot.tsx` and
   `web/app/components/AppSidebar/AppSidebar.tsx`. Fill each one. Its comment
   says what it holds, what it leaves out, and what the theme puts there.
+- The header is three slots: `HeaderLeftSlot`, `HeaderCenterSlot` and
+  `HeaderRightSlot`. `PageLayout` keeps each at its place, the center in the
+  bar's middle, so a slot needs no spacer.
 - Code already placed `PageLogo` and `UserMenu` where the theme put the logo
   and the account. Keep them where they are; add the part's other items
   around them.
 - A part returns its items, not a bar: no `header`, `aside`, `footer` or
   `SidebarMenu` of its own, and no height, padding, background or border
-  around them. A header or footer lays its items in a row: push the end
-  items over with `<div className="flex-1" />`.
+  around them. A footer lays its items in a row: push the end items over
+  with `<div className="flex-1" />`.
 - The sidebar's parts: `AppSidebar` returns the rows, each destination a
   `SidebarMenuItem` with `as={NextLink}` and its `href`. `AppSidebarHeader` holds what
   stays fixed above them, such as a Create button, and `AppSidebarFooter`

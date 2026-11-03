@@ -1,5 +1,7 @@
 import { MarketingFooter } from '@app/components/MarketingFooter';
-import { MarketingHeader } from '@app/components/MarketingHeader';
+import { MarketingHeaderCenterSlot } from '@app/components/MarketingHeaderCenterSlot';
+import { MarketingHeaderLeftSlot } from '@app/components/MarketingHeaderLeftSlot';
+import { MarketingHeaderRightSlot } from '@app/components/MarketingHeaderRightSlot';
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
 
@@ -13,7 +15,9 @@ export default function MarketingLayout({
     <PageLayout
       layout={layouts.marketing}
       kind="marketing"
-      header={<MarketingHeader />}
+      headerLeft={<MarketingHeaderLeftSlot />}
+      headerCenter={<MarketingHeaderCenterSlot />}
+      headerRight={<MarketingHeaderRightSlot />}
       footer={<MarketingFooter />}
     >
       {children}

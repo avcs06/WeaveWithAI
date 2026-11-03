@@ -11,8 +11,8 @@ import { spacingPx, type ThemeInput } from '../helpers';
  * the logo and the account sit in a needed part, named in the slot where
  * they sit: a bar's start, center or end, the sidebar's top for the logo and
  * its bottom for the account.
- * Pass: the reading-list app layout, a header with the logo, the Shelf link
- * and the account.
+ * Pass: the reading-list app layout, a header with logo at its start and
+ * "Shelf link, account" at its end.
  * Fail: a needed sidebar 0 wide.
  */
 export const rule = defineRule<ThemeInput>(
@@ -79,7 +79,7 @@ export const rule = defineRule<ThemeInput>(
         else if (where !== 'none' && !named(where, what))
           issues.push(
             fail(
-              `The ${kind} ${what} is in the ${where}, but no slot of it names "the ${what}"; name it in the slot where it sits.`,
+              `The ${kind} ${what} is in the ${where}, but no slot of it names ${what}; write ${what} in the slot where it sits.`,
               `${kind}.${where}`,
             ),
           );

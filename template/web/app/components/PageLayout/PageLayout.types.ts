@@ -69,8 +69,12 @@ export type PageLayoutProps = {
    * 36px apart.
    */
   kind: 'app' | 'marketing';
-  /** The header's content, laid out in a row; rendered when `layout.header.needed`. */
-  header?: ReactNode;
+  /** The header's left end, such as the logo; the header renders when `layout.header.needed`. */
+  headerLeft?: ReactNode;
+  /** The header's center, such as the navigation. */
+  headerCenter?: ReactNode;
+  /** The header's right end, such as the account. */
+  headerRight?: ReactNode;
   /** Fixed above the sidebar's rows, such as a Create button. */
   sidebarHeader?: ReactNode;
   /** The sidebar's rows, SidebarMenuItems; rendered when `layout.sidebar.needed`. */

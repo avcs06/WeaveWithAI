@@ -6,9 +6,9 @@ export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
     docksFirst: 'header',
     header: {
       needed: true,
-      start: 'the wordmark',
+      start: 'logo',
       center: '',
-      end: 'the account menu',
+      end: 'account',
       heightPx: 60,
       padding: '4',
       gap: '4',
@@ -49,9 +49,9 @@ export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
     docksFirst: 'header',
     header: {
       needed: true,
-      start: 'the wordmark',
+      start: 'logo',
       center: '',
-      end: 'the mode switch',
+      end: 'account',
       heightPx: 60,
       padding: '4',
       gap: '4',

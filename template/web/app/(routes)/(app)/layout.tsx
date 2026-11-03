@@ -1,7 +1,9 @@
 'use client';
 
 import { AppFooter } from '@app/components/AppFooter';
-import { AppHeader } from '@app/components/AppHeader';
+import { AppHeaderCenterSlot } from '@app/components/AppHeaderCenterSlot';
+import { AppHeaderLeftSlot } from '@app/components/AppHeaderLeftSlot';
+import { AppHeaderRightSlot } from '@app/components/AppHeaderRightSlot';
 import { AppSidebar } from '@app/components/AppSidebar';
 import { AppSidebarFooter } from '@app/components/AppSidebarFooter';
 import { AppSidebarHeader } from '@app/components/AppSidebarHeader';
@@ -26,7 +28,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <PageLayout
       layout={layouts.app}
       kind="app"
-      header={<AppHeader />}
+      headerLeft={<AppHeaderLeftSlot />}
+      headerCenter={<AppHeaderCenterSlot />}
+      headerRight={<AppHeaderRightSlot />}
       sidebarHeader={<AppSidebarHeader />}
       sidebar={<AppSidebar />}
       sidebarFooter={<AppSidebarFooter />}

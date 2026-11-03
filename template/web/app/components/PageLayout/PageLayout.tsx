@@ -57,7 +57,8 @@ export function frameGrid(layout: PageLayoutConfig) {
 /**
  * A frame from the theme's page layout: header, sidebar and footer around
  * the page's container. The layout's sizes, sticking and separations are its
- * own; the slots hold only what sits in each bar. The sidebar is a
+ * own; the slots hold only what sits in each bar. The header has three: its
+ * left and right ends and its center. The sidebar is a
  * SidebarMenu: `sidebar` holds its rows, `sidebarHeader` and `sidebarFooter`
  * what stays fixed above and below them.
  *
@@ -66,7 +67,9 @@ export function frameGrid(layout: PageLayoutConfig) {
 export const PageLayout = ({
   layout,
   kind,
-  header,
+  headerLeft,
+  headerCenter,
+  headerRight,
   sidebarHeader,
   sidebar,
   sidebarFooter,
@@ -151,7 +154,15 @@ export const PageLayout = ({
             [styles.gap]: space(layout.header.gap),
           })}
         >
-          {header}
+          <div data-ds="" data-slot="header-left" className={styles.headerLeft}>
+            {headerLeft}
+          </div>
+          <div data-ds="" data-slot="header-center" className={styles.headerCenter}>
+            {headerCenter}
+          </div>
+          <div data-ds="" data-slot="header-right" className={styles.headerRight}>
+            {headerRight}
+          </div>
         </header>
       )}
       {layout.sidebar.needed && (

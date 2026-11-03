@@ -381,9 +381,9 @@
       "docksFirst": "header",
       "header": {
         "needed": true,
-        "start": "the logo",
+        "start": "logo",
         "center": "",
-        "end": "the Shelf link and the account",
+        "end": "Shelf link, account",
         "heightPx": 72,
         "sticky": true,
         "overlay": false,
@@ -440,9 +440,9 @@
       "docksFirst": "header",
       "header": {
         "needed": true,
-        "start": "the logo",
+        "start": "logo",
         "center": "",
-        "end": "the account",
+        "end": "account",
         "heightPx": 72,
         "sticky": false,
         "overlay": true,

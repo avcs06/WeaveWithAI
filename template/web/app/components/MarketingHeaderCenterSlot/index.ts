@@ -1,0 +1,1 @@
+export { MarketingHeaderCenterSlot } from './MarketingHeaderCenterSlot';

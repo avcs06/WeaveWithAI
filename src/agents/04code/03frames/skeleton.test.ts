@@ -18,13 +18,17 @@ describe('frame skeletons', () => {
     const files = frameSkeletons(more, flows, scope, theme);
     expect([...files.keys()]).toEqual([
       'web/app/(routes)/(admin)/layout.tsx',
-      'web/app/components/AdminHeader/AdminHeader.tsx',
-      'web/app/components/AdminHeader/index.ts',
+      'web/app/components/AdminHeaderLeftSlot/AdminHeaderLeftSlot.tsx',
+      'web/app/components/AdminHeaderLeftSlot/index.ts',
+      'web/app/components/AdminHeaderRightSlot/AdminHeaderRightSlot.tsx',
+      'web/app/components/AdminHeaderRightSlot/index.ts',
     ]);
     const layout = files.get('web/app/(routes)/(admin)/layout.tsx')!;
-    expect(layout).toContain('<PageLayout layout={layouts.app} kind="app" header={<AdminHeader />}>');
+    expect(layout).toContain(
+      '<PageLayout layout={layouts.app} kind="app" headerLeft={<AdminHeaderLeftSlot />} headerRight={<AdminHeaderRightSlot />}>',
+    );
     expect(layout).toContain("if (user === null) router.replace('/');");
-    expect(files.get('web/app/components/AdminHeader/AdminHeader.tsx')).toContain(
+    expect(files.get('web/app/components/AdminHeaderRightSlot/AdminHeaderRightSlot.tsx')).toContain(
       '<UserMenu placement="header" signInHref="/sign-in" />',
     );
   });
