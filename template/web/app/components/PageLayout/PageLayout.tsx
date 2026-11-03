@@ -3,6 +3,7 @@
 import { classNames } from '@packages/styles/classNames';
 import { tokens } from '@packages/styles/tokens.css';
 import { FlexScrollArea } from '@packages/ui/ScrollArea';
+import { SectionGroupScope } from '@packages/ui/Section';
 import { SidebarMenu } from '@packages/ui/SidebarMenu';
 import { assignInlineVars, setElementVars } from '@vanilla-extract/dynamic';
 import React, { useLayoutEffect, useRef } from 'react';
@@ -91,7 +92,8 @@ export const PageLayout = ({
         [styles.sectionGap]: space(main.sectionGap),
       })}
     >
-      {children}
+      {/* The theme's section gap spaces the page's sections, as a group's does. */}
+      <SectionGroupScope>{children}</SectionGroupScope>
     </div>
   );
 

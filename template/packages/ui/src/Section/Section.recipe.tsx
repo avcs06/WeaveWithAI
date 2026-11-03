@@ -16,8 +16,9 @@
  *   the heading element instead of nesting: `h1` only for a landing page's
  *   headline. Sections inside continue from it.
  * - Titles are one size at every level: don't restyle a nested one.
- * - Section adds no margin around itself: stack sections with the parent's
- *   `flex-col-gap-*`.
+ * - Stack sections in a SectionGroup, which puts a fixed gap between them.
+ *   A Section on its own pads itself above and below. A page's sections
+ *   need no group: the page spaces them.
  * - `description` is one muted line about the section; anything longer, or
  *   anything to act on, goes in the content.
  * - `headerAction` holds the section's own actions, like Add, at the
@@ -27,7 +28,7 @@
  */
 import { Button } from '@packages/ui/Button';
 import { Input } from '@packages/ui/Input';
-import { Section } from '@packages/ui/Section';
+import { Section, SectionGroup } from '@packages/ui/Section';
 import { Switch } from '@packages/ui/Switch';
 import { Tag } from '@packages/ui/Tag';
 import { Bell, User } from 'lucide-react';
@@ -35,16 +36,16 @@ import React, { useState } from 'react';
 
 // Usage: the patterns to copy.
 /**
- * A page of sections: each with its heading and description, then its
- * content. The page stacks them; the last has no description. An icon marks
- * a heading; a Tag after it (`rightAddOn`) shows a state.
+ * Sections stacked in a SectionGroup: each with its heading and description,
+ * then its content; the last has no description. An icon marks a heading; a
+ * Tag after it (`rightAddOn`) shows a state.
  */
 const SettingsSections = () => {
   const [name, setName] = useState('Ada Lovelace');
   const [reminders, setReminders] = useState(true);
 
   return (
-    <div className="flex-col-gap-8">
+    <SectionGroup>
       <Section
         title="Profile"
         description="How other attendees see you"
@@ -72,7 +73,7 @@ const SettingsSections = () => {
           <Button variant="danger">Delete account</Button>
         </div>
       </Section>
-    </div>
+    </SectionGroup>
   );
 };
 

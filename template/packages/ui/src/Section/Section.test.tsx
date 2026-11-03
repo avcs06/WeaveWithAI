@@ -6,7 +6,7 @@ import { Button } from '../Button';
 import { Radio, RadioGroup } from '../Radio';
 import { axe, renderUI } from '../test-utils';
 
-import { Section } from '.';
+import { Section, SectionGroup } from '.';
 
 const heading = (level: number, name: string) =>
   screen.getByRole('heading', { level, name });
@@ -136,5 +136,24 @@ describe('Section', () => {
     expect(section).toHaveAttribute('id', 'profile');
     expect(section).toHaveAttribute('data-kind', 'settings');
     expect(section).toHaveClass('w-full', 'px-4');
+  });
+
+  it('pads itself above and below on its own, and leaves the spacing to a SectionGroup or a parent section', async () => {
+    const { container } = renderUI(
+      <>
+        <Section title="Alone" data-testid="alone" />
+        <SectionGroup data-testid="group">
+          <Section title="Grouped" data-testid="grouped" />
+        </SectionGroup>
+        <Section title="Outer">
+          <Section title="Inner" data-testid="inner" />
+        </Section>
+      </>,
+    );
+    expect(screen.getByTestId('alone')).toHaveClass('py-5');
+    expect(screen.getByTestId('group')).toHaveClass('flex-col-gap-6');
+    expect(screen.getByTestId('grouped')).not.toHaveClass('py-5');
+    expect(screen.getByTestId('inner')).not.toHaveClass('py-5');
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

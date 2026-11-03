@@ -7,7 +7,7 @@ import { StoryPage, StorySection } from '../StoryLayout';
 import { Tag } from '../Tag';
 import { caption, mutedText, outlinedBox } from '../StoryStyles.css';
 
-import { Section } from '.';
+import { Section, SectionGroup } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -21,6 +21,7 @@ const SectionStories = () => {
   const [nested, setNested] = useState(true);
   const [longTitle, setLongTitle] = useState(false);
   const [boxes, setBoxes] = useState(true);
+  const [grouped, setGrouped] = useState(true);
   const [pageTitle, setPageTitle] = useState(false);
   const [leftIcon, setLeftIcon] = useState(false);
   const [rightIcon, setRightIcon] = useState(false);
@@ -29,64 +30,74 @@ const SectionStories = () => {
   const [action, setAction] = useState(false);
 
   const box = boxes ? outlinedBox : undefined;
+  const stack = (sections: React.ReactNode) =>
+    grouped ? (
+      <SectionGroup>{sections}</SectionGroup>
+    ) : (
+      <div className="flex-col-gap-4">{sections}</div>
+    );
 
   return (
     <StoryPage>
       <p className={`${caption} ${mutedText}`}>
-        The same sizes and spacing everywhere: 20px padding, 4px from heading to
-        description, 20px from header to content, 16px between content blocks. A
-        section inside a section takes the next heading level at the same size.
+        The same sizes and spacing everywhere: 16px padding at the sides, 4px
+        from heading to description, 16px from header to content and between
+        content blocks. On its own a section pads 20px above and below; in a
+        SectionGroup the group puts 24px between sections instead. A section
+        inside a section takes the next heading level at the same size.
       </p>
 
       <StorySection title="Sections">
-        <div className="flex-col-gap-4">
-          <Section
-            title="Profile"
-            description="How other attendees see you"
-            className={box}
-          >
-            <p>Ada Lovelace, organizer.</p>
-          </Section>
-          <Section
-            title="Icon and add-on"
-            description="leftIcon, then rightAddOn after the title"
-            leftIcon={<Bell />}
-            rightAddOn={<Tag>On</Tag>}
-            className={box}
-          />
-          <Section
-            title="Header action"
-            description="headerAction, at the header's end"
-            headerAction={<Button variant="base">Add hall</Button>}
-            className={box}
-          />
-          <Section title="Title only" className={box}>
-            <p>No description: the content follows the heading.</p>
-          </Section>
-          <Section
-            title="No content"
-            description="Only a header"
-            className={box}
-          />
-          <Section
-            title="Page title"
-            headingAs="h1"
-            description="headingAs: h1, the page's own title"
-            className={box}
-          />
-          <Section
-            title="Venue"
-            description="Nested sections are a level deeper"
-            className={box}
-          >
-            <Section title="Hall A" className={box}>
-              <p>Second floor, 300 seats.</p>
+        {stack(
+          <>
+            <Section
+              title="Profile"
+              description="How other attendees see you"
+              className={box}
+            >
+              <p>Ada Lovelace, organizer.</p>
             </Section>
-            <Section title="Hall B" className={box}>
-              <p>Ground floor, 120 seats.</p>
+            <Section
+              title="Icon and add-on"
+              description="leftIcon, then rightAddOn after the title"
+              leftIcon={<Bell />}
+              rightAddOn={<Tag>On</Tag>}
+              className={box}
+            />
+            <Section
+              title="Header action"
+              description="headerAction, at the header's end"
+              headerAction={<Button variant="base">Add hall</Button>}
+              className={box}
+            />
+            <Section title="Title only" className={box}>
+              <p>No description: the content follows the heading.</p>
             </Section>
-          </Section>
-        </div>
+            <Section
+              title="No content"
+              description="Only a header"
+              className={box}
+            />
+            <Section
+              title="Page title"
+              headingAs="h1"
+              description="headingAs: h1, the page's own title"
+              className={box}
+            />
+            <Section
+              title="Venue"
+              description="Nested sections are a level deeper"
+              className={box}
+            >
+              <Section title="Hall A" className={box}>
+                <p>Second floor, 300 seats.</p>
+              </Section>
+              <Section title="Hall B" className={box}>
+                <p>Ground floor, 120 seats.</p>
+              </Section>
+            </Section>
+          </>,
+        )}
       </StorySection>
 
       <StorySection title="Features">
@@ -105,6 +116,9 @@ const SectionStories = () => {
           </Checkbox>
           <Checkbox checked={boxes} onCheckedChange={setBoxes}>
             Show boxes
+          </Checkbox>
+          <Checkbox checked={grouped} onCheckedChange={setGrouped}>
+            In a SectionGroup
           </Checkbox>
           <Checkbox checked={pageTitle} onCheckedChange={setPageTitle}>
             headingAs: h1

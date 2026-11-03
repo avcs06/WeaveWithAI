@@ -1,6 +1,8 @@
 import type { IconAddonProps } from '../utils';
 import type { ComponentProps, ReactNode } from 'react';
 
+export type SectionGroupProps = ComponentProps<'div'>;
+
 export type SectionHeaderProps = Pick<
   IconAddonProps,
   'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn'

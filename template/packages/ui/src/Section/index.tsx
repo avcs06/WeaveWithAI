@@ -3,8 +3,14 @@ export {
   SectionContent,
   SectionDescription,
   SectionFrame,
+  SectionGroup,
+  SectionGroupScope,
   SectionHeader,
   SectionHeading,
   useSectionLevel,
 } from './Section';
-export type { SectionHeaderProps, SectionProps } from './Section.types';
+export type {
+  SectionGroupProps,
+  SectionHeaderProps,
+  SectionProps,
+} from './Section.types';
