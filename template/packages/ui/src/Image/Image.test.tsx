@@ -40,6 +40,43 @@ describe('Image', () => {
     );
   });
 
+  it('with one side, the picture’s own ratio sets the other', () => {
+    const { container } = renderUI(
+      <>
+        <Image src="/wide.png" alt="Width only" width={400} fit="cover" />
+        <Image src="/tall.png" alt="Height only" height={200} fit="cover" />
+      </>,
+    );
+    const [byWidth, byHeight] = Array.from(
+      container.children,
+    ) as HTMLElement[];
+    expect(byWidth!.getAttribute('style')).toContain('400px');
+    expect(byWidth!.getAttribute('style')).not.toContain('400 / ');
+    expect(screen.getByRole('img', { name: 'Width only' })).toHaveClass(
+      'w-full',
+      'h-auto',
+    );
+    expect(byHeight!.getAttribute('style')).toContain('200px');
+    expect(byHeight!.getAttribute('style')).toContain('fit-content');
+    expect(screen.getByRole('img', { name: 'Height only' })).toHaveClass(
+      'h-full',
+      'w-auto',
+    );
+  });
+
+  it('with one side and no picture, the box is square', () => {
+    renderUI(
+      <>
+        <Image alt="Width only" width={120} fit="cover" />
+        <Image alt="Height only" height={80} fit="cover" />
+      </>,
+    );
+    const byWidth = screen.getByRole('img', { name: 'Width only' });
+    expect(byWidth.getAttribute('style')).toMatch(/120px.*:\s*1(;|$)/);
+    const byHeight = screen.getByRole('img', { name: 'Height only' });
+    expect(byHeight.getAttribute('style')?.match(/80px/g)).toHaveLength(2);
+  });
+
   it('without src, keeps the box with an icon, named by alt', async () => {
     const { container } = renderUI(
       <Image alt="No photo yet" width={400} height={300} fit="cover" />,

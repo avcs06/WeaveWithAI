@@ -33,14 +33,23 @@ export const Image = ({
 }: ImageProps) => {
   const image = useImageFailed(src);
   const shown = !!src && !image.failed;
-  const vars = assignInlineVars({
-    [styles.width]: `${width}px`,
-    [styles.ratio]: `${width} / ${height}`,
-    ...(src && { [styles.picture]: `url("${src}")` }),
-  });
+  const px = (side: number | undefined) =>
+    side === undefined ? undefined : `${side}px`;
+  const ratio =
+    width !== undefined && height !== undefined
+      ? `${width} / ${height}`
+      : undefined;
 
   if (hasContent(children)) {
     const background = styles.backgrounds[fit];
+    // With a side left out, the content sets it: CSS can't read the picture's ratio.
+    const vars = assignInlineVars({
+      [styles.width]: px(width) ?? 'auto',
+      [styles.height]: ratio ? 'auto' : (px(height) ?? 'auto'),
+      [styles.ratio]: ratio ?? 'auto',
+      ...(src && { [styles.picture]: `url("${src}")` }),
+    });
+
     return (
       <div
         {...props}
@@ -57,6 +66,14 @@ export const Image = ({
       </div>
     );
   }
+
+  // With a side left out, the shown picture's own ratio sets it; a missing picture is square.
+  const vars = assignInlineVars({
+    [styles.width]:
+      px(width) ?? (shown ? 'fit-content' : (px(height) ?? 'auto')),
+    [styles.height]: width === undefined ? (px(height) ?? 'auto') : 'auto',
+    [styles.ratio]: ratio ?? (shown ? 'auto' : '1'),
+  });
 
   // In place of a missing picture, the box itself carries the alt text.
   const named = !shown && !!alt;
@@ -81,10 +98,16 @@ export const Image = ({
           alt={alt}
           onError={image.onError}
           data-ds=""
-          className={classNames(
-            'absolute inset-0 w-full h-full',
-            fit === 'cover' ? 'object-cover' : 'object-contain',
-          )}
+          className={
+            ratio
+              ? classNames(
+                  'absolute inset-0 w-full h-full',
+                  fit === 'cover' ? 'object-cover' : 'object-contain',
+                )
+              : width === undefined
+                ? 'block h-full w-auto'
+                : 'block w-full h-auto'
+          }
         />
       ) : (
         <ImageIcon

@@ -12,6 +12,9 @@
  * Pitfalls:
  * - `width` and `height` are the box at full width. Give the picture's own
  *   ratio; in a narrower parent the box narrows and keeps it.
+ * - Give one side only when the picture's shape is unknown, such as one a
+ *   user uploads: its own ratio sets the other side once it loads, and
+ *   without a picture the box is square.
  * - `alt` says what the picture shows. Use "" only for a picture that
  *   decorates, such as the backdrop behind a headline.
  * - Text over a picture sits on a surface of its own, such as a Card, so it
@@ -55,6 +58,11 @@ const Logo = () => (
   />
 );
 
+/** A picture of unknown shape: its width only; its own ratio sets the height. */
+const UnknownShape = () => (
+  <Image src={photo} alt="What the photo shows" width={240} fit="cover" />
+);
+
 /** A record with no picture yet: the box keeps its place with an icon. */
 const NoPicture = () => (
   <Image alt="The record's name" width={400} height={300} fit="cover" />
@@ -81,6 +89,7 @@ export default function ImageRecipe() {
     <div className="flex-col-gap-6">
       <Photo />
       <Logo />
+      <UnknownShape />
       <NoPicture />
       <Backdrop />
     </div>

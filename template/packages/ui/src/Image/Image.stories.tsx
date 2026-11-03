@@ -58,6 +58,23 @@ const ImageStories = () => {
         </div>
       </StorySection>
 
+      <StorySection title="One side: the picture's own ratio sets the other">
+        <div className="flex-row-gap-6 flex-wrap items-start">
+          <Labelled label="width 160, picture">
+            <Image src={src} alt="A circle" width={160} fit="cover" />
+          </Labelled>
+          <Labelled label="height 120, picture">
+            <Image src={src} alt="A circle" height={120} fit="cover" />
+          </Labelled>
+          <Labelled label="width 160, none: square">
+            <Image alt="No picture yet" width={160} fit="cover" />
+          </Labelled>
+          <Labelled label="height 120, none: square">
+            <Image alt="No picture yet" height={120} fit="cover" />
+          </Labelled>
+        </div>
+      </StorySection>
+
       <StorySection title="No picture">
         <div className="flex-row-gap-6 flex-wrap">
           <Labelled label="no src">
