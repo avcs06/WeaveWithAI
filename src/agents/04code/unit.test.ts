@@ -123,24 +123,6 @@ describe('a coding unit', () => {
     expect([count('stage:start', 'code-pages'), count('stage:done', 'code-pages')]).toEqual([1, 1]);
   });
 
-  it("warns about a read its guidelines rule out, from the hook's tool log", async () => {
-    const { ctx, spec, deps } = setup('reads', false, () => false);
-    const log = `${JSON.stringify({ tool: 'bash', command: 'cat packages/ui/src/Dialog/Dialog.tsx' })}\n`;
-    const result = await withWrites({ ...page, '.weave/tools.log': log }, () => runUnit(ctx, spec, deps));
-    expect(result.known).toEqual([]);
-    expect(result.warnings.map((i) => [i.rule, i.at])).toContainEqual(['CODE-010', 'packages/ui/src/Dialog/Dialog.tsx']);
-  });
-
-  it('takes a folder listed on the way to an allowed file, or the unit\'s own folder, as no read to warn about', async () => {
-    const { ctx, spec, deps } = setup('toward', false, () => false);
-    const reads = { deny: ['web/app/(routes)/**', '.weave/04-pages/**'], allow: ['web/app/(routes)/books/**', '.weave/04-pages/S04/**'] };
-    const log = ['ls web/app/\\(routes\\)/books', 'ls .weave/04-pages/', 'cat web/app/\\(routes\\)/other/page.tsx']
-      .map((command) => JSON.stringify({ tool: 'bash', command }))
-      .join('\n');
-    const result = await withWrites({ ...page, '.weave/tools.log': `${log}\n` }, () => runUnit(ctx, { ...spec, reads }, deps));
-    expect(result.warnings.filter((i) => i.rule === 'CODE-010').map((i) => i.at)).toEqual(['web/app/(routes)/other/page.tsx']);
-  });
-
   it('fails a write to a test with CODE-004', async () => {
     const { ctx, spec, deps } = setup('outside', false, () => false);
     const writes = { ...page, 'web/app/(routes)/books/page.test.tsx': 'export {};\n' };

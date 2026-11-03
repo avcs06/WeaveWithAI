@@ -111,7 +111,7 @@ restructure) stay as they are.
   (`docs/specs/benchmark.md`) will measure the frontend.
 - Code the generator writes into an app is recorded in the app's ledger with
   its origin. A Muse Code session may change any app file, the design system
-  included, but tools, config, tests and `.weave`. The runner records its
+  and the entities included, but tools, config and tests. The runner records its
   git diff in the ledger, commits it with a patch in the run whether it passed
   or not, and fails the session when the diff touches a test or a protected
   path.

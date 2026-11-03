@@ -25,12 +25,6 @@ import type { StageContext } from '../stages';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
 
-/** Code wrote the entity layer; a session adds to it when a screen needs an operation or a field it lacks. */
-export const ENTITIES = 'web/app/entities/**';
-
-/** What no session should read: the design system's and the tools' code, and the token and Tailwind files the MCP answers for. */
-export const READS_DENIED = ['packages/**', 'tools/**', 'tokens.ts', 'colors.ts', 'tailwind.preset.cjs', 'web/tailwind.config.js'];
-
 /** The design system's components in the app, by folder, as the MCP lists them. */
 function designSystemComponents(appDir: string): string {
   const root = path.join(appDir, 'packages', 'ui', 'src');
@@ -115,7 +109,6 @@ export async function resumeUnit(
       task: fillPrompt(load('resume-task.md'), { task: `.weave/tasks/${sessionSlug(cut)}.md` }),
       routes: spec.routes,
       expects: spec.expects,
-      reads: spec.reads ?? { deny: READS_DENIED },
       stage: spec.stage,
       museSession: id,
       maxSteps: spec.maxSteps,
@@ -148,7 +141,6 @@ export async function runUnit(
   const own = spec.folders.at(-1) ?? '';
   const unit: Unit = {
     ...spec,
-    reads: spec.reads ?? { deny: READS_DENIED },
     fixTask: (pending) =>
       fillPrompt(load('fix-task.md'), {
         folders: spec.folders.map((f) => `\`.weave/${f}/\``).join(', '),

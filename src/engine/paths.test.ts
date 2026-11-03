@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inPath, protectedOf, readPaths } from './session';
+import { inPath, protectedOf } from './session';
 
 describe('path rules', () => {
   it('take route folders such as [clientId] and (routes) literally', () => {
@@ -17,21 +17,23 @@ describe('path rules', () => {
     expect(inPath('web/app/(routes)/(app)/dashboards/page.tsx', shell)).toBe(false);
   });
 
-  it('flag a test or a protected path as a change a session may not make, and nothing else', () => {
+  it('flag a test, the tools or the config as a change a session may not make, and nothing else', () => {
     expect(
       protectedOf([
         'web/app/(routes)/(app)/layout.css.ts',
         'web/app/(routes)/(app)/page.test.tsx',
         'packages/ui/src/x.ts',
         'tools/x.mjs',
+        '.mcp.json',
         '.weave/x.md',
       ]),
-    ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'tools/x.mjs', '.weave/x.md']);
-    // Code writes the frames' layouts; a session may change the design system, the template's page and frame components included.
+    ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'tools/x.mjs', '.mcp.json']);
+    // A session may change, with care, the design system, the entities and the frames' layouts code wrote.
     expect(
       protectedOf([
         'web/app/(routes)/(app)/layout.tsx',
         'web/app/(routes)/(app)/dashboards/layout.tsx',
+        'web/app/entities/book/index.ts',
         'web/app/components/PageLayout/PageLayout.tsx',
         'web/app/components/PageHeader/PageHeader.tsx',
         'web/app/components/Hero/Hero.css.ts',
@@ -40,20 +42,6 @@ describe('path rules', () => {
         'web/app/components/UserMenu/UserMenu.tsx',
         'web/app/components/AppHeader/AppHeader.tsx',
       ]),
-    ).toEqual(['web/app/(routes)/(app)/layout.tsx']);
-  });
-});
-
-describe('the files a tool log shows read', () => {
-  it('takes read tools and the paths in shell commands, relative to the app', () => {
-    const log = [
-      JSON.stringify({ tool: 'read_file', path: '/app/web/app/entities/client/index.ts' }),
-      JSON.stringify({ tool: 'bash', command: "cat packages/ui/src/Dialog/Dialog.tsx; sed -n '1,80p' tokens.ts; ls web/app/\\(routes\\)" }),
-      JSON.stringify({ tool: 'write_file', path: '/app/web/app/(routes)/home/page.tsx' }),
-      JSON.stringify({ tool: 'bash', command: 'pnpm typecheck 2>&1 | tail -5' }),
-    ].join('\n');
-    expect(readPaths(log, '/somewhere/app').sort()).toEqual(
-      ['packages/ui/src/Dialog/Dialog.tsx', 'tokens.ts', 'web/app/(routes)', 'web/app/entities/client/index.ts'].sort(),
-    );
+    ).toEqual([]);
   });
 });

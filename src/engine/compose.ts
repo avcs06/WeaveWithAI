@@ -9,7 +9,7 @@ import path from 'node:path';
 import { checkIssues, type LongFile, MAX_LINES } from './checks';
 import type { ScreenExpect } from './conformance';
 import { UNIT_MARKER, type UnreadRecipe, unreadInFiles } from './recipes';
-import { type CheckedRoute, protectedOf, type ReadRules, runSession, type SessionDeps, type SessionResult } from './session';
+import { type CheckedRoute, protectedOf, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
 // A coding unit on the stage runner: its draft and its fixes are Muse
@@ -36,8 +36,6 @@ export type Unit = {
   task: string;
   /** The fix session's task for the pending issues. */
   fixTask: (pending: Issue[]) => string;
-  /** The paths its guidelines keep it from reading, measured after the session. */
-  reads?: ReadRules;
   /** The routes `pnpm verify` checks after each session. */
   routes?: CheckedRoute[];
   /** What each of its screens' code must name. */
@@ -50,7 +48,7 @@ export type Unit = {
 };
 
 export type UnitResult = {
-  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed' | 'readsOutside'> & {
+  session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed'> & {
     longFiles: LongFile[];
     unreadRecipes: UnreadRecipe[];
   };
@@ -95,7 +93,6 @@ export function sessionCompose(
         task,
         routes: unit.routes,
         expects: unit.expects,
-        reads: unit.reads,
         stage: unit.stage,
         museSession,
         maxSteps: unit.maxSteps,
@@ -107,7 +104,6 @@ export function sessionCompose(
       summary: `The session could not run: ${String(error).split('\n')[0]}`,
       changed: [],
       protectedHits: [],
-      readsOutside: [],
       usage: { calls: 0, input: 0, cached: 0, output: 0, reasoning: 0 },
       costUsd: 0,
       checks: [],
@@ -154,9 +150,9 @@ export async function unitDraft(
   // The recipe gate's leftovers, over the unit's whole diff: reads count from the unit's marker.
   const log = path.join(appDir, '.weave', 'tools.log');
   const unreadRecipes = unreadInFiles(sources, existsSync(log) ? readFileSync(log, 'utf8') : '');
-  const { status, summary, checks, changed, readsOutside } = result;
+  const { status, summary, checks, changed } = result;
   return {
-    data: { session: { status, summary, checks, protectedHits, changed, readsOutside, unreadRecipes, longFiles }, rendered, diff },
+    data: { session: { status, summary, checks, protectedHits, changed, unreadRecipes, longFiles }, rendered, diff },
     raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
     model: resolveBackend(ctx.config, ctx.backend).model,
   };

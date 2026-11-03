@@ -166,15 +166,25 @@ meet them already. A control you build yourself must meet them too.
 ## Never
 
 - Never write or change a test.
-- Never change `tools/`, `.weave/`, `.muse/` or a config file. A session
-  that changes one fails.
-- Never change the design system in `packages/`, or `PageLayout`,
-  `PageHeader`, `Hero`, `NotFound`, `PageLogo` or `UserMenu` in
-  `web/app/components/`, unless an issue needs it and the app's own code
-  cannot fix it. Then change only what the issue needs.
+- Never change `tools/`, `.muse/` or a config file. A session that changes
+  one fails.
 - Never install, add or remove a package (`pnpm install`, `pnpm add`). The
   app's packages are fixed. When a command fails because of the install,
   stop and say so in your summary.
+
+## Change with care
+
+These are yours to change, but every screen depends on them:
+
+- the design system in `packages/`
+- `PageLayout`, `PageHeader`, `Hero`, `NotFound`, `PageLogo` and
+  `UserMenu` in `web/app/components/`
+- the entity layer in `web/app/entities/`
+- each frame's `layout.tsx`, which code wrote
+
+Leave them as they are unless an issue needs a change there and your own
+code cannot fix it. Then change only what the issue needs, and keep every
+other screen that uses it working.
 
 ## What done looks like
 

@@ -32,13 +32,6 @@ describe('checks as issues', () => {
   });
 });
 
-describe('reads the guidelines rule out', () => {
-  it('are warnings, so they never start a fix session', () => {
-    const issues = checkIssues({ ...passing, readsOutside: ['packages/ui/src/Dialog/Dialog.tsx'] });
-    expect(issues).toEqual([expect.objectContaining({ rule: 'CODE-010', severity: 'warning', at: 'packages/ui/src/Dialog/Dialog.tsx' })]);
-  });
-});
-
 describe('the warnings that never start a fix', () => {
   it('CODE-012 for a file over 300 lines', () => {
     const issues = checkIssues({

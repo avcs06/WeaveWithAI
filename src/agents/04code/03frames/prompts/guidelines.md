@@ -13,7 +13,8 @@
   the frame stays in place, and only the main region scrolls. The sidebar
   is a `SidebarMenu` that `PageLayout` renders itself. The layout of a
   frame around signed-in screens also sends a visitor to the landing page.
-  Never change the layout or `PageLayout`. A session that does fails.
+  Change the layout or `PageLayout` only as "Change with care" in
+  `.weave/01-scaffold/guidelines.md` says.
 - The layout imports one part for each area of the theme's layout, such as
   `web/app/components/AppHeaderRightSlot/AppHeaderRightSlot.tsx` and
   `web/app/components/AppSidebar/AppSidebar.tsx`. Fill each part. Its

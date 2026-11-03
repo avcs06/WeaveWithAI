@@ -15,7 +15,7 @@ import type { StageContext, StageDef } from '../../stages';
 import { screenFolder, screenReads } from '../01scaffold/weave';
 import { seedId, signedIn, storagePrefix } from '../02contract/codegen';
 import { behindSignIn, renderedOn, routeSample } from '../rendered';
-import { READS_DENIED, runUnits, type UnitSpec } from '../unit';
+import { runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
 
@@ -61,7 +61,6 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
     folders: ['01-scaffold', '02-contract', '03-frames', '04-pages'],
     routes: parts.map(({ route }) => route),
     expects: parts.map(({ expect }) => expect),
-    reads: { deny: READS_DENIED },
     maxSteps: STEPS_PER_SCREEN * parts.length,
     timeoutMs: MINUTES_PER_SCREEN * 60_000 * parts.length,
   };

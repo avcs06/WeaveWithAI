@@ -16,8 +16,8 @@ import { git } from './setup';
 
 // One coding session on Muse Code headless. The agent can read
 // anything in the app; this code judges the result: it reruns the checks,
-// records the diff in the ledger, measures the reads its rules rule out, and
-// fails a session whose diff touches a test or a protected path.
+// records the diff in the ledger, and fails a session whose diff touches a
+// test or a protected path.
 
 export type Session = {
   /** 'frames', 'pages', 'repair:R03' */
@@ -28,8 +28,6 @@ export type Session = {
   routes?: CheckedRoute[];
   /** What each screen's route folder must name, from its design and the contract. */
   expects?: ScreenExpect[];
-  /** Paths the guidelines keep the agent from reading; a read there is a warning, since reading can't be blocked. */
-  reads?: ReadRules;
   /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
   stage?: string;
   /** The Muse Code session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built. */
@@ -40,16 +38,11 @@ export type Session = {
 
 export type Check = { name: string; ok: boolean; output: string };
 
-/** Paths a session should not read (`deny`), except those `allow` names. */
-export type ReadRules = { deny: string[]; allow?: string[] };
-
 export type SessionResult = {
   status: 'done' | 'failed' | 'checks' | 'protected' | 'timeout';
   summary: string;
   changed: string[];
   protectedHits: string[];
-  /** Files the agent read that its read rules keep it from. */
-  readsOutside: string[];
   usage: { calls: number; input: number; cached: number; output: number; reasoning: number };
   costUsd: number;
   checks: Check[];
@@ -62,10 +55,8 @@ export type SessionDeps = {
 };
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
-/** What the guidelines tell the agent never to change: the tools, the config and `.weave`. */
-const PROTECTED = ['tools/**', '.muse/**', '.mcp.json', '.weave/**'];
-/** A frame's layout in its route group, which the frames stage writes by code. */
-const FRAME_LAYOUT = /^web\/app\/\(routes\)\/\([^/]+\)\/layout\.tsx$/;
+/** What the guidelines tell the agent never to change: the tools that run the checks, and the config. */
+const PROTECTED = ['tools/**', '.muse/**', '.mcp.json'];
 
 /** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
 export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
@@ -95,29 +86,6 @@ export function inPath(file: string, rule: string): boolean {
   return file === rule;
 }
 
-/** The app files a tool log shows the agent reading: read tools' paths, and paths in its shell commands. */
-export function readPaths(log: string, appDir: string): string[] {
-  const root = path.resolve(appDir);
-  const relative = (raw: string) => {
-    const clean = raw.replace(/\\/g, '').replace(/[*:,]+$/, '');
-    const rel = clean.startsWith('/app/') ? clean.slice(5) : clean.startsWith(`${root}/`) ? clean.slice(root.length + 1) : clean;
-    return rel.replace(/^\.\//, '');
-  };
-  const paths = new Set<string>();
-  for (const line of log.split('\n').filter(Boolean)) {
-    let entry: { tool?: string; path?: string; command?: string };
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    if (entry.path && /read|view|open/i.test(entry.tool ?? '')) paths.add(relative(entry.path));
-    for (const token of (entry.command ?? '').split(/[\s;|&<>'"`]+/))
-      if (!token.startsWith('-') && !/^[a-z]+:\/\//.test(token) && (token.includes('/') || /\.(tsx?|jsx?|cjs|mjs|json|css)$/.test(token)))
-        paths.add(relative(token));
-  }
-  return [...paths].filter((p) => p && !p.startsWith('/') && !p.startsWith('..'));
-}
 const MAX_OUTPUT_LINES = 200;
 
 /** What pnpm wrote when it installed the app; it changes when anything reinstalls the packages. */
@@ -126,9 +94,9 @@ function installState(appDir: string): string {
   return existsSync(file) ? readFileSync(file, 'utf8') : '';
 }
 
-/** The changed files a session may not touch: tests, `PROTECTED` and the frames' layouts. */
+/** The changed files a session may not touch: tests and `PROTECTED`. */
 export function protectedOf(changed: string[]): string[] {
-  return changed.filter((file) => TESTS.test(file) || FRAME_LAYOUT.test(file) || PROTECTED.some((rule) => inPath(file, rule)));
+  return changed.filter((file) => TESTS.test(file) || PROTECTED.some((rule) => inPath(file, rule)));
 }
 
 export async function appCheck(appDir: string, name: string, args: string[]): Promise<Check> {
@@ -223,12 +191,6 @@ export async function runSession(
   const wholeLog = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)) : Buffer.alloc(0);
   const tools = wholeLog.subarray(wholeLog.length < toolsFrom ? 0 : toolsFrom).toString('utf8');
   writeFileSync(runPath(run, 'sessions', `${slug}.tools.jsonl`), tools);
-  const { deny = [], allow = [] } = session.reads ?? {};
-  // A folder listed on the way to an allowed file is no read of what the rules keep the agent from.
-  const toward = (folder: string, rule: string) => rule.startsWith(`${folder.replace(/\/$/, '')}/`);
-  const readsOutside = readPaths(tools, appDir).filter(
-    (file) => deny.some((rule) => inPath(file, rule)) && !allow.some((rule) => inPath(file, rule) || toward(file, rule)),
-  );
   const usage = readUsage(exec.stdout);
   if (!usage.childrenIncluded && usage.children > 0)
     appendEvent(run, {
@@ -304,7 +266,6 @@ export async function runSession(
     summary: usage.summary,
     changed,
     protectedHits,
-    readsOutside,
     usage: { calls: usage.calls, input: usage.input, cached: usage.cached, output: usage.output, reasoning: usage.reasoning },
     costUsd: cost,
     checks,
