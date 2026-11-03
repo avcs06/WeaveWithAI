@@ -91,6 +91,18 @@ describe('Button', () => {
     );
   });
 
+  it('keeps its own width in a column unless the caller widens it', () => {
+    renderUI(
+      <div className="flex-col-gap-2">
+        <Button>Own width</Button>
+        <Button className="w-full">Full width</Button>
+      </div>,
+    );
+    expect(button('Own width')).toHaveClass('w-fit');
+    expect(button('Full width')).toHaveClass('w-full');
+    expect(button('Full width')).not.toHaveClass('w-fit');
+  });
+
   it('keeps native submit, and only submits when enabled', async () => {
     const onSubmit = jest.fn((event: React.FormEvent) =>
       event.preventDefault(),

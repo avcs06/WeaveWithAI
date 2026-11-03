@@ -197,7 +197,10 @@ export const Button = <C extends ButtonTarget = 'button'>({
 }: ButtonProps<C>) => {
   const buttonClassName = buttonRecipe({ variant, size, ...buttonLook(look) });
   return (
-    <ButtonBase {...props} className={classNames(buttonClassName, className)} />
+    <ButtonBase
+      {...props}
+      className={classNames(buttonClassName, 'w-fit', className)}
+    />
   );
 };
 

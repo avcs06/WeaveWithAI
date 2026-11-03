@@ -112,6 +112,19 @@ describe('FormControl', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('shows help text the error repeats word for word once, as the error', async () => {
+    const { container } = renderUI(
+      <Field
+        label="Email"
+        helpText="Use your work email"
+        error="Use your work email"
+      />,
+    );
+    expect(screen.getAllByText('Use your work email')).toHaveLength(1);
+    expect(textbox()).toHaveAccessibleDescription('Use your work email');
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   it('descriptions read in order: the message, the help text, the hint, the tooltip, the reason', async () => {
     const { container } = renderUI(
       <Field

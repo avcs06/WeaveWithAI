@@ -79,7 +79,7 @@ export const Tag = ({
         data-disabled={isDisabled || undefined}
         className={classNames(
           'inline-flex-row-gap-0 items-center',
-          'max-w-full',
+          'max-w-full w-fit',
           tagClassName,
           className,
         )}

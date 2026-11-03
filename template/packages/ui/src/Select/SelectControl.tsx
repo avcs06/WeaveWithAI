@@ -25,7 +25,7 @@ import {
 import { useSelectOptions, useSelectStoreContext } from './store';
 import { useSelectFocus } from './useSelectFocus';
 import { useSelectSearch } from './useSelectSearch';
-import { announcement, menuMessage } from './utils';
+import { announcement, inSentence, menuMessage } from './utils';
 
 import type {
   SelectControlProps,
@@ -82,7 +82,8 @@ export function SelectControl(props: SelectControlProps) {
   const canEdit = selectionControl.multiple
     ? selectedOptions.length > 0 && !isDisabled
     : canClear;
-  const placeholderText = placeholder ?? (label ? `Select ${label}` : 'Select');
+  const placeholderText =
+    placeholder ?? (label ? `Select ${inSentence(label)}` : 'Select');
   const message = menuMessage(isLoading, filteredOptions.length, isSearching);
 
   const setOpen = (next: boolean) => {

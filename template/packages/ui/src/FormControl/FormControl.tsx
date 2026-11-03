@@ -91,6 +91,8 @@ export const FormControl = ({
 
   const { status, message } = winningStatus({ error, warning, success });
   const controlId = id ?? generatedId;
+  // Help text the message repeats word for word shows once, as the message.
+  const showsHelp = hasContent(helpText) && helpText !== message;
 
   // Also kept hidden in the page for screen readers.
   const hiddenDescriptions = [
@@ -108,7 +110,7 @@ export const FormControl = ({
     // The message first: it says what's wrong, help text what's asked.
     'aria-describedby': joinIds(
       hasContent(message) && messageId,
-      hasContent(helpText) && helpId,
+      showsHelp && helpId,
       ...hiddenDescriptions.map((description) => description.id),
     ),
     'aria-invalid': status === 'error' || undefined,
@@ -181,7 +183,7 @@ export const FormControl = ({
       ) : (
         boxed
       )}
-      {hasContent(helpText) && (
+      {showsHelp && (
         <div id={helpId} data-slot="help" className={controlMessage} data-ds="">
           {helpText}
         </div>

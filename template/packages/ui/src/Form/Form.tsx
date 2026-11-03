@@ -46,7 +46,7 @@ export const Form = ({
       {hasContent(actions) && (
         <div
           data-slot="actions"
-          className="flex-row-gap-2 flex-wrap"
+          className="flex-row-gap-2 flex-wrap items-center"
           data-ds=""
         >
           {actions}
