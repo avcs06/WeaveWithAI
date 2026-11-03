@@ -65,6 +65,26 @@ export function setTitle(text: string, name: string): string {
   return `${text.slice(0, at)}\n${line}${text.slice(at)}`;
 }
 
+export const PAGE_LOGO = 'web/app/components/PageLogo/PageLogo.tsx';
+
+const LOGO_NAME = /\nconst APP_NAME = '(?:[^'\\]|\\.)*';\n/;
+
+/** PageLogo with the app's name, so an agent places the logo and never writes the name. */
+export function setLogoName(text: string, name: string): string {
+  if (!LOGO_NAME.test(text)) throw new Error('no APP_NAME in PageLogo to name');
+  return text.replace(LOGO_NAME, `\nconst APP_NAME = '${name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}';\n`);
+}
+
+/** Writes `setLogoName` into the app's PageLogo; true when it changed the file. */
+export function applyLogoName(appDir: string, name: string): boolean {
+  const file = path.join(appDir, PAGE_LOGO);
+  const before = readFileSync(file, 'utf8');
+  const after = setLogoName(before, name);
+  if (after === before) return false;
+  writeFileSync(file, after);
+  return true;
+}
+
 /** Writes `setTitle` into the app's root layout; true when it changed the file. */
 export function applyTitle(appDir: string, name: string): boolean {
   const file = path.join(appDir, ROOT_LAYOUT);

@@ -10,7 +10,7 @@ import { prepareApp } from '../../../engine/setup';
 import type { Scope } from '../../01flows/01scope/schema';
 import type { Themed } from '../../02design/01theme/build';
 import type { StageContext, StageDef } from '../../stages';
-import { applyMode, applyTitle, ensureApp, ROOT_LAYOUT } from './app';
+import { applyLogoName, applyMode, applyTitle, ensureApp, PAGE_LOGO, ROOT_LAYOUT } from './app';
 import { applyTheme } from './apply';
 import { readCodeInputs } from './inputs';
 import { validateApplied } from './validation/validation';
@@ -46,7 +46,9 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (movedAside) appendEvent(run, { type: 'scaffold:moved-aside', stage: STAGE, to: movedAside });
   const { changed, skipped } = applyTheme(appDir, theme);
   if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
-  if (applyTitle(appDir, readArtifact<Scope>(run, 'flows-scope').data.app.name)) changed.push(ROOT_LAYOUT);
+  const { name } = readArtifact<Scope>(run, 'flows-scope').data.app;
+  if (applyTitle(appDir, name)) changed.push(ROOT_LAYOUT);
+  if (applyLogoName(appDir, name)) changed.push(PAGE_LOGO);
   for (const reason of skipped) appendEvent(run, { type: 'scaffold:skipped', stage: STAGE, reason });
 
   // A wrong color here is a generator bug, never the model's.

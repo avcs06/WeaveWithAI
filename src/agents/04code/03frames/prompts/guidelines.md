@@ -41,10 +41,9 @@
   names for it: call them in the part that shows them.
 - A frame has no H1, not even its logo: each screen's title is the page's
   only H1.
-- The wordmark is `Wordmark` from `@app/components/Wordmark`, with the app
-  name as its children. Never style the app name by hand. When it leads
-  home, wrap it in `NextLink` with `look="plain"`: its place already says
-  it is a link, so it needs no dotted line. `Wordmark` is not itself a link.
+- The logo is `PageLogo` from `@app/components/PageLogo`. Place it as it
+  is: it shows the app's name in the theme's logo style and leads home.
+  Never write or style the app's name by hand.
 - Keep `web/app/(routes)/layout.tsx` as it is.
 - A frame is its layout, its parts in `web/app/blocks/` and the pieces they
   use. The route folders inside a route group are the screens'.

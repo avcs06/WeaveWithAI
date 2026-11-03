@@ -1,0 +1,1 @@
+export { PageLogo } from './PageLogo';
