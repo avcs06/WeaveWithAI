@@ -79,6 +79,10 @@ export const TableContent = ({
       ),
     [columnOrder, columnsById],
   );
+  const columnIds = useMemo(
+    () => columns.map((column) => column.id),
+    [columns],
+  );
 
   // Shared by select-all, the body and the pagination counts.
   const rows = useClientRows({
@@ -130,7 +134,7 @@ export const TableContent = ({
           rows={rows}
           rowKey={getRowKey}
           slots={slots}
-          columnIds={columnOrder}
+          columnIds={columnIds}
           virtualized={virtualized}
           reorderEnabled={reorderEnabled}
           infiniteScrollEnabled={infiniteScrollEnabled}
