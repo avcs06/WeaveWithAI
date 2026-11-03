@@ -13,7 +13,10 @@
   `/`, is a placeholder. The screen at `/` writes over it when that screen
   is in the landing group; otherwise delete it.
 - A screen fills its frame's main region: no header, navigation or footer
-  of its own. Its title is the page's only H1.
+  of its own. Every screen but the landing page starts with a `PageHeader`
+  from `@app/components/PageHeader`: its title is the page's only H1, with
+  the description, the breadcrumb to the pages above, and the page's
+  actions.
 - The frame's container already sets the page padding, the width and the
   gap between sections. A page returns its sections, with no padding, max
   width or outer gap of its own.

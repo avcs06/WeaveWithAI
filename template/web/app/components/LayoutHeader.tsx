@@ -5,8 +5,8 @@ import { Button } from '@packages/ui/Button';
 
 import { PageLogo } from './PageLogo';
 
-/** The starter page's header content: the logo and the mode switch. */
-export const PageHeader = () => {
+/** The starter layout's header content: the logo and the mode switch. */
+export const LayoutHeader = () => {
   const { mode, toggle } = useThemeMode();
 
   return (

@@ -1,7 +1,7 @@
+import { LayoutHeader } from '@app/components/LayoutHeader';
+import { LayoutSidebar } from '@app/components/LayoutSidebar';
 import { PageFooter } from '@app/components/PageFooter';
-import { PageHeader } from '@app/components/PageHeader';
 import { layouts, PageLayout } from '@app/components/PageLayout';
-import { PageSidebar } from '@app/components/PageSidebar';
 import React from 'react';
 
 /** The app a signed-in user works in, in the theme's app layout. */
@@ -10,8 +10,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <PageLayout
       layout={layouts.app}
       scrollMain
-      header={<PageHeader />}
-      sidebar={<PageSidebar />}
+      header={<LayoutHeader />}
+      sidebar={<LayoutSidebar />}
       footer={<PageFooter />}
     >
       {children}

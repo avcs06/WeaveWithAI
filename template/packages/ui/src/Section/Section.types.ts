@@ -18,8 +18,9 @@ export type SectionProps = Omit<ComponentProps<'section'>, 'title'> &
     /** The heading's id, for a control it names with `aria-labelledby`. */
     titleId?: string;
     /**
-     * The heading element, over the one nesting picks: `h1` for the page's
-     * own title. Sections inside follow from it; the size stays the same.
+     * The heading element, over the one nesting picks: `h1` for a landing
+     * page's headline; any other page's title is the app's PageHeader.
+     * Sections inside follow from it; the size stays the same.
      */
     headingAs?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   };

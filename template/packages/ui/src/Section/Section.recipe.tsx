@@ -12,8 +12,9 @@
  * Pitfalls:
  * - The heading level comes from nesting: a Section is an `h2`, one inside a
  *   Section an `h3`, and so on. Don't wrap `title` in a heading of your own.
- * - `headingAs` picks the heading element instead: `h1` for the page's own
- *   title, once per page. Sections inside continue from it.
+ * - A page's title is the app's PageHeader, its only H1. `headingAs` picks
+ *   the heading element instead of nesting: `h1` only for a landing page's
+ *   headline. Sections inside continue from it.
  * - Titles are one size at every level: don't restyle a nested one.
  * - Section adds no margin around itself: stack sections with the parent's
  *   `flex-col-gap-*`.
@@ -96,13 +97,13 @@ const NestedSections = () => (
 );
 
 /**
- * The page's own title: the outermost Section takes `headingAs="h1"`, so its
- * sections are `h2`s.
+ * A landing page's headline, on a page with no PageHeader: the outermost
+ * Section takes `headingAs="h1"`, so its sections are `h2`s.
  */
-const PageSection = () => (
-  <Section title="Settings" headingAs="h1" description="Your account">
-    <Section title="Language">
-      <p>English (United Kingdom)</p>
+const LandingSection = () => (
+  <Section title="Plan your week in minutes" headingAs="h1">
+    <Section title="How it works">
+      <p>Add your tasks, then drag them into the days.</p>
     </Section>
   </Section>
 );
@@ -110,7 +111,7 @@ const PageSection = () => (
 export default function SectionRecipe() {
   return (
     <div className="flex-col-gap-8">
-      <PageSection />
+      <LandingSection />
       <SettingsSections />
       <NestedSections />
     </div>
