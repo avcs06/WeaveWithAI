@@ -17,6 +17,9 @@ Each issue below has an id, such as T01, and the replies given on it in earlier 
 
 - `closed` when you fixed it. Say what you changed.
 - `open` when you did not fix it. Give your reason in one or two sentences.
+
+## When you do not fix an issue
+
 - Two issues may ask for opposite changes, such as one that moves a link and one that keeps it where it is. Decide which one serves the user better. Fix that one. Answer the other `open`, and name the one you fixed.
 - A reviewer may ask for something you believe is not an issue, such as a change your guidelines or the design rule out. Answer it `open` with your reason.
 - A failed check you answer `open` with a reason is not sent to you again. Leave a check open only when fixing it would break something the user needs.
