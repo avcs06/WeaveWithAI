@@ -55,6 +55,10 @@ export type PageLayoutConfig = {
     /** How the content area sets off from the frame: a panel background, a border, a shadow, or nothing. */
     separation: Separation;
   };
+  /** Where the scaffold placed the app's logo. */
+  logo: 'header' | 'sidebar' | 'footer';
+  /** Where the account menu sits; none for a site without accounts. */
+  account: 'header' | 'sidebar' | 'none';
 };
 
 export type PageLayoutProps = {

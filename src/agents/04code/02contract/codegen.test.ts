@@ -13,12 +13,11 @@ describe('storage keys', () => {
   const prefix = storagePrefix({ id: '20261102-1425-dashboard-editor' });
   const files = entityFiles(contract, {}, prefix);
 
-  it('prefix every entity store and the auth store with the run', () => {
+  it('prefix every entity store with the run', () => {
     expect(prefix).toBe('weave:20261102-1425-dashboard-editor');
     const stores = [...files].filter(([file]) => file.endsWith('/store.ts')).map(([, text]) => text);
     expect(stores.length).toBeGreaterThan(0);
     for (const text of stores) expect(text).toMatch(/'weave:20261102-1425-dashboard-editor:[a-z]\w*'/);
-    expect(files.get('web/app/entities/auth/index.ts')).toContain("'weave:20261102-1425-dashboard-editor:auth'");
   });
 
   it('write the signed-in session under the same auth key', () => {

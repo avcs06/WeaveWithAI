@@ -85,6 +85,26 @@ export function applyLogoName(appDir: string, name: string): boolean {
   return true;
 }
 
+export const AUTH_STORE = 'web/app/entities/auth/index.ts';
+
+const AUTH_KEY = /\nconst AUTH_KEY = '[^'\n]*';\n/;
+
+/** The template's auth store keyed to the run, as the checks' signed-in session is. */
+export function setAuthKey(text: string, key: string): string {
+  if (!AUTH_KEY.test(text)) throw new Error('no AUTH_KEY in the auth store to key');
+  return text.replace(AUTH_KEY, `\nconst AUTH_KEY = '${key}';\n`);
+}
+
+/** Writes `setAuthKey` into the app's auth store; true when it changed the file. */
+export function applyAuthKey(appDir: string, key: string): boolean {
+  const file = path.join(appDir, AUTH_STORE);
+  const before = readFileSync(file, 'utf8');
+  const after = setAuthKey(before, key);
+  if (after === before) return false;
+  writeFileSync(file, after);
+  return true;
+}
+
 /** Writes `setTitle` into the app's root layout; true when it changed the file. */
 export function applyTitle(appDir: string, name: string): boolean {
   const file = path.join(appDir, ROOT_LAYOUT);

@@ -70,11 +70,15 @@ export function withProbes(appDir: string, probes: Probe[], check: () => Promise
 
 /** The frames' layouts and empty parts, by code, committed before the session so its diff holds only what it fills in. */
 async function writeSkeletons(run: Run, appDir: string, files: Map<string, string>): Promise<void> {
+  const existed = new Set([...files.keys()].filter((file) => existsSync(path.join(appDir, file))));
   for (const [file, text] of files) {
     mkdirSync(path.dirname(path.join(appDir, file)), { recursive: true });
     writeFileSync(path.join(appDir, file), text);
   }
-  appendLedger(appDir, [...files.keys()].map((file) => ({ path: file, status: 'A', origin: 'code', stage: STAGE })));
+  appendLedger(
+    appDir,
+    [...files.keys()].map((file) => ({ path: file, status: existed.has(file) ? 'M' : 'A', origin: 'code', stage: STAGE })),
+  );
   const checks: [string, string[]][] = [
     ['validate', ['node', 'tools/validate-files.mjs', ...files.keys()]],
     ['typecheck', ['pnpm', 'typecheck']],
@@ -107,7 +111,8 @@ async function runFrames(ctx: StageContext): Promise<void> {
     STAGE,
     framesSpecs(architecture).map((spec) => ({ ...spec, ...(rendered && { rendered }) })),
     {},
-    (dir) => writeSkeletons(ctx.run, dir, skeletons),
+    // Only a frame beyond the app's and the marketing site's needs code here.
+    skeletons.size ? (dir) => writeSkeletons(ctx.run, dir, skeletons) : undefined,
   );
 }
 

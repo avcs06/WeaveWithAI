@@ -330,6 +330,7 @@ exports[`buildTheme > stays the same for the same input 1`] = `
   },
   "layouts": {
     "app": {
+      "account": "header",
       "docksFirst": "header",
       "footer": {
         "center": "",
@@ -343,16 +344,17 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       },
       "header": {
         "center": "",
-        "end": "the Shelf link",
+        "end": "the Shelf link and the account",
         "gap": "3",
         "heightPx": 72,
         "needed": true,
         "overlay": false,
         "padding": "3",
         "separation": "divider",
-        "start": "the wordmark",
+        "start": "the logo",
         "sticky": false,
       },
+      "logo": "header",
       "main": {
         "align": "center",
         "container": "fluid",
@@ -371,6 +373,7 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       },
     },
     "marketing": {
+      "account": "header",
       "docksFirst": "header",
       "footer": {
         "center": "",
@@ -384,16 +387,17 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       },
       "header": {
         "center": "",
-        "end": "Sign in",
+        "end": "the account",
         "gap": "4",
         "heightPx": 72,
         "needed": true,
         "overlay": true,
         "padding": "4",
         "separation": "none",
-        "start": "the wordmark",
+        "start": "the logo",
         "sticky": false,
       },
+      "logo": "header",
       "main": {
         "align": "center",
         "container": "fluid",

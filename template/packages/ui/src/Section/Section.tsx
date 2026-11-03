@@ -203,10 +203,7 @@ export const Section = ({
   });
 
   return (
-    <SectionFrame
-      {...props}
-      className={classNames(section, className)}
-    >
+    <SectionFrame {...props} className={classNames(section, className)}>
       <SectionHeader
         heading={
           <SectionHeading level={level} id={titleId} className={sectionTitle}>

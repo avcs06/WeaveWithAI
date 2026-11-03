@@ -381,9 +381,9 @@
       "docksFirst": "header",
       "header": {
         "needed": true,
-        "start": "the wordmark",
+        "start": "the logo",
         "center": "",
-        "end": "the Shelf link",
+        "end": "the Shelf link and the account",
         "heightPx": 72,
         "sticky": true,
         "overlay": false,
@@ -432,15 +432,17 @@
         "sectionGap": "6",
         "fullBleed": false,
         "separation": "none"
-      }
+      },
+      "logo": "header",
+      "account": "header"
     },
     "marketing": {
       "docksFirst": "header",
       "header": {
         "needed": true,
-        "start": "the wordmark",
+        "start": "the logo",
         "center": "",
-        "end": "Sign in",
+        "end": "the account",
         "heightPx": 72,
         "sticky": false,
         "overlay": true,
@@ -488,7 +490,9 @@
         "sectionGap": "6",
         "fullBleed": true,
         "separation": "none"
-      }
+      },
+      "logo": "header",
+      "account": "header"
     }
   },
   "defaults": {

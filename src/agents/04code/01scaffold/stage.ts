@@ -8,13 +8,17 @@ import { saveStagePatch } from '../../../engine/patches';
 import { appCheck, type Check, verifyCommand } from '../../../engine/session';
 import { prepareApp } from '../../../engine/setup';
 import type { Scope } from '../../01flows/01scope/schema';
+import type { Flows } from '../../01flows/schema';
 import type { Themed } from '../../02design/01theme/build';
+import type { Architecture } from '../../02design/02architect/schema';
 import type { StageContext, StageDef } from '../../stages';
-import { applyLogoName, applyMode, applyTitle, ensureApp, PAGE_LOGO, ROOT_LAYOUT } from './app';
+import { authKey, storagePrefix } from '../02contract/codegen';
+import { applyAuthKey, applyLogoName, applyMode, applyTitle, AUTH_STORE, ensureApp, PAGE_LOGO, ROOT_LAYOUT } from './app';
 import { applyTheme } from './apply';
+import { applyLayouts } from './layouts';
 import { readCodeInputs } from './inputs';
 import { validateApplied } from './validation/validation';
-import { weaveFolders, writeWeave } from './weave';
+import { signInRoute, weaveFolders, writeWeave } from './weave';
 
 const STAGE = 'code-scaffold';
 const CHECKS: [string, string[]][] = [
@@ -49,13 +53,21 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   const { name } = readArtifact<Scope>(run, 'flows-scope').data.app;
   if (applyTitle(appDir, name)) changed.push(ROOT_LAYOUT);
   if (applyLogoName(appDir, name)) changed.push(PAGE_LOGO);
+  if (applyAuthKey(appDir, authKey(storagePrefix(run)))) changed.push(AUTH_STORE);
+  const architecture = readArtifact<Architecture>(run, 'design-architect').data;
+  const flows = readArtifact<Flows>(run, 'flows-expand').data;
+  const layouts = applyLayouts(appDir, theme, { signInHref: signInRoute(architecture, flows) });
+  changed.push(...layouts.changed);
   for (const reason of skipped) appendEvent(run, { type: 'scaffold:skipped', stage: STAGE, reason });
 
   // A wrong color here is a generator bug, never the model's.
   const issues = validateApplied({ colorsTs: readFileSync(path.join(appDir, 'colors.ts'), 'utf8'), theme });
   if (issues.length) fail(issues.map((issue) => issue.message).join('\n'));
 
-  appendLedger(appDir, changed.map((file) => ({ path: file, status: 'M', origin: 'code', stage: STAGE })));
+  appendLedger(appDir, [
+    ...changed.map((file) => ({ path: file, status: 'M', origin: 'code' as const, stage: STAGE })),
+    ...layouts.removed.map((file) => ({ path: file, status: 'D', origin: 'code' as const, stage: STAGE })),
+  ]);
   if (ctx.config.MUSE_DOCKER === true) await ensureAgentImage();
   // Before the baseline commit, so every session's diff starts with its inputs in place.
   writeWeave(appDir, weaveFolders(readCodeInputs(run)));

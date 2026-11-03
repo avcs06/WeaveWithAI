@@ -6,8 +6,9 @@ import { Button } from '../Button';
 import { Radio, RadioGroup } from '../Radio';
 import { axe, renderUI } from '../test-utils';
 
-import { Section, SectionGroup } from '.';
 import * as styles from './Section.css';
+
+import { Section, SectionGroup } from '.';
 
 const heading = (level: number, name: string) =>
   screen.getByRole('heading', { level, name });

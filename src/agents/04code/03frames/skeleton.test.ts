@@ -3,52 +3,29 @@ import { architecture, flows, scope, theme } from '../../02design/__fixtures__/c
 import { frameSkeletons } from './skeleton';
 
 describe('frame skeletons', () => {
-  const withSidebar = {
-    ...theme,
-    layouts: {
-      ...theme.layouts,
-      app: {
-        ...theme.layouts.app,
-        sidebar: { ...theme.layouts.app.sidebar, needed: true, top: 'the Add book button', items: 'the shelves', bottom: 'the account' },
-      },
-    },
-  };
-
-  it('write a layout per frame on the theme layout its screens need, and an empty part per bar and sidebar area it needs', () => {
-    const files = frameSkeletons(architecture, flows, scope, withSidebar);
-    expect([...files.keys()]).toEqual([
-      'web/app/(routes)/(marketing)/layout.tsx',
-      'web/app/blocks/MarketingHeader/MarketingHeader.tsx',
-      'web/app/blocks/MarketingHeader/index.ts',
-      'web/app/(routes)/(app)/layout.tsx',
-      'web/app/blocks/AppHeader/AppHeader.tsx',
-      'web/app/blocks/AppHeader/index.ts',
-      'web/app/blocks/AppSidebarHeader/AppSidebarHeader.tsx',
-      'web/app/blocks/AppSidebarHeader/index.ts',
-      'web/app/blocks/AppSidebar/AppSidebar.tsx',
-      'web/app/blocks/AppSidebar/index.ts',
-      'web/app/blocks/AppSidebarFooter/AppSidebarFooter.tsx',
-      'web/app/blocks/AppSidebarFooter/index.ts',
-    ]);
-    expect(files.get('web/app/(routes)/(marketing)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.marketing} kind="marketing" header={<MarketingHeader />}>',
-    );
-    expect(files.get('web/app/(routes)/(app)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.app} kind="app" header={<AppHeader />} sidebarHeader={<AppSidebarHeader />} sidebar={<AppSidebar />} sidebarFooter={<AppSidebarFooter />}>',
-    );
-    expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('Rows: the shelves.');
-    expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('return SidebarMenuItems');
-    expect(files.get('web/app/blocks/AppSidebarFooter/AppSidebarFooter.tsx')).toContain('It holds: the account.');
-    expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('export const AppSidebar = () => null;');
+  it('leave the app and the marketing site to the scaffold', () => {
+    expect(frameSkeletons(architecture, flows, scope, theme).size).toBe(0);
   });
 
-  it('send a visitor of a signed-in frame to the landing page, and leave a public frame open', () => {
-    const files = frameSkeletons(architecture, flows, scope, theme);
-    const app = files.get('web/app/(routes)/(app)/layout.tsx')!;
-    expect(app.startsWith("'use client';")).toBe(true);
-    expect(app).toContain("if (user === null) router.replace('/');");
-    const site = files.get('web/app/(routes)/(marketing)/layout.tsx')!;
-    expect(site).not.toContain('useCurrentUser');
-    expect(site).not.toContain("'use client'");
+  it('give a further frame its own layout and parts, signed in when its screens are', () => {
+    const app = architecture.frames.find((frame) => frame.id === 'FR02')!;
+    const books = architecture.screens.find((screen) => screen.id === 'S04')!;
+    const more = {
+      ...architecture,
+      frames: [...architecture.frames, { ...app, id: 'FR03', name: 'Admin frame' }],
+      screens: [...architecture.screens, { ...books, id: 'S06', frame: 'FR03', route: '/admin' }],
+    };
+    const files = frameSkeletons(more, flows, scope, theme);
+    expect([...files.keys()]).toEqual([
+      'web/app/(routes)/(admin)/layout.tsx',
+      'web/app/components/AdminHeader/AdminHeader.tsx',
+      'web/app/components/AdminHeader/index.ts',
+    ]);
+    const layout = files.get('web/app/(routes)/(admin)/layout.tsx')!;
+    expect(layout).toContain('<PageLayout layout={layouts.app} kind="app" header={<AdminHeader />}>');
+    expect(layout).toContain("if (user === null) router.replace('/');");
+    expect(files.get('web/app/components/AdminHeader/AdminHeader.tsx')).toContain(
+      '<UserMenu placement="header" signInHref="/sign-in" />',
+    );
   });
 });

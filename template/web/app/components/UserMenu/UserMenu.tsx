@@ -1,5 +1,6 @@
 'use client';
 
+import { signOut, useCurrentUser } from '@app/entities/auth';
 import { classNames } from '@packages/styles/classNames';
 import { Avatar } from '@packages/ui/Avatar';
 import { Button, PlainButton } from '@packages/ui/Button';
@@ -13,15 +14,13 @@ import { NextLink } from '../NextLink';
 import type { UserMenuProps } from './UserMenu.types';
 
 /**
- * The account in a header or a sidebar. Signed in, it shows the user's avatar
- * and name, and opens a menu: the name, the rows passed as children, then
- * Sign out. Signed out, it shows a Sign in button. It shows nothing while the
- * saved session is read.
+ * The account in a header or a sidebar, from the app's session. Signed in, it
+ * shows the user's avatar and name, and opens a menu: the name, the rows
+ * passed as children, then Sign out, which signs out. Signed out, it shows a
+ * Sign in button. It shows nothing while the saved session is read.
  */
 export const UserMenu = ({
-  user,
   placement,
-  onSignOut,
   signInHref,
   children,
   variant,
@@ -29,9 +28,10 @@ export const UserMenu = ({
   look,
   className,
 }: UserMenuProps) => {
-  if (user === undefined) return null;
+  const session = useCurrentUser();
+  if (session === undefined) return null;
 
-  if (user === null)
+  if (session === null)
     return (
       <Button
         as={NextLink}
@@ -46,22 +46,24 @@ export const UserMenu = ({
     );
 
   const inSidebar = placement === 'sidebar';
+  // The session knows the user by email.
+  const name = session.email;
   return (
     <Dropdown
       side={inSidebar ? 'right' : 'bottom'}
       menu={
         <>
-          <Dropdown.Group label={user.name} />
+          <Dropdown.Group label={name} />
           {children}
           <Dropdown.Separator />
-          <Dropdown.Item leftIcon={<LogOut />} onSelect={onSignOut}>
+          <Dropdown.Item leftIcon={<LogOut />} onSelect={signOut}>
             Sign out
           </Dropdown.Item>
         </>
       }
     >
       <PlainButton
-        aria-label={`Account menu for ${user.name}`}
+        aria-label={`Account menu for ${name}`}
         className={className}
       >
         <span
@@ -70,8 +72,8 @@ export const UserMenu = ({
             inSidebar && 'w-full',
           )}
         >
-          <Avatar name={user.name} src={user.avatarUrl} />
-          <Truncate>{user.name}</Truncate>
+          <Avatar name={name} />
+          <Truncate>{name}</Truncate>
         </span>
       </PlainButton>
     </Dropdown>

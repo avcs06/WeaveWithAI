@@ -232,6 +232,8 @@ describe('theme rules', () => {
         }),
       ),
     ).toEqual(['app.sidebar.widthPx']);
+    expect(at((t) => (t.layouts.app.logo = 'sidebar'))).toEqual(['app.logo']);
+    expect(at((t) => (t.layouts.app.header.end = 'the Shelf link'))).toEqual(['app.header']);
     expect(at((t) => (t.layouts.app.main.container = 'fixed'))).toEqual([
       'app.main.maxWidthPx',
     ]);

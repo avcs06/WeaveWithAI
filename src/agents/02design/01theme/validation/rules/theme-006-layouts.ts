@@ -1,13 +1,18 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule } from '../../../../../core/rules';
+import { ACCOUNT, LOGO, positionIn } from '../../../config';
 import { spacingPx, type ThemeInput } from '../helpers';
 
 /**
  * THEME-006 · mandatory
  * In each page layout, a needed header, sidebar or footer holds something and
  * a needed sidebar has a width; a fixed container has a width; a header or
- * footer of fixed height fits a button of the default size and its padding.
- * Pass: the reading-list app layout, a header with the wordmark and the shelf.
+ * footer of fixed height fits a button of the default size and its padding;
+ * the logo and the account sit in a needed part, named in the slot where
+ * they sit: a bar's start, center or end, the sidebar's top for the logo and
+ * its bottom for the account.
+ * Pass: the reading-list app layout, a header with the logo, the Shelf link
+ * and the account.
  * Fail: a needed sidebar 0 wide.
  */
 export const rule = defineRule<ThemeInput>(
@@ -53,6 +58,31 @@ export const rule = defineRule<ThemeInput>(
             ),
           );
       }
+      const shown = { header, sidebar, footer } as const;
+      // Code places them in the slot that names them.
+      const named = (where: 'header' | 'sidebar' | 'footer', what: 'logo' | 'account') => {
+        const word = what === 'logo' ? LOGO : ACCOUNT;
+        if (where !== 'sidebar') return positionIn(shown[where], word) !== undefined;
+        return word.test(what === 'logo' ? sidebar.top : sidebar.bottom);
+      };
+      for (const [what, where] of [
+        ['logo', layout.logo],
+        ['account', layout.account],
+      ] as const)
+        if (where !== 'none' && !shown[where].needed)
+          issues.push(
+            fail(
+              `The ${kind} ${what} is in the ${where}, which is not needed; put it in a needed part, or make the ${where} needed.`,
+              `${kind}.${what}`,
+            ),
+          );
+        else if (where !== 'none' && !named(where, what))
+          issues.push(
+            fail(
+              `The ${kind} ${what} is in the ${where}, but no slot of it names "the ${what}"; name it in the slot where it sits.`,
+              `${kind}.${where}`,
+            ),
+          );
       if (main.container === 'fixed' && main.maxWidthPx <= 0)
         issues.push(
           fail(

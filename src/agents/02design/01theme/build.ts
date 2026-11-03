@@ -167,6 +167,8 @@ const marketingLayout = (
   sidebar: NO_SIDEBAR,
   footer: marketing.footer,
   main: marketing.main,
+  logo: marketing.logo,
+  account: marketing.account,
 });
 
 /** The theme call's artifact: the brief the later stages read, and the theme its values became. */

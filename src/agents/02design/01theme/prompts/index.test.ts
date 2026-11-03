@@ -93,6 +93,7 @@ describe('theme prompt', () => {
       'header',
       'sidebar',
       'items',
+      'account',
       'footer',
       'main',
       'separation',

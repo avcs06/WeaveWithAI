@@ -103,6 +103,16 @@ export function routeGroups(
   return groups;
 }
 
+/** The sign-in page: the screen given most to the flow that signs in, or the landing page when there is none. */
+export function signInRoute(architecture: Architecture, flows: Flows): string {
+  const signIn = new Set(flows.flows.filter((flow) => flow.authKind === 'signIn').map((flow) => flow.id));
+  // The landing page may start the flow too; the sign-in page holds little else.
+  const [page] = architecture.screens
+    .filter((screen) => screen.flows.some((id) => signIn.has(id)))
+    .sort((a, b) => a.flows.length - b.flows.length);
+  return page?.route ?? '/';
+}
+
 /** A screen's route folder, inside its frame's route group. */
 export function screenFolder(
   architecture: Architecture,

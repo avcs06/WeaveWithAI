@@ -4,7 +4,8 @@ import type { SeedRows } from './schema';
 
 // The contract as the app's entity layer, written by code: one folder per
 // entity under web/app/entities/ with its types, seed rows, a persistent store
-// and one function per operation, plus sign-in (auth) and the mock helpers.
+// and one function per operation. Sign-in (auth) and the mock helpers are the
+// template's; the scaffold keys the auth store to the run.
 
 const lower = (name: string) => `${name.charAt(0).toLowerCase()}${name.slice(1)}`;
 const upper = (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
@@ -176,105 +177,16 @@ ${operations.map((op) => operationCode(op, entity.name)).join('\n\n')}
 `;
 }
 
-const MOCK = `import { useEffect, useState } from 'react';
-
-// No backend yet: every operation waits NEXT_PUBLIC_MOCK_LATENCY_MS, and fails
-// when localStorage 'weave:fail' names it, so loading and error states show.
-
-const LATENCY = Number(process.env.NEXT_PUBLIC_MOCK_LATENCY_MS ?? 0);
-
-function failing(operation: string): boolean {
-  try {
-    return localStorage.getItem('weave:fail') === operation;
-  } catch {
-    return false;
-  }
-}
-
-export async function mockCall(operation: string): Promise<void> {
-  if (LATENCY > 0) await new Promise((resolve) => setTimeout(resolve, LATENCY));
-  if (failing(operation)) throw new Error(\`\${operation} failed\`);
-}
-
-/** A read as a page renders it: the data, while it loads, its error, and a retry. */
-export type Read<T> = { data: T; loading: boolean; error: Error | null; retry: () => void };
-
-export function useRead<T>(operation: string, data: T): Read<T> {
-  const [attempt, setAttempt] = useState(0);
-  const [status, setStatus] = useState<{ loading: boolean; error: Error | null }>({
-    loading: LATENCY > 0,
-    error: null,
-  });
-  useEffect(() => {
-    let live = true;
-    mockCall(operation).then(
-      () => live && setStatus({ loading: false, error: null }),
-      (error: Error) => live && setStatus({ loading: false, error }),
-    );
-    return () => {
-      live = false;
-    };
-  }, [operation, attempt]);
-  const retry = () => {
-    setStatus({ loading: LATENCY > 0, error: null });
-    setAttempt((n) => n + 1);
-  };
-  return { data, ...status, retry };
-}
-`;
-
 /** The browser storage keys of one run's app: no two apps on the same origin share records or a session. */
 export const storagePrefix = (run: Pick<Run, 'id'>): string => `weave:${run.id}`;
 
 /** Where the auth store keeps the signed-in user in the browser. */
-const authKey = (prefix: string) => `${prefix}:auth`;
+export const authKey = (prefix: string) => `${prefix}:auth`;
 
 /** A signed-in member's browser storage, as the auth store saves it: the checks write it before a signed-in page loads. */
 export const signedIn = (prefix: string): Record<string, string> => ({
   [authKey(prefix)]: JSON.stringify({ state: { user: { email: 'member@example.com' } }, version: 0 }),
 });
-
-const auth = (prefix: string) => `import { createPersistentStore } from '@packages/utils/state';
-import { useSyncExternalStore } from 'react';
-
-import { mockCall } from '../mock';
-
-// Sign up and sign in take any email: there is no backend yet.
-
-export type User = { email: string };
-
-type AuthState = { user: User | null };
-
-const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), '${authKey(prefix)}');
-
-export async function signUp(email: string): Promise<User> {
-  await mockCall('signUp');
-  useAuthStore.setState({ user: { email } });
-  return { email };
-}
-
-export async function signIn(email: string): Promise<User> {
-  await mockCall('signIn');
-  useAuthStore.setState({ user: { email } });
-  return { email };
-}
-
-export function signOut(): void {
-  useAuthStore.setState({ user: null });
-}
-
-const noSubscription = () => () => undefined;
-
-/**
- * The signed-in user, null for a visitor, or undefined until the saved session is read: the server and the
- * first render after it cannot read the browser's storage, so a page waits instead of taking a member for a visitor.
- */
-export function useCurrentUser(): User | null | undefined {
-  const user = useAuthStore('user');
-  const read = useSyncExternalStore(noSubscription, () => true, () => false);
-  return read ? user : undefined;
-}
-`;
 
 /** The entity's folder exports, named one by one as the template's lint asks. */
 function barrel(entity: Entity, operations: Operation[]): string {
@@ -288,10 +200,8 @@ function barrel(entity: Entity, operations: Operation[]): string {
 /** Every file of the entity layer, by path in the app, its stores keyed under `prefix`. Pure. */
 export function entityFiles(contract: Contract, seed: SeedRows, prefix: string): Map<string, string> {
   const reserved = contract.entities.filter((e) => ['Auth', 'Mock', 'Enums'].includes(e.name));
-  if (reserved.length) throw new Error(`entity names ${reserved.map((e) => e.name).join(', ')} clash with the generated auth, mock and enums folders`);
+  if (reserved.length) throw new Error(`entity names ${reserved.map((e) => e.name).join(', ')} clash with the template's auth and mock folders or the generated enums folder`);
   const files = new Map<string, string>();
-  files.set('web/app/entities/mock/index.ts', MOCK);
-  files.set('web/app/entities/auth/index.ts', auth(prefix));
   if (contract.enums.length) files.set('web/app/entities/enums/index.ts', enumsModule(contract));
   for (const entity of contract.entities) {
     const folder = entityFolder(entity.name);

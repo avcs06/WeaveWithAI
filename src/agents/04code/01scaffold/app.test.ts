@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Theme } from '../../02design/01theme/build';
-import { PAGE_LOGO, pinMode, ROOT_LAYOUT, setLogoName, setTitle } from './app';
+import { AUTH_STORE, PAGE_LOGO, pinMode, ROOT_LAYOUT, setAuthKey, setLogoName, setTitle } from './app';
+import { authKey, signedIn, storagePrefix } from '../02contract/codegen';
 
 const uiRoot = readFileSync('template/packages/ui/src/Root/UIRoot.tsx', 'utf8');
 const withModes = (modes: Theme['modes']) => ({ modes }) as Theme;
@@ -41,5 +42,17 @@ describe('setLogoName', () => {
     expect(named).toContain("const APP_NAME = 'Ana\\'s Studio';");
     expect(setLogoName(named, 'NeonBoard')).toContain("const APP_NAME = 'NeonBoard';");
     expect(setLogoName(named, 'NeonBoard').match(/const APP_NAME/g)).toHaveLength(1);
+  });
+});
+
+describe('setAuthKey', () => {
+  const store = readFileSync(`template/${AUTH_STORE}`, 'utf8');
+
+  it('keys the template auth store to the run, as the checks key the signed-in session', () => {
+    const prefix = storagePrefix({ id: '20261103-0119-ecommerce-store' });
+    const keyed = setAuthKey(store, authKey(prefix));
+    expect(keyed).toContain("const AUTH_KEY = 'weave:20261103-0119-ecommerce-store:auth';");
+    expect(Object.keys(signedIn(prefix))).toEqual(['weave:20261103-0119-ecommerce-store:auth']);
+    expect(setAuthKey(keyed, 'other:auth').match(/const AUTH_KEY/g)).toHaveLength(1);
   });
 });

@@ -213,16 +213,34 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
       sidebar: Sidebar,
       footer,
       main,
+      logo: z
+        .enum(['header', 'sidebar'])
+        .describe("Where the app's logo sits: the header, or the top of the sidebar"),
+      account: z
+        .enum(['header', 'sidebar'])
+        .describe("Where the account menu sits: the header's end, or the bottom of the sidebar"),
     }),
-    marketing: z.object({ header: z.object({ ...header, sticky }), footer, main }),
+    marketing: z.object({
+      header: z.object({ ...header, sticky }),
+      footer,
+      main,
+      logo: z.enum(['header', 'footer']).describe("Where the app's logo sits"),
+      account: z
+        .enum(['header', 'none'])
+        .describe("The account menu, Sign in for a visitor, at the header's end; none for a site without accounts"),
+    }),
   };
 }
 const anyLayouts = pageLayoutSchemas(z.string());
 /** The layouts as the theme call writes them. */
 export const CallLayouts = z.object(anyLayouts);
 export type CallLayouts = z.infer<typeof CallLayouts>;
-/** A built layout: the app's shape with the marketing header, so PageLayout reads both alike. */
-const Layout = anyLayouts.app.extend({ header: anyLayouts.marketing.shape.header });
+/** A built layout: the app's shape with the marketing header and either kind's places, so PageLayout reads both alike. */
+const Layout = anyLayouts.app.extend({
+  header: anyLayouts.marketing.shape.header,
+  logo: z.enum(['header', 'sidebar', 'footer']),
+  account: z.enum(['header', 'sidebar', 'none']),
+});
 export const Layouts = z.object({ app: Layout, marketing: Layout });
 export type Layouts = z.infer<typeof Layouts>;
 

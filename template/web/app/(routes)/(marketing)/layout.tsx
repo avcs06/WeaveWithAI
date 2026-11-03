@@ -1,5 +1,5 @@
-import { LayoutFooter } from '@app/components/LayoutFooter';
-import { LayoutHeader } from '@app/components/LayoutHeader';
+import { MarketingFooter } from '@app/components/MarketingFooter';
+import { MarketingHeader } from '@app/components/MarketingHeader';
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
 
@@ -13,8 +13,8 @@ export default function MarketingLayout({
     <PageLayout
       layout={layouts.marketing}
       kind="marketing"
-      header={<LayoutHeader />}
-      footer={<LayoutFooter />}
+      header={<MarketingHeader />}
+      footer={<MarketingFooter />}
     >
       {children}
     </PageLayout>

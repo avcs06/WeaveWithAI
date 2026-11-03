@@ -42,6 +42,8 @@ export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
       align: 'start',
       separation: 'none',
     },
+    logo: 'header',
+    account: 'header',
   },
   marketing: {
     docksFirst: 'header',
@@ -83,5 +85,7 @@ export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
       align: 'start',
       separation: 'none',
     },
+    logo: 'header',
+    account: 'header',
   },
 };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { architecture, flows, scope } from '../../02design/__fixtures__/chain';
-import { routeGroups, screenFolder } from './weave';
+import { routeGroups, screenFolder, signInRoute } from './weave';
 
 describe('route groups', () => {
   it('put the public frame in the template\'s marketing group and the signed-in one in its app group', () => {
@@ -29,5 +29,11 @@ describe('route groups', () => {
     expect(routeGroups(more, flows, scope)).toEqual(
       new Map([['FR01', 'marketing'], ['FR02', 'app'], ['FR03', 'admin'], ['FR04', 'fr04']]),
     );
+  });
+});
+
+describe('sign-in route', () => {
+  it('is the screen given most to the sign-in flow, not the landing page that starts it', () => {
+    expect(signInRoute(architecture, flows)).toBe('/sign-in');
   });
 });
