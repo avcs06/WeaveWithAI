@@ -80,6 +80,16 @@ export type SearchInputProps = TextFieldProps<'type'> &
   FieldName &
   SetByComponent<'rightIcon' | 'rightAddOn'>;
 
+/** The browser's own date picker; every value is a day, `2026-11-07`. */
+export type DateInputProps = TextFieldProps<'type' | 'min' | 'max' | 'step'> &
+  FieldName &
+  Pick<DelayProps<never>, 'autoComplete'> & {
+    /** The first day it takes, as `2026-11-07`. */
+    min?: string;
+    /** The last day it takes, as `2026-11-07`. */
+    max?: string;
+  };
+
 /** The toggle takes the right side and switches `type`. */
 export type PasswordInputProps = InputProps &
   SetByComponent<'type' | 'rightIcon' | 'rightAddOn'>;

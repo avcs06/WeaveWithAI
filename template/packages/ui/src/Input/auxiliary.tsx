@@ -19,6 +19,7 @@ import { InputBase } from './Input';
 import { fieldButton, quantityField, searchField } from './Input.css';
 
 import type {
+  DateInputProps,
   FieldButtonProps,
   NumberInputProps,
   PasswordInputProps,
@@ -146,6 +147,18 @@ export const PasswordInput = (props: PasswordInputProps) => {
     />
   );
 };
+
+/**
+ * A date field on the browser's own picker: `value` and `onChange` are the
+ * day as `2026-11-07`, `''` while empty, and `min` and `max` bound it the
+ * same way. The picker shows the day in the browser's language; show a saved
+ * day with Typography's `Time`.
+ *
+ * @invalidAlternative input[type="date"], Input[type="date"]
+ */
+export const DateInput = (props: DateInputProps) => (
+  <InputBase {...props} type="date" />
+);
 
 const toText = (number: number | null) => (number === null ? '' : `${number}`);
 

@@ -10,8 +10,8 @@
  * When not to use:
  * - A password: PasswordInput. A search: SearchInput. A number: NumberInput.
  *   A small count, like an item's quantity: QuantitySelector.
- * - A choice from a list: Select. A date or time: FormControl around the native
- *   input.
+ * - A choice from a list: Select. A date: DateInput. A time: FormControl around
+ *   the native input.
  *
  * Pitfalls:
  * - Every field needs a name: `label`, `aria-label` or `aria-labelledby`. A
@@ -40,6 +40,7 @@
 import { Button, IconButton } from '@packages/ui/Button';
 import { Controller, Form } from '@packages/ui/Form';
 import {
+  DateInput,
   Input,
   NumberInput,
   PasswordInput,
@@ -744,6 +745,23 @@ const VenueSearch = () => {
 };
 
 /**
+ * A day on the browser's own picker: `value` is the day as `2026-11-07`, `''`
+ * while empty, and `min` and `max` bound it the same way.
+ */
+const EventDay = () => {
+  const [day, setDay] = useState('');
+  return (
+    <DateInput
+      label="Event day"
+      autoComplete="off"
+      min="2026-01-01"
+      value={day}
+      onChange={setDay}
+    />
+  );
+};
+
+/**
  * A button beside the field: `action` lines it up with the box, so the label
  * stays above both and a message below both. The button says why it waits.
  */
@@ -796,6 +814,7 @@ export default function InputRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContactForm />
+      <EventDay />
       <InviteByEmail />
       <AutosavedTitle />
       <PromoCode />

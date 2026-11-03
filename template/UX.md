@@ -39,6 +39,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 - Every form is a `Form`: it lays out the fields, the form's own error and the actions. Fields take their width from it, 1x by default; a field sets `width` to 0.5x, 0.75x, 1.5x or 2x when its content needs another, and fields in one form share these widths.
 - A button that acts on a field's value, such as Send, Apply or Move, goes in that field's `action` slot, in a form or out of one, such as a filter bar or a toolbar. There it lines up with the field's box, not its label. A Select clears with its own clear button: no Clear button beside it.
 - The form's main action comes last in its actions, as the primary button. Cancel is secondary, before it.
+- The action that completes a task sits at the end of its row, on the right, after the other actions: Submit, Place order, or a cart's Checkout outside any form.
 - A summary of what the main action commits to, such as a total or a count, sits once, above the actions or beside the form.
 - A choice with a usual answer starts on it, such as the cheapest delivery or the current month. A choice with no usual answer starts empty and is required.
 - A repeated group of fields, such as an item's variants, is one `FormRow` per item with its remove icon button at the row's end, and an Add button under the rows. A list of links, such as a record's photos, is one URL `Input` per link in the same way, never a textarea of links.
@@ -59,6 +60,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 - A number the user reads and compares, such as a counter, a total, a statistic or a table's figures, is a `Numeral`. A number inside a sentence stays in the sentence's font, and a date, a time or a phone number stays text.
 - Label and value pairs, such as an order's totals or a record's details, are a `DescriptionList`, at a width that keeps each label near its value. A value the user needs to keep, such as a confirmation number, sits in the title or on a line of its own.
 - Steps the user follows in order are a numbered `List`, with `ordered`.
+- A date or a moment shows through `Time`, in the app's one format, and a date the user picks is a `DateInput`.
 - Any text that stays on one line is a `Truncate`, wherever it sits: a heading, a label, a cell, a breadcrumb, a status line. Whether or not its container has a set width, it cuts the text with an ellipsis and a tooltip where the room runs out, and changes nothing where it does not. A flex parent needs `min-w-0`.
 
 ## Copy

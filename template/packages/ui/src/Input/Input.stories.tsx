@@ -7,6 +7,7 @@ import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, controlWidth, mutedText } from '../StoryStyles.css';
 
 import {
+  DateInput,
   Input,
   type InputProps,
   PasswordInput,
@@ -78,6 +79,19 @@ const Row = ({ label, children }: { label: string; children: ReactNode }) => (
     <div className="flex-row-gap-4 items-start flex-wrap">{children}</div>
   </div>
 );
+
+const Day = () => {
+  const [value, setValue] = useState('');
+  return (
+    <DateInput
+      label="Event day"
+      autoComplete="off"
+      value={value}
+      onChange={setValue}
+      className={controlWidth}
+    />
+  );
+};
 
 const Password = () => {
   const [value, setValue] = useState('');
@@ -169,6 +183,7 @@ const InputStories = () => {
             helpText="Six characters"
           />
           <Password />
+          <Day />
         </Row>
       </StorySection>
 

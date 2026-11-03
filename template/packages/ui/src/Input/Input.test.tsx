@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AtSign } from 'lucide-react';
 import React, { createRef, useState } from 'react';
@@ -8,6 +8,7 @@ import { Controller } from '../Form';
 import { axe, renderUI } from '../test-utils';
 
 import {
+  DateInput,
   NumberInput,
   PasswordInput,
   QuantitySelector,
@@ -342,6 +343,48 @@ describe('Input', () => {
         expect.anything(),
       );
     });
+  });
+});
+
+describe('DateInput', () => {
+  const Day = (props: Partial<React.ComponentProps<typeof DateInput>>) => {
+    const [value, setValue] = useState('2026-11-07');
+    return (
+      <>
+        <DateInput
+          label="Event day"
+          autoComplete="off"
+          min="2026-01-01"
+          max="2026-12-31"
+          {...props}
+          value={value}
+          onChange={setValue}
+        />
+        <output>{value || 'empty'}</output>
+      </>
+    );
+  };
+
+  it('is a date field named by its label, bounded by min and max; onChange gets the day', async () => {
+    const { container } = renderUI(<Day />);
+    const field = screen.getByLabelText('Event day');
+    expect(field).toHaveAttribute('type', 'date');
+    expect(field).toHaveValue('2026-11-07');
+    expect(field).toHaveAttribute('min', '2026-01-01');
+    expect(field).toHaveAttribute('max', '2026-12-31');
+    fireEvent.change(field, { target: { value: '2026-12-24' } });
+    expect(screen.getByText('2026-12-24')).toBeInTheDocument();
+    fireEvent.change(field, { target: { value: '' } });
+    expect(screen.getByText('empty')).toBeInTheDocument();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('when disabled with a reason: read-only and unchanged, still a tab stop', async () => {
+    renderUI(<Day disabledWithReason="Locked once tickets are on sale" />);
+    const field = screen.getByLabelText('Event day');
+    expect(field).toHaveAttribute('readonly');
+    await userEvent.tab();
+    expect(field).toHaveFocus();
   });
 });
 

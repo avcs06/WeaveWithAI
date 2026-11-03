@@ -7,8 +7,9 @@
  * - A text, number, password or search field: Input, NumberInput,
  *   PasswordInput, SearchInput.
  * - A choice from a list: Select or MultiSelect. A yes/no choice: Checkbox.
+ * - A date: DateInput.
  * - Only for a control the design system has no component for, like a native
- *   date input or the star rating below.
+ *   time input or the star rating below.
  *
  * Pitfalls:
  * - A button that acts on the field's value, such as Send, Apply or Move,
@@ -32,14 +33,14 @@ import {
   FormControl,
   type ControlProps,
 } from '@packages/ui/FormControl';
-import { CalendarDays, Star } from 'lucide-react';
+import { Clock, Star } from 'lucide-react';
 import React, { type KeyboardEvent, type MouseEvent, useId } from 'react';
 import { useForm } from 'react-hook-form';
 
 // Setup: stand-ins for your app's data and requests, not part of the pattern.
 // Stand in for requests to a server.
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const saveEventDate = (form: EventDateForm) => wait(400).then(() => form);
+const saveDoorsTime = (form: DoorsTimeForm) => wait(400).then(() => form);
 const sendReview = (review: Review) => wait(400).then(() => review);
 
 // Usage: the patterns to copy.
@@ -92,7 +93,7 @@ const Stars = ({ value }: { value: number }) =>
     />
   ));
 
-type EventDateForm = { date: string };
+type DoorsTimeForm = { time: string };
 
 /**
  * A native control inside the box. Every shared prop works as on Input:
@@ -100,33 +101,33 @@ type EventDateForm = { date: string };
  * `tooltip`, `labelRightSlot`. `isDisabled` covers the disabled, read-only and
  * loading states, so the input is read-only while it's true.
  */
-const EventDate = () => {
-  const { control, handleSubmit } = useForm<EventDateForm>({
-    defaultValues: { date: '' },
+const DoorsTime = () => {
+  const { control, handleSubmit } = useForm<DoorsTimeForm>({
+    defaultValues: { time: '' },
   });
 
   return (
     <Form
-      onSubmit={handleSubmit(saveEventDate)}
-      actions={<Button type="submit">Save date</Button>}
+      onSubmit={handleSubmit(saveDoorsTime)}
+      actions={<Button type="submit">Save time</Button>}
     >
       <Controller
-        name="date"
+        name="time"
         control={control}
-        rules={{ required: 'Pick the event date' }}
+        rules={{ required: 'Pick when the doors open' }}
       >
         {({ field: { value, onChange, onBlur, ...field } }) => (
           <FormControl
-            label="Event date"
+            label="Doors open"
             hint="In the venue's time zone"
-            helpText="Doors open at 9:00"
-            leftIcon={<CalendarDays />}
+            helpText="Attendees can arrive from then"
+            leftIcon={<Clock />}
             {...field}
           >
             {({ isDisabled, ...controlProps }) => (
               <input
                 {...controlProps}
-                type="date"
+                type="time"
                 value={value}
                 readOnly={isDisabled}
                 onChange={(event) => {
@@ -170,35 +171,35 @@ const DateStates = () => {
         )}
       </FormControl>
       <FormControl
-        label="Start date"
-        disabledWithReason="Dates lock once tickets are on sale"
+        label="Start time"
+        disabledWithReason="Times lock once tickets are on sale"
       >
         {({ isDisabled, ...controlProps }) => (
           <input
             {...controlProps}
-            type="date"
-            defaultValue="2026-11-12"
+            type="time"
+            defaultValue="18:00"
             readOnly={isDisabled}
           />
         )}
       </FormControl>
       <FormControl
-        label="End date"
+        label="End time"
         readOnlyWithReason="The end follows the start"
         success="Matches the schedule"
       >
         {({ isDisabled, ...controlProps }) => (
           <input
             {...controlProps}
-            type="date"
-            defaultValue="2026-11-13"
+            type="time"
+            defaultValue="21:00"
             readOnly={isDisabled}
           />
         )}
       </FormControl>
-      <FormControl label="Rain date" loadingWithReason="Checking the forecast">
+      <FormControl label="Rain start" loadingWithReason="Checking the forecast">
         {({ isDisabled, ...controlProps }) => (
-          <input {...controlProps} type="date" readOnly={isDisabled} />
+          <input {...controlProps} type="time" readOnly={isDisabled} />
         )}
       </FormControl>
     </div>
@@ -283,7 +284,7 @@ const BoxedRating = () => {
 export default function FormControlRecipe() {
   return (
     <div className="flex-col-gap-6">
-      <EventDate />
+      <DoorsTime />
       <DateStates />
       <EventRating />
       <BoxedRating />
