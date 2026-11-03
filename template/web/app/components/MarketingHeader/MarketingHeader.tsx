@@ -5,7 +5,7 @@
  *
  * Holds, as the theme names them:
  * - Links to the site's own pages or sections: a `NextLink` from
- *   `@app/components/NextLink` each.
+ *   `@app/components/NextLink` with `look="plain"` each.
  *
  * Leaves out:
  * - The logo and the account: the ends hold them, placed by code.

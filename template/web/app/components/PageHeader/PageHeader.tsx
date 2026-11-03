@@ -25,7 +25,9 @@ export const PageHeader = ({
         <ul className="flex-row-gap-1 items-center flex-wrap">
           {breadcrumb.map((crumb) => (
             <li key={crumb.href} className="flex-row-gap-1 items-center">
-              <NextLink href={crumb.href}>{crumb.label}</NextLink>
+              <NextLink look="plain" href={crumb.href}>
+                {crumb.label}
+              </NextLink>
               <ChevronRight aria-hidden className={styles.separator} />
             </li>
           ))}

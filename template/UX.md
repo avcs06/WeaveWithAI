@@ -26,7 +26,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Screens
 
 - The top of a screen holds the breadcrumbs or the way back first, then the title. The page-level actions sit in line with the title, or above it with the breadcrumbs. Nothing else comes before the title.
-- A link that works as a control, such as a breadcrumb, a way back or a navigation item, is `plain`. The dotted line is for a link inside text.
+- A link outside a sentence is `look="plain"`: a way back, a breadcrumb, a navigation item, a footer's links, a link beside a button. Only two links keep the dotted line: a link inside a sentence, and a record's name in a table.
 - In a flex row with action buttons, the buttons align to the center only when the rest of the row is one line. When the rest runs to several lines, such as a title with a description, the buttons align to the start or the end of the row.
 
 ## Forms

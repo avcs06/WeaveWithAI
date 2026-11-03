@@ -11,8 +11,8 @@ import { PageLogo } from '../PageLogo';
  * - Code places `PageLogo` here when the theme puts the logo at the header's
  *   left. Keep it first, as it is.
  * - The navigation, when the layout has no sidebar and the theme names it
- *   here: a `NextLink` from `@app/components/NextLink` per destination, the
- *   current one marked `aria-current="page"`.
+ *   here: a `NextLink` from `@app/components/NextLink` with `look="plain"`
+ *   per destination, the current one marked `aria-current="page"`.
  *
  * Leaves out:
  * - A wrapper, height, padding, background or border: PageLayout draws the

@@ -8,7 +8,7 @@
  *   `Paragraph` from `@packages/ui/Typography` with `color="muted"`.
  * - Links to help or terms a flow has: `NextLink` from
  *   `@app/components/NextLink`, or `Link` from `@packages/ui/Link` for
- *   another site.
+ *   another site, each with `look="plain"`.
  *
  * Leaves out:
  * - A `footer` element, height, padding, background or border: PageLayout

@@ -4,8 +4,8 @@
  *
  * Holds, as the theme names them:
  * - The navigation, when the layout has no sidebar: a `NextLink` from
- *   `@app/components/NextLink` per destination, the current one marked
- *   `aria-current="page"`.
+ *   `@app/components/NextLink` with `look="plain"` per destination, the
+ *   current one marked `aria-current="page"`.
  * - A search over the app's records, when a flow searches: `SearchInput`
  *   from `@packages/ui/Input`.
  *

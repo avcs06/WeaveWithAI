@@ -204,6 +204,8 @@ export const MenuItemBase = ({
         className={classNames(
           menuItem,
           'flex-row-gap-2.5 items-center cursor-pointer',
+          // A row rendered as a Link drops Link's `w-fit` and spans the menu.
+          'w-auto',
           className,
         )}
       >

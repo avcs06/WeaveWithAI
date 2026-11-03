@@ -11,7 +11,8 @@ import { PageLogo } from '../PageLogo';
  * - Code places `PageLogo` here when the theme puts the logo at the header's
  *   left. Keep it first, as it is.
  * - Links to the site's own pages or sections, when the theme names them
- *   here: a `NextLink` from `@app/components/NextLink` each.
+ *   here: a `NextLink` from `@app/components/NextLink` with `look="plain"`
+ *   each.
  *
  * Leaves out:
  * - A wrapper, height, padding, background or border: PageLayout draws the

@@ -59,7 +59,12 @@ export const Link = ({
           // order.
           tabIndex={disabledWithReason ? 0 : -1}
           onClick={(event) => event.preventDefault()}
-          className={classNames(linkClassName, childClassName, className)}
+          className={classNames(
+            linkClassName,
+            'w-fit',
+            childClassName,
+            className,
+          )}
         >
           {child ? child.props.children : children}
         </a>
@@ -71,7 +76,9 @@ export const Link = ({
   return (
     <Anchor
       {...props}
-      className={classNames(linkClassName, className)}
+      // Its text's width, not its column's: a stretched link draws its dotted
+      // line across the row.
+      className={classNames(linkClassName, 'w-fit', className)}
       data-ds={asChild ? undefined : ''}
     >
       {children}
