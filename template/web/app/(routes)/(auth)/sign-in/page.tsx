@@ -45,12 +45,18 @@ export default function SignInPage() {
         onSubmit={handleSubmit(submit)}
         error={errors.root?.message}
         actions={
-          <Button
-            type="submit"
-            loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
-          >
-            Sign in
-          </Button>
+          <>
+            {/* Takes the row's start, so the button stays at its end. */}
+            <Paragraph className="flex-1">
+              No account yet? <NextLink href="/sign-up">Sign up</NextLink>
+            </Paragraph>
+            <Button
+              type="submit"
+              loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
+            >
+              Sign in
+            </Button>
+          </>
         }
       >
         <Controller
@@ -66,9 +72,6 @@ export default function SignInPage() {
           )}
         </Controller>
       </Form>
-      <Paragraph>
-        No account yet? <NextLink href="/sign-up">Sign up</NextLink>
-      </Paragraph>
     </>
   );
 }

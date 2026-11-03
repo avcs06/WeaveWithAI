@@ -52,12 +52,18 @@ export default function SignUpPage() {
         onSubmit={handleSubmit(submit)}
         error={errors.root?.message}
         actions={
-          <Button
-            type="submit"
-            loadingWithReason={isSubmitting ? 'Signing you up' : undefined}
-          >
-            Sign up
-          </Button>
+          <>
+            {/* Takes the row's start, so the button stays at its end. */}
+            <Paragraph className="flex-1">
+              Already have an account? <NextLink href="/sign-in">Sign in</NextLink>
+            </Paragraph>
+            <Button
+              type="submit"
+              loadingWithReason={isSubmitting ? 'Signing you up' : undefined}
+            >
+              Sign up
+            </Button>
+          </>
         }
       >
         <Controller
@@ -90,9 +96,6 @@ export default function SignUpPage() {
           </Controller>
         )}
       </Form>
-      <Paragraph>
-        Already have an account? <NextLink href="/sign-in">Sign in</NextLink>
-      </Paragraph>
     </>
   );
 }
