@@ -58,6 +58,10 @@ export function threadBook() {
   };
 }
 
+/** A thread the fix of `round` closed; it goes to no reviewer. */
+export const closedByFix = (thread: Thread, round: number) =>
+  thread.entries.some((e) => e.round === round && e.by === 'fix' && e.status === 'closed');
+
 /** A check's issue the fixer left with a reason; the next fix does not take it again. */
 export const leftWithReason = (thread: Thread) => thread.entries.some((e) => e.by === 'fix' && e.status === 'open');
 

@@ -1195,7 +1195,49 @@ describe('runSpecStage with reasoning threads', () => {
     expect(lastUser(inputs[3])).toContain('- T01: REVIEW at title: Title is generic. Fix: Name the breed.');
     // The peer raised T01, so only the peer gets it back.
     expect(lastUser(inputs[4])).toContain(thread);
-    expect(lastUser(inputs[5])).toContain('## Your threads from the last round\n\nNone.');
+    expect(lastUser(inputs[5])).toContain('## Your threads the fixer left open\n\nNone.');
+  });
+
+  it('sends a thread its fixer closed to no reviewer, and one its reviewer closed to no fix', async () => {
+    const two: Review = {
+      checked: [],
+      replies: [],
+      blockers: [...generic.blockers, { at: 'title', problem: 'Title is short.', fix: 'Add the colour.' }],
+    };
+    const accept: Review = { checked: [], blockers: [], replies: [{ id: 'T02', status: 'closed', reason: 'The reason holds.' }] };
+    const { llm, inputs } = fakeLlm([
+      { title: 'Cats' },
+      two,
+      clean,
+      {
+        title: 'Siamese',
+        replies: [
+          { id: 'T01', status: 'closed', reason: 'Named the breed.' },
+          { id: 'T02', status: 'open', reason: 'Short titles read better.' },
+        ],
+      } as Doc,
+      accept,
+      generic,
+      { title: 'Siamese cats', replies: [{ id: 'T03', status: 'closed', reason: 'Named the breed and the kind.' }] } as Doc,
+    ]);
+    const { promise } = stage('thread-queue', llm, () => [], guide);
+    await promise;
+
+    expect(inputs.map((input) => input.stage)).toEqual([
+      'doc',
+      'doc-review-peer',
+      'doc-review-output',
+      'doc',
+      'doc-review-peer',
+      'doc-review-output',
+      'doc',
+    ]);
+    // The round-2 peer gets T02, which the fixer left open, and not T01, which it closed.
+    expect(lastUser(inputs[4])).toContain('- T02: REVIEW at title: Title is short. Fix: Add the colour.');
+    expect(lastUser(inputs[4])).not.toContain('T01');
+    // The final fix gets the output reviewer's new T03, and not T02, which the peer closed.
+    expect(lastUser(inputs[6])).toContain('- T03: REVIEW at title: Title is generic. Fix: Name the breed.');
+    expect(lastUser(inputs[6])).not.toContain('T02');
   });
 
   it("keeps a reviewer's thread the next reviewer challenges, and sends it to the final fix with what both said", async () => {

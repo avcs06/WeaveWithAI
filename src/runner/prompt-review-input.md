@@ -20,7 +20,7 @@ Review the output below.
 {{output}}
 ````
 
-## Your threads from the last round
+## Your threads the fixer left open
 
 {{threads}}
 

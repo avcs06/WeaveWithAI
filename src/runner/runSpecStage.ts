@@ -21,7 +21,7 @@ import { costUsd, isPriced } from '../core/prices';
 import { fillPrompt, loadPrompt } from '../core/prompt';
 import { applyPatch, type PatchKeys, patchFormat, patchSchema } from './patch';
 import { guideIds, Review, toIssues } from './review';
-import { formatThreads, leftWithReason, Reply, type Thread, threadBook } from './threads';
+import { closedByFix, formatThreads, leftWithReason, Reply, type Thread, threadBook } from './threads';
 import { appendEvent, type Run, runPath, updateStage } from '../core/run';
 import { pathBeside, writeJsonAtomic } from '../core/utils';
 
@@ -265,7 +265,7 @@ export async function runSpecStage<T>(
     const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
     const reviewed = Boolean(o.review) && reviewers.length > 0;
     if (o.review && reviewed) {
-      // Each reviewer reads what the fix said about the threads it raised, then answers each one or raises new blockers.
+      // Each reviewer reads the threads it raised that the fix left open, then answers each one or raises new blockers.
       const { blockers, replies } = await review(
         o,
         o.review,
@@ -273,7 +273,7 @@ export async function runSpecStage<T>(
         reviewers,
         last.draft.raw,
         o.reviewersSeeMandatory ? mandatory : warnings,
-        reviewThreads,
+        reviewThreads.filter((thread) => !closedByFix(thread, round)),
       );
       book.raise(blockers, round);
       for (const answer of replies) book.reply(answer.replies, round, answer.by);
@@ -487,7 +487,7 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   };
 }
 
-/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads each raised that the fix answered. */
+/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads each raised that the fix left open. */
 async function review<T>(
   o: SpecStageOptions<T>,
   guides: ReviewGuides,

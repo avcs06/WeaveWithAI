@@ -22,7 +22,7 @@ Leave these out:
    - `at`: where it is, as an ID, a file or a JSON path in the output.
    - `problem`: what is wrong, in one sentence.
    - `fix`: what the output must say instead.
-4. Write `replies`. The input lists the threads you raised in the last round: each problem's id, and what the fixer said about it. Answer each one by its id:
+4. Write `replies`. The input lists the threads you raised that the fixer left open: each problem's id, and the fixer's reason. Answer each one by its id:
    - `closed` when it is fixed, or when the fixer's reason for leaving it holds.
    - `open` when it is not fixed, or when the fixer's reason does not hold. Say why.
    A thread you answer is no blocker: never report its problem again in `blockers`.

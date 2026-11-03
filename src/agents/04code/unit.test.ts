@@ -99,7 +99,7 @@ describe('a coding unit', () => {
     const round2 = reviews.filter((r) => r.round === 2);
     const user = (name: string) => String(round2.find((r) => r.stage.endsWith(`-review-${name}`))?.messages.at(-1)?.content);
     expect(user('code')).toContain('  - round 2, fix, open: One job: the list is the page.');
-    for (const name of ['adherence', 'behavior', 'ux']) expect(user(name)).toContain('what the agent said about it.\n\nNone.');
+    for (const name of ['adherence', 'behavior', 'ux']) expect(user(name)).toContain("the agent's reason.\n\nNone.");
   });
 
   it('records what is left after the third round as known, and returns', async () => {

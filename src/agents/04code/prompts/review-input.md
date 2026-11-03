@@ -18,9 +18,9 @@ Review the code change below.
 {{output}}
 ````
 
-## Your threads from the last round
+## Your threads the fixer left open
 
-Each problem you raised in the last round, with its id and what the agent said about it.
+Each problem you raised that the agent left open, with its id and the agent's reason.
 
 {{threads}}
 
