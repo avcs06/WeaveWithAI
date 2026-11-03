@@ -1,3 +1,4 @@
+import { PageFooter } from '@app/components/PageFooter';
 import { PageHeader } from '@app/components/PageHeader';
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
@@ -9,7 +10,11 @@ export default function LandingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <PageLayout layout={layouts.marketing} header={<PageHeader />}>
+    <PageLayout
+      layout={layouts.marketing}
+      header={<PageHeader />}
+      footer={<PageFooter />}
+    >
       {children}
     </PageLayout>
   );
