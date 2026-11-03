@@ -37,7 +37,7 @@ export type PageSidebar = {
 
 /** A page layout as the theme writes it in `layouts.app` and `layouts.marketing`. */
 export type PageLayoutConfig = {
-  /** header: the header and footer span the full width; sidebars: the sidebars run the full height. */
+  /** header: the header and footer span the full width; sidebars: the sidebar runs the full height. */
   docksFirst: 'header' | 'sidebars';
   header: PageBar & {
     /** Stays in view while the page scrolls. */
@@ -46,7 +46,6 @@ export type PageLayoutConfig = {
     overlay: boolean;
   };
   sidebar: PageSidebar;
-  extraSidebar: PageSidebar;
   footer: PageBar;
   main: {
     /** fluid fills the space the frame leaves; fixed stops at `maxWidthPx`, centered. */
@@ -71,7 +70,6 @@ export type PageLayoutProps = {
   header?: ReactNode;
   /** The sidebar's content, laid out in a column; rendered when `layout.sidebar.needed`. */
   sidebar?: ReactNode;
-  extraSidebar?: ReactNode;
   footer?: ReactNode;
   /** The page: its sections, as the container's children. */
   children: ReactNode;

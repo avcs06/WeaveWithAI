@@ -11,7 +11,7 @@ import { routeGroups, signedInFrame } from '../01scaffold/weave';
 // stay as the theme set them.
 
 type Layout = Theme['layouts']['app'];
-type Part = { slot: 'header' | 'sidebar' | 'extraSidebar' | 'footer'; name: string; holds: string };
+type Part = { slot: 'header' | 'sidebar' | 'footer'; name: string; holds: string };
 
 /** A frame's route group layout file. */
 export const frameLayoutFile = (group: string) => `web/app/(routes)/(${group})/layout.tsx`;
@@ -31,11 +31,11 @@ function parts(base: string, layout: Layout): Part[] {
     const { start, center, end } = layout[slot];
     return { slot, name: `${base}${suffix}`, holds: [said('Start', start), said('Center', center), said('End', end)] };
   };
-  const side = (slot: 'sidebar' | 'extraSidebar', suffix: string) => {
-    const { top, bottom } = layout[slot];
-    return { slot, name: `${base}${suffix}`, holds: [said('Top', top), said('Bottom', bottom)] };
+  const side = () => {
+    const { top, bottom } = layout.sidebar;
+    return { slot: 'sidebar' as const, name: `${base}Sidebar`, holds: [said('Top', top), said('Bottom', bottom)] };
   };
-  const all = [bar('header', 'Header'), side('sidebar', 'Sidebar'), side('extraSidebar', 'ExtraSidebar'), bar('footer', 'Footer')];
+  const all = [bar('header', 'Header'), side(), bar('footer', 'Footer')];
   return all
     .filter((part) => layout[part.slot].needed)
     .map((part) => ({ ...part, holds: part.holds.filter(Boolean).join(' ') || 'Nothing named by the theme.' }));
@@ -47,7 +47,7 @@ const COLUMN = 'PageLayout lays its children out in a column with the theme\'s g
 function partFile(part: Part, frame: Frame, kind: string): string {
   const flow = part.slot === 'header' || part.slot === 'footer' ? ROW : COLUMN;
   return `/**
- * The ${part.slot === 'extraSidebar' ? 'second sidebar' : part.slot} of ${frame.name} (${frame.id}), in the ${kind} layout. ${part.holds}
+ * The ${part.slot} of ${frame.name} (${frame.id}), in the ${kind} layout. ${part.holds}
  * ${flow} Return its items, not a bar of your own.
  */
 export const ${part.name} = () => null;

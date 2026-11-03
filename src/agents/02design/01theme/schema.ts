@@ -208,11 +208,10 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
       docksFirst: z
         .enum(['header', 'sidebars'])
         .describe(
-          'header: the header and footer span the full width and the sidebars run between them; sidebars: the sidebars run the full height and the header and footer sit between them',
+          'header: the header and footer span the full width and the sidebar runs between them; sidebars: the sidebar runs the full height and the header and footer sit beside it',
         ),
       header,
       sidebar: Sidebar,
-      extraSidebar: Sidebar,
       footer,
       main,
     }),

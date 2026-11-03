@@ -19,8 +19,7 @@ export const rule = defineRule<ThemeInput>(
     const issues: Issue[] = [];
     const px = spacingPx(inventory);
     for (const kind of ['app', 'marketing'] as const) {
-      const { main, header, sidebar, extraSidebar, footer } =
-        theme.layouts[kind];
+      const { main, header, sidebar, footer } = theme.layouts[kind];
       const [low, high] = SECTION_GAP_PX[kind];
       const sectionGap = px(main.sectionGap);
       if (sectionGap < low || sectionGap > high)
@@ -37,7 +36,6 @@ export const rule = defineRule<ThemeInput>(
       for (const [name, part] of Object.entries({
         header,
         sidebar,
-        extraSidebar,
         footer,
       }))
         if (part.needed) padded.push([name, px(part.padding), px(part.gap)]);

@@ -64,7 +64,6 @@ describe('buildTheme', () => {
       ...call.layouts.marketing,
       docksFirst: 'header',
       sidebar: { needed: false },
-      extraSidebar: { needed: false },
     });
     expect(theme.defaults).toEqual(call.defaults);
     expect(validateTheme(theme, inventory)).toEqual([]);
@@ -212,7 +211,7 @@ describe('theme rules', () => {
     ).toEqual(['THEME-004']);
   });
 
-  it('THEME-006 wants something in a needed part, the sidebars apart and a width for a fixed container', () => {
+  it('THEME-006 wants something in a needed part, a width for a needed sidebar and for a fixed container', () => {
     const at = (change: (t: Theme) => void) => {
       const copy = structuredClone(theme);
       change(copy);
@@ -222,17 +221,14 @@ describe('theme rules', () => {
       'marketing.footer',
     ]);
     expect(
-      at((t) => {
-        const { sidebar, extraSidebar } = t.layouts.app;
-        Object.assign(sidebar, { needed: true, top: 'a', widthPx: 240 });
-        Object.assign(extraSidebar, {
+      at((t) =>
+        Object.assign(t.layouts.app.sidebar, {
           needed: true,
-          top: 'b',
-          widthPx: 200,
-          side: 'left',
-        });
-      }),
-    ).toEqual(['app.extraSidebar.side']);
+          top: 'a',
+          widthPx: 0,
+        }),
+      ),
+    ).toEqual(['app.sidebar.widthPx']);
     expect(at((t) => (t.layouts.app.main.container = 'fixed'))).toEqual([
       'app.main.maxWidthPx',
     ]);

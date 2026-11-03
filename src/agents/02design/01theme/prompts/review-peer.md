@@ -19,7 +19,7 @@ First picture the people from the idea, the scope and the flows: what they come 
 
 ## Page layouts
 
-- P08: The app frame fits how the app is used. For example, these fail: a top bar for a tool with many destinations used all day, a sidebar for a small app with two pages, an extra sidebar no page needs, and an overlay header that would lie over the top of every task page.
+- P08: The app frame fits how the app is used. For example, these fail: a top bar for a tool with many destinations used all day, a sidebar for a small app with two pages, and an overlay header that would lie over the top of every task page.
 - P09: The marketing frame lets the landing page read as one surface. For example, a heavy header with a divider above a hero fails.
 - P10: A fixed container is wide enough for the widest content the app shows, such as wide tables or boards. A page can narrow its column inside the container, never widen it.
 - P11: The page padding and section gap of each layout follow the density: tighter for compact, roomier for spacious.
@@ -39,6 +39,6 @@ Leave to the validators, which check:
 - The brief's counts and ranges, every vocabulary noun once in the entities, colored hues at least 30 degrees from each other and from the brand, and each status hue inside its band.
 - Three different fonts for each role.
 - The contrast of text, of `border` and `focus`, and of the wordmark.
-- A needed sidebar with no width, a header or footer too short for a button, two sidebars on one side, and a fixed container with no width.
+- A needed sidebar with no width, a header or footer too short for a button, and a fixed container with no width.
 - The section gap ranges, and a padding other than 0 that is smaller than the gap inside it.
 - The defaults that carry meaning.

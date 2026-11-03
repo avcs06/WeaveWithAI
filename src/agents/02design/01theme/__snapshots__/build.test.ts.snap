@@ -331,17 +331,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
   "layouts": {
     "app": {
       "docksFirst": "header",
-      "extraSidebar": {
-        "bottom": "",
-        "gap": "0",
-        "needed": false,
-        "padding": "0",
-        "separation": "none",
-        "side": "right",
-        "sticky": false,
-        "top": "",
-        "widthPx": 0,
-      },
       "footer": {
         "center": "",
         "end": "",
@@ -386,17 +375,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
     },
     "marketing": {
       "docksFirst": "header",
-      "extraSidebar": {
-        "bottom": "",
-        "gap": "0",
-        "needed": false,
-        "padding": "0",
-        "separation": "none",
-        "side": "right",
-        "sticky": false,
-        "top": "",
-        "widthPx": 0,
-      },
       "footer": {
         "center": "",
         "end": "",

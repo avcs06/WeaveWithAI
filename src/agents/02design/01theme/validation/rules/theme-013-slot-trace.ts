@@ -17,7 +17,6 @@ export const rule = defineRule<LayoutsInput>('THEME-013', 'mandatory', ({ layout
       ['header', layout.header, { start: layout.header.start, center: layout.header.center, end: layout.header.end }],
       ['footer', layout.footer, { start: layout.footer.start, center: layout.footer.center, end: layout.footer.end }],
       ['sidebar', layout.sidebar, { top: layout.sidebar.top, bottom: layout.sidebar.bottom }],
-      ['extraSidebar', layout.extraSidebar, { top: layout.extraSidebar.top, bottom: layout.extraSidebar.bottom }],
     ];
     for (const [part, bar, slots] of parts) {
       if (!bar.needed) continue;

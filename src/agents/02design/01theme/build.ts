@@ -167,7 +167,6 @@ const marketingLayout = (
   docksFirst: 'header',
   header: marketing.header,
   sidebar: NO_SIDEBAR,
-  extraSidebar: { ...NO_SIDEBAR, side: 'right' },
   footer: marketing.footer,
   main: marketing.main,
 });

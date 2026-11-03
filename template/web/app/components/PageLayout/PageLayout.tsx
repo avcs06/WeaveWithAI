@@ -25,12 +25,9 @@ const flag = (on: boolean) => (on ? '' : undefined);
 export function frameGrid(layout: PageLayoutConfig) {
   const fullWidth = layout.docksFirst === 'header';
 
-  const sidebars = (
-    [
-      ['sidebar', layout.sidebar],
-      ['extra', layout.extraSidebar],
-    ] as const
-  ).filter(([, sidebar]) => sidebar.needed);
+  const sidebars = ([['sidebar', layout.sidebar]] as const).filter(
+    ([, sidebar]) => sidebar.needed,
+  );
   const left = sidebars.filter(([, sidebar]) => sidebar.side === 'left');
   const right = sidebars.filter(([, sidebar]) => sidebar.side === 'right');
 
@@ -104,7 +101,6 @@ export const PageLayout = ({
   scrollMain = false,
   header,
   sidebar,
-  extraSidebar,
   footer,
   children,
 }: PageLayoutProps) => {
@@ -205,17 +201,6 @@ export const PageLayout = ({
           {children}
         </div>
       </main>
-      {layout.extraSidebar.needed && (
-        <Sidebar
-          area="extra"
-          label="Secondary sidebar"
-          sidebar={layout.extraSidebar}
-          sticky={sticky(layout.extraSidebar.sticky)}
-          underHeader={underHeader}
-        >
-          {extraSidebar}
-        </Sidebar>
-      )}
       {layout.footer.needed && (
         <footer
           data-ds=""

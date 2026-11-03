@@ -92,7 +92,6 @@ describe('theme prompt', () => {
       'docksFirst',
       'header',
       'sidebar',
-      'extraSidebar',
       'footer',
       'main',
       'separation',

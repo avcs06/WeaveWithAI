@@ -5,9 +5,8 @@ import { spacingPx, type ThemeInput } from '../helpers';
 /**
  * THEME-006 · mandatory
  * In each page layout, a needed header, sidebar or footer holds something and
- * a needed sidebar has a width; the two sidebars sit on different sides; a
- * fixed container has a width; a header or footer of fixed height fits a
- * button of the default size and its padding.
+ * a needed sidebar has a width; a fixed container has a width; a header or
+ * footer of fixed height fits a button of the default size and its padding.
  * Pass: the reading-list app layout, a header with the wordmark and the shelf.
  * Fail: a needed sidebar 0 wide.
  */
@@ -21,7 +20,7 @@ export const rule = defineRule<ThemeInput>(
     const box = inventory.components.find((c) => c.name === 'Button')?.box;
     const button = box?.[size]?.height ?? box?.md?.height ?? 0;
     for (const [kind, layout] of Object.entries(theme.layouts)) {
-      const { header, sidebar, extraSidebar, footer, main } = layout;
+      const { header, sidebar, footer, main } = layout;
       const empty = (part: string) =>
         issues.push(
           fail(
@@ -44,27 +43,16 @@ export const rule = defineRule<ThemeInput>(
             ),
           );
       }
-      for (const [part, side] of [
-        ['sidebar', sidebar],
-        ['extraSidebar', extraSidebar],
-      ] as const) {
-        if (!side.needed) continue;
-        if (!side.top && !side.bottom) empty(part);
-        if (side.widthPx <= 0)
+      if (sidebar.needed) {
+        if (!sidebar.top && !sidebar.bottom) empty('sidebar');
+        if (sidebar.widthPx <= 0)
           issues.push(
             fail(
-              `The ${kind} ${part} is ${side.widthPx} wide; give it a width in px.`,
-              `${kind}.${part}.widthPx`,
+              `The ${kind} sidebar is ${sidebar.widthPx} wide; give it a width in px.`,
+              `${kind}.sidebar.widthPx`,
             ),
           );
       }
-      if (sidebar.needed && extraSidebar.needed && sidebar.side === extraSidebar.side)
-        issues.push(
-          fail(
-            `Both ${kind} sidebars are on the ${sidebar.side}; put the extra sidebar on the other side.`,
-            `${kind}.extraSidebar.side`,
-          ),
-        );
       if (main.container === 'fixed' && main.maxWidthPx <= 0)
         issues.push(
           fail(
