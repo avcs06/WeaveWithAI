@@ -27,6 +27,15 @@ export const fieldButton = style(
 
 export const searchField = style({});
 
+// Sized by its number, not its parent: four digits, centered between the buttons.
+export const quantityField = style({});
+
+globalStyle(`${quantityField} input`, {
+  flex: '0 0 auto',
+  width: '4ch',
+  textAlign: 'center',
+});
+
 // Replaces the browser's clear button.
 globalStyle(`${searchField} input::-webkit-search-cancel-button`, {
   appearance: 'none',

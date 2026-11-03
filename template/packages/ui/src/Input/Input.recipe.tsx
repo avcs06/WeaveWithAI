@@ -1,13 +1,15 @@
 /**
  * Input: a single-line text field. `onChange` gets the text, not an event. With
  * `delay`, the text shows at once and `onChange` waits for a pause in typing.
- * PasswordInput, SearchInput and NumberInput are the fields for those values.
+ * PasswordInput, SearchInput and NumberInput are the fields for those values;
+ * QuantitySelector is a small count stepped with − and + or typed.
  * In a `useForm` form, every field renders through `Controller`, and
  * `{...field}` gives it its name, value, `onChange`, `required` mark, `error`
  * and focus on a failed submit.
  *
  * When not to use:
  * - A password: PasswordInput. A search: SearchInput. A number: NumberInput.
+ *   A small count, like an item's quantity: QuantitySelector.
  * - A choice from a list: Select. A date or time: FormControl around the native
  *   input.
  *
@@ -27,6 +29,9 @@
  * - SearchInput's `loading` locks typing unless `disableWhileLoading={false}`.
  * - NumberInput shows a text keyboard on phones unless `min` is 0 or more or
  *   `allowNegative={false}`: number keypads have no minus key.
+ * - QuantitySelector starts at `min`, 1 unless set. Give `maxReason` the
+ *   reason the count stops, such as "Only 5 in stock", and name it for its
+ *   item: `aria-label="Quantity of …"`.
  */
 import { Button, IconButton } from '@packages/ui/Button';
 import { Controller, Form } from '@packages/ui/Form';
@@ -34,6 +39,7 @@ import {
   Input,
   NumberInput,
   PasswordInput,
+  QuantitySelector,
   SearchInput,
 } from '@packages/ui/Input';
 import { Link } from '@packages/ui/Link';
@@ -767,6 +773,21 @@ const InviteByEmail = () => {
   );
 };
 
+/** A count stepped or typed, such as an item's quantity, with the reason it stops. */
+const ItemQuantity = () => {
+  const [quantity, setQuantity] = useState<number | null>(1);
+  return (
+    <QuantitySelector
+      aria-label="Quantity of the item"
+      autoComplete="off"
+      value={quantity}
+      onChange={setQuantity}
+      max={5}
+      maxReason="Only 5 in stock"
+    />
+  );
+};
+
 export default function InputRecipe() {
   return (
     <div className="flex-col-gap-6">
@@ -787,6 +808,7 @@ export default function InputRecipe() {
       <VenueCapacity />
       <AgendaShift />
       <GuestCount />
+      <ItemQuantity />
       <SignInForm />
       <SignUpPassword />
       <EventSearch />

@@ -50,7 +50,7 @@ export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
     header: {
       needed: true,
       start: 'logo',
-      center: '',
+      center: 'the mode switch',
       end: 'account',
       heightPx: 60,
       padding: '4',

@@ -2,7 +2,7 @@ import type { Constant } from '@packages/utils/types';
 
 // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- FormControl's own props, for the controls built on it.
 import type { FormControlOwnProps } from '../FormControl/FormControl.types';
-import type { SetByComponent } from '../utils';
+import type { DisabledState, SetByComponent } from '../utils';
 import type {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
@@ -104,10 +104,27 @@ export type NumberInputProps<D extends number = never> = FormControlOwnProps &
     allowNegative?: boolean;
   };
 
-export type FieldButtonProps = {
+/** Whole numbers between its own buttons. */
+export type QuantitySelectorProps = NumberInputProps &
+  SetByComponent<
+    | 'allowDecimal'
+    | 'allowNegative'
+    | 'leftIcon'
+    | 'rightIcon'
+    | 'leftAddOn'
+    | 'rightAddOn'
+  > & {
+  /** Why − can't go lower at `min`, in its tooltip; "Already the fewest" unless set. */
+  minReason?: string;
+  /** Why + can't go higher at `max`, such as "Only 5 in stock"; "No more" unless set. */
+  maxReason?: string;
+};
+
+export type FieldButtonProps = DisabledState & {
   /** The button's name, also shown in its tooltip. */
   label: string;
-  disabled?: boolean;
+  /** -1 keeps it out of the tab order, when the field's keys do the same. */
+  tabIndex?: number;
   'aria-pressed'?: boolean;
   onClick: () => void;
   children: ReactElement;

@@ -4,7 +4,7 @@ import { classNames } from '@packages/styles/classNames';
 import { SEARCH_DEBOUNCE_MS } from '@packages/utils/constants';
 import { composeHandlers } from '@packages/utils/events';
 import { useBoundState } from '@packages/utils/hooks';
-import { Eye, EyeOff, Search, X } from 'lucide-react';
+import { Eye, EyeOff, Minus, Plus, Search, X } from 'lucide-react';
 import React, {
   type KeyboardEvent,
   useLayoutEffect,
@@ -16,12 +16,13 @@ import { IconButton } from '../Button';
 import { mergeRefs, useIsDisabled } from '../utils';
 
 import { InputBase } from './Input';
-import { fieldButton, searchField } from './Input.css';
+import { fieldButton, quantityField, searchField } from './Input.css';
 
 import type {
   FieldButtonProps,
   NumberInputProps,
   PasswordInputProps,
+  QuantitySelectorProps,
   SearchInputProps,
 } from './Input.types';
 
@@ -267,6 +268,67 @@ export const NumberInput = <D extends number = never>({
         settle();
         onBlur?.(event);
       }}
+    />
+  );
+};
+
+/**
+ * A small count the user steps or types, such as an item's quantity in a
+ * cart: a number field between a − and a + button. Whole numbers from `min`,
+ * 1 unless set, to `max`; at either limit its button says why it goes no
+ * further. The arrow keys step it as the buttons do.
+ */
+export const QuantitySelector = ({
+  value,
+  onChange,
+  min = 1,
+  max = Infinity,
+  step = 1,
+  minReason = 'Already the fewest',
+  maxReason = 'No more',
+  className,
+  ...props
+}: QuantitySelectorProps) => {
+  const { isDisabled } = useIsDisabled(props);
+  const current = value ?? min;
+  const stepTo = (next: number) => onChange(Math.min(max, Math.max(min, next)));
+
+  return (
+    <NumberInput
+      {...props}
+      value={value}
+      onChange={onChange}
+      min={min}
+      max={max}
+      step={step}
+      allowDecimal={false}
+      allowNegative={min < 0}
+      className={classNames('w-fit', quantityField, className)}
+      leftAddOn={
+        <FieldButton
+          label="Decrease"
+          // The field's arrow keys step it already.
+          tabIndex={-1}
+          {...(isDisabled
+            ? { disabled: true }
+            : { disabledWithReason: current <= min ? minReason : undefined })}
+          onClick={() => stepTo(current - step)}
+        >
+          <Minus />
+        </FieldButton>
+      }
+      rightAddOn={
+        <FieldButton
+          label="Increase"
+          tabIndex={-1}
+          {...(isDisabled
+            ? { disabled: true }
+            : { disabledWithReason: current >= max ? maxReason : undefined })}
+          onClick={() => stepTo(current + step)}
+        >
+          <Plus />
+        </FieldButton>
+      }
     />
   );
 };
