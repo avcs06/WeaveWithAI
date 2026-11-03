@@ -29,6 +29,7 @@ import {
 import { runRenderedChecks } from './index';
 import { checkRoute } from './index';
 import { keyboardWalk } from './keyboard';
+import { contentEdge, gridOrphans, pageTitle, spreadPairs, titleStyles } from './layout';
 import type { Finding } from './types';
 
 // Two static pages served over http: one clean, one with a planted defect for
@@ -252,6 +253,48 @@ describe('rendered checks on the fixture pages', () => {
     expect(await numerals(await open('clean.html'))).toEqual([]);
   });
 
+  it('R-014 content edge, R-015 spread pairs, R-016 grid orphans: planted on the defects page, none on the clean page', async () => {
+    const page = await open('defects.html');
+    expect(rules(await contentEdge(page))).toEqual([
+      expect.stringMatching(/^mandatory \[data-testid="indented"\] starts 20px right of the page container's content edge/),
+    ]);
+    expect(rules(await spreadPairs(page))).toEqual([
+      expect.stringMatching(/^mandatory \[data-testid="spread"\] "Pickup" and "Free" sit \d+px apart in a 900px row/),
+    ]);
+    expect(rules(await gridOrphans(page))).toEqual([
+      expect.stringMatching(/^mandatory \[data-testid="orphan"\] 4 items in 3 columns leave one alone/),
+    ]);
+    const clean = await open('clean.html');
+    expect(await contentEdge(clean)).toEqual([]);
+    expect(await spreadPairs(clean)).toEqual([]);
+    expect(await gridOrphans(clean)).toEqual([]);
+  });
+
+  it('R-013 titles: a route whose H1 looks unlike the PageHeader title fails; the hero is left out', async () => {
+    const clean = await pageTitle(await open('clean.html'));
+    const defects = await pageTitle(await open('defects.html'));
+    expect(clean).toMatchObject({ pageHeader: true });
+    expect(defects).toMatchObject({ pageHeader: false });
+    const found = titleStyles([
+      { route: '/defects', title: defects },
+      { route: '/clean', title: clean },
+      { route: '/', title: null },
+    ]);
+    expect(found.map(({ route, finding }) => [route, finding.rule, finding.severity])).toEqual([
+      ['/defects', 'DESIGN-R-013', 'mandatory'],
+    ]);
+    expect(found[0]?.finding.message).toContain('line-height');
+    // With no PageHeader, most routes set the style.
+    const header = { element: 'h1', pageHeader: false, style: { 'font-size': '24px' } };
+    expect(
+      titleStyles([
+        { route: '/a', title: header },
+        { route: '/b', title: header },
+        { route: '/c', title: { ...header, style: { 'font-size': '14px' } } },
+      ]).map(({ route }) => route),
+    ).toEqual(['/c']);
+  });
+
   it('R-007 typography, R-008 colors', async () => {
     const page = await open('defects.html');
     expect(rules(await typography(page))).toEqual(
@@ -311,6 +354,10 @@ describe('runRenderedChecks', () => {
       'DESIGN-R-010',
       'DESIGN-R-011',
       'DESIGN-R-012',
+      'DESIGN-R-013',
+      'DESIGN-R-014',
+      'DESIGN-R-015',
+      'DESIGN-R-016',
     ]);
     const written = JSON.parse(
       readFileSync(path.join(run.dir, 'reports', 'rendered.json'), 'utf8'),

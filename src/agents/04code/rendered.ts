@@ -7,8 +7,8 @@ import type { Flows } from '../01flows/schema';
 import type { Theme } from '../02design/01theme/build';
 import type { Screen } from '../02design/02architect/schema';
 
-// The rendered checks of a code unit (DESIGN-R-001 to 012): axe, contrast,
-// target sizes, the keyboard walk, the spacing and the rest, on its routes, after its session.
+// The rendered checks of a code unit (DESIGN-R-001 to 016): axe, contrast,
+// target sizes, the keyboard walk, the spacing, the layout and the rest, on its routes, after its session.
 
 /** The brand's accent fills; accentFg is the text on them, often the page's own white. */
 const ACCENT_FILLS = new Set(['accentBg', 'accentHoverBg']);

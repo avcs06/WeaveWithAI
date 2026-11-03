@@ -1,5 +1,5 @@
 // Runs inside the page (Chromium): the measurements the rendered checks need
-// (DESIGN-R-001 to 012). Plain browser JavaScript, installed by page.ts as
+// (DESIGN-R-001 to 012; in-page-layout.js has 013 to 016). Plain browser JavaScript, installed by page.ts as
 // globalThis.__weaveChecks, so the generator's TypeScript, which has no DOM
 // types, never compiles it.
 (() => {
@@ -83,6 +83,9 @@
     [...document.body.querySelectorAll('*')].filter(
       (element) => ownText(element) && visible(element),
     );
+
+  // For the layout measures in in-page-layout.js, installed after this file.
+  globalThis.__weaveInPage = { visible, name, appMade, FOCUSABLE };
 
   globalThis.__weaveChecks = {
     /**

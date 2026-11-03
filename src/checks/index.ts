@@ -15,6 +15,7 @@ import {
   typography,
 } from './collectors';
 import { type KeyboardReport, keyboardWalk } from './keyboard';
+import { contentEdge, gridOrphans, type PageTitle, pageTitle, spreadPairs, titleStyles } from './layout';
 import { type Finding, finding } from './types';
 
 // The rendered checks over every sampled route: the gate after a coding
@@ -33,6 +34,8 @@ export type RouteSample = {
 export type RenderedReport = {
   route: string;
   findings: Finding[];
+  /** The page's H1, for DESIGN-R-013's comparison across routes. */
+  title: PageTitle | null;
   metrics: {
     axeViolations: number;
     contrastFailures: number;
@@ -84,7 +87,11 @@ export async function checkRoute(
       ...(await guard('DESIGN-R-009', [], () => targetGaps(page))),
       ...(await guard('DESIGN-R-010', [], () => containerSpacing(page))),
       ...(await guard('DESIGN-R-012', [], () => numerals(page))),
+      ...(await guard('DESIGN-R-014', [], () => contentEdge(page))),
+      ...(await guard('DESIGN-R-015', [], () => spreadPairs(page))),
+      ...(await guard('DESIGN-R-016', [], () => gridOrphans(page))),
     ];
+    const title = await guard('DESIGN-R-013', null, () => pageTitle(page));
     // Last: the walk presses keys and may open and close things.
     const { findings: walked, ...keyboard } = await guard('DESIGN-R-003', { ...EMPTY_WALK, findings: [] }, () =>
       keyboardWalk(page, { blockMutations: true }),
@@ -92,6 +99,7 @@ export async function checkRoute(
     return {
       route: sample.route,
       findings: [...axe.findings, ...contrast.findings, ...targets.findings, ...rest, ...walked, ...broken],
+      title,
       metrics: {
         axeViolations: axe.violations.length,
         contrastFailures: contrast.failures.length,
@@ -121,6 +129,9 @@ export async function runRenderedChecks(opts: {
     await context.close();
     return reports;
   });
+  // Titles compare across routes, so their findings join each route's after all are checked.
+  for (const { route, finding: found } of titleStyles(perRoute))
+    perRoute.find((report) => report.route === route)?.findings.push(found);
   writeJsonAtomic(runPath(opts.run, 'reports', 'rendered.json'), perRoute);
   const issues = perRoute.flatMap((report) =>
     report.findings.map((f): Issue => ({

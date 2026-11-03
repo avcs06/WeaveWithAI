@@ -42,6 +42,13 @@
   <div class="crowded" data-testid="crowded"><button type="button" class="tiny" aria-label="Minimize"></button><button type="button" class="tiny" aria-label="Maximize"></button></div>
   <div><span>Pages read</span> <span data-testid="plain-number">1,834</span></div>
 </section>
+<!-- R-014: a block off the container's content edge. R-015: a label and its value at a wide row's far ends. R-016: four items in three columns. -->
+<div data-slot="container" style="display:flex; flex-direction:column; gap:8px; padding:0 16px">
+  <p>On the content edge</p>
+  <p data-testid="indented" style="margin-left:20px">Twenty pixels in</p>
+</div>
+<div data-testid="spread" style="display:flex; justify-content:space-between; width:900px"><span>Pickup</span><span>Free</span></div>
+<div data-testid="orphan" style="display:grid; grid-template-columns:repeat(3, 100px); gap:8px"><span>One</span><span>Two</span><span>Three</span><span>Four</span></div>
 <div class="wide"></div>
 <div style="height:1000px"></div>
 <h1>Below the fold</h1>

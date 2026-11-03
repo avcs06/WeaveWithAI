@@ -5,10 +5,10 @@ import { pathBeside } from '../core/utils';
 // The in-page measurements (in-page.js) are installed once per document and
 // called by name, so the TypeScript here never needs DOM types.
 
-const SOURCE = readFileSync(
-  pathBeside(import.meta.url, './in-page.js'),
-  'utf8',
-);
+// The layout measures come second: they use the helpers the first file shares.
+const SOURCE = ['./in-page.js', './in-page-layout.js']
+  .map((file) => readFileSync(pathBeside(import.meta.url, file), 'utf8'))
+  .join('\n');
 
 type Checks = Record<string, (arg?: unknown) => unknown>;
 
