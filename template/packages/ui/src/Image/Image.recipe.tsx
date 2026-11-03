@@ -28,16 +28,16 @@ const picture = (width: number, height: number, from: string, to: string) =>
   `data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><linearGradient id="g"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient><rect width="100%" height="100%" fill="url(#g)"/></svg>`,
   )}`;
-const mug = picture(400, 300, '#9A3412', '#FDBA74');
-const logo = picture(200, 60, '#1E3A8A', '#93C5FD');
-const banner = picture(1200, 400, '#134E4A', '#5EEAD4');
+const photo = picture(400, 300, '#475569', '#CBD5E1');
+const logo = picture(200, 60, '#334155', '#94A3B8');
+const backdrop = picture(1200, 400, '#1E293B', '#64748B');
 
 // Usage: the patterns to copy.
 /** A photo that fills its box: `cover` crops what does not fit. */
 const Photo = () => (
   <Image
-    src={mug}
-    alt="A rust-glazed mug on a wooden table"
+    src={photo}
+    alt="What the photo shows"
     width={400}
     height={300}
     fit="cover"
@@ -48,7 +48,7 @@ const Photo = () => (
 const Logo = () => (
   <Image
     src={logo}
-    alt="Jaipur Studio"
+    alt="The company's name"
     width={240}
     height={120}
     fit="contain"
@@ -57,13 +57,13 @@ const Logo = () => (
 
 /** A record with no picture yet: the box keeps its place with an icon. */
 const NoPicture = () => (
-  <Image alt="Blue vase" width={400} height={300} fit="cover" />
+  <Image alt="The record's name" width={400} height={300} fit="cover" />
 );
 
 /** A backdrop with content over it: the picture becomes the box's background. */
 const Backdrop = () => (
   <Image
-    src={banner}
+    src={backdrop}
     alt=""
     width={1200}
     height={400}
@@ -71,7 +71,7 @@ const Backdrop = () => (
     className="flex-row-gap-0 items-center justify-center p-6"
   >
     <Card>
-      <Paragraph>New glazes every month.</Paragraph>
+      <Paragraph>A headline over the picture.</Paragraph>
     </Card>
   </Image>
 );
