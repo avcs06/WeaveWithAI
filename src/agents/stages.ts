@@ -14,6 +14,7 @@ import { scaffoldStage } from './04code/01scaffold/stage';
 import { contractCodeStage } from './04code/02contract/stage';
 import { framesStage } from './04code/03frames/stage';
 import { pagesStage } from './04code/04pages/stage';
+import type { UnitSpec } from './04code/unit';
 
 export type StageContext = {
   run: Run;
@@ -21,6 +22,8 @@ export type StageContext = {
   llm: Llm;
   interactive: boolean;
   backend: string;
+  /** The code stage `weave run --round` resumes, at the round `weave session-resume` saved. */
+  resume?: { stage: string; round: number };
 };
 
 export type StageDef = {
@@ -30,6 +33,8 @@ export type StageDef = {
   run(ctx: StageContext): Promise<void>;
   /** Reruns the stage's validators on the artifacts on disk, for `weave validate`. */
   validate?(run: Run): Issue[];
+  /** A code stage's coding units, which `weave session-resume` resumes a cut session of. */
+  units?(ctx: StageContext): UnitSpec[];
 };
 
 export const PIPELINE: string[] = [

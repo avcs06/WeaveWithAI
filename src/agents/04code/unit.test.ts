@@ -4,13 +4,13 @@ import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { ConfigSchema } from '../../core/env';
 import type { GenerateInput, Llm } from '../../core/llm';
-import { createRun, readEvents, runPath } from '../../core/run';
+import { appendEvent, createRun, readEvents, readState, runPath } from '../../core/run';
 import { pathBeside } from '../../core/utils';
 import type { Check } from '../../engine/session';
 import { git, prepareApp } from '../../engine/setup';
 import { guideIds } from '../../runner/review';
 import type { StageContext } from '../stages';
-import { runUnit, runUnits, type UnitSpec } from './unit';
+import { resumeUnit, runUnit, runUnits, type UnitSpec } from './unit';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-unit-'));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -144,6 +144,49 @@ describe('a coding unit', () => {
     const writes = { ...page, 'web/app/(routes)/books/page.test.tsx': 'export {};\n' };
     const result = await withWrites(writes, () => runUnit(ctx, spec, deps));
     expect(result.known.map((i) => i.rule)).toContain('CODE-004');
+  });
+});
+
+describe('a coding unit resumed after its session was cut', () => {
+  it('finishes the cut session in its Muse session, saves the round, and a run from that round reviews it and fixes on', async () => {
+    const { run, ctx, spec, reviews, deps } = setup('resumed', true, () => false);
+    const appDir = runPath(run, 'app');
+    // A killed run: the unit's inputs commit, its Muse session logged, and its files left uncommitted.
+    mkdirSync(path.join(appDir, '.weave/tasks'), { recursive: true });
+    writeFileSync(path.join(appDir, '.weave/tasks/page-S04.md'), `${spec.task}\n`);
+    git(appDir, 'add', '-A');
+    git(appDir, 'commit', '-q', '-m', 'code-pages-S04: inputs for page-S04');
+    appendEvent(run, { type: 'session:start', stage: 'session:page-S04', museSession: 'muse-1' });
+    const cut = 'web/app/(routes)/shelves/page.tsx';
+    mkdirSync(path.join(appDir, path.dirname(cut)), { recursive: true });
+    writeFileSync(path.join(appDir, cut), 'export default function Shelves() { return null; }\n');
+    process.env.FAKE_ARGS = runPath(run, 'muse-args.log');
+    const ids = () => readFileSync(runPath(run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
+
+    const { file, saved } = await withWrites(page, () => resumeUnit(ctx, spec, undefined, deps));
+    expect(file).toBe(runPath(run, 'resume', 'code-pages-S04-round-1.json'));
+    expect(saved).toMatchObject({ unit: 'page-S04', round: 1, museSession: 'muse-1' });
+    expect(saved.draft.data.diff).toContain('shelves/page.tsx');
+    expect(saved.draft.data.diff).toContain('books/page.tsx');
+    expect(readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-resume.md'), 'utf8')).toContain('.weave/tasks/page-S04.md');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-resume');
+    await expect(resumeUnit(ctx, spec, undefined, deps)).rejects.toThrow('nothing to resume');
+
+    // Round 1 is the saved one: reviewed, not run again; the code reviewer's blocker goes to a fix in the same Muse session.
+    const resumed = { ...ctx, resume: { stage: 'code-pages-S04', round: 1 } };
+    await withWrites(page, () => runUnits(resumed, 'code-pages-S04', [spec], deps)).finally(() => delete process.env.FAKE_ARGS);
+    expect(ids()).toEqual(['--session-id muse-1', '--session-id muse-1']);
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 2, 2]);
+    expect(readEvents(run).some((e) => e.type === 'stage:reset')).toBe(false);
+    expect(git(appDir, 'log', '-3', '--format=%s').split('\n')).toEqual([
+      'code-pages-S04: page-S04-fix-1',
+      'code-pages-S04: inputs for page-S04-fix-1',
+      'code-pages-S04: page-S04-resume',
+    ]);
+    expect(readState(run).stages['code-pages-S04']).toMatchObject({ status: 'done', rounds: 2, known: 0 });
+    await expect(runUnits({ ...ctx, resume: { stage: 'code-pages-S04', round: 2 } }, 'code-pages-S04', [spec], deps)).rejects.toThrow(
+      'no saved round 2',
+    );
   });
 });
 

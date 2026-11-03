@@ -7,6 +7,7 @@ import {
   dsCommand,
   goldenCommand,
   runCommand,
+  sessionResumeCommand,
   showCommand,
   UsageError,
   validateCommand,
@@ -134,6 +135,16 @@ describe('weave run', () => {
     ).rejects.toBeInstanceOf(UsageError);
     await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toThrow(
       /Known stages: flows-scope, flows-catalog/,
+    );
+  });
+
+  it('takes --round only with --run and --from a code stage, and a session-resume only of a code stage', async () => {
+    const roundError = /--round 1: give a round number with --run <id> and --from one of code-frames, code-pages/;
+    await expect(runCommand({ idea, from: 'code-pages', round: '1' }, deps)).rejects.toThrow(roundError);
+    await expect(runCommand({ idea, run: run.id, from: 'flows-scope', round: '1' }, deps)).rejects.toThrow(roundError);
+    await expect(runCommand({ idea, run: run.id, from: 'code-pages', round: '0' }, deps)).rejects.toBeInstanceOf(UsageError);
+    await expect(sessionResumeCommand(run.id, 'flows-scope', {}, deps)).rejects.toThrow(
+      'flows-scope: session-resume takes a code stage: code-frames, code-pages',
     );
   });
 

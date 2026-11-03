@@ -8,6 +8,7 @@ import {
 } from './agents/02design/01theme/preview/storybook';
 import { applyTheme } from './agents/04code/01scaffold/apply';
 import { applyMode, ensureApp } from './agents/04code/01scaffold/app';
+import { resumeUnit } from './agents/04code/unit';
 import {
   type ArtifactName,
   FILE_OF,
@@ -43,6 +44,8 @@ export type RunArgs = {
   idea: string;
   run?: string;
   from?: string;
+  /** With --run and --from a code stage: start that stage at the round `weave session-resume` saved. */
+  round?: string;
   to?: string;
   interactive?: boolean;
   replay?: boolean;
@@ -58,7 +61,9 @@ export type CliDeps = {
 };
 
 const USAGE = `usage:
-  weave run <idea.md> [--run <id>] [--from <stage>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
+  weave run <idea.md> [--run <id>] [--from <stage>] [--round <n>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
+  weave session-resume <runId> <stage> [--muse-session <uuid>] [--backend <name>]
+                                 finish a code stage's cut session; then weave run --run <id> --from <stage> --round <n>
   weave validate <runId> [stage]
   weave show <runId>
   weave golden <runId> <ideaName> [--stages flows-scope,flows-expand]
@@ -91,6 +96,15 @@ export async function runCommand(
     );
   }
 
+  const round = args.round === undefined ? undefined : Number(args.round);
+  if (round !== undefined) {
+    const codeStages = stages.filter((stage) => stage.units).map((stage) => stage.name);
+    if (!args.run || !args.from || !codeStages.includes(args.from) || !Number.isInteger(round) || round < 1)
+      throw new UsageError(
+        `--round ${args.round}: give a round number with --run <id> and --from one of ${codeStages.join(', ')}`,
+      );
+  }
+
   const loaded = deps.config ?? loadConfig();
   const config: Config =
     args.replay === false ? { ...loaded, LLM_REPLAY: false } : loaded;
@@ -105,6 +119,7 @@ export async function runCommand(
     llm: deps.llm ?? createLlm({ config, backend }),
     interactive: args.interactive ?? false,
     backend: backend.name,
+    ...(round !== undefined && args.from && { resume: { stage: args.from, round } }),
   };
   out(`run ${run.id} (${run.dir})`);
   const log = runLog(PIPELINE, out);
@@ -141,6 +156,49 @@ export async function runCommand(
     stopLog();
   }
   return run;
+}
+
+/**
+ * Finishes the Muse session a code stage's run left cut, such as a killed run's, and saves its round's output, for
+ * `weave run --run <id> --from <stage> --round <n>` to review and fix from without running that session again.
+ */
+export async function sessionResumeCommand(
+  runId: string,
+  stage: string,
+  options: { museSession?: string; backend?: string },
+  deps: CliDeps = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const def = stages.find((s) => s.name === stage);
+  const codeStages = stages.filter((s) => s.units).map((s) => s.name);
+  if (!def?.units) throw new UsageError(`${stage}: session-resume takes a code stage: ${codeStages.join(', ')}`);
+  if (options.backend !== undefined && !isBackendName(options.backend))
+    throw new UsageError(`--backend ${options.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`);
+  const config = deps.config ?? loadConfig();
+  const backend = resolveBackend(config, options.backend);
+  const ctx: StageContext = {
+    run,
+    config,
+    llm: deps.llm ?? createLlm({ config, backend }),
+    interactive: false,
+    backend: backend.name,
+  };
+  const [spec, ...more] = def.units(ctx);
+  if (!spec || more.length) throw new UsageError(`${stage}: session-resume needs a stage of one unit`);
+  const log = runLog(PIPELINE, out);
+  const stopLog = watchEvents(run, log.event);
+  try {
+    const { file, saved } = await resumeUnit(ctx, spec, options.museSession);
+    const lines = [
+      `${stage} round ${saved.round}: the resumed session ended ${saved.draft.data.session.status}; saved ${file}`,
+      `next: weave run ${readState(run).idea} --run ${run.id} --from ${stage} --round ${saved.round}`,
+    ];
+    for (const line of lines) out(line);
+    return lines;
+  } finally {
+    stopLog();
+  }
 }
 
 /** Validators only, no model calls. Returns every issue found. */
@@ -347,6 +405,8 @@ export async function main(argv: string[]): Promise<number> {
       options: {
         run: { type: 'string' },
         from: { type: 'string' },
+        round: { type: 'string' },
+        'muse-session': { type: 'string' },
         to: { type: 'string' },
         interactive: { type: 'boolean' },
         replay: { type: 'boolean' },
@@ -360,6 +420,10 @@ export async function main(argv: string[]): Promise<number> {
       case 'run':
         if (!first) throw new UsageError('run needs an idea file');
         await runCommand({ idea: first, ...values });
+        return 0;
+      case 'session-resume':
+        if (!first || !second) throw new UsageError('session-resume needs a run id and a code stage');
+        await sessionResumeCommand(first, second, { museSession: values['muse-session'], backend: values.backend });
         return 0;
       case 'validate':
         if (!first) throw new UsageError('validate needs a run id');

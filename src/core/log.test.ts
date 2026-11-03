@@ -71,6 +71,12 @@ describe('the run log', () => {
     ).toBe('    scaffold failed: typecheck failed in the app');
   });
 
+  it('names a round resumed with its saved output', () => {
+    expect(logged([{ type: 'round:resumed', stage: 'flows-scope', round: 2 }]).at(-1)).toBe(
+      '    scope round 2 resumed with the output saved for it',
+    );
+  });
+
   it('names a retried answer and leaves the time out when the call has none', () => {
     const { durationMs: _, ...paid } = call;
     expect(

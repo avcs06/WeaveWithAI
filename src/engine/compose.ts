@@ -68,16 +68,20 @@ export function unitIssues(result: UnitResult): Issue[] {
   return [...checkIssues(result.session), ...result.rendered];
 }
 
+/** Where a unit picks up after a resumed session: its Muse session, the sessions it has run, and the commit its diff starts from. */
+export type UnitResume = { museSession: string; sessions: number; baseline: string };
+
 export function sessionCompose(
   ctx: StageContext,
   appDir: string,
   unit: Unit,
   deps: SessionDeps = {},
+  resumed?: UnitResume,
 ): Compose<UnitResult> {
-  const baseline = git(appDir, 'rev-parse', 'HEAD');
+  const baseline = resumed?.baseline ?? git(appDir, 'rev-parse', 'HEAD');
   // One Muse session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
-  const museSession = randomUUID();
-  let sessions = 0;
+  const museSession = resumed?.museSession ?? randomUUID();
+  let sessions = resumed?.sessions ?? 0;
   const run = async (task: string): Promise<Draft<UnitResult>> => {
     sessions += 1;
     const id = sessions === 1 ? unit.id : `${unit.id}-fix-${sessions - 1}`;
@@ -110,41 +114,52 @@ export function sessionCompose(
       costUsd: 0,
       checks: [],
     }));
-    // Rendered checks only mean something on a route that loads.
-    const loads = result.checks.every((check) => check.ok || check.name === 'design');
-    // A checker that cannot run, such as a dev server that never starts, is noted; the unit goes on.
-    const rendered: Issue[] =
-      unit.rendered && loads
-        ? await unit.rendered().catch((error: unknown) => [
-            {
-              rule: 'DESIGN-R-000',
-              severity: 'warning' as const,
-              message: `The browser checks could not run: ${String(error).split('\n')[0]}`,
-            },
-          ])
-        : [];
-    const diff = git(appDir, 'diff', baseline, '--', '.', ':(exclude).weave');
-    // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
-    const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
-    const protectedHits = protectedOf(touched);
-    const sources = touched
-      .filter((file) => /\.tsx?$/.test(file) && existsSync(path.join(appDir, file)))
-      .map((file) => ({ file, text: readFileSync(path.join(appDir, file), 'utf8') }));
-    const longFiles = sources
-      .map(({ file, text }) => ({ path: file, lines: text.split('\n').length }))
-      .filter((file) => file.lines > MAX_LINES);
-    // The recipe gate's leftovers, over the unit's whole diff: reads count from the unit's marker.
-    const log = path.join(appDir, '.weave', 'tools.log');
-    const unreadRecipes = unreadInFiles(sources, existsSync(log) ? readFileSync(log, 'utf8') : '');
-    const { status, summary, checks, changed, readsOutside } = result;
-    return {
-      data: { session: { status, summary, checks, protectedHits, changed, readsOutside, unreadRecipes, longFiles }, rendered, diff },
-      raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
-      model: resolveBackend(ctx.config, ctx.backend).model,
-    };
+    return unitDraft(ctx, appDir, unit, baseline, result);
   };
   return {
     draft: () => run(unit.task),
     fix: (_call, _current, pending) => run(unit.fixTask(pending)),
+  };
+}
+
+/** What the reviewers read after one of a unit's sessions: its checks, the rendered checks, and the unit's whole diff since `baseline`. */
+export async function unitDraft(
+  ctx: StageContext,
+  appDir: string,
+  unit: Pick<Unit, 'rendered'>,
+  baseline: string,
+  result: SessionResult,
+): Promise<Draft<UnitResult>> {
+  // Rendered checks only mean something on a route that loads.
+  const loads = result.checks.every((check) => check.ok || check.name === 'design');
+  // A checker that cannot run, such as a dev server that never starts, is noted; the unit goes on.
+  const rendered: Issue[] =
+    unit.rendered && loads
+      ? await unit.rendered().catch((error: unknown) => [
+          {
+            rule: 'DESIGN-R-000',
+            severity: 'warning' as const,
+            message: `The browser checks could not run: ${String(error).split('\n')[0]}`,
+          },
+        ])
+      : [];
+  const diff = git(appDir, 'diff', baseline, '--', '.', ':(exclude).weave');
+  // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
+  const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
+  const protectedHits = protectedOf(touched);
+  const sources = touched
+    .filter((file) => /\.tsx?$/.test(file) && existsSync(path.join(appDir, file)))
+    .map((file) => ({ file, text: readFileSync(path.join(appDir, file), 'utf8') }));
+  const longFiles = sources
+    .map(({ file, text }) => ({ path: file, lines: text.split('\n').length }))
+    .filter((file) => file.lines > MAX_LINES);
+  // The recipe gate's leftovers, over the unit's whole diff: reads count from the unit's marker.
+  const log = path.join(appDir, '.weave', 'tools.log');
+  const unreadRecipes = unreadInFiles(sources, existsSync(log) ? readFileSync(log, 'utf8') : '');
+  const { status, summary, checks, changed, readsOutside } = result;
+  return {
+    data: { session: { status, summary, checks, protectedHits, changed, readsOutside, unreadRecipes, longFiles }, rendered, diff },
+    raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
+    model: resolveBackend(ctx.config, ctx.backend).model,
   };
 }

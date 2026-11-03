@@ -779,6 +779,60 @@ describe('runSpecStage with compose', () => {
   });
 });
 
+describe('runSpecStage resumed at a round', () => {
+  it('reviews the given document in that round with no generation, keeps the earlier report rounds, and fixes after it', async () => {
+    const { llm, inputs } = fakeLlm([clean, clean, { title: 'Cats' }, clean]);
+    const run = createRun({ idea, runsDir: root, id: 'resumed' });
+    writeReport(run, 'doc', 1, [longTitle]);
+    writeReport(run, 'doc', 4, [missingTitle]); // a round of the attempt that was cut
+    const result = await runSpecStage({
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: requireTitle,
+      review: guide,
+      resume: { round: 2, draft: { data: { title: '' }, raw: '{"title":""}', model: 'none' } },
+      llm,
+    });
+
+    expect(result).toMatchObject({ output: { title: 'Cats' }, known: [], rounds: 3 });
+    // Round 2: both reviewers read the given document; round 3 fixes it and the output reviewer checks the fix.
+    expect(inputs.map((input) => [input.stage, input.round])).toEqual([
+      ['doc-review-peer', 2],
+      ['doc-review-output', 2],
+      ['doc', 3],
+      ['doc-review-output', 3],
+    ]);
+    expect(lastUser(inputs[0])).toContain('{"title":""}');
+    expect(readReport(run, 'doc')?.rounds).toEqual([
+      { round: 1, issues: [longTitle] },
+      { round: 2, issues: [missingTitle] },
+      { round: 3, issues: [] },
+    ]);
+    const events = readEvents(run);
+    expect(events.filter((e) => e.type === 'round:resumed').map((e) => e.round)).toEqual([2]);
+    expect(events.filter((e) => e.type === 'round:start').map((e) => e.round)).toEqual([3]);
+    expect(events.filter((e) => e.type === 'stage:round').map((e) => [e.round, e.generated])).toEqual([
+      [2, true],
+      [3, true],
+    ]);
+  });
+
+  it('refuses a round with no reviewers, before the stage starts', async () => {
+    const { llm, inputs } = fakeLlm([]);
+    const run = createRun({ idea, runsDir: root, id: 'resumed-unreviewed' });
+    const draft = { data: { title: 'Cats' }, raw: '{"title":"Cats"}', model: 'none' };
+    const options = { run, stage: 'doc', schema: Doc, schemaName: 'Doc', system: 'Write a doc.', user: 'About cats.', validate: requireTitle, review: guide, llm };
+    await expect(runSpecStage({ ...options, resume: { round: 5, draft } })).rejects.toThrow('round 5 has no reviewers');
+    await expect(runSpecStage({ ...options, resume: { round: 6, draft } })).rejects.toThrow('no round 6 to resume');
+    expect(inputs).toEqual([]);
+    expect(readEvents(run)).toEqual([]);
+  });
+});
+
 describe('runSpecStage with a model that has no price', () => {
   it('logs a warning beside a live call to it, and none for a priced or a replayed call', async () => {
     const { llm } = fakeLlm([{ title: 'Cats' }, clean, clean]);

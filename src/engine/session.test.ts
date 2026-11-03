@@ -9,7 +9,7 @@ import type { Llm } from '../core/llm';
 import { createRun, readEvents, runPath, totals } from '../core/run';
 import { pathBeside } from '../core/utils';
 import { museArgs, readUsage } from './muse';
-import { appCheck, type Check, runSession } from './session';
+import { appCheck, type Check, resumeSession, runSession } from './session';
 import { git, prepareApp } from './setup';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-engine-'));
@@ -173,6 +173,34 @@ describe('runSession', () => {
       ok: false,
       output: "Nothing in web/app/(routes)/books calls listShelves; load the screen's records through it.",
     });
+  });
+});
+
+describe('resumeSession', () => {
+  it("continues the cut Muse session by its id, and counts the cut session's uncommitted files as its own", async () => {
+    const { run, appDir, ctx } = setup('resume');
+    const museSession = '6fc17888-93c9-445e-a984-940be5c78d23';
+    // What the cut session wrote before the run was killed: in the app, never committed.
+    const cut = 'web/app/(routes)/shelves/page.tsx';
+    mkdirSync(path.join(appDir, path.dirname(cut)), { recursive: true });
+    writeFileSync(path.join(appDir, cut), 'export default 2;\n');
+    process.env.FAKE_ARGS = runPath(run, 'muse-args.log');
+    const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
+      resumeSession(ctx, appDir, { ...session, id: 'pages-resume', museSession }, { bin: fake, runCheck: checks() }),
+    ).finally(() => delete process.env.FAKE_ARGS);
+
+    expect(readFileSync(runPath(run, 'muse-args.log'), 'utf8')).toContain(`--session-id ${museSession}`);
+    expect(result.status).toBe('done');
+    expect(result.changed.sort()).toEqual([page, cut]);
+    // The inputs commit holds the task alone; the session's commit holds both pages.
+    expect(git(appDir, 'show', '--name-only', '--format=', 'HEAD~1').trim()).toBe('.weave/tasks/pages-resume.md');
+    expect(git(appDir, 'show', '--name-only', '--format=', 'HEAD', '--', 'web').trim().split('\n').sort()).toEqual([page, cut]);
+    const ledger = JSON.parse(readFileSync(path.join(appDir, '.weave/ledger.json'), 'utf8'));
+    expect(ledger.map((entry: { path: string; session: string }) => [entry.path, entry.session]).sort()).toEqual([
+      [page, 'pages-resume'],
+      [cut, 'pages-resume'],
+    ]);
+    expect(readEvents(run).find((e) => e.type === 'session:start')).toMatchObject({ museSession });
   });
 });
 

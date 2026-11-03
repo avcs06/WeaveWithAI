@@ -50,6 +50,8 @@ export function runLog(
             event.stage,
             `${round} started${n('fixing') ? `, fixing ${count(n('fixing'), 'issue')}` : ''}`,
           );
+        case 'round:resumed':
+          return line(event.stage, `${round} resumed with the output saved for it`);
         case 'llm:call': {
           if (typeof event.reviewer === 'string') {
             const missed = (event.missed as string[] | undefined) ?? [];

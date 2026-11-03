@@ -90,6 +90,12 @@ export type SpecStageOptions<T> = {
   compose?: Compose<T>;
   /** A document to start from: round 1 validates it instead of generating one, and the fixes patch it. */
   start?: Draft<T>;
+  /**
+   * A round to resume at, with the document made for it outside this call, such as by a resumed coding session:
+   * the round validates and reviews it with no generation, the report keeps the rounds before it, and the rounds
+   * after it run as usual.
+   */
+  resume?: { round: number; draft: Draft<T> };
   /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
   llm: Llm;
@@ -144,9 +150,19 @@ const recheckPrompt = loadPrompt(
 export async function runSpecStage<T>(
   o: SpecStageOptions<T>,
 ): Promise<SpecStageResult<T>> {
+  const schedule = o.schedule ?? SCHEDULE;
+  const first = o.resume?.round ?? 1;
+  if (o.resume) {
+    const step = schedule[first - 1];
+    if (!step) throw new Error(`${o.stage}: no round ${first} to resume; the schedule has ${schedule.length}`);
+    if (o.start) throw new Error(`${o.stage}: both resume and start given; a resumed round brings its own document`);
+    // The blockers a round passes on come from its reviewers; resumed where none run, those of the round before would be lost.
+    if (o.review && !step.reviewers.some((reviewer) => o.review?.[reviewer]))
+      throw new Error(`${o.stage}: round ${first} has no reviewers, so resuming there loses the blockers of round ${first - 1}; resume at a round with reviewers`);
+  }
   appendEvent(o.run, { type: 'stage:start', stage: o.stage });
   updateStage(o.run, o.stage, { status: 'running' });
-  clearReport(o.run, o.stage);
+  clearReport(o.run, o.stage, first);
 
   const compose = o.compose ?? conversation(o);
   const answers: Answers = {};
@@ -191,16 +207,20 @@ export async function runSpecStage<T>(
     appendEvent(o.run, { type: 'stage:answers', stage: o.stage, count });
   };
 
-  let last = o.start
-    ? { draft: o.start, issues: o.validate(o.start.data) }
+  // A resumed round's document, like a given one, is validated here and never generated.
+  const given = o.resume?.draft ?? o.start;
+  if (o.resume) appendEvent(o.run, { type: 'round:resumed', stage: o.stage, round: first });
+  let last = given
+    ? { draft: given, issues: o.validate(given.data) }
     : await produce(1, (call) => compose.draft(call), 0);
   await askAbout(last.draft.data);
 
   let pending: Issue[] = [];
   let blockers: Issue[] = [];
-  let rounds = 1;
-  for (const [index, step] of (o.schedule ?? SCHEDULE).entries()) {
+  let rounds = first;
+  for (const [index, step] of schedule.entries()) {
     const round = index + 1;
+    if (round < first) continue;
     rounds = round;
     const hasPendingIssues = pending.length > 0;
     if (step.fix && hasPendingIssues) {
@@ -224,8 +244,9 @@ export async function runSpecStage<T>(
       }
       await askAbout(last.draft.data);
     }
-    // Round 1 produced unless it started from a given document; later rounds only when something was pending.
-    const produced = round === 1 ? !o.start : hasPendingIssues;
+    // The first round produced unless it started from a given document (a resumed one was produced outside);
+    // later rounds only when something was pending.
+    const produced = round === first ? !o.start : hasPendingIssues;
 
     const { mandatory, warnings } = splitIssues(last.issues);
     if (round === 1 || produced)

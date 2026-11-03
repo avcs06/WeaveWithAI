@@ -147,25 +147,55 @@ export async function appCheck(appDir: string, name: string, args: string[]): Pr
   return { name, ok: result.exitCode === 0, output: lines.slice(-MAX_OUTPUT_LINES).join('\n') };
 }
 
+/** A session's name in file names: its task is `.weave/tasks/<slug>.md`, its log `sessions/<slug>.jsonl`. */
+export const sessionSlug = (id: string) => id.replace(/[^a-zA-Z0-9]+/g, '-');
+
+/**
+ * Continues a Muse session that was cut off mid-task, such as by a killed run: Muse picks it up by its id, and what
+ * the cut session left uncommitted counts as this session's, in its ledger, its checks and its commit.
+ */
+export function resumeSession(
+  ctx: StageContext,
+  appDir: string,
+  session: Session & { museSession: string },
+  deps: SessionDeps = {},
+): Promise<SessionResult> {
+  return runSession(ctx, appDir, session, deps, true);
+}
+
 export async function runSession(
   ctx: StageContext,
   appDir: string,
   session: Session,
   deps: SessionDeps = {},
+  resuming = false,
 ): Promise<SessionResult> {
   const { run } = ctx;
   const backend = resolveBackend(ctx.config, ctx.backend);
-  const slug = session.id.replace(/[^a-zA-Z0-9]+/g, '-');
+  const slug = sessionSlug(session.id);
   const stage = session.stage ?? 'session';
   const at = (...parts: string[]) => path.join(appDir, ...parts);
 
   const promptFile = `.weave/tasks/${slug}.md`;
   mkdirSync(at('.weave', 'tasks'), { recursive: true });
   writeFileSync(at(promptFile), `${session.task}\n`);
-  git(appDir, 'add', '-A');
-  git(appDir, 'commit', '-q', '--allow-empty', '-m', `${stage}: inputs for ${session.id}`);
+  if (resuming) {
+    // The task alone: the cut session's files stay uncommitted, for this session's diff.
+    git(appDir, 'add', '--', promptFile);
+    git(appDir, 'commit', '-q', '-m', `${stage}: inputs for ${session.id}`, '--', promptFile);
+  } else {
+    git(appDir, 'add', '-A');
+    git(appDir, 'commit', '-q', '--allow-empty', '-m', `${stage}: inputs for ${session.id}`);
+  }
 
-  appendEvent(run, { type: 'session:start', stage: `session:${session.id}`, backend: backend.name, model: backend.model });
+  // The Muse session id is what a resume needs once a run is cut.
+  appendEvent(run, {
+    type: 'session:start',
+    stage: `session:${session.id}`,
+    backend: backend.name,
+    model: backend.model,
+    museSession: session.museSession,
+  });
   // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
   const inContainer = !deps.bin && ctx.config.MUSE_DOCKER === true;
   // The subscription is a Muse Code login on the Meta API; the open-weight backends have only keys.

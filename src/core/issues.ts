@@ -27,9 +27,17 @@ export function readReport(run: Run, stage: string): Report | undefined {
   return JSON.parse(readFileSync(file, 'utf8')) as Report;
 }
 
-/** A rerun of a stage starts a fresh report; rounds of an earlier run would otherwise linger beside the new ones. */
-export function clearReport(run: Run, stage: string): void {
-  rmSync(runPath(run, 'reports', `${stage}.json`), { force: true });
+/**
+ * A rerun of a stage starts a fresh report; rounds of an earlier run would otherwise linger beside the new ones.
+ * A stage resumed at a round keeps the rounds before it.
+ */
+export function clearReport(run: Run, stage: string, fromRound = 1): void {
+  const report = fromRound > 1 ? readReport(run, stage) : undefined;
+  if (!report) {
+    rmSync(runPath(run, 'reports', `${stage}.json`), { force: true });
+    return;
+  }
+  writeJsonAtomic(runPath(run, 'reports', `${stage}.json`), { rounds: report.rounds.filter((entry) => entry.round < fromRound) });
 }
 
 export function writeReport(

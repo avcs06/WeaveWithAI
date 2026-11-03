@@ -71,20 +71,24 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
 const pageSample = (run: Run, screen: Screen, route: CheckedRoute): RouteSample =>
   routeSample(route.url, screen.id, screen.route === '/', route.signedIn ? signedIn(storagePrefix(run)) : undefined);
 
-async function runPages(ctx: StageContext): Promise<void> {
+function pagesUnits(ctx: StageContext): UnitSpec[] {
   const scope = readArtifact<Scope>(ctx.run, 'flows-scope').data;
   const flows = readArtifact<Flows>(ctx.run, 'flows-expand').data;
   const architecture = readArtifact<Architecture>(ctx.run, 'design-architect').data;
   const contract = readArtifact<Contract>(ctx.run, 'contract').data;
   const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
-  const appDir = runPath(ctx.run, 'app');
   const spec = pagesSpec(architecture, contract, flows, scope);
   const samples = builtScreens(architecture).map((screen, i) => pageSample(ctx.run, screen, spec.routes![i]!));
-  await runUnits(ctx, STAGE, [{ ...spec, rendered: renderedOn(ctx.run, appDir, samples, theme) }]);
+  return [{ ...spec, rendered: renderedOn(ctx.run, runPath(ctx.run, 'app'), samples, theme) }];
+}
+
+async function runPages(ctx: StageContext): Promise<void> {
+  const appDir = runPath(ctx.run, 'app');
+  await runUnits(ctx, STAGE, pagesUnits(ctx));
   // CODE-008: one production build once every page is in; what fails is known, the run goes on.
   const build = await appCheck(appDir, 'build', ['pnpm', 'build']);
   appendEvent(ctx.run, { type: 'check:run', stage: STAGE, name: 'build', ok: build.ok });
   writeReport(ctx.run, `${STAGE}-build`, 1, build.ok ? [] : [{ rule: 'CODE-008', severity: 'mandatory', message: `next build failed:\n${build.output.trim()}` }]);
 }
 
-export const pagesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runPages(ctx) };
+export const pagesStage: StageDef = { name: STAGE, produces: [], units: pagesUnits, run: (ctx) => runPages(ctx) };

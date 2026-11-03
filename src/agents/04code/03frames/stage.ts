@@ -94,7 +94,7 @@ async function writeSkeletons(run: Run, appDir: string, files: Map<string, strin
   git(appDir, 'commit', '-q', '-m', `${STAGE}: frame layouts by code`);
 }
 
-async function runFrames(ctx: StageContext): Promise<void> {
+function framesUnits(ctx: StageContext): UnitSpec[] {
   const architecture = readArtifact<Architecture>(ctx.run, 'design-architect').data;
   const flows = readArtifact<Flows>(ctx.run, 'flows-expand').data;
   const scope = readArtifact<Scope>(ctx.run, 'flows-scope').data;
@@ -105,15 +105,23 @@ async function runFrames(ctx: StageContext): Promise<void> {
     routeSample(probe.route, probe.frame, false, probe.signedIn ? signedIn(storagePrefix(ctx.run)) : undefined),
   );
   const rendered = samples.length ? withProbes(appDir, probes, renderedOn(ctx.run, appDir, samples, theme)) : undefined;
+  return framesSpecs(architecture).map((spec) => ({ ...spec, ...(rendered && { rendered }) }));
+}
+
+async function runFrames(ctx: StageContext): Promise<void> {
+  const architecture = readArtifact<Architecture>(ctx.run, 'design-architect').data;
+  const flows = readArtifact<Flows>(ctx.run, 'flows-expand').data;
+  const scope = readArtifact<Scope>(ctx.run, 'flows-scope').data;
+  const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
   const skeletons = frameSkeletons(architecture, flows, scope, theme);
   await runUnits(
     ctx,
     STAGE,
-    framesSpecs(architecture).map((spec) => ({ ...spec, ...(rendered && { rendered }) })),
+    framesUnits(ctx),
     {},
     // Only a frame beyond the app's and the marketing site's needs code here.
     skeletons.size ? (dir) => writeSkeletons(ctx.run, dir, skeletons) : undefined,
   );
 }
 
-export const framesStage: StageDef = { name: STAGE, produces: [], run: (ctx) => runFrames(ctx) };
+export const framesStage: StageDef = { name: STAGE, produces: [], units: framesUnits, run: (ctx) => runFrames(ctx) };
