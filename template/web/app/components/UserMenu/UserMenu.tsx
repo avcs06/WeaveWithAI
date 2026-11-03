@@ -72,7 +72,7 @@ export const UserMenu = ({
             inSidebar && 'w-full',
           )}
         >
-          <Avatar name={name} />
+          <Avatar size="sm" name={name} />
           <Truncate>{name}</Truncate>
         </span>
       </PlainButton>
