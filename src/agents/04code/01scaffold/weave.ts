@@ -9,7 +9,11 @@ import {
   frameLines,
   screenLines,
 } from '../../02design/02architect/render';
-import type { Architecture, Frame, Screen } from '../../02design/02architect/schema';
+import type {
+  Architecture,
+  Frame,
+  Screen,
+} from '../../02design/02architect/schema';
 import type { Contract } from '../../03contract/schema';
 import { behindSignIn } from '../rendered';
 
@@ -19,7 +23,12 @@ import { behindSignIn } from '../rendered';
 // dialogs and the operations that load it.
 
 export type KnownIssue = Issue & { stage: string };
-type QuestionRecord = { id: string; question: string; answer: string; from: string };
+type QuestionRecord = {
+  id: string;
+  question: string;
+  answer: string;
+  from: string;
+};
 
 export type CodeInputs = {
   scope: Scope;
@@ -48,9 +57,19 @@ const slug = (name: string) =>
     .replace(/^-+|-+$/g, '');
 
 /** A frame whose every screen is behind sign-in: it takes the app layout and sends visitors to the landing page. */
-export function signedInFrame(architecture: Architecture, flows: Flows, scope: Scope, frame: Frame): boolean {
-  const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
-  return screens.length > 0 && screens.every((screen) => behindSignIn(screen, flows, scope));
+export function signedInFrame(
+  architecture: Architecture,
+  flows: Flows,
+  scope: Scope,
+  frame: Frame,
+): boolean {
+  const screens = architecture.screens.filter(
+    (screen) => screen.frame === frame.id,
+  );
+  return (
+    screens.length > 0 &&
+    screens.every((screen) => behindSignIn(screen, flows, scope))
+  );
 }
 
 /**
@@ -59,23 +78,38 @@ export function signedInFrame(architecture: Architecture, flows: Flows, scope: S
  * a kind gets one from its name: "Admin frame" is `admin`, or its id when
  * that name is taken. A frame without screens has none.
  */
-export function routeGroups(architecture: Architecture, flows: Flows, scope: Scope): Map<string, string> {
-  const framed = architecture.frames.filter((frame) => architecture.screens.some((screen) => screen.frame === frame.id));
+export function routeGroups(
+  architecture: Architecture,
+  flows: Flows,
+  scope: Scope,
+): Map<string, string> {
+  const framed = architecture.frames.filter((frame) =>
+    architecture.screens.some((screen) => screen.frame === frame.id),
+  );
   const groups = new Map<string, string>();
   for (const frame of framed) {
-    const group = signedInFrame(architecture, flows, scope, frame) ? 'app' : 'landing';
+    const group = signedInFrame(architecture, flows, scope, frame)
+      ? 'app'
+      : 'landing';
     if (![...groups.values()].includes(group)) groups.set(frame.id, group);
   }
   for (const frame of framed.filter((f) => !groups.has(f.id))) {
     const name = slug(frame.name);
-    const taken = [...groups.values()].includes(name) || framed.some((f) => f.id !== frame.id && slug(f.name) === name);
+    const taken =
+      [...groups.values()].includes(name) ||
+      framed.some((f) => f.id !== frame.id && slug(f.name) === name);
     groups.set(frame.id, name && !taken ? name : frame.id.toLowerCase());
   }
   return groups;
 }
 
 /** A screen's route folder, inside its frame's route group. */
-export function screenFolder(architecture: Architecture, flows: Flows, scope: Scope, screen: Screen): string {
+export function screenFolder(
+  architecture: Architecture,
+  flows: Flows,
+  scope: Scope,
+  screen: Screen,
+): string {
   const group = routeGroups(architecture, flows, scope).get(screen.frame);
   const route = screen.route === '/' ? '' : screen.route;
   return `web/app/(routes)${group ? `/(${group})` : ''}${route}`;
@@ -83,12 +117,27 @@ export function screenFolder(architecture: Architecture, flows: Flows, scope: Sc
 
 /** The dialogs a screen opens. */
 export const dialogsOf = (architecture: Architecture, screen: Screen) =>
-  architecture.dialogs.filter((dialog) => dialog.openedFrom.includes(screen.id));
+  architecture.dialogs.filter((dialog) =>
+    dialog.openedFrom.includes(screen.id),
+  );
 
 /** The operations that load what a screen and its dialogs show, by the contract's `screens`. */
-export function screenReads(architecture: Architecture, contract: Contract, screen: Screen): string[] {
-  const ids = new Set([screen.id, ...dialogsOf(architecture, screen).map((dialog) => dialog.id)]);
-  return [...new Set(contract.screens.filter((entry) => ids.has(entry.screen)).flatMap((entry) => entry.reads))];
+export function screenReads(
+  architecture: Architecture,
+  contract: Contract,
+  screen: Screen,
+): string[] {
+  const ids = new Set([
+    screen.id,
+    ...dialogsOf(architecture, screen).map((dialog) => dialog.id),
+  ]);
+  return [
+    ...new Set(
+      contract.screens
+        .filter((entry) => ids.has(entry.screen))
+        .flatMap((entry) => entry.reads),
+    ),
+  ];
 }
 
 /** The folder an issue goes to, from the id its `at` names: a frame's to the frames; a screen's, dialog's or flow's to the pages. */
@@ -107,9 +156,11 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
   const { architecture, scope, flows, themed, contract } = inputs;
   const groups = routeGroups(architecture, flows, scope);
   const files = new Map<string, string>();
-  const put = (file: string, value: unknown) => files.set(file, typeof value === 'string' ? value : json(value));
+  const put = (file: string, value: unknown) =>
+    files.set(file, typeof value === 'string' ? value : json(value));
 
-  for (const [folder, guidelines] of Object.entries(inputs.guidelines)) put(`${folder}/guidelines.md`, guidelines);
+  for (const [folder, guidelines] of Object.entries(inputs.guidelines))
+    put(`${folder}/guidelines.md`, guidelines);
   put(`${SCAFFOLD}/scope.json`, scope);
   put(`${SCAFFOLD}/flows.json`, flows);
   put(`${SCAFFOLD}/theme.json`, themed);
@@ -130,7 +181,9 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
     text([
       '# Frames',
       ...architecture.frames.flatMap((frame) => {
-        const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
+        const screens = architecture.screens.filter(
+          (screen) => screen.frame === frame.id,
+        );
         const group = groups.get(frame.id);
         return [
           '',
@@ -139,7 +192,12 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
           group
             ? `Route group: \`web/app/(routes)/(${group})/\`. Screens inside it: ${screens.map((screen) => `${screen.id} ${screen.route}`).join(', ')}.`
             : 'No screen sits in it, so it has no route group.',
-          `Loads its records through: ${contract.screens.filter((entry) => entry.screen === frame.id).flatMap((entry) => entry.reads).join(', ') || 'nothing'}.`,
+          `Loads its records through: ${
+            contract.screens
+              .filter((entry) => entry.screen === frame.id)
+              .flatMap((entry) => entry.reads)
+              .join(', ') || 'nothing'
+          }.`,
         ];
       }),
     ]),
@@ -154,7 +212,10 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
         '',
         `Route folder: \`${screenFolder(architecture, flows, scope, screen)}\`.`,
         `Loads its records through: ${reads.join(', ') || 'nothing'}.`,
-        ...dialogsOf(architecture, screen).flatMap((dialog) => ['', ...dialogLines(dialog)]),
+        ...dialogsOf(architecture, screen).flatMap((dialog) => [
+          '',
+          ...dialogLines(dialog),
+        ]),
       ]),
     );
   }
@@ -165,8 +226,13 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
     const owner = issueOwner(issue.at);
     issues.set(owner, [...(issues.get(owner) ?? []), issue]);
   }
-  put(`${SCAFFOLD}/issues.json`, { questions: inputs.questions, known: issues.get(SCAFFOLD) ?? [] });
-  for (const [owner, known] of issues) if (owner !== SCAFFOLD) put(`${owner}/issues.json`, { questions: [], known });
+  put(`${SCAFFOLD}/issues.json`, {
+    questions: inputs.questions,
+    known: issues.get(SCAFFOLD) ?? [],
+  });
+  for (const [owner, known] of issues)
+    if (owner !== SCAFFOLD)
+      put(`${owner}/issues.json`, { questions: [], known });
   return files;
 }
 

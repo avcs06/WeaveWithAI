@@ -199,11 +199,6 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
     padding: spacing.describe('The page padding around the content'),
     align: z.enum(['start', 'center']),
     sectionGap: spacing.describe('The gap between sections'),
-    fullBleed: z
-      .boolean()
-      .describe(
-        'Section backgrounds run the full width while their content stays in the container',
-      ),
     separation: separation.describe(
       'How the content area sets off from the frame: its own panel background, a border, a shadow, or nothing',
     ),

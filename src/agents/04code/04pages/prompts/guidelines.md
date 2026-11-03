@@ -30,8 +30,8 @@
 
 ## The landing page
 
-- When the marketing layout's `main.fullBleed` is true, build the hero as a
-  `Bleed` from `@app/components/PageLayout`: its background runs the full
+- Build the hero as a `Bleed` from `@app/components/PageLayout`: its
+  background runs the full
   width while its content stays in the container. As the first section
   under an overlay header, it runs under the header too.
   Draw the background from the theme's brand colors through tokens, such

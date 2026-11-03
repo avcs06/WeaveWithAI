@@ -367,7 +367,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       "main": {
         "align": "center",
         "container": "fluid",
-        "fullBleed": false,
         "maxWidthPx": 0,
         "padding": "6",
         "sectionGap": "6",
@@ -423,7 +422,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
       "main": {
         "align": "center",
         "container": "fluid",
-        "fullBleed": true,
         "maxWidthPx": 0,
         "padding": "6",
         "sectionGap": "6",

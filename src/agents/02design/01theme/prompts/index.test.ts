@@ -96,7 +96,6 @@ describe('theme prompt', () => {
       'footer',
       'main',
       'separation',
-      'fullBleed',
     ])
       expect(prompt).toContain(`\`${part}\``);
   });

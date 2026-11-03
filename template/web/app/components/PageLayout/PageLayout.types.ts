@@ -58,8 +58,6 @@ export type PageLayoutConfig = {
     align: 'start' | 'center';
     /** The gap between the page's sections. */
     sectionGap: SpacingKey;
-    /** Section backgrounds may run the full width: see `Bleed`. */
-    fullBleed: boolean;
     /** How the content area sets off from the frame: a panel background, a border, a shadow, or nothing. */
     separation: Separation;
   };
