@@ -1,4 +1,5 @@
 import { classNames } from '@packages/styles/classNames';
+import { Quote as QuoteMark } from 'lucide-react';
 import React from 'react';
 
 import * as styles from './Typography.css';
@@ -150,8 +151,8 @@ export const DescriptionDetails = ({
 );
 
 /**
- * A quotation set off from the text around it, with its `source` under it
- * when given.
+ * A quotation between quote marks on a box in the theme's color, with its
+ * `source` under it in the box when given.
  *
  * @invalidAlternative blockquote
  */
@@ -160,23 +161,37 @@ export const Quote = ({
   font,
   color,
   className,
+  children,
   ...props
 }: QuoteProps) => {
+  const box = classNames('relative', styles.quoteBox);
   const quote = (
     <blockquote
       {...props}
       data-ds=""
       className={classNames(
-        styles.quote,
+        source === undefined ? box : styles.quote,
         font && styles.fonts[font],
         color && styles.textColors[color],
         source === undefined && className,
       )}
-    />
+    >
+      <QuoteMark
+        aria-hidden
+        fill="currentColor"
+        className={classNames('absolute', styles.openMark)}
+      />
+      {children}
+      <QuoteMark
+        aria-hidden
+        fill="currentColor"
+        className={classNames('absolute', styles.closeMark)}
+      />
+    </blockquote>
   );
   if (source === undefined) return quote;
   return (
-    <figure data-ds="" className={classNames(styles.quoteFigure, className)}>
+    <figure data-ds="" className={classNames(box, className)}>
       {quote}
       <figcaption data-ds="" className={styles.quoteSource}>
         {source}

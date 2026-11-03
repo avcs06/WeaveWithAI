@@ -38,9 +38,13 @@ export const list = style({
   paddingInlineStart: space[5],
 });
 
-export const bulleted = style({ listStyleType: 'disc' });
+export const bulleted = style({
+  listStyleType: 'disc',
+});
 
-export const numbered = style({ listStyleType: 'decimal' });
+export const numbered = style({
+  listStyleType: 'decimal',
+});
 
 export const listItem = style({
   paddingInlineStart: space[1],
@@ -58,24 +62,57 @@ export const descriptionList = style({
 });
 
 // A div around a term and its details, as HTML allows, keeps them in the grid's row.
-globalStyle(`${descriptionList} > div`, { display: 'contents' });
+globalStyle(`${descriptionList} > div`, {
+  display: 'contents',
+});
 
-export const descriptionTerm = style({ gridColumn: 1 });
+export const descriptionTerm = style({
+  gridColumn: 1,
+});
 
-export const descriptionDetails = style({ gridColumn: 2 });
+export const descriptionDetails = style({
+  gridColumn: 2,
+});
 
-export const quoteFigure = style(body);
+const boxPadding = space[4];
+const markSize = tokens.iconSize.body;
 
-export const quote = style({
+// Around the quote alone, or the figure with its source: the marks in its corners, the text between them.
+export const quoteBox = style({
   ...body,
-  paddingInlineStart: space[3],
-  borderInlineStart: `${space[0.5]} solid ${colors.base.border}`,
+  padding: boxPadding,
+  paddingInline: `calc(${boxPadding} + ${markSize} + ${space[2]})`,
+  borderRadius: tokens.radius.surface,
+  background: colors.primary.bg,
+});
+
+export const quote = style(body);
+
+const mark = {
+  width: markSize,
+  height: markSize,
+  color: colors.primary.fgMuted,
+};
+
+// The icon draws a closing mark; turned around, it opens.
+export const openMark = style({
+  ...mark,
+  insetBlockStart: boxPadding,
+  insetInlineStart: boxPadding,
+  transform: 'rotate(180deg)',
+});
+
+export const closeMark = style({
+  ...mark,
+  insetBlockEnd: boxPadding,
+  insetInlineEnd: boxPadding,
 });
 
 export const quoteSource = style({
-  marginTop: space[1],
-  paddingInlineStart: space[3],
+  marginTop: space[2],
   color: colors.surface.pageFgMuted,
+  // Empty alt text: screen readers skip the dash.
+  '::before': { content: '"- " / ""' },
 });
 
 // Inside text: it takes the text's size, and pads only sideways so the line keeps its height.
