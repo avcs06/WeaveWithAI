@@ -7,7 +7,7 @@ import { menu, menuItem } from '../Menu/Menu.css';
 const surface = tokens.color.surface;
 const brand = tokens.color.primary;
 
-// Menu's shell without a menu's chrome: no edge, shadow, padding or size
+// Menu's shell and spacing without a menu's chrome: no edge, shadow or size
 // cap, and the height the sidebar gives it, on the sidebar's own background.
 export const sidebarMenu = style({
   selectors: {
@@ -16,7 +16,6 @@ export const sidebarMenu = style({
       maxWidth: 'none',
       maxHeight: 'none',
       height: '100%',
-      paddingBlock: 0,
       borderRadius: 0,
       background: 'transparent',
       boxShadow: 'none',
@@ -35,7 +34,6 @@ globalStyle(`${sidebarMenu} > [data-slot='footer']`, { marginTop: 'auto' });
 export const sidebarMenuItem = style({
   selectors: {
     [`${menuItem}&`]: {
-      marginInline: 0,
       color: surface.pageFg,
       backgroundImage: 'none',
       textDecoration: 'none',

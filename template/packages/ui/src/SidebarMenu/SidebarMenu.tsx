@@ -30,7 +30,7 @@ export const SidebarMenu = ({ className, ...props }: SidebarMenuProps) => (
   <Menu
     role="navigation"
     {...props}
-    className={classNames(sidebarMenu, 'flex-col-gap-3', className)}
+    className={classNames(sidebarMenu, className)}
   />
 );
 
