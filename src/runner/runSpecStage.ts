@@ -365,13 +365,76 @@ function patchFixMessage(pending: Issue[], answers: Answers): string {
   });
 }
 
-/** Tries per model call before a bad or cut answer counts as the model's failure. */
-const CALL_ATTEMPTS = 3;
+/** What a failed try cost: an answer the schema refuses or one cut at the output limit was paid for. */
+function logFailedCall<T>(o: SpecStageOptions<T>, stage: string, round: number, error: unknown): void {
+  if (error instanceof ModelOutputInvalid && error.paid) {
+    const { model, usage } = error.paid;
+    appendEvent(o.run, {
+      type: 'llm:call',
+      stage,
+      round,
+      invalid: true,
+      model,
+      input: usage.input,
+      cachedInput: usage.cachedInput,
+      output: usage.output,
+      costUsd: costUsd(model, usage),
+    });
+    warnUnpriced(o.run, stage, model);
+  } else if (error instanceof ModelOutputTruncated) {
+    appendEvent(o.run, {
+      type: 'llm:call',
+      stage,
+      round,
+      truncated: true,
+      model: error.model,
+      input: error.usage.input,
+      cachedInput: error.usage.cachedInput,
+      output: error.usage.output,
+      costUsd: costUsd(error.model, error.usage),
+      contentLength: error.contentLength,
+    });
+    warnUnpriced(o.run, stage, error.model);
+  }
+}
 
 /**
- * A `Call` for one round: logs every call as an `llm:call` event.
- * A call cut at the output limit, or answered with what the schema refuses, is
- * tried up to CALL_ATTEMPTS times here, not around the compose, so a compose's side effects never repeat.
+ * One model call with one retry on any failure, in the same round: the other
+ * calls of the round run once, and the retry is no round of its own. A second
+ * failure is the caller's to handle.
+ */
+async function withRetry<T, R>(
+  o: SpecStageOptions<T>,
+  stage: string,
+  round: number,
+  call: () => Promise<R>,
+): Promise<R> {
+  const attempt = () =>
+    call().catch((error: unknown) => {
+      logFailedCall(o, stage, round, error);
+      throw error;
+    });
+  try {
+    return await attempt();
+  } catch (error) {
+    const why =
+      error instanceof ModelOutputInvalid
+        ? `the answer did not match the schema (${error.message})`
+        : error instanceof ModelOutputTruncated
+          ? 'the answer was cut at the output limit'
+          : `the call failed (${String(error).split('\n')[0]})`;
+    appendEvent(o.run, {
+      type: 'warning',
+      stage,
+      message: `${stage} round ${round}: ${why}; retrying once`,
+    });
+    return await attempt();
+  }
+}
+
+/**
+ * A `Call` for one round: logs every call as an `llm:call` event, and retries a
+ * failed one once here, not around the compose, so a compose's side effects never repeat.
  */
 function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   return async (input) => {
@@ -381,59 +444,9 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
       model: input.model ?? 'default',
       runDir: o.run.dir,
     };
-    for (let attempt = 1; ; attempt += 1) {
-      const retried = attempt >= CALL_ATTEMPTS;
-      try {
-        const result = await o.llm.generateStructured(request);
-        logCall(o.run, input.stage, round, result);
-        return result;
-      } catch (error) {
-        if (error instanceof ModelOutputInvalid) {
-          const paid = error.paid;
-          if (paid) {
-            appendEvent(o.run, {
-              type: 'llm:call',
-              stage: input.stage,
-              round,
-              invalid: true,
-              model: paid.model,
-              input: paid.usage.input,
-              cachedInput: paid.usage.cachedInput,
-              output: paid.usage.output,
-              costUsd: costUsd(paid.model, paid.usage),
-            });
-            warnUnpriced(o.run, input.stage, paid.model);
-          }
-          if (retried) throw error;
-          appendEvent(o.run, {
-            type: 'warning',
-            stage: input.stage,
-            message: `${input.stage} round ${round}: the answer did not match the schema (${error.message}); retrying`,
-          });
-          continue;
-        }
-        if (!(error instanceof ModelOutputTruncated)) throw error;
-        appendEvent(o.run, {
-          type: 'llm:call',
-          stage: input.stage,
-          round,
-          truncated: true,
-          model: error.model,
-          input: error.usage.input,
-          cachedInput: error.usage.cachedInput,
-          output: error.usage.output,
-          costUsd: costUsd(error.model, error.usage),
-          contentLength: error.contentLength,
-        });
-        warnUnpriced(o.run, input.stage, error.model);
-        if (retried) throw error;
-        appendEvent(o.run, {
-          type: 'warning',
-          stage: input.stage,
-          message: `${input.stage} round ${round}: the answer was cut at the output limit; retrying`,
-        });
-      }
-    }
+    const result = await withRetry(o, input.stage, round, () => o.llm.generateStructured(request));
+    logCall(o.run, input.stage, round, result);
+    return result;
   };
 }
 
@@ -505,17 +518,19 @@ async function reviewCall<T>(
 ) {
   const stage = `${o.stage}-review-${reviewer}`;
   appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
-  const result = await o.llm.generateStructured({
-    stage,
-    round,
-    schema: Review,
-    schemaName: 'Review',
-    messages: [...messages],
-    model: 'default',
-    reasoningEffort: REVIEW_EFFORT,
-    maxTokens: REVIEW_MAX_TOKENS,
-    runDir: o.run.dir,
-  });
+  const result = await withRetry(o, stage, round, () =>
+    o.llm.generateStructured({
+      stage,
+      round,
+      schema: Review,
+      schemaName: 'Review',
+      messages: [...messages],
+      model: 'default',
+      reasoningEffort: REVIEW_EFFORT,
+      maxTokens: REVIEW_MAX_TOKENS,
+      runDir: o.run.dir,
+    }),
+  );
   const checked = new Set(result.data.checked);
   const missed = points.filter((id) => !checked.has(id));
   logCall(o.run, stage, round, result, { reviewer, blockers: result.data.blockers.length, missed });

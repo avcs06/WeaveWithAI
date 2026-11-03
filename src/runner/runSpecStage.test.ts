@@ -817,7 +817,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
       120,
     );
 
-  it('retries a cut first draft with the same input and finishes', async () => {
+  it('retries a cut first draft once with the same input and finishes', async () => {
     const { llm, inputs } = fakeLlm([cut(), { title: 'Cats' }]);
     const { run, promise } = stage('cut-once', llm, () => []);
 
@@ -854,13 +854,13 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     expect(warning).toMatchObject({
       stage: 'doc',
       message:
-        'doc round 1: the answer was cut at the output limit; retrying',
+        'doc round 1: the answer was cut at the output limit; retrying once',
     });
     expect(answered).toMatchObject({ stage: 'doc', round: 1, output: 5 });
     expect(answered).not.toHaveProperty('truncated');
   });
 
-  it('retries an answer the schema refuses, logging what it cost, and fails the first draft on a third', async () => {
+  it('retries once an answer the schema refuses, logging what it cost, and fails on a second', async () => {
     const invalid = () => {
       const error = new ModelOutputInvalid('output is not JSON: Unexpected token', []);
       error.paid = { model: 'muse-spark-1.3', usage: { input: 10, cachedInput: 0, output: 40 } };
@@ -873,32 +873,67 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     const [refused, warning] = readEvents(first.run).slice(2, 4);
     expect(refused).toMatchObject({ type: 'llm:call', invalid: true, output: 40 });
     expect(warning?.message).toContain('did not match the schema');
-    const thrice = fakeLlm([invalid(), invalid(), invalid()]);
-    const second = stage('invalid-thrice', thrice.llm, () => []);
+    const twice = fakeLlm([invalid(), invalid()]);
+    const second = stage('invalid-twice', twice.llm, () => []);
     await expect(second.promise).rejects.toBeInstanceOf(ModelOutputInvalid);
-    expect(thrice.inputs).toHaveLength(3);
+    expect(twice.inputs).toHaveLength(2);
   });
 
-  it('keeps the last document when a fix is refused on every try, with what was pending as known', async () => {
+  it('keeps the last document when a fix fails on its retry too, with what was pending as known', async () => {
     const invalid = () => new ModelOutputInvalid('output is not JSON: Unexpected token', []);
-    const { llm, inputs } = fakeLlm([{ title: '' }, invalid(), invalid(), invalid()]);
+    const { llm, inputs } = fakeLlm([{ title: '' }, invalid(), invalid()]);
     const { run, promise } = stage('fix-refused', llm, requireTitle);
     const result = await promise;
     expect(result).toMatchObject({ output: { title: '' } });
     expect(result.known).toHaveLength(1);
-    expect(inputs.map((input) => input.round)).toEqual([1, 2, 2, 2]);
+    // The retry is no round of its own: both tries are round 2.
+    expect(inputs.map((input) => input.round)).toEqual([1, 2, 2]);
     expect(readState(run).stages.doc?.status).not.toBe('failed');
     expect(
       readEvents(run).filter((event) => event.type === 'warning').at(-1)?.message,
     ).toContain('doc round 2: the fix failed');
   });
 
-  it('fails the stage when every retry of the first draft is cut too, logging each cut call once', async () => {
-    const { llm, inputs } = fakeLlm([cut(), cut(), cut()]);
-    const { run, promise } = stage('cut-thrice', llm, () => []);
+  it('retries a failed review once in its round; the other reviewer runs once, and a second failure adds no blockers', async () => {
+    const calls: Record<string, number> = {};
+    const reviewing = (failures: number): Llm => ({
+      async generateStructured(input) {
+        calls[input.stage] = (calls[input.stage] ?? 0) + 1;
+        if (input.stage === 'doc-review-peer' && calls[input.stage]! <= failures)
+          throw new Error('Meta API 500');
+        const data = input.stage === 'doc' ? { title: 'Cats' } : clean;
+        return {
+          data: data as never,
+          raw: JSON.stringify(data),
+          usage: { input: 10, cachedInput: 0, output: 5 },
+          costUsd: 0.001,
+          replayed: false,
+          backend: 'meta',
+          model: 'muse-spark-1.3',
+          durationMs: 1,
+        };
+      },
+    });
+    const once = stage('review-retry', reviewing(1), () => [], guide);
+    expect(await once.promise).toMatchObject({ output: { title: 'Cats' }, rounds: 2, known: [] });
+    expect(calls).toEqual({ doc: 1, 'doc-review-peer': 2, 'doc-review-output': 1 });
+    expect(readEvents(once.run).some((event) => event.type === 'warning' && String(event.message).includes('retrying once'))).toBe(true);
+
+    for (const key of Object.keys(calls)) delete calls[key];
+    const twice = stage('review-fails', reviewing(2), () => [], guide);
+    expect(await twice.promise).toMatchObject({ output: { title: 'Cats' }, known: [] });
+    expect(calls['doc-review-peer']).toBe(2);
+    expect(
+      readEvents(twice.run).some((event) => event.type === 'warning' && String(event.message).includes('the peer review failed')),
+    ).toBe(true);
+  });
+
+  it('fails the stage when the retry is cut too, logging each cut call once', async () => {
+    const { llm, inputs } = fakeLlm([cut(), cut()]);
+    const { run, promise } = stage('cut-twice', llm, () => []);
 
     await expect(promise).rejects.toBeInstanceOf(ModelOutputTruncated);
-    expect(inputs).toHaveLength(3);
+    expect(inputs).toHaveLength(2);
     expect(readState(run).stages.doc).toMatchObject({
       status: 'failed',
       rounds: 1,
@@ -908,8 +943,6 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     ).toEqual([
       ['stage:start', undefined],
       ['round:start', undefined],
-      ['llm:call', true],
-      ['warning', undefined],
       ['llm:call', true],
       ['warning', undefined],
       ['llm:call', true],
@@ -938,7 +971,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
     ).toMatchObject([
       {
         message:
-          'doc round 2: the answer was cut at the output limit; retrying',
+          'doc round 2: the answer was cut at the output limit; retrying once',
       },
     ]);
   });
