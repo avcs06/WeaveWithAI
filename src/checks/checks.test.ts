@@ -166,6 +166,8 @@ describe('rendered checks on the fixture pages', () => {
     // Contrast is tested on the design system's text too; its text size is not.
     expect(of('DESIGN-R-002').map((f) => f.element)).toContain('#ds-grey');
     expect(of('DESIGN-R-007').map((f) => f.element)).not.toContain('#ds-small');
+    // Spacing the design system set through asChild (data-slot) is its own; the same spacing set by the app is tested.
+    expect([...of('DESIGN-R-010'), ...of('DESIGN-R-011')].map((f) => f.element)).toEqual(['#app-row', '#app-row']);
     await context.close();
   });
 
@@ -185,17 +187,30 @@ describe('rendered checks on the fixture pages', () => {
     expect(new Set(report.findings.map((f) => f.rule))).toContain('DESIGN-R-003');
   });
 
-  it('R-004 targets: a 12 px button fails; the clean page passes', async () => {
+  it('R-004 targets: two 12 px buttons whose circles overlap fail; a 12 px button with room passes; the clean page passes', async () => {
     const bad = await targetSizes(await open('defects.html'));
     // Named from the nearest node with a test id, as the code names it.
-    expect(bad.findings).toEqual([
+    const crowded = (n: number) =>
       expect.objectContaining({
         severity: 'mandatory',
-        message: 'target is 12 by 12; at least 24 by 24',
-        element: '[data-testid="controls"] > button:nth-of-type(3)',
-      }),
-    ]);
+        message: 'target is 12 by 12 and another target is too close; make it at least 24 by 24, or keep other targets clear of a 24px circle on its center',
+        element: `[data-testid="crowded"] > button:nth-of-type(${n})`,
+      });
+    expect(bad.findings).toEqual([crowded(1), crowded(2)]);
+    expect(bad.small24).toBe(3);
     expect((await targetSizes(await open('clean.html'))).findings).toEqual([]);
+  });
+
+  it('R-004 targets: WCAG 2.5.8 passes small links in a sentence and a small link with room; small links in no sentence fail', async () => {
+    const found = await targetSizes(await open('targets.html'));
+    expect(found.findings.map((f) => f.element)).toEqual(['[data-testid="nav-a"]', '[data-testid="nav-b"]']);
+    expect(found.small24).toBe(5);
+  });
+
+  it('R-003 keyboard: a menu button that opens on keydown and cancels the click acts, by its menu and aria-expanded', async () => {
+    const walk = await keyboardWalk(await open('menu.html'), { blockMutations: true });
+    expect(walk.findings.filter((f) => f.message.includes('activate'))).toEqual([]);
+    expect(walk.activation).toEqual({ buttons: 1, enterOk: 1, spaceOk: 1 });
   });
 
   it('R-005 overflow, R-006 first viewport', async () => {

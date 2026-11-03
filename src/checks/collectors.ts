@@ -69,22 +69,23 @@ export async function contrastCheck(
   return { findings, failures, unknown };
 }
 
-/** R-004: a control under 24 by 24 fails. */
+/** R-004: a control under 24 by 24 fails, unless it meets a WCAG 2.5.8 exception: a link inside a sentence, or room around it. */
 export async function targetSizes(
   page: Page,
 ): Promise<{ findings: Finding[]; small24: number }> {
-  const targets = await inPage<
-    { element: string; width: number; height: number }[]
+  const small24 = await inPage<
+    { element: string; width: number; height: number; exempt: string }[]
   >(page, 'targets');
-  const small24 = targets.filter((t) => Math.min(t.width, t.height) < 24);
-  const findings = small24.map((t) =>
-    finding(
-      'DESIGN-R-004',
-      'mandatory',
-      `target is ${t.width} by ${t.height}; at least 24 by 24`,
-      t.element,
-    ),
-  );
+  const findings = small24
+    .filter((t) => !t.exempt)
+    .map((t) =>
+      finding(
+        'DESIGN-R-004',
+        'mandatory',
+        `target is ${t.width} by ${t.height} and another target is too close; make it at least 24 by 24, or keep other targets clear of a 24px circle on its center`,
+        t.element,
+      ),
+    );
   return { findings, small24: small24.length };
 }
 

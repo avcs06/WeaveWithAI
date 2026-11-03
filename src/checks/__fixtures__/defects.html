@@ -16,6 +16,7 @@
   .tight { display: flex; gap: 4px; }
   .loose { display: flex; flex-direction: column; gap: 32px; }
   .cramped { display: flex; gap: 16px; padding: 4px; }
+  .crowded { display: flex; gap: 10px; }
 </style>
 </head>
 <body>
@@ -37,6 +38,8 @@
   <div class="tight" data-testid="tight"><button type="button">Save</button><button type="button">Cancel</button></div>
   <div class="loose" data-testid="loose"><span>Inside a group</span><span>spaced wider than the groups</span></div>
   <div class="cramped" data-testid="cramped"><span>Padding</span><span>under the gap</span></div>
+  <!-- Two 12px buttons 10px apart: their 24px circles overlap (R-004), though their edges keep 8px (R-009). -->
+  <div class="crowded" data-testid="crowded"><button type="button" class="tiny" aria-label="Minimize"></button><button type="button" class="tiny" aria-label="Maximize"></button></div>
   <div><span>Pages read</span> <span data-testid="plain-number">1,834</span></div>
 </section>
 <div class="wide"></div>

@@ -2,7 +2,10 @@ import type { Issue } from '../../core/issues';
 import type { Run } from '../../core/run';
 import { type RouteSample, runRenderedChecks, type ThemeColors } from '../../checks';
 import { APP_URL, withDevServer } from '../../engine/server';
+import type { Scope } from '../01flows/01scope/schema';
+import type { Flows } from '../01flows/schema';
 import type { Theme } from '../02design/01theme/build';
+import type { Screen } from '../02design/02architect/schema';
 
 // The rendered checks of a code unit (DESIGN-R-001 to 012): axe, contrast,
 // target sizes, the keyboard walk, the spacing and the rest, on its routes, after its session.
@@ -23,6 +26,13 @@ export function themeColors(theme: Theme): ThemeColors {
   };
   walk(theme.colors);
   return { all, accent };
+}
+
+/** A screen is behind sign-in unless every flow on it runs signed out, or, with no flows, none of its roles signs in. */
+export function behindSignIn(screen: Screen, flows: Flows, scope: Scope): boolean {
+  const on = flows.flows.filter((flow) => screen.flows.includes(flow.id));
+  if (on.length) return on.some((flow) => !flow.signedOut);
+  return scope.roles.some((role) => screen.roles.includes(role.id) && role.signedIn);
 }
 
 /** One route as the checks sample it; an entry page also checks its first viewport, and a page behind sign-in loads with `storage`'s session. */

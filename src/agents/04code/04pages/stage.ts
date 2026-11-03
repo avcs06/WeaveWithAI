@@ -14,7 +14,7 @@ import type { Contract } from '../../03contract/schema';
 import type { StageContext, StageDef } from '../../stages';
 import { screenFolder, screenReads } from '../01scaffold/weave';
 import { seedId, signedIn, storagePrefix } from '../02contract/codegen';
-import { renderedOn, routeSample } from '../rendered';
+import { behindSignIn, renderedOn, routeSample } from '../rendered';
 import { READS_DENIED, runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
@@ -30,13 +30,6 @@ export function concreteRoute(route: string, contract: Contract): string {
     const entity = contract.entities.find((e) => e.name.toLowerCase() === name.toLowerCase());
     return entity ? seedId(entity.name, 1) : 'demo';
   });
-}
-
-/** A screen is behind sign-in unless every flow on it runs signed out, or, with no flows, none of its roles signs in. */
-export function behindSignIn(screen: Screen, flows: Flows, scope: Scope): boolean {
-  const on = flows.flows.filter((flow) => screen.flows.includes(flow.id));
-  if (on.length) return on.some((flow) => !flow.signedOut);
-  return scope.roles.some((role) => screen.roles.includes(role.id) && role.signedIn);
 }
 
 /** One session for every screen, each in its route folder; what two screens share goes in blocks or components. */

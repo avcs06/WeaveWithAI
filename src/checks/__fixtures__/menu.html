@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu button</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { padding: 24px 16px; }
+  button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Menu button</h1>
+  <!-- Opens on keydown and cancels the click, as a Radix menu trigger does; Escape closes it and focus goes back. -->
+  <button type="button" data-testid="trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="menu">Account</button>
+  <div role="menu" id="menu" hidden><div role="menuitem" tabindex="-1">Sign out</div></div>
+</main>
+<script>
+  const trigger = document.querySelector('[data-testid="trigger"]');
+  const menu = document.getElementById('menu');
+  const show = (open) => {
+    menu.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    (open ? menu.querySelector('[role="menuitem"]') : trigger).focus();
+  };
+  trigger.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      show(menu.hidden);
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !menu.hidden) show(false);
+  });
+</script>
+</body>
+</html>

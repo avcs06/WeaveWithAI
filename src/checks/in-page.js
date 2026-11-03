@@ -75,6 +75,10 @@
       .trim();
   /** Made by the app, not the design system: its own tests cover every element it marks with data-ds. */
   const appMade = (element) => !element.hasAttribute('data-ds');
+  /** Spaced by the design system: its own elements, and an app element it styles through asChild, which gets data-slot but not data-ds. */
+  const dsSpaced = (element) => element.hasAttribute('data-ds') || element.hasAttribute('data-slot');
+  /** What a button can open. */
+  const POPUPS = '[role="dialog"], dialog[open], [role="menu"], [role="listbox"]';
   const textElements = () =>
     [...document.body.querySelectorAll('*')].filter(
       (element) => ownText(element) && visible(element),
@@ -106,14 +110,45 @@
       return { failures, unknown };
     },
 
-    /** R-004: every visible control's box. */
+    /**
+     * R-004: every visible app control under 24 by 24, with the WCAG 2.5.8 exception it meets: "inline" for a link
+     * inside a sentence, "spacing" when a 24px circle on its center touches no other target and no other small
+     * target's circle, "" for none.
+     */
     targets() {
-      return [...document.querySelectorAll(`${FOCUSABLE}, [role="button"], [role="link"]`)]
-        .filter((element) => appMade(element) && visible(element))
+      const all = [...document.querySelectorAll(`${FOCUSABLE}, [role="button"], [role="link"]`)]
+        .filter(visible)
         .map((element) => {
           const box = element.getBoundingClientRect();
-          return { element: name(element), width: Math.round(box.width), height: Math.round(box.height) };
+          return { element, box, small: Math.min(box.width, box.height) < 24, x: box.left + box.width / 2, y: box.top + box.height / 2 };
         });
+      // In a sentence: inline, in a block with text of its own; a row of links alone is no sentence.
+      const inSentence = (element) => {
+        if (getComputedStyle(element).display !== 'inline') return false;
+        let block = element.parentElement;
+        while (block && getComputedStyle(block).display.startsWith('inline')) block = block.parentElement;
+        if (!block) return false;
+        const copy = block.cloneNode(true);
+        for (const target of copy.querySelectorAll(`${FOCUSABLE}, [role="button"], [role="link"]`)) target.remove();
+        return Boolean(copy.textContent.trim());
+      };
+      const toBox = (x, y, box) => Math.hypot(Math.max(box.left - x, 0, x - box.right), Math.max(box.top - y, 0, y - box.bottom));
+      const spaced = (target) =>
+        all.every(
+          (other) =>
+            other === target ||
+            other.element.contains(target.element) ||
+            target.element.contains(other.element) ||
+            (toBox(target.x, target.y, other.box) >= 12 && !(other.small && Math.hypot(other.x - target.x, other.y - target.y) < 24)),
+        );
+      return all
+        .filter((target) => target.small && appMade(target.element))
+        .map((target) => ({
+          element: name(target.element),
+          width: Math.round(target.box.width),
+          height: Math.round(target.box.height),
+          exempt: inSentence(target.element) ? 'inline' : spaced(target) ? 'spacing' : '',
+        }));
     },
 
     /** R-005: verify.mjs's measureLayout: the page or a non-table box that scrolls sideways. */
@@ -226,9 +261,9 @@
     },
 
     /**
-     * R-010 and R-011: each app-made container (flex or grid, two or more visible children, a gap) against the
+     * R-010 and R-011: each container the app spaced (flex or grid, two or more visible children, a gap) against the
      * nearest container around it, whose gap it may not exceed, and against its own padding, which is at least
-     * its gap on every side that has one.
+     * its gap on every side that has one. The design system's spacing is its own, asChild parts included.
      */
     containerSpacing() {
       const isContainer = (element) =>
@@ -248,7 +283,7 @@
       };
       const nesting = [];
       const padding = [];
-      for (const element of [...document.body.querySelectorAll('*')].filter((e) => appMade(e) && isContainer(e))) {
+      for (const element of [...document.body.querySelectorAll('*')].filter((e) => !dsSpaced(e) && isContainer(e))) {
         const gap = gapOf(element);
         if (!gap) continue;
         const parent = parentOf(element);
@@ -332,8 +367,13 @@
       }, true);
       document.addEventListener('submit', (event) => event.preventDefault(), true);
     },
-    clicks(selector) {
-      return globalThis.__weaveClicks?.[selector] || 0;
+    /** What a key on a button can change: its clicks, its aria-expanded, and how many dialogs, menus and listboxes show. */
+    pressState(selector) {
+      return {
+        clicks: globalThis.__weaveClicks?.[selector] || 0,
+        expanded: find(selector)?.getAttribute('aria-expanded') ?? '',
+        popups: [...document.querySelectorAll(POPUPS)].filter(visible).length,
+      };
     },
     /**
      * Marks, for axe to leave out, each topmost design-system element whose whole subtree the design system made
@@ -346,8 +386,8 @@
         element.setAttribute('data-weave-skip', '');
       }
     },
-    dialogOpen() {
-      return [...document.querySelectorAll('[role="dialog"], dialog[open]')].some(visible);
+    popupOpen() {
+      return [...document.querySelectorAll(POPUPS)].some(visible);
     },
   };
 })();

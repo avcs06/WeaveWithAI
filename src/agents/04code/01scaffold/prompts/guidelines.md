@@ -115,8 +115,9 @@ already; a control you build yourself must too.
 - Every control has an accessible name: its visible label, or `aria-label`
   when it shows only an icon.
 - Text has a contrast of at least 4.5:1, or 3:1 for large text.
-- Click and touch targets are at least 24 by 24 px, and two controls sit
-  at least 8 px apart.
+- Click and touch targets are at least 24 by 24 px. A smaller one passes
+  inside a sentence, or when no other target comes within 12 px of its
+  center. Two controls sit at least 8 px apart.
 - A container's gap is at most the gap of the container around it, and its
   padding is at least its own gap.
 - A number that stands alone, such as a count, a total or a statistic, is a

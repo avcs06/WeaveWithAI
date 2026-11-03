@@ -8,6 +8,7 @@ import { type Finding, finding } from './types';
 
 type Focusable = { element: string; app: boolean; button: boolean; skip: boolean };
 type Active = { element: string; style: string };
+type Press = { clicks: number; expanded: string; popups: number };
 
 export type KeyboardReport = {
   interactive: number;
@@ -105,17 +106,21 @@ export async function keyboardWalk(
   if (controls.length && !skipLink)
     findings.push(finding(R, 'warning', 'no skip link first in the tab order'));
 
-  // Enter and Space on every button; Escape closes whatever a button opened.
+  // Enter and Space on every button; Escape closes the dialog, menu or listbox a button opened, before the next key.
   await inPage(page, 'watchClicks');
   const buttons = ours.filter((c) => c.button);
   const activation = { buttons: buttons.length, enterOk: 0, spaceOk: 0 };
   for (const button of buttons)
     for (const key of ['Enter', 'Space'] as const) {
-      const before = await inPage<number>(page, 'clicks', button.element);
+      const before = await inPage<Press>(page, 'pressState', button.element);
       await inPage(page, 'focus', button.element);
       await page.keyboard.press(key);
+      const after = await inPage<Press>(page, 'pressState', button.element);
+      // A menu button opens on keydown and cancels the click; what it opened, or its aria-expanded, shows it acted.
       const acted =
-        (await inPage<number>(page, 'clicks', button.element)) > before;
+        after.clicks > before.clicks ||
+        after.expanded !== before.expanded ||
+        after.popups > before.popups;
       if (acted) activation[key === 'Enter' ? 'enterOk' : 'spaceOk'] += 1;
       else
         findings.push(
@@ -126,7 +131,7 @@ export async function keyboardWalk(
             button.element,
           ),
         );
-      if (await inPage<boolean>(page, 'dialogOpen'))
+      if (await inPage<boolean>(page, 'popupOpen'))
         await page.keyboard.press('Escape');
     }
   if (opts.blockMutations) await page.unroute('**/*');
