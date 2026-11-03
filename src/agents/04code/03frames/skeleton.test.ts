@@ -17,9 +17,9 @@ describe('frame skeletons', () => {
   it('write a layout per frame on the theme layout its screens need, and an empty part per bar and sidebar area it needs', () => {
     const files = frameSkeletons(architecture, flows, scope, withSidebar);
     expect([...files.keys()]).toEqual([
-      'web/app/(routes)/(landing)/layout.tsx',
-      'web/app/blocks/LandingHeader/LandingHeader.tsx',
-      'web/app/blocks/LandingHeader/index.ts',
+      'web/app/(routes)/(marketing)/layout.tsx',
+      'web/app/blocks/MarketingHeader/MarketingHeader.tsx',
+      'web/app/blocks/MarketingHeader/index.ts',
       'web/app/(routes)/(app)/layout.tsx',
       'web/app/blocks/AppHeader/AppHeader.tsx',
       'web/app/blocks/AppHeader/index.ts',
@@ -30,8 +30,8 @@ describe('frame skeletons', () => {
       'web/app/blocks/AppSidebarFooter/AppSidebarFooter.tsx',
       'web/app/blocks/AppSidebarFooter/index.ts',
     ]);
-    expect(files.get('web/app/(routes)/(landing)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.marketing} kind="marketing" header={<LandingHeader />}>',
+    expect(files.get('web/app/(routes)/(marketing)/layout.tsx')).toContain(
+      '<PageLayout layout={layouts.marketing} kind="marketing" header={<MarketingHeader />}>',
     );
     expect(files.get('web/app/(routes)/(app)/layout.tsx')).toContain(
       '<PageLayout layout={layouts.app} kind="app" header={<AppHeader />} sidebarHeader={<AppSidebarHeader />} sidebar={<AppSidebar />} sidebarFooter={<AppSidebarFooter />}>',
@@ -47,7 +47,7 @@ describe('frame skeletons', () => {
     const app = files.get('web/app/(routes)/(app)/layout.tsx')!;
     expect(app.startsWith("'use client';")).toBe(true);
     expect(app).toContain("if (user === null) router.replace('/');");
-    const site = files.get('web/app/(routes)/(landing)/layout.tsx')!;
+    const site = files.get('web/app/(routes)/(marketing)/layout.tsx')!;
     expect(site).not.toContain('useCurrentUser');
     expect(site).not.toContain("'use client'");
   });

@@ -3,8 +3,8 @@ import { architecture, flows, scope } from '../../02design/__fixtures__/chain';
 import { routeGroups, screenFolder } from './weave';
 
 describe('route groups', () => {
-  it('put the public frame in the template\'s landing group and the signed-in one in its app group', () => {
-    expect(routeGroups(architecture, flows, scope)).toEqual(new Map([['FR01', 'landing'], ['FR02', 'app']]));
+  it('put the public frame in the template\'s marketing group and the signed-in one in its app group', () => {
+    expect(routeGroups(architecture, flows, scope)).toEqual(new Map([['FR01', 'marketing'], ['FR02', 'app']]));
     const books = architecture.screens.find((screen) => screen.id === 'S04')!;
     expect(screenFolder(architecture, flows, scope, books)).toBe('web/app/(routes)/(app)/books');
   });
@@ -27,7 +27,7 @@ describe('route groups', () => {
       ],
     };
     expect(routeGroups(more, flows, scope)).toEqual(
-      new Map([['FR01', 'landing'], ['FR02', 'app'], ['FR03', 'admin'], ['FR04', 'fr04']]),
+      new Map([['FR01', 'marketing'], ['FR02', 'app'], ['FR03', 'admin'], ['FR04', 'fr04']]),
     );
   });
 });

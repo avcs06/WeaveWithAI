@@ -74,7 +74,7 @@ export function signedInFrame(
 
 /**
  * Each frame's route group. The first signed-in frame takes the template's
- * `app` group and the first other one its `landing` group. A second frame of
+ * `app` group and the first other one its `marketing` group. A second frame of
  * a kind gets one from its name: "Admin frame" is `admin`, or its id when
  * that name is taken. A frame without screens has none.
  */
@@ -90,7 +90,7 @@ export function routeGroups(
   for (const frame of framed) {
     const group = signedInFrame(architecture, flows, scope, frame)
       ? 'app'
-      : 'landing';
+      : 'marketing';
     if (![...groups.values()].includes(group)) groups.set(frame.id, group);
   }
   for (const frame of framed.filter((f) => !groups.has(f.id))) {

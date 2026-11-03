@@ -8,7 +8,7 @@ import { frameProbes, withProbes } from './stage';
 describe('frame probes', () => {
   it('put one page in the route group of each frame a screen uses, signed in when that screen is', () => {
     expect(frameProbes(architecture, flows, scope)).toEqual([
-      { frame: 'FR01', file: 'web/app/(routes)/(landing)/weave-frame-landing/page.tsx', route: '/weave-frame-landing', signedIn: false },
+      { frame: 'FR01', file: 'web/app/(routes)/(marketing)/weave-frame-marketing/page.tsx', route: '/weave-frame-marketing', signedIn: false },
       { frame: 'FR02', file: 'web/app/(routes)/(app)/weave-frame-app/page.tsx', route: '/weave-frame-app', signedIn: true },
     ]);
   });

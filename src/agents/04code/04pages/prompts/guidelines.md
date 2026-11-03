@@ -9,9 +9,9 @@
   `page.css.ts` beside it, and its own parts and dialogs in `components/`
   beside it. A dialog or a part that two screens use is built once, in
   `web/app/blocks/` or `web/app/components/`.
-- The template's starter page, `web/app/(routes)/(landing)/page.tsx` at
+- The template's starter page, `web/app/(routes)/(marketing)/page.tsx` at
   `/`, is a placeholder. The screen at `/` writes over it when that screen
-  is in the landing group; otherwise delete it.
+  is in the marketing group; otherwise delete it.
 - A screen fills its frame's main region: no header, navigation or footer
   of its own. Every screen but the landing page starts with a `PageHeader`
   from `@app/components/PageHeader`: its title is the page's only H1, with
