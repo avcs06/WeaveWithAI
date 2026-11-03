@@ -35,7 +35,7 @@ export function concreteRoute(route: string, contract: Contract): string {
 /** One session for every screen, each in its route folder; what two screens share goes in blocks or components. */
 export function pagesSpec(architecture: Architecture, contract: Contract, flows: Flows, scope: Scope): Omit<UnitSpec, 'rendered'> {
   const parts = architecture.screens.map((screen) => {
-    const folder = screenFolder(architecture, screen);
+    const folder = screenFolder(architecture, flows, scope, screen);
     return {
       screen,
       folder,

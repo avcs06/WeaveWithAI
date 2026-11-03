@@ -9,8 +9,9 @@ import {
   frameLines,
   screenLines,
 } from '../../02design/02architect/render';
-import type { Architecture, Screen } from '../../02design/02architect/schema';
+import type { Architecture, Frame, Screen } from '../../02design/02architect/schema';
 import type { Contract } from '../../03contract/schema';
+import { behindSignIn } from '../rendered';
 
 // The coding sessions' inputs: one numbered folder per code stage under
 // .weave/, each with its guidelines and the slice of the run's artifacts its
@@ -46,18 +47,36 @@ const slug = (name: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-/** The route group of a frame's screens, from its name: "App frame" is `app`, "Public site frame" is `public-site`; its id when two names meet. */
-export function frameGroup(architecture: Architecture, frameId: string): string {
-  const frame = architecture.frames.find((f) => f.id === frameId);
-  if (!frame) return '';
-  const name = slug(frame.name);
-  const taken = architecture.frames.some((f) => f.id !== frame.id && slug(f.name) === name);
-  return name && !taken ? name : frame.id.toLowerCase();
+/** A frame whose every screen is behind sign-in: it takes the app layout and sends visitors to the landing page. */
+export function signedInFrame(architecture: Architecture, flows: Flows, scope: Scope, frame: Frame): boolean {
+  const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
+  return screens.length > 0 && screens.every((screen) => behindSignIn(screen, flows, scope));
+}
+
+/**
+ * Each frame's route group. The first signed-in frame takes the template's
+ * `app` group and the first other one its `landing` group. A second frame of
+ * a kind gets one from its name: "Admin frame" is `admin`, or its id when
+ * that name is taken. A frame without screens has none.
+ */
+export function routeGroups(architecture: Architecture, flows: Flows, scope: Scope): Map<string, string> {
+  const framed = architecture.frames.filter((frame) => architecture.screens.some((screen) => screen.frame === frame.id));
+  const groups = new Map<string, string>();
+  for (const frame of framed) {
+    const group = signedInFrame(architecture, flows, scope, frame) ? 'app' : 'landing';
+    if (![...groups.values()].includes(group)) groups.set(frame.id, group);
+  }
+  for (const frame of framed.filter((f) => !groups.has(f.id))) {
+    const name = slug(frame.name);
+    const taken = [...groups.values()].includes(name) || framed.some((f) => f.id !== frame.id && slug(f.name) === name);
+    groups.set(frame.id, name && !taken ? name : frame.id.toLowerCase());
+  }
+  return groups;
 }
 
 /** A screen's route folder, inside its frame's route group. */
-export function screenFolder(architecture: Architecture, screen: Screen): string {
-  const group = frameGroup(architecture, screen.frame);
+export function screenFolder(architecture: Architecture, flows: Flows, scope: Scope, screen: Screen): string {
+  const group = routeGroups(architecture, flows, scope).get(screen.frame);
   const route = screen.route === '/' ? '' : screen.route;
   return `web/app/(routes)${group ? `/(${group})` : ''}${route}`;
 }
@@ -86,6 +105,7 @@ const text = (lines: string[]) => `${lines.join('\n').trim()}\n`;
 /** Every file under .weave/ for the code stages, by path. Pure. */
 export function weaveFolders(inputs: CodeInputs): Map<string, string> {
   const { architecture, scope, flows, themed, contract } = inputs;
+  const groups = routeGroups(architecture, flows, scope);
   const files = new Map<string, string>();
   const put = (file: string, value: unknown) => files.set(file, typeof value === 'string' ? value : json(value));
 
@@ -101,7 +121,7 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
       id: screen.id,
       title: screen.title,
       route: screen.route,
-      folder: screenFolder(architecture, screen),
+      folder: screenFolder(architecture, flows, scope, screen),
     })),
   );
 
@@ -111,11 +131,14 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
       '# Frames',
       ...architecture.frames.flatMap((frame) => {
         const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
+        const group = groups.get(frame.id);
         return [
           '',
           ...frameLines(frame),
           '',
-          `Route group: \`web/app/(routes)/(${frameGroup(architecture, frame.id)})/\`. Screens inside it: ${screens.map((screen) => `${screen.id} ${screen.route}`).join(', ') || 'none'}.`,
+          group
+            ? `Route group: \`web/app/(routes)/(${group})/\`. Screens inside it: ${screens.map((screen) => `${screen.id} ${screen.route}`).join(', ')}.`
+            : 'No screen sits in it, so it has no route group.',
           `Loads its records through: ${contract.screens.filter((entry) => entry.screen === frame.id).flatMap((entry) => entry.reads).join(', ') || 'nothing'}.`,
         ];
       }),
@@ -129,7 +152,7 @@ export function weaveFolders(inputs: CodeInputs): Map<string, string> {
       text([
         ...screenLines(screen),
         '',
-        `Route folder: \`${screenFolder(architecture, screen)}\`.`,
+        `Route folder: \`${screenFolder(architecture, flows, scope, screen)}\`.`,
         `Loads its records through: ${reads.join(', ') || 'nothing'}.`,
         ...dialogsOf(architecture, screen).flatMap((dialog) => ['', ...dialogLines(dialog)]),
       ]),

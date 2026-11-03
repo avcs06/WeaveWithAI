@@ -87,7 +87,7 @@ export const SectionFrame = ({
     {...props}
     data-ds=""
     data-slot="section"
-    className={classNames('flex-col-gap-5 px-5', className)}
+    className={classNames('flex-col-gap-4 px-4', className)}
   />
 );
 

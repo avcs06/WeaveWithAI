@@ -2,8 +2,7 @@ import type { Scope } from '../../01flows/01scope/schema';
 import type { Flows } from '../../01flows/schema';
 import type { Theme } from '../../02design/01theme/build';
 import type { Architecture, Frame } from '../../02design/02architect/schema';
-import { frameGroup } from '../01scaffold/weave';
-import { behindSignIn } from '../rendered';
+import { routeGroups, signedInFrame } from '../01scaffold/weave';
 
 // Each frame's layout written by code: PageLayout with the theme's app or
 // marketing layout, the redirect of a signed-in frame, and one empty part per
@@ -16,12 +15,6 @@ type Part = { slot: 'header' | 'sidebar' | 'extraSidebar' | 'footer'; name: stri
 
 /** A frame's route group layout file. */
 export const frameLayoutFile = (group: string) => `web/app/(routes)/(${group})/layout.tsx`;
-
-/** A frame whose every screen is behind sign-in: it takes the app layout and sends visitors to the landing page. */
-export function signedInFrame(architecture: Architecture, flows: Flows, scope: Scope, frame: Frame): boolean {
-  const screens = architecture.screens.filter((screen) => screen.frame === frame.id);
-  return screens.length > 0 && screens.every((screen) => behindSignIn(screen, flows, scope));
-}
 
 const pascal = (group: string) =>
   group
@@ -101,9 +94,10 @@ ${guard}  return (
 /** Every frame's layout and empty parts, by path. Frames without screens have no route group, so none. Pure. */
 export function frameSkeletons(architecture: Architecture, flows: Flows, scope: Scope, theme: Theme): Map<string, string> {
   const files = new Map<string, string>();
+  const groups = routeGroups(architecture, flows, scope);
   for (const frame of architecture.frames) {
-    if (!architecture.screens.some((screen) => screen.frame === frame.id)) continue;
-    const group = frameGroup(architecture, frame.id);
+    const group = groups.get(frame.id);
+    if (!group) continue;
     const signedIn = signedInFrame(architecture, flows, scope, frame);
     const kind = signedIn ? 'app' : 'marketing';
     const all = parts(pascal(group), theme.layouts[kind]);

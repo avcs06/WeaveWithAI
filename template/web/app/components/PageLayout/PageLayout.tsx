@@ -23,6 +23,8 @@ const flag = (on: boolean) => (on ? '' : undefined);
 
 /** The grid's areas, columns and rows: the sidebars beside the main region, the header and footer above and below it. */
 export function frameGrid(layout: PageLayoutConfig) {
+  const fullWidth = layout.docksFirst === 'header';
+
   const sidebars = (
     [
       ['sidebar', layout.sidebar],
@@ -31,16 +33,18 @@ export function frameGrid(layout: PageLayoutConfig) {
   ).filter(([, sidebar]) => sidebar.needed);
   const left = sidebars.filter(([, sidebar]) => sidebar.side === 'left');
   const right = sidebars.filter(([, sidebar]) => sidebar.side === 'right');
+
   const stack = [
     layout.header.needed && 'header',
     'main',
     layout.footer.needed && 'footer',
   ].filter((area): area is string => Boolean(area));
-  const fullWidth = layout.docksFirst === 'header';
+
   const row = (area: string) =>
     area === 'main' || !fullWidth
       ? [...left.map(([name]) => name), area, ...right.map(([name]) => name)]
       : [...left, [area], ...right].map(() => area);
+
   return {
     areas: stack.map((area) => `"${row(area).join(' ')}"`).join(' '),
     columns: [
@@ -103,9 +107,11 @@ export const PageLayout = ({
 }: PageLayoutProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+
   const grid = frameGrid(layout);
   const { main } = layout;
   const overlay = layout.header.needed && layout.header.overlay;
+
   // A sticky sidebar starts under the header only when the header spans it and stays in view.
   const underHeader =
     layout.header.needed &&

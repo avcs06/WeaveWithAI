@@ -13,7 +13,7 @@ import type { Flows } from '../../01flows/schema';
 import type { Themed } from '../../02design/01theme/build';
 import type { Architecture } from '../../02design/02architect/schema';
 import type { StageContext, StageDef } from '../../stages';
-import { frameGroup } from '../01scaffold/weave';
+import { routeGroups } from '../01scaffold/weave';
 import { signedIn, storagePrefix } from '../02contract/codegen';
 import { behindSignIn, renderedOn, routeSample } from '../rendered';
 import { runUnits, type UnitSpec } from '../unit';
@@ -41,10 +41,11 @@ const PROBE_PAGE = 'export default function FrameProbe() {\n  return <h1 data-ds
 
 /** One probe for each frame a screen uses, signed in when that screen is. */
 export function frameProbes(architecture: Architecture, flows: Flows, scope: Scope): Probe[] {
+  const groups = routeGroups(architecture, flows, scope);
   return architecture.frames.flatMap((frame) => {
     const screen = architecture.screens.find((s) => s.frame === frame.id);
-    if (!screen) return [];
-    const group = frameGroup(architecture, frame.id);
+    const group = groups.get(frame.id);
+    if (!screen || !group) return [];
     const route = `/weave-frame-${group}`;
     return [{ frame: frame.id, file: `web/app/(routes)/(${group})${route}/page.tsx`, route, signedIn: behindSignIn(screen, flows, scope) }];
   });
