@@ -1,7 +1,10 @@
+import { mkdirSync } from 'node:fs';
+import path from 'node:path';
 import type { Issue } from '../core/issues';
+import type { ImageInput } from '../core/llm';
 import { type Run, runPath } from '../core/run';
 import { writeJsonAtomic } from '../core/utils';
-import { openRoute, withBrowser } from './browser';
+import { fullScreenshot, openRoute, withBrowser } from './browser';
 import {
   axeCheck,
   colorVariables,
@@ -34,6 +37,8 @@ export type RouteSample = {
 export type RenderedReport = {
   route: string;
   findings: Finding[];
+  /** The route's full-height screenshot, when the checks took one. */
+  shot?: string;
   /** The page's H1, for DESIGN-R-013's comparison across routes. */
   title: PageTitle | null;
   metrics: {
@@ -63,6 +68,7 @@ export async function checkRoute(
   sample: RouteSample,
   theme: ThemeColors,
   open: (url: string) => Promise<import('playwright-core').Page>,
+  shot?: string,
 ): Promise<RenderedReport> {
   const page = await open(sample.url);
   // A check that breaks is the checker's trouble, not the page's: a warning on its rule, and the other checks go on.
@@ -76,6 +82,8 @@ export async function checkRoute(
     }
   };
   try {
+    // First, as the page loaded: the checks after it press keys and may open things.
+    const shotTaken = shot ? await guard('DESIGN-R-000', false, async () => (await fullScreenshot(page, shot), true)) : false;
     const axe = await guard('DESIGN-R-001', { findings: [], violations: [] }, () => axeCheck(page));
     const contrast = await guard('DESIGN-R-002', { findings: [], failures: [], unknown: 0 }, () => contrastCheck(page));
     const targets = await guard('DESIGN-R-004', { findings: [], small24: 0 }, () => targetSizes(page));
@@ -100,6 +108,7 @@ export async function checkRoute(
     return {
       route: sample.route,
       findings: [...axe.findings, ...contrast.findings, ...targets.findings, ...rest, ...walked, ...broken],
+      ...(shotTaken && { shot }),
       title,
       metrics: {
         axeViolations: axe.violations.length,
@@ -114,19 +123,21 @@ export async function checkRoute(
   }
 }
 
-/** Every route; writes `reports/rendered.json` and returns the findings as issues. */
+/** Every route; writes `reports/rendered.json` and returns the findings as issues, and with `shotsDir` a screenshot of each route. */
 export async function runRenderedChecks(opts: {
   run: Run;
   routes: RouteSample[];
   theme: ThemeColors;
-}): Promise<{ issues: Issue[]; perRoute: RenderedReport[] }> {
+  shotsDir?: string;
+}): Promise<{ issues: Issue[]; perRoute: RenderedReport[]; shots: ImageInput[] }> {
+  if (opts.shotsDir) mkdirSync(opts.shotsDir, { recursive: true });
   const perRoute = await withBrowser(async (browser) => {
     const context = await browser.newContext();
     const reports: RenderedReport[] = [];
-    for (const sample of opts.routes)
-      reports.push(
-        await checkRoute(sample, opts.theme, (url) => openRoute(context, url, sample.storage)),
-      );
+    for (const [i, sample] of opts.routes.entries()) {
+      const shot = opts.shotsDir && path.join(opts.shotsDir, `${String(i + 1).padStart(2, '0')}-${sample.screen}.png`);
+      reports.push(await checkRoute(sample, opts.theme, (url) => openRoute(context, url, sample.storage), shot || undefined));
+    }
     await context.close();
     return reports;
   });
@@ -142,5 +153,9 @@ export async function runRenderedChecks(opts: {
       ...(f.element !== undefined && { at: f.element }),
     })),
   );
-  return { issues, perRoute };
+  const shots = perRoute.flatMap((report, i) => {
+    const screen = opts.routes[i]?.screen;
+    return report.shot ? [{ label: `The screenshot of ${screen} at ${report.route}:`, file: report.shot }] : [];
+  });
+  return { issues, perRoute, shots };
 }

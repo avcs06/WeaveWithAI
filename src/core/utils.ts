@@ -19,8 +19,8 @@ function sortKeys(value: unknown): unknown {
   );
 }
 
-export function sha256(text: string): string {
-  return createHash('sha256').update(text).digest('hex');
+export function sha256(data: string | Buffer): string {
+  return createHash('sha256').update(data).digest('hex');
 }
 
 export const hashOf = (value: unknown): string => sha256(canonicalJson(value));

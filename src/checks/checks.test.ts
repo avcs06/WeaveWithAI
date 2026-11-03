@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { type Browser, chromium, type Page } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createRun } from '../core/run';
-import { HEIGHT, openRoute, WIDTH } from './browser';
+import { fullScreenshot, HEIGHT, openRoute, WIDTH } from './browser';
 import {
   axeCheck,
   colorVariables,
@@ -342,9 +342,44 @@ describe('rendered checks on the fixture pages', () => {
   });
 });
 
+/** A PNG's height in px, from its header. */
+const pngHeight = (file: string) => readFileSync(file).readUInt32BE(20);
+
+describe('screenshots', () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'weave-shots-'));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  it('shoot a page whose main region scrolls at its full height, and set the viewport back after', async () => {
+    const page = await open('scroll-main.html');
+    const file = path.join(dir, 'scroll-main.png');
+    await fullScreenshot(page, file);
+    expect(pngHeight(file)).toBeGreaterThanOrEqual(60 + 2400);
+    expect(page.viewportSize()).toEqual({ width: WIDTH, height: HEIGHT });
+    const short = path.join(dir, 'clean.png');
+    await fullScreenshot(await open('clean.html'), short);
+    expect(pngHeight(short)).toBeLessThan(60 + 2400);
+  });
+});
+
 describe('runRenderedChecks', () => {
   const runsDir = mkdtempSync(path.join(tmpdir(), 'weave-checks-'));
   afterAll(() => rmSync(runsDir, { recursive: true, force: true }));
+
+  it('takes a screenshot of each route into shotsDir as it loads, labelled with its screen and route', async () => {
+    const idea = path.join(runsDir, 'idea.md');
+    writeFileSync(idea, '# Idea\n');
+    const run = createRun({ idea, runsDir, id: 'shots' });
+    const shotsDir = path.join(runsDir, 'shots');
+    const { shots, perRoute } = await runRenderedChecks({
+      run,
+      routes: [{ route: '/books', url: `${base}scroll-main.html`, screen: 'S02', entry: false }],
+      theme,
+      shotsDir,
+    });
+    expect(shots).toEqual([{ label: 'The screenshot of S02 at /books:', file: path.join(shotsDir, '01-S02.png') }]);
+    expect(perRoute[0]?.shot).toBe(path.join(shotsDir, '01-S02.png'));
+    expect(pngHeight(path.join(shotsDir, '01-S02.png'))).toBeGreaterThanOrEqual(60 + 2400);
+  });
 
   it('checks each route and writes reports/rendered.json', async () => {
     const idea = path.join(runsDir, 'idea.md');

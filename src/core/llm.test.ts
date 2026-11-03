@@ -263,6 +263,37 @@ describe('generateStructured', () => {
     );
   });
 
+  it('sends each image after the text under its label as a data URL, and keys the replay by its bytes, not its path', async () => {
+    const dir = tmp();
+    const write = (name: string, bytes: string) => {
+      writeFileSync(path.join(dir, name), bytes);
+      return path.join(dir, name);
+    };
+    const withImage = (file: string) => ({
+      ...input(),
+      messages: [{ role: 'user' as const, content: 'Review the screens.', images: [{ label: 'S01 at /', file }] }],
+    });
+    const replayDir = tmp();
+    const replaying = { ...config, LLM_REPLAY: true };
+    const first = harness([completion('{"title":"Weave"}')], replaying, { replayDir });
+    await first.llm.generateStructured(withImage(write('a.png', 'png-1')));
+    expect(first.calls[0]?.messages).toEqual([
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Review the screens.' },
+          { type: 'text', text: 'S01 at /' },
+          { type: 'image_url', image_url: { url: `data:image/png;base64,${Buffer.from('png-1').toString('base64')}` } },
+        ],
+      },
+    ]);
+    // The same bytes at another path replay; new bytes ask again.
+    const second = harness([completion('{"title":"Weave 2"}')], replaying, { replayDir });
+    expect((await second.llm.generateStructured(withImage(write('b.png', 'png-1')))).replayed).toBe(true);
+    expect((await second.llm.generateStructured(withImage(write('c.png', 'png-2')))).replayed).toBe(false);
+    expect(second.calls).toHaveLength(1);
+  });
+
   it('retries a truncated answer once with max_tokens doubled, capped at 98304', async () => {
     const doubled = harness([
       completion('{"title":"We', 'length'),

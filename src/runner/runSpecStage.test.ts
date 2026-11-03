@@ -705,6 +705,29 @@ describe('runSpecStage with compose', () => {
     expect(rounds.map((event) => event.generated)).toEqual([true, true]);
   });
 
+  it("shots: only the reviewers shotReviewers names see the draft's screenshots, after their input", async () => {
+    const { llm, inputs } = fakeLlm([clean, clean]);
+    const run = createRun({ idea, runsDir: root, id: 'shots' });
+    const shots = [{ label: 'The screenshot of S01 at /:', file: '/shots/01-S01.png' }];
+    await runSpecStage({
+      run,
+      stage: 'doc',
+      schema: Doc,
+      schemaName: 'Doc',
+      system: 'Write a doc.',
+      user: 'About cats.',
+      validate: () => [],
+      review: { output: { code: 'Judge the code.', ux: 'Judge the screens.' } },
+      shotReviewers: ['ux'],
+      start: { data: { title: 'Cats' }, raw: '{"title":"Cats"}', model: 'none', shots },
+      llm,
+    });
+
+    const user = (stage: string) => inputs.find((input) => input.stage === stage)?.messages[1];
+    expect(user('doc-review-ux')?.images).toEqual(shots);
+    expect(user('doc-review-code')?.images).toBeUndefined();
+  });
+
   it('start: round 1 validates the given document with no call, and a fix patches it', async () => {
     const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
     const run = createRun({ idea, runsDir: root, id: 'started' });

@@ -4,6 +4,7 @@ import {
   chromium,
   type Page,
 } from 'playwright-core';
+import { inPage } from './page';
 
 /** The width every route is checked at: desktop only. */
 export const WIDTH = 1280;
@@ -45,4 +46,22 @@ export async function openRoute(
   await page.addStyleTag({ content: STILL });
   await page.waitForTimeout(300);
   return page;
+}
+
+/** The tallest screenshot, in px: a page longer than this is cut, so one screen never floods a review. */
+const MAX_SHOT_HEIGHT = 6000;
+
+/**
+ * The whole page as a PNG at `file`. The app frame scrolls only its main region, which a full-page shot cuts at the
+ * viewport, so the viewport grows by what a scrolling region still hides, for the shot only. The page's own scroll is
+ * the full-page shot's.
+ */
+export async function fullScreenshot(page: Page, file: string): Promise<void> {
+  const hidden = await inPage<number>(page, 'scrollHidden');
+  if (hidden > 0) await page.setViewportSize({ width: WIDTH, height: Math.min(MAX_SHOT_HEIGHT, HEIGHT + hidden) });
+  try {
+    await page.screenshot({ path: file, fullPage: true });
+  } finally {
+    if (hidden > 0) await page.setViewportSize({ width: WIDTH, height: HEIGHT });
+  }
 }

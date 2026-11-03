@@ -25,11 +25,12 @@ describe('frame probes', () => {
     writeFileSync(theirs, 'the app page');
 
     const seen: string[] = [];
-    const check = withProbes(root, probes, async () => {
-      seen.push(readFileSync(ours, 'utf8'));
-      return [];
+    const check = withProbes(root, probes, async (shotsDir) => {
+      seen.push(readFileSync(ours, 'utf8'), shotsDir);
+      return { issues: [], shots: [] };
     });
-    expect(await check()).toEqual([]);
+    expect(await check('shots/frames')).toEqual({ issues: [], shots: [] });
+    expect(seen[1]).toBe('shots/frames');
     expect(seen[0]).toContain('<h1 data-ds="">Frame check</h1>');
     expect(existsSync(path.dirname(ours))).toBe(false);
     expect(readFileSync(theirs, 'utf8')).toBe('the app page');
@@ -37,7 +38,7 @@ describe('frame probes', () => {
     const failing = withProbes(root, probes, async () => {
       throw new Error('the dev server did not start');
     });
-    await expect(failing()).rejects.toThrow('the dev server did not start');
+    await expect(failing('shots/frames')).rejects.toThrow('the dev server did not start');
     expect(existsSync(path.dirname(ours))).toBe(false);
     expect(readFileSync(theirs, 'utf8')).toBe('the app page');
   });

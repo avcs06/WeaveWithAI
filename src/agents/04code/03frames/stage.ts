@@ -1,10 +1,10 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { readArtifact } from '../../../core/artifacts';
-import type { Issue } from '../../../core/issues';
 import { loadPrompt } from '../../../core/prompt';
 import { appendEvent, type Run, runPath } from '../../../core/run';
 import { pathBeside } from '../../../core/utils';
+import type { Rendered } from '../../../engine/compose';
 import { appendLedger } from '../../../engine/ledger';
 import { appCheck } from '../../../engine/session';
 import { git } from '../../../engine/setup';
@@ -52,8 +52,8 @@ export function frameProbes(architecture: Architecture, flows: Flows, scope: Sco
 }
 
 /** `check` with the probes in place; they are gone again before the session's diff is read, even when the check throws. */
-export function withProbes(appDir: string, probes: Probe[], check: () => Promise<Issue[]>): () => Promise<Issue[]> {
-  return async () => {
+export function withProbes(appDir: string, probes: Probe[], check: (shotsDir: string) => Promise<Rendered>): (shotsDir: string) => Promise<Rendered> {
+  return async (shotsDir) => {
     // A folder the app already has is never written to, so removing ours can touch nothing of the app's.
     const files = probes.map((probe) => path.join(appDir, probe.file)).filter((file) => !existsSync(path.dirname(file)));
     for (const file of files) {
@@ -61,7 +61,7 @@ export function withProbes(appDir: string, probes: Probe[], check: () => Promise
       writeFileSync(file, PROBE_PAGE);
     }
     try {
-      return await check();
+      return await check(shotsDir);
     } finally {
       for (const file of files) rmSync(path.dirname(file), { recursive: true, force: true });
     }

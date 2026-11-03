@@ -1,6 +1,6 @@
-import type { Issue } from '../../core/issues';
 import type { Run } from '../../core/run';
 import { type RouteSample, runRenderedChecks, type ThemeColors } from '../../checks';
+import type { Rendered } from '../../engine/compose';
 import { APP_URL, withDevServer } from '../../engine/server';
 import type { Scope } from '../01flows/01scope/schema';
 import type { Flows } from '../01flows/schema';
@@ -45,8 +45,15 @@ export function routeSample(
   return { route, url: `${APP_URL}${route}`, screen, entry, ...(storage && { storage }) };
 }
 
-/** The checks on `routes`, with the app's dev server up for them. */
-export function renderedOn(run: Run, appDir: string, routes: RouteSample[], theme: Theme): () => Promise<Issue[]> {
-  return () =>
-    withDevServer(appDir, async () => (await runRenderedChecks({ run, routes, theme: themeColors(theme) })).issues, routes[0]?.url);
+/** The checks on `routes`, with the app's dev server up for them, and a screenshot of each route in `shotsDir`. */
+export function renderedOn(run: Run, appDir: string, routes: RouteSample[], theme: Theme): (shotsDir: string) => Promise<Rendered> {
+  return (shotsDir) =>
+    withDevServer(
+      appDir,
+      async () => {
+        const { issues, shots } = await runRenderedChecks({ run, routes, theme: themeColors(theme), shotsDir });
+        return { issues, shots };
+      },
+      routes[0]?.url,
+    );
 }

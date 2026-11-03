@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { resolveBackend } from '../core/backends';
 import type { Issue } from '../core/issues';
+import type { ImageInput } from '../core/llm';
+import { runPath } from '../core/run';
 import type { Compose, Draft, Round } from '../runner/runSpecStage';
 import { Reply, type Thread } from '../runner/threads';
 import type { StageContext } from '../agents/stages';
@@ -44,12 +46,15 @@ export type Unit = {
   routes?: CheckedRoute[];
   /** What each of its screens' code must name. */
   expects?: ScreenExpect[];
-  /** The rendered checks on the unit's routes, once its app builds. */
-  rendered?: () => Promise<Issue[]>;
+  /** The rendered checks on the unit's routes, once its app builds, with a screenshot of each route in `shotsDir`. */
+  rendered?: (shotsDir: string) => Promise<Rendered>;
   /** The session's model-step cap and time limit; the session's defaults when unset. */
   maxSteps?: number;
   timeoutMs?: number;
 };
+
+/** What the rendered checks give back: their issues, and each route's screenshot for the reviewers that look at them. */
+export type Rendered = { issues: Issue[]; shots: ImageInput[] };
 
 export type UnitResult = {
   session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed'> & {
@@ -112,7 +117,7 @@ export function sessionCompose(
       costUsd: 0,
       checks: [],
     }));
-    return unitDraft(ctx, appDir, unit, baseline, result);
+    return unitDraft(ctx, appDir, unit, baseline, result, id);
   };
   return {
     draft: () => run(unit.task),
@@ -130,27 +135,34 @@ export function sessionCompose(
   };
 }
 
-/** What the reviewers read after one of a unit's sessions: its checks, the rendered checks, and the unit's whole diff since `baseline`. */
+/**
+ * What the reviewers read after one of a unit's sessions: its checks, the rendered checks, the unit's whole diff
+ * since `baseline`, and the screenshots the session `id`'s checks took.
+ */
 export async function unitDraft(
   ctx: StageContext,
   appDir: string,
   unit: Pick<Unit, 'rendered'>,
   baseline: string,
   result: SessionResult,
+  id: string,
 ): Promise<Draft<UnitResult>> {
   // Rendered checks only mean something on a route that loads.
   const loads = result.checks.every((check) => check.ok || check.name === 'design');
   // A checker that cannot run, such as a dev server that never starts, is noted; the unit goes on.
-  const rendered: Issue[] =
+  const { issues: rendered, shots }: Rendered =
     unit.rendered && loads
-      ? await unit.rendered().catch((error: unknown) => [
-          {
-            rule: 'DESIGN-R-000',
-            severity: 'warning' as const,
-            message: `The browser checks could not run: ${String(error).split('\n')[0]}`,
-          },
-        ])
-      : [];
+      ? await unit.rendered(runPath(ctx.run, 'shots', id)).catch((error: unknown) => ({
+          issues: [
+            {
+              rule: 'DESIGN-R-000',
+              severity: 'warning' as const,
+              message: `The browser checks could not run: ${String(error).split('\n')[0]}`,
+            },
+          ],
+          shots: [],
+        }))
+      : { issues: [], shots: [] };
   const diff = git(appDir, 'diff', baseline, '--', '.', ':(exclude).weave');
   // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
   const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);
@@ -169,5 +181,6 @@ export async function unitDraft(
     data: { session: { status, summary, checks, protectedHits, changed, unreadRecipes, longFiles }, rendered, diff },
     raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
     model: resolveBackend(ctx.config, ctx.backend).model,
+    shots,
   };
 }

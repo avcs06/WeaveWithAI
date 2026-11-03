@@ -124,7 +124,7 @@ export async function resumeUnit(
     round: Number(fix) + 1,
     museSession: id,
     baseline,
-    draft: await unitDraft(ctx, appDir, spec, baseline, result),
+    draft: await unitDraft(ctx, appDir, spec, baseline, result, `${cut}-resume`),
   };
   const file = savedRoundFile(ctx.run, spec.stage, saved.round);
   writeJsonAtomic(file, saved);
@@ -161,6 +161,7 @@ export async function runUnit(
     review: { output: codeReviewGuides(appDir) },
     reviewInput: load('review-input.md'),
     reviewersSeeMandatory: true,
+    shotReviewers: ['ux'],
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(
       ctx,

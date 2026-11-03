@@ -21,7 +21,8 @@ src/
   core/                  model client, artifacts, runs, issues, rule helpers, prompt loader
   runner/                running one stage: the rounds, reviewers and fixes (runSpecStage)
   ds/                    the design-system inventory the agents read
-  checks/                rendered checks on a built app (DESIGN-R-001 to 016), in a real browser
+  checks/                rendered checks on a built app (DESIGN-R-001 to 017), in a real browser,
+                         and the screenshot of each route the UX reviewer reads
   engine/                the Muse Code runner: app setup, one coding session, the gate after it
   agents/
     stages.ts            the pipeline order

@@ -171,6 +171,16 @@
       ];
     },
 
+    /** For the screenshot: the most any region below the body still hides by scrolling down, in px. */
+    scrollHidden() {
+      return Math.max(
+        0,
+        ...[...document.body.querySelectorAll('*')]
+          .filter((element) => ['auto', 'scroll'].includes(getComputedStyle(element).overflowY))
+          .map((element) => element.scrollHeight - element.clientHeight),
+      );
+    },
+
     /** R-006: the H1's bottom against the viewport. */
     firstViewport() {
       const h1 = document.querySelector('h1');

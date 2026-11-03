@@ -9,9 +9,14 @@ import { costUsd, type Usage } from './prices';
 import { toJsonSchema } from './schema';
 import { canonicalJson, sha256, writeJsonAtomic } from './utils';
 
+/** A PNG on disk, such as a screen's screenshot, with the line that names it for the model. */
+export type ImageInput = { label: string; file: string };
+
 export type ChatMessage = {
   role: 'system' | 'user' | 'assistant';
   content: string;
+  /** Sent after the text, each under its label; user messages only. */
+  images?: ImageInput[];
 };
 export type ModelChoice = 'default' | 'strong';
 /** Meta's `reasoning_effort`; omitted, the model picks its own level. Reasoning tokens count toward max_tokens. */
@@ -123,10 +128,13 @@ const MAX_BACKOFF_MS = 30_000;
 const MAX_RETRY_AFTER_MS = 60_000;
 const JITTER_MS = 250;
 
+/** A message as the replay key holds it: an image by the hash of its bytes, so a moved file still replays. */
+type KeyedMessage = { role: ChatMessage['role']; content: string; images?: { label: string; sha256: string }[] };
+
 type Request = {
   backend: string;
   model: string;
-  messages: ChatMessage[];
+  messages: KeyedMessage[];
   temperature: number;
   reasoningEffort?: ReasoningEffort;
   schemaName: string;
@@ -166,10 +174,25 @@ export function createLlm(deps: LlmDeps): Llm {
         ? (STEP_UP[input.reasoningEffort] ?? input.reasoningEffort)
         : input.reasoningEffort;
     const bridged = toJsonSchema(input.schema, input.schemaName);
+    const images = new Map<string, Buffer>();
+    const messages = await Promise.all(
+      input.messages.map(async ({ role, content, images: attached }): Promise<KeyedMessage> => {
+        if (!attached?.length) return { role, content };
+        const keyed = await Promise.all(
+          attached.map(async ({ label, file }) => {
+            const bytes = await readFile(file);
+            const hash = sha256(bytes);
+            images.set(hash, bytes);
+            return { label, sha256: hash };
+          }),
+        );
+        return { role, content, images: keyed };
+      }),
+    );
     const request: Request = {
       backend: backend.name,
       model,
-      messages: input.messages,
+      messages,
       temperature: input.temperature ?? TEMPERATURE,
       ...(reasoningEffort ? { reasoningEffort } : {}),
       schemaName: input.schemaName,
@@ -187,6 +210,7 @@ export function createLlm(deps: LlmDeps): Llm {
       try {
         completed = await requestUntilComplete(
           request,
+          images,
           input.maxTokens ?? DEFAULT_MAX_TOKENS,
         );
       } catch (error) {
@@ -292,6 +316,7 @@ export function createLlm(deps: LlmDeps): Llm {
   /** One request, plus a single retry with a larger output limit when the answer was cut short. */
   async function requestUntilComplete(
     request: Request,
+    images: Map<string, Buffer>,
     maxTokens: number,
   ): Promise<Completed> {
     let limit = maxTokens;
@@ -299,7 +324,7 @@ export function createLlm(deps: LlmDeps): Llm {
     for (let grown = false; ; grown = true) {
       const completion = await requestWithRetries({
         model: request.model,
-        messages: request.messages,
+        messages: toWire(request.messages, images),
         temperature: request.temperature,
         ...(request.reasoningEffort
           ? { reasoning_effort: request.reasoningEffort }
@@ -390,6 +415,20 @@ export function createLlm(deps: LlmDeps): Llm {
   }
 
   return { generateStructured };
+}
+
+/** The messages as the API takes them: the text, then each image's label and the image inline as a base64 data URL. */
+function toWire(messages: KeyedMessage[], images: Map<string, Buffer>): OpenAI.ChatCompletionMessageParam[] {
+  return messages.map(({ role, content, images: attached }) => {
+    if (!attached?.length) return { role, content };
+    const parts: OpenAI.ChatCompletionContentPart[] = [{ type: 'text', text: content }];
+    for (const { label, sha256: hash } of attached)
+      parts.push(
+        { type: 'text', text: label },
+        { type: 'image_url', image_url: { url: `data:image/png;base64,${images.get(hash)?.toString('base64') ?? ''}` } },
+      );
+    return { role: 'user', content: parts };
+  });
 }
 
 /**

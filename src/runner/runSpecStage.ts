@@ -10,6 +10,7 @@ import {
   type ChatMessage,
   type GenerateInput,
   type GenerateResult,
+  type ImageInput,
   type Llm,
   type ModelChoice,
   ModelOutputInvalid,
@@ -38,8 +39,11 @@ export type ReviewGuides = { peer?: string; output: string | Record<string, stri
 /** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
 export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
 
-/** What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, and a fix's replies to its threads. */
-export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[] };
+/**
+ * What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, a fix's
+ * replies to its threads, and screenshots of what it built for the reviewers `shotReviewers` names.
+ */
+export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[]; shots?: ImageInput[] };
 
 /** One model call made for the stage; it is logged as an `llm:call` event and runs on the default model unless it names one. */
 export type Call = <U>(
@@ -77,6 +81,8 @@ export type SpecStageOptions<T> = {
   reviewInput?: string;
   /** Reviewers see the mandatory issues as known, the ones the next fix takes, instead of the warnings. */
   reviewersSeeMandatory?: boolean;
+  /** The named output guides whose reviewers also see the draft's screenshots, after their input. */
+  shotReviewers?: string[];
   /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
   ask?: (output: T) => Promise<Answers>;
   /** Output budget for the writer's calls, reasoning included; the client doubles it once when the answer is cut. */
@@ -271,7 +277,7 @@ export async function runSpecStage<T>(
         o.review,
         round,
         reviewers,
-        last.draft.raw,
+        last.draft,
         o.reviewersSeeMandatory ? mandatory : warnings,
         reviewThreads.filter((thread) => !closedByFix(thread, round)),
       );
@@ -493,7 +499,7 @@ async function review<T>(
   guides: ReviewGuides,
   round: number,
   reviewers: (keyof ReviewGuides)[],
-  output: string,
+  draft: Draft<T>,
   warnings: Issue[],
   threads: Thread[],
 ) {
@@ -510,7 +516,7 @@ async function review<T>(
       const user = fillPrompt(o.reviewInput ?? reviewInput, {
         system: o.system,
         user: o.user,
-        output,
+        output: draft.raw,
         known,
         threads: own.length > 0 ? formatThreads(own) : 'None.',
       });
@@ -520,7 +526,11 @@ async function review<T>(
       });
       const messages: ChatMessage[] = [
         { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
-        { role: 'user', content: user },
+        {
+          role: 'user',
+          content: user,
+          ...(o.shotReviewers?.includes(reviewer) && draft.shots?.length && { images: draft.shots }),
+        },
       ];
       // A reviewer the model cannot answer adds no blockers: the run goes on without its review.
       const skip = (name: string, error: unknown) => {
