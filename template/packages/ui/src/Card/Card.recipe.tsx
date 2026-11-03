@@ -1,7 +1,8 @@
 /**
  * Card: a bordered container with padding and gap, for one item's content (an
  * event in a gallery), as a whole-card button, or, in a CardGroup, as a large
- * selectable option with room for a description.
+ * selectable option with room for a description. CardList lays records out
+ * as a column of full-width cards, with its own Pagination when asked.
  *
  * When not to use:
  * - A short toggle or filter: Chip. A yes/no setting: Checkbox.
@@ -10,6 +11,8 @@
  *   make the card a button that navigates.
  *
  * Pitfalls:
+ * - CardList draws the card: `renderItem` returns the card's content, never a
+ *   Card of its own. Each record needs an `id`.
  * - A card is exactly one of: static (no `onClick`), a button (`onClick`), or
  *   selectable (in a CardGroup, or with `active` and `onActiveChange`). Never
  *   put links or buttons inside a button or selectable card: their children are
@@ -30,7 +33,7 @@
  */
 import { classNames } from '@packages/styles/classNames';
 import { Button } from '@packages/ui/Button';
-import { Card, CardGroup } from '@packages/ui/Card';
+import { Card, CardGroup, CardList } from '@packages/ui/Card';
 import { Controller, Form } from '@packages/ui/Form';
 import { Link } from '@packages/ui/Link';
 import React, { useId, useState } from 'react';
@@ -42,6 +45,12 @@ import { cardColumns } from './Card.recipe.css';
 // Stands in for a request to a server.
 const register = (registration: Registration) =>
   new Promise((resolve) => setTimeout(resolve, 400, registration));
+const projects = Array.from({ length: 24 }, (_, index) => ({
+  id: index + 1,
+  name: `Project ${index + 1}`,
+  owner: index % 2 ? 'Alex Morgan' : 'Sam Lee',
+}));
+type Project = (typeof projects)[number];
 
 // Usage: the patterns to copy.
 /**
@@ -328,6 +337,33 @@ const ToggleCard = () => {
   );
 };
 
+/** A record's card content, for CardList to draw the card around. */
+const ProjectCard = ({ project }: { project: Project }) => (
+  <>
+    <h3>{project.name}</h3>
+    <p>{project.owner}</p>
+  </>
+);
+
+/** Records as full-width cards, every one shown. */
+const RecordCards = () => (
+  <CardList
+    aria-label="Projects"
+    items={projects.slice(0, 3)}
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
+/** A long list in pages, with the list's own Pagination under the cards. */
+const PagedRecordCards = () => (
+  <CardList
+    aria-label="All projects"
+    items={projects}
+    pagination={{ itemName: ['project', 'projects'], pageSize: 5 }}
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
 export default function CardRecipe() {
   return (
     <div className="flex-col-gap-6">
@@ -341,6 +377,8 @@ export default function CardRecipe() {
       <TicketForm />
       <UnavailableOptions />
       <ToggleCard />
+      <RecordCards />
+      <PagedRecordCards />
     </div>
   );
 }

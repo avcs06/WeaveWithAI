@@ -6,7 +6,13 @@ import type {
 } from '../Selectable';
 import type { DisabledState, ReadOnlyState, SetByComponent } from '../utils';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
-import type { ComponentPropsWithRef, MouseEventHandler, Ref } from 'react';
+import type {
+  ComponentPropsWithRef,
+  Key,
+  MouseEventHandler,
+  ReactNode,
+  Ref,
+} from 'react';
 
 type CardRecipeVariants = NonNullable<RecipeVariants<typeof cardRecipe>>;
 
@@ -59,3 +65,19 @@ export type CardProps = Omit<
   );
 
 export type CardGroupProps = SelectableGroupProps;
+
+export type CardListProps<T extends { id: Key }> = {
+  /** The records, one full-width card each, in this order. */
+  items: readonly T[];
+  /** One record's card content; CardList draws the card around it. */
+  renderItem: (item: T) => ReactNode;
+  /** Names the list: "Projects". Its Pagination is named after it. */
+  'aria-label': string;
+  /**
+   * Pages of cards, with a Pagination under them: the items' name, one and
+   * many, and the first page size (10 when left out). Without it, every card
+   * shows.
+   */
+  pagination?: { itemName?: readonly [string, string]; pageSize?: number };
+  className?: string;
+};
