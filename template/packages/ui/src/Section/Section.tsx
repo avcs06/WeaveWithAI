@@ -72,8 +72,9 @@ export const SectionDescription = ({
   ) : null;
 
 /**
- * A section's box: its padding and the room between its header and content,
- * the same for every Section and Accordion item.
+ * A section's box: its side padding and the room between its header and
+ * content, the same for every Section and Accordion item. The parent's gap
+ * spaces sections apart, so there is no padding above or below.
  *
  * @internal
  */
@@ -86,7 +87,7 @@ export const SectionFrame = ({
     {...props}
     data-ds=""
     data-slot="section"
-    className={classNames('flex-col-gap-5 p-5', className)}
+    className={classNames('flex-col-gap-5 px-5', className)}
   />
 );
 

@@ -83,7 +83,7 @@ const AccordionItem = ({
 
   return (
     <AccordionPrimitive.Item value={value} asChild>
-      <SectionFrame className={classNames(accordionItem, className)}>
+      <SectionFrame className={classNames('py-5', accordionItem, className)}>
         <SectionHeader
           heading={heading}
           description={description}

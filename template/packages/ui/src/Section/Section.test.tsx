@@ -24,7 +24,7 @@ describe('Section', () => {
       'data-slot',
       'description',
     );
-    expect(section).toHaveClass('flex-col-gap-5', 'p-5');
+    expect(section).toHaveClass('flex-col-gap-5', 'px-5');
     expect(section?.querySelector('[data-slot="header"]')).toBeInTheDocument();
     expect(section?.querySelector('[data-slot="content"]')).toHaveClass(
       'flex-col-gap-4',
@@ -135,6 +135,6 @@ describe('Section', () => {
     const section = container.querySelector('section');
     expect(section).toHaveAttribute('id', 'profile');
     expect(section).toHaveAttribute('data-kind', 'settings');
-    expect(section).toHaveClass('w-full', 'p-5');
+    expect(section).toHaveClass('w-full', 'px-5');
   });
 });
