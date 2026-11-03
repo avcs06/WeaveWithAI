@@ -2,11 +2,15 @@
  * Typography: the text elements of a page, styled by the design system:
  * `Paragraph`, `Caption`, `List` with `ListItem`, `DescriptionList` with
  * `DescriptionTerm` and `DescriptionDetails`, `Quote`, `Code`, `CodeBlock`,
- * `Kbd`, `Mark`, `Separator` and `Time`. Each but `Separator` takes `font` (ui,
- * display or mono) and `color` (default, muted, primary or a status) over
- * what it inherits; its size and line height stay its own: the caption's for
- * `Caption`, the text's around it for `Code`, `Kbd`, `Mark` and `Time`, the
- * body's for the others.
+ * `Kbd`, `Mark`, `Separator` and `Time`.
+ * - `color` (default, muted, primary or a status) replaces the color the
+ *   text inherits. Every element but `Separator` takes it.
+ * - `font` (ui, display or mono) replaces the font the text inherits.
+ *   `Code` and `CodeBlock` are always mono, and `Separator` has no text, so
+ *   these three don't take it.
+ * - Size and line height are fixed: the caption's for `Caption`, the
+ *   surrounding text's for `Code`, `Kbd`, `Mark` and `Time`, and the body's
+ *   for the others.
  *
  * When not to use:
  * - A heading: a `Section`'s title is the heading.

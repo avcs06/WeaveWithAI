@@ -14,5 +14,13 @@
   {
     "selector": "Form [className*=\"flex-row\"]:has(Input, NumberInput, PasswordInput, SearchInput, Select, MultiSelect, Textarea)",
     "use": "a FormRow for fields side by side in a Form"
+  },
+  {
+    "selector": "nav Link:not([look*=\"plain\"])",
+    "use": "look=\"plain\": a link in a navigation is a control, and a link outside a sentence is plain. The dotted line marks a link inside text"
+  },
+  {
+    "selector": "nav NextLink:not([look*=\"plain\"])",
+    "use": "look=\"plain\": a link in a navigation is a control, and a link outside a sentence is plain. The dotted line marks a link inside text"
   }
 ]

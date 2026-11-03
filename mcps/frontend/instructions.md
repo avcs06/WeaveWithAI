@@ -38,8 +38,8 @@ the React Compiler, and fits a 320px screen: `pnpm nx test ui` and
   it" is no reason, since the design may be wrong.
 - Leave `variant`, `size` and `look` out to keep the defaults the theme set.
   Another value needs a comment on the prop with your own reason, the same way.
-- Phones: `@media (max-width: 639px)`. Card grids:
-  `repeat(auto-fill, minmax(min(100%, 280px), 1fr))`.
+- Phones: `@media (max-width: 639px)`. Records in a grid are a `CardList`
+  with `layout="grid"`, which sets the columns.
 
 ## App structure
 

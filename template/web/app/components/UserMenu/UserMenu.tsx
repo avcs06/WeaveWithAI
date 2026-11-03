@@ -72,7 +72,10 @@ export const UserMenu = ({
             inSidebar && 'w-full',
           )}
         >
-          <Avatar size="sm" name={name} />
+          <Avatar
+            size="sm" // One line high, so the header bar and the sidebar row keep their height.
+            name={name}
+          />
           <Truncate>{name}</Truncate>
         </span>
       </PlainButton>

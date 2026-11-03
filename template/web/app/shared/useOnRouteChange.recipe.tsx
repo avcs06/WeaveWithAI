@@ -49,10 +49,14 @@ const NavMenu = () => {
       <nav id={id} aria-label="Main" hidden={!open}>
         <ul className="flex-col-gap-1">
           <li>
-            <NextLink href="/events">Events</NextLink>
+            <NextLink look="plain" href="/events">
+              Events
+            </NextLink>
           </li>
           <li>
-            <NextLink href="/venues">Venues</NextLink>
+            <NextLink look="plain" href="/venues">
+              Venues
+            </NextLink>
           </li>
         </ul>
       </nav>

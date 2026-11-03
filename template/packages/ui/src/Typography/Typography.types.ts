@@ -50,9 +50,11 @@ export type QuoteProps = Element<'blockquote'> & {
   source?: ReactNode;
 };
 
-export type CodeProps = Element<'code'>;
+/** Always in the mono font: code has no other. */
+export type CodeProps = Omit<Element<'code'>, 'font'>;
 
-export type CodeBlockProps = Omit<Element<'pre'>, 'children'> & {
+/** Always in the mono font, like Code. */
+export type CodeBlockProps = Omit<Element<'pre'>, 'children' | 'font'> & {
   /** The code as text; its lines and spaces stay as written. */
   children: string;
 };

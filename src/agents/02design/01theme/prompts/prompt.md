@@ -94,6 +94,7 @@ Code checks these contrasts:
 - 4.5:1 for the theme's and base's `fg` on `pageBg` and `frameBg`, where links sit.
 - 3:1 for `border` and `focus` on `bg`, and for the theme's and base's `border` and `focus` on `pageBg` and `frameBg`.
 - 3:1 for the `logo` on `frameBg` and `pageBg`.
+- 2:1 between `fgMuted` and `fg` in every set, and between `pageFgMuted` and `pageFg`, so muted text reads as secondary.
 - 1.1:1 between the lightest and darkest colors of a page background that has more than one color.
 - 1.1:1 for `divider` on `pageBg`, `frameBg` and every color of the page background, and for `skeleton` on `pageBg`, `frameBg` and the base set's `bg`. A `backdrop` darker than the page and the frame.
 

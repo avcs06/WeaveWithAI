@@ -242,13 +242,12 @@ export const Quote = ({
  *
  * @invalidAlternative code
  */
-export const Code = ({ font, color, className, ...props }: CodeProps) => (
+export const Code = ({ color, className, ...props }: CodeProps) => (
   <code
     {...props}
     data-ds=""
     className={classNames(
       styles.code,
-      font && styles.fonts[font],
       color && styles.textColors[color],
       className,
     )}
@@ -263,7 +262,6 @@ export const Code = ({ font, color, className, ...props }: CodeProps) => (
  */
 export const CodeBlock = ({
   children,
-  font,
   color,
   className,
   ...props
@@ -275,7 +273,6 @@ export const CodeBlock = ({
     data-ds=""
     className={classNames(
       styles.codeBlock,
-      font && styles.fonts[font],
       color && styles.textColors[color],
       className,
     )}

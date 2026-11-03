@@ -108,6 +108,7 @@ describe('theme rules', () => {
     'THEME-009': (t) => (t.colors.light!.page.divider = t.colors.light!.page.pageBg),
     'THEME-011': (t) => (t.logo.colors.light = t.colors.light!.page.frameBg),
     'THEME-014': (t) => (t.colors.dark!.page.pageBackground = 'linear-gradient(#0B1111, #0E1818)'),
+    'THEME-015': (t) => (t.colors.light!.base.fgMuted = t.colors.light!.base.fg),
   };
 
   it('pairs each theme rule with one mutation', () => {
