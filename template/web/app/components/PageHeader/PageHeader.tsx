@@ -35,7 +35,9 @@ export const PageHeader = ({
     <div className="flex-row-gap-4 items-start">
       <div className="flex-col-gap-1 flex-fill-x">
         <h1 className={styles.title}>{title}</h1>
-        {description ? <Paragraph color="muted">{description}</Paragraph> : null}
+        {description ? (
+          <Paragraph color="muted">{description}</Paragraph>
+        ) : null}
       </div>
       {actions ? (
         <div className="flex-row-gap-2 items-center shrink-0">{actions}</div>
