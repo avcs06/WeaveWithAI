@@ -4,7 +4,7 @@ import { formatIssues } from '../../core/issues';
 import { fillPrompt, loadPrompt } from '../../core/prompt';
 import { appendEvent, readEvents, type Run, runPath, updateStage } from '../../core/run';
 import { pathBeside, writeJsonAtomic } from '../../core/utils';
-import { uxPractices } from '../../ds/ux';
+import { DESIGN_SECTIONS, uxPractices } from '../../ds/ux';
 import {
   CODE_SCHEDULE,
   sessionCompose,
@@ -21,7 +21,7 @@ import { type Draft, runSpecStage, type SpecStageResult } from '../../runner/run
 import type { StageContext } from '../stages';
 
 // One coding unit of a code stage on the stage runner: its session,
-// the checks after it, and the three reviewers, code, adherence and behavior.
+// the checks after it, and the four reviewers, code, adherence, behavior and ux.
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
 
@@ -36,14 +36,16 @@ function designSystemComponents(appDir: string): string {
 }
 
 /**
- * The three output reviewers of every coding unit: the code reviewer knows the components, the adherence reviewer
- * the UX practices, and the behavior reviewer judges state, failures and security.
+ * The four output reviewers of every coding unit: the code reviewer knows the components, the adherence reviewer
+ * the UX practices, the behavior reviewer judges state, failures and security, and the UX reviewer how each screen
+ * presents its content, with the practices about what the user sees.
  */
 function codeReviewGuides(appDir: string): Record<string, string> {
   return {
     code: fillPrompt(load('review-code.md'), { components: designSystemComponents(appDir) }),
     adherence: fillPrompt(load('review-adherence.md'), { ux: uxPractices() }),
     behavior: load('review-behavior.md'),
+    ux: fillPrompt(load('review-ux.md'), { ux: uxPractices(DESIGN_SECTIONS) }),
   };
 }
 

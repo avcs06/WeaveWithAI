@@ -86,4 +86,30 @@ describe('SidebarMenu', () => {
     expect(slot(link, 'label')).toHaveTextContent('Home');
     expect(slot(link, 'icon')).toBeInTheDocument();
   });
+
+  it('with as="div", a header or footer row holds its piece as it is: no link, label or state of its own', async () => {
+    const { container } = renderUI(
+      <SidebarMenu
+        aria-label="Pages"
+        header={
+          <SidebarMenuItem as="div" data-testid="row" className="shrink-0">
+            <button type="button">Create</button>
+          </SidebarMenuItem>
+        }
+      >
+        <SidebarMenuItem href="/home">Home</SidebarMenuItem>
+      </SidebarMenu>,
+    );
+    const row = screen.getByTestId('row');
+    expect(row.tagName).toBe('DIV');
+    expect(row).not.toHaveAttribute('data-slot');
+    expect(row).not.toHaveAttribute('aria-current');
+    expect(row.className).toContain('shrink-0');
+    expect(slot(row, 'label')).toBeNull();
+    expect(row).toContainElement(
+      screen.getByRole('button', { name: 'Create' }),
+    );
+    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(await axe(container)).toHaveNoViolations();
+  });
 });

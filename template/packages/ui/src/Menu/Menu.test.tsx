@@ -173,6 +173,9 @@ describe('Menu', () => {
     expect(shell).toContainElement(
       screen.getByRole('searchbox', { name: 'Search countries' }),
     );
+    // The list takes the shell's padding from the header only.
+    expect(listbox).toHaveAttribute('data-after-header', 'true');
+    expect(listbox).not.toHaveAttribute('data-before-footer');
     expect(await axe(container)).toHaveNoViolations();
   });
 
@@ -187,6 +190,9 @@ describe('Menu', () => {
     expect(screen.getByRole('menu')).not.toContainElement(footer);
     const list = slot(screen.getByTestId('menu'), 'list')!;
     expect(list.compareDocumentPosition(footer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The list takes the shell's padding from the footer only.
+    expect(list).toHaveAttribute('data-before-footer', 'true');
+    expect(list).not.toHaveAttribute('data-after-header');
     rerender(
       <Menu role="menu" aria-label="Pages" data-testid="menu">
         <MenuItem role="menuitem">Rename</MenuItem>
@@ -194,6 +200,9 @@ describe('Menu', () => {
     );
     expect(slot(screen.getByTestId('menu'), 'footer')).toBeNull();
     expect(container.querySelector('[data-slot="footer"]')).toBeNull();
+    expect(slot(screen.getByTestId('menu'), 'list')).not.toHaveAttribute(
+      'data-before-footer',
+    );
   });
 
   it('forwards refs and props to every part', () => {

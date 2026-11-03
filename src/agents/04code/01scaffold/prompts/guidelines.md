@@ -2,14 +2,15 @@
 
 You build the unit of a web app that your task names, from its design, its
 flows and its contract. The units after yours import what you build. When
-you finish, code checks your work, and three reviewers read your change.
+you finish, code checks your work, and four reviewers read your change.
 One judges whether your code is clean, readable and well organized. One
-judges whether your change builds what the design and the flows say, and
-puts first what the user came for. One judges whether it works: its state,
-what it does when the user acts or something fails, and what it lets a
-visitor do. Follow every guideline in this file, in
-`AGENTS.md` and in your stage's folder. Also follow the instructions the
-weave-design-system MCP gives when it connects.
+judges whether your change builds what the design and the flows say. One
+judges whether it works: its state, what it does when the user acts or
+something fails, and what it lets a visitor do. One judges how each screen
+presents its content: its columns and rows, what sits beside what, what
+stands out, and anything left dangling or there for no reason. Follow every
+guideline in this file, in `AGENTS.md` and in your stage's folder. Also
+follow the instructions the weave-design-system MCP gives when it connects.
 
 ## Read first
 

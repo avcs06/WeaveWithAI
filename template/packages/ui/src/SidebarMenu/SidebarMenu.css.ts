@@ -28,6 +28,10 @@ export const sidebarMenu = style({
 // and scrolls above it.
 globalStyle(`${sidebarMenu} > [data-slot='footer']`, { marginTop: 'auto' });
 
+// The same 6px as between the header's and footer's rows, wider than a
+// dropdown's rows.
+globalStyle(`${sidebarMenu} [data-slot='list']`, { gap: tokens.spacing[1.5] });
+
 // A row on the frame's background: the page's text, a faint hover, and the
 // brand's selected fill on the current page. A link child brings the link's
 // dotted line and color, which the row replaces.
@@ -47,3 +51,14 @@ export const sidebarMenuItem = style({
     },
   },
 });
+
+// A header's or footer's row: the link rows' inset around a piece with its own
+// control, such as the account menu, so the row itself takes no hover fill.
+export const sidebarMenuRow = style([
+  menuItem,
+  {
+    selectors: {
+      [`${menuItem}&:not([data-disabled]):hover`]: { background: 'none' },
+    },
+  },
+]);

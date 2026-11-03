@@ -55,11 +55,12 @@ export const Menu = ({
   children,
   ...props
 }: MenuProps) => {
+  const hasHeader = hasContent(header);
+  const hasFooter = hasContent(footer);
   // With a header or a footer, the menu's role, id and name move to the list,
   // which holds only the rows: a menu can't hold a field or a button. An
   // aside keeps its own role, so they move there too.
-  const outside =
-    Shell === 'aside' || hasContent(header) || hasContent(footer);
+  const outside = Shell === 'aside' || hasHeader || hasFooter;
   const {
     role,
     id,
@@ -118,12 +119,14 @@ export const Menu = ({
           {...(outside && listSemantics)}
           data-ds=""
           data-slot="list"
+          data-after-header={hasHeader || undefined}
+          data-before-footer={hasFooter || undefined}
           className={classNames(menuList, 'flex-col-gap-0.5')}
         >
           {children}
         </div>
       </FlexScrollArea>
-      {hasContent(footer) && (
+      {hasFooter && (
         <div data-slot="footer" data-ds="" className="shrink-0">
           {footer}
         </div>

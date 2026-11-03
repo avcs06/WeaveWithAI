@@ -9,7 +9,7 @@ First read this unit's design in the unit's inputs. Then follow each frame, scre
 - A01: Every frame, screen and dialog of this unit is built, and none is an empty shell.
 - A02: Every step is built, and it shows and does what it says. Its fields are the ones the step names. Each list item shows what the step says it shows.
 - A03: Every alternative is built: invalid input, a failure, an empty list with the action that fills it, a cancel, a confirm, no access, and a record that is gone. Each alternative shows when its situation happens, and only then. For example, an empty list never shows while the records still load.
-- A04: Every control works and leads where its step says. A link opens the route its step names. A step that opens a dialog opens it. Each way out of a dialog leads where its step says.
+- A04: Every control works and leads where its step says. A link opens the route its step names. A step that opens a dialog opens it. Each way out of a dialog leads where its step says. A step that only leads to another screen is built when the breadcrumb or the frame's navigation leads there.
 - A05: Every list shows records with the seed data. None is left empty by a filter on a fixed value the user did not choose.
 - A06: Every form saves and then shows the result its step gives. It tells the user which field is invalid and why. When a save, change or delete fails, a message says so, and what the user typed is kept.
 - A07: Every destructive action opens its confirm dialog and runs only after the user confirms. A cancel changes nothing.

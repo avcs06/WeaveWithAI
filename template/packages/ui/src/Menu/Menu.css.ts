@@ -26,11 +26,14 @@ export const menuAvailableHeight = createVar('menuAvailableHeight');
 // On narrow screens the margin on both sides wins over the minimum width.
 const viewportWidth = `calc(100vw - 2 * ${tokens.spacing[4]})`;
 
+const shellPaddingBlock = fallbackVar(menuShellPaddingBlock, tokens.spacing[2]);
+const listPaddingBlock = fallbackVar(menuListPaddingBlock, '0px');
+
 export const menu = style({
   minWidth: `min(220px, ${viewportWidth})`,
   maxWidth: `min(360px, ${viewportWidth})`,
   maxHeight: `min(420px, calc(100vh - ${tokens.spacing[12]}), ${fallbackVar(menuAvailableHeight, '100vh')})`,
-  paddingBlock: fallbackVar(menuShellPaddingBlock, tokens.spacing[2]),
+  paddingBlock: shellPaddingBlock,
   borderRadius: tokens.radius.surface,
   color: colors.fg,
   background: colors.bg,
@@ -40,9 +43,18 @@ export const menu = style({
 
 // Inside the scroll area, so a surface that moves the shell's padding here
 // keeps it around the content's edges (a field's focus ring at the top isn't
-// clipped).
+// clipped). The rows keep the shell's padding from a header or a footer too,
+// as they do from the shell's edges.
 export const menuList = style({
-  paddingBlock: fallbackVar(menuListPaddingBlock, '0px'),
+  paddingBlock: listPaddingBlock,
+  selectors: {
+    '&[data-after-header]': {
+      paddingTop: `calc(${listPaddingBlock} + ${shellPaddingBlock})`,
+    },
+    '&[data-before-footer]': {
+      paddingBottom: `calc(${listPaddingBlock} + ${shellPaddingBlock})`,
+    },
+  },
 });
 
 // 30px tall with one line: 8px padding + 14px line height + 8px padding.
