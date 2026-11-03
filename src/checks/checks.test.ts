@@ -376,7 +376,7 @@ describe('runRenderedChecks', () => {
       theme,
       shotsDir,
     });
-    expect(shots).toEqual([{ label: 'The screenshot of S02 at /books:', file: path.join(shotsDir, '01-S02.png') }]);
+    expect(shots).toEqual([{ label: 'The screenshot of S02 at /books:', file: path.join(shotsDir, '01-S02.png'), screen: 'S02' }]);
     expect(perRoute[0]?.shot).toBe(path.join(shotsDir, '01-S02.png'));
     expect(pngHeight(path.join(shotsDir, '01-S02.png'))).toBeGreaterThanOrEqual(60 + 2400);
   });

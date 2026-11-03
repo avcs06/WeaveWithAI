@@ -61,6 +61,7 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
     folders: ['01-scaffold', '02-contract', '03-frames', '04-pages'],
     routes: parts.map(({ route }) => route),
     expects: parts.map(({ expect }) => expect),
+    screens: parts.map(({ screen, folder }) => ({ id: screen.id, folder })),
     maxSteps: STEPS_PER_SCREEN * parts.length,
     timeoutMs: MINUTES_PER_SCREEN * 60_000 * parts.length,
   };

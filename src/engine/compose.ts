@@ -53,8 +53,14 @@ export type Unit = {
   timeoutMs?: number;
 };
 
+/** Where the agent's summary starts in the text the reviewers read, after the unit's diff. */
+export const SUMMARY_HEAD = "## The agent's summary\n\n";
+
+/** A route's screenshot, with the screen it shows. */
+export type Shot = ImageInput & { screen: string };
+
 /** What the rendered checks give back: their issues, and each route's screenshot for the reviewers that look at them. */
-export type Rendered = { issues: Issue[]; shots: ImageInput[] };
+export type Rendered = { issues: Issue[]; shots: Shot[] };
 
 export type UnitResult = {
   session: Pick<SessionResult, 'status' | 'summary' | 'checks' | 'protectedHits' | 'changed'> & {
@@ -63,6 +69,7 @@ export type UnitResult = {
   };
   rendered: Issue[];
   diff: string;
+  shots: Shot[];
 };
 
 /** The runner asks for a schema; a unit's result is built by code, never parsed from a model. */
@@ -178,9 +185,8 @@ export async function unitDraft(
   const unreadRecipes = unreadInFiles(sources, existsSync(log) ? readFileSync(log, 'utf8') : '');
   const { status, summary, checks, changed } = result;
   return {
-    data: { session: { status, summary, checks, protectedHits, changed, unreadRecipes, longFiles }, rendered, diff },
-    raw: `${diff}\n\n## The agent's summary\n\n${summary}`,
+    data: { session: { status, summary, checks, protectedHits, changed, unreadRecipes, longFiles }, rendered, diff, shots },
+    raw: `${diff}\n\n${SUMMARY_HEAD}${summary}`,
     model: resolveBackend(ctx.config, ctx.backend).model,
-    shots,
   };
 }

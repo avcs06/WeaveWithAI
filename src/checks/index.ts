@@ -129,7 +129,7 @@ export async function runRenderedChecks(opts: {
   routes: RouteSample[];
   theme: ThemeColors;
   shotsDir?: string;
-}): Promise<{ issues: Issue[]; perRoute: RenderedReport[]; shots: ImageInput[] }> {
+}): Promise<{ issues: Issue[]; perRoute: RenderedReport[]; shots: (ImageInput & { screen: string })[] }> {
   if (opts.shotsDir) mkdirSync(opts.shotsDir, { recursive: true });
   const perRoute = await withBrowser(async (browser) => {
     const context = await browser.newContext();
@@ -154,8 +154,8 @@ export async function runRenderedChecks(opts: {
     })),
   );
   const shots = perRoute.flatMap((report, i) => {
-    const screen = opts.routes[i]?.screen;
-    return report.shot ? [{ label: `The screenshot of ${screen} at ${report.route}:`, file: report.shot }] : [];
+    const screen = opts.routes[i]?.screen ?? '';
+    return report.shot ? [{ label: `The screenshot of ${screen} at ${report.route}:`, file: report.shot, screen }] : [];
   });
   return { issues, perRoute, shots };
 }

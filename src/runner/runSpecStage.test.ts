@@ -705,26 +705,37 @@ describe('runSpecStage with compose', () => {
     expect(rounds.map((event) => event.generated)).toEqual([true, true]);
   });
 
-  it("shots: only the reviewers shotReviewers names see the draft's screenshots, after their input", async () => {
-    const { llm, inputs } = fakeLlm([clean, clean]);
-    const run = createRun({ idea, runsDir: root, id: 'shots' });
-    const shots = [{ label: 'The screenshot of S01 at /:', file: '/shots/01-S01.png' }];
+  it('reviewScopes: a guide with two scopes is two reviewers, each with its slice and its images; the others read the whole', async () => {
+    const { llm, inputs } = fakeLlm([clean, clean, clean]);
+    const run = createRun({ idea, runsDir: root, id: 'scoped' });
+    const shot = (screen: string) => ({ label: `The screenshot of ${screen}:`, file: `/shots/${screen}.png` });
     await runSpecStage({
       run,
       stage: 'doc',
       schema: Doc,
       schemaName: 'Doc',
       system: 'Write a doc.',
-      user: 'About cats.',
+      user: 'About cats and dogs.',
       validate: () => [],
       review: { output: { code: 'Judge the code.', ux: 'Judge the screens.' } },
-      shotReviewers: ['ux'],
-      start: { data: { title: 'Cats' }, raw: '{"title":"Cats"}', model: 'none', shots },
+      reviewScopes: (draft) => ({
+        ux: [
+          { user: 'About cats.', output: `${draft.raw} (cats)`, images: [shot('S01')] },
+          { user: 'About dogs.', images: [shot('S02')] },
+        ],
+      }),
+      start: { data: { title: 'Pets' }, raw: '{"title":"Pets"}', model: 'none' },
       llm,
     });
 
+    expect(inputs.map((input) => input.stage)).toEqual(['doc-review-code', 'doc-review-ux-1', 'doc-review-ux-2']);
     const user = (stage: string) => inputs.find((input) => input.stage === stage)?.messages[1];
-    expect(user('doc-review-ux')?.images).toEqual(shots);
+    expect(user('doc-review-ux-1')).toMatchObject({ images: [shot('S01')] });
+    expect(user('doc-review-ux-1')?.content).toContain('About cats.');
+    expect(user('doc-review-ux-1')?.content).toContain('{"title":"Pets"} (cats)');
+    expect(user('doc-review-ux-2')).toMatchObject({ images: [shot('S02')] });
+    expect(user('doc-review-ux-2')?.content).toContain('About dogs.');
+    expect(user('doc-review-code')?.content).toContain('About cats and dogs.');
     expect(user('doc-review-code')?.images).toBeUndefined();
   });
 

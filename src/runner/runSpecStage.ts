@@ -39,11 +39,11 @@ export type ReviewGuides = { peer?: string; output: string | Record<string, stri
 /** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
 export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
 
-/**
- * What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, a fix's
- * replies to its threads, and screenshots of what it built for the reviewers `shotReviewers` names.
- */
-export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[]; shots?: ImageInput[] };
+/** What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, and a fix's replies to its threads. */
+export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[] };
+
+/** One reviewer call's share of the review: its slice of the input and of the output, and the images it looks at; what it leaves out is the whole. */
+export type ReviewScope = { user?: string; output?: string; images?: ImageInput[] };
 
 /** One model call made for the stage; it is logged as an `llm:call` event and runs on the default model unless it names one. */
 export type Call = <U>(
@@ -81,8 +81,12 @@ export type SpecStageOptions<T> = {
   reviewInput?: string;
   /** Reviewers see the mandatory issues as known, the ones the next fix takes, instead of the warnings. */
   reviewersSeeMandatory?: boolean;
-  /** The named output guides whose reviewers also see the draft's screenshots, after their input. */
-  shotReviewers?: string[];
+  /**
+   * Per named output guide, the calls its review makes on a draft, each with its own scope, such as three screens'
+   * design, code and screenshots. Two or more calls are reviewers `<name>-1`, `<name>-2` and on; a guide with none
+   * is one call on the whole.
+   */
+  reviewScopes?: (draft: Draft<T>) => Record<string, ReviewScope[]>;
   /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
   ask?: (output: T) => Promise<Answers>;
   /** Output budget for the writer's calls, reasoning included; the client doubles it once when the answer is cut. */
@@ -504,19 +508,25 @@ async function review<T>(
   threads: Thread[],
 ) {
   const known = warnings.length > 0 ? formatIssues(warnings) : 'None.';
-  // A named output guide is a reviewer of its own: `<stage>-review-<name>`.
-  const calls = reviewers.flatMap((reviewer): [string, string][] => {
+  // A named output guide is a reviewer of its own, `<stage>-review-<name>`, or one per scope, `<stage>-review-<name>-1`.
+  const scopes = o.reviewScopes?.(draft) ?? {};
+  const calls = reviewers.flatMap((reviewer): [string, string, ReviewScope][] => {
     const guide = guides[reviewer];
-    return typeof guide === 'object' ? Object.entries(guide) : [[reviewer, guide ?? '']];
+    const named: [string, string][] = typeof guide === 'object' ? Object.entries(guide) : [[reviewer, guide ?? '']];
+    return named.flatMap(([name, text]) => {
+      const own = scopes[name] ?? [];
+      if (own.length < 2) return [[name, text, own[0] ?? {}]];
+      return own.map((scope, i): [string, string, ReviewScope] => [`${name}-${i + 1}`, text, scope]);
+    });
   });
   const reviews = await Promise.all(
-    calls.map(async ([reviewer, guide]) => {
+    calls.map(async ([reviewer, guide, scope]) => {
       const by = `review-${reviewer}`;
       const own = threads.filter((thread) => thread.by === by);
       const user = fillPrompt(o.reviewInput ?? reviewInput, {
         system: o.system,
-        user: o.user,
-        output: draft.raw,
+        user: scope.user ?? o.user,
+        output: scope.output ?? draft.raw,
         known,
         threads: own.length > 0 ? formatThreads(own) : 'None.',
       });
@@ -526,11 +536,7 @@ async function review<T>(
       });
       const messages: ChatMessage[] = [
         { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
-        {
-          role: 'user',
-          content: user,
-          ...(o.shotReviewers?.includes(reviewer) && draft.shots?.length && { images: draft.shots }),
-        },
+        { role: 'user', content: user, ...(scope.images?.length && { images: scope.images }) },
       ];
       // A reviewer the model cannot answer adds no blockers: the run goes on without its review.
       const skip = (name: string, error: unknown) => {

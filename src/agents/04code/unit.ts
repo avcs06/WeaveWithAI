@@ -19,6 +19,7 @@ import { git } from '../../engine/setup';
 import { type Draft, runSpecStage, type SpecStageResult } from '../../runner/runSpecStage';
 import { formatThreads } from '../../runner/threads';
 import type { StageContext } from '../stages';
+import { fileSection, type UnitScreen, uxScopes, type WeaveFile } from './scopes';
 
 // One coding unit of a code stage on the stage runner: its session,
 // the checks after it, and the four reviewers, code, adherence, behavior and ux.
@@ -49,23 +50,24 @@ function codeReviewGuides(appDir: string): Record<string, string> {
   };
 }
 
-/** A unit as its stage describes it: the runner's stage name and the .weave folders its session reads. */
-export type UnitSpec = Omit<Unit, 'fixTask'> & { stage: string; folders: string[] };
+/** A unit as its stage describes it: the runner's stage name, the .weave folders its session reads, and the screens it builds. */
+export type UnitSpec = Omit<Unit, 'fixTask'> & { stage: string; folders: string[]; screens?: UnitScreen[] };
 
-/** A .weave file, or every file of a .weave folder with its subfolders, as `## path` and the text. */
-function folderText(appDir: string, folder: string): string {
+/** A .weave file, or every file of a .weave folder with its subfolders. */
+function weaveFiles(appDir: string, folder: string): WeaveFile[] {
   const root = path.join(appDir, '.weave', folder);
-  if (!existsSync(root)) return '';
+  if (!existsSync(root)) return [];
   const walk = (at: string): string[] =>
     statSync(at).isDirectory()
       ? readdirSync(at)
           .sort()
           .flatMap((name) => walk(path.join(at, name)))
       : [at];
-  return walk(root)
-    .map((file) => `## .weave/${path.relative(path.join(appDir, '.weave'), file)}\n\n${readFileSync(file, 'utf8')}`)
-    .join('\n\n');
+  return walk(root).map((file) => ({ path: path.relative(path.join(appDir, '.weave'), file), text: readFileSync(file, 'utf8') }));
 }
+
+/** The files as the unit's inputs show them: `## .weave/path` and the text. */
+const folderText = (appDir: string, folder: string) => weaveFiles(appDir, folder).map(fileSection).join('\n\n');
 
 /** A unit's round that `weave session-resume` finished, for `weave run --round` to review: what the session made, and where the unit picks up. */
 export type SavedRound = { stage: string; unit: string; round: number; museSession: string; baseline: string; draft: Draft<UnitResult> };
@@ -141,6 +143,7 @@ export async function runUnit(
   const guidelines = spec.folders.map((folder) => folderText(appDir, `${folder}/guidelines.md`));
   // The reviewers get what the agent was told and the unit's own folder; the earlier folders stay out to keep the review small.
   const own = spec.folders.at(-1) ?? '';
+  const ownFiles = weaveFiles(appDir, own);
   const unit: Unit = {
     ...spec,
     fixTask: (pending) =>
@@ -156,12 +159,13 @@ export async function runUnit(
     schema: UnitResultSchema,
     schemaName: 'Unit',
     system: [...guidelines.filter(Boolean), `## The task\n\n${spec.task}`].join('\n\n'),
-    user: folderText(appDir, own),
+    user: ownFiles.map(fileSection).join('\n\n'),
     validate: unitIssues,
     review: { output: codeReviewGuides(appDir) },
     reviewInput: load('review-input.md'),
     reviewersSeeMandatory: true,
-    shotReviewers: ['ux'],
+    // The UX reviewer judges a few screens a call, each from its screenshot.
+    reviewScopes: (draft) => ({ ux: uxScopes(spec.screens ?? [], ownFiles, draft.raw, draft.data.shots ?? []) }),
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(
       ctx,
