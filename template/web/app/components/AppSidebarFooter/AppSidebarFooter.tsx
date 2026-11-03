@@ -1,18 +1,28 @@
 /**
- * What stays fixed below the app sidebar's rows. PageLayout passes it to the
- * sidebar's `SidebarMenu`, which keeps it at the bottom.
+ * The bottom of the app's sidebar. It stays fixed below the rows.
  *
- * Holds, as the theme names them, each piece in its own `SidebarMenuItem`
- * from `@packages/ui/SidebarMenu` with `as="div"`, which lines it up with the
- * rows:
- * - Code places `UserMenu` here, in its row, when the theme puts the account
- *   in the sidebar: it opens to the right. Keep it as it is.
- * - A secondary action a flow has, such as Invite: a `Button` from
- *   `@packages/ui/Button`.
+ * Put here:
+ * - The account. Code places `UserMenu` here, in its own row, when the
+ *   theme puts the account in the sidebar. It opens to the right. Keep it
+ *   as it is.
+ * - A secondary action that a flow has. Use a `Button` from
+ *   `@packages/ui/Button`. Example: "Invite teammates".
  *
- * Leaves out:
- * - Links to destinations: they are the rows, in `AppSidebar`.
- * - A wrapper, padding, background or border of its own: the row and the
- *   menu draw them.
+ * Wrap each piece in its own `SidebarMenuItem` from
+ * `@packages/ui/SidebarMenu`, with `as="div"`. This lines it up with the
+ * rows.
+ *
+ * Example:
+ *   <SidebarMenuItem as="div">
+ *     <Button>Invite teammates</Button>
+ *   </SidebarMenuItem>
+ *
+ * Never put here:
+ * - Links to pages. They are the rows, in `AppSidebar`.
+ * - A wrapper, padding, background or border. The row and the menu draw
+ *   them.
+ *
+ * The line "The theme puts here" below names this app's items. Build those
+ * and nothing else.
  */
 export const AppSidebarFooter = () => null;

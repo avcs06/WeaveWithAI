@@ -5,22 +5,24 @@ import { Button } from '@packages/ui/Button';
 import React from 'react';
 
 /**
- * The right end of the public site's header, over its pages. PageLayout
- * renders the bar and keeps this slot at its right end. It lays these
- * items in a row with the theme's gap.
+ * The right end of the public site's header bar.
  *
- * Holds, as the theme names them:
- * - Sign up as the main action, `Button as={NextLink}` to the sign-up page,
- *   unless the landing page's hero offers it.
- * - Code places `UserMenu` here when the theme puts the account at the
- *   header's right: Sign in for a visitor, the account menu for a member.
- *   Keep it last, as it is.
+ * Put here, in this order:
+ * - Sign up, as the main action. Use `Button as={NextLink}` with
+ *   `href="/sign-up"`. Leave it out when the landing page's hero already
+ *   offers it.
+ * - The account. Code places `UserMenu` here when the theme puts the
+ *   account at the right. It shows Sign in to a visitor and the account
+ *   menu to a member. Keep it last, as it is.
  *
- * Leaves out:
- * - A wrapper, height, padding, background or border: PageLayout draws the
- *   bar.
- * - A page's own actions: they go in the page's `PageHeader` from
- *   `@app/components/PageHeader`.
+ * PageLayout draws the bar and lays these items in a row. Return only the
+ * items: no wrapper, height, padding, background or border.
+ *
+ * Never put here:
+ * - A page's own actions. They go in the page's `PageHeader`.
+ *
+ * The line "The theme puts here" below names this app's items. Build those
+ * and nothing else.
  */
 export const MarketingHeaderRightSlot = () => {
   const { mode, toggle } = useThemeMode();

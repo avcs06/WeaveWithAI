@@ -1,20 +1,29 @@
 /**
- * What stays fixed above the app sidebar's rows. PageLayout passes it to the
- * sidebar's `SidebarMenu`, whose rows scroll under it with the menu's spacing.
+ * The top of the app's sidebar. It stays fixed above the rows.
  *
- * Holds, as the theme names them, each piece in its own `SidebarMenuItem`
- * from `@packages/ui/SidebarMenu` with `as="div"`, which lines it up with the
- * rows:
- * - The app's main action, such as Create: a `Button` from
- *   `@packages/ui/Button`.
- * - A search over the rows, when a flow has one: `SearchInput` from
- *   `@packages/ui/Input`.
- * - Code places `PageLogo` here, in its row, when the theme puts the logo in
- *   the sidebar. Keep it as it is.
+ * Put here:
+ * - The app's main action. Use a `Button` from `@packages/ui/Button`.
+ *   Example: "New project".
+ * - A search over the rows, when a flow searches them. Use `SearchInput`
+ *   from `@packages/ui/Input`. Example: "Search projects".
+ * - The logo. Code places `PageLogo` here, in its own row, when the theme
+ *   puts the logo in the sidebar. Keep it as it is.
  *
- * Leaves out:
- * - Links to destinations: they are the rows, in `AppSidebar`.
- * - A wrapper, padding, background or border of its own: the row and the
- *   menu draw them.
+ * Wrap each piece in its own `SidebarMenuItem` from
+ * `@packages/ui/SidebarMenu`, with `as="div"`. This lines it up with the
+ * rows.
+ *
+ * Example:
+ *   <SidebarMenuItem as="div">
+ *     <Button as={NextLink} href="/projects/new">New project</Button>
+ *   </SidebarMenuItem>
+ *
+ * Never put here:
+ * - Links to pages. They are the rows, in `AppSidebar`.
+ * - A wrapper, padding, background or border. The row and the menu draw
+ *   them.
+ *
+ * The line "The theme puts here" below names this app's items. Build those
+ * and nothing else.
  */
 export const AppSidebarHeader = () => null;

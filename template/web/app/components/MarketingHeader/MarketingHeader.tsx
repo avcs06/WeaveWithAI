@@ -1,16 +1,21 @@
 /**
- * The center of the public site's header, over its pages, kept in the bar's
- * middle whatever its ends hold. Style it as the theme names it. Sign in and
- * sign up have a layout of their own, without this header.
+ * The center of the public site's header bar. It stays in the middle of the
+ * bar. Sign in and sign up have their own layout, without this header.
  *
- * Holds, as the theme names them:
- * - Links to the site's own pages or sections: a `NextLink` from
- *   `@app/components/NextLink` with `look="plain"` each.
+ * Put here:
+ * - Links to the site's own pages or sections. Use one `NextLink` from
+ *   `@app/components/NextLink` with `look="plain"` per link. Example:
+ *   Features, Pricing, About.
+ *   Each link opens a route from `.weave/01-scaffold/routes.json`.
  *
- * Leaves out:
- * - The logo and the account: the ends hold them, placed by code.
- * - A wrapper, height, padding, background or border: PageLayout draws the
- *   bar.
- * - Search, help or settings with no flow behind them.
+ * PageLayout draws the bar. Return only the items: no wrapper, height,
+ * padding, background or border.
+ *
+ * Never put here:
+ * - The logo or the account. Code places them at the ends of the bar.
+ * - A search, help or settings that no flow uses.
+ *
+ * The line "The theme puts here" below names this app's items. Build those
+ * and nothing else.
  */
 export const MarketingHeader = () => null;
