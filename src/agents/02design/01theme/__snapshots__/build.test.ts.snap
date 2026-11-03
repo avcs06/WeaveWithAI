@@ -358,7 +358,6 @@ exports[`buildTheme > stays the same for the same input 1`] = `
         "container": "fluid",
         "maxWidthPx": 0,
         "padding": "6",
-        "sectionGap": "6",
         "separation": "none",
       },
       "sidebar": {
@@ -399,8 +398,7 @@ exports[`buildTheme > stays the same for the same input 1`] = `
         "align": "center",
         "container": "fluid",
         "maxWidthPx": 0,
-        "padding": "6",
-        "sectionGap": "6",
+        "padding": "9",
         "separation": "none",
       },
       "sidebar": {

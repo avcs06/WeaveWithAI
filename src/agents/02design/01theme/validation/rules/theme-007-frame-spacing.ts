@@ -5,12 +5,12 @@ import { spacingPx, type ThemeInput } from '../helpers';
 
 /**
  * THEME-007 · mandatory
- * The spacing a layout gives every page of its kind: sections 24 to 32 apart
- * on app pages and 24 to 48 on marketing pages, and the main area and a
- * needed header or footer padded at least as much as the gap inside them,
- * unless the padding is 0. A sidebar takes its menu's spacing.
- * Pass: the reading-list layouts, sections 24 apart in a padding of 24.
- * Fail: app sections 16 apart.
+ * The spacing a layout gives every page of its kind: the main area padded at
+ * least as much as the gap between its sections, 24 on app pages and 36 on
+ * marketing pages, and a needed header or footer at least as much as the gap
+ * inside it, unless the padding is 0. A sidebar takes its menu's spacing.
+ * Pass: the reading-list layouts, page paddings of 24 and 36.
+ * Fail: an app page padded 16.
  */
 export const rule = defineRule<ThemeInput>(
   'THEME-007',
@@ -20,18 +20,8 @@ export const rule = defineRule<ThemeInput>(
     const px = spacingPx(inventory);
     for (const kind of ['app', 'marketing'] as const) {
       const { main, header, footer } = theme.layouts[kind];
-      const [low, high] = SECTION_GAP_PX[kind];
-      const sectionGap = px(main.sectionGap);
-      if (sectionGap < low || sectionGap > high)
-        issues.push(
-          fail(
-            `The ${kind} sections are ${sectionGap} apart; keep them ${low} to ${high} apart.`,
-            `${kind}.main.sectionGap`,
-          ),
-        );
-
       const padded: [string, number, number][] = [
-        ['main', px(main.padding), sectionGap],
+        ['main', px(main.padding), SECTION_GAP_PX[kind]],
       ];
       for (const [name, part] of Object.entries({
         header,

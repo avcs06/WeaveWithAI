@@ -15,7 +15,6 @@ export const barPadding = createVar();
 export const padding = createVar();
 export const gap = createVar();
 export const maxWidth = createVar();
-export const sectionGap = createVar();
 
 export const root = style({
   display: 'grid',
@@ -85,9 +84,6 @@ export const main = style({
 });
 
 export const container = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: sectionGap,
   width: '100%',
   minWidth: 0,
   padding,

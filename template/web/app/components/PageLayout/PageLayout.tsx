@@ -65,7 +65,7 @@ export function frameGrid(layout: PageLayoutConfig) {
  */
 export const PageLayout = ({
   layout,
-  scrollMain = false,
+  kind,
   header,
   sidebarHeader,
   sidebar,
@@ -73,6 +73,7 @@ export const PageLayout = ({
   footer,
   children,
 }: PageLayoutProps) => {
+  const scrollMain = kind === 'app';
   const rootRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -86,11 +87,14 @@ export const PageLayout = ({
       data-slot="container"
       data-container={main.container}
       data-separation={main.separation}
-      // The theme's section gap spaces the page's sections, as a group's does.
-      className={classNames(sectionGroup, styles.container)}
+      // A SectionGroup whose sections sit the kind's fixed gap apart.
+      className={classNames(
+        sectionGroup,
+        scrollMain ? 'flex-col-gap-6' : 'flex-col-gap-9',
+        styles.container,
+      )}
       style={assignInlineVars({
         [styles.maxWidth]: px(main.maxWidthPx),
-        [styles.sectionGap]: space(main.sectionGap),
       })}
     >
       {children}

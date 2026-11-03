@@ -94,7 +94,7 @@ function layoutFile(frame: Frame, group: string, kind: 'app' | 'marketing', all:
 /** ${frame.name} (${frame.id}).${signedIn ? ' A visitor who is not signed in goes to the landing page.' : ''} */
 export default function ${name}({ children }: { children: React.ReactNode }) {
 ${guard}  return (
-    <PageLayout layout={layouts.${kind}}${kind === 'app' ? ' scrollMain' : ''}${slots}>
+    <PageLayout layout={layouts.${kind}} kind="${kind}"${slots}>
       {children}
     </PageLayout>
   );

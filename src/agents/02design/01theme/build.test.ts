@@ -103,7 +103,7 @@ describe('theme rules', () => {
       t.layouts.app.sidebar.needed = true;
       t.layouts.app.sidebar.top = 'the shelves';
     },
-    'THEME-007': (t) => (t.layouts.app.main.sectionGap = '4'),
+    'THEME-007': (t) => (t.layouts.app.main.padding = '4'),
     'THEME-008': (t) => (t.defaults.Button!.size = 'icon-sm'),
     'THEME-009': (t) => (t.colors.light!.page.divider = t.colors.light!.page.pageBg),
     'THEME-011': (t) => (t.logo.colors.light = t.colors.light!.page.frameBg),
@@ -243,17 +243,14 @@ describe('theme rules', () => {
     expect(at((t) => (t.layouts.app.header.heightPx = 0))).toEqual([]);
   });
 
-  it('THEME-007 keeps sections in range by kind and every padding at least its gap', () => {
+  it('THEME-007 keeps every padding at least the gap inside it: 24 between sections in the main area', () => {
     const at = (change: (t: Theme) => void) => {
       const copy = structuredClone(theme);
       change(copy);
       return validateTheme(copy, inventory).map((issue) => issue.at);
     };
-    expect(
-      at((t) => Object.assign(t.layouts.marketing.main, { sectionGap: '12', padding: '12' })),
-    ).toEqual([]);
-    expect(at((t) => (t.layouts.app.main.sectionGap = '12'))).toEqual([
-      'app.main.sectionGap',
+    expect(at((t) => (t.layouts.marketing.main.padding = '12'))).toEqual([]);
+    expect(at((t) => (t.layouts.app.main.padding = '4'))).toEqual([
       'app.main.padding',
     ]);
     expect(at((t) => (t.layouts.marketing.header.gap = '6'))).toEqual([

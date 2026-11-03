@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <PageLayout
       layout={layouts.app}
-      scrollMain
+      kind="app"
       header={<LayoutHeader />}
       sidebar={<LayoutSidebar />}
       footer={<LayoutFooter />}

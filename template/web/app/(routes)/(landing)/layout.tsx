@@ -12,6 +12,7 @@ export default function LandingLayout({
   return (
     <PageLayout
       layout={layouts.marketing}
+      kind="marketing"
       header={<LayoutHeader />}
       footer={<LayoutFooter />}
     >

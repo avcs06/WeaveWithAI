@@ -10,8 +10,9 @@ export const link = style({});
 
 // An icon beside the name, in the logo's color.
 globalStyle(`${link} > svg`, {
-  width: tokens.iconSize.subheading,
-  height: tokens.iconSize.subheading,
+  // Halfway between the name's font size and its line height, whatever size the bar gives the logo.
+  width: 'calc((1em + 1lh) / 2)',
+  height: 'calc((1em + 1lh) / 2)',
   flexShrink: 0,
   color: tokens.color.surface.logo,
 });

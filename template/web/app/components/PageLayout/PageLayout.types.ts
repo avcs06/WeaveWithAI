@@ -52,8 +52,6 @@ export type PageLayoutConfig = {
     padding: SpacingKey;
     /** For the page's own sections; the container lays out nothing by it. */
     align: 'start' | 'center';
-    /** The gap between the page's sections. */
-    sectionGap: SpacingKey;
     /** How the content area sets off from the frame: a panel background, a border, a shadow, or nothing. */
     separation: Separation;
   };
@@ -61,8 +59,12 @@ export type PageLayoutConfig = {
 
 export type PageLayoutProps = {
   layout: PageLayoutConfig;
-  /** The main region scrolls on its own while the frame around it stays in place, as in the app layout; otherwise the page scrolls. */
-  scrollMain?: boolean;
+  /**
+   * `app`: the frame stays in place, the main region scrolls on its own, and
+   * sections sit 24px apart. `marketing`: the page scrolls, and sections sit
+   * 36px apart.
+   */
+  kind: 'app' | 'marketing';
   /** The header's content, laid out in a row; rendered when `layout.header.needed`. */
   header?: ReactNode;
   /** Fixed above the sidebar's rows, such as a Create button. */

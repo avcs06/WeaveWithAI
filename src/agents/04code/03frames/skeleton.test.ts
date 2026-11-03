@@ -31,10 +31,10 @@ describe('frame skeletons', () => {
       'web/app/blocks/AppSidebarFooter/index.ts',
     ]);
     expect(files.get('web/app/(routes)/(landing)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.marketing} header={<LandingHeader />}>',
+      '<PageLayout layout={layouts.marketing} kind="marketing" header={<LandingHeader />}>',
     );
     expect(files.get('web/app/(routes)/(app)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.app} scrollMain header={<AppHeader />} sidebarHeader={<AppSidebarHeader />} sidebar={<AppSidebar />} sidebarFooter={<AppSidebarFooter />}>',
+      '<PageLayout layout={layouts.app} kind="app" header={<AppHeader />} sidebarHeader={<AppSidebarHeader />} sidebar={<AppSidebar />} sidebarFooter={<AppSidebarFooter />}>',
     );
     expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('Rows: the shelves.');
     expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('return SidebarMenuItems');
