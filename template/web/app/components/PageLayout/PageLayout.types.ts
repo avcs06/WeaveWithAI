@@ -67,6 +67,8 @@ export type PageLayoutConfig = {
 
 export type PageLayoutProps = {
   layout: PageLayoutConfig;
+  /** The main region scrolls on its own while the frame around it stays in place, as in the app layout; otherwise the page scrolls. */
+  scrollMain?: boolean;
   /** The header's content, laid out in a row; rendered when `layout.header.needed`. */
   header?: ReactNode;
   /** The sidebar's content, laid out in a column; rendered when `layout.sidebar.needed`. */

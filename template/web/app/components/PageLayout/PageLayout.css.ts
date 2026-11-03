@@ -24,6 +24,10 @@ export const root = style({
   gridTemplateColumns: columns,
   gridTemplateRows: rows,
   minHeight: '100dvh',
+  selectors: {
+    // The frame fills the screen and only the main region scrolls.
+    '&[data-scroll-main]': { height: '100dvh' },
+  },
 });
 
 const separations = (side: 'Top' | 'Bottom' | 'Left' | 'Right', on = '&') => ({
@@ -81,6 +85,7 @@ export const sidebar = style({
       height: `calc(100dvh - ${headerHeight})`,
     },
     '&[data-sticky]:not([data-under-header])': { top: 0, height: '100dvh' },
+    [`${root}[data-scroll-main] > &`]: { overflowY: 'auto' },
   },
 });
 
@@ -92,6 +97,7 @@ export const main = style({
   selectors: {
     // An overlay header lies over the main region's top.
     [`${root}[data-overlay] > &`]: { gridRow: 'header-start / main-end' },
+    [`${root}[data-scroll-main] > &`]: { overflowY: 'auto' },
     '&[data-panel]': { padding },
   },
 });
@@ -104,7 +110,10 @@ export const container = style({
   minWidth: 0,
   padding,
   selectors: {
-    '&[data-container="fixed"]': { maxWidth, marginInline: 'auto' },
+    '&[data-container="fixed"]': {
+      maxWidth,
+      marginInline: 'auto',
+    },
     [`${root}[data-overlay] &`]: {
       paddingTop: `calc(${headerHeight} + ${padding})`,
     },

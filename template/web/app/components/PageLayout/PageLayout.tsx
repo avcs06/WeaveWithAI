@@ -60,12 +60,14 @@ const Sidebar = ({
   area,
   label,
   sidebar,
+  sticky,
   underHeader,
   children,
 }: {
   area: string;
   label: string;
   sidebar: PageSidebar;
+  sticky: boolean;
   underHeader: boolean;
   children: React.ReactNode;
 }) => (
@@ -73,7 +75,7 @@ const Sidebar = ({
     aria-label={label}
     data-ds=""
     data-side={sidebar.side}
-    data-sticky={flag(sidebar.sticky)}
+    data-sticky={flag(sticky)}
     data-under-header={flag(underHeader)}
     data-separation={sidebar.separation}
     className={styles.sidebar}
@@ -99,6 +101,7 @@ const Sidebar = ({
  */
 export const PageLayout = ({
   layout,
+  scrollMain = false,
   header,
   sidebar,
   extraSidebar,
@@ -111,6 +114,9 @@ export const PageLayout = ({
   const grid = frameGrid(layout);
   const { main } = layout;
   const overlay = layout.header.needed && layout.header.overlay;
+
+  // Nothing outside the main region scrolls when it scrolls on its own, so nothing needs to stick.
+  const sticky = (on: boolean) => !scrollMain && on;
 
   // A sticky sidebar starts under the header only when the header spans it and stays in view.
   const underHeader =
@@ -137,6 +143,7 @@ export const PageLayout = ({
       ref={rootRef}
       data-ds=""
       data-overlay={flag(overlay)}
+      data-scroll-main={flag(scrollMain)}
       className={styles.root}
       style={assignInlineVars({
         [styles.areas]: grid.areas,
@@ -151,7 +158,7 @@ export const PageLayout = ({
         <header
           ref={headerRef}
           data-ds=""
-          data-sticky={flag(layout.header.sticky)}
+          data-sticky={flag(sticky(layout.header.sticky))}
           data-overlay={flag(overlay)}
           data-separation={layout.header.separation}
           className={styles.header}
@@ -172,6 +179,7 @@ export const PageLayout = ({
           area="sidebar"
           label="Sidebar"
           sidebar={layout.sidebar}
+          sticky={sticky(layout.sidebar.sticky)}
           underHeader={underHeader}
         >
           {sidebar}
@@ -202,6 +210,7 @@ export const PageLayout = ({
           area="extra"
           label="Secondary sidebar"
           sidebar={layout.extraSidebar}
+          sticky={sticky(layout.extraSidebar.sticky)}
           underHeader={underHeader}
         >
           {extraSidebar}

@@ -24,7 +24,7 @@ describe('frame skeletons', () => {
       '<PageLayout layout={layouts.marketing} header={<LandingHeader />}>',
     );
     expect(files.get('web/app/(routes)/(app)/layout.tsx')).toContain(
-      '<PageLayout layout={layouts.app} header={<AppHeader />} sidebar={<AppSidebar />}>',
+      '<PageLayout layout={layouts.app} scrollMain header={<AppHeader />} sidebar={<AppSidebar />}>',
     );
     expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('Top: the shelves.');
     expect(files.get('web/app/blocks/AppSidebar/AppSidebar.tsx')).toContain('export const AppSidebar = () => null;');
