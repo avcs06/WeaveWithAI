@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Issue } from '../core/issues';
+import { Reply } from './threads';
 
 export const Blocker = z.object({
   at: z.string().describe('Where it is: an ID, a file or a JSON path in the output'),
@@ -9,6 +10,7 @@ export const Blocker = z.object({
 export const Review = z.object({
   checked: z.array(z.string()).describe('The id of every guide point checked, such as P01'),
   blockers: z.array(Blocker),
+  replies: z.array(Reply).describe('One answer for each thread you judged'),
 });
 export type Review = z.infer<typeof Review>;
 

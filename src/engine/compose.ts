@@ -2,9 +2,10 @@ import { z } from 'zod';
 import { resolveBackend } from '../core/backends';
 import type { Issue } from '../core/issues';
 import type { Compose, Draft, Round } from '../runner/runSpecStage';
+import { Reply, type Thread } from '../runner/threads';
 import type { StageContext } from '../agents/stages';
 import { randomUUID } from 'node:crypto';
-import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { checkIssues, type LongFile, MAX_LINES } from './checks';
 import type { ScreenExpect } from './conformance';
@@ -28,14 +29,17 @@ export const CODE_SCHEDULE: Round[] = [
   { fix: true, reviewers: [] },
 ];
 
+/** Where a fix session writes its reply to each thread. */
+export const REPLIES = '.weave/replies.json';
+
 export type Unit = {
   /** 'frames', 'pages': the session ids and the runner's stage name end with it. */
   id: string;
   /** The run's stage of the unit, such as `code-pages`. */
   stage?: string;
   task: string;
-  /** The fix session's task for the pending issues. */
-  fixTask: (pending: Issue[]) => string;
+  /** The fix session's task for the pending threads. */
+  fixTask: (pending: Thread[]) => string;
   /** The routes `pnpm verify` checks after each session. */
   routes?: CheckedRoute[];
   /** What each of its screens' code must name. */
@@ -112,7 +116,17 @@ export function sessionCompose(
   };
   return {
     draft: () => run(unit.task),
-    fix: (_call, _current, pending) => run(unit.fixTask(pending)),
+    // The fix task asks for the replies in REPLIES; a file the session leaves out or gets wrong gives none.
+    async fix(_call, _current, pending) {
+      const file = path.join(appDir, REPLIES);
+      rmSync(file, { force: true });
+      const draft = await run(unit.fixTask(pending));
+      let replies: Reply[] = [];
+      try {
+        replies = z.array(Reply).parse(JSON.parse(readFileSync(file, 'utf8')));
+      } catch {}
+      return { ...draft, replies };
+    },
   };
 }
 

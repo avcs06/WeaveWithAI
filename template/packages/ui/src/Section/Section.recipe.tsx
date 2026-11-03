@@ -21,10 +21,10 @@
  * - Stack sections in a SectionGroup, which puts a fixed gap between them.
  *   A Section on its own pads itself above and below. A page's sections
  *   need no group: the page spaces them.
- * - A Section has no side padding, so its heading lines up with the
- *   PageHeader. The sides come from what wraps it: the page's container, a
- *   Card or a panel. Never pad a Section's sides, or wrap one in a box only
- *   to pad it.
+ * - A Section has no side padding by default, so its heading lines up with
+ *   the PageHeader and the text around it. The sides come from what wraps
+ *   it: the page's container, a Card or a panel. Where one section needs
+ *   sides of its own, give them with `className`, such as `px-4`.
  * - `description` is one muted line about the section; anything longer, or
  *   anything to act on, goes in the content.
  * - `headerAction` holds the section's own actions, like Add, at the
@@ -33,10 +33,12 @@
  *   like a Tag, are read as part of the heading: no buttons or links.
  */
 import { Button } from '@packages/ui/Button';
+import { Card } from '@packages/ui/Card';
 import { Input } from '@packages/ui/Input';
 import { Section, SectionGroup } from '@packages/ui/Section';
 import { Switch } from '@packages/ui/Switch';
 import { Tag } from '@packages/ui/Tag';
+import { Paragraph } from '@packages/ui/Typography';
 import { Bell, User } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -103,11 +105,30 @@ const NestedSections = () => (
   </Section>
 );
 
+/**
+ * The wrapper gives the sides: a Card's padding here, the page's container
+ * on a page. A plain heading, a paragraph and the sections all start on its
+ * one left edge.
+ */
+const SharedLeftEdge = () => (
+  <Card>
+    <h2>Frontend summit</h2>
+    <Paragraph>Two days of talks on the web platform, in Lisbon.</Paragraph>
+    <Section title="Hall A" description="Second floor">
+      <Paragraph>300 seats, with a stage and two screens.</Paragraph>
+    </Section>
+    <Section title="Hall B" description="Ground floor">
+      <Paragraph>120 seats, for the workshops.</Paragraph>
+    </Section>
+  </Card>
+);
+
 export default function SectionRecipe() {
   return (
     <div className="flex-col-gap-8">
       <SettingsSections />
       <NestedSections />
+      <SharedLeftEdge />
     </div>
   );
 }

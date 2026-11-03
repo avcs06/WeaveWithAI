@@ -173,8 +173,9 @@ export const SectionContent = ({
  * A titled part of a page: a heading, an optional muted description, then its
  * content, with the same sizes and spacing everywhere. A section inside a
  * section gets the next heading level. One that opens and closes is a
- * Collapsible, several are an Accordion. It has no side padding: the page's
- * container, or the Card or panel around it, gives the sides.
+ * Collapsible, several are an Accordion. It has no side padding by default:
+ * the page's container, or the Card or panel around it, gives the sides. A
+ * section that needs its own takes them through `className`.
  *
  * @invalidAlternative section
  */

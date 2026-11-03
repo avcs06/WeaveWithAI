@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import {
   clearReport,
   formatIssues,
@@ -21,8 +21,9 @@ import { costUsd, isPriced } from '../core/prices';
 import { fillPrompt, loadPrompt } from '../core/prompt';
 import { applyPatch, type PatchKeys, patchFormat, patchSchema } from './patch';
 import { guideIds, Review, toIssues } from './review';
-import { appendEvent, type Run, updateStage } from '../core/run';
-import { pathBeside } from '../core/utils';
+import { formatThreads, leftWithReason, Reply, type Thread, threadBook } from './threads';
+import { appendEvent, type Run, runPath, updateStage } from '../core/run';
+import { pathBeside, writeJsonAtomic } from '../core/utils';
 
 /** Question id to the question as asked and the answer given; the question text survives reruns, the id alone does not. */
 export type Answer = { question: string; answer: string };
@@ -37,8 +38,8 @@ export type ReviewGuides = { peer?: string; output: string | Record<string, stri
 /** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
 export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
 
-/** What a stage produces in a round: the typed document, the text the reviewers read, and which model wrote it. */
-export type Draft<T> = { data: T; raw: string; model: string };
+/** What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, and a fix's replies to its threads. */
+export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[] };
 
 /** One model call made for the stage; it is logged as an `llm:call` event and runs on the default model unless it names one. */
 export type Call = <U>(
@@ -47,13 +48,13 @@ export type Call = <U>(
   },
 ) => Promise<GenerateResult<U>>;
 
-/** How a stage produces its document: the first draft, and a fix that applies pending issues and answers to the current one. */
+/** How a stage produces its document: the first draft, and a fix that answers the pending threads and applies the answers to the current one. */
 export type Compose<T> = {
   draft(call: Call): Promise<Draft<T>>;
   fix(
     call: Call,
     current: Draft<T>,
-    pending: Issue[],
+    pending: Thread[],
     answers: Answers,
   ): Promise<Draft<T>>;
 };
@@ -214,8 +215,11 @@ export async function runSpecStage<T>(
     : await produce(1, (call) => compose.draft(call), 0);
   await askAbout(last.draft.data);
 
-  let pending: Issue[] = [];
-  let blockers: Issue[] = [];
+  const book = threadBook();
+  // The threads the next fix takes, the reviewers' open ones, and what is left when no fix clears them.
+  let pending: Thread[] = [];
+  let reviewThreads: Thread[] = [];
+  let known: Issue[] = [];
   let rounds = first;
   for (const [index, step] of schedule.entries()) {
     const round = index + 1;
@@ -241,6 +245,7 @@ export async function runSpecStage<T>(
         });
         break;
       }
+      book.reply(last.draft.replies ?? [], round, 'fix');
       await askAbout(last.draft.data);
     }
     // The first round produced unless it started from a given document (a resumed one was produced outside);
@@ -257,26 +262,34 @@ export async function runSpecStage<T>(
         warnings: warnings.length,
         rules: mandatory.map((issue) => issue.rule),
       });
+    const checks = book.checks(mandatory, round);
     const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
-    if (o.review && reviewers.length > 0) {
-      blockers = await review(
+    const reviewed = Boolean(o.review) && reviewers.length > 0;
+    if (o.review && reviewed) {
+      // The reviewers read what the fix said about their threads, then answer each one or raise new blockers.
+      const { blockers, replies } = await review(
         o,
         o.review,
         round,
         reviewers,
         last.draft.raw,
         o.reviewersSeeMandatory ? mandatory : warnings,
+        reviewThreads,
       );
-    } else if (produced) {
-      // The final fix addressed these; nobody checked the result.
-      blockers = blockers.map((issue) => ({
-        ...issue,
-        message: issue.message + NOT_REREVIEWED,
-      }));
+      book.raise(blockers, round);
+      for (const answer of replies) book.reply(answer.replies, round, answer.by);
+      reviewThreads = book.reviews(round);
     }
+    // The final fix addressed these; nobody checked the result.
+    const reviewIssues = reviewThreads.map((thread) =>
+      !reviewed && produced ? { ...thread.issue, message: thread.issue.message + NOT_REREVIEWED } : thread.issue,
+    );
 
-    pending = [...mandatory, ...blockers];
-    writeReport(o.run, o.stage, round, [...last.issues, ...blockers]);
+    // A check the fixer left with a reason is known but not fixed again.
+    pending = [...checks.filter((thread) => !leftWithReason(thread)), ...reviewThreads];
+    known = [...checks.map((thread) => thread.issue), ...reviewIssues];
+    writeReport(o.run, o.stage, round, [...last.issues, ...reviewIssues]);
+    writeJsonAtomic(runPath(o.run, 'reports', `${o.stage}.threads.json`), book.threads);
     appendEvent(o.run, {
       type: 'stage:round',
       stage: o.stage,
@@ -284,7 +297,7 @@ export async function runSpecStage<T>(
       generated: produced,
       mandatory: mandatory.length,
       warnings: warnings.length,
-      blockers: blockers.length,
+      blockers: reviewThreads.length,
     });
     if (pending.length === 0 && (reviewers.length > 0 || !o.review)) break;
   }
@@ -294,14 +307,14 @@ export async function runSpecStage<T>(
     type: 'stage:done',
     stage: o.stage,
     rounds,
-    known: pending.length,
+    known: known.length,
   });
-  updateStage(o.run, o.stage, { rounds, known: pending.length });
+  updateStage(o.run, o.stage, { rounds, known: known.length });
 
   return {
     output: last.draft.data,
     warnings,
-    known: pending,
+    known,
     answers,
     model: last.draft.model,
     rounds,
@@ -351,36 +364,41 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
             : fixMessage(pending, answers),
         },
       );
-      if (!keys) return generate(call, { reasoningEffort });
       const result = await call({
         stage: o.stage,
-        schema: patchSchema(o.schema, keys),
-        schemaName: `${o.schemaName}Patch`,
+        schema: withReplies(keys ? patchSchema(o.schema, keys) : o.schema),
+        schemaName: keys ? `${o.schemaName}Patch` : o.schemaName,
         messages,
         maxTokens: o.maxTokens,
         reasoningEffort,
       });
-      const data = o.schema.parse(
-        applyPatch(current.data as object, result.data, keys),
-      );
-      return { data, raw: JSON.stringify(data), model: result.model };
+      // The replies go to the threads, not into the document.
+      const { replies = [], ...answer } = result.data as Record<string, unknown> & { replies?: Reply[] };
+      const data = keys ? o.schema.parse(applyPatch(current.data as object, answer, keys)) : (answer as T);
+      return { data, raw: JSON.stringify(data), model: result.model, replies };
     },
   };
 }
 
-/** The fix message for a document with no keyed lists: the pending issues and the answers given since the last generation. */
-export function fixMessage(pending: Issue[], answers: Answers): string {
+/** A fix's answer: the document or its patch, and a reply to each thread it was given. */
+function withReplies(schema: z.ZodType): z.ZodObject {
+  if (!(schema instanceof z.ZodObject)) throw new Error('a fix needs an object schema');
+  return schema.extend({ replies: z.array(Reply).describe('One answer for each problem, by its id') });
+}
+
+/** The fix message for a document with no keyed lists: the pending threads and the answers given since the last generation. */
+export function fixMessage(pending: Thread[], answers: Answers): string {
   return fillPrompt(fixPrompt, {
-    issues: formatIssues(pending),
+    issues: formatThreads(pending),
     answers: Object.keys(answers).length > 0 ? formatAnswers(answers) : 'None.',
   });
 }
 
 /** The fix message for a document with keyed lists: the same, asking for a patch. */
-function patchFixMessage(pending: Issue[], answers: Answers): string {
+function patchFixMessage(pending: Thread[], answers: Answers): string {
   return fillPrompt(patchFixPrompt, {
     patch: patchFormat,
-    issues: formatIssues(pending),
+    issues: formatThreads(pending),
     answers: Object.keys(answers).length > 0 ? formatAnswers(answers) : 'None.',
   });
 }
@@ -470,6 +488,7 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   };
 }
 
+/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads the fix answered. */
 async function review<T>(
   o: SpecStageOptions<T>,
   guides: ReviewGuides,
@@ -477,6 +496,7 @@ async function review<T>(
   reviewers: (keyof ReviewGuides)[],
   output: string,
   warnings: Issue[],
+  threads: Thread[],
 ) {
   const known = warnings.length > 0 ? formatIssues(warnings) : 'None.';
   const user = fillPrompt(o.reviewInput ?? reviewInput, {
@@ -484,6 +504,7 @@ async function review<T>(
     user: o.user,
     output,
     known,
+    threads: threads.length > 0 ? formatThreads(threads) : 'None.',
   });
   // A named output guide is a reviewer of its own: `<stage>-review-<name>`.
   const calls = reviewers.flatMap((reviewer): [string, string][] => {
@@ -492,6 +513,11 @@ async function review<T>(
   });
   const reviews = await Promise.all(
     calls.map(async ([reviewer, guide]) => {
+      const by = `review-${reviewer}`;
+      const said = (data: Review) => ({
+        blockers: toIssues(data).map((issue) => ({ issue, by })),
+        replies: [{ by, replies: data.replies ?? [] }],
+      });
       const messages: ChatMessage[] = [
         { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
         { role: 'user', content: user },
@@ -503,7 +529,7 @@ async function review<T>(
           stage: o.stage,
           message: `${o.stage} round ${round}: the ${name} review failed (${String(error).split('\n')[0]}); its blockers are left out`,
         });
-        return [];
+        return { blockers: [], replies: [] };
       };
       let first;
       try {
@@ -511,21 +537,27 @@ async function review<T>(
       } catch (error) {
         return skip(reviewer, error);
       }
-      if (first.missed.length === 0) return toIssues(first.data);
+      if (first.missed.length === 0) return said(first.data);
       // One more turn for the points it left unchecked; what it still leaves is only logged.
       messages.push(
         { role: 'assistant', content: first.raw },
         { role: 'user', content: fillPrompt(recheckPrompt, { missed: first.missed.map((id) => `- ${id}`).join('\n') }) },
       );
+      let second;
       try {
-        const second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
-        return [...toIssues(first.data), ...toIssues(second.data)];
+        second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
       } catch (error) {
-        return [...toIssues(first.data), ...skip(`${reviewer}-recheck`, error)];
+        skip(`${reviewer}-recheck`, error);
+        return said(first.data);
       }
+      const [a, b] = [said(first.data), said(second.data)];
+      return { blockers: [...a.blockers, ...b.blockers], replies: [...a.replies, ...b.replies] };
     }),
   );
-  return reviews.flat();
+  return {
+    blockers: reviews.flatMap((r) => r.blockers),
+    replies: reviews.flatMap((r) => r.replies),
+  };
 }
 
 /** One reviewer call, logged with its blockers and the points of `points` it did not list as checked. */

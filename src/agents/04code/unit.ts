@@ -1,6 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { formatIssues } from '../../core/issues';
 import { fillPrompt, loadPrompt } from '../../core/prompt';
 import { appendEvent, readEvents, type Run, runPath, updateStage } from '../../core/run';
 import { pathBeside, writeJsonAtomic } from '../../core/utils';
@@ -18,6 +17,7 @@ import { saveStagePatch, startStage } from '../../engine/patches';
 import { resumeSession, type SessionDeps, sessionSlug } from '../../engine/session';
 import { git } from '../../engine/setup';
 import { type Draft, runSpecStage, type SpecStageResult } from '../../runner/runSpecStage';
+import { formatThreads } from '../../runner/threads';
 import type { StageContext } from '../stages';
 
 // One coding unit of a code stage on the stage runner: its session,
@@ -146,7 +146,7 @@ export async function runUnit(
     fixTask: (pending) =>
       fillPrompt(load('fix-task.md'), {
         folders: spec.folders.map((f) => `\`.weave/${f}/\``).join(', '),
-        issues: formatIssues(pending),
+        issues: formatThreads(pending),
       }),
   };
   return runSpecStage({

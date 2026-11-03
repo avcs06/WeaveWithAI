@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { type Issue, readReport, writeReport } from '../core/issues';
 import { type GenerateInput, type Llm, ModelOutputInvalid, ModelOutputTruncated } from '../core/llm';
 import type { Review } from './review';
+import type { Thread } from './threads';
 import { createRun, readEvents, readState } from '../core/run';
 import {
   type Answers,
@@ -34,9 +35,10 @@ const longTitle: Issue = {
   severity: 'warning',
   message: 'title is long',
 };
-const clean: Review = { checked: [], blockers: [] };
+const clean: Review = { checked: [], blockers: [], replies: [] };
 const generic: Review = {
   checked: [],
+  replies: [],
   blockers: [
     { at: 'title', problem: 'Title is generic.', fix: 'Name the breed.' },
   ],
@@ -320,10 +322,10 @@ describe('runSpecStage with reviewers', () => {
       'default',
     ]);
     expect(lastUser(inputs[3])).toContain(
-      '- DOC-001 at title: title must not be empty',
+      '- T01: DOC-001 at title: title must not be empty',
     );
     expect(lastUser(inputs[3])).toContain(
-      '- REVIEW at title: Title is generic. Fix: Name the breed.',
+      '- T02: REVIEW at title: Title is generic. Fix: Name the breed.',
     );
     expect(readReport(run, 'doc')?.rounds).toEqual([
       { round: 1, issues: [missingTitle, genericIssue] },
@@ -447,7 +449,7 @@ describe('runSpecStage with reviewers', () => {
       [3, 'default'],
     ]);
     // The final fix takes round 2's blocker and not the validator issue round 2's fix cleared.
-    expect(lastUser(inputs[5])).toContain('- REVIEW at title: Title is generic. Fix: Name the breed.');
+    expect(lastUser(inputs[5])).toContain('- T03: REVIEW at title: Title is generic. Fix: Name the breed.');
     expect(lastUser(inputs[5])).not.toContain('DOC-001');
   });
 });
@@ -509,7 +511,7 @@ describe('runSpecStage with questions (interactive)', () => {
       'doc-review-output',
     ]);
     const fixup = lastUser(inputs[3]);
-    expect(fixup).toContain('- DOC-001 at title: title must not be empty');
+    expect(fixup).toContain('- T01: DOC-001 at title: title must not be empty');
     expect(fixup).toContain('Answers the user gave to your questions');
     expect(fixup).toContain('- Q01 "Breed?": Siamese');
     expect(fixup).not.toContain('Q02');
@@ -610,7 +612,7 @@ describe('runSpecStage without a review guide', () => {
       'Return the complete corrected document as JSON.',
     );
     expect(messages[3]?.content).toContain(
-      '- DOC-001 at title: title must not be empty',
+      '- T01: DOC-001 at title: title must not be empty',
     );
     expect(messages[3]?.content).not.toContain('DOC-002');
     expect(messages[3]?.content).toContain(
@@ -644,7 +646,7 @@ describe('runSpecStage with compose', () => {
   it('compose: round 1 validates the draft; a fix uses compose.fix with the pending issues', async () => {
     const { llm, inputs } = fakeLlm([{ title: 'Cats' }]);
     const run = createRun({ idea, runsDir: root, id: 'composed-fix' });
-    const fixes: Issue[][] = [];
+    const fixes: Thread[][] = [];
     const compose: Compose<Doc> = {
       draft: async () => ({ data: { title: '' }, raw: '{"title":""}', model: 'none' }),
       async fix(call, _current, pending) {
@@ -675,7 +677,8 @@ describe('runSpecStage with compose', () => {
       known: [],
       rounds: 2,
     });
-    expect(fixes).toEqual([[missingTitle]]);
+    // The fix takes the validator's issue as its thread, with nothing said about it yet.
+    expect(fixes).toEqual([[{ id: 'T01', issue: missingTitle, by: 'checks', round: 1, entries: [] }]]);
     expect(inputs.map((input) => input.stage)).toEqual(['doc-fix']);
     const rounds = readEvents(run).filter(
       (event) => event.type === 'stage:round',
@@ -1071,7 +1074,7 @@ describe('runSpecStage with patch keys', () => {
       'Review',
     ]);
     expect(lastUser(inputs[2])).toContain('Return a patch, not the complete document');
-    expect(lastUser(inputs[2])).toContain('- DOC-003 at B1: a book needs a name');
+    expect(lastUser(inputs[2])).toContain('- T01: DOC-003 at B1: a book needs a name');
     expect(lastUser(inputs[3])).toContain('"name":"Emma"');
   });
 
@@ -1096,8 +1099,8 @@ describe('runSpecStage with a guide whose points have ids', () => {
   };
 
   it('asks once more for the points the reviewer left unchecked, keeps the blockers of both answers, and only logs what is still unchecked', async () => {
-    const first: Review = { checked: ['O01'], blockers: [] };
-    const recheck: Review = { checked: ['O02'], blockers: generic.blockers };
+    const first: Review = { checked: ['O01'], blockers: [], replies: [] };
+    const recheck: Review = { checked: ['O02'], blockers: generic.blockers, replies: [] };
     const { llm, inputs } = fakeLlm([{ title: 'Cats' }, first, recheck]);
     const { run, promise } = stage('recheck', llm, () => [], pointed, lastRound);
     const result = await promise;
@@ -1119,8 +1122,67 @@ describe('runSpecStage with a guide whose points have ids', () => {
   });
 
   it('asks nothing more when every point was checked', async () => {
-    const { llm, inputs } = fakeLlm([{ title: 'Cats' }, { checked: ['O01', 'O02', 'O03'], blockers: [] }]);
+    const { llm, inputs } = fakeLlm([{ title: 'Cats' }, { checked: ['O01', 'O02', 'O03'], blockers: [], replies: [] }]);
     await stage('all-checked', llm, () => [], pointed, lastRound).promise;
     expect(inputs.map((input) => input.stage)).toEqual(['doc', 'doc-review-output']);
+  });
+});
+
+describe('runSpecStage with reasoning threads', () => {
+  const reason = 'Cats is the breed the user asked for.';
+  const thread = `- T01: REVIEW at title: Title is generic. Fix: Name the breed.\n  - round 2, fix, open: ${reason}`;
+
+  it("sends no check the fixer left with a reason to another fix, and keeps it known", async () => {
+    const { llm, inputs } = fakeLlm([
+      { title: '' },
+      { title: '', replies: [{ id: 'T01', status: 'open', reason: 'The user gave no title.' }] } as Doc,
+    ]);
+    const { run, promise } = stage('check-left', llm, requireTitle);
+    const result = await promise;
+
+    expect(result).toMatchObject({ known: [missingTitle], rounds: 2 });
+    expect(inputs).toHaveLength(2);
+    // The replies go to the thread, not into the document.
+    expect(result.output).toEqual({ title: '' });
+    const threads = JSON.parse(readFileSync(path.join(run.dir, 'reports', 'doc.threads.json'), 'utf8'));
+    expect(threads).toEqual([
+      { id: 'T01', issue: missingTitle, by: 'checks', round: 1, entries: [{ id: 'T01', status: 'open', reason: 'The user gave no title.', round: 2, by: 'fix' }] },
+    ]);
+  });
+
+  it("closes a reviewer's thread the next reviewer accepts, after showing it the fixer's reason", async () => {
+    const accept: Review = { checked: [], blockers: [], replies: [{ id: 'T01', status: 'closed', reason: 'The reason holds.' }] };
+    const { llm, inputs } = fakeLlm([
+      { title: 'Cats' },
+      generic,
+      clean,
+      { title: 'Cats', replies: [{ id: 'T01', status: 'open', reason }] } as Doc,
+      accept,
+    ]);
+    const { promise } = stage('thread-accepted', llm, () => [], guide);
+    const result = await promise;
+
+    expect(result).toMatchObject({ output: { title: 'Cats' }, known: [], rounds: 2 });
+    expect(inputs.map((input) => input.stage)).toEqual(['doc', 'doc-review-peer', 'doc-review-output', 'doc', 'doc-review-output']);
+    expect(lastUser(inputs[3])).toContain('- T01: REVIEW at title: Title is generic. Fix: Name the breed.');
+    expect(lastUser(inputs[4])).toContain(thread);
+  });
+
+  it("keeps a reviewer's thread the next reviewer challenges, and sends it to the final fix with what both said", async () => {
+    const challenge: Review = { checked: [], blockers: [], replies: [{ id: 'T01', status: 'open', reason: 'The user asked for Siamese.' }] };
+    const { llm, inputs } = fakeLlm([
+      { title: 'Cats' },
+      generic,
+      clean,
+      { title: 'Cats', replies: [{ id: 'T01', status: 'open', reason }] } as Doc,
+      challenge,
+      { title: 'Siamese cats', replies: [{ id: 'T01', status: 'closed', reason: 'Named the breed.' }] } as Doc,
+    ]);
+    const { promise } = stage('thread-challenged', llm, () => [], guide);
+    const result = await promise;
+
+    expect(result).toMatchObject({ output: { title: 'Siamese cats' }, rounds: 3 });
+    expect(result.known).toEqual([{ ...genericIssue, message: `${genericIssue.message} (addressed in the final fix, not re-reviewed)` }]);
+    expect(lastUser(inputs[5])).toContain(`${thread}\n  - round 2, review-output, open: The user asked for Siamese.`);
   });
 });

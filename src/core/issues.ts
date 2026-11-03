@@ -56,7 +56,7 @@ export function writeReport(
 
 /** One `- RULE at ID: message` line per issue, the way issues go to the model. */
 export function formatIssues(issues: Issue[]): string {
-  return issues.map((issue) => `- ${describe(issue)}`).join('\n');
+  return issues.map((issue) => `- ${issueText(issue)}`).join('\n');
 }
 
 export function formatForTerminal(issues: Issue[]): string {
@@ -69,11 +69,12 @@ export function formatForTerminal(issues: Issue[]): string {
     ['Warnings', warnings],
   ] as const) {
     if (list.length === 0) continue;
-    lines.push('', `${title}:`, ...list.map((issue) => `  ${describe(issue)}`));
+    lines.push('', `${title}:`, ...list.map((issue) => `  ${issueText(issue)}`));
   }
   return lines.join('\n');
 }
 
-function describe(issue: Issue): string {
+/** An issue as one line, `RULE at ID: message`. */
+export function issueText(issue: Issue): string {
   return `${issue.rule}${issue.at ? ` at ${issue.at}` : ''}: ${issue.message}`;
 }

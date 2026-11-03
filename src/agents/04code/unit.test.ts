@@ -89,6 +89,17 @@ describe('a coding unit', () => {
     expect(user).toContain('CODE-002');
   });
 
+  it("reads the fix session's replies into the stage's threads, for the next round's reviewers", async () => {
+    const { run, ctx, spec, reviews, deps } = setup('replies', true, () => false);
+    const replies = [{ id: 'T01', status: 'open', reason: 'One job: the list is the page.' }];
+    await withWrites({ ...page, '.weave/replies.json': JSON.stringify(replies) }, () => runUnit(ctx, spec, deps));
+    const fixTask = readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-fix-1.md'), 'utf8');
+    expect(fixTask).toContain('- T01: REVIEW at web/app/(routes)/books/page.tsx: The page does two jobs. Fix: Split the list out.');
+    const round2 = reviews.filter((r) => r.round === 2).map((r) => String(r.messages.at(-1)?.content));
+    expect(round2).toHaveLength(4);
+    for (const user of round2) expect(user).toContain('  - round 2, fix, open: One job: the list is the page.');
+  });
+
   it('records what is left after the third round as known, and returns', async () => {
     const { ctx, spec, deps, reviews } = setup('known', false, (name) => name === 'typecheck');
     process.env.FAKE_VARY = '1';

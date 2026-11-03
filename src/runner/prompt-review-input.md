@@ -20,6 +20,10 @@ Review the output below.
 {{output}}
 ````
 
+## Threads the last fix answered
+
+{{threads}}
+
 ## Known issues, already found by code
 
 {{known}}

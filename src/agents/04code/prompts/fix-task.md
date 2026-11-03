@@ -4,13 +4,23 @@ You built this unit earlier in this session, so you know what you changed. You n
 
 Each issue below is a failed check, or a reviewer's finding with the fix it asks for. Fix each one, and keep everything else as it is. End with the summary the guidelines ask for.
 
-## When you skip an issue
+## Your replies
 
-- Two issues may ask for opposite changes, such as one that moves a link and one that keeps it where it is. Decide which one serves the user better. Fix that one, and skip the other.
-- A reviewer may ask for something you believe is not an issue, such as a change your guidelines or the design rule out. You may skip it.
-- A failed check runs again after you finish, so a check you skip fails again.
-- Add a fifth part to your summary, `## Skipped`. List each issue you skipped: quote it, and give your reason in one or two sentences. When it conflicts with another issue, name that issue.
-- The reviewers read your reasons in the next round. They accept a sound reason, or report the issue again and say why the reason fails.
+Each issue below has an id, such as T01, and the replies given on it in earlier rounds. When you finish, write `.weave/replies.json` with one reply per issue:
+
+```json
+[
+  { "id": "T01", "status": "closed", "reason": "Moved the Edit button into the page header." },
+  { "id": "T02", "status": "open", "reason": "T01 moves the same button; the header is where the user looks for it." }
+]
+```
+
+- `closed` when you fixed it. Say what you changed.
+- `open` when you did not fix it. Give your reason in one or two sentences.
+- Two issues may ask for opposite changes, such as one that moves a link and one that keeps it where it is. Decide which one serves the user better. Fix that one. Answer the other `open`, and name the one you fixed.
+- A reviewer may ask for something you believe is not an issue, such as a change your guidelines or the design rule out. Answer it `open` with your reason.
+- A failed check you answer `open` with a reason is not sent to you again. Leave a check open only when fixing it would break something the user needs.
+- The reviewers read your replies in the next round. They accept a sound reason, or answer it `open` and say why it fails.
 
 ## How the checks ran
 

@@ -22,5 +22,9 @@ Leave these out:
    - `at`: where it is, as an ID, a file or a JSON path in the output.
    - `problem`: what is wrong, in one sentence.
    - `fix`: what the output must say instead.
+4. Write `replies`. The input lists the threads the last fix answered: each problem's id, and what the fixer and the reviewers said about it. Answer each thread in your area by its id:
+   - `closed` when it is fixed, or when the fixer's reason for leaving it holds.
+   - `open` when it is not fixed, or when the fixer's reason does not hold. Say why.
+   A thread you answer is no blocker: never report its problem again in `blockers`.
 
-When nothing major is wrong, `blockers` is [].
+When nothing major is wrong, `blockers` is []. When the input lists no threads, `replies` is [].
