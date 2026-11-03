@@ -22,6 +22,7 @@ import { Truncate } from '../Truncate';
 import { mergeRefs } from '../utils';
 
 import {
+  selectClear,
   selectLineBox,
   selectPlaceholder,
   selectSearch,
@@ -166,6 +167,7 @@ export const SelectEnd = ({
   onClear: (() => void) | undefined;
 }) => {
   const iconClassName = controlIcon({ size });
+  const clearClassName = selectClear[size ?? 'sm'];
   return (
     <span
       data-ds=""
@@ -183,6 +185,7 @@ export const SelectEnd = ({
           tabIndex={-1}
           tooltip="Clear selection"
           onClick={onClear}
+          className={clearClassName}
         >
           <X data-ds="" />
         </IconButton>
