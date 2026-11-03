@@ -19,9 +19,15 @@ describe('path rules', () => {
 
   it('flag a test or a protected path as a change a session may not make, and nothing else', () => {
     expect(
-      protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']),
-    ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']);
-    // Code writes the frames' layouts; the template's page and frame components stay as they are; a session fills the parts.
+      protectedOf([
+        'web/app/(routes)/(app)/layout.css.ts',
+        'web/app/(routes)/(app)/page.test.tsx',
+        'packages/ui/src/x.ts',
+        'tools/x.mjs',
+        '.weave/x.md',
+      ]),
+    ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'tools/x.mjs', '.weave/x.md']);
+    // Code writes the frames' layouts; a session may change the design system, the template's page and frame components included.
     expect(
       protectedOf([
         'web/app/(routes)/(app)/layout.tsx',
@@ -34,15 +40,7 @@ describe('path rules', () => {
         'web/app/components/UserMenu/UserMenu.tsx',
         'web/app/components/AppHeader/AppHeader.tsx',
       ]),
-    ).toEqual([
-      'web/app/(routes)/(app)/layout.tsx',
-      'web/app/components/PageLayout/PageLayout.tsx',
-      'web/app/components/PageHeader/PageHeader.tsx',
-      'web/app/components/Hero/Hero.css.ts',
-      'web/app/components/NotFound/NotFound.tsx',
-      'web/app/components/PageLogo/PageLogo.tsx',
-      'web/app/components/UserMenu/UserMenu.tsx',
-    ]);
+    ).toEqual(['web/app/(routes)/(app)/layout.tsx']);
   });
 });
 

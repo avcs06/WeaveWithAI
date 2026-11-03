@@ -70,6 +70,7 @@ export const UserMenu = ({
         className={className}
       >
         <span
+          data-ds=""
           className={classNames(
             'flex-row-gap-2 items-center',
             inSidebar && 'w-full',

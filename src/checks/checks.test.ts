@@ -214,6 +214,16 @@ describe('rendered checks on the fixture pages', () => {
     expect(walk.activation).toEqual({ buttons: 1, enterOk: 1, spaceOk: 1 });
   });
 
+  it('R-003 keyboard: focus that cycles among three buttons is a trap; a native date input, which holds Tab over its parts, is none', async () => {
+    const trapped = await keyboardWalk(await open('trap.html'), { blockMutations: true });
+    expect(trapped.trap).toBe(true);
+    expect(rules(trapped.findings)).toContain('mandatory  focus stays among 3 controls and never leaves');
+    const dated = await keyboardWalk(await open('date-input.html'), { blockMutations: true });
+    expect(dated.trap).toBe(false);
+    expect(dated.findings.filter((f) => f.severity === 'mandatory')).toEqual([]);
+    expect(dated.reachable).toBe(3);
+  });
+
   it('R-005 overflow, R-006 first viewport', async () => {
     const page = await open('defects.html');
     expect(await overflowCheck(page)).toEqual([

@@ -12,7 +12,7 @@ import type { NotFoundProps } from './NotFound.types';
  * list.
  */
 export const NotFound = ({ title, description, back }: NotFoundProps) => (
-  <div className="flex-col-gap-4 items-start">
+  <div data-ds="" className="flex-col-gap-4 items-start">
     <PageHeader title={title} description={description} />
     <Button as={NextLink} href={back.href}>
       {back.label}

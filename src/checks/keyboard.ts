@@ -37,14 +37,19 @@ export async function keyboardWalk(
   const ours = controls.filter((c) => c.app);
   const order = new Map(ours.map((c, i) => [c.element, i]));
 
-  // Tab from the top until focus leaves the page or the presses run out.
+  // Tab from the top until focus leaves the page or the presses run out. A native date input holds focus
+  // over its month, day, year and picker, so a press that stays on the element just visited is no new stop.
   await inPage(page, 'reset');
   const visits: Active[] = [];
-  for (let press = 0; press < controls.length + 5; press += 1) {
+  let left = false;
+  for (let press = 0; press < 3 * controls.length + 5; press += 1) {
     await page.keyboard.press('Tab');
     const active = await inPage<Active>(page, 'active');
-    if (!active.element) break;
-    visits.push(active);
+    if (!active.element) {
+      left = true;
+      break;
+    }
+    if (active.element !== visits.at(-1)?.element) visits.push(active);
   }
   const reached = new Set(visits.map((v) => v.element));
   for (const control of ours)
@@ -52,10 +57,10 @@ export async function keyboardWalk(
       findings.push(
         finding(R, 'mandatory', 'not reachable with Tab', control.element),
       );
-  const looped = visits.length > controls.length;
+  // A trap holds focus on the page through every press and never comes back to where Tab started.
   const trap =
     controls.length > 0 &&
-    looped &&
+    !left &&
     !visits.slice(1).some((v) => v.element === visits[0]?.element);
   if (trap)
     findings.push(

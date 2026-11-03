@@ -19,14 +19,19 @@ export const Hero = ({
   media,
   className,
 }: HeroProps) => (
-  <header data-hero="" className={classNames(styles.hero, className)}>
+  <header
+    data-ds=""
+    data-hero=""
+    className={classNames(styles.hero, className)}
+  >
     <div
+      data-ds=""
       className={
         media ? classNames(styles.split, 'grid gap-10 items-center') : undefined
       }
     >
-      <div className="flex-col-gap-6 items-start">
-        <div className="flex-col-gap-3">
+      <div data-ds="" className="flex-col-gap-6 items-start">
+        <div data-ds="" className="flex-col-gap-3">
           <h1 data-slot="hero-title" className={styles.title}>
             {title}
           </h1>
@@ -35,10 +40,16 @@ export const Hero = ({
           ) : null}
         </div>
         {actions ? (
-          <div className="flex-row-gap-3 flex-wrap items-center">{actions}</div>
+          <div data-ds="" className="flex-row-gap-3 flex-wrap items-center">
+            {actions}
+          </div>
         ) : null}
       </div>
-      {media ? <div className="min-w-0">{media}</div> : null}
+      {media ? (
+        <div data-ds="" className="min-w-0">
+          {media}
+        </div>
+      ) : null}
     </div>
   </header>
 );

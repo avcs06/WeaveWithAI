@@ -124,11 +124,11 @@ describe('runSession', () => {
   it('fails a session whose diff touches a test or a protected path', async () => {
     const { appDir, ctx } = setup('protected');
     const result = await withWrites(
-      { [page]: 'x\n', 'web/app/(routes)/books/page.test.tsx': 'x\n', 'packages/ui/x.ts': 'x\n' },
+      { [page]: 'x\n', 'web/app/(routes)/books/page.test.tsx': 'x\n', 'tools/x.mjs': 'x\n' },
       () => runSession(ctx, appDir, session, { bin: fake, runCheck: checks() }),
     );
     expect(result.status).toBe('protected');
-    expect(result.protectedHits.sort()).toEqual(['packages/ui/x.ts', 'web/app/(routes)/books/page.test.tsx']);
+    expect(result.protectedHits.sort()).toEqual(['tools/x.mjs', 'web/app/(routes)/books/page.test.tsx']);
     // Committed anyway, so the next session starts clean and the hit is there to review.
     expect(git(appDir, 'status', '--porcelain')).toBe('');
     expect(git(appDir, 'log', '-1', '--format=%s')).toBe('session: pages (protected)');

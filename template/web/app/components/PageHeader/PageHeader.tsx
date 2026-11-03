@@ -19,12 +19,16 @@ export const PageHeader = ({
   breadcrumb,
   actions,
 }: PageHeaderProps) => (
-  <header className="flex-col-gap-2">
+  <header data-ds="" className="flex-col-gap-2">
     {breadcrumb?.length ? (
-      <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
-        <ul className="flex-row-gap-1 items-center flex-wrap">
+      <nav data-ds="" aria-label="Breadcrumb" className={styles.breadcrumb}>
+        <ul data-ds="" className="flex-row-gap-1 items-center flex-wrap">
           {breadcrumb.map((crumb) => (
-            <li key={crumb.href} className="flex-row-gap-1 items-center">
+            <li
+              key={crumb.href}
+              data-ds=""
+              className="flex-row-gap-1 items-center"
+            >
               <NextLink look="plain" href={crumb.href}>
                 {crumb.label}
               </NextLink>
@@ -34,8 +38,8 @@ export const PageHeader = ({
         </ul>
       </nav>
     ) : null}
-    <div className="flex-row-gap-4 items-start">
-      <div className="flex-col-gap-1 flex-fill-x">
+    <div data-ds="" className="flex-row-gap-4 items-start">
+      <div data-ds="" className="flex-col-gap-1 flex-fill-x">
         {/* Marked, so the rendered checks hold every screen's title to it. */}
         <h1 data-slot="page-title" className={styles.title}>
           {title}
@@ -45,7 +49,9 @@ export const PageHeader = ({
         ) : null}
       </div>
       {actions ? (
-        <div className="flex-row-gap-2 items-center shrink-0">{actions}</div>
+        <div data-ds="" className="flex-row-gap-2 items-center shrink-0">
+          {actions}
+        </div>
       ) : null}
     </div>
   </header>
