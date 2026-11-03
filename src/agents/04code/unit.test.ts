@@ -95,9 +95,11 @@ describe('a coding unit', () => {
     await withWrites({ ...page, '.weave/replies.json': JSON.stringify(replies) }, () => runUnit(ctx, spec, deps));
     const fixTask = readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-fix-1.md'), 'utf8');
     expect(fixTask).toContain('- T01: REVIEW at web/app/(routes)/books/page.tsx: The page does two jobs. Fix: Split the list out.');
-    const round2 = reviews.filter((r) => r.round === 2).map((r) => String(r.messages.at(-1)?.content));
-    expect(round2).toHaveLength(4);
-    for (const user of round2) expect(user).toContain('  - round 2, fix, open: One job: the list is the page.');
+    // The code reviewer raised T01, so only it gets the agent's reply back.
+    const round2 = reviews.filter((r) => r.round === 2);
+    const user = (name: string) => String(round2.find((r) => r.stage.endsWith(`-review-${name}`))?.messages.at(-1)?.content);
+    expect(user('code')).toContain('  - round 2, fix, open: One job: the list is the page.');
+    for (const name of ['adherence', 'behavior', 'ux']) expect(user(name)).toContain('what the agent said about it.\n\nNone.');
   });
 
   it('records what is left after the third round as known, and returns', async () => {

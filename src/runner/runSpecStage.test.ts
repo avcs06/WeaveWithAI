@@ -193,6 +193,7 @@ describe('runSpecStage with reviewers', () => {
       clean,
       { title: 'Cats' },
       clean,
+      clean,
     ]);
     const run = createRun({ idea, runsDir: root, id: 'temperature' });
     await runSpecStage({
@@ -213,6 +214,7 @@ describe('runSpecStage with reviewers', () => {
       ['doc-review-peer', undefined],
       ['doc-review-output', undefined],
       ['doc', undefined],
+      ['doc-review-peer', undefined],
       ['doc-review-output', undefined],
     ]);
   });
@@ -238,6 +240,7 @@ describe('runSpecStage with reviewers', () => {
       clean,
       { title: '' },
       clean,
+      clean,
       { title: 'Cats' },
     ]);
     const { promise } = stage('draft-model', llm, requireTitle, guide, {
@@ -252,6 +255,7 @@ describe('runSpecStage with reviewers', () => {
       ['doc-review-peer', 1, 'default'],
       ['doc-review-output', 1, 'default'],
       ['doc', 2, 'default'],
+      ['doc-review-peer', 2, 'default'],
       ['doc-review-output', 2, 'default'],
       ['doc', 3, 'default'],
     ]);
@@ -263,6 +267,7 @@ describe('runSpecStage with reviewers', () => {
       clean,
       clean,
       { title: 'Cats' },
+      clean,
       clean,
     ]);
     const { promise } = stage('effort', llm, requireTitle, guide, {
@@ -277,6 +282,7 @@ describe('runSpecStage with reviewers', () => {
       ['doc-review-peer', 1, 'medium'],
       ['doc-review-output', 1, 'medium'],
       ['doc', 2, 'medium'],
+      ['doc-review-peer', 2, 'medium'],
       ['doc-review-output', 2, 'medium'],
     ]);
 
@@ -295,6 +301,7 @@ describe('runSpecStage with reviewers', () => {
       generic,
       { title: 'Siamese cats' },
       clean,
+      clean,
     ]);
     const { run, promise } = stage('fixed', llm, requireTitle, guide);
     const result = await promise;
@@ -312,9 +319,11 @@ describe('runSpecStage with reviewers', () => {
       'doc-review-peer',
       'doc-review-output',
       'doc',
+      'doc-review-peer',
       'doc-review-output',
     ]);
     expect(inputs.map((input) => input.model)).toEqual([
+      'default',
       'default',
       'default',
       'default',
@@ -340,6 +349,7 @@ describe('runSpecStage with reviewers', () => {
       clean,
       { title: '' },
       clean,
+      clean,
       { title: 'Cats' },
     ]);
     const { run, promise } = stage('parallel', llm, requireTitle, guide);
@@ -350,6 +360,7 @@ describe('runSpecStage with reviewers', () => {
       'doc-review-peer',
       'doc-review-output',
       'doc',
+      'doc-review-peer',
       'doc-review-output',
       'doc',
     ]);
@@ -375,6 +386,7 @@ describe('runSpecStage with reviewers', () => {
       generic,
       clean,
       { title: 'Cat' },
+      clean,
       generic,
       { title: 'Cats!' },
     ]);
@@ -386,6 +398,7 @@ describe('runSpecStage with reviewers', () => {
       'doc-review-peer',
       'doc-review-output',
       'doc',
+      'doc-review-peer',
       'doc-review-output',
       'doc',
     ]);
@@ -405,12 +418,13 @@ describe('runSpecStage with reviewers', () => {
     });
   });
 
-  it('runs the output reviewer again in round 2 and stops after the final fix in round 3', async () => {
+  it('runs both reviewers again in round 2 and stops after the final fix in round 3', async () => {
     const { llm, inputs } = fakeLlm([
       { title: '' },
       clean,
       clean,
       { title: '' },
+      clean,
       clean,
       { title: '' },
     ]);
@@ -422,6 +436,7 @@ describe('runSpecStage with reviewers', () => {
       ['doc-review-peer', 1],
       ['doc-review-output', 1],
       ['doc', 2],
+      ['doc-review-peer', 2],
       ['doc-review-output', 2],
       ['doc', 3],
     ]);
@@ -434,6 +449,7 @@ describe('runSpecStage with reviewers', () => {
       generic,
       clean,
       { title: 'Cat' },
+      clean,
       generic,
       { title: 'Cats!' },
     ]);
@@ -446,11 +462,12 @@ describe('runSpecStage with reviewers', () => {
       [1, 'default'],
       [2, 'default'],
       [2, 'default'],
+      [2, 'default'],
       [3, 'default'],
     ]);
     // The final fix takes round 2's blocker and not the validator issue round 2's fix cleared.
-    expect(lastUser(inputs[5])).toContain('- T03: REVIEW at title: Title is generic. Fix: Name the breed.');
-    expect(lastUser(inputs[5])).not.toContain('DOC-001');
+    expect(lastUser(inputs[6])).toContain('- T03: REVIEW at title: Title is generic. Fix: Name the breed.');
+    expect(lastUser(inputs[6])).not.toContain('DOC-001');
   });
 });
 
@@ -477,6 +494,7 @@ describe('runSpecStage with questions (interactive)', () => {
       clean,
       clean,
       { title: 'Cats' },
+      clean,
       clean,
     ]);
     const asked: Doc[] = [];
@@ -508,6 +526,7 @@ describe('runSpecStage with questions (interactive)', () => {
       'doc-review-peer',
       'doc-review-output',
       'doc',
+      'doc-review-peer',
       'doc-review-output',
     ]);
     const fixup = lastUser(inputs[3]);
@@ -768,7 +787,7 @@ describe('runSpecStage with compose', () => {
 
 describe('runSpecStage resumed at a round', () => {
   it('reviews the given document in that round with no generation, keeps the earlier report rounds, and fixes after it', async () => {
-    const { llm, inputs } = fakeLlm([clean, { title: 'Cats' }]);
+    const { llm, inputs } = fakeLlm([clean, clean, { title: 'Cats' }]);
     const run = createRun({ idea, runsDir: root, id: 'resumed' });
     writeReport(run, 'doc', 1, [longTitle]);
     writeReport(run, 'doc', 4, [missingTitle]); // a stale round from an earlier, longer run
@@ -786,12 +805,13 @@ describe('runSpecStage resumed at a round', () => {
     });
 
     expect(result).toMatchObject({ output: { title: 'Cats' }, known: [], rounds: 3 });
-    // Round 2: the output reviewer reads the given document; round 3, the final fix, fixes it and nobody reviews it.
+    // Round 2: both reviewers read the given document; round 3, the final fix, fixes it and nobody reviews it.
     expect(inputs.map((input) => [input.stage, input.round])).toEqual([
+      ['doc-review-peer', 2],
       ['doc-review-output', 2],
       ['doc', 3],
     ]);
-    expect(lastUser(inputs[0])).toContain('{"title":""}');
+    expect(lastUser(inputs[1])).toContain('{"title":""}');
     expect(readReport(run, 'doc')?.rounds).toEqual([
       { round: 1, issues: [longTitle] },
       { round: 2, issues: [missingTitle] },
@@ -1150,7 +1170,7 @@ describe('runSpecStage with reasoning threads', () => {
     ]);
   });
 
-  it("closes a reviewer's thread the next reviewer accepts, after showing it the fixer's reason", async () => {
+  it("closes a thread its reviewer accepts, after showing the fixer's reason to that reviewer only", async () => {
     const accept: Review = { checked: [], blockers: [], replies: [{ id: 'T01', status: 'closed', reason: 'The reason holds.' }] };
     const { llm, inputs } = fakeLlm([
       { title: 'Cats' },
@@ -1158,14 +1178,24 @@ describe('runSpecStage with reasoning threads', () => {
       clean,
       { title: 'Cats', replies: [{ id: 'T01', status: 'open', reason }] } as Doc,
       accept,
+      clean,
     ]);
     const { promise } = stage('thread-accepted', llm, () => [], guide);
     const result = await promise;
 
     expect(result).toMatchObject({ output: { title: 'Cats' }, known: [], rounds: 2 });
-    expect(inputs.map((input) => input.stage)).toEqual(['doc', 'doc-review-peer', 'doc-review-output', 'doc', 'doc-review-output']);
+    expect(inputs.map((input) => input.stage)).toEqual([
+      'doc',
+      'doc-review-peer',
+      'doc-review-output',
+      'doc',
+      'doc-review-peer',
+      'doc-review-output',
+    ]);
     expect(lastUser(inputs[3])).toContain('- T01: REVIEW at title: Title is generic. Fix: Name the breed.');
+    // The peer raised T01, so only the peer gets it back.
     expect(lastUser(inputs[4])).toContain(thread);
+    expect(lastUser(inputs[5])).toContain('## Your threads from the last round\n\nNone.');
   });
 
   it("keeps a reviewer's thread the next reviewer challenges, and sends it to the final fix with what both said", async () => {
@@ -1176,6 +1206,7 @@ describe('runSpecStage with reasoning threads', () => {
       clean,
       { title: 'Cats', replies: [{ id: 'T01', status: 'open', reason }] } as Doc,
       challenge,
+      clean,
       { title: 'Siamese cats', replies: [{ id: 'T01', status: 'closed', reason: 'Named the breed.' }] } as Doc,
     ]);
     const { promise } = stage('thread-challenged', llm, () => [], guide);
@@ -1183,6 +1214,6 @@ describe('runSpecStage with reasoning threads', () => {
 
     expect(result).toMatchObject({ output: { title: 'Siamese cats' }, rounds: 3 });
     expect(result.known).toEqual([{ ...genericIssue, message: `${genericIssue.message} (addressed in the final fix, not re-reviewed)` }]);
-    expect(lastUser(inputs[5])).toContain(`${thread}\n  - round 2, review-output, open: The user asked for Siamese.`);
+    expect(lastUser(inputs[6])).toContain(`${thread}\n  - round 2, review-peer, open: The user asked for Siamese.`);
   });
 });

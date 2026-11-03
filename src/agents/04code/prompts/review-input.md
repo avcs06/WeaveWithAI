@@ -18,9 +18,9 @@ Review the code change below.
 {{output}}
 ````
 
-## Threads the last fix answered
+## Your threads from the last round
 
-Each problem the last fix took, with its id and what the agent and the reviewers said about it.
+Each problem you raised in the last round, with its id and what the agent said about it.
 
 {{threads}}
 

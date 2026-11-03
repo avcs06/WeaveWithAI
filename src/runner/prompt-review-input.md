@@ -20,7 +20,7 @@ Review the output below.
 {{output}}
 ````
 
-## Threads the last fix answered
+## Your threads from the last round
 
 {{threads}}
 

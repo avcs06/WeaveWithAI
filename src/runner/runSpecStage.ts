@@ -114,11 +114,10 @@ export type SpecStageResult<T> = {
 };
 
 // Three rounds: a fix runs only when something is pending; reviewers look at the output whatever the validators found.
-// The peer challenges the decisions once, in round 1, beside the output reviewer; the output reviewer checks the fix of
-// round 2; round 3 is the final fix, and what it leaves is known.
+// Both reviewers check the draft of round 1 and the fix of round 2; round 3 is the final fix, and what it leaves is known.
 const SCHEDULE: Round[] = [
   { fix: false, reviewers: ['peer', 'output'] },
-  { fix: true, reviewers: ['output'] },
+  { fix: true, reviewers: ['peer', 'output'] },
   { fix: true, reviewers: [] },
 ];
 const FIX_EFFORT = 'medium';
@@ -266,7 +265,7 @@ export async function runSpecStage<T>(
     const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
     const reviewed = Boolean(o.review) && reviewers.length > 0;
     if (o.review && reviewed) {
-      // The reviewers read what the fix said about their threads, then answer each one or raise new blockers.
+      // Each reviewer reads what the fix said about the threads it raised, then answers each one or raises new blockers.
       const { blockers, replies } = await review(
         o,
         o.review,
@@ -488,7 +487,7 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   };
 }
 
-/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads the fix answered. */
+/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads each raised that the fix answered. */
 async function review<T>(
   o: SpecStageOptions<T>,
   guides: ReviewGuides,
@@ -499,13 +498,6 @@ async function review<T>(
   threads: Thread[],
 ) {
   const known = warnings.length > 0 ? formatIssues(warnings) : 'None.';
-  const user = fillPrompt(o.reviewInput ?? reviewInput, {
-    system: o.system,
-    user: o.user,
-    output,
-    known,
-    threads: threads.length > 0 ? formatThreads(threads) : 'None.',
-  });
   // A named output guide is a reviewer of its own: `<stage>-review-<name>`.
   const calls = reviewers.flatMap((reviewer): [string, string][] => {
     const guide = guides[reviewer];
@@ -514,6 +506,14 @@ async function review<T>(
   const reviews = await Promise.all(
     calls.map(async ([reviewer, guide]) => {
       const by = `review-${reviewer}`;
+      const own = threads.filter((thread) => thread.by === by);
+      const user = fillPrompt(o.reviewInput ?? reviewInput, {
+        system: o.system,
+        user: o.user,
+        output,
+        known,
+        threads: own.length > 0 ? formatThreads(own) : 'None.',
+      });
       const said = (data: Review) => ({
         blockers: toIssues(data).map((issue) => ({ issue, by })),
         replies: [{ by, replies: data.replies ?? [] }],
