@@ -1,6 +1,6 @@
+import { LayoutFooter } from '@app/components/LayoutFooter';
 import { LayoutHeader } from '@app/components/LayoutHeader';
 import { LayoutSidebar } from '@app/components/LayoutSidebar';
-import { PageFooter } from '@app/components/PageFooter';
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
 
@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       scrollMain
       header={<LayoutHeader />}
       sidebar={<LayoutSidebar />}
-      footer={<PageFooter />}
+      footer={<LayoutFooter />}
     >
       {children}
     </PageLayout>

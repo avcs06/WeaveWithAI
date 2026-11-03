@@ -1,5 +1,5 @@
+import { LayoutFooter } from '@app/components/LayoutFooter';
 import { LayoutHeader } from '@app/components/LayoutHeader';
-import { PageFooter } from '@app/components/PageFooter';
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
 
@@ -13,7 +13,7 @@ export default function LandingLayout({
     <PageLayout
       layout={layouts.marketing}
       header={<LayoutHeader />}
-      footer={<PageFooter />}
+      footer={<LayoutFooter />}
     >
       {children}
     </PageLayout>
