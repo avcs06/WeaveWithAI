@@ -386,7 +386,6 @@
         "end": "Shelf link, account",
         "sticky": true,
         "overlay": false,
-        "padding": "3",
         "gap": "3",
         "separation": "divider"
       },
@@ -443,7 +442,6 @@
         "end": "account",
         "sticky": false,
         "overlay": true,
-        "padding": "4",
         "gap": "4",
         "separation": "none"
       },

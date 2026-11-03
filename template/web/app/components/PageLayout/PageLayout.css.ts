@@ -43,8 +43,9 @@ const bar = {
 // Three slots: the left and right at the bar's ends, the center in its middle whatever the sides hold.
 export const header = style({
   ...bar,
-  // The sidebar rows' margin and padding, so the header's items start where theirs do.
-  paddingInline: tokens.spacing[4],
+  // Fixed above and below, so every theme's header is the same height. Its sides are
+  // the sidebar rows' margin and padding, so the header's items start where theirs do.
+  padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
   gridArea: 'header',

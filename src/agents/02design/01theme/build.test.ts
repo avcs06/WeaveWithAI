@@ -249,7 +249,7 @@ describe('theme rules', () => {
     ).toEqual([]);
   });
 
-  it('THEME-007 keeps every padding at least the gap inside it: 24 between sections in the main area', () => {
+  it('THEME-007 keeps every padding at least the gap inside it running the same way: 24 between sections in the main area', () => {
     const at = (change: (t: Theme) => void) => {
       const copy = structuredClone(theme);
       change(copy);
@@ -259,8 +259,20 @@ describe('theme rules', () => {
     expect(at((t) => (t.layouts.app.main.padding = '4'))).toEqual([
       'app.main.padding',
     ]);
+    expect(
+      at((t) =>
+        Object.assign(t.layouts.marketing.footer, {
+          needed: true,
+          content: 'the site links in columns',
+          padding: '4',
+          gap: '6',
+        }),
+      ),
+    ).toEqual(['marketing.footer.padding']);
+    // The header's gap runs across, against the 16 code fixes at its sides.
+    expect(at((t) => (t.layouts.marketing.header.gap = '4'))).toEqual([]);
     expect(at((t) => (t.layouts.marketing.header.gap = '6'))).toEqual([
-      'marketing.header.padding',
+      'marketing.header.gap',
     ]);
     // A part that is not needed, or a box with no padding, has nothing to check.
     expect(at((t) => (t.layouts.app.footer.gap = '6'))).toEqual([]);

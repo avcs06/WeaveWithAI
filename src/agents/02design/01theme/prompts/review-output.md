@@ -47,5 +47,5 @@ Leave to the validators, which check:
 - The contrast of text, of `border` and `focus`, and of the wordmark. Whether the divider, the skeleton and the backdrop show.
 - Each mode the color scheme names, once, with one set for each colored noun. A background of colors and gradients only. Each shadow on the darkest step.
 - A needed part that holds nothing, a needed sidebar with no width, and a fixed container with no width.
-- A padding other than 0 that is smaller than the gap inside it, the gap between a page's sections included: 24 on app pages, 36 on marketing pages.
+- A padding other than 0 that is smaller than the gap inside it running the same way: the gap between a page's sections, 24 on app pages and 36 on marketing pages, and the header's gap against the 16px code pads its sides.
 - The defaults that carry meaning.

@@ -143,10 +143,7 @@ export const PageLayout = ({
           data-overlay={flag(overlay)}
           data-separation={layout.header.separation}
           className={styles.header}
-          style={assignInlineVars({
-            [styles.padding]: space(layout.header.padding),
-            [styles.gap]: space(layout.header.gap),
-          })}
+          style={assignInlineVars({ [styles.gap]: space(layout.header.gap) })}
         >
           <div data-ds="" data-slot="header-left" className={styles.headerLeft}>
             {headerLeft}

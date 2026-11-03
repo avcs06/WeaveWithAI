@@ -155,13 +155,12 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
     z
       .string()
       .describe(`What sits ${where}, e.g. "the wordmark"; "" for nothing`);
-  // A bar's height is its items and its padding. The header's sides line up with the sidebar's rows.
+  // Code fixes the header's padding, so every theme's header is the same height.
   const header = {
     needed: z.boolean(),
     start: slot('at the start'),
     center: slot('in the center'),
     end: slot('at the end'),
-    padding: spacing.describe('Above and below its items'),
     gap: spacing,
     separation,
     overlay: z

@@ -40,5 +40,5 @@ Leave to the validators, which check:
 - Three different fonts for each role.
 - The contrast of text, of `border` and `focus`, and of the wordmark.
 - A needed sidebar with no width, and a fixed container with no width.
-- A padding other than 0 that is smaller than the gap inside it, the gap between a page's sections included: 24 on app pages, 36 on marketing pages.
+- A padding other than 0 that is smaller than the gap inside it running the same way: the gap between a page's sections, 24 on app pages and 36 on marketing pages, and the header's gap against the 16px code pads its sides.
 - The defaults that carry meaning.
