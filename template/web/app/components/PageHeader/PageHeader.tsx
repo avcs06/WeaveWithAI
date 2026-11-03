@@ -36,7 +36,10 @@ export const PageHeader = ({
     ) : null}
     <div className="flex-row-gap-4 items-start">
       <div className="flex-col-gap-1 flex-fill-x">
-        <h1 className={styles.title}>{title}</h1>
+        {/* Marked, so the rendered checks hold every screen's title to it. */}
+        <h1 data-slot="page-title" className={styles.title}>
+          {title}
+        </h1>
         {description ? (
           <Paragraph color="muted">{description}</Paragraph>
         ) : null}

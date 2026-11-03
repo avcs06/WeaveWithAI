@@ -88,6 +88,8 @@ export const sidebar = style({
 export const main = style({
   gridArea: 'main',
   minWidth: 0,
+  // A Hero measures the region's width to span it.
+  containerType: 'inline-size',
   selectors: {
     // An overlay header lies over the main region's top.
     [`${root}[data-overlay] > &`]: { gridRow: 'header-start / main-end' },

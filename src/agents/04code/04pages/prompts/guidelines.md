@@ -19,6 +19,10 @@
   from `@app/components/PageHeader`: its title is the page's only H1, with
   the description, the breadcrumb to the pages above, and the page's
   actions.
+- A record's screen whose record is gone returns `NotFound` from
+  `@app/components/NotFound` alone, in place of the page: its title names
+  what is missing, such as "Order not found", and its way back leads to the
+  list.
 - The frame's container already sets the page padding, the width and the
   gap between sections. A page returns its sections, with no padding, max
   width or outer gap of its own.
@@ -35,14 +39,13 @@
 
 ## The landing page
 
-- Build the hero as the first section. Draw its background from the
-  theme's brand colors through tokens, such
-  as a gradient from `tokens.color.primary.bg` into
-  `tokens.color.surface.pageBg`. Keep all text at 4.5:1 against every
-  background color, in each supported mode.
-- The headline is the page's only H1, in `tokens.fontFamily.display` at
-  `tokens.fontSize.display`, `tokens.lineHeight.display` and
-  `tokens.fontWeight.display`.
+- The hero is `Hero` from `@app/components/Hero`, first on the page:
+  `title` is the headline, the page's only H1, `description` the line under
+  it, `actions` the main action and the way to sign in, and `media` the
+  preview beside them. It spans the page on the brand's gradient, its
+  content on the page's edge. A background of its own, such as the brief's
+  signature, goes in a colocated `.css.ts` passed as `className`. Keep all
+  text at 4.5:1 against every background color, in each supported mode.
 - Each action appears once in the view, the header included. When the
   design gives the hero signing up and the header only signing in, build
   it that way. The preview and the reasons repeat neither action.

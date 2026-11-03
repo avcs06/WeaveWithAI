@@ -23,7 +23,7 @@ First read the design of this part in the unit's inputs. Then follow each frame,
 
 ## Layout and emphasis
 
-- A12: The landing page carries the theme: a hero, a headline in the display font, a preview of the app, and the brief's signature.
+- A12: The landing page carries the theme: it starts with `Hero`, the preview of the app sits in its `media` or the section after it, and the brief's signature shows.
 - A13: On every screen, what the user came for comes first and stands out. The steps keep the order the design gives. Nothing later stands out more than the title and the first steps, and help text and secondary actions come after them.
 - A14: A view styles at most one action as its main one, and that action stands out from the others. Where a menu belongs, many secondary actions sit in it rather than in a row.
 - A15: Sibling actions of equal weight are the same element: never sign in as a link beside sign up as a button.
