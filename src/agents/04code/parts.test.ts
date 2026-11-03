@@ -47,6 +47,18 @@ describe('part files', () => {
     expect(partSource(right, partDoc(text, 'AppHeaderRightSlot'), wiring)).toBe(text);
   });
 
+  it('put each piece of the sidebar header and footer in its own row, and nothing else in one', () => {
+    const parts = layoutParts('App', withSidebar);
+    const header = partSource(parts.find((part) => part.slot === 'sidebarHeader')!, undefined, wiring);
+    expect(header).toContain('  return (\n    <SidebarMenuItem as="div">\n      <PageLogo />\n    </SidebarMenuItem>\n  );');
+    expect(header).toContain("import { SidebarMenuItem } from '@packages/ui/SidebarMenu';");
+    const footer = partSource(parts.find((part) => part.slot === 'sidebarFooter')!, undefined, wiring);
+    expect(footer).toContain(
+      '    <SidebarMenuItem as="div">\n      <UserMenu placement="sidebar" signInHref="/sign-in" />\n    </SidebarMenuItem>',
+    );
+    expect(partSource(right, doc, wiring)).not.toContain('SidebarMenuItem');
+  });
+
   it('put a footer logo at its slot with spacers, and leave a part with nothing placed empty', () => {
     const footer = layoutParts('App', { ...app, logo: 'footer' as const, footer: { ...app.footer, needed: true, end: 'logo' } }).find(
       (part) => part.slot === 'footer',

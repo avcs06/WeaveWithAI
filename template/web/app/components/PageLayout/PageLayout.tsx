@@ -188,7 +188,6 @@ export const PageLayout = ({
           <FlexScrollArea
             // The page keeps the region's width: wide content, like a table, scrolls sideways itself.
             orientation="vertical"
-            className="flex-fill-y"
           >
             {container}
           </FlexScrollArea>

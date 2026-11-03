@@ -118,7 +118,8 @@ export function partDoc(text: string | undefined, name: string): string | undefi
 const ROW = 'PageLayout lays its items in a row with the theme\'s gap. Return its items, not a bar of your own.';
 const SLOT = 'PageLayout keeps it at its place in the header and lays its items in a row. Return its items, not a bar of your own.';
 const ROWS = 'They are the rows of the sidebar\'s SidebarMenu: return SidebarMenuItems, not a menu or a bar of your own.';
-const FIXED = 'The sidebar\'s SidebarMenu keeps it fixed beside its rows. Return its items, not a bar of your own.';
+const FIXED =
+  'The sidebar\'s SidebarMenu keeps it fixed beside its rows. Return its items, each in a SidebarMenuItem with as="div", not a bar of your own.';
 
 /** The theme's line for the part, added under the template's guidance, or a comment of its own for a part with none. */
 function partComment(part: Part, doc: string | undefined): string {
@@ -136,12 +137,15 @@ export type AccountWiring = { signInHref: string };
 /** A part's file: its comment, then the logo and the account where the theme put them, empty otherwise. */
 export function partSource(part: Part, doc: string | undefined, wiring?: AccountWiring): string {
   const account = part.account ? wiring : undefined;
-  const userMenu = account && [
-    `<UserMenu placement="${part.slot === 'sidebarFooter' ? 'sidebar' : 'header'}" signInHref="${account.signInHref}" />`,
-  ];
+  // In the sidebar's header and footer, each piece sits in its own row, lined up with the links.
+  const inRow = part.slot === 'sidebarHeader' || part.slot === 'sidebarFooter';
+  const piece = (line: string) => (inRow ? ['<SidebarMenuItem as="div">', `  ${line}`, '</SidebarMenuItem>'] : [line]);
   const at: Record<Position, string[][]> = { start: [], center: [], end: [] };
-  if (part.logo) at[part.logo].push(['<PageLogo />']);
-  if (userMenu && part.account) at[part.account].push(userMenu);
+  if (part.logo) at[part.logo].push(piece('<PageLogo />'));
+  if (account && part.account) {
+    const placement = part.slot === 'sidebarFooter' ? 'sidebar' : 'header';
+    at[part.account].push(piece(`<UserMenu placement="${placement}" signInHref="${account.signInHref}" />`));
+  }
   // In the footer, spacers push the center and the end over; a header slot sits where PageLayout keeps it.
   const spacer = ['<div className="flex-1" />'];
   const bar = part.slot === 'footer';
@@ -160,6 +164,7 @@ export function partSource(part: Part, doc: string | undefined, wiring?: Account
   const imports = [
     ...(part.logo ? ["import { PageLogo } from '@app/components/PageLogo';"] : []),
     ...(account ? ["import { UserMenu } from '@app/components/UserMenu';"] : []),
+    ...(inRow ? ["import { SidebarMenuItem } from '@packages/ui/SidebarMenu';"] : []),
     "import React from 'react';",
   ];
   return `${imports.join('\n')}

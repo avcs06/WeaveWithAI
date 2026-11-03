@@ -12,6 +12,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 - A row's actions are quiet. With one or two actions, each is an icon button with a tooltip. With more than two, they go in one row menu. Never put a filled button on every row.
 - A delete on a row is as quiet as the row's other actions. Only the confirm dialog's Delete is a filled `danger` button.
 - An inline action in a row or a toolbar shows only an icon, with a tooltip. An action in a menu shows an icon and its text.
+- The actions of one item, such as its edit and remove, sit side by side in one row. Never stack them in a column.
 
 ## Actions
 
@@ -32,6 +33,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 
 - Every screen but the landing page, `web/app/(routes)/(marketing)/page.tsx` at `/`, starts with a `PageHeader`. It holds the breadcrumbs to the pages above, the title, its description and the page's actions. Nothing comes before it.
 - The landing page starts with a `Hero`. A record's screen whose record is gone shows a `NotFound`.
+- A link from a dashboard or a summary to the full list says where it leads in a full phrase, such as "See the full list of orders". Never leave a bare word like "Orders" as the link.
 - A link outside a sentence is `look="plain"`. Examples are a way back, a breadcrumb, a navigation item, a footer's links and a link beside a button. Only two links keep the dotted line. They are a link inside a sentence and a record's name in a table.
 - In a flex row with action buttons, the buttons align to the center only when the rest of the row is one line. When the rest runs to several lines, such as a title with a description, the buttons align to the start or the end of the row.
 
@@ -56,7 +58,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 
 - The logo is a `PageLogo`, and the account menu is a `UserMenu`. Code places both where the theme puts them. Never build either by hand.
 - Sign in and sign up are the template's pages, in a layout of their own. Link to them. Never build them again.
-- The sidebar's navigation is a `SidebarMenu`. Every item has the same padding and hover. The current item is marked. A fixed top holds what sits above the list, such as a logo, a search or a Create button. A fixed bottom holds what sits below it, such as the account. The list between them scrolls.
+- The sidebar's navigation is a `SidebarMenu`. Every item has the same padding and hover. The current item is marked. A fixed top holds what sits above the list, such as a logo, a search or a Create button. A fixed bottom holds what sits below it, such as the account. Each piece of the top and the bottom sits in its own `SidebarMenuItem` with `as="div"`, so it lines up with the items. The list between them scrolls.
 
 ## Text
 

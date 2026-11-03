@@ -83,7 +83,11 @@ const AccordionItem = ({
 
   return (
     <AccordionPrimitive.Item value={value} asChild>
-      <SectionFrame className={classNames('py-5', accordionItem, className)}>
+      {/* Its own sides, unlike a Section: the header's press area and focus
+          ring reach out into them. */}
+      <SectionFrame
+        className={classNames('px-4 py-5', accordionItem, className)}
+      >
         <SectionHeader
           heading={heading}
           description={description}

@@ -35,7 +35,9 @@
   `SidebarMenuItem` with `as={NextLink}` and its `href`. `AppSidebarHeader`
   holds what stays fixed above the rows, such as a Create button.
   `AppSidebarFooter` holds what stays fixed below them, such as the account
-  menu. The menu's list scrolls between them.
+  menu. Each of their pieces sits in its own `SidebarMenuItem` with
+  `as="div"`, which lines it up with the rows. The menu's list scrolls
+  between them.
 - A piece a part uses goes in `web/app/components/<Name>/`, or in
   `web/app/blocks/<Name>/` when it loads or changes records.
 - A step that leads somewhere opens its route with `NextLink`, even when

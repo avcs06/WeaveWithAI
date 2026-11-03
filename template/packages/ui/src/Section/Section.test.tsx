@@ -26,7 +26,9 @@ describe('Section', () => {
       'data-slot',
       'description',
     );
-    expect(section).toHaveClass('flex-col-gap-4', 'px-4');
+    expect(section).toHaveClass('flex-col-gap-4');
+    // The container around it gives the sides.
+    expect(section).not.toHaveClass('px-4');
     expect(section?.querySelector('[data-slot="header"]')).toBeInTheDocument();
     expect(section?.querySelector('[data-slot="content"]')).toHaveClass(
       'flex-col-gap-4',
@@ -137,7 +139,7 @@ describe('Section', () => {
     const section = container.querySelector('section');
     expect(section).toHaveAttribute('id', 'profile');
     expect(section).toHaveAttribute('data-kind', 'settings');
-    expect(section).toHaveClass('w-full', 'px-4');
+    expect(section).toHaveClass('w-full');
   });
 
   it('pads itself above and below unless its parent spaces it: a SectionGroup or a section’s content', async () => {

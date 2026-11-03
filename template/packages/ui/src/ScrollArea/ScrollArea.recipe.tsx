@@ -3,8 +3,8 @@
  * scrollbars that show while the content overflows and sit over its edge.
  * ScrollArea is for a box with its own height (`h-*` or `max-h-*` on it).
  * FlexScrollArea is for a flex column, like a side panel or a dialog body:
- * it takes its content's height until the column is full, then scrolls,
- * while the header and footer stay put.
+ * it grows into the room the column leaves it, and scrolls once its content
+ * needs more, while the header and footer stay put.
  *
  * When not to use:
  * - The page itself: let the document scroll.
@@ -18,7 +18,8 @@
  *   scroll it.
  * - FlexScrollArea needs a flex column parent with a bounded height (fixed,
  *   or filling its own parent); otherwise it grows with its content and
- *   never scrolls.
+ *   never scrolls. It grows into the column by itself: add no `flex-1` or
+ *   `flex-fill-y`.
  * - `className` and `style` go on the outer box; `ref` reaches the element
  *   that scrolls, for its scroll position or a scroll listener.
  * - Don't add `overflow-*` classes to it or its parent: it scrolls itself.

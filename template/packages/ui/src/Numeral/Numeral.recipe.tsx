@@ -1,8 +1,9 @@
 /**
  * Numeral: a number the user reads and compares, such as a count, a total,
- * a statistic or a table's figures. It sets the number in the theme's mono
- * font, so digits line up in a column and a count that changes doesn't move
- * what sits beside it. Size, weight and color come from around it.
+ * a statistic or a table's figures. It sets the digits in the theme's mono
+ * font, so they line up in a column and a count that changes doesn't move
+ * what sits beside it. A currency sign, a unit or words in it keep the text's
+ * font. Size, weight and color come from around it.
  *
  * When not to use:
  * - A number inside a sentence ("3 books left to read"): it is part of the
@@ -13,7 +14,9 @@
  * - Format the number before you pass it: Numeral only sets its font. Use
  *   `toLocaleString` or `Intl.NumberFormat` for separators and currency.
  * - Keep the label outside: "Pages read" is text, only the figure is a
- *   Numeral. A unit that belongs to the figure, like € or %, goes inside.
+ *   Numeral. A unit that belongs to the figure, like € or %, goes inside;
+ *   Numeral keeps it in the text's font. Never split a figure into a
+ *   Numeral for the digits and text for the unit yourself.
  */
 import { IconButton } from '@packages/ui/Button';
 import { Numeral } from '@packages/ui/Numeral';

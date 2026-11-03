@@ -20,6 +20,8 @@
  *   row's children are the label.
  * - Rows are links. Anything else in the sidebar, like the logo, a search, a
  *   Create button or Sign out, goes in `header` or `footer`, never in a row.
+ *   Each of those pieces sits in its own `SidebarMenuItem as="div"`, so it
+ *   lines up with the links; never pad or wrap it yourself.
  * - The sidebar wears the frame's background (`bg-surface-frame`); the rows
  *   are colored for it.
  */
@@ -63,7 +65,8 @@ const Sidebar = ({ children }: { children: ReactNode }) => (
 /**
  * An app sidebar: the frame's Create in the header, one row per dashboard
  * with the current one selected, and the account with sign out in the
- * footer, which stays at the bottom.
+ * footer, which stays at the bottom. The header's and footer's pieces sit in
+ * `as="div"` rows, lined up with the links.
  */
 const AppSidebar = () => {
   const [current, setCurrent] = useState('d1');
@@ -73,18 +76,20 @@ const AppSidebar = () => {
       <SidebarMenu
         aria-label="Dashboards"
         header={
-          <Button leftIcon={<Plus />} className="w-full">
-            Create
-          </Button>
+          <SidebarMenuItem as="div">
+            <Button leftIcon={<Plus />} className="w-full">
+              Create
+            </Button>
+          </SidebarMenuItem>
         }
         footer={
-          <div className="flex-row-gap-2 items-center min-w-0">
+          <SidebarMenuItem as="div">
             <Avatar size="sm" name="Ada Lovelace" />
             <Truncate>ada@example.com</Truncate>
             <IconButton tooltip="Sign out">
               <LogOut />
             </IconButton>
-          </div>
+          </SidebarMenuItem>
         }
       >
         {dashboards.map((dashboard) => (
@@ -136,8 +141,16 @@ const Scrolling = () => (
   <Sidebar>
     <SidebarMenu
       aria-label="Projects"
-      header={<Button className="w-full">New project</Button>}
-      footer={<Truncate>24 projects</Truncate>}
+      header={
+        <SidebarMenuItem as="div">
+          <Button className="w-full">New project</Button>
+        </SidebarMenuItem>
+      }
+      footer={
+        <SidebarMenuItem as="div">
+          <Truncate>24 projects</Truncate>
+        </SidebarMenuItem>
+      }
     >
       {many.map((project) => (
         <SidebarMenuItem key={project.id} href={`/projects/${project.id}`}>

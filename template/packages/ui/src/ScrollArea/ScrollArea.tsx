@@ -131,8 +131,8 @@ export const ScrollArea = ({
 };
 
 /**
- * A ScrollArea for a flex column, like a panel or dialog body: it takes its
- * content's height until the column is full, then scrolls.
+ * A ScrollArea for a flex column, like a panel or dialog body: it grows into
+ * the room the column leaves it, and scrolls once its content needs more.
  *
  * @invalidAlternative .min-h-0.overflow-auto, .min-h-0.overflow-y-auto, .flex-fill-y.overflow-auto, .flex-fill-y.overflow-y-auto
  */

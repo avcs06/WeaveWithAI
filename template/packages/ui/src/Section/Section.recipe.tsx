@@ -21,6 +21,10 @@
  * - Stack sections in a SectionGroup, which puts a fixed gap between them.
  *   A Section on its own pads itself above and below. A page's sections
  *   need no group: the page spaces them.
+ * - A Section has no side padding, so its heading lines up with the
+ *   PageHeader. The sides come from what wraps it: the page's container, a
+ *   Card or a panel. Never pad a Section's sides, or wrap one in a box only
+ *   to pad it.
  * - `description` is one muted line about the section; anything longer, or
  *   anything to act on, goes in the content.
  * - `headerAction` holds the section's own actions, like Add, at the

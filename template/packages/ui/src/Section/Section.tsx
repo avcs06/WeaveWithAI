@@ -91,9 +91,10 @@ export const SectionDescription = ({
   ) : null;
 
 /**
- * A section's box: its side padding and the room between its header and
- * content, the same for every Section and Accordion item. Padding above and
- * below comes from the Section or the Accordion item.
+ * A section's box: the room between its header and content, the same for
+ * every Section and Accordion item. Padding above and below comes from the
+ * Section or the Accordion item. It has no side padding: the container
+ * around it gives the sides, so a section lines up with what sits beside it.
  *
  * @internal
  */
@@ -106,7 +107,7 @@ export const SectionFrame = ({
     {...props}
     data-ds=""
     data-slot="section"
-    className={classNames('flex-col-gap-4 px-4', className)}
+    className={classNames('flex-col-gap-4', className)}
   />
 );
 
@@ -172,7 +173,8 @@ export const SectionContent = ({
  * A titled part of a page: a heading, an optional muted description, then its
  * content, with the same sizes and spacing everywhere. A section inside a
  * section gets the next heading level. One that opens and closes is a
- * Collapsible, several are an Accordion.
+ * Collapsible, several are an Accordion. It has no side padding: the page's
+ * container, or the Card or panel around it, gives the sides.
  *
  * @invalidAlternative section
  */
