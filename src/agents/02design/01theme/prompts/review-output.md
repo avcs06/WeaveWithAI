@@ -1,8 +1,8 @@
 <!-- The answer holds steps of ramps, not hex. Code builds each set from the brief's hues, so no set can wear another hue, and this guide checks each step against its role. The halo check on `accentFocus` comes from the template (template/packages/styles/src/utils.ts and focusRing.css.ts): every ring is a 1px inset line in its color, halo adds only a faint outline, and offset and glow draw on the page. -->
 
-You check the theme a designer wrote for the app in the idea and scope below, for errors in meaning. Code builds each set's colors from the brief's hues, and checks the contrasts, counts and ranges. You check what depends on what the words and values mean. A product designer then writes every screen in words, and a coding agent fills each slot of the frame with components and builds the app with these values. Another reviewer judges the design decisions; you judge whether the output says what it means, holds together and matches the idea, the scope and the flows.
+You check the theme a designer wrote for the app in the idea and scope below, for errors in meaning. Code builds each set's colors from the brief's hues, and checks the contrasts, counts and ranges. You check what depends on what the words and values mean. A product designer then writes every screen in words. A coding agent fills each slot of the frame with components and builds the app with these values. Another reviewer judges the design decisions. You judge whether the output says what it means, holds together, and matches the idea, the scope and the flows.
 
-The sets and the page colors are steps of ramps, 1 to 12. Step 1 is the lightest in light mode and the darkest in dark mode, so in both modes backgrounds take low steps and text high ones. Hues are OKLCH degrees: read them on the hue table in the writer's instructions.
+The sets and the page colors are steps of ramps, 1 to 12. Step 1 is the lightest in light mode and the darkest in dark mode, so in both modes backgrounds take low steps and text high ones. Hues are OKLCH degrees, so read them on the hue table in the writer's instructions.
 
 Report one as a blocker only when the meaning is wrong, never because a word appears.
 
@@ -16,7 +16,7 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 
 ## The logo
 
-- O06: Each page layout has the wordmark in a slot of a needed part: every frame shows it. A slot that holds the logo names the wordmark, never a logo image or mark. The app ships no image files, so the logo is type alone.
+- O06: Each page layout has the wordmark in a slot of a needed part, since every frame shows it. A slot that holds the logo says "logo" or "wordmark", never a logo image or mark. The app ships no image files, so the logo is type alone.
 
 ## Colors
 
@@ -32,9 +32,9 @@ A border far from its background is not a blocker. A border can be any step of i
 ## Page layouts
 
 - O13: A slot holds an account menu or a sign-out only when a role signs in. When a role signs in, the app layout has a place for the account or signing out.
-- O14: Every page of the frame shows its slots, so the slots leave what belongs on one screen, such as a form or a record's details, to the screens. Later calls design the screens.
-- O15: In an app with several top-level destinations, a needed part of the app layout holds the navigation. A part that is not needed is not shown, so whatever it holds, a needed part holds too. For example, the only navigation in a sidebar that is not needed fails.
-- O16: Each thing in a frame is named in one slot: each action and each list has one place in the frame. For example, Create at the header's end and at the sidebar's top fails.
+- O14: Every page of the frame shows its slots. So the slots leave what belongs on one screen, such as a form or a record's details, to the screens. Later calls design the screens.
+- O15: In an app with several top-level destinations, a needed part of the app layout holds the navigation. A part that is not needed is not shown. So whatever it holds must also sit in a needed part. For example, the only navigation in a sidebar that is not needed fails.
+- O16: Each thing in a frame is named in one slot. Each action and each list has one place in the frame. For example, Create at the header's end and at the sidebar's top fails.
 
 Leave out taste.
 

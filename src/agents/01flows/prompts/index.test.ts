@@ -69,7 +69,7 @@ describe('review guides', () => {
       expect(peer).not.toContain('{{');
       expect(peer).not.toContain('<!--');
       expect(peer).toContain(standard);
-      expect(peer).toContain('Challenge, and report as a blocker');
+      expect(peer).toContain('Challenge the decisions. Report as a blocker only what you would not sign off.');
     }
   });
 

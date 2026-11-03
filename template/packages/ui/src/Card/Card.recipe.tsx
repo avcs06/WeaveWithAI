@@ -25,11 +25,11 @@
  * - `onClick` and `asChild` don't mix: a list item can't be a button.
  * - Name a button or selectable card with `aria-labelledby` on its title and
  *   `aria-describedby` on its details; its whole text is its name otherwise.
- * - Records in a grid are `CardList layout="grid"`. Other cards in a grid
- *   are a list: `<ul role="list">` of `<Card asChild><li>`, with `<h3>`
- *   titles. Columns go in a colocated .css.ts: `gridTemplateColumns:
- *   'repeat(auto-fill, minmax(min(100%, 280px), 1fr))'`, with Tailwind `grid
- *   gap-4` beside it.
+ * - A list of cards is a `CardList`: a column, or a grid with
+ *   `layout="grid"`. Never a `ul` or a grid of Cards built by hand.
+ * - A CardGroup's choices side by side take their columns from a colocated
+ *   .css.ts: `gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%,
+ *   280px), 1fr))'`, with Tailwind `grid gap-4` beside it.
  * - A card in a group takes the group's `disabled` or `disabledWithReason`; a
  *   card's own reason wins.
  */
@@ -53,29 +53,46 @@ const projects = Array.from({ length: 24 }, (_, index) => ({
   owner: index % 2 ? 'Alex Morgan' : 'Sam Lee',
 }));
 type Project = (typeof projects)[number];
+const events = [
+  {
+    id: 'meetup',
+    name: 'Design systems meetup',
+    summary: 'Talks on tokens, theming and docs.',
+  },
+  {
+    id: 'summit',
+    name: 'Frontend summit',
+    summary: 'A day of talks on the web platform.',
+  },
+];
 
 // Usage: the patterns to copy.
 /**
- * Content cards: a gallery of items. A list of cards is a list, so each is an
- * `li` via `asChild`, with a heading for screen-reader navigation.
- * `look="elevated"` adds a shadow; `!elevated`, the default, has none.
+ * Content cards: a gallery of items is a CardList with `layout="grid"`, each
+ * title a heading for screen-reader navigation.
  */
 const ContentCards = () => (
-  // eslint-disable-next-line jsx-a11y/no-redundant-roles -- Safari drops list semantics once list-style is none.
-  <ul role="list" className={classNames(cardColumns, 'grid gap-4')}>
-    <Card asChild>
-      <li>
-        <h3>Design systems meetup</h3>
-        <p>Talks on tokens, theming and docs.</p>
-      </li>
-    </Card>
-    <Card asChild look="elevated">
-      <li>
-        <h3>Frontend summit</h3>
-        <p>A day of talks on the web platform.</p>
-      </li>
-    </Card>
-  </ul>
+  <CardList
+    aria-label="Events"
+    items={events}
+    layout="grid"
+    renderItem={(event) => (
+      <>
+        <h3>{event.name}</h3>
+        <p>{event.summary}</p>
+      </>
+    )}
+  />
+);
+
+/** `look="elevated"` adds a shadow; `!elevated`, the default, has none. */
+const ElevatedCard = () => (
+  <Card
+    look="elevated" // The shadow lifts the one card the page features.
+  >
+    <h3>Frontend summit</h3>
+    <p>A day of talks on the web platform.</p>
+  </Card>
 );
 
 /**
@@ -407,6 +424,7 @@ export default function CardRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContentCards />
+      <ElevatedCard />
       <LinkCard />
       <CardWithActions />
       <ClickableCard />

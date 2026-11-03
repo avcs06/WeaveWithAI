@@ -55,7 +55,13 @@ export const header = style({
   selectors: {
     ...separations('Bottom'),
     '&[data-sticky]': { position: 'sticky', top: 0, zIndex: 1 },
-    '&[data-overlay]': { background: 'transparent', alignSelf: 'start' },
+    // Over the main region it shares a row with, which comes later and would paint over it.
+    '&[data-overlay]': {
+      background: 'transparent',
+      alignSelf: 'start',
+      position: 'relative',
+      zIndex: 1,
+    },
   },
 });
 

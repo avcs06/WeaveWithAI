@@ -46,7 +46,7 @@ export interface JsxElement {
   openSpread: boolean;
   /** The classes its `className` could produce, when it has one. */
   classes?: Set<string>;
-  /** The tags of its direct JSX element children; a child behind an expression is not among them. */
+  /** The tags of its direct JSX element children, with those an expression renders: a branch, `&&`, a fragment or a `.map` callback. */
   children: string[];
   /** The tags of the JSX elements around it, nearest first. */
   ancestors: string[];
@@ -166,12 +166,47 @@ function tagName(name: JSXOpeningElement['name']): string | undefined {
   return object && `${object}.${name.property.name}`;
 }
 
+/** The tags a child puts straight into its parent: its own, a fragment's, or what an expression renders. */
+function childTags(node: Node): string[] {
+  switch (node.type) {
+    case 'JSXElement': {
+      const tag = tagName(node.openingElement.name);
+      return tag ? [tag] : [];
+    }
+    case 'JSXFragment':
+      return node.children.flatMap(childTags);
+    case 'JSXExpressionContainer':
+    case 'ParenthesizedExpression':
+      return childTags(node.expression);
+    case 'ConditionalExpression':
+      return [...childTags(node.consequent), ...childTags(node.alternate)];
+    case 'LogicalExpression':
+      return childTags(node.right);
+    case 'CallExpression':
+    case 'OptionalCallExpression': {
+      // `items.map((item) => <Card />)`: the callback's JSX lands in the parent.
+      const { callee } = node;
+      const [callback] = node.arguments;
+      const isMap =
+        (callee.type === 'MemberExpression' || callee.type === 'OptionalMemberExpression') &&
+        callee.property.type === 'Identifier' &&
+        callee.property.name === 'map';
+      if (!isMap || !callback || (callback.type !== 'ArrowFunctionExpression' && callback.type !== 'FunctionExpression'))
+        return [];
+      if (callback.body.type !== 'BlockStatement') return childTags(callback.body);
+      return callback.body.body.flatMap((statement) =>
+        statement.type === 'ReturnStatement' && statement.argument ? childTags(statement.argument) : [],
+      );
+    }
+    default:
+      return [];
+  }
+}
+
 /** The tags of an opening element's direct JSX element children, and of the elements around it, nearest first. */
 function surroundings(nodePath: NodePath<JSXOpeningElement>): Pick<JsxElement, 'children' | 'ancestors'> {
   const element = nodePath.parentPath;
-  const children = element?.isJSXElement()
-    ? element.node.children.flatMap((child) => (child.type === 'JSXElement' ? (tagName(child.openingElement.name) ?? []) : []))
-    : [];
+  const children = element?.isJSXElement() ? element.node.children.flatMap(childTags) : [];
   const ancestors: string[] = [];
   for (let at: NodePath | null | undefined = element?.parentPath; at; at = at.parentPath) {
     if (!at.isJSXElement()) continue;

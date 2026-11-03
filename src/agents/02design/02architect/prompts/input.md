@@ -1,22 +1,22 @@
-# Scope (01-flows/01-scope.json)
+# Scope
 
 {{scope}}
 
-# Flows (01-flows/03-expand.json)
+# Flows
 
 {{flows}}
 
-# Brief (from 02-design/01-theme.json)
+# Brief, from the theme
 
 {{brief}}
 
-# Page layouts (from 02-design/01-theme.json)
+# Page layouts, from the theme
 
 {{layouts}}
 
 # Your job in this call
 
-Write the frames, the screens and the dialogs of this app. Walk every flow from its first step to its outcome, and give each step a place: a step on a screen, in a dialog, or in a frame. Then add what no flow covers but every user needs on that page: its title, the way back, and what it shows when there is nothing yet.
+Write the frames, the screens and the dialogs of this app. Walk every flow from its first step to its outcome. Give each flow step a place: a step on a screen, in a dialog, or in a frame. Then add what no flow covers but every user needs on that page: its title, the way back, and what it shows when there is nothing yet.
 
 Before you answer, check:
 

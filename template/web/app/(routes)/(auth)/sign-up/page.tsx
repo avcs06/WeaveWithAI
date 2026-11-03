@@ -47,7 +47,7 @@ export default function SignUpPage() {
   return (
     <>
       {/* The page's name for assistive tech; the box shows the logo instead of a title. */}
-      <h1 className="sr-only">Sign up</h1>
+      <h1 data-slot="page-title" className="sr-only">Sign up</h1>
       <Form
         onSubmit={handleSubmit(submit)}
         error={errors.root?.message}

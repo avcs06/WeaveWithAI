@@ -4,7 +4,8 @@
  * the page's actions at the end of the title's row.
  *
  * When not to use:
- * - The landing page: its `Hero` holds the headline, the page's H1.
+ * - The landing page, `web/app/(routes)/(marketing)/page.tsx`: its `Hero`
+ *   holds the headline, the page's H1.
  * - A part of the page with its own title: a Section, whose heading comes
  *   after the page's.
  *

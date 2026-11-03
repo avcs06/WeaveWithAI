@@ -5,7 +5,7 @@ import { MarketingHeaderRightSlot } from '@app/components/MarketingHeaderRightSl
 import { layouts, PageLayout } from '@app/components/PageLayout';
 import React from 'react';
 
-/** The public site: the landing page, sign in and sign up, in the theme's marketing layout. */
+/** The public site: the landing page and every page a visitor opens, in the theme's marketing layout. Sign in and sign up have their own. */
 export default function MarketingLayout({
   children,
 }: {

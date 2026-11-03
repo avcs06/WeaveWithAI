@@ -2,55 +2,63 @@
 
 ## Workflow
 
-1. For each component you use, call `get_recipe`, pick the case that fits
-   (each says when to use it) and adapt it, and `get_component` for its
-   props, their types and defaults. Recipes are the supported usage; don't
-   read the component's source.
-2. Search or list to find what exists and the real token names, with the
-   class that applies each. Never invent a color, spacing value or component
-   prop, never read the token or Tailwind files, and never hand-build an
-   element the system already has a component for.
-3. Build a page in its route folder, `web/app/(routes)/<path>/`: `page.tsx`,
-   and its own components and controllers in `components/` beside it. A
-   piece a second route uses goes in `blocks` or `components`. Data comes
-   from `web/app/entities/`.
-4. Run `validate` on each file you write and fix every finding. At the end, run once:
-   `pnpm typecheck`, `pnpm nx lint web` and `pnpm verify <route>`. All three
-   passing means done.
+1. For each component you use, call `get_recipe`. Pick the case that fits
+   and adapt it. Each case says when to use it. Call `get_component` for the
+   component's props, their types and defaults. Recipes are the supported
+   usage. Don't read the component's source.
+2. Search or list to find what exists and the real token names. Each token
+   comes with the class that applies it. Never invent a color, spacing value
+   or component prop. Never read the token or Tailwind files. Never
+   hand-build an element the system already has a component for.
+3. Build a page in its route folder, `web/app/(routes)/<path>/`. The folder
+   holds `page.tsx`, and the page's own components and controllers in
+   `components/` beside it. A piece that a second route uses goes in
+   `blocks` or `components`. Data comes from `web/app/entities/`.
+4. Run `validate` on each file you write, and fix every finding. At the end,
+   run `pnpm typecheck`, `pnpm nx lint web` and `pnpm verify <route>` once.
+   You are done when all three pass.
 
 ## Already guaranteed
 
-Every component server-renders and hydrates without a mismatch, works under
-the React Compiler, and fits a 320px screen: `pnpm nx test ui` and
-`pnpm verify --recipes` check each recipe for this. Don't re-check components;
-`pnpm verify <route>` checks your page.
+Every component server-renders and hydrates without a mismatch. It works
+under the React Compiler and fits a 320px screen. `pnpm nx test ui` and
+`pnpm verify --recipes` check each recipe for this. `pnpm verify <route>`
+checks your page. Don't re-check components.
 
 ## Styling
 
-- Tailwind variants and selectors (`hover:`, `sm:`), arbitrary values
-  (`w-[13px]`) and negative classes go in a colocated `.css.ts`
-  (vanilla-extract) using `tokens` from `@packages/styles/tokens.css`.
-- A class list has at most 50 characters, and an element at most two lists:
-  `classNames('flex-row-gap-2 flex-wrap', 'items-center')`. Styles that don't
-  fit go in the `.css.ts` too.
-- Use a token for every color, spacing and size. A literal needs a comment on
-  the property saying why it is right, in your own words; "the design asks for
-  it" is no reason, since the design may be wrong.
+- Put Tailwind variants and selectors, such as `hover:` and `sm:`, in a
+  colocated `.css.ts` (vanilla-extract). Put arbitrary values, such as
+  `w-[13px]`, and negative classes there too. The file uses `tokens` from
+  `@packages/styles/tokens.css`.
+- A class list has at most 50 characters. An element has at most two lists,
+  such as `classNames('flex-row-gap-2 flex-wrap', 'items-center')`. Styles
+  that don't fit go in the `.css.ts` too.
+- Use a token for every color, spacing and size. A literal needs a comment
+  on the property that says, in your own words, why the literal is right.
+  "The design asks for it" is no reason, since the design may be wrong.
 - Leave `variant`, `size` and `look` out to keep the defaults the theme set.
   Another value needs a comment on the prop with your own reason, the same way.
-- Phones: `@media (max-width: 639px)`. Records in a grid are a `CardList`
-  with `layout="grid"`, which sets the columns.
+- For phones, use `@media (max-width: 639px)`. Records in a grid are a
+  `CardList` with `layout="grid"`, which sets the columns.
 
 ## App structure
 
-- Folders in `web/app`: `shared` for app-wide plumbing with no UI;
-  `entities` for domain data (types, seed data, store); `components` for
-  reused basic components; `blocks` for reused complex components and
-  controllers, which combine design-system components with entity data;
-  `(routes)` for pages.
+- `web/app` has these folders:
+  - `shared` holds app-wide plumbing with no UI.
+  - `entities` holds domain data: types, seed data and the store.
+  - `components` holds reused basic components.
+  - `blocks` holds reused complex components and controllers. They combine
+    design-system components with entity data.
+  - `(routes)` holds pages.
+- A page starts with `PageHeader` from `@app/components/PageHeader`. The
+  landing page, `web/app/(routes)/(marketing)/page.tsx` at `/`, starts with
+  `Hero` from `@app/components/Hero` instead. A record that is gone shows
+  `NotFound` from `@app/components/NotFound`.
+- A list of records is a `CardList` or a `Table`.
 - Imports go one way: shared → entities → components → blocks → (routes).
-  Reach a sibling folder through its `index.ts`; a package as
+  Import a sibling folder through its `index.ts`. Import a package as
   `@packages/<package>/<Module>`.
-- No backend yet: each entity keeps its data in a store made with
-  `createPersistentStore` from `@packages/utils/state`, behind its hooks and
-  functions.
+- There is no backend yet. Each entity keeps its data in a store made with
+  `createPersistentStore` from `@packages/utils/state`. The store sits behind
+  the entity's hooks and functions.

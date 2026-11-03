@@ -1,14 +1,16 @@
 /**
- * Hero: the landing page's first section. The headline as the page's only
- * H1, the line under it, the main action and the way to sign in, and the
- * preview of the app beside them. It spans the main region on the brand's
- * background, while its content keeps the page's edge.
+ * Hero: the first section of the landing page,
+ * `web/app/(routes)/(marketing)/page.tsx` at `/`. It holds the headline as
+ * the page's only H1, the line under it, the main action and the way to
+ * sign in, and the preview of the app beside them. It spans the main region
+ * on the brand's background, while its content keeps the page's edge.
  *
  * When not to use:
- * - Any page but the landing page: its title is a PageHeader.
+ * - Any page but `web/app/(routes)/(marketing)/page.tsx`: its title is a
+ *   PageHeader.
  *
  * Pitfalls:
- * - First on the landing page, and only there: it meets the frame's header.
+ * - First in that page, and only there: it meets the frame's header.
  * - Each action once in the view: when the header offers signing in, the
  *   hero offers signing up alone.
  * - A background of the page's own, such as the brief's signature, goes in a
@@ -27,19 +29,11 @@ const WithPreview = () => (
   <Hero
     title="Every book you mean to read, in one quiet list"
     description="Add a book, keep it on a shelf that says where you are with it, and find it again later."
+    // The header offers signing in, so the hero offers signing up alone.
     actions={
-      <>
-        <Button as={NextLink} href="/sign-up">
-          Start your list
-        </Button>
-        <Button
-          as={NextLink}
-          href="/sign-in"
-          variant="base" // Signing in is the quieter way in, beside signing up.
-        >
-          Sign in
-        </Button>
-      </>
+      <Button as={NextLink} href="/sign-up">
+        Start your list
+      </Button>
     }
     media={
       <Card>

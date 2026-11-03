@@ -35,10 +35,13 @@ export function concreteRoute(route: string, contract: Contract): string {
 /** The screens the template builds: sign in and sign up. */
 export const TEMPLATE_ROUTES = ['/sign-in', '/sign-up'];
 
+/** The screens the pages session builds and the checks open: every one but the template's. */
+export const builtScreens = (architecture: Architecture) =>
+  architecture.screens.filter((screen) => !TEMPLATE_ROUTES.includes(screen.route));
+
 /** One session for every screen the template doesn't build, each in its route folder; what two screens share goes in blocks or components. */
 export function pagesSpec(architecture: Architecture, contract: Contract, flows: Flows, scope: Scope): Omit<UnitSpec, 'rendered'> {
-  const screens = architecture.screens.filter((screen) => !TEMPLATE_ROUTES.includes(screen.route));
-  const parts = screens.map((screen) => {
+  const parts = builtScreens(architecture).map((screen) => {
     const folder = screenFolder(architecture, flows, scope, screen);
     return {
       screen,
@@ -76,7 +79,7 @@ async function runPages(ctx: StageContext): Promise<void> {
   const { theme } = readArtifact<Themed>(ctx.run, 'design-theme').data;
   const appDir = runPath(ctx.run, 'app');
   const spec = pagesSpec(architecture, contract, flows, scope);
-  const samples = architecture.screens.map((screen, i) => pageSample(ctx.run, screen, spec.routes![i]!));
+  const samples = builtScreens(architecture).map((screen, i) => pageSample(ctx.run, screen, spec.routes![i]!));
   await runUnits(ctx, STAGE, [{ ...spec, rendered: renderedOn(ctx.run, appDir, samples, theme) }]);
   // CODE-008: one production build once every page is in; what fails is known, the run goes on.
   const build = await appCheck(appDir, 'build', ['pnpm', 'build']);

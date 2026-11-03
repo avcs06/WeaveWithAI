@@ -6,10 +6,11 @@ import * as styles from './Hero.css';
 import type { HeroProps } from './Hero.types';
 
 /**
- * The landing page's first section: the headline as the page's only H1, the
- * line under it and the actions, with the preview beside them. It spans the
- * main region and draws the brand's background; its content keeps the
- * page's edge.
+ * The first section of the landing page,
+ * `web/app/(routes)/(marketing)/page.tsx` at `/`. It holds the headline as
+ * the page's only H1, the line under it and the actions, with the preview
+ * beside them. It spans the main region and draws the brand's background.
+ * Its content keeps the page's edge.
  */
 export const Hero = ({
   title,
@@ -26,7 +27,9 @@ export const Hero = ({
     >
       <div className="flex-col-gap-6 items-start">
         <div className="flex-col-gap-3">
-          <h1 className={styles.title}>{title}</h1>
+          <h1 data-slot="hero-title" className={styles.title}>
+            {title}
+          </h1>
           {description ? (
             <p className={styles.description}>{description}</p>
           ) : null}

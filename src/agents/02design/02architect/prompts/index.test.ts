@@ -29,7 +29,7 @@ describe('the architect prompt', () => {
   it('carries the scope, the flows, the brief and the layouts', () => {
     const message = architectUserMessage(scope, flows, brief, theme.layouts);
     filled(message);
-    expect(message).toContain('# Flows (01-flows/03-expand.json)');
+    expect(message).toContain('# Flows\n');
     expect(message).toContain('"F05"');
     expect(message).toContain('# Page layouts');
   });

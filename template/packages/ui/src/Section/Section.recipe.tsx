@@ -12,9 +12,11 @@
  * Pitfalls:
  * - The heading level comes from nesting: a Section is an `h2`, one inside a
  *   Section an `h3`, and so on. Don't wrap `title` in a heading of your own.
- * - A page's title is the app's PageHeader, its only H1. `headingAs` picks
- *   the heading element instead of nesting: `h1` only for a landing page's
- *   headline. Sections inside continue from it.
+ * - A Section is never the page's H1. A page's H1 is its PageHeader's
+ *   title. In `web/app/(routes)/(marketing)/page.tsx`, the page at `/`, it is the Hero's
+ *   headline.
+ * - `headingAs` picks another level when nesting picks the wrong one.
+ *   Sections inside continue from it.
  * - Titles are one size at every level: don't restyle a nested one.
  * - Stack sections in a SectionGroup, which puts a fixed gap between them.
  *   A Section on its own pads itself above and below. A page's sections
@@ -97,22 +99,9 @@ const NestedSections = () => (
   </Section>
 );
 
-/**
- * A landing page's headline, on a page with no PageHeader: the outermost
- * Section takes `headingAs="h1"`, so its sections are `h2`s.
- */
-const LandingSection = () => (
-  <Section title="Plan your week in minutes" headingAs="h1">
-    <Section title="How it works">
-      <p>Add your tasks, then drag them into the days.</p>
-    </Section>
-  </Section>
-);
-
 export default function SectionRecipe() {
   return (
     <div className="flex-col-gap-8">
-      <LandingSection />
       <SettingsSections />
       <NestedSections />
     </div>

@@ -22,5 +22,25 @@
   {
     "selector": "nav NextLink:not([look*=\"plain\"])",
     "use": "look=\"plain\": a link in a navigation is a control, and a link outside a sentence is plain. The dotted line marks a link inside text"
+  },
+  {
+    "selector": "h1:not([data-slot])",
+    "use": "PageHeader from @app/components/PageHeader: its title is the page's only H1. In web/app/(routes)/(marketing)/page.tsx, the page at /, Hero from @app/components/Hero holds the H1"
+  },
+  {
+    "selector": "Section[headingAs=\"h1\"]",
+    "use": "PageHeader from @app/components/PageHeader: its title is the page's only H1. In web/app/(routes)/(marketing)/page.tsx, the page at /, Hero from @app/components/Hero holds the H1"
+  },
+  {
+    "selector": "Form[headingAs=\"h1\"]",
+    "use": "PageHeader from @app/components/PageHeader: its title is the page's only H1. In web/app/(routes)/(marketing)/page.tsx, the page at /, Hero from @app/components/Hero holds the H1"
+  },
+  {
+    "selector": "ul:has(Card)",
+    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side. A list of records is a CardList or a Table"
+  },
+  {
+    "selector": "ol:has(Card)",
+    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side. A list of records is a CardList or a Table"
   }
 ]

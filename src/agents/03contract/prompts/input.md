@@ -4,13 +4,13 @@
 
 # Flows
 
-Fields and forms are defined once, and steps refer to them by id.
+Fields and forms are defined once. Steps refer to them by id.
 
 {{flows}}
 
 # Frames, screens and dialogs
 
-What the user sees and does in each place, in reading order. Steps name the fields they show or ask for by id.
+Each frame, screen and dialog lists what the user sees and does there, in reading order. Steps name the fields they show or ask for by id.
 
 {{architecture}}
 

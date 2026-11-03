@@ -268,6 +268,10 @@ describe('rendered checks on the fixture pages', () => {
     expect(await contentEdge(clean)).toEqual([]);
     expect(await spreadPairs(clean)).toEqual([]);
     expect(await gridOrphans(clean)).toEqual([]);
+    // A lone block of columns is a block itself, and a heading spanning a grid's row fills it.
+    const layout = await open('layout.html');
+    expect(await contentEdge(layout)).toEqual([]);
+    expect(await gridOrphans(layout)).toEqual([]);
   });
 
   it('R-013 titles: a route whose H1 looks unlike the PageHeader title fails; the hero is left out', async () => {

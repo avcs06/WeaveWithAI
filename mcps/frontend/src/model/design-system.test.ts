@@ -493,8 +493,18 @@ describe('validate — :has() and required props', () => {
     expect(finding).toMatchObject({ rule: 'invalid-alternative', suggestion: 'Toolbar' });
     expect(finding?.message).toContain('holding <Button>');
     expect(system.validate('<nav><span /></nav>', 'app/page.tsx').findings).toEqual([]);
-    // A child behind an expression is not seen.
-    expect(system.validate('<nav>{actions.map((a) => <Button key={a} />)}</nav>', 'app/page.tsx').findings).toEqual([]);
+    // A child an expression renders counts: a .map callback, a branch, `&&` or a fragment.
+    for (const code of [
+      '<nav>{actions.map((a) => <Button key={a} />)}</nav>',
+      '<nav>{actions?.map((a) => { return <Button key={a} />; })}</nav>',
+      '<nav>{open ? <Button /> : null}</nav>',
+      '<nav>{open && <><Button /></>}</nav>',
+    ])
+      expect(system.validate(code, 'app/page.tsx').findings).toEqual([
+        expect.objectContaining({ rule: 'invalid-alternative', suggestion: 'Toolbar' }),
+      ]);
+    // Deeper than the callback's own element is not a child.
+    expect(system.validate('<nav>{actions.map((a) => <span key={a}><Button /></span>)}</nav>', 'app/page.tsx').findings).toEqual([]);
   });
 
   it('flags a component used without a prop its @requiredProp names, unless a spread may carry it', () => {

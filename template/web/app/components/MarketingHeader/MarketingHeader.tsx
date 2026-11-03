@@ -1,7 +1,7 @@
 /**
- * The center of the public site's header, over the landing page, sign in and
- * sign up, kept in the bar's middle whatever its ends hold. Style it as the
- * theme names it.
+ * The center of the public site's header, over its pages, kept in the bar's
+ * middle whatever its ends hold. Style it as the theme names it. Sign in and
+ * sign up have a layout of their own, without this header.
  *
  * Holds, as the theme names them:
  * - Links to the site's own pages or sections: a `NextLink` from

@@ -16,8 +16,7 @@
  * - A heading: a `Section`'s title is the heading.
  * - A line between groups: a gap between them is usually enough. Use a
  *   `Separator` only where the groups need a visible line.
- * - A list of records or cards people scan and open: lay them out as a grid
- *   or a column of `Card`s, or a `Table`; a `List` is for text.
+ * - A list of records: a `CardList` or a `Table`. A `List` is for text.
  * - Rows people sort, filter or compare across: a `Table`.
  * - A number people read and compare: a `Numeral`, inside the text element.
  *

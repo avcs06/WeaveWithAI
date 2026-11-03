@@ -1,5 +1,7 @@
+'use client';
+
 import { classNames } from '@packages/styles/classNames';
-import React from 'react';
+import React, { useSyncExternalStore } from 'react';
 
 import * as styles from './Typography.css';
 
@@ -88,18 +90,15 @@ export const Separator = ({
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const date = { day: 'numeric', month: 'short', year: 'numeric' } as const;
+const time = { hour: '2-digit', minute: '2-digit' } as const;
 // The app's one format: "7 Nov 2026", and "7 Nov 2026, 18:30" with the time.
-// A day is a calendar date, the same in every time zone.
-const dayFormat = new Intl.DateTimeFormat('en-GB', {
-  ...date,
-  timeZone: 'UTC',
+const formatsIn = (timeZone?: string) => ({
+  date: new Intl.DateTimeFormat('en-GB', { ...date, timeZone }),
+  dateTime: new Intl.DateTimeFormat('en-GB', { ...date, ...time, timeZone }),
 });
-const dateFormat = new Intl.DateTimeFormat('en-GB', date);
-const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
-  ...date,
-  hour: '2-digit',
-  minute: '2-digit',
-});
+const utc = formatsIn('UTC');
+const viewer = formatsIn();
+const noSubscription = () => () => undefined;
 
 /**
  * A date or a moment in the app's one format: "7 Nov 2026", or with
@@ -116,16 +115,23 @@ export const Time = ({
   className,
   ...props
 }: TimeProps) => {
+  // Only the browser knows the viewer's time zone. The server and the render
+  // that hydrates show a moment in UTC, so they match; the next render shows it
+  // in the viewer's zone. A day is a calendar date, the same in every zone.
+  const hydrated = useSyncExternalStore(
+    noSubscription,
+    () => true,
+    () => false,
+  );
   const day = DAY.test(value);
   const moment = new Date(day ? `${value}T00:00:00Z` : value);
-  const format = day ? dayFormat : withTime ? dateTimeFormat : dateFormat;
+  const formats = day || !hydrated ? utc : viewer;
+  const format = withTime && !day ? formats.dateTime : formats.date;
   return (
     <time
       {...props}
       dateTime={value}
       data-ds=""
-      // A moment's text follows the viewer's time zone, which the server can't know.
-      suppressHydrationWarning={!day}
       className={classNames(
         font && styles.fonts[font],
         color && styles.textColors[color],

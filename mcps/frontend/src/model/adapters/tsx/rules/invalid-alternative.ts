@@ -16,7 +16,7 @@ interface Compound {
    * with `ignoreCase`.
    */
   attributes: { name: string; value?: string; contains?: boolean; ignoreCase?: boolean }[];
-  /** `:has(…)` parts: for each, one of its tags must be a direct JSX element child. */
+  /** `:has(…)` parts: for each, one of its tags must be a direct JSX element child, or one an expression there renders. */
   has: string[][];
 }
 
@@ -130,7 +130,8 @@ function parseParts(text: string, into: Compound, not?: Compound[]): boolean {
  *                             in any case
  *   `a:not([href])`           an <a> with no href
  *   `aside:has(nav, ul)`      an <aside> with a <nav> or a <ul> among its
- *                             direct JSX children
+ *                             direct JSX children, those a branch, `&&` or
+ *                             a `.map` callback renders included
  *   `Form div:has(Input)`     a <div> holding an <Input>, anywhere inside a
  *                             <Form>: a tag before a space names an ancestor
  *

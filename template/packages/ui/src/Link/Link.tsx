@@ -61,7 +61,7 @@ export const Link = ({
           onClick={(event) => event.preventDefault()}
           className={classNames(
             linkClassName,
-            'w-fit',
+            'w-fit max-w-full',
             childClassName,
             className,
           )}
@@ -77,8 +77,8 @@ export const Link = ({
     <Anchor
       {...props}
       // Its text's width, not its column's: a stretched link draws its dotted
-      // line across the row.
-      className={classNames(linkClassName, 'w-fit', className)}
+      // line across the row. Never wider than its column, so a Truncate in it cuts.
+      className={classNames(linkClassName, 'w-fit max-w-full', className)}
       data-ds={asChild ? undefined : ''}
     >
       {children}

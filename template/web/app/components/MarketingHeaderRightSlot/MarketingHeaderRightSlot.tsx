@@ -5,9 +5,9 @@ import { Button } from '@packages/ui/Button';
 import React from 'react';
 
 /**
- * The right end of the public site's header, over the landing page, sign in
- * and sign up. PageLayout renders the bar and keeps this slot at its right
- * end. It lays these items in a row with the theme's gap.
+ * The right end of the public site's header, over its pages. PageLayout
+ * renders the bar and keeps this slot at its right end. It lays these
+ * items in a row with the theme's gap.
  *
  * Holds, as the theme names them:
  * - Sign up as the main action, `Button as={NextLink}` to the sign-up page,

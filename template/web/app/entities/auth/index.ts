@@ -10,7 +10,8 @@ export type User = { email: string; role?: string };
 /** A role a member signs up as. */
 export type Role = { id: string; name: string };
 
-type AuthState = { user: User | null };
+// `roles` keeps each email's role from sign up, so signing in again restores it.
+type AuthState = { user: User | null; roles: Record<string, string> };
 
 // The scaffold writes the run's key over this, so no two apps on one origin share a session.
 const AUTH_KEY = 'weave:app:auth';
@@ -21,19 +22,27 @@ export const ROLES: Role[] = [];
 // The scaffold writes the app's first signed-in page over this: where signing in or up leads.
 export const HOME_ROUTE = '/';
 
-const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), AUTH_KEY);
+const useAuthStore = createPersistentStore<AuthState>(
+  () => ({ user: null, roles: {} }),
+  AUTH_KEY,
+);
 
 export async function signUp(email: string, role?: string): Promise<User> {
   await mockCall('signUp');
   const user = role ? { email, role } : { email };
-  useAuthStore.setState({ user });
+  useAuthStore.setState((state) => ({
+    user,
+    roles: role ? { ...state.roles, [email]: role } : state.roles,
+  }));
   return user;
 }
 
 export async function signIn(email: string): Promise<User> {
   await mockCall('signIn');
-  useAuthStore.setState({ user: { email } });
-  return { email };
+  const role = useAuthStore.getState().roles[email];
+  const user = role ? { email, role } : { email };
+  useAuthStore.setState({ user });
+  return user;
 }
 
 export function signOut(): void {

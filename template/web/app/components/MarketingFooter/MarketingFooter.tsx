@@ -1,7 +1,8 @@
 /**
- * The public site's footer items, under the landing page, sign in and sign
- * up. PageLayout renders the bar: its height, padding, background and
- * separation. It lays these items in a row with the theme's gap.
+ * The public site's footer items, under its pages. Sign in and sign up have
+ * a layout of their own, without this footer. PageLayout renders the bar:
+ * its height, padding, background and separation. It lays these items in a
+ * row with the theme's gap.
  *
  * Holds, as the theme names them:
  * - Links to the site's own pages, such as About or Contact: a `NextLink`

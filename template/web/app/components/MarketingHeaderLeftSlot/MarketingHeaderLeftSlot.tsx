@@ -3,9 +3,9 @@ import React from 'react';
 import { PageLogo } from '../PageLogo';
 
 /**
- * The left end of the public site's header, over the landing page, sign in
- * and sign up. PageLayout renders the bar and keeps this slot at its left
- * end. It lays these items in a row with the theme's gap.
+ * The left end of the public site's header, over its pages. PageLayout
+ * renders the bar and keeps this slot at its left end. It lays these
+ * items in a row with the theme's gap.
  *
  * Holds, as the theme names them:
  * - Code places `PageLogo` here when the theme puts the logo at the header's
