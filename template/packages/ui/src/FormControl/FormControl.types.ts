@@ -59,8 +59,9 @@ export type FormControlOwnProps = DisabledProps &
     /** Shown on hover over the box, above any disabled reason. */
     tooltip?: ReactNode;
     /**
-     * A button beside the box, lined up with it: the label stays above both
-     * and the messages below both.
+     * A button that acts on this field's value, such as Send, Apply or Move,
+     * beside the box and lined up with it: the label stays above both and
+     * the messages below both. Any field takes it, in a form or out of one.
      */
     action?: ReactNode;
     /**

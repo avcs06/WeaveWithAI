@@ -16,6 +16,10 @@
  * Pitfalls:
  * - Every field needs a name: `label`, `aria-label` or `aria-labelledby`. A
  *   placeholder is not a name.
+ * - A button that acts on the field's value, such as Send, Apply or Move,
+ *   goes in its `action`, in a form or out of one, such as a filter bar or a
+ *   toolbar. A button beside the field in a flex row lines up with the label,
+ *   not the box.
  * - Set `required` through the `rules` of `Controller`, which also marks the
  *   field. `{...field}` overwrites a `required` or `error` given before it, so
  *   spread it first when you override either.

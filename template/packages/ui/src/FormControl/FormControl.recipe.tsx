@@ -11,6 +11,10 @@
  *   date input or the star rating below.
  *
  * Pitfalls:
+ * - A button that acts on the field's value, such as Send, Apply or Move,
+ *   goes in its `action`, in a form or out of one, such as a filter bar or a
+ *   toolbar. A button beside the field in a flex row lines up with the label,
+ *   not the box.
  * - Spread `controlProps` on one focusable element. Take `isDisabled` out first
  *   (it isn't an attribute) and stop the control changing while it's true:
  *   FormControl sets `tabIndex` and `aria-disabled`, not `disabled`.

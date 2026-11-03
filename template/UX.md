@@ -13,6 +13,7 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Actions
 
 - One main action per view, as the primary button. Every other action is secondary, or sits in a menu when there are many.
+- A button that acts on a field's value, such as Send, Apply or Move, goes in that field's `action` slot, in a form or out of one, such as a filter bar or a toolbar. There it lines up with the field's box, not its label. A Select clears with its own clear button: no Clear button beside it.
 - An action appears once per view. A frame's action, in the header or the sidebar, is not repeated on the screen inside it.
 - An empty list shows its add action once, in the empty state. The same action above the list is hidden while the list is empty.
 - Sibling actions of equal weight are the same element: two buttons, primary and secondary, or two links. A link beside a button says the link weighs less, as a quiet way out beside the main action does. Never a link and a button for two actions of equal weight, such as sign in and sign up.
@@ -32,7 +33,6 @@ the coding agent builds to them, and the reviewers hold the work to them.
 ## Forms
 
 - Every form is a `Form`: it lays out the fields, the form's own error and the actions. Fields take their width from it, 1x by default; a field sets `width` to 0.5x, 0.75x, 1.5x or 2x when its content needs another, and fields in one form share these widths.
-- A button beside a field goes in the field's `action` slot, so it lines up with the field's box and not with the label.
 - The form's main action comes last in its actions, as the primary button. Cancel is secondary, before it.
 
 ## Frames
