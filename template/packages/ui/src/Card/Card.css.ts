@@ -1,6 +1,6 @@
 import { tokens } from '@packages/styles/tokens.css';
 import { disabledColor, focusRing } from '@packages/styles/utils';
-import { createVar, style } from '@vanilla-extract/css';
+import { createVar, style, styleVariants } from '@vanilla-extract/css';
 
 export const cardText = createVar('cardText');
 export const cardBg = createVar('cardBg');
@@ -77,3 +77,10 @@ export const card = style({
 export const cardGrid = style({
   gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
 });
+
+// A fixed set's column count, which divides the set; after cardGrid, so it
+// wins. One column on a phone, where the columns would be too narrow.
+export const fixedColumns = styleVariants({ 2: 2, 3: 3, 4: 4 }, (count) => ({
+  gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))`,
+  '@media': { '(max-width: 639px)': { gridTemplateColumns: 'minmax(0, 1fr)' } },
+}));

@@ -113,14 +113,10 @@ const TypographyStories = () => (
     <StorySection title="Kbd">
       <div className="flex-col-gap-1">
         <Paragraph>
-          Press <Kbd>Ctrl K</Kbd> to search, in the mono font by default.
+          Press <Kbd>Ctrl K</Kbd> to search, always in the mono font.
         </Paragraph>
         <Paragraph>
-          Or{' '}
-          <Kbd font="ui" color="primary">
-            Esc
-          </Kbd>{' '}
-          in another font and color.
+          Or <Kbd color="primary">Esc</Kbd> in another color.
         </Paragraph>
       </div>
     </StorySection>

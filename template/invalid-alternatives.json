@@ -37,10 +37,14 @@
   },
   {
     "selector": "ul:has(Card)",
-    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side. A list of records is a CardList or a Table"
+    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side and `columns` for a fixed set, such as columns={2} for 4 cards. A list of records is a CardList or a Table"
   },
   {
     "selector": "ol:has(Card)",
-    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side. A list of records is a CardList or a Table"
+    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side and `columns` for a fixed set, such as columns={2} for 4 cards. A list of records is a CardList or a Table"
+  },
+  {
+    "selector": "div.grid:has(Card)",
+    "use": "CardList from @packages/ui/Card, with layout=\"grid\" for cards side by side and `columns` for a fixed set, such as columns={2} for 4 cards. A list of records is a CardList or a Table"
   }
 ]

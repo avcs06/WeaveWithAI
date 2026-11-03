@@ -6,7 +6,7 @@ import React, { type Key, useState } from 'react';
 import { Pagination, type PaginationValue } from '../Pagination';
 
 import { Card } from './Card';
-import { cardGrid } from './Card.css';
+import { cardGrid, fixedColumns } from './Card.css';
 
 import type { CardListProps } from './Card.types';
 
@@ -21,6 +21,7 @@ export const CardList = <T extends { id: Key }>({
   'aria-label': label,
   pagination,
   layout = 'column',
+  columns,
   stretchLink = false,
   className,
 }: CardListProps<T>) => {
@@ -45,7 +46,11 @@ export const CardList = <T extends { id: Key }>({
         data-ds=""
         className={
           layout === 'grid'
-            ? classNames(cardGrid, 'grid gap-4')
+            ? classNames(
+                cardGrid,
+                columns && fixedColumns[columns],
+                'grid gap-4',
+              )
             : 'flex-col-gap-3'
         }
       >

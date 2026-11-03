@@ -92,6 +92,12 @@ export type CardListProps<T extends { id: Key }> = {
    * records the user browses, such as products with photos.
    */
   layout?: 'column' | 'grid';
+  /**
+   * With `layout="grid"`, a fixed column count for a fixed set, such as 2
+   * for 4 reasons, so no card sits alone in the last row. Without it, as
+   * many columns as fit at 280px.
+   */
+  columns?: 2 | 3 | 4;
   /** Each card opens its record from anywhere on it: Card's `stretchLink`. */
   stretchLink?: boolean;
   className?: string;

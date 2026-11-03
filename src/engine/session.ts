@@ -62,8 +62,15 @@ export type SessionDeps = {
 };
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
-/** What the guidelines tell the agent never to change: the design system, the config, and the frames code wrote. */
-const PROTECTED = ['packages/**', 'tools/**', '.muse/**', '.mcp.json', '.weave/**', 'web/app/components/PageLayout/**'];
+/** What the guidelines tell the agent never to change: the design system, the config, the frames code wrote, and the template's page and frame components. */
+const PROTECTED = [
+  'packages/**',
+  'tools/**',
+  '.muse/**',
+  '.mcp.json',
+  '.weave/**',
+  ...['PageLayout', 'PageHeader', 'Hero', 'NotFound', 'PageLogo', 'UserMenu'].map((name) => `web/app/components/${name}/**`),
+];
 /** A frame's layout in its route group, which the frames stage writes by code. */
 const FRAME_LAYOUT = /^web\/app\/\(routes\)\/\([^/]+\)\/layout\.tsx$/;
 

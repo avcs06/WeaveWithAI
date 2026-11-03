@@ -125,22 +125,20 @@ describe('Typography', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it('shows a key in the mono font, or in the font and color it is given', async () => {
+  it('shows a key in its own style, or in the color it is given', async () => {
     const { container } = renderUI(
       <Paragraph>
-        Press <Kbd id="search">Ctrl K</Kbd> or{' '}
-        <Kbd font="ui" color="primary">
-          Esc
-        </Kbd>
+        Press <Kbd id="search">Ctrl K</Kbd> or <Kbd color="primary">Esc</Kbd>
       </Paragraph>,
     );
     const search = screen.getByText('Ctrl K');
     expect(search.tagName).toBe('KBD');
-    expect(search).toHaveClass(styles.kbd, styles.fonts.mono);
+    expect(search).toHaveClass(styles.kbd);
     expect(search).toHaveAttribute('id', 'search');
-    const esc = screen.getByText('Esc');
-    expect(esc).toHaveClass(styles.fonts.ui, styles.textColors.primary);
-    expect(esc).not.toHaveClass(styles.fonts.mono);
+    expect(screen.getByText('Esc')).toHaveClass(
+      styles.kbd,
+      styles.textColors.primary,
+    );
     expect(await axe(container)).toHaveNoViolations();
   });
 

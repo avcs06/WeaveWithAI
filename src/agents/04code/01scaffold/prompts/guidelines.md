@@ -163,6 +163,9 @@ meet them already. A control you build yourself must meet them too.
 
 - Never write or change a test.
 - Never change `packages/`, `tools/`, `.weave/`, `.muse/` or a config file.
+- Never change `PageLayout`, `PageHeader`, `Hero`, `NotFound`, `PageLogo` or
+  `UserMenu` in `web/app/components/`. Use them as they are. A session that
+  changes one fails.
 - Never install, add or remove a package (`pnpm install`, `pnpm add`). The
   app's packages are fixed. When a command fails because of the install,
   stop and say so in your summary.

@@ -50,7 +50,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 
 - A list of records is a `Table` or a `CardList`. Use a Table for records the user scans and compares. Use a CardList for rich records, with its `layout` set to fit them. Set `column` for records read one by one, and `grid` for records browsed side by side.
 - In a Table, the record's name keeps the dotted line. `onRowClick` follows its link from the whole row. In a CardList, the name is `look="plain"`. `stretchLink` follows its link from the whole card.
-- A fixed set in a grid, such as a dashboard's numbers or a landing page's reasons, takes a column count that divides the set. For example, 4 items take 2 columns. Records in a grid are a `CardList` with `layout="grid"`.
+- A fixed set in a grid, such as a dashboard's numbers or a landing page's reasons, takes a column count that divides the set. For example, 4 items take 2 columns. Records in a grid are a `CardList` with `layout="grid"`. Cards in a fixed set are a `CardList` with `layout="grid"` and `columns`, such as `columns={2}` for 4 cards.
 
 ## Frames
 

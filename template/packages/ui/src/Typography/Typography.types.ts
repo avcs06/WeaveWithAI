@@ -59,7 +59,8 @@ export type CodeBlockProps = Omit<Element<'pre'>, 'children' | 'font'> & {
   children: string;
 };
 
-export type KbdProps = Element<'kbd'>;
+/** Always in the mono font, like Code. */
+export type KbdProps = Omit<Element<'kbd'>, 'font'>;
 
 export type MarkProps = Element<'mark'>;
 

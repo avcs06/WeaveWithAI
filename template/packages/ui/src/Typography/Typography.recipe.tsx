@@ -6,8 +6,8 @@
  * - `color` (default, muted, primary or a status) replaces the color the
  *   text inherits. Every element but `Separator` takes it.
  * - `font` (ui, display or mono) replaces the font the text inherits.
- *   `Code` and `CodeBlock` are always mono, and `Separator` has no text, so
- *   these three don't take it.
+ *   `Code`, `CodeBlock` and `Kbd` are always mono, and `Separator` has no
+ *   text, so these four don't take it.
  * - Size and line height are fixed: the caption's for `Caption`, the
  *   surrounding text's for `Code`, `Kbd`, `Mark` and `Time`, and the body's
  *   for the others.

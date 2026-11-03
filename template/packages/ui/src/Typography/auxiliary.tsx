@@ -18,18 +18,12 @@ import type {
  *
  * @invalidAlternative kbd
  */
-export const Kbd = ({
-  font = 'mono',
-  color,
-  className,
-  ...props
-}: KbdProps) => (
+export const Kbd = ({ color, className, ...props }: KbdProps) => (
   <kbd
     {...props}
     data-ds=""
     className={classNames(
       styles.kbd,
-      font && styles.fonts[font],
       color && styles.textColors[color],
       className,
     )}

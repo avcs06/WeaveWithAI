@@ -26,7 +26,8 @@
  * - Name a button or selectable card with `aria-labelledby` on its title and
  *   `aria-describedby` on its details; its whole text is its name otherwise.
  * - A list of cards is a `CardList`: a column, or a grid with
- *   `layout="grid"`. Never a `ul` or a grid of Cards built by hand.
+ *   `layout="grid"`, and `columns` for a fixed set. Never a `ul` or a grid
+ *   of Cards built by hand.
  * - A CardGroup's choices side by side take their columns from a colocated
  *   .css.ts: `gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%,
  *   280px), 1fr))'`, with Tailwind `grid gap-4` beside it.
@@ -53,6 +54,16 @@ const projects = Array.from({ length: 24 }, (_, index) => ({
   owner: index % 2 ? 'Alex Morgan' : 'Sam Lee',
 }));
 type Project = (typeof projects)[number];
+const reasons = [
+  { id: 'plan', title: 'Plan in minutes', line: 'Drag tasks into the days.' },
+  {
+    id: 'share',
+    title: 'Share the week',
+    line: 'Everyone sees the same plan.',
+  },
+  { id: 'track', title: 'Track what is done', line: 'Tick tasks as you go.' },
+  { id: 'review', title: 'Review the week', line: 'See what moved and why.' },
+];
 const events = [
   {
     id: 'meetup',
@@ -409,6 +420,25 @@ const RecordGrid = () => (
   />
 );
 
+/**
+ * A fixed set, such as four reasons to join: `columns` sets a count that
+ * divides it, so no card sits alone in the last row.
+ */
+const FixedSet = () => (
+  <CardList
+    aria-label="Reasons to join"
+    items={reasons}
+    layout="grid"
+    columns={2}
+    renderItem={(reason) => (
+      <>
+        <h3>{reason.title}</h3>
+        <p>{reason.line}</p>
+      </>
+    )}
+  />
+);
+
 /** A long list in pages, with the list's own Pagination under the cards. */
 const PagedRecordCards = () => (
   <CardList
@@ -436,6 +466,7 @@ export default function CardRecipe() {
       <ToggleCard />
       <RecordCards />
       <RecordGrid />
+      <FixedSet />
       <PagedRecordCards />
     </div>
   );

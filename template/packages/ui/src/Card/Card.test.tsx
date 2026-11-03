@@ -9,7 +9,7 @@ import { axe, renderUI } from '../test-utils';
 
 import { CardList } from './auxiliary';
 import { Card, CardGroup } from './Card';
-import { cardGrid } from './Card.css';
+import { cardGrid, fixedColumns } from './Card.css';
 import { cardRecipe } from './Card.recipes.css';
 
 const { variants } = cardRecipe.classNames;
@@ -366,6 +366,22 @@ describe('stretchLink', () => {
     const { follow } = renderEventCard(false);
     await userEvent.click(screen.getByText('Thursday 18:00 at Hall B.'));
     expect(follow).not.toHaveBeenCalled();
+  });
+
+  it('CardList lays a fixed set in the column count it is given', () => {
+    renderUI(
+      <CardList
+        aria-label="Reasons"
+        items={[1, 2, 3, 4].map((id) => ({ id }))}
+        layout="grid"
+        columns={2}
+        renderItem={(item) => <p>{`Reason ${item.id}`}</p>}
+      />,
+    );
+    expect(screen.getByRole('list', { name: 'Reasons' })).toHaveClass(
+      cardGrid,
+      fixedColumns[2],
+    );
   });
 
   it('CardList passes it to every card and lays them in a grid on request', async () => {

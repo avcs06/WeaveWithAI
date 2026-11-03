@@ -21,15 +21,28 @@ describe('path rules', () => {
     expect(
       protectedOf(['web/app/(routes)/(app)/layout.css.ts', 'web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']),
     ).toEqual(['web/app/(routes)/(app)/page.test.tsx', 'packages/ui/src/x.ts', '.weave/x.md']);
-    // Code writes the frames' layouts and PageLayout; a session fills only the parts in blocks.
+    // Code writes the frames' layouts; the template's page and frame components stay as they are; a session fills the parts.
     expect(
       protectedOf([
         'web/app/(routes)/(app)/layout.tsx',
         'web/app/(routes)/(app)/dashboards/layout.tsx',
         'web/app/components/PageLayout/PageLayout.tsx',
-        'web/app/blocks/AppHeader/AppHeader.tsx',
+        'web/app/components/PageHeader/PageHeader.tsx',
+        'web/app/components/Hero/Hero.css.ts',
+        'web/app/components/NotFound/NotFound.tsx',
+        'web/app/components/PageLogo/PageLogo.tsx',
+        'web/app/components/UserMenu/UserMenu.tsx',
+        'web/app/components/AppHeader/AppHeader.tsx',
       ]),
-    ).toEqual(['web/app/(routes)/(app)/layout.tsx', 'web/app/components/PageLayout/PageLayout.tsx']);
+    ).toEqual([
+      'web/app/(routes)/(app)/layout.tsx',
+      'web/app/components/PageLayout/PageLayout.tsx',
+      'web/app/components/PageHeader/PageHeader.tsx',
+      'web/app/components/Hero/Hero.css.ts',
+      'web/app/components/NotFound/NotFound.tsx',
+      'web/app/components/PageLogo/PageLogo.tsx',
+      'web/app/components/UserMenu/UserMenu.tsx',
+    ]);
   });
 });
 

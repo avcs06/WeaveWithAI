@@ -142,8 +142,9 @@ export const codeBlock = style({
   selectors: { '&:focus-visible': focusRing(colors.primary.focus) },
 });
 
-// Inside text, as `code` is. The mono font comes from `fonts`, so `font` can replace it.
+// Inside text, as `code` is.
 export const kbd = style({
+  fontFamily: tokens.fontFamily.mono,
   fontSize: 'inherit',
   paddingInline: space[1],
   borderRadius: tokens.radius.control,
