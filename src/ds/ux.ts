@@ -8,7 +8,7 @@ import { pathBeside } from '../core/utils';
 export const UX_FILE = 'UX.md';
 
 /** The sections the design prose decides; the others name components and spacing, which the coding agent meets. */
-export const DESIGN_SECTIONS = ['Lists and records', 'Actions', 'Editing'];
+export const DESIGN_SECTIONS = ['Lists and records', 'Actions', 'Editing', 'Copy'];
 
 /** The practices as prompt text, without the title line: every section, or only the named ones. */
 export function uxPractices(sections?: string[]): string {

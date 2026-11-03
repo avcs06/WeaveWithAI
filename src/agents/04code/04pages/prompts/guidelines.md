@@ -47,9 +47,11 @@
   design gives the hero signing up and the header only signing in, build
   it that way. The preview and the reasons repeat neither action.
 - Build the preview from the app's own components and blocks, with records
-  from the seed data. It is read-only: nothing in it saves. The app ships
+  from the seed data: a few, three at most, never a whole list. It is
+  read-only: nothing in it saves. The app ships
   no images, so this preview is the landing page's picture.
-- Put the three or four reasons in a grid. Give each an icon from
+- Put the three or four reasons in a grid whose column count divides them:
+  three in one row, four in two rows of two. Give each an icon from
   `lucide-react` when the brief's `imagery` is `icons`.
 - Make the brief's `signature` in `theme.json` visible on the landing page.
 - All checks still hold: DESIGN-R-006 needs the H1 in the first view, and
