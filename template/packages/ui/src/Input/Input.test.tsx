@@ -7,7 +7,12 @@ import { useForm } from 'react-hook-form';
 import { Controller } from '../Form';
 import { axe, renderUI } from '../test-utils';
 
-import { NumberInput, PasswordInput, SearchInput } from './auxiliary';
+import {
+  NumberInput,
+  PasswordInput,
+  QuantitySelector,
+  SearchInput,
+} from './auxiliary';
 import { Input } from './Input';
 
 import type { InputProps, NumberInputProps } from './Input.types';
@@ -740,5 +745,84 @@ describe('SearchInput', () => {
     expect(search()).toHaveValue('rock');
     expect(onChange).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe('QuantitySelector', () => {
+  const Quantity = ({
+    initial = 1,
+    disabled = false,
+    ...props
+  }: {
+    initial?: number | null;
+    min?: number;
+    max?: number;
+    step?: number;
+    maxReason?: string;
+    disabled?: boolean;
+  }) => {
+    const [value, setValue] = useState<number | null>(initial);
+    return (
+      <QuantitySelector
+        aria-label="Quantity"
+        autoComplete="off"
+        value={value}
+        onChange={setValue}
+        {...props}
+        {...(disabled && { disabled: true })}
+      />
+    );
+  };
+  const quantity = () => spinbutton('Quantity');
+  const decrease = () => screen.getByRole('button', { name: 'Decrease' });
+  const increase = () => screen.getByRole('button', { name: 'Increase' });
+
+  it('steps with its buttons, which stay out of the tab order', async () => {
+    const { container } = renderUI(<Quantity initial={2} />);
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('3');
+    await userEvent.click(decrease());
+    await userEvent.click(decrease());
+    expect(quantity()).toHaveValue('1');
+    expect(decrease()).toHaveAttribute('tabindex', '-1');
+    expect(increase()).toHaveAttribute('tabindex', '-1');
+    // From the field, Tab leaves the selector: the arrow keys step it instead.
+    quantity().focus();
+    await userEvent.tab();
+    expect(increase()).not.toHaveFocus();
+    expect(quantity()).not.toHaveFocus();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('stops at min and max, each button disabled with its reason', async () => {
+    renderUI(<Quantity max={2} maxReason="Only 2 in stock" />);
+    expect(decrease()).toHaveAttribute('aria-disabled', 'true');
+    expect(decrease()).toHaveAccessibleDescription('Already the fewest');
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('2');
+    expect(increase()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).toHaveAccessibleDescription('Only 2 in stock');
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('2');
+    expect(decrease()).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('takes typed whole numbers and steps with the arrow keys as the buttons do', async () => {
+    renderUI(<Quantity step={2} max={9} />);
+    await userEvent.clear(quantity());
+    await userEvent.type(quantity(), '3.5');
+    expect(quantity()).toHaveValue('35');
+    await userEvent.clear(quantity());
+    await userEvent.type(quantity(), '4{ArrowUp}');
+    expect(quantity()).toHaveValue('6');
+    expect(quantity()).toHaveAttribute('aria-valuemin', '1');
+    expect(quantity()).toHaveAttribute('aria-valuemax', '9');
+  });
+
+  it('disabled, holds both buttons with no reason of their own', () => {
+    renderUI(<Quantity disabled />);
+    expect(decrease()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).not.toHaveAccessibleDescription('No more');
   });
 });

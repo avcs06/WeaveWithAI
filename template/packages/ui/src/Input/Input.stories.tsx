@@ -6,7 +6,13 @@ import { Checkbox } from '../Checkbox';
 import { StoryPage, StorySection } from '../StoryLayout';
 import { caption, controlWidth, mutedText } from '../StoryStyles.css';
 
-import { Input, type InputProps, PasswordInput, SearchInput } from '.';
+import {
+  Input,
+  type InputProps,
+  PasswordInput,
+  QuantitySelector,
+  SearchInput,
+} from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 export default { title: 'UI/Input' } satisfies Meta;
@@ -30,6 +36,29 @@ const Field = (props: Partial<InputProps> & { autoComplete: string }) => {
  * A Field that can wait 500ms: `delay` takes a literal, so it can't be a prop
  * of Field.
  */
+const Quantity = ({
+  initial = 1,
+  disabled = false,
+  ...props
+}: {
+  initial?: number;
+  max?: number;
+  maxReason?: string;
+  disabled?: boolean;
+}) => {
+  const [value, setValue] = useState<number | null>(initial);
+  return (
+    <QuantitySelector
+      aria-label="Quantity"
+      autoComplete="off"
+      value={value}
+      onChange={setValue}
+      {...props}
+      {...(disabled && { disabled: true })}
+    />
+  );
+};
+
 const DelayableField = ({
   delayed,
   ...props
@@ -184,6 +213,18 @@ const InputStories = () => {
       <StorySection title="SearchInput">
         <Row label="Base variant, a search icon, and onChange after a 300ms pause">
           <Search />
+        </Row>
+      </StorySection>
+
+      <StorySection title="QuantitySelector">
+        <Row label="From 1, stepped with − and + or typed">
+          <Quantity />
+        </Row>
+        <Row label="At its max, + says why">
+          <Quantity initial={5} max={5} maxReason="Only 5 in stock" />
+        </Row>
+        <Row label="Disabled">
+          <Quantity disabled />
         </Row>
       </StorySection>
 
