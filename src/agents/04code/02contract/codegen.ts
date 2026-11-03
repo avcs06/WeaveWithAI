@@ -123,15 +123,19 @@ function operationCode(op: Operation, entity: string): string {
 export function use${upper(op.id)}(): Read<${entity}[]> {
   return useRead('${op.id}', ${store}('records'));
 }`;
-    case 'get':
-      return `export async function ${op.id}(id: string): Promise<${entity} | undefined> {
+    case 'get': {
+      // A get finds by id, or by the one field the user types, such as a discount code.
+      const by = op.inputs[0]?.as ?? 'id';
+      const param = by === 'id' ? 'id: string' : `${by}: ${entity}['${by}']`;
+      return `export async function ${op.id}(${param}): Promise<${entity} | undefined> {
   await mockCall('${op.id}');
-  return ${store}.getState().records.find((record) => record.id === id);
+  return ${store}.getState().records.find((record) => record.${by} === ${by});
 }
 
-export function use${upper(op.id)}(id: string): Read<${entity} | undefined> {
-  return useRead('${op.id}', ${store}(({ records }) => records.find((record) => record.id === id)));
+export function use${upper(op.id)}(${param}): Read<${entity} | undefined> {
+  return useRead('${op.id}', ${store}(({ records }) => records.find((record) => record.${by} === ${by})));
 }`;
+    }
     case 'create':
       return `export async function ${op.id}(input: ${entity}Input): Promise<${entity}> {
   await mockCall('${op.id}');

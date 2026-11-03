@@ -30,5 +30,5 @@ Leave out taste. Leave to the validators, which check:
 - An enum field names an enum of the contract. A ref field names an entity of the contract or the built-in User, and so does every operation's `entity`.
 - Every entity's `noun` is a vocabulary noun, and every noun a step has an effect on has an entity.
 - No entity lists id, createdAt or updatedAt, and no entity is named User.
-- Every input's `field` is a flow field. Its `as` is a field of the operation's entity, or `q` on a list. Only a list takes `q`. A get or a delete takes no inputs.
+- Every input's `field` is a flow field. Its `as` is a field of the operation's entity, or `q` on a list. Only a list takes `q`. A get takes no inputs, or the one field the user types to find its record. A delete takes no inputs.
 - No operation has an empty `flowSteps`. Every step with effects is in some operation's `flowSteps`. For each effect of a step, an operation of the matching kind on that noun's entity lists the step.

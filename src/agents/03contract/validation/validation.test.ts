@@ -36,4 +36,15 @@ describe('contract rules on the reading-list contract', () => {
     op(search, 'createBook').inputs[0]!.as = 'q';
     expect(ids(search)).toContain('CONTRACT-007');
   });
+
+  it('CONTRACT-007 lets a get take the one field the user types to find its record, and a delete none', () => {
+    const lookup = structuredClone(contract);
+    op(lookup, 'getBook').inputs.push({ field: 'FD03', as: 'title' });
+    expect(ids(lookup)).not.toContain('CONTRACT-007');
+    op(lookup, 'getBook').inputs.push({ field: 'FD04', as: 'author' });
+    expect(ids(lookup)).toContain('CONTRACT-007');
+    const remove = structuredClone(contract);
+    op(remove, 'deleteBook').inputs.push({ field: 'FD03', as: 'title' });
+    expect(ids(remove)).toContain('CONTRACT-007');
+  });
 });

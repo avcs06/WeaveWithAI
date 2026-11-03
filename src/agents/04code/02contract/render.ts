@@ -14,8 +14,9 @@ export function renderEntities(contract: Contract): string {
       .filter((op) => op.entity === entity.name)
       .map((op) => {
         const reads = op.kind === 'list' || op.kind === 'get';
-        const call = op.kind === 'list' ? '()' : op.kind === 'create' ? '(input)' : op.kind === 'update' ? '(id, changes)' : '(id)';
-        return `- \`${op.id}${call}\`${reads ? ` or \`use${upper(op.id)}${op.kind === 'get' ? '(id)' : '()'}\`` : ''}: ${op.summary}`;
+        const key = op.kind === 'get' ? `(${op.inputs[0]?.as ?? 'id'})` : '(id)';
+        const call = op.kind === 'list' ? '()' : op.kind === 'create' ? '(input)' : op.kind === 'update' ? '(id, changes)' : key;
+        return `- \`${op.id}${call}\`${reads ? ` or \`use${upper(op.id)}${op.kind === 'get' ? key : '()'}\`` : ''}: ${op.summary}`;
       });
     return [`## ${entity.name}`, '', `\`@app/entities/${lower(entity.name)}\``, '', ...fields, '', ...operations].join('\n');
   });
