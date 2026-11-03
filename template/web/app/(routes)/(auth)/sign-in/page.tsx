@@ -1,7 +1,6 @@
 'use client';
 
 import { NextLink } from '@app/components/NextLink';
-import { PageHeader } from '@app/components/PageHeader';
 import { HOME_ROUTE, signIn, useCurrentUser } from '@app/entities/auth';
 import { Button } from '@packages/ui/Button';
 import { Controller, Form } from '@packages/ui/Form';
@@ -40,7 +39,8 @@ export default function SignInPage() {
 
   return (
     <>
-      <PageHeader title="Sign in" description="Welcome back." />
+      {/* The page's name for assistive tech; the box shows the logo instead of a title. */}
+      <h1 className="sr-only">Sign in</h1>
       <Form
         onSubmit={handleSubmit(submit)}
         error={errors.root?.message}

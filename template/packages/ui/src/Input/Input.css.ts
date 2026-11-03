@@ -27,12 +27,12 @@ export const fieldButton = style(
 
 export const searchField = style({});
 
-// Sized by its number, not its parent: four digits, centered between the buttons.
+// Sized by its number, not its parent: three digits, centered between the buttons.
 export const quantityField = style({});
 
 globalStyle(`${quantityField} input`, {
   flex: '0 0 auto',
-  width: '4ch',
+  width: '3ch',
   textAlign: 'center',
 });
 

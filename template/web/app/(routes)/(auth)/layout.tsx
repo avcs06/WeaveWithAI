@@ -2,7 +2,7 @@ import { layouts, PageLayout } from '@app/components/PageLayout';
 import { PageLogo } from '@app/components/PageLogo';
 import React from 'react';
 
-import { column } from './layout.css';
+import { box } from './layout.css';
 
 // The marketing layout's page, with no bar around it: signing in and up stand alone.
 const layout = {
@@ -11,7 +11,7 @@ const layout = {
   footer: { ...layouts.marketing.footer, needed: false },
 };
 
-/** Sign in and sign up: the logo above the form, in a narrow column with no header, sidebar or footer. */
+/** Sign in and sign up: one centered box with the logo, then the page's form and its buttons. */
 export default function AuthLayout({
   children,
 }: {
@@ -19,7 +19,7 @@ export default function AuthLayout({
 }) {
   return (
     <PageLayout layout={layout} kind="marketing">
-      <div className={`flex-col-gap-6 ${column}`}>
+      <div className={`flex-col-gap-6 ${box}`}>
         <PageLogo />
         {children}
       </div>

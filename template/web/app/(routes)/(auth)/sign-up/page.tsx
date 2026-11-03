@@ -1,7 +1,6 @@
 'use client';
 
 import { NextLink } from '@app/components/NextLink';
-import { PageHeader } from '@app/components/PageHeader';
 import { HOME_ROUTE, ROLES, signUp, useCurrentUser } from '@app/entities/auth';
 import { Button } from '@packages/ui/Button';
 import { Controller, Form } from '@packages/ui/Form';
@@ -47,7 +46,8 @@ export default function SignUpPage() {
 
   return (
     <>
-      <PageHeader title="Sign up" description="Create your account." />
+      {/* The page's name for assistive tech; the box shows the logo instead of a title. */}
+      <h1 className="sr-only">Sign up</h1>
       <Form
         onSubmit={handleSubmit(submit)}
         error={errors.root?.message}
