@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DESIGN_SECTIONS, uxPractices } from './ux';
+import { COMPONENT_SECTIONS, DESIGN_SECTIONS, uxPractices } from './ux';
 
 describe('the UX practices', () => {
   it('come from the template, one rule a line, with no title and no placeholders', () => {
@@ -18,5 +18,10 @@ describe('the UX practices', () => {
     expect(text).not.toContain('## Forms');
     expect(text).not.toMatch(/`[A-Z]\w+`/);
     expect(() => uxPractices(['Nope'])).toThrow('no section Nope');
+  });
+
+  it('split every section between the design sections and the component sections', () => {
+    const headings = (text: string) => text.match(/^## .*/gm);
+    expect(headings(uxPractices([...DESIGN_SECTIONS, ...COMPONENT_SECTIONS]))).toEqual(headings(uxPractices()));
   });
 });

@@ -96,6 +96,33 @@ a glance what it is for:
   in a comment on the prop. "The design asks for it" is no reason, and the
   MCP refuses it.
 
+## Presentation
+
+Every element sits where the user looks for it and earns its place. A
+reviewer holds each screen to these rules.
+
+- A link or button sits with what it acts on or leads from. A link to a
+  record sits on its row, card or name. A record's actions sit with the
+  record or in the `PageHeader`. Never leave a link or button alone after
+  the content, between two sections or in a row of its own, such as "Back
+  to the list" under a record's details.
+- The way up to a list or a parent is the breadcrumb. A screen the frame's
+  navigation lists is reached through that navigation. Neither shows again
+  as a link or button of its own.
+- After a task is done, such as a save or an order, offer one main next
+  step and at most one way out, in one row with the result.
+- Each destination and each action appears once in a view.
+- Related buttons, such as Edit and Remove, or Save and Cancel, sit side by
+  side in one row.
+- A note, total, count or status sits beside what it describes.
+- Every heading, section and card holds something. Wrap no single element
+  in a frame it does not need.
+- Every word helps the user act. Write no line that describes the screen to
+  itself, such as "This page shows your orders". Help text never repeats
+  its label, and a status shows once.
+- Add nothing only to decorate or fill space. Each badge, tag, icon, border
+  and card tells the user something they need here.
+
 ## Building
 
 - Build every step and every alternative, in the order the design gives
@@ -116,6 +143,41 @@ a glance what it is for:
   word for this app, in the voice the brief in `theme.json` names. Never
   write placeholder text or words that would fit any app.
 - The app is built for desktop screens only. Write no phone layout.
+
+## Behavior
+
+The app keeps working when the user acts and when something fails. A
+reviewer holds your code to these rules.
+
+- Work out a value that follows from records or other state, such as a
+  total or a filtered list, while rendering. Never keep it in state synced
+  by an effect, and never copy a hook's records into state.
+- Keep what must outlive the view in the entity layer's store. Keep what
+  belongs to one view, such as an open dialog or a filter, in that view.
+- After a save, every screen and frame part that shows the record shows
+  the new value without a reload.
+- An action that saves, changes or removes records waits for its operation
+  and reacts to the outcome. A second press while it runs does nothing.
+- Every effect lists what it reads and cleans up what it starts, such as a
+  timer or a listener. No effect sets the state that sets it off again. A
+  load that finishes after the user moved on never shows on the new view.
+- A list item's key comes from its record, never its index.
+- Handle an empty list, an empty optional field, zero, one item and a long
+  name. Check a record that may be missing before you read its fields.
+- A change across several records happens in full, or tells the user what
+  did not happen.
+- Round money once, when you show it, so a total equals the sum of its
+  lines. Keep each quantity within its limits, such as above zero.
+- Compare dates as dates, never as text. Store a date the user picks as
+  the day they picked.
+- Never set text a user typed or a record holds as HTML. A link or image
+  address from a user or a record opens only an `http`, `https` or app
+  address. A path from the URL, such as where to go after sign-in, leads
+  only to a route of this app.
+- Never write a password, card number or other secret to browser storage,
+  a log or the URL, and never show one back.
+- A signed-in page shows and changes only what the user's role may. A
+  member sees their own records.
 
 ## Keyboard, accessibility and spacing
 

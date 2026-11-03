@@ -48,9 +48,9 @@ export function checkIssues(
       issues.push(issue(rule, `${check.name} failed:\n${check.output.trim()}`));
       continue;
     }
-    // Each line names the screen's route folder: "<folder> has no code." or "Nothing in <folder> calls <operation>; ...".
+    // Each line names the screen's route folder: "<folder> has no code." or "Nothing in <folder> or the blocks it imports calls <operation>; ...".
     for (const line of check.output.split('\n').filter(Boolean))
-      issues.push(issue(line.includes(' calls ') ? 'CODE-006' : 'CODE-005', line, line.match(/^(?:Nothing in )?(\S+) (?:has no code|calls )/)?.[1]));
+      issues.push(issue(line.includes(' calls ') ? 'CODE-006' : 'CODE-005', line, line.match(/^(?:Nothing in )?(\S+) /)?.[1]));
   }
   if (result.status === 'timeout' || result.status === 'failed')
     issues.push(issue('CODE-009', `The session did not finish (${result.status}): ${result.summary || 'no summary'}`));

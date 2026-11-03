@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import { guideIds } from './review';
 
 const agents = fileURLToPath(new URL('../agents/', import.meta.url));
-const LETTER: Record<string, string> = { peer: 'P', output: 'O', code: 'C', adherence: 'A' };
+const LETTER: Record<string, string> = { peer: 'P', output: 'O', code: 'C', adherence: 'A', behavior: 'B', ux: 'U' };
 const guides = readdirSync(agents, { recursive: true, encoding: 'utf8' }).filter((file) =>
-  /prompts\/review-(peer|output|code|adherence)\.md$/.test(file),
+  /prompts\/review-(peer|output|code|adherence|behavior|ux)\.md$/.test(file),
 );
 
 describe('guideIds', () => {

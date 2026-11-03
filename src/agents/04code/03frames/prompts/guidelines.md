@@ -8,8 +8,8 @@
 - Code wrote each frame's layout,
   `web/app/(routes)/(<route group>)/layout.tsx`. It renders `PageLayout`
   from `@app/components/PageLayout` with the theme's app or marketing
-  layout. `PageLayout` sets the header's height, the sidebar's width, what
-  stays in view, the separations and the page container. In the app layout
+  layout. `PageLayout` sets the bars' padding and gaps, the sidebar's width,
+  what stays in view, the separations and the page container. In the app layout
   the frame stays in place, and only the main region scrolls. The sidebar
   is a `SidebarMenu` that `PageLayout` renders itself. The layout of a
   frame around signed-in screens also sends a visitor to the landing page.

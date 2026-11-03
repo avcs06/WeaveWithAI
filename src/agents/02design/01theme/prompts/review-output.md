@@ -46,6 +46,6 @@ Leave to the validators, which check:
 - Three different fonts for each role, and a wordmark weight its font ships.
 - The contrast of text, of `border` and `focus`, and of the wordmark. Whether the divider, the skeleton and the backdrop show.
 - Each mode the color scheme names, once, with one set for each colored noun. A background of colors and gradients only. Each shadow on the darkest step.
-- A needed part that holds nothing, a needed sidebar with no width, a header or footer too short for a button, and a fixed container with no width.
+- A needed part that holds nothing, a needed sidebar with no width, and a fixed container with no width.
 - A padding other than 0 that is smaller than the gap inside it, the gap between a page's sections included: 24 on app pages, 36 on marketing pages.
 - The defaults that carry meaning.

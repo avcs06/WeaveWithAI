@@ -73,7 +73,7 @@ export type SpecStageOptions<T> = {
   review?: ReviewGuides;
   /** The rounds; default the three of SCHEDULE. */
   schedule?: Round[];
-  /** The reviewers' user message, with the placeholders system, user, output and known; default prompt-review-input.md. */
+  /** The reviewers' user message, with the placeholders system, user, output, known and threads; default prompt-review-input.md. */
   reviewInput?: string;
   /** Reviewers see the mandatory issues as known, the ones the next fix takes, instead of the warnings. */
   reviewersSeeMandatory?: boolean;

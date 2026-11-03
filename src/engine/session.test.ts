@@ -171,7 +171,7 @@ describe('runSession', () => {
     expect(result.checks.at(-1)).toEqual({
       name: 'design',
       ok: false,
-      output: "Nothing in web/app/(routes)/books calls listShelves; load the screen's records through it.",
+      output: "Nothing in web/app/(routes)/books or the blocks it imports calls listShelves; load the screen's records through it.",
     });
   });
 });

@@ -65,7 +65,7 @@ describe('the contract stage', () => {
       },
       data: contract,
     });
-    // A clean draft ends after round 2's two reviews.
+    // A clean draft ends after round 1's two reviews.
     expect(inputs.map((input) => [input.stage, input.reasoningEffort, input.maxTokens])).toEqual([
       ['contract', 'medium', 32_768],
       ['contract-review-peer', 'medium', 16_384],

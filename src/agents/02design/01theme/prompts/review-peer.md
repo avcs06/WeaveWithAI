@@ -39,6 +39,6 @@ Leave to the validators, which check:
 - The brief's counts and ranges, every vocabulary noun once in the entities, colored hues at least 30 degrees from each other and from the brand, and each status hue inside its band.
 - Three different fonts for each role.
 - The contrast of text, of `border` and `focus`, and of the wordmark.
-- A needed sidebar with no width, a header or footer too short for a button, and a fixed container with no width.
+- A needed sidebar with no width, and a fixed container with no width.
 - A padding other than 0 that is smaller than the gap inside it, the gap between a page's sections included: 24 on app pages, 36 on marketing pages.
 - The defaults that carry meaning.

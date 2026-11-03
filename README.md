@@ -8,7 +8,7 @@ stores inside the app. Built on Meta's Muse models through the Meta Model API.
 The approach in one line: models write specifications and code; code checks
 both. Each spec stage writes a JSON artifact with stable IDs. Model reviewers
 check it, and so do code validators where the stage has them. Only mandatory
-issues and reviewer blockers go back to the model, for at most five rounds. The
+issues and reviewer blockers go back to the model, for at most three rounds. The
 coding stages run Muse Code sessions, and checks and reviewers judge each one.
 
 ## Repository

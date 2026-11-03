@@ -18,7 +18,7 @@ describe('checks as issues', () => {
         { name: 'typecheck', ok: false, output: 'error TS2304' },
         { name: 'lint', ok: false, output: '1 error' },
         { name: 'verify', ok: false, output: 'overflow at 1280' },
-        { name: 'design', ok: false, output: 'web/app/(routes)/clients has no code.\nNothing in web/app/(routes)/home calls listClients; load the screen\'s records through it.' },
+        { name: 'design', ok: false, output: 'web/app/(routes)/clients has no code.\nNothing in web/app/(routes)/home or the blocks it imports calls listClients; load the screen\'s records through it.' },
       ],
     });
     expect(issues.map((i) => i.rule)).toEqual(['CODE-004', 'CODE-001', 'CODE-002', 'CODE-003', 'CODE-007', 'CODE-005', 'CODE-006']);

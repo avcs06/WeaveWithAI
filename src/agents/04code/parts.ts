@@ -9,7 +9,7 @@ import { ACCOUNT, type BarPosition, LOGO, positionIn } from '../02design/config'
 type Layout = Theme['layouts']['app'];
 export type Kind = 'app' | 'marketing';
 type Slot = 'headerLeft' | 'header' | 'headerRight' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
-/** Where an item sits in its part: the footer's by the slot that names it; elsewhere the logo first and the account last. */
+/** Where an item sits in its part: the logo first and the account last. */
 type Position = BarPosition;
 
 // The header's center is the header part itself, as the sidebar's rows are the sidebar.

@@ -39,7 +39,7 @@ describe('the screen check after a coding session', () => {
     expect(checkScreen(app, expected)).toEqual({
       name: 'design',
       ok: false,
-      output: "Nothing in web/app/(routes)/orders/[orderId] calls listPieces; load the screen's records through it.",
+      output: "Nothing in web/app/(routes)/orders/[orderId] or the blocks it imports calls listPieces; load the screen's records through it.",
     });
   });
 });

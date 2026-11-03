@@ -25,7 +25,7 @@ When you finish, write `.weave/replies.json` with one reply per issue:
 - Two issues may ask for opposite changes, such as one that moves a link and one that keeps it where it is. Decide which one serves the user better. Fix that one. Answer the other `open`, and name the one you fixed.
 - A reviewer may ask for something you believe is not an issue, such as a change your guidelines or the design rule out. Answer it `open` with your reason.
 - A failed check you answer `open` with a reason is not sent to you again. Leave a check open only when fixing it would break something the user needs.
-- The reviewers read your replies in the next round. They accept a sound reason, or answer it `open` and say why it fails.
+- The reviewers read your replies when they review this fix. They accept a sound reason, or answer it `open` and say why it fails.
 
 ## How the checks ran
 

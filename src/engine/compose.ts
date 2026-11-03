@@ -30,7 +30,7 @@ export const CODE_SCHEDULE: Round[] = [
 ];
 
 /** Where a fix session writes its reply to each thread. */
-export const REPLIES = '.weave/replies.json';
+const REPLIES = '.weave/replies.json';
 
 export type Unit = {
   /** 'frames', 'pages': the session ids and the runner's stage name end with it. */

@@ -3,12 +3,12 @@ import path from 'node:path';
 import type { Contract } from '../agents/03contract/schema';
 import type { Check } from './session';
 
-// The app's own check after a coding session: each screen's route folder
-// against the contract. The guidelines ask for data through functions named
-// after the operations, so a missing name is a screen that does not load its
-// records, not a style choice.
+// The app's own check after a coding session: each screen's route folder,
+// and the blocks it imports, against the contract. The guidelines ask for
+// data through functions named after the operations, so a missing name is a
+// screen that does not load its records, not a style choice.
 
-/** What a screen's route folder must call: the operations that load what it and its dialogs show. */
+/** What a screen's route folder, or a block it imports, must call: the operations that load what it and its dialogs show. */
 export type ScreenExpect = { folder: string; operations: string[] };
 
 /** A screen's folder and the operations that load it; a get drops out when the screen calls its entity's list, which holds each record. */
@@ -49,7 +49,7 @@ export function checkScreen(appDir: string, expect: ScreenExpect): Check {
     // An operation is called by its function or its hook: listBooks() or useListBooks().
     ...expect.operations
       .filter((op) => !new RegExp(`\\b(${op}|use${op.charAt(0).toUpperCase()}${op.slice(1)})\\b`).test(code))
-      .map((op) => `Nothing in ${expect.folder} calls ${op}; load the screen's records through it.`),
+      .map((op) => `Nothing in ${expect.folder} or the blocks it imports calls ${op}; load the screen's records through it.`),
   ];
   return { name: 'design', ok: lines.length === 0, output: lines.join('\n') };
 }
