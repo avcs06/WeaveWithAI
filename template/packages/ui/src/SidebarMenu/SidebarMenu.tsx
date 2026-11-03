@@ -28,9 +28,10 @@ import type {
  */
 export const SidebarMenu = ({ className, ...props }: SidebarMenuProps) => (
   <Menu
+    as="aside"
     role="navigation"
     {...props}
-    className={classNames(sidebarMenu, className)}
+    className={classNames(sidebarMenu, 'gap-1.5', className)}
   />
 );
 

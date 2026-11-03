@@ -44,7 +44,7 @@ export const rule = defineRule<ThemeInput>(
           );
       }
       if (sidebar.needed) {
-        if (!sidebar.top && !sidebar.bottom) empty('sidebar');
+        if (!sidebar.top && !sidebar.items && !sidebar.bottom) empty('sidebar');
         if (sidebar.widthPx <= 0)
           issues.push(
             fail(

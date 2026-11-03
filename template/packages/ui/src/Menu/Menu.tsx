@@ -43,6 +43,7 @@ import type {
  * @internal
  */
 export const Menu = ({
+  as: Shell = 'div',
   availableHeight,
   loading,
   header,
@@ -53,8 +54,10 @@ export const Menu = ({
   ...props
 }: MenuProps) => {
   // With a header or a footer, the menu's role, id and name move to the list,
-  // which holds only the rows: a menu can't hold a field or a button.
-  const outside = hasContent(header) || hasContent(footer);
+  // which holds only the rows: a menu can't hold a field or a button. An
+  // aside keeps its own role, so they move there too.
+  const outside =
+    Shell === 'aside' || hasContent(header) || hasContent(footer);
   const {
     role,
     id,
@@ -74,7 +77,7 @@ export const Menu = ({
   };
 
   return (
-    <div
+    <Shell
       {...(outside
         ? shellProps
         : { ...props, 'aria-busy': loading || undefined })}
@@ -123,7 +126,7 @@ export const Menu = ({
           {footer}
         </div>
       )}
-    </div>
+    </Shell>
   );
 };
 

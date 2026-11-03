@@ -11,7 +11,15 @@ import { routeGroups, signedInFrame } from '../01scaffold/weave';
 // stay as the theme set them.
 
 type Layout = Theme['layouts']['app'];
-type Part = { slot: 'header' | 'sidebar' | 'footer'; name: string; holds: string };
+type Part = {
+  slot: 'header' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
+  /** What the part is, for its comment. */
+  label: string;
+  name: string;
+  holds: string;
+  /** How PageLayout lays the part out, and what to return. */
+  flow: string;
+};
 
 /** A frame's route group layout file. */
 export const frameLayoutFile = (group: string) => `web/app/(routes)/(${group})/layout.tsx`;
@@ -25,30 +33,33 @@ const pascal = (group: string) =>
 
 const said = (where: string, what: string) => (what ? `${where}: ${what}.` : '');
 
-/** The bars the layout needs, each with what the theme puts in it. */
+const ROW = 'PageLayout lays its children out in a row with the theme\'s gap, centered in the bar. Return its items, not a bar of your own.';
+const ROWS = 'They are the rows of the sidebar\'s SidebarMenu: return SidebarMenuItems, not a menu or a bar of your own.';
+const fixed = (where: string) =>
+  `The sidebar's SidebarMenu keeps it fixed ${where} its rows, with the menu's spacing. Return its items, not a bar of your own.`;
+
+/** The parts the layout needs, each with what the theme puts in it: a bar's row, or the sidebar's rows and what sits fixed above and below them. */
 function parts(base: string, layout: Layout): Part[] {
-  const bar = (slot: 'header' | 'footer', suffix: string) => {
-    const { start, center, end } = layout[slot];
-    return { slot, name: `${base}${suffix}`, holds: [said('Start', start), said('Center', center), said('End', end)] };
+  const bar = (slot: 'header' | 'footer', suffix: string): Part[] => {
+    const { needed, start, center, end } = layout[slot];
+    const holds = [said('Start', start), said('Center', center), said('End', end)].filter(Boolean).join(' ');
+    return needed ? [{ slot, label: slot, name: `${base}${suffix}`, holds: holds || 'Nothing named by the theme.', flow: ROW }] : [];
   };
-  const side = () => {
-    const { top, bottom } = layout.sidebar;
-    return { slot: 'sidebar' as const, name: `${base}Sidebar`, holds: [said('Top', top), said('Bottom', bottom)] };
-  };
-  const all = [bar('header', 'Header'), side(), bar('footer', 'Footer')];
-  return all
-    .filter((part) => layout[part.slot].needed)
-    .map((part) => ({ ...part, holds: part.holds.filter(Boolean).join(' ') || 'Nothing named by the theme.' }));
+  const { needed, top, items, bottom } = layout.sidebar;
+  const sidebar: Part[] = needed
+    ? [
+        ...(top ? [{ slot: 'sidebarHeader', label: "sidebar's header", name: `${base}SidebarHeader`, holds: said('It holds', top), flow: fixed('above') } as const] : []),
+        { slot: 'sidebar', label: "sidebar's rows", name: `${base}Sidebar`, holds: said('Rows', items) || 'Nothing named by the theme.', flow: ROWS },
+        ...(bottom ? [{ slot: 'sidebarFooter', label: "sidebar's footer", name: `${base}SidebarFooter`, holds: said('It holds', bottom), flow: fixed('below') } as const] : []),
+      ]
+    : [];
+  return [...bar('header', 'Header'), ...sidebar, ...bar('footer', 'Footer')];
 }
 
-const ROW = 'PageLayout lays its children out in a row with the theme\'s gap, centered in the bar.';
-const COLUMN = 'PageLayout lays its children out in a column with the theme\'s gap, the bar\'s full height.';
-
 function partFile(part: Part, frame: Frame, kind: string): string {
-  const flow = part.slot === 'header' || part.slot === 'footer' ? ROW : COLUMN;
   return `/**
- * The ${part.slot} of ${frame.name} (${frame.id}), in the ${kind} layout. ${part.holds}
- * ${flow} Return its items, not a bar of your own.
+ * The ${part.label} of ${frame.name} (${frame.id}), in the ${kind} layout. ${part.holds}
+ * ${part.flow}
  */
 export const ${part.name} = () => null;
 `;

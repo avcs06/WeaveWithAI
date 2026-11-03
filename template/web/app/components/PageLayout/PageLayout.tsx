@@ -2,6 +2,7 @@
 
 import { classNames } from '@packages/styles/classNames';
 import { tokens } from '@packages/styles/tokens.css';
+import { SidebarMenu } from '@packages/ui/SidebarMenu';
 import { assignInlineVars, setElementVars } from '@vanilla-extract/dynamic';
 import React, { useLayoutEffect, useRef } from 'react';
 
@@ -11,7 +12,6 @@ import type {
   BleedProps,
   PageLayoutConfig,
   PageLayoutProps,
-  PageSidebar,
   SpacingKey,
 } from './PageLayout.types';
 
@@ -21,7 +21,7 @@ const px = (value: number) => `${value}px`;
 // Data attributes take a boolean as present or absent.
 const flag = (on: boolean) => (on ? '' : undefined);
 
-/** The grid's areas, columns and rows: the sidebars beside the main region, the header and footer above and below it. */
+/** The grid's areas, columns and rows: the sidebar beside the main region, the header and footer above and below it. */
 export function frameGrid(layout: PageLayoutConfig) {
   const fullWidth = layout.docksFirst === 'header';
 
@@ -53,46 +53,12 @@ export function frameGrid(layout: PageLayoutConfig) {
   };
 }
 
-const Sidebar = ({
-  area,
-  label,
-  sidebar,
-  sticky,
-  underHeader,
-  children,
-}: {
-  area: string;
-  label: string;
-  sidebar: PageSidebar;
-  sticky: boolean;
-  underHeader: boolean;
-  children: React.ReactNode;
-}) => (
-  <aside
-    aria-label={label}
-    data-ds=""
-    data-side={sidebar.side}
-    data-sticky={flag(sticky)}
-    data-under-header={flag(underHeader)}
-    data-separation={sidebar.separation}
-    className={styles.sidebar}
-    style={{
-      gridArea: area,
-      ...assignInlineVars({
-        [styles.width]: px(sidebar.widthPx),
-        [styles.padding]: space(sidebar.padding),
-        [styles.gap]: space(sidebar.gap),
-      }),
-    }}
-  >
-    {children}
-  </aside>
-);
-
 /**
- * A frame from the theme's page layout: header, sidebars and footer around
+ * A frame from the theme's page layout: header, sidebar and footer around
  * the page's container. The layout's sizes, sticking and separations are its
- * own; the slots hold only what sits in each bar.
+ * own; the slots hold only what sits in each bar. The sidebar is a
+ * SidebarMenu: `sidebar` holds its rows, `sidebarHeader` and `sidebarFooter`
+ * what stays fixed above and below them.
  *
  * @invalidAlternative main
  */
@@ -100,7 +66,9 @@ export const PageLayout = ({
   layout,
   scrollMain = false,
   header,
+  sidebarHeader,
   sidebar,
+  sidebarFooter,
   footer,
   children,
 }: PageLayoutProps) => {
@@ -113,12 +81,6 @@ export const PageLayout = ({
 
   // Nothing outside the main region scrolls when it scrolls on its own, so nothing needs to stick.
   const sticky = (on: boolean) => !scrollMain && on;
-
-  // A sticky sidebar starts under the header only when the header spans it and stays in view.
-  const underHeader =
-    layout.header.needed &&
-    layout.header.sticky &&
-    layout.docksFirst === 'header';
 
   // A header sized by its content has a height only once rendered.
   useLayoutEffect(() => {
@@ -171,15 +133,17 @@ export const PageLayout = ({
         </header>
       )}
       {layout.sidebar.needed && (
-        <Sidebar
-          area="sidebar"
-          label="Sidebar"
-          sidebar={layout.sidebar}
-          sticky={sticky(layout.sidebar.sticky)}
-          underHeader={underHeader}
+        <SidebarMenu
+          aria-label="Sidebar"
+          header={sidebarHeader}
+          footer={sidebarFooter}
+          data-side={layout.sidebar.side}
+          data-separation={layout.sidebar.separation}
+          className={styles.sidebar}
+          style={{ gridArea: 'sidebar' }}
         >
           {sidebar}
-        </Sidebar>
+        </SidebarMenu>
       )}
       <main
         data-ds=""

@@ -59,7 +59,10 @@ describe('buildTheme', () => {
     });
     expect(theme.radius).toEqual({ surface: '8px', control: '6px' });
     expect(Object.keys(theme.colors.light!.entity)).toEqual(['shelf']);
-    expect(theme.layouts.app).toEqual(call.layouts.app);
+    expect(theme.layouts.app).toEqual({
+      ...call.layouts.app,
+      header: { ...call.layouts.app.header, sticky: false },
+    });
     expect(theme.layouts.marketing).toMatchObject({
       ...call.layouts.marketing,
       docksFirst: 'header',

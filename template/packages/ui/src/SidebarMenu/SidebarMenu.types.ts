@@ -2,10 +2,10 @@ import type { MenuProps } from '../Menu';
 import type { AccessibleName, IconAddonProps, SetByComponent } from '../utils';
 import type { ComponentPropsWithoutRef } from 'react';
 
-/** Menu's shell without a menu's role or height cap, named for assistive tech. */
+/** Menu's shell as an `aside`, without a menu's role or height cap, named for assistive tech. */
 export type SidebarMenuProps = Omit<
   MenuProps,
-  'role' | 'availableHeight' | 'loading' | 'aria-busy'
+  'as' | 'role' | 'availableHeight' | 'loading' | 'aria-busy'
 > &
   AccessibleName;
 

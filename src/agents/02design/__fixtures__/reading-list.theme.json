@@ -395,6 +395,7 @@
         "needed": false,
         "side": "left",
         "top": "",
+        "items": "",
         "bottom": "",
         "widthPx": 0,
         "sticky": false,

@@ -8,30 +8,31 @@
 - Code wrote each frame's layout, `web/app/(routes)/(<route group>)/layout.tsx`.
   It renders `PageLayout` from `@app/components/PageLayout` with the theme's
   app or marketing layout. `PageLayout` sets the header's height, the
-  sidebar's width, what stays in view while the page scrolls, the
-  separations and the page container. A frame around signed-in screens also
+  sidebar's width, what stays in view, the separations and the page
+  container. In the app layout the frame stays in place and only the
+  main region scrolls. The sidebar is a `SidebarMenu` that `PageLayout`
+  renders itself. A frame around signed-in screens also
   sends a visitor to the landing page there. Never change the layout or
   `PageLayout`: a session that does fails.
-- The layout imports one empty part for each bar its layout needs, such as
+- The layout imports one empty part for each area its layout needs, such as
   `web/app/blocks/AppHeader/AppHeader.tsx` and
   `web/app/blocks/AppSidebar/AppSidebar.tsx`. Fill each one. Its comment says
-  what the theme puts at its start, center and end, or its top and bottom.
-- A part returns its items, not a bar: no `header`, `aside` or `footer`
-  element of its own, and no height, padding, background or border around
-  them. A header or footer lays its items in a row: push the end items over
-  with `<div className="flex-1" />`. A sidebar lays them in a column.
+  what the theme puts there.
+- A part returns its items, not a bar: no `header`, `aside`, `footer` or
+  `SidebarMenu` of its own, and no height, padding, background or border
+  around them. A header or footer lays its items in a row: push the end
+  items over with `<div className="flex-1" />`.
+- The sidebar's parts: `AppSidebar` returns the rows, each destination a
+  `SidebarMenuItem` around a `NextLink`. `AppSidebarHeader` holds what
+  stays fixed above them, such as a Create button, and `AppSidebarFooter`
+  what stays fixed below, such as the account. The menu's list scrolls
+  between them.
 - A piece a part uses, such as an account menu, goes in
   `web/app/components/<Name>/`, or in `web/app/blocks/<Name>/` when it loads
   or changes records.
 - A step that leads somewhere opens that route from
   `.weave/01-scaffold/routes.json` with `NextLink`, even when the screen is
   not built yet. The navigation marks the item of the screen the user is on.
-- A sidebar's navigation is a `SidebarMenu`: its `header` holds what sits
-  above the list, such as the logo, a search or a Create button, its
-  `footer` what sits below it, such as the account and sign out, and each
-  destination is a `SidebarMenuItem` around a `NextLink`. `PageLayout`
-  gives the sidebar the height under the header; the menu fills it and its
-  list scrolls inside it.
 - A part that shows the signed-in user reads `useCurrentUser()` from
   `@app/entities/auth`. It is `undefined` until the saved session is read.
 - The design may have the header offer only signing in, because the

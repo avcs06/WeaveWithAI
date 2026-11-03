@@ -4,6 +4,8 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 export type MenuProps = ComponentPropsWithRef<'div'> &
   /** Set from `loading`. */
   SetByComponent<'aria-busy'> & {
+    /** The shell's element: `aside` for a sidebar, which keeps its own role and gives the menu's role and name to the list. */
+    as?: 'div' | 'aside';
     /** The height left where the menu opens, a CSS length; caps its height. */
     availableHeight?: string;
     loading?: boolean;

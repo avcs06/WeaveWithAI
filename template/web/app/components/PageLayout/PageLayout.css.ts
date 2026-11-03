@@ -7,14 +7,13 @@ const divider = `1px solid ${surface.divider}`;
 export const areas = createVar();
 export const columns = createVar();
 export const rows = createVar();
-/** The header's rendered height: sticky sidebars start under it, an overlay header's page pads by it. */
+/** The header's rendered height: an overlay header's page pads by it. */
 export const headerHeight = createVar();
 export const barHeight = createVar();
 /** A bar with a set height centers its row in it; one sized by its content pads above and below too. */
 export const barPadding = createVar();
 export const padding = createVar();
 export const gap = createVar();
-export const width = createVar();
 export const maxWidth = createVar();
 export const sectionGap = createVar();
 
@@ -64,28 +63,12 @@ export const footer = style({
   selectors: separations('Top'),
 });
 
+// The SidebarMenu keeps the menu's spacing and scrolls its own rows; the frame gives it a column and a separation.
 export const sidebar = style({
-  display: 'flex',
-  flexDirection: 'column',
   minHeight: 0,
-  width,
-  padding,
-  gap,
   selectors: {
     ...separations('Right', '&[data-side="left"]'),
     ...separations('Left', '&[data-side="right"]'),
-    '&[data-sticky]': {
-      position: 'sticky',
-      alignSelf: 'start',
-      overflowY: 'auto',
-    },
-    // Under a sticky header that spans it, a sticky sidebar starts below the header.
-    '&[data-sticky][data-under-header]': {
-      top: headerHeight,
-      height: `calc(100dvh - ${headerHeight})`,
-    },
-    '&[data-sticky]:not([data-under-header])': { top: 0, height: '100dvh' },
-    [`${root}[data-scroll-main] > &`]: { overflowY: 'auto' },
   },
 });
 

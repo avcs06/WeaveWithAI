@@ -16,7 +16,7 @@ export const rule = defineRule<LayoutsInput>('THEME-013', 'mandatory', ({ layout
     const parts: [string, { needed: boolean }, Record<string, string>][] = [
       ['header', layout.header, { start: layout.header.start, center: layout.header.center, end: layout.header.end }],
       ['footer', layout.footer, { start: layout.footer.start, center: layout.footer.center, end: layout.footer.end }],
-      ['sidebar', layout.sidebar, { top: layout.sidebar.top, bottom: layout.sidebar.bottom }],
+      ['sidebar', layout.sidebar, { top: layout.sidebar.top, items: layout.sidebar.items, bottom: layout.sidebar.bottom }],
     ];
     for (const [part, bar, slots] of parts) {
       if (!bar.needed) continue;

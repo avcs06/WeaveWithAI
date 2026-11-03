@@ -46,7 +46,13 @@ const Photo = () => (
 
 /** A logo or a screenshot shown whole: `contain` leaves room around it. */
 const Logo = () => (
-  <Image src={logo} alt="Jaipur Studio" width={240} height={120} fit="contain" />
+  <Image
+    src={logo}
+    alt="Jaipur Studio"
+    width={240}
+    height={120}
+    fit="contain"
+  />
 );
 
 /** A record with no picture yet: the box keeps its place with an icon. */

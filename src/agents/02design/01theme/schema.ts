@@ -142,8 +142,8 @@ export const entitySets = (brief: Brief): { name: string; hue: number }[] =>
 
 /**
  * The page layouts over a spacing schema: the inventory's keys for the call,
- * any string for the artifact. Public pages have no sidebars, so the
- * marketing layout has neither them nor `docksFirst`.
+ * any string for the artifact. Public pages have no sidebar, so the
+ * marketing layout has neither it nor `docksFirst`.
  */
 export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
   const separation = z
@@ -165,26 +165,26 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
     gap: spacing,
     separation,
   };
+  // A sidebar is a menu: its spacing is the menu's, and its rows scroll between what sits fixed above and below them.
   const Sidebar = z.object({
     needed: z.boolean(),
     side: z.enum(['left', 'right']),
-    top: slot('at the top'),
-    bottom: slot('at the bottom'),
+    top: slot('fixed at the top'),
+    items: slot('in the rows between, e.g. "the navigation"'),
+    bottom: slot('fixed at the bottom'),
     widthPx: z.number().int(),
-    sticky: z.boolean().describe('Stays in view while the content scrolls'),
-    padding: spacing,
-    gap: spacing,
     separation,
   });
-  const header = z.object({
+  const header = {
     ...bar,
-    sticky: z.boolean().describe('Stays in view while the page scrolls'),
     overlay: z
       .boolean()
       .describe(
         'Lies over the first section, such as a light header on a hero, instead of above it',
       ),
-  });
+  };
+  // Only the marketing page scrolls as a whole; the app's frame stays in place while its main region scrolls.
+  const sticky = z.boolean().describe('Stays in view while the page scrolls');
   const footer = z.object(bar);
   const main = z.object({
     container: z
@@ -210,23 +210,21 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
         .describe(
           'header: the header and footer span the full width and the sidebar runs between them; sidebars: the sidebar runs the full height and the header and footer sit beside it',
         ),
-      header,
+      header: z.object(header),
       sidebar: Sidebar,
       footer,
       main,
     }),
-    marketing: z.object({ header, footer, main }),
+    marketing: z.object({ header: z.object({ ...header, sticky }), footer, main }),
   };
 }
 const anyLayouts = pageLayoutSchemas(z.string());
 /** The layouts as the theme call writes them. */
 export const CallLayouts = z.object(anyLayouts);
 export type CallLayouts = z.infer<typeof CallLayouts>;
-/** The built layouts: the marketing one takes the app's shape with no sidebars, so PageLayout reads both alike. */
-export const Layouts = z.object({
-  app: anyLayouts.app,
-  marketing: anyLayouts.app,
-});
+/** A built layout: the app's shape with the marketing header, so PageLayout reads both alike. */
+const Layout = anyLayouts.app.extend({ header: anyLayouts.marketing.shape.header });
+export const Layouts = z.object({ app: Layout, marketing: Layout });
 export type Layouts = z.infer<typeof Layouts>;
 
 /** Per component: a value for each variant its recipe defaults, and its look. */

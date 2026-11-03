@@ -21,17 +21,14 @@ export type PageBar = {
   separation: Separation;
 };
 
-/** A sidebar. `top` and `bottom` say what its component shows there; "" for nothing. */
+/** A sidebar, a menu with the menu's spacing. `top`, `items` and `bottom` say what sits fixed above, in the rows and fixed below; "" for nothing. */
 export type PageSidebar = {
   needed: boolean;
   side: 'left' | 'right';
   top: string;
+  items: string;
   bottom: string;
   widthPx: number;
-  /** Stays in view while the content scrolls. */
-  sticky: boolean;
-  padding: SpacingKey;
-  gap: SpacingKey;
   separation: Separation;
 };
 
@@ -68,8 +65,12 @@ export type PageLayoutProps = {
   scrollMain?: boolean;
   /** The header's content, laid out in a row; rendered when `layout.header.needed`. */
   header?: ReactNode;
-  /** The sidebar's content, laid out in a column; rendered when `layout.sidebar.needed`. */
+  /** Fixed above the sidebar's rows, such as a Create button. */
+  sidebarHeader?: ReactNode;
+  /** The sidebar's rows, SidebarMenuItems; rendered when `layout.sidebar.needed`. */
   sidebar?: ReactNode;
+  /** Fixed below the sidebar's rows, such as the account. */
+  sidebarFooter?: ReactNode;
   footer?: ReactNode;
   /** The page: its sections, as the container's children. */
   children: ReactNode;

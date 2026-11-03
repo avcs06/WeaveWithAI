@@ -152,11 +152,9 @@ const NO_SIDEBAR: Layouts['app']['sidebar'] = {
   needed: false,
   side: 'left',
   top: '',
+  items: '',
   bottom: '',
   widthPx: 0,
-  sticky: false,
-  padding: '0',
-  gap: '0',
   separation: 'none',
 };
 
@@ -257,7 +255,11 @@ export function buildTheme(call: ThemeCall): Theme {
       colors: logoColors,
     },
     layouts: {
-      app: call.layouts.app,
+      // The app's main region scrolls on its own, so its header never needs to stick.
+      app: {
+        ...call.layouts.app,
+        header: { ...call.layouts.app.header, sticky: false },
+      },
       marketing: marketingLayout(call.layouts.marketing),
     },
     defaults,
