@@ -112,14 +112,18 @@ const NestedSections = () => (
  */
 const SharedLeftEdge = () => (
   <Card>
-    <h2>Frontend summit</h2>
+    <h2 className="font-display text-heading font-heading">
+      Frontend summit
+    </h2>
     <Paragraph>Two days of talks on the web platform, in Lisbon.</Paragraph>
-    <Section title="Hall A" description="Second floor">
-      <Paragraph>300 seats, with a stage and two screens.</Paragraph>
-    </Section>
-    <Section title="Hall B" description="Ground floor">
-      <Paragraph>120 seats, for the workshops.</Paragraph>
-    </Section>
+    <SectionGroup>
+      <Section title="Hall A" description="Second floor">
+        <Paragraph>300 seats, with a stage and two screens.</Paragraph>
+      </Section>
+      <Section title="Hall B" description="Ground floor">
+        <Paragraph>120 seats, for the workshops.</Paragraph>
+      </Section>
+    </SectionGroup>
   </Card>
 );
 
