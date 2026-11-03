@@ -10,7 +10,12 @@ import React, {
 
 import { hasContent, useIconAddon } from '../utils';
 
-import { sectionDescription, sectionTitle } from './Section.css';
+import {
+  section,
+  sectionDescription,
+  sectionGroup,
+  sectionTitle,
+} from './Section.css';
 
 import type { SectionGroupProps, SectionProps } from './Section.types';
 
@@ -19,32 +24,18 @@ type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 // The page's own title is the h1.
 const HeadingLevelContext = createContext<HeadingLevel>(1);
 
-// Whether something around the section spaces it from its neighbors.
-const SectionGroupContext = createContext(false);
-
 /**
- * Sections stacked with a fixed gap between them. A Section outside a group
- * pads itself above and below instead.
+ * Sections stacked with a fixed gap between them. A Section right inside a
+ * group leaves the spacing to it; one outside a group pads itself above and
+ * below instead.
  */
 export const SectionGroup = ({ className, ...props }: SectionGroupProps) => (
-  <SectionGroupContext value>
-    <div
-      {...props}
-      data-ds=""
-      data-slot="section-group"
-      className={classNames('flex-col-gap-6', className)}
-    />
-  </SectionGroupContext>
-);
-
-/**
- * Marks its children as in a group for a container that spaces them itself,
- * like the page's.
- *
- * @internal
- */
-export const SectionGroupScope = ({ children }: { children: ReactNode }) => (
-  <SectionGroupContext value>{children}</SectionGroupContext>
+  <div
+    {...props}
+    data-ds=""
+    data-slot="section-group"
+    className={classNames(sectionGroup, 'flex-col-gap-6', className)}
+  />
 );
 
 /**
@@ -168,10 +159,12 @@ export const SectionContent = ({
   // Takes the height left in a section given one, so a FlexScrollArea in it
   // scrolls.
   // Its gap spaces the sections in it, as a group's does.
-  <div data-slot="content" className="flex-col-gap-4 flex-fill-y" data-ds="">
-    <HeadingLevelContext value={level}>
-      <SectionGroupContext value>{children}</SectionGroupContext>
-    </HeadingLevelContext>
+  <div
+    data-slot="content"
+    className={classNames(sectionGroup, 'flex-col-gap-4 flex-fill-y')}
+    data-ds=""
+  >
+    <HeadingLevelContext value={level}>{children}</HeadingLevelContext>
   </div>
 );
 
@@ -198,7 +191,6 @@ export const Section = ({
   ...props
 }: SectionProps) => {
   const nestedLevel = useSectionLevel();
-  const inGroup = useContext(SectionGroupContext);
   const level = headingAs
     ? (Number(headingAs.slice(1)) as HeadingLevel)
     : nestedLevel;
@@ -213,7 +205,7 @@ export const Section = ({
   return (
     <SectionFrame
       {...props}
-      className={classNames(!inGroup && 'py-5', className)}
+      className={classNames(section, className)}
     >
       <SectionHeader
         heading={

@@ -7,6 +7,7 @@ import { Radio, RadioGroup } from '../Radio';
 import { axe, renderUI } from '../test-utils';
 
 import { Section, SectionGroup } from '.';
+import * as styles from './Section.css';
 
 const heading = (level: number, name: string) =>
   screen.getByRole('heading', { level, name });
@@ -138,7 +139,7 @@ describe('Section', () => {
     expect(section).toHaveClass('w-full', 'px-4');
   });
 
-  it('pads itself above and below on its own, and leaves the spacing to a SectionGroup or a parent section', async () => {
+  it('pads itself above and below unless its parent spaces it: a SectionGroup or a section’s content', async () => {
     const { container } = renderUI(
       <>
         <Section title="Alone" data-testid="alone" />
@@ -150,10 +151,16 @@ describe('Section', () => {
         </Section>
       </>,
     );
-    expect(screen.getByTestId('alone')).toHaveClass('py-5');
-    expect(screen.getByTestId('group')).toHaveClass('flex-col-gap-6');
-    expect(screen.getByTestId('grouped')).not.toHaveClass('py-5');
-    expect(screen.getByTestId('inner')).not.toHaveClass('py-5');
+    // The padding is CSS on `section`: `:not(sectionGroup) > section`.
+    const alone = screen.getByTestId('alone');
+    expect(alone).toHaveClass(styles.section);
+    expect(alone.parentElement).not.toHaveClass(styles.sectionGroup);
+    const group = screen.getByTestId('group');
+    expect(group).toHaveClass(styles.sectionGroup, 'flex-col-gap-6');
+    expect(screen.getByTestId('grouped').parentElement).toBe(group);
+    const inner = screen.getByTestId('inner');
+    expect(inner).toHaveClass(styles.section);
+    expect(inner.parentElement).toHaveClass(styles.sectionGroup);
     expect(await axe(container)).toHaveNoViolations();
   });
 });
