@@ -1,5 +1,5 @@
 import { tokens } from '@packages/styles/tokens.css';
-import { createVar, globalStyle, style } from '@vanilla-extract/css';
+import { createVar, style } from '@vanilla-extract/css';
 
 const surface = tokens.color.surface;
 const divider = `1px solid ${surface.divider}`;
@@ -75,12 +75,11 @@ export const sidebar = style({
 export const main = style({
   gridArea: 'main',
   minWidth: 0,
-  // Bleed reaches the main region's edges by its width.
-  containerType: 'inline-size',
   selectors: {
     // An overlay header lies over the main region's top.
     [`${root}[data-overlay] > &`]: { gridRow: 'header-start / main-end' },
-    [`${root}[data-scroll-main] > &`]: { overflowY: 'auto' },
+    // Its scroll area takes the row's height and no more.
+    [`${root}[data-scroll-main] > &`]: { minHeight: 0 },
     '&[data-panel]': { padding },
   },
 });
@@ -93,9 +92,9 @@ export const container = style({
   minWidth: 0,
   padding,
   selectors: {
+    // The box spans the main region, so its background does too; the padding keeps the content at maxWidth.
     '&[data-container="fixed"]': {
-      maxWidth,
-      marginInline: 'auto',
+      paddingInline: `max(${padding}, calc((100% - ${maxWidth}) / 2))`,
     },
     [`${root}[data-overlay] &`]: {
       paddingTop: `calc(${headerHeight} + ${padding})`,
@@ -114,18 +113,4 @@ export const container = style({
       boxShadow: tokens.boxShadow.card,
     },
   },
-});
-
-// Runs to the main region's edges; its content stays in the container's width.
-export const bleed = style({
-  // Half the space between the container and the main region (100cqw) on each side: no token measures the frame.
-  marginInline: 'calc((100% - 100cqw) / 2)',
-  // The same half back inside, so the content lines up with the container.
-  paddingInline: 'calc((100cqw - 100%) / 2)',
-});
-
-// The first band under an overlay header starts under the header, so its background shows behind it.
-globalStyle(`${root}[data-overlay] ${container} > ${bleed}:first-child`, {
-  marginTop: `calc(-1 * (${headerHeight} + ${padding}))`,
-  paddingTop: `calc(${headerHeight} + ${padding})`,
 });

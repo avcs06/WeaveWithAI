@@ -76,7 +76,3 @@ export type PageLayoutProps = {
   children: ReactNode;
 };
 
-export type BleedProps = {
-  className?: string;
-  children: ReactNode;
-};

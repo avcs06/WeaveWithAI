@@ -30,11 +30,8 @@
 
 ## The landing page
 
-- Build the hero as a `Bleed` from `@app/components/PageLayout`: its
-  background runs the full
-  width while its content stays in the container. As the first section
-  under an overlay header, it runs under the header too.
-  Draw the background from the theme's brand colors through tokens, such
+- Build the hero as the first section. Draw its background from the
+  theme's brand colors through tokens, such
   as a gradient from `tokens.color.primary.bg` into
   `tokens.color.surface.pageBg`. Keep all text at 4.5:1 against every
   background color, in each supported mode.

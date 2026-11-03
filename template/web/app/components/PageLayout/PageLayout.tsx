@@ -2,6 +2,7 @@
 
 import { classNames } from '@packages/styles/classNames';
 import { tokens } from '@packages/styles/tokens.css';
+import { FlexScrollArea } from '@packages/ui/ScrollArea';
 import { SidebarMenu } from '@packages/ui/SidebarMenu';
 import { assignInlineVars, setElementVars } from '@vanilla-extract/dynamic';
 import React, { useLayoutEffect, useRef } from 'react';
@@ -9,7 +10,6 @@ import React, { useLayoutEffect, useRef } from 'react';
 import * as styles from './PageLayout.css';
 
 import type {
-  BleedProps,
   PageLayoutConfig,
   PageLayoutProps,
   SpacingKey,
@@ -78,6 +78,22 @@ export const PageLayout = ({
   const grid = frameGrid(layout);
   const { main } = layout;
   const overlay = layout.header.needed && layout.header.overlay;
+
+  const container = (
+    <div
+      data-ds=""
+      data-slot="container"
+      data-container={main.container}
+      data-separation={main.separation}
+      className={styles.container}
+      style={assignInlineVars({
+        [styles.maxWidth]: px(main.maxWidthPx),
+        [styles.sectionGap]: space(main.sectionGap),
+      })}
+    >
+      {children}
+    </div>
+  );
 
   // Nothing outside the main region scrolls when it scrolls on its own, so nothing needs to stick.
   const sticky = (on: boolean) => !scrollMain && on;
@@ -148,22 +164,20 @@ export const PageLayout = ({
       <main
         data-ds=""
         data-panel={flag(main.separation !== 'none')}
-        className={styles.main}
+        className={classNames(styles.main, scrollMain && 'flex-col-gap-0')}
         style={assignInlineVars({ [styles.padding]: space(main.padding) })}
       >
-        <div
-          data-ds=""
-          data-slot="container"
-          data-container={main.container}
-          data-separation={main.separation}
-          className={styles.container}
-          style={assignInlineVars({
-            [styles.maxWidth]: px(main.maxWidthPx),
-            [styles.sectionGap]: space(main.sectionGap),
-          })}
-        >
-          {children}
-        </div>
+        {scrollMain ? (
+          <FlexScrollArea
+            // The page keeps the region's width: wide content, like a table, scrolls sideways itself.
+            orientation="vertical"
+            className="flex-fill-y"
+          >
+            {container}
+          </FlexScrollArea>
+        ) : (
+          container
+        )}
       </main>
       {layout.footer.needed && (
         <footer
@@ -185,10 +199,3 @@ export const PageLayout = ({
     </div>
   );
 };
-
-/** A band whose background runs the full width of the main region while its content stays in the container. */
-export const Bleed = ({ className, children }: BleedProps) => (
-  <div data-ds="" className={classNames(styles.bleed, className)}>
-    {children}
-  </div>
-);
