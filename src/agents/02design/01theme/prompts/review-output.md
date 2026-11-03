@@ -9,7 +9,7 @@ Report one as a blocker only when the meaning is wrong, never because a word app
 ## The brief
 
 - O01: The brief's personality, voice, density and feel agree with each other. For example, a calm, quiet personality with a loud, punchy voice fails.
-- O02: The audience agrees with the scope's audience and roles. It covers every main role, such as the sellers of a marketplace, so the look serves all the people who use the app.
+- O02: The audience agrees with the scope's audience and roles. It covers every main role, such as the sellers of a marketplace or the doctors of a clinic, so the look serves all the people who use the app.
 - O03: The theme follows what the idea asks for about the look. For example, a light-only color scheme fails for an idea that asks for dark mode. `references` holds exactly the style references the idea names.
 - O04: Each hue matches the color the idea names for it, read on the hue table. For example, a `seedHue` of 30 for an orange brand fails: 30 is red, and orange is 53.
 - O05: Each role's font candidates are in order, best first, since the first candidate of each role is the one the app uses. A first candidate whose reason calls it a second choice fails, and so does a later candidate whose reason makes it the better fit.

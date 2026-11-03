@@ -56,7 +56,7 @@ Treat these as decided. A scope question not answered here keeps its default ans
    - `optionsFrom`: when a choice offers records the app keeps, the vocabulary noun of those records, and `options` is `[]`. Otherwise "".
    - `example`: a realistic value, written as text in quotes even for a number, a date or a yes or no ("60", "2026-11-03", "yes").
 
-   A field is a value the user types or picks. A record's place among others, such as a widget's position, is not a field. The user moves the record earlier or later, and the website keeps the order.
+   A field is a value the user types or picks. A record's place among others, such as a widget's position or a lesson's place in a course, is not a field. The user moves the record earlier or later, and the website keeps the order.
 
    A step asks for fields by id in its `fields`, or for a whole form by id in its `form`. It asks for each field once. A form holds the fields one screen asks for, when more than one flow shows that screen. Forms are in `forms`, each with an id (FM01, FM02, ...).
 6. A step's `effects` name the vocabulary nouns the step creates, lists, reads, updates or deletes. Each effect has a `noun`, spelled exactly as the scope spells it, and a `change`: "create", "list", "read", "update" or "delete". A step that stores or loads nothing has `[]`. A noun that some step creates is also listed or read by some step. Some step also updates it and some step deletes it, unless an assumption names the noun and says why not.

@@ -29,7 +29,7 @@ import {
 import { runRenderedChecks } from './index';
 import { checkRoute } from './index';
 import { keyboardWalk } from './keyboard';
-import { contentEdge, gridOrphans, pageTitle, spreadPairs, titleStyles } from './layout';
+import { contentEdge, frameParts, gridOrphans, pageTitle, spreadPairs, titleStyles } from './layout';
 import type { Finding } from './types';
 
 // Two static pages served over http: one clean, one with a planted defect for
@@ -274,6 +274,15 @@ describe('rendered checks on the fixture pages', () => {
     expect(await gridOrphans(layout)).toEqual([]);
   });
 
+  it('R-017 frame parts: a page with no PageHeader, PageLogo or UserMenu fails; the clean page has all three', async () => {
+    expect(rules(await frameParts(await open('defects.html')))).toEqual([
+      expect.stringMatching(/^mandatory  The page has no PageHeader/),
+      expect.stringMatching(/^mandatory  The frame shows no PageLogo/),
+      expect.stringMatching(/^mandatory  The frame shows no UserMenu/),
+    ]);
+    expect(await frameParts(await open('clean.html'))).toEqual([]);
+  });
+
   it('R-013 titles: a route whose H1 looks unlike the PageHeader title fails; the hero is left out', async () => {
     const clean = await pageTitle(await open('clean.html'));
     const defects = await pageTitle(await open('defects.html'));
@@ -362,6 +371,7 @@ describe('runRenderedChecks', () => {
       'DESIGN-R-014',
       'DESIGN-R-015',
       'DESIGN-R-016',
+      'DESIGN-R-017',
     ]);
     const written = JSON.parse(
       readFileSync(path.join(run.dir, 'reports', 'rendered.json'), 'utf8'),

@@ -10,7 +10,7 @@ Write the catalog. It holds the fields, the forms, and a header and a descriptio
 
 1. Find the flows by walking every role of the scope through every kind below. For browse, view, create, edit, delete and act, also walk each vocabulary noun the role works with. A pair is a role and a kind, plus a noun for those six kinds. Each pair gets a flow, or an entry in `skipped` with its `role`, `noun`, `kind` and the `reason` it has no flow. A pair in neither list is a gap. Two pairs with one goal get one flow, such as a home that is the same list a browse flow would show. The other pair goes in `skipped`, with a reason that names the flow kept.
    - landing: arriving on the public page and getting started, for the role the page invites in.
-   - auth: signing up, signing in and signing out, one flow each, for a role that signs in. A role with a single user, such as the owner of a one-person shop, signs up too. No one makes accounts outside the app.
+   - auth: signing up, signing in and signing out, one flow each, for a role that signs in. A role with a single user, such as the owner of a one-person shop or a tutor who works alone, signs up too. No one makes accounts outside the app.
    - home: what the role sees first after signing in, such as a dashboard or an overview, and what it does from there.
    - browse: finding records in a list, with search or filters where the list can grow.
    - view: looking at one record's details.

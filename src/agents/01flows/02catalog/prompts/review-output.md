@@ -25,14 +25,14 @@ No code reads what a description says, so you also check the form and field ids 
 
 - O10: Each description begins at the flow's `start` and runs all the way to the flow's own outcome. It is detailed enough to expand into steps. It says what the user does, what the website shows in response, and where the user ends up.
 - O11: Where the user enters values in a description, it names the form or the fields by id. Each value is one a field defines. Each form and field it names is one the catalog defines, and the right one for what the user enters there.
-- O12: Each description agrees with its own header, with the other flows and with the fields it uses. A description that moves an order to Shipped needs a Shipped option in the status field.
+- O12: Each description agrees with its own header, with the other flows and with the fields it uses. A description that moves an order to Shipped needs a Shipped option in the status field. One that moves a ticket to Closed needs a Closed option.
 
 ## Fields and forms
 
 - O13: Each value is one field, and a field two flows use is one entry. A book's title is not defined as FD03 and again as FD09.
 - O14: Each field's `noun` is the vocabulary noun whose records keep the value. A value no record keeps, such as a password, a sign-in email or a search, has noun "".
 - O15: Each field's type fits its value. A price or a date is not a text field. A choice among records the app keeps, such as a task's project, names that noun in `optionsFrom` instead of a fixed list of options.
-- O16: The user sets a record's place among others, such as a widget's position, by moving the record earlier or later, never by typing it in a field.
+- O16: The user sets a record's place among others, such as a widget's position or a lesson's place in a course, by moving the record earlier or later, never by typing it in a field.
 - O17: Each field's limits accept realistic values. Its minimum is at most its maximum. A title of at most 10 characters refuses realistic titles. Each example is a realistic value of its field, one its own limits and options accept.
 - O18: Each label reads as plain words, not as a technical name such as dueAt or user_id. Each meaning says what the value means to the business.
 - O19: Each form holds exactly the fields one screen asks for. A screen that more than one flow shows, such as the form to add and to edit a record, has its fields in one form.

@@ -79,3 +79,20 @@ export async function gridOrphans(page: Page): Promise<Finding[]> {
     ),
   );
 }
+
+/** R-017: a page without its PageHeader or Hero, or a frame without its PageLogo or UserMenu. */
+export async function frameParts(page: Page): Promise<Finding[]> {
+  const parts = await inPage<{ title: boolean; logo: boolean; userMenu: boolean }>(page, 'frameParts');
+  const missing = (what: string, fix: string) => finding('DESIGN-R-017', 'mandatory', `${what}. ${fix}`);
+  return [
+    ...(parts.title
+      ? []
+      : [missing('The page has no PageHeader', "Start every page with PageHeader from @app/components/PageHeader. The page at /, web/app/(routes)/(marketing)/page.tsx, starts with Hero from @app/components/Hero")]),
+    ...(parts.logo
+      ? []
+      : [missing('The frame shows no PageLogo', "Keep PageLogo from @app/components/PageLogo in the frame's part where code placed it")]),
+    ...(parts.userMenu
+      ? []
+      : [missing('The frame shows no UserMenu', "Keep UserMenu from @app/components/UserMenu in the frame's part where code placed it")]),
+  ];
+}

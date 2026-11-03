@@ -36,6 +36,8 @@ export const UserMenu = ({
       <Button
         as={NextLink}
         href={signInHref}
+        // Marked, so the rendered checks find the account in every frame.
+        data-user-menu=""
         variant={variant}
         size={size}
         look={look}
@@ -64,6 +66,7 @@ export const UserMenu = ({
     >
       <PlainButton
         aria-label={`Account menu for ${name}`}
+        data-user-menu=""
         className={className}
       >
         <span

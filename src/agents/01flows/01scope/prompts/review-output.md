@@ -16,7 +16,7 @@ Read the idea and the answers already given first. Then read the scope as someon
 ## Holds together
 
 - O06: The parts of the scope agree with each other. No out-of-scope entry or assumption rules out an in-scope item. The rest of the scope follows every default answer.
-- O07: Every role and noun is described as the thing its name says. An Order is described as an order, not as the product being sold.
+- O07: Every role and noun is described as the thing its name says. An Order is described as an order, not as the product being sold. A Visit is described as a visit, not as the patient who comes.
 
 ## In scope and out of scope
 

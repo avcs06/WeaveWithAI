@@ -157,6 +157,7 @@ export async function runSpecStage<T>(
     round: number,
     make: (call: Call) => Promise<Draft<T>>,
     fixing: number,
+    fatal = true,
   ) => {
     const call = callerFor(o, round);
     appendEvent(o.run, { type: 'round:start', stage: o.stage, round, fixing });
@@ -164,7 +165,8 @@ export async function runSpecStage<T>(
       const draft = await make(call);
       return { draft, issues: o.validate(draft.data) };
     } catch (error) {
-      // A model error (truncation, bad status) ends the run; leave the state honest for `weave show`.
+      if (!fatal) throw error;
+      // A model error on the first draft ends the run; leave the state honest for `weave show`.
       updateStage(o.run, o.stage, {
         status: 'failed',
         rounds: round,
@@ -204,11 +206,22 @@ export async function runSpecStage<T>(
     if (step.fix && hasPendingIssues) {
       const toApply = unapplied;
       unapplied = {};
-      last = await produce(
-        round,
-        (call) => compose.fix(call, last.draft, pending, toApply),
-        pending.length,
-      );
+      try {
+        last = await produce(
+          round,
+          (call) => compose.fix(call, last.draft, pending, toApply),
+          pending.length,
+          false,
+        );
+      } catch (error) {
+        // A fix the model cannot answer keeps the last document; what was pending stays as known issues and the run goes on.
+        appendEvent(o.run, {
+          type: 'warning',
+          stage: o.stage,
+          message: `${o.stage} round ${round}: the fix failed (${String(error).split('\n')[0]}); the stage keeps the document of round ${round - 1}`,
+        });
+        break;
+      }
       await askAbout(last.draft.data);
     }
     // Round 1 produced unless it started from a given document; later rounds only when something was pending.
@@ -352,10 +365,13 @@ function patchFixMessage(pending: Issue[], answers: Answers): string {
   });
 }
 
+/** Tries per model call before a bad or cut answer counts as the model's failure. */
+const CALL_ATTEMPTS = 3;
+
 /**
  * A `Call` for one round: logs every call as an `llm:call` event.
  * A call cut at the output limit, or answered with what the schema refuses, is
- * retried once here, not around the compose, so a compose's side effects never repeat.
+ * tried up to CALL_ATTEMPTS times here, not around the compose, so a compose's side effects never repeat.
  */
 function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   return async (input) => {
@@ -365,7 +381,8 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
       model: input.model ?? 'default',
       runDir: o.run.dir,
     };
-    for (let retried = false; ; retried = true) {
+    for (let attempt = 1; ; attempt += 1) {
+      const retried = attempt >= CALL_ATTEMPTS;
       try {
         const result = await o.llm.generateStructured(request);
         logCall(o.run, input.stage, round, result);
@@ -391,7 +408,7 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
           appendEvent(o.run, {
             type: 'warning',
             stage: input.stage,
-            message: `${input.stage} round ${round}: the answer did not match the schema (${error.message}); retrying once`,
+            message: `${input.stage} round ${round}: the answer did not match the schema (${error.message}); retrying`,
           });
           continue;
         }
@@ -413,7 +430,7 @@ function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
         appendEvent(o.run, {
           type: 'warning',
           stage: input.stage,
-          message: `${input.stage} round ${round}: the answer was cut at the output limit; retrying once`,
+          message: `${input.stage} round ${round}: the answer was cut at the output limit; retrying`,
         });
       }
     }
@@ -446,15 +463,33 @@ async function review<T>(
         { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
         { role: 'user', content: user },
       ];
-      const first = await reviewCall(o, round, reviewer, messages, guideIds(guide));
+      // A reviewer the model cannot answer adds no blockers: the run goes on without its review.
+      const skip = (name: string, error: unknown) => {
+        appendEvent(o.run, {
+          type: 'warning',
+          stage: o.stage,
+          message: `${o.stage} round ${round}: the ${name} review failed (${String(error).split('\n')[0]}); its blockers are left out`,
+        });
+        return [];
+      };
+      let first;
+      try {
+        first = await reviewCall(o, round, reviewer, messages, guideIds(guide));
+      } catch (error) {
+        return skip(reviewer, error);
+      }
       if (first.missed.length === 0) return toIssues(first.data);
       // One more turn for the points it left unchecked; what it still leaves is only logged.
       messages.push(
         { role: 'assistant', content: first.raw },
         { role: 'user', content: fillPrompt(recheckPrompt, { missed: first.missed.map((id) => `- ${id}`).join('\n') }) },
       );
-      const second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
-      return [...toIssues(first.data), ...toIssues(second.data)];
+      try {
+        const second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
+        return [...toIssues(first.data), ...toIssues(second.data)];
+      } catch (error) {
+        return [...toIssues(first.data), ...skip(`${reviewer}-recheck`, error)];
+      }
     }),
   );
   return reviews.flat();

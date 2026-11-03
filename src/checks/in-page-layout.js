@@ -79,6 +79,16 @@
       return found;
     },
 
+    /** R-017: the template's pieces on the page. A probe page's own H1 (data-ds) stands for a screen not built yet. */
+    frameParts() {
+      const shown = (selector) => [...document.querySelectorAll(selector)].some(visible);
+      return {
+        title: shown('h1[data-slot="page-title"]') || shown('[data-hero]') || shown('h1[data-ds]'),
+        logo: shown('[data-page-logo]'),
+        userMenu: shown('[data-user-menu]'),
+      };
+    },
+
     /**
      * R-016: an app's grid of three or more columns whose last row, of two or more, holds one item that spans one
      * column. Rows come from the items' top edges, so an item spanning every column, such as a heading, fills its row.

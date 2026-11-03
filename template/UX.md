@@ -5,9 +5,9 @@ The coding agent builds to them. The reviewers hold the work to them.
 
 ## Lists and records
 
-- A list of records shows each record in a table row or a card, even when the list is short. Never show records as rows of bare text. The row's line or the card's border keeps one record's details together across a wide screen. A table holds records the user scans and compares, such as an admin's orders or products. Cards hold rich records, each with a photo, a description or several lines.
+- A list of records shows each record in a table row or a card, even when the list is short. Never show records as rows of bare text. The row's line or the card's border keeps one record's details together across a wide screen. A table holds records the user scans and compares, such as an admin's orders, tickets or invoices. Cards hold rich records, each with a photo, a description or several lines.
 - In a list, the record's name is the link that opens the record. A click anywhere on its row or card opens it too.
-- A record shows each fact once. It shows one status at a time. When two fields say the same thing, such as "8 in stock" and "8 left", show the one the user acts on.
+- A record shows each fact once. It shows one status at a time. When two fields say the same thing, such as "8 in stock" and "8 left", or "Paid" and "0 due", show the one the user acts on.
 - A list sorted by a field shows that field. A list sorted "newest first" shows each record's date.
 - A row's actions are quiet. With one or two actions, each is an icon button with a tooltip. With more than two, they go in one row menu. Never put a filled button on every row.
 - A delete on a row is as quiet as the row's other actions. Only the confirm dialog's Delete is a filled `danger` button.
@@ -43,7 +43,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 - The action that completes a task sits at the end of its row, on the right, after the other actions. Examples are Submit, Place order, and a cart's Checkout outside any form.
 - A summary of what the main action commits to, such as a total or a count, appears once. It sits above the actions or beside the form.
 - A choice with a usual answer starts on it, such as the cheapest delivery or the current month. A choice with no usual answer starts empty and is required.
-- A repeated group of fields, such as an item's variants, is one `FormRow` per item. Each row ends with its remove icon button, and an Add button sits under the rows. A list of links, such as a record's photos, works the same way, with one URL `Input` per link. Never use a textarea of links.
+- A repeated group of fields, such as an item's variants or a course's lessons, is one `FormRow` per item. Each row ends with its remove icon button, and an Add button sits under the rows. A list of links, such as a record's photos, works the same way, with one URL `Input` per link. Never use a textarea of links.
 - A wrong entry in an optional field shows its error on the field. Clearing the field is the way past it. Never add an extra step to go on without it.
 
 ## Tables and cards
@@ -69,7 +69,7 @@ The coding agent builds to them. The reviewers hold the work to them.
 
 ## Copy
 
-- Buttons, titles, labels and messages are in sentence case. Write "Mark as packed", not "Mark as Packed".
+- Buttons, titles, labels and messages are in sentence case. Write "Mark as packed" or "Add a patient", not "Mark as Packed" or "Add a Patient".
 - Use a comma, a colon or two sentences instead of an em dash.
 - A screen speaks its role's words, not the system's. A patient reads "Your visits", not "Appointment records". A buyer reads "Subtotal", not "Merchandise subtotal".
 - Money shows one way everywhere. It has two decimals, or none when the app's amounts are whole. Never show one decimal, such as "902.5".

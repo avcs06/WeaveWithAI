@@ -15,7 +15,7 @@ import {
   typography,
 } from './collectors';
 import { type KeyboardReport, keyboardWalk } from './keyboard';
-import { contentEdge, gridOrphans, type PageTitle, pageTitle, spreadPairs, titleStyles } from './layout';
+import { contentEdge, frameParts, gridOrphans, type PageTitle, pageTitle, spreadPairs, titleStyles } from './layout';
 import { type Finding, finding } from './types';
 
 // The rendered checks over every sampled route: the gate after a coding
@@ -90,6 +90,7 @@ export async function checkRoute(
       ...(await guard('DESIGN-R-014', [], () => contentEdge(page))),
       ...(await guard('DESIGN-R-015', [], () => spreadPairs(page))),
       ...(await guard('DESIGN-R-016', [], () => gridOrphans(page))),
+      ...(await guard('DESIGN-R-017', [], () => frameParts(page))),
     ];
     const title = await guard('DESIGN-R-013', null, () => pageTitle(page));
     // Last: the walk presses keys and may open and close things.

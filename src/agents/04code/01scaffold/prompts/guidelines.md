@@ -73,7 +73,9 @@ a glance what it is for:
   a main column with a side column. The first steps go in the first column.
   For example, a product page puts its photos in the left column, and its
   name, price, options and main action in the right one. A checkout keeps
-  its order summary in a side column beside the form.
+  its order summary in a side column beside the form. A patient's page
+  keeps the next visit and its actions in a side column beside the
+  history.
 - One main action per view, as the primary button. Other actions are
   secondary, or sit in a menu when there are many.
 - What belongs together sits together. A record's fields sit in one

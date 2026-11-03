@@ -32,7 +32,7 @@ Report a finding as a blocker only when the meaning is wrong, never because a wo
 - O12: Each step's `fields` and `form` hold exactly the values its words ask for.
 - O13: A new field or form is added only when none in the catalog fits. No new field means the same as a catalog field. No new form copies a catalog form.
 - O14: Each new field's `noun` is the vocabulary noun whose records keep the value, spelled as the scope spells it. The `noun` is "" when no record keeps the value, such as a password or a search. A new choice field that offers records the app keeps, such as the user's own shelves, names those records in `optionsFrom` instead of fixed options.
-- O15: Each new field's label is a plain name, not a technical one. Its meaning says what the value means to the business. Its type fits the value. A price of type text does not fit. Its example is a realistic value of it.
+- O15: Each new field's label is a plain name, not a technical one. Its meaning says what the value means to the business. Its type fits the value. A price or a due date of type text does not fit. Its example is a realistic value of it.
 
 ## Effects
 

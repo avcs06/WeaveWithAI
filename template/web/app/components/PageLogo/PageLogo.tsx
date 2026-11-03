@@ -19,6 +19,8 @@ export const PageLogo = ({ leftIcon, rightIcon }: PageLogoProps) => (
   <NextLink
     href="/"
     look="plain"
+    // Marked, so the rendered checks find the logo in every frame.
+    data-page-logo=""
     className={classNames('inline-flex-row-gap-2 items-center', styles.link)}
   >
     {leftIcon}

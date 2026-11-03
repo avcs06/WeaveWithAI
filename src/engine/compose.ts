@@ -84,7 +84,8 @@ export function sessionCompose(
     // The recipe gate counts reads from here: the unit's fixes continue its Muse session, which holds what it read.
     if (sessions === 1)
       appendFileSync(path.join(appDir, '.weave', 'tools.log'), `${JSON.stringify({ at: new Date().toISOString(), tool: UNIT_MARKER, unit: unit.id })}\n`);
-    const result = await runSession(
+    // A session that cannot run at all, such as one whose container never starts, is a failed session: the run goes on.
+    const result: SessionResult = await runSession(
       ctx,
       appDir,
       {
@@ -99,10 +100,29 @@ export function sessionCompose(
         timeoutMs: unit.timeoutMs,
       },
       deps,
-    );
+    ).catch((error: unknown) => ({
+      status: 'failed' as const,
+      summary: `The session could not run: ${String(error).split('\n')[0]}`,
+      changed: [],
+      protectedHits: [],
+      readsOutside: [],
+      usage: { calls: 0, input: 0, cached: 0, output: 0, reasoning: 0 },
+      costUsd: 0,
+      checks: [],
+    }));
     // Rendered checks only mean something on a route that loads.
     const loads = result.checks.every((check) => check.ok || check.name === 'design');
-    const rendered = unit.rendered && loads ? await unit.rendered() : [];
+    // A checker that cannot run, such as a dev server that never starts, is noted; the unit goes on.
+    const rendered: Issue[] =
+      unit.rendered && loads
+        ? await unit.rendered().catch((error: unknown) => [
+            {
+              rule: 'DESIGN-R-000',
+              severity: 'warning' as const,
+              message: `The browser checks could not run: ${String(error).split('\n')[0]}`,
+            },
+          ])
+        : [];
     const diff = git(appDir, 'diff', baseline, '--', '.', ':(exclude).weave');
     // Over the unit's whole diff: a fix that leaves a bad file alone has not undone it.
     const touched = git(appDir, 'diff', '--name-only', baseline, '--', '.', ':(exclude).weave').split('\n').filter(Boolean);

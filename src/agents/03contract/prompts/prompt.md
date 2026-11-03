@@ -41,7 +41,7 @@ The contract has one job. Every screen and dialog knows where its data comes fro
 - `inputs`: each field the users fill in for the operation.
 - An input's `field` is the id of the flow field, such as FD03.
 - An input's `as` is the entity field it sets, such as `dueDate`. On a list, `as` is the field the list filters by, or `q` for a free-text search.
-- A get finds its record by id and takes no inputs. When the user types the value that finds the record, the get takes that one field. An example is a discount code at checkout. The input's `as` is then the field the value matches.
+- A get finds its record by id and takes no inputs. When the user types the value that finds the record, the get takes that one field. Examples are a discount code at checkout and a booking reference at check-in. The input's `as` is then the field the value matches.
 - A delete takes no inputs.
 - Every field a screen or dialog asks for is an input of an operation that serves the same flow.
 - When a form is filled in at one step and saved at the next, its fields are inputs of the operation that saves it.

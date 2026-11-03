@@ -21,8 +21,8 @@
   above, and the page's actions.
 - When a record's screen finds its record gone, it returns `NotFound` from
   `@app/components/NotFound` alone, in place of the page. Its title names
-  what is missing, such as "Order not found". Its way back leads to the
-  list.
+  what is missing, such as "Order not found" or "Patient not found". Its
+  way back leads to the list.
 - The frame's page container already sets the page padding, the width and
   the gap between sections. A page returns its sections, with no padding,
   max width or outer gap of its own.
@@ -37,6 +37,13 @@
 - To find a component a step needs, ask the MCP. Call `search_components`,
   then `get_component` and `get_recipe`. When nothing fits, build it
   yourself in `components/` beside the page.
+- Every list of records is a `Table` or a `CardList`, never anything else:
+  no `ul`, no grid of Cards built by hand, no rows of text. Pick by what
+  the user does with the records. A `Table` holds records the user scans,
+  sorts or compares, such as an admin's list of tickets, invoices or
+  orders. A `CardList` holds records the user browses or opens one by one,
+  each with a photo, a description or several lines. Use `layout="grid"`
+  for records browsed side by side, and `columns` for a fixed set.
 
 ## The landing page
 
