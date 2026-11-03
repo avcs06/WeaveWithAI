@@ -70,7 +70,7 @@ export type SpecStageOptions<T> = {
   validate: (output: T) => Issue[];
   /** The stage's review guides. Without them no reviewer calls run. */
   review?: ReviewGuides;
-  /** The rounds; default the five of SCHEDULE. */
+  /** The rounds; default the three of SCHEDULE. */
   schedule?: Round[];
   /** The reviewers' user message, with the placeholders system, user, output and known; default prompt-review-input.md. */
   reviewInput?: string;
@@ -112,12 +112,11 @@ export type SpecStageResult<T> = {
   rounds: number;
 };
 
-// Five rounds: a fix runs only when something is pending; from round 2 on reviewers look at the output whatever the validators found.
-// The peer challenges the decisions once, in round 2; the output reviewer checks round 2 and the two fixes after it; round 5 is the final fix.
+// Three rounds: a fix runs only when something is pending; reviewers look at the output whatever the validators found.
+// The peer challenges the decisions once, in round 1, beside the output reviewer; the output reviewer checks the fix of
+// round 2; round 3 is the final fix, and what it leaves is known.
 const SCHEDULE: Round[] = [
-  { fix: false, reviewers: [] },
-  { fix: true, reviewers: ['peer', 'output'] },
-  { fix: true, reviewers: ['output'] },
+  { fix: false, reviewers: ['peer', 'output'] },
   { fix: true, reviewers: ['output'] },
   { fix: true, reviewers: [] },
 ];

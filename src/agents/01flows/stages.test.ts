@@ -132,7 +132,7 @@ describe('the three stages', () => {
     });
     expect(stages['flows-expand-1']).toMatchObject({
       status: 'done',
-      rounds: 2,
+      rounds: 1,
       known: 0,
     });
 

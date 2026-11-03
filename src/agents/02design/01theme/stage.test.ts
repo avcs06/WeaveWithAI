@@ -95,7 +95,7 @@ describe('the theme stage', () => {
       },
       data: themed(call),
     });
-    // A clean draft ends after round 2's two reviews.
+    // A clean draft ends after round 1's two reviews.
     expect(
       inputs.map((input) => [
         input.stage,
@@ -112,7 +112,7 @@ describe('the theme stage', () => {
     expect(inputs[0]?.messages[1]?.content).toContain('A reading list for one reader.');
     expect(inputs[0]?.messages[1]?.content).toContain('# Flows, what each flow is');
     const { stages } = readState(run);
-    expect(stages['design-theme']).toMatchObject({ status: 'done', rounds: 2, known: 0 });
+    expect(stages['design-theme']).toMatchObject({ status: 'done', rounds: 1, known: 0 });
     expect(themeStage.validate?.(run)).toEqual([]);
   });
 });

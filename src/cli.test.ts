@@ -89,7 +89,7 @@ describe('weave run', () => {
       version: 1,
       model: 'muse-spark-1.3',
       stage: 'flows-scope',
-      rounds: 2,
+      rounds: 1,
     });
     expect(readState(run).stages['flows-scope']).toMatchObject({
       status: 'done',
@@ -104,13 +104,12 @@ describe('weave run', () => {
       '    scope round 1 started',
       `    scope round 1 written ${call}`,
       '    scope round 1 validate passed',
+      '    scope round 1 review peer started',
+      '    scope round 1 review output started',
+      `    scope round 1 review peer found 0 blockers ${call}`,
+      `    scope round 1 review output found 0 blockers ${call}`,
       '    scope round 1 finished: nothing pending',
-      '    scope round 2 review peer started',
-      '    scope round 2 review output started',
-      `    scope round 2 review peer found 0 blockers ${call}`,
-      `    scope round 2 review output found 0 blockers ${call}`,
-      '    scope round 2 finished: nothing pending',
-      '    scope done v1, 2 rounds',
+      '    scope done v1, 1 rounds',
     ]);
   });
 
@@ -167,7 +166,7 @@ describe('weave run', () => {
       expect(existsSync(path.join(dest, '01-flows/01-scope.json'))).toBe(true);
       expect(existsSync(path.join(dest, '01-flows/01-scope.md'))).toBe(true);
       expect(printed).toEqual([
-        'flows-scope: 2 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
+        'flows-scope: 1 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
       ]);
       expect(lines[0]).toContain(
         `golden ${ideaName}: 01-flows/01-scope.json, 01-flows/01-scope.md ->`,
