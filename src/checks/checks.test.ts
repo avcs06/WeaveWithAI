@@ -256,7 +256,7 @@ describe('rendered checks on the fixture pages', () => {
     expect(await containerSpacing(clean)).toEqual([]);
   });
 
-  it('R-012 numerals: a standalone number in the text font on the defects page; a Numeral and a number in a sentence pass', async () => {
+  it('R-012 numerals: a standalone number in the text font on the defects page; a Numeral, a number in a sentence and a phone number pass', async () => {
     expect(rules(await numerals(await open('defects.html')))).toEqual([
       'mandatory [data-testid="plain-number"] wrap the number "1,834" in Numeral from @packages/ui/Numeral: a number the user reads and compares is set in the mono font',
     ]);

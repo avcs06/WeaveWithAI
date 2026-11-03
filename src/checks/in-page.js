@@ -302,6 +302,8 @@
     /** R-012: a number that stands alone, such as a count, a total or a statistic, set in the text font instead of the mono one. */
     numerals() {
       const NUMBER = /^[+\-−]?[$€£¥₹]?\s?\d[\d.,\s]*%?$/u;
+      // A phone number stays text, as UX.md says: a run of 7 or more digits with no separator, or one led by +.
+      const PHONE = /^(\+\d[\d\s]{6,}|\d{7,})$/;
       // A number on a control is its label.
       const CONTROL = 'a, button, label, input, select, textarea, option, svg, [role="button"], [role="link"], [role="tab"], [role="option"], [role="menuitem"]';
       const probe = document.createElement('span');
@@ -316,6 +318,7 @@
         .filter(
           (element) =>
             NUMBER.test(ownText(element)) &&
+            !PHONE.test(ownText(element)) &&
             !element.closest(CONTROL) &&
             // Inside a sentence, the number is part of the text.
             !(element.parentElement && ownText(element.parentElement)) &&

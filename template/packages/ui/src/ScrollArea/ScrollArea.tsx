@@ -137,5 +137,5 @@ export const ScrollArea = ({
  * @invalidAlternative .min-h-0.overflow-auto, .min-h-0.overflow-y-auto, .flex-fill-y.overflow-auto, .flex-fill-y.overflow-y-auto
  */
 export const FlexScrollArea = ({ className, ...props }: ScrollAreaProps) => (
-  <ScrollArea {...props} className={classNames('min-h-0', className)} />
+  <ScrollArea {...props} className={classNames('min-h-0 flex-1', className)} />
 );
