@@ -1,5 +1,9 @@
 import type { IconAddonProps, SetByComponent } from '../utils';
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type {
+  ComponentPropsWithRef,
+  JSXElementConstructor,
+  ReactNode,
+} from 'react';
 
 export type MenuProps = ComponentPropsWithRef<'div'> &
   /** Set from `loading`. */
@@ -15,11 +19,19 @@ export type MenuProps = ComponentPropsWithRef<'div'> &
     footer?: ReactNode;
   };
 
-export type MenuItemProps = ComponentPropsWithRef<'div'> &
-  Pick<
-    IconAddonProps,
-    'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn' | 'loading'
-  > &
+/** A row's element: a `div`, or for a row that opens a page `a` or a link component such as the app's NextLink. */
+export type MenuItemTarget = 'div' | 'a' | JSXElementConstructor<never>;
+
+type MenuItemTargetProps<C extends MenuItemTarget> = C extends 'div' | 'a'
+  ? ComponentPropsWithRef<C>
+  : C extends JSXElementConstructor<infer Props>
+    ? Props
+    : never;
+
+type MenuItemOwnProps = Pick<
+  IconAddonProps,
+  'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn' | 'loading'
+> &
   /** Set from `loading`, and from `selected` as the role has it. */
   SetByComponent<
     'aria-busy' | 'aria-selected' | 'aria-checked' | 'aria-current'
@@ -35,6 +47,24 @@ export type MenuItemProps = ComponentPropsWithRef<'div'> &
     /** Shown on hover after the cut label, such as a disabled reason. */
     tooltip?: ReactNode;
   };
+
+/**
+ * Inside the components, props already checked by the public types are only
+ * passed through.
+ */
+export type MenuItemBaseProps = MenuItemOwnProps & {
+  as?: MenuItemTarget;
+  role?: string;
+  className?: string;
+  children?: ReactNode;
+  [prop: string]: unknown;
+};
+
+export type MenuItemProps<C extends MenuItemTarget = 'div'> = {
+  /** Renders the row as `a` with `href`, or as a link component; selected, it is the current page. */
+  as?: C;
+} & Omit<MenuItemTargetProps<C>, keyof MenuItemOwnProps | 'as'> &
+  MenuItemOwnProps;
 
 export type MenuGroupProps = ComponentPropsWithRef<'div'>;
 

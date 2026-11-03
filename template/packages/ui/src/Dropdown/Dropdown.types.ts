@@ -83,6 +83,7 @@ export type DropdownProps = DropdownStateProps &
 
 export type DropdownItemProps = Omit<
   MenuItemProps,
+  | 'as'
   | 'onSelect'
   | 'tooltip'
   | 'loading'

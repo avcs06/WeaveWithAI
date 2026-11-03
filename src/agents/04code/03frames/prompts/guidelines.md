@@ -23,7 +23,7 @@
   around them. A header or footer lays its items in a row: push the end
   items over with `<div className="flex-1" />`.
 - The sidebar's parts: `AppSidebar` returns the rows, each destination a
-  `SidebarMenuItem` around a `NextLink`. `AppSidebarHeader` holds what
+  `SidebarMenuItem` with `as={NextLink}` and its `href`. `AppSidebarHeader` holds what
   stays fixed above them, such as a Create button, and `AppSidebarFooter`
   what stays fixed below, such as the account. The menu's list scrolls
   between them.

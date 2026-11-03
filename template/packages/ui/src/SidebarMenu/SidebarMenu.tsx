@@ -1,20 +1,15 @@
 'use client';
 
 import { classNames } from '@packages/styles/classNames';
-import { Slot } from '@radix-ui/react-slot';
-import React, { cloneElement, isValidElement, type ReactNode } from 'react';
+import React from 'react';
 
-import { Menu } from '../Menu';
-// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the row's look, colored for the frame in SidebarMenu.css.
-import { menuItem } from '../Menu/Menu.css';
-import { Tooltip } from '../Tooltip';
-import { useTruncation } from '../Truncate';
-import { useIconAddon } from '../utils';
+import { Menu, MenuItemBase } from '../Menu';
 
 import { sidebarMenu, sidebarMenuItem } from './SidebarMenu.css';
 
 import type {
   SidebarMenuItemProps,
+  SidebarMenuItemTarget,
   SidebarMenuProps,
 } from './SidebarMenu.types';
 
@@ -36,72 +31,21 @@ export const SidebarMenu = ({ className, ...props }: SidebarMenuProps) => (
 );
 
 /**
- * A row of the SidebarMenu that opens a route: an anchor with `href`, or
- * with `asChild` its one child, a link component such as the app's NextLink,
- * which keeps its `href` and gives its text as the label. The current page's
- * row is `selected`. A label too long for the row is cut, with the whole of
- * it in a tooltip.
+ * A row of the SidebarMenu that opens a route: a MenuItem as an anchor with
+ * `href`, or with `as` a link component such as the app's NextLink. The
+ * current page's row is `selected`. A label too long for the row is cut,
+ * with the whole of it in a tooltip.
  */
-export const SidebarMenuItem = ({
-  leftIcon,
-  rightAddOn,
-  selected = false,
-  asChild = false,
+export const SidebarMenuItem = <C extends SidebarMenuItemTarget = 'a'>({
   className,
-  children,
   ...props
-}: SidebarMenuItemProps) => {
-  const {
-    ref: labelRef,
-    className: labelClassName,
-    truncated,
-  } = useTruncation<HTMLSpanElement>();
-  const { leftSlot, rightSlot } = useIconAddon({ leftIcon, rightAddOn });
-
-  const child =
-    asChild && isValidElement<{ children?: ReactNode }>(children)
-      ? children
-      : undefined;
-  const label = child ? child.props.children : children;
-  const row = (
-    <>
-      {leftSlot}
-      <span
-        ref={labelRef}
-        data-slot="label"
-        data-ds=""
-        className={classNames(labelClassName, 'flex-fill-x')}
-      >
-        {label}
-      </span>
-      {rightSlot}
-    </>
-  );
-  const rowProps = {
-    ...props,
-    'aria-current': selected ? ('page' as const) : undefined,
-    'data-slot': 'item',
-    'data-selected': selected || undefined,
-    'data-left': leftSlot ? true : undefined,
-    'data-right': rightSlot ? true : undefined,
-    className: classNames(
-      menuItem,
-      sidebarMenuItem,
-      'flex-row-gap-2.5 items-center',
-      className,
-    ),
-  };
-
-  return (
-    // The whole label shows only when the row cut it; the link's text names it already.
-    <Tooltip tooltip={truncated && label} description={null}>
-      {child ? (
-        <Slot {...rowProps}>{cloneElement(child, undefined, row)}</Slot>
-      ) : (
-        <a {...rowProps} data-ds="">
-          {row}
-        </a>
-      )}
-    </Tooltip>
-  );
-};
+}: SidebarMenuItemProps<C>) => (
+  <MenuItemBase
+    // An anchor unless `as` gives a link component.
+    as="a"
+    // The current page shows by its fill, not a check.
+    checkmark={false}
+    {...props}
+    className={classNames(sidebarMenuItem, className)}
+  />
+);

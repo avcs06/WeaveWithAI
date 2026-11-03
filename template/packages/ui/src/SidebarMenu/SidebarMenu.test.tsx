@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { Home } from 'lucide-react';
-import React from 'react';
+import React, { type ComponentPropsWithRef } from 'react';
 
 import { axe, renderUI } from '../test-utils';
 
@@ -57,18 +57,28 @@ describe('SidebarMenu', () => {
     );
   });
 
-  it('with asChild, the child link takes the row: its href stays, its text is the label, and the state lands on it', () => {
+  it('with as, the link component is the row: its href stays, the children are the label, and the state lands on it', () => {
+    const PageLink = ({ children, ...props }: ComponentPropsWithRef<'a'>) => (
+      <a {...props} data-kind="page-link">
+        {children}
+      </a>
+    );
     renderUI(
       <SidebarMenu aria-label="Pages">
-        <SidebarMenuItem asChild selected leftIcon={<Home />}>
-          <a href="/home" className="shrink-0">
-            Home
-          </a>
+        <SidebarMenuItem
+          as={PageLink}
+          href="/home"
+          className="shrink-0"
+          selected
+          leftIcon={<Home />}
+        >
+          Home
         </SidebarMenuItem>
       </SidebarMenu>,
     );
     const link = screen.getByRole('link', { name: 'Home' });
     expect(link).toHaveAttribute('href', '/home');
+    expect(link).toHaveAttribute('data-kind', 'page-link');
     expect(link).toHaveAttribute('aria-current', 'page');
     expect(link).toHaveAttribute('data-slot', 'item');
     expect(link).toHaveAttribute('data-left', 'true');

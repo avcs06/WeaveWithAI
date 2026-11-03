@@ -3,7 +3,7 @@
 import { classNames } from '@packages/styles/classNames';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import { ChevronRight } from 'lucide-react';
-import React from 'react';
+import React, { type ElementType } from 'react';
 
 // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- shared styles for the icon at the end of a trigger.
 import { controlIcon } from '../Button/Button.recipes.css';
@@ -29,7 +29,9 @@ import {
 
 import type {
   MenuGroupProps,
+  MenuItemBaseProps,
   MenuItemProps,
+  MenuItemTarget,
   MenuLabelProps,
   MenuProps,
   MenuSeparatorProps,
@@ -131,12 +133,12 @@ export const Menu = ({
 };
 
 /**
- * A row's look: icon, label, add-ons and a selected row's check, for rows
- * inside a Popover's content. No behavior of its own: wrap it in a
- * PlainButton to press it. For a menu of actions or choices use a Dropdown,
- * whose rows bring menu roles and arrow keys.
+ * A row's look and parts, for MenuItem and the rows built on it.
+ *
+ * @internal
  */
-export const MenuItem = ({
+export const MenuItemBase = ({
+  as,
   leftIcon,
   rightIcon,
   leftAddOn,
@@ -151,7 +153,9 @@ export const MenuItem = ({
   className,
   children,
   ...props
-}: MenuItemProps) => {
+}: MenuItemBaseProps) => {
+  const Row = (as ?? 'div') as ElementType;
+  const isLink = as !== undefined && as !== 'div';
   const {
     ref: labelRef,
     className: labelClassName,
@@ -174,7 +178,7 @@ export const MenuItem = ({
 
   return (
     <Tooltip tooltip={[truncated && children, tooltip]} description={tooltip}>
-      <div
+      <Row
         {...props}
         data-ds=""
         role={role}
@@ -186,7 +190,12 @@ export const MenuItem = ({
             ? selected
             : undefined
         }
-        aria-current={(role === 'menuitem' && selected) || undefined}
+        // A link row that is selected is the page the user is on.
+        aria-current={
+          isLink
+            ? (selected && 'page') || undefined
+            : (role === 'menuitem' && selected) || undefined
+        }
         data-slot="item"
         data-left={leftSlot || hasCheckbox ? true : undefined}
         data-right={rightSlot || hasCheck || nested ? true : undefined}
@@ -237,10 +246,20 @@ export const MenuItem = ({
             className={classNames(chevronClassName, menuChevron, 'shrink-0')}
           />
         )}
-      </div>
+      </Row>
     </Tooltip>
   );
 };
+
+/**
+ * A row's look: icon, label, add-ons and a selected row's check, for rows
+ * inside a Popover's content. No behavior of its own: wrap it in a
+ * PlainButton to press it. For a menu of actions or choices use a Dropdown,
+ * whose rows bring menu roles and arrow keys. With `as`, the row is a link.
+ */
+export const MenuItem = <C extends MenuItemTarget = 'div'>(
+  props: MenuItemProps<C>,
+) => <MenuItemBase {...props} />;
 
 /** Rows of a Popover's content kept together, apart from the next group. */
 export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (

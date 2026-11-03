@@ -16,8 +16,8 @@
  *   height nothing scrolls and the footer sits right under the last row.
  * - `selected` comes from the current route (`usePathname()` in the Next
  *   app); it marks the row `aria-current="page"`.
- * - `asChild` takes one link element, the app's NextLink, and replaces its
- *   children with the row, so pass the label as the link's text.
+ * - `as` takes a link component, the app's NextLink, with its `href`; the
+ *   row's children are the label.
  * - Rows are links. Anything else in the sidebar, like the logo, a search, a
  *   Create button or Sign out, goes in `header` or `footer`, never in a row.
  * - The sidebar wears the frame's background (`bg-surface-frame`); the rows
@@ -107,18 +107,22 @@ const AppSidebar = () => {
 };
 
 /**
- * In the Next app, each row wraps the app's NextLink with `asChild`, so the
- * route changes without a reload; Link stands in for it here. The link's
- * text is the row's label.
+ * In the Next app, each row is the app's NextLink with `as`, so the route
+ * changes without a reload; Link stands in for it here.
  */
 const WithNextLink = () => (
   <Sidebar>
     <SidebarMenu aria-label="Settings">
-      <SidebarMenuItem asChild selected leftIcon={<Settings />}>
-        <Link href="/settings/profile">Profile</Link>
+      <SidebarMenuItem
+        as={Link}
+        href="/settings/profile"
+        selected
+        leftIcon={<Settings />}
+      >
+        Profile
       </SidebarMenuItem>
-      <SidebarMenuItem asChild leftIcon={<Star />}>
-        <Link href="/settings/plan">Plan</Link>
+      <SidebarMenuItem as={Link} href="/settings/plan" leftIcon={<Star />}>
+        Plan
       </SidebarMenuItem>
     </SidebarMenu>
   </Sidebar>

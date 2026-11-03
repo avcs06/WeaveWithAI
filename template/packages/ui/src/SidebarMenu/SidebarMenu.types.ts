@@ -1,6 +1,5 @@
-import type { MenuProps } from '../Menu';
-import type { AccessibleName, IconAddonProps, SetByComponent } from '../utils';
-import type { ComponentPropsWithoutRef } from 'react';
+import type { MenuItemProps, MenuItemTarget, MenuProps } from '../Menu';
+import type { AccessibleName } from '../utils';
 
 /** Menu's shell as an `aside`, without a menu's role or height cap, named for assistive tech. */
 export type SidebarMenuProps = Omit<
@@ -9,15 +8,18 @@ export type SidebarMenuProps = Omit<
 > &
   AccessibleName;
 
-export type SidebarMenuItemProps = ComponentPropsWithoutRef<'a'> &
-  Pick<IconAddonProps, 'leftIcon' | 'rightAddOn'> &
-  /** Set from `selected`. */
-  SetByComponent<'aria-current'> & {
-    /** The row of the page the user is on, marked `aria-current="page"`. */
-    selected?: boolean;
-    /**
-     * Styles its only child, a link component that takes the `href`, like the
-     * app's NextLink; the child's text becomes the row's label.
-     */
-    asChild?: boolean;
-  };
+/** A row's link: `a` with `href`, or a link component such as the app's NextLink. */
+export type SidebarMenuItemTarget = Exclude<MenuItemTarget, 'div'>;
+
+/** A MenuItem that is a link; `selected` marks the page the user is on. */
+export type SidebarMenuItemProps<C extends SidebarMenuItemTarget = 'a'> = Omit<
+  MenuItemProps<C>,
+  | 'role'
+  | 'rightIcon'
+  | 'leftAddOn'
+  | 'loading'
+  | 'checkbox'
+  | 'checkmark'
+  | 'nested'
+  | 'tooltip'
+>;

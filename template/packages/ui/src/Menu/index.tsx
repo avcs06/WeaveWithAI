@@ -1,7 +1,15 @@
-export { Menu, MenuGroup, MenuItem, MenuLabel, MenuSeparator } from './Menu';
+export {
+  Menu,
+  MenuGroup,
+  MenuItem,
+  MenuItemBase,
+  MenuLabel,
+  MenuSeparator,
+} from './Menu';
 export type {
   MenuGroupProps,
   MenuItemProps,
+  MenuItemTarget,
   MenuLabelProps,
   MenuProps,
   MenuSeparatorProps,
