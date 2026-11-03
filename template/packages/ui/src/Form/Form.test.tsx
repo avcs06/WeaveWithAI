@@ -214,9 +214,10 @@ describe('Form', () => {
     expect(form.querySelector('[data-slot="message"]')).toHaveTextContent(
       'Could not save',
     );
-    expect(
-      screen.getByRole('button', { name: 'Save' }).closest('[data-slot="actions"]'),
-    ).not.toBeNull();
+    const actions = screen
+      .getByRole('button', { name: 'Save' })
+      .closest('[data-slot="actions"]');
+    expect(actions).toHaveClass('justify-end');
     expect(await axe(container)).toHaveNoViolations();
   });
 

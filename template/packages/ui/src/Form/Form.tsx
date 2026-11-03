@@ -13,7 +13,7 @@ import type { FormProps, FormRowProps } from './Form.types';
 
 /**
  * A form's layout: its fields in a column, then its own `error` and its
- * `actions`, the main one last. Every field is 1x wide, the form's field
+ * `actions` at the end of the row, the main one last. Every field is 1x wide, the form's field
  * width, unless its `width` says otherwise, so the fields of one form line
  * up. With a `title` it is a Section of its own; in a Dialog, `fill` gives
  * every field the dialog's width. The browser's own validation is off: the
@@ -49,7 +49,7 @@ export const Form = ({
       {hasContent(actions) && (
         <div
           data-slot="actions"
-          className="flex-row-gap-2 flex-wrap items-center"
+          className="flex-row-gap-2 flex-wrap items-center justify-end"
           data-ds=""
         >
           {actions}
