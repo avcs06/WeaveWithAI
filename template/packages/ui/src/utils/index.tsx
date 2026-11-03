@@ -1,6 +1,7 @@
 export { createLook } from './look';
 export { useFieldText } from './useFieldText';
 export { useIconAddon, type IconAddonProps } from './useIconAddon';
+export { useImageFailed } from './useImageFailed';
 export {
   useIsDisabled,
   type DisabledProps,

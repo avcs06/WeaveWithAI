@@ -4,6 +4,7 @@ import { classNames } from '@packages/styles/classNames';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Tooltip } from '../Tooltip';
+import { useImageFailed } from '../utils';
 
 import { avatarRecipe } from './Avatar.recipes.css';
 
@@ -19,27 +20,6 @@ const getInitials = (name: string) => {
       .join('')
       .toUpperCase()
   );
-};
-
-/**
- * Whether `src` failed to load. It can fail before hydration, missing React's
- * error event, so a settled image is checked: `decode()` rejects when broken.
- */
-const useImageFailed = (src: string | undefined) => {
-  const ref = useRef<HTMLImageElement>(null);
-  const [failedSrc, setFailedSrc] = useState<string>();
-
-  useEffect(() => {
-    const image = ref.current;
-    // jsdom has no `decode`.
-    if (image?.complete) image.decode?.().catch(() => setFailedSrc(src));
-  }, [src]);
-
-  return {
-    ref,
-    failed: src !== undefined && failedSrc === src,
-    onError: () => setFailedSrc(src),
-  };
 };
 
 /**
