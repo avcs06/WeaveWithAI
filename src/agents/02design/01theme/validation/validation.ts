@@ -5,7 +5,12 @@ import type { Scope } from '../../../01flows/01scope/schema';
 import type { Flows } from '../../../01flows/schema';
 import { buildTheme } from '../build';
 import type { ThemeCall } from '../schema';
-import type { BriefInput, CallInput, LayoutsInput, ThemeInput } from './helpers';
+import type {
+  BriefInput,
+  CallInput,
+  LayoutsInput,
+  ThemeInput,
+} from './helpers';
 import { rule as brief001 } from './rules/brief-001-ranges';
 import { rule as brief002 } from './rules/brief-002-entities';
 import { rule as brief003 } from './rules/brief-003-hues-apart';
@@ -55,11 +60,17 @@ export const themeRules: readonly Rule<ThemeInput>[] = [
 ];
 
 /** The theme call's answer: the brief against the scope, the layouts against the scope and flows, the colors against the brief, and the theme they build. */
-export function validateTheme(call: ThemeCall, scope: Scope, flows: Flows, inventory: Inventory): Issue[] {
+export function validateTheme(
+  call: ThemeCall,
+  scope: Scope,
+  flows: Flows,
+  inventory: Inventory,
+): Issue[] {
+  const theme = buildTheme(call);
   return [
     ...runRules(briefRules, { brief: call.brief, scope }),
-    ...runRules(layoutRules, { layouts: call.layouts, scope, flows }),
+    ...runRules(layoutRules, { layouts: theme.layouts, scope, flows }),
     ...runRules(callRules, { call }),
-    ...runRules(themeRules, { theme: buildTheme(call), inventory }),
+    ...runRules(themeRules, { theme, inventory }),
   ];
 }

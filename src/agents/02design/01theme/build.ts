@@ -4,6 +4,7 @@ import { type Status, STATUSES } from './brief';
 import { rampsOf } from './ramps';
 import {
   type Brief,
+  type CallLayouts,
   chosenFonts,
   ColorSet,
   type ComponentDefaults,
@@ -31,7 +32,12 @@ const ModeColors = z.object({
   base: ColorSet,
   page: PageColors,
   entity: z.record(z.string(), ColorSet),
-  status: z.object(Object.fromEntries(STATUSES.map((status) => [status, ColorSet])) as Record<Status, typeof ColorSet>),
+  status: z.object(
+    Object.fromEntries(STATUSES.map((status) => [status, ColorSet])) as Record<
+      Status,
+      typeof ColorSet
+    >,
+  ),
 });
 
 export const Theme = z.object({
@@ -49,7 +55,10 @@ export const Theme = z.object({
     weight: z.string(),
     case: z.enum(['as written', 'upper', 'lower']),
     letterSpacing: z.string(),
-    colors: z.object({ light: z.string().optional(), dark: z.string().optional() }),
+    colors: z.object({
+      light: z.string().optional(),
+      dark: z.string().optional(),
+    }),
   }),
   layouts: Layouts,
   defaults: z.record(z.string(), z.record(z.string(), z.string())),
@@ -139,10 +148,37 @@ const RADIUS: Record<Brief['radius'], [string, string]> = {
   pill: ['16px', '9999px'],
 };
 
+const NO_SIDEBAR: Layouts['app']['sidebar'] = {
+  needed: false,
+  side: 'left',
+  top: '',
+  bottom: '',
+  widthPx: 0,
+  sticky: false,
+  padding: '0',
+  gap: '0',
+  separation: 'none',
+};
+
+/** The marketing layout in the app layout's shape: the header spans the page and no sidebar is needed. */
+const marketingLayout = (
+  marketing: CallLayouts['marketing'],
+): Layouts['marketing'] => ({
+  docksFirst: 'header',
+  header: marketing.header,
+  sidebar: NO_SIDEBAR,
+  extraSidebar: { ...NO_SIDEBAR, side: 'right' },
+  footer: marketing.footer,
+  main: marketing.main,
+});
+
 /** The theme call's artifact: the brief the later stages read, and the theme its values became. */
 export type Themed = { brief: Brief; theme: Theme };
 
-export const themed = (call: ThemeCall): Themed => ({ brief: call.brief, theme: buildTheme(call) });
+export const themed = (call: ThemeCall): Themed => ({
+  brief: call.brief,
+  theme: buildTheme(call),
+});
 
 /** The theme call's values as one theme: each step turned into its ramp's hex, in capitals; a mode the brief does not name is left out (THEME-010). */
 export function buildTheme(call: ThemeCall): Theme {
@@ -169,7 +205,10 @@ export function buildTheme(call: ThemeCall): Theme {
             page: {
               pageBg: at(ramp[page.pageBg.ramp], page.pageBg.step),
               pageFg: at(ramp[page.pageFg.ramp], page.pageFg.step),
-              pageFgMuted: at(ramp[page.pageFgMuted.ramp], page.pageFgMuted.step),
+              pageFgMuted: at(
+                ramp[page.pageFgMuted.ramp],
+                page.pageFgMuted.step,
+              ),
               frameBg: at(ramp.frame, page.frameBg),
               divider: at(ramp[page.divider.ramp], page.divider.step),
               backdrop: at(ramp[page.backdrop.ramp], page.backdrop.step),
@@ -183,7 +222,10 @@ export function buildTheme(call: ThemeCall): Theme {
               ]),
             ),
             status: Object.fromEntries(
-              STATUSES.map((status) => [status, set(ramp.status[status], values.status[status])]),
+              STATUSES.map((status) => [
+                status,
+                set(ramp.status[status], values.status[status]),
+              ]),
             ) as Record<Status, ColorSet>,
           },
         ],
@@ -197,7 +239,9 @@ export function buildTheme(call: ThemeCall): Theme {
     modes.flatMap((mode) => {
       const values = call.colors.find((c) => c.mode === mode);
       const ramp = ramps[mode];
-      return values && ramp ? [[mode, ramp[values.logo.ramp][values.logo.step - 1] ?? '']] : [];
+      return values && ramp
+        ? [[mode, ramp[values.logo.ramp][values.logo.step - 1] ?? '']]
+        : [];
     }),
   );
   return {
@@ -213,7 +257,10 @@ export function buildTheme(call: ThemeCall): Theme {
       letterSpacing: LETTER_SPACING[call.logo.letterSpacing],
       colors: logoColors,
     },
-    layouts: call.layouts,
+    layouts: {
+      app: call.layouts.app,
+      marketing: marketingLayout(call.layouts.marketing),
+    },
     defaults,
   };
 }

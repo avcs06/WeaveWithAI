@@ -59,7 +59,13 @@ describe('buildTheme', () => {
     });
     expect(theme.radius).toEqual({ surface: '8px', control: '6px' });
     expect(Object.keys(theme.colors.light!.entity)).toEqual(['shelf']);
-    expect(theme.layouts).toEqual(call.layouts);
+    expect(theme.layouts.app).toEqual(call.layouts.app);
+    expect(theme.layouts.marketing).toMatchObject({
+      ...call.layouts.marketing,
+      docksFirst: 'header',
+      sidebar: { needed: false },
+      extraSidebar: { needed: false },
+    });
     expect(theme.defaults).toEqual(call.defaults);
     expect(validateTheme(theme, inventory)).toEqual([]);
     expect(theme.colors.light!.page.pageBackground).toBe(call.colors[0]!.background);
