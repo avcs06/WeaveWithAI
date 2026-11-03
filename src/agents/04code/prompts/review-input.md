@@ -18,6 +18,13 @@ Review the code change below.
 {{output}}
 ````
 
+## Issues the agent skipped
+
+After a fix, the agent's summary may end with a `## Skipped` part. It lists the issues of the last round that the agent chose not to fix, each with its reason. Judge each one in your area:
+
+- When the reason holds, accept it, and leave the issue out.
+- When the reason does not hold, report the issue again. In `problem`, say why the reason fails.
+
 ## Known issues, already being handled
 
 The checks after the session found these, and the next fix takes them. Do not report them again.
