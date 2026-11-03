@@ -2,7 +2,8 @@
  * Image: a picture in a box of a set width and height, such as a product
  * photo, a cover or a logo. The box narrows with its parent and keeps its
  * ratio, so the page doesn't jump while the picture loads. A missing or
- * broken picture leaves the box in place, with an image icon in the middle.
+ * broken picture leaves the box in place, with an icon in the middle: an
+ * image icon, or the `fallbackIcon` you give.
  *
  * When not to use:
  * - A person's picture or initials: Avatar.
@@ -20,10 +21,12 @@
  * - Text over a picture sits on a surface of its own, such as a Card, so it
  *   stays readable on any picture.
  * - Leave `src` out when a record has no picture yet: the box keeps its place.
+ * - `fallbackIcon` is one lucide-react icon. The box sets its size and color.
  */
 import { Card } from '@packages/ui/Card';
 import { Image } from '@packages/ui/Image';
 import { Paragraph } from '@packages/ui/Typography';
+import { Package } from 'lucide-react';
 import React from 'react';
 
 // Setup: stand-ins for your app's data, not part of the pattern.
@@ -68,6 +71,17 @@ const NoPicture = () => (
   <Image alt="The record's name" width={400} height={300} fit="cover" />
 );
 
+/** A record with no picture yet, shown by the icon of its kind: `fallbackIcon`. */
+const NoPictureWithIcon = () => (
+  <Image
+    alt="The item's name"
+    width={400}
+    height={300}
+    fit="cover"
+    fallbackIcon={<Package />}
+  />
+);
+
 /** A backdrop with content over it: the picture becomes the box's background. */
 const Backdrop = () => (
   <Image
@@ -91,6 +105,7 @@ export default function ImageRecipe() {
       <Logo />
       <UnknownShape />
       <NoPicture />
+      <NoPictureWithIcon />
       <Backdrop />
     </div>
   );

@@ -1,3 +1,4 @@
+import { Package } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Checkbox } from '../Checkbox';
@@ -87,6 +88,15 @@ const ImageStories = () => {
               width={240}
               height={160}
               fit="cover"
+            />
+          </Labelled>
+          <Labelled label="fallbackIcon">
+            <Image
+              alt="No picture yet"
+              width={240}
+              height={160}
+              fit="cover"
+              fallbackIcon={<Package />}
             />
           </Labelled>
           <Labelled label="small box">

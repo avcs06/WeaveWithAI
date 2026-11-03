@@ -1,4 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react';
+import { Package } from 'lucide-react';
 import React from 'react';
 
 import { axe, renderUI } from '../test-utils';
@@ -86,6 +87,22 @@ describe('Image', () => {
     expect(box.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('img')).toBeNull();
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('shows the fallbackIcon in place of a missing picture, sized and colored by the box', () => {
+    const { container } = renderUI(
+      <Image
+        alt="No photo yet"
+        width={400}
+        height={300}
+        fit="cover"
+        fallbackIcon={<Package />}
+      />,
+    );
+    const icons = container.querySelectorAll('svg');
+    expect(icons).toHaveLength(1);
+    expect(icons[0]).toHaveClass('lucide-package', styles.icon);
+    expect(icons[0]).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('leaves a missing picture that only decorates unnamed', () => {

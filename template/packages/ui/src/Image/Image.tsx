@@ -1,6 +1,7 @@
 'use client';
 
 import { classNames } from '@packages/styles/classNames';
+import { Slot } from '@radix-ui/react-slot';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import { Image as ImageIcon } from 'lucide-react';
 import React from 'react';
@@ -14,9 +15,9 @@ import type { ImageProps } from './Image.types';
 /**
  * A picture in a box of its own width and height, which narrows with its
  * parent and keeps its ratio. `fit` covers the box or shows all of the
- * picture. Without `src`, or when the picture fails to load, an image icon
- * sits in the middle of the box. With children, the picture is the box's
- * background and the children lie over it.
+ * picture. Without `src`, or when the picture fails to load, `fallbackIcon`
+ * sits in the middle of the box, an image icon unless given. With children,
+ * the picture is the box's background and the children lie over it.
  *
  * @invalidAlternative img, import('next/image')
  */
@@ -26,6 +27,7 @@ export const Image = ({
   width,
   height,
   fit,
+  fallbackIcon,
   children,
   className,
   style,
@@ -110,11 +112,14 @@ export const Image = ({
           }
         />
       ) : (
-        <ImageIcon
+        // The box sizes and colors the icon, whichever it is.
+        <Slot
           aria-hidden
           data-ds=""
           className={classNames('h-auto', styles.icon)}
-        />
+        >
+          {fallbackIcon ?? <ImageIcon />}
+        </Slot>
       )}
     </div>
   );
