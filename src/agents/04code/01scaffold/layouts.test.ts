@@ -20,12 +20,12 @@ describe('scaffold layouts', () => {
       'web/app/(routes)/(marketing)/layout.tsx',
     ]);
     expect(removed).toEqual([
-      'web/app/components/AppHeaderCenterSlot',
+      'web/app/components/AppHeader',
       'web/app/components/AppSidebarHeader',
       'web/app/components/AppSidebar',
       'web/app/components/AppSidebarFooter',
       'web/app/components/AppFooter',
-      'web/app/components/MarketingHeaderCenterSlot',
+      'web/app/components/MarketingHeader',
       'web/app/components/MarketingFooter',
     ]);
   });

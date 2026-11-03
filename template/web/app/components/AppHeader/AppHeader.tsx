@@ -15,4 +15,4 @@
  *   bar.
  * - Search, help or settings with no flow behind them.
  */
-export const AppHeaderCenterSlot = () => null;
+export const AppHeader = () => null;

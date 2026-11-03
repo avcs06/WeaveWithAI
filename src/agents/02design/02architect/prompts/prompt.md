@@ -25,6 +25,7 @@ A frame holds what the theme's page layout puts in its slots, such as the logo, 
 A screen is one URL. Make one for each place a flow needs: the landing page, each list the frame does not hold, each record's details, each editor, each form that needs a page of its own, and the account and settings pages.
 
 - `route`: kebab-case; a plural noun for a list (/dashboards); a [param] named after the record's noun for one record (/dashboards/[dashboardId]); /new or /edit only when a form needs a page of its own. The landing page is /, signing in is /sign-in, and signing up is /sign-up.
+- Signing in and signing up are built already, in the public site's frame: an email field, and on sign up a role choice when the app has several signed-in roles. Give each its screen at its route, with one step that says so, such as "Signs in with their email.".
 - `title`: the words at the top of the page, as the user reads them.
 - `purpose`: why the user comes here and what they leave with.
 - `roles`, `frame` and `flows`: who uses it, the frame it sits in, and the flows with a step here.

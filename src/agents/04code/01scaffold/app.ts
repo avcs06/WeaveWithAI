@@ -87,19 +87,35 @@ export function applyLogoName(appDir: string, name: string): boolean {
 
 export const AUTH_STORE = 'web/app/entities/auth/index.ts';
 
-const AUTH_KEY = /\nconst AUTH_KEY = '[^'\n]*';\n/;
+/** What the template's auth module learns of the app: the run's store key, its signed-in roles and its first signed-in page. */
+export type AuthValues = { key: string; roles: { id: string; name: string }[]; home: string };
 
-/** The template's auth store keyed to the run, as the checks' signed-in session is. */
-export function setAuthKey(text: string, key: string): string {
-  if (!AUTH_KEY.test(text)) throw new Error('no AUTH_KEY in the auth store to key');
-  return text.replace(AUTH_KEY, `\nconst AUTH_KEY = '${key}';\n`);
+const AUTH_LINES = {
+  key: /\nconst AUTH_KEY = .*;\n/,
+  roles: /\nexport const ROLES: Role\[\] = .*;\n/,
+  home: /\nexport const HOME_ROUTE = .*;\n/,
+};
+
+/** The template's auth module with the app's values: keyed to the run, as the checks' signed-in session is. */
+export function setAuth(text: string, values: AuthValues): string {
+  const lines = {
+    key: `const AUTH_KEY = ${JSON.stringify(values.key)};`,
+    roles: `export const ROLES: Role[] = ${JSON.stringify(values.roles)};`,
+    home: `export const HOME_ROUTE = ${JSON.stringify(values.home)};`,
+  };
+  let out = text;
+  for (const name of ['key', 'roles', 'home'] as const) {
+    if (!AUTH_LINES[name].test(out)) throw new Error(`no ${name} line in the auth module to write`);
+    out = out.replace(AUTH_LINES[name], `\n${lines[name]}\n`);
+  }
+  return out;
 }
 
-/** Writes `setAuthKey` into the app's auth store; true when it changed the file. */
-export function applyAuthKey(appDir: string, key: string): boolean {
+/** Writes `setAuth` into the app's auth module; true when it changed the file. */
+export function applyAuth(appDir: string, values: AuthValues): boolean {
   const file = path.join(appDir, AUTH_STORE);
   const before = readFileSync(file, 'utf8');
-  const after = setAuthKey(before, key);
+  const after = setAuth(before, values);
   if (after === before) return false;
   writeFileSync(file, after);
   return true;

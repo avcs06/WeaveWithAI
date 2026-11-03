@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Theme } from '../../02design/01theme/build';
-import { AUTH_STORE, PAGE_LOGO, pinMode, ROOT_LAYOUT, setAuthKey, setLogoName, setTitle } from './app';
+import { AUTH_STORE, PAGE_LOGO, pinMode, ROOT_LAYOUT, setAuth, setLogoName, setTitle } from './app';
 import { authKey, signedIn, storagePrefix } from '../02contract/codegen';
 
 const uiRoot = readFileSync('template/packages/ui/src/Root/UIRoot.tsx', 'utf8');
@@ -45,14 +45,21 @@ describe('setLogoName', () => {
   });
 });
 
-describe('setAuthKey', () => {
+describe('setAuth', () => {
   const store = readFileSync(`template/${AUTH_STORE}`, 'utf8');
+  const prefix = storagePrefix({ id: '20261103-0119-ecommerce-store' });
+  const values = {
+    key: authKey(prefix),
+    roles: [{ id: 'owner', name: "Shop's owner" }],
+    home: '/products',
+  };
 
-  it('keys the template auth store to the run, as the checks key the signed-in session', () => {
-    const prefix = storagePrefix({ id: '20261103-0119-ecommerce-store' });
-    const keyed = setAuthKey(store, authKey(prefix));
-    expect(keyed).toContain("const AUTH_KEY = 'weave:20261103-0119-ecommerce-store:auth';");
+  it('writes the run key the checks sign in with, the roles and the home page, once each', () => {
+    const written = setAuth(store, values);
+    expect(written).toContain('const AUTH_KEY = "weave:20261103-0119-ecommerce-store:auth";');
     expect(Object.keys(signedIn(prefix))).toEqual(['weave:20261103-0119-ecommerce-store:auth']);
-    expect(setAuthKey(keyed, 'other:auth').match(/const AUTH_KEY/g)).toHaveLength(1);
+    expect(written).toContain('export const ROLES: Role[] = [{"id":"owner","name":"Shop\'s owner"}];');
+    expect(written).toContain('export const HOME_ROUTE = "/products";');
+    expect(setAuth(written, { ...values, home: '/' }).match(/HOME_ROUTE =/g)).toHaveLength(1);
   });
 });

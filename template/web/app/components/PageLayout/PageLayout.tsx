@@ -68,7 +68,7 @@ export const PageLayout = ({
   layout,
   kind,
   headerLeft,
-  headerCenter,
+  header,
   headerRight,
   sidebarHeader,
   sidebar,
@@ -158,7 +158,7 @@ export const PageLayout = ({
             {headerLeft}
           </div>
           <div data-ds="" data-slot="header-center" className={styles.headerCenter}>
-            {headerCenter}
+            {header}
           </div>
           <div data-ds="" data-slot="header-right" className={styles.headerRight}>
             {headerRight}

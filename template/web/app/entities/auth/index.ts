@@ -5,19 +5,29 @@ import { mockCall } from '../mock';
 
 // Sign up and sign in take any email: there is no backend yet.
 
-export type User = { email: string };
+export type User = { email: string; role?: string };
+
+/** A role a member signs up as. */
+export type Role = { id: string; name: string };
 
 type AuthState = { user: User | null };
 
 // The scaffold writes the run's key over this, so no two apps on one origin share a session.
 const AUTH_KEY = 'weave:app:auth';
 
+// The scaffold writes the app's signed-in roles over this; sign up asks for one when there are several.
+export const ROLES: Role[] = [];
+
+// The scaffold writes the app's first signed-in page over this: where signing in or up leads.
+export const HOME_ROUTE = '/';
+
 const useAuthStore = createPersistentStore<AuthState>(() => ({ user: null }), AUTH_KEY);
 
-export async function signUp(email: string): Promise<User> {
+export async function signUp(email: string, role?: string): Promise<User> {
   await mockCall('signUp');
-  useAuthStore.setState({ user: { email } });
-  return { email };
+  const user = role ? { email, role } : { email };
+  useAuthStore.setState({ user });
+  return user;
 }
 
 export async function signIn(email: string): Promise<User> {

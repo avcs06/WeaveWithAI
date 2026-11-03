@@ -113,6 +113,12 @@ export function signInRoute(architecture: Architecture, flows: Flows): string {
   return page?.route ?? '/';
 }
 
+/** Where signing in leads: the app group's first page with no parameter in its route, or the landing page. */
+export function homeRoute(architecture: Architecture, flows: Flows, scope: Scope): string {
+  const app = [...routeGroups(architecture, flows, scope)].find(([, group]) => group === 'app')?.[0];
+  return architecture.screens.find((screen) => screen.frame === app && !screen.route.includes('['))?.route ?? '/';
+}
+
 /** A screen's route folder, inside its frame's route group. */
 export function screenFolder(
   architecture: Architecture,

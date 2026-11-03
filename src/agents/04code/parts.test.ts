@@ -20,7 +20,7 @@ describe('layout parts', () => {
     ]);
     const centered = { ...app, header: { ...app.header, start: '', center: 'logo' } };
     expect(layoutParts('App', centered).map((part) => [part.name, part.logo])).toEqual([
-      ['AppHeaderCenterSlot', 'start'],
+      ['AppHeader', 'start'],
       ['AppHeaderRightSlot', undefined],
     ]);
   });

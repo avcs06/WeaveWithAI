@@ -13,12 +13,12 @@ import type { Themed } from '../../02design/01theme/build';
 import type { Architecture } from '../../02design/02architect/schema';
 import type { StageContext, StageDef } from '../../stages';
 import { authKey, storagePrefix } from '../02contract/codegen';
-import { applyAuthKey, applyLogoName, applyMode, applyTitle, AUTH_STORE, ensureApp, PAGE_LOGO, ROOT_LAYOUT } from './app';
+import { applyAuth, applyLogoName, applyMode, applyTitle, AUTH_STORE, ensureApp, PAGE_LOGO, ROOT_LAYOUT } from './app';
 import { applyTheme } from './apply';
 import { applyLayouts } from './layouts';
 import { readCodeInputs } from './inputs';
 import { validateApplied } from './validation/validation';
-import { signInRoute, weaveFolders, writeWeave } from './weave';
+import { homeRoute, signInRoute, weaveFolders, writeWeave } from './weave';
 
 const STAGE = 'code-scaffold';
 const CHECKS: [string, string[]][] = [
@@ -50,12 +50,17 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
   if (movedAside) appendEvent(run, { type: 'scaffold:moved-aside', stage: STAGE, to: movedAside });
   const { changed, skipped } = applyTheme(appDir, theme);
   if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
-  const { name } = readArtifact<Scope>(run, 'flows-scope').data.app;
-  if (applyTitle(appDir, name)) changed.push(ROOT_LAYOUT);
-  if (applyLogoName(appDir, name)) changed.push(PAGE_LOGO);
-  if (applyAuthKey(appDir, authKey(storagePrefix(run)))) changed.push(AUTH_STORE);
+  const scope = readArtifact<Scope>(run, 'flows-scope').data;
   const architecture = readArtifact<Architecture>(run, 'design-architect').data;
   const flows = readArtifact<Flows>(run, 'flows-expand').data;
+  if (applyTitle(appDir, scope.app.name)) changed.push(ROOT_LAYOUT);
+  if (applyLogoName(appDir, scope.app.name)) changed.push(PAGE_LOGO);
+  const auth = {
+    key: authKey(storagePrefix(run)),
+    roles: scope.roles.filter((role) => role.signedIn).map(({ id, name }) => ({ id, name })),
+    home: homeRoute(architecture, flows, scope),
+  };
+  if (applyAuth(appDir, auth)) changed.push(AUTH_STORE);
   const layouts = applyLayouts(appDir, theme, { signInHref: signInRoute(architecture, flows) });
   changed.push(...layouts.changed);
   for (const reason of skipped) appendEvent(run, { type: 'scaffold:skipped', stage: STAGE, reason });

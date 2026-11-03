@@ -18,9 +18,9 @@
   `web/app/components/AppHeaderRightSlot/AppHeaderRightSlot.tsx` and
   `web/app/components/AppSidebar/AppSidebar.tsx`. Fill each one. Its comment
   says what it holds, what it leaves out, and what the theme puts there.
-- The header is three slots: `HeaderLeftSlot`, `HeaderCenterSlot` and
-  `HeaderRightSlot`. `PageLayout` keeps each at its place, the center in the
-  bar's middle, so a slot needs no spacer.
+- The header is three parts: `HeaderLeftSlot`, the header itself in the
+  center, such as `AppHeader`, and `HeaderRightSlot`. `PageLayout` keeps each
+  at its place, the center in the bar's middle, so a part needs no spacer.
 - Code already placed `PageLogo` and `UserMenu` where the theme put the logo
   and the account. Keep them where they are; add the part's other items
   around them.

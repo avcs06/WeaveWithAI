@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { architecture, flows, scope } from '../../02design/__fixtures__/chain';
-import { routeGroups, screenFolder, signInRoute } from './weave';
+import { homeRoute, routeGroups, screenFolder, signInRoute } from './weave';
 
 describe('route groups', () => {
   it('put the public frame in the template\'s marketing group and the signed-in one in its app group', () => {
@@ -35,5 +35,11 @@ describe('route groups', () => {
 describe('sign-in route', () => {
   it('is the screen given most to the sign-in flow, not the landing page that starts it', () => {
     expect(signInRoute(architecture, flows)).toBe('/sign-in');
+  });
+});
+
+describe('home route', () => {
+  it("is the app group's first page with no parameter, where signing in leads", () => {
+    expect(homeRoute(architecture, flows, scope)).toBe('/books');
   });
 });

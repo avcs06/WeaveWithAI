@@ -8,11 +8,16 @@ import { ACCOUNT, type BarPosition, LOGO, positionIn } from '../02design/config'
 
 type Layout = Theme['layouts']['app'];
 export type Kind = 'app' | 'marketing';
-type Slot = 'headerLeft' | 'headerCenter' | 'headerRight' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
+type Slot = 'headerLeft' | 'header' | 'headerRight' | 'sidebarHeader' | 'sidebar' | 'sidebarFooter' | 'footer';
 /** Where an item sits in its part: the footer's by the slot that names it; elsewhere the logo first and the account last. */
 type Position = BarPosition;
 
-const SIDES = { start: 'Left', center: 'Center', end: 'Right' } as const;
+// The header's center is the header part itself, as the sidebar's rows are the sidebar.
+const HEADER_PARTS = {
+  start: { slot: 'headerLeft', suffix: 'HeaderLeftSlot' },
+  center: { slot: 'header', suffix: 'Header' },
+  end: { slot: 'headerRight', suffix: 'HeaderRightSlot' },
+} as const;
 
 export type Part = {
   slot: Slot;
@@ -29,14 +34,14 @@ export type Part = {
 export const TEMPLATE_PARTS: Record<Kind, string[]> = {
   app: [
     'AppHeaderLeftSlot',
-    'AppHeaderCenterSlot',
+    'AppHeader',
     'AppHeaderRightSlot',
     'AppSidebarHeader',
     'AppSidebar',
     'AppSidebarFooter',
     'AppFooter',
   ],
-  marketing: ['MarketingHeaderLeftSlot', 'MarketingHeaderCenterSlot', 'MarketingHeaderRightSlot', 'MarketingFooter'],
+  marketing: ['MarketingHeaderLeftSlot', 'MarketingHeader', 'MarketingHeaderRightSlot', 'MarketingFooter'],
 };
 
 export const layoutPath = (group: string) => `web/app/(routes)/(${group})/layout.tsx`;
@@ -67,8 +72,8 @@ export function layoutParts(base: string, layout: Layout): Part[] {
         if (!text && !logo && !account) return [];
         return [
           {
-            slot: `header${SIDES[position]}` as const,
-            name: `${base}Header${SIDES[position]}Slot`,
+            slot: HEADER_PARTS[position].slot,
+            name: `${base}${HEADER_PARTS[position].suffix}`,
             holds: said('It holds', text),
             ...(logo && { logo: 'start' as const }),
             ...(account && { account: 'end' as const }),

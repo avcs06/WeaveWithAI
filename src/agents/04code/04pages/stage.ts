@@ -32,9 +32,13 @@ export function concreteRoute(route: string, contract: Contract): string {
   });
 }
 
-/** One session for every screen, each in its route folder; what two screens share goes in blocks or components. */
+/** The screens the template builds: sign in and sign up. */
+export const TEMPLATE_ROUTES = ['/sign-in', '/sign-up'];
+
+/** One session for every screen the template doesn't build, each in its route folder; what two screens share goes in blocks or components. */
 export function pagesSpec(architecture: Architecture, contract: Contract, flows: Flows, scope: Scope): Omit<UnitSpec, 'rendered'> {
-  const parts = architecture.screens.map((screen) => {
+  const screens = architecture.screens.filter((screen) => !TEMPLATE_ROUTES.includes(screen.route));
+  const parts = screens.map((screen) => {
     const folder = screenFolder(architecture, flows, scope, screen);
     return {
       screen,

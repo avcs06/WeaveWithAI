@@ -9,6 +9,8 @@
   `page.css.ts` beside it, and its own parts and dialogs in `components/`
   beside it. A dialog or a part that two screens use is built once, in
   `web/app/blocks/` or `web/app/components/`.
+- Sign in and sign up are the template's pages, at `/sign-in` and
+  `/sign-up`: keep them as they are, and link to them.
 - The template's starter page, `web/app/(routes)/(marketing)/page.tsx` at
   `/`, is a placeholder. The screen at `/` writes over it when that screen
   is in the marketing group; otherwise delete it.

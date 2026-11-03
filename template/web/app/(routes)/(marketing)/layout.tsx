@@ -1,5 +1,5 @@
 import { MarketingFooter } from '@app/components/MarketingFooter';
-import { MarketingHeaderCenterSlot } from '@app/components/MarketingHeaderCenterSlot';
+import { MarketingHeader } from '@app/components/MarketingHeader';
 import { MarketingHeaderLeftSlot } from '@app/components/MarketingHeaderLeftSlot';
 import { MarketingHeaderRightSlot } from '@app/components/MarketingHeaderRightSlot';
 import { layouts, PageLayout } from '@app/components/PageLayout';
@@ -16,7 +16,7 @@ export default function MarketingLayout({
       layout={layouts.marketing}
       kind="marketing"
       headerLeft={<MarketingHeaderLeftSlot />}
-      headerCenter={<MarketingHeaderCenterSlot />}
+      header={<MarketingHeader />}
       headerRight={<MarketingHeaderRightSlot />}
       footer={<MarketingFooter />}
     >

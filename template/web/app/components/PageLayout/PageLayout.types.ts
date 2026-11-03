@@ -72,7 +72,7 @@ export type PageLayoutProps = {
   /** The header's left end, such as the logo; the header renders when `layout.header.needed`. */
   headerLeft?: ReactNode;
   /** The header's center, such as the navigation. */
-  headerCenter?: ReactNode;
+  header?: ReactNode;
   /** The header's right end, such as the account. */
   headerRight?: ReactNode;
   /** Fixed above the sidebar's rows, such as a Create button. */

@@ -13,4 +13,4 @@
  *   bar.
  * - Search, help or settings with no flow behind them.
  */
-export const MarketingHeaderCenterSlot = () => null;
+export const MarketingHeader = () => null;
