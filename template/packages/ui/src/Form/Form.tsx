@@ -42,7 +42,10 @@ export const Form = ({
     >
       {children}
       {/* Kept on the page while empty, like a field's message, so a new error is announced. */}
-      <ControlMessage status={hasContent(error) ? 'error' : undefined} message={error} />
+      <ControlMessage
+        status={hasContent(error) ? 'error' : undefined}
+        message={error}
+      />
       {hasContent(actions) && (
         <div
           data-slot="actions"

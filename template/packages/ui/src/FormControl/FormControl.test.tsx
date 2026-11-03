@@ -26,7 +26,7 @@ const textbox = (name = 'Email') => screen.getByRole('textbox', { name });
 const box = (container: HTMLElement) =>
   container.querySelector<HTMLElement>('[data-slot="box"]')!;
 const message = (container: HTMLElement) =>
-  container.querySelector('[data-slot="message"]')!;
+  container.querySelector<HTMLElement>('[data-slot="message"]')!;
 
 describe('FormControl', () => {
   it('labels the control: the label names it, and its id is the label’s htmlFor', async () => {
