@@ -18,8 +18,8 @@ First walk every flow, as its role, from its start to its outcome through the sc
 
 ## Each screen says what it is for
 
-- P07: Each screen's title and first steps say what it is for. The first steps carry what the user came for, as the `purpose` names it. Secondary actions, filters, help text and promotions come after them.
-- P08: The landing page first says what the app is, who it is for and what to do next. It has its headline, its main action, a preview of the app with sample records, and three or four reasons to join.
+- P07: Each screen's title and first steps say what it is for. The first steps carry what the user came for, as the `purpose` names it. Secondary actions, filters, help text and promotions come after them. A screen of one record is titled with the record's name or number, never a title any record would get, such as "Order details". A dashboard that sums up a role's work opens with the numbers the role checks first.
+- P08: The landing page first says what the app is, who it is for and what to do next. It has its headline, its main action, a preview of the app with sample records, and three or four reasons to join. With several roles, it speaks to the role that comes to it; another role's way in sits in the frame.
 - P09: Every step is concrete enough to build. A step names the fields it shows, rather than "Sees the details". A list says what each item shows. An action says where it leads, and a choice gives its options.
 - P10: The landing page and every empty state quote their words. The words are written for this app: words that would fit any app, such as "Welcome to our app", do not count.
 

@@ -26,7 +26,7 @@ A screen is one URL. Make one for each place a flow needs: the landing page, eac
 
 - `route`: kebab-case; a plural noun for a list (/dashboards); a [param] named after the record's noun for one record (/dashboards/[dashboardId]); /new or /edit only when a form needs a page of its own. The landing page is /, signing in is /sign-in, and signing up is /sign-up.
 - Signing in and signing up are built already, in the public site's frame: an email field, and on sign up a role choice when the app has several signed-in roles. Give each its screen at its route, with one step that says so, such as "Signs in with their email.".
-- `title`: the words at the top of the page, as the user reads them.
+- `title`: the words at the top of the page, as the user reads them. A screen of one record is titled with the record: its name, or its number when it has no name. Write the field it shows, such as "The book's title" or "The invoice's number, as in "Invoice 1042"". Never a title any record would get, such as "Order details".
 - `purpose`: why the user comes here and what they leave with.
 - `roles`, `frame` and `flows`: who uses it, the frame it sits in, and the flows with a step here.
 - `steps`: everything the user sees and can do here, one sentence each, in reading order. The order is also the order of importance: what the user came for comes first.
@@ -38,12 +38,14 @@ A screen is one URL. Make one for each place a flow needs: the landing page, eac
 
 A screen the user comes to look at or use, and can also change, has a view mode and an edit mode: a dashboard, a document, a board, a profile, a settings page, whatever the flows call it, an editor included. Its steps are the viewing ones, with one action that enters editing: "Can choose "Edit", which shows the editing controls." The editing steps go under an alternative "When editing:", ending with the action that leaves it: "Can choose "Done", which shows the dashboard as it is now." No editing control shows while the user only views. Using the content, such as ticking a checklist item or opening a link, is viewing and stays in the viewing steps.
 
+A dashboard that sums up a role's work opens with the numbers the role checks first, each with its label: a support lead's open tickets and longest wait, a teacher's assignments due and work missing, a shop owner's orders today and sales this week. The lists that need the role's action come after the numbers. A dashboard the user builds and keeps as a record is a record's screen instead.
+
 ## The landing page
 
 Write the landing screen's steps in this order:
 
 1. The headline and the line under it, with their exact words.
-2. The main action and where it leads, and a way to sign in for people who already have an account. Each action appears once in the view, the frame included. One valid choice, when it suits the app: the screen offers signing up as its main action, and the frame offers only signing in. The frame's steps then say so.
+2. The main action and where it leads, and a way to sign in for people who already have an account. Each action appears once in the view, the frame included. One valid choice, when it suits the app: the screen offers signing up as its main action, and the frame offers only signing in. The frame's steps then say so. When the app has several roles, the landing page speaks to the role that comes to it, such as a clinic's patients or a shop's buyers. Another role's way in, such as the staff's sign in, goes in the frame's steps, such as its footer, never in the screen's.
 3. A preview of the app at work. Say what it shows, with sample records from the app's work, such as "Sees a preview of a dashboard with a note called 'Launch plan', a counter showing 12 tasks and a checklist with 'Review the draft' checked." The preview changes no records.
 4. Three or four reasons to join, each with a short title and one line. Give the exact words and connect each reason to what the app lets people do.
 
