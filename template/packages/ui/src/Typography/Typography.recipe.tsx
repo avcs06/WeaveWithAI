@@ -1,13 +1,17 @@
 /**
  * Typography: the text elements of a page, styled by the design system:
- * `Paragraph`, `List` with `ListItem`, `DescriptionList` with
- * `DescriptionTerm` and `DescriptionDetails`, `Quote`, `Code` and
- * `CodeBlock`. Each takes `font` (ui, display or mono) and `color` (default,
- * muted, primary or a status) over what it inherits; its size and line height
- * stay the body's.
+ * `Paragraph`, `Caption`, `List` with `ListItem`, `DescriptionList` with
+ * `DescriptionTerm` and `DescriptionDetails`, `Quote`, `Code`, `CodeBlock`,
+ * `Kbd`, `Mark`, `Separator` and `Time`. Each but `Separator` takes `font` (ui,
+ * display or mono) and `color` (default, muted, primary or a status) over
+ * what it inherits; its size and line height stay its own: the caption's for
+ * `Caption`, the text's around it for `Code`, `Kbd`, `Mark` and `Time`, the
+ * body's for the others.
  *
  * When not to use:
  * - A heading: a `Section`'s title is the heading.
+ * - A line between groups: a gap between them is usually enough. Use a
+ *   `Separator` only where the groups need a visible line.
  * - A list of records or cards people scan and open: lay them out as a grid
  *   or a column of `Card`s, or a `Table`; a `List` is for text.
  * - Rows people sort, filter or compare across: a `Table`.
@@ -22,15 +26,20 @@
  */
 import { Numeral } from '@packages/ui/Numeral';
 import {
+  Caption,
   Code,
   CodeBlock,
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
+  Kbd,
   List,
   ListItem,
+  Mark,
   Paragraph,
   Quote,
+  Separator,
+  Time,
 } from '@packages/ui/Typography';
 import React from 'react';
 
@@ -51,6 +60,14 @@ const Text = () => (
       A paragraph of body text, which wraps to the width of its column.
     </Paragraph>
     <Paragraph color="muted">A muted paragraph for a detail.</Paragraph>
+  </div>
+);
+
+/** A small muted line on the text above it, such as when a record was made. */
+const Note = () => (
+  <div className="flex-col-gap-1">
+    <Paragraph>Spring launch plan</Paragraph>
+    <Caption>Updated 2 Nov 2026</Caption>
   </div>
 );
 
@@ -111,15 +128,61 @@ const Commands = () => (
   </div>
 );
 
+/** A shortcut named in a sentence. */
+const Shortcut = () => (
+  <Paragraph>
+    Press <Kbd>Ctrl K</Kbd> to search.
+  </Paragraph>
+);
+
+/** A search result's line, with the words that match the search marked. */
+const SearchResult = () => (
+  <Paragraph>
+    Spring <Mark>launch</Mark> plan
+  </Paragraph>
+);
+
+/**
+ * A line between two groups of text that need one, and between items in a
+ * row, where the row stretches it to its height.
+ */
+const Groups = () => (
+  <div className="flex-col-gap-3">
+    <Paragraph>Delivery by courier, in 3 to 5 days.</Paragraph>
+    <Separator />
+    <div className="flex-row-gap-3">
+      <Paragraph>2 items</Paragraph>
+      <Separator orientation="vertical" />
+      <Paragraph>Paid by card</Paragraph>
+    </div>
+  </div>
+);
+
+/**
+ * A record's date or moment, from the ISO value it keeps: one format across
+ * the app. `withTime` adds the time of day to a moment.
+ */
+const Dates = () => (
+  <Paragraph>
+    Placed <Time value="2026-11-07" />, shipped{' '}
+    <Time value="2026-11-09T10:30:00.000Z" withTime />.
+  </Paragraph>
+);
+
 export default function TypographyRecipe() {
   return (
     <div className="flex-col-gap-6">
       <Text />
+      <Note />
       <Points />
       <Steps />
       <Fields />
       <Testimonial />
       <Commands />
+      <Shortcut />
+      <SearchResult />
+      <Groups />
+      <Dates />
     </div>
   );
 }

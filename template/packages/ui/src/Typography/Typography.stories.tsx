@@ -3,15 +3,20 @@ import React from 'react';
 import { StoryPage, StorySection } from '../StoryLayout';
 
 import {
+  Caption,
   Code,
   CodeBlock,
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
+  Kbd,
   List,
   ListItem,
+  Mark,
   Paragraph,
   Quote,
+  Separator,
+  Time,
 } from '.';
 
 import type { TextColor, TextFont } from '.';
@@ -51,6 +56,14 @@ const TypographyStories = () => (
             {color}
           </Paragraph>
         ))}
+      </div>
+    </StorySection>
+
+    <StorySection title="Caption">
+      <div className="flex-col-gap-1">
+        <Paragraph>Spring launch plan</Paragraph>
+        <Caption>Updated 2 Nov 2026, muted by default</Caption>
+        <Caption color="primary">Or in another color</Caption>
       </div>
     </StorySection>
 
@@ -94,6 +107,57 @@ const TypographyStories = () => (
           Run <Code>pnpm dev</Code> to start.
         </Paragraph>
         <CodeBlock>{`pnpm install\npnpm dev -- --port 3001 --a-long-flag-that-scrolls-sideways-inside-the-block`}</CodeBlock>
+      </div>
+    </StorySection>
+
+    <StorySection title="Kbd">
+      <div className="flex-col-gap-1">
+        <Paragraph>
+          Press <Kbd>Ctrl K</Kbd> to search, in the mono font by default.
+        </Paragraph>
+        <Paragraph>
+          Or{' '}
+          <Kbd font="ui" color="primary">
+            Esc
+          </Kbd>{' '}
+          in another font and color.
+        </Paragraph>
+      </div>
+    </StorySection>
+
+    <StorySection title="Mark">
+      <div className="flex-col-gap-1">
+        <Paragraph>
+          Spring <Mark>launch</Mark> plan
+        </Paragraph>
+        <Paragraph color="muted">
+          A <Mark>match</Mark> keeps the color around it, or{' '}
+          <Mark color="error">takes its own</Mark>.
+        </Paragraph>
+      </div>
+    </StorySection>
+
+    <StorySection title="Separator">
+      <div className="flex-col-gap-3">
+        <Paragraph>Above the line</Paragraph>
+        <Separator />
+        <div className="flex-row-gap-3">
+          <Paragraph>In a row</Paragraph>
+          <Separator orientation="vertical" />
+          <Paragraph>Vertical, as tall as the row</Paragraph>
+        </div>
+      </div>
+    </StorySection>
+
+    <StorySection title="Time">
+      <div className="flex-col-gap-1">
+        <Paragraph>
+          A day: <Time value="2026-11-07" />
+        </Paragraph>
+        <Paragraph>
+          A moment with its time:{' '}
+          <Time value="2026-11-09T10:30:00.000Z" withTime />
+        </Paragraph>
       </div>
     </StorySection>
   </StoryPage>

@@ -1,4 +1,6 @@
+export { Kbd, Mark, Separator, Time } from './auxiliary';
 export {
+  Caption,
   Code,
   CodeBlock,
   DescriptionDetails,
@@ -10,15 +12,20 @@ export {
   Quote,
 } from './Typography';
 export type {
+  CaptionProps,
   CodeBlockProps,
   CodeProps,
   DescriptionDetailsProps,
   DescriptionListProps,
   DescriptionTermProps,
+  KbdProps,
   ListItemProps,
   ListProps,
+  MarkProps,
   ParagraphProps,
   QuoteProps,
+  SeparatorProps,
   TextColor,
   TextFont,
+  TimeProps,
 } from './Typography.types';

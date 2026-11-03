@@ -33,6 +33,12 @@ const body = {
 
 export const paragraph = style(body);
 
+// Smaller than the body, so it reads as a note on the text beside it.
+export const caption = style({
+  fontSize: tokens.fontSize.caption,
+  lineHeight: tokens.lineHeight.caption,
+});
+
 export const list = style({
   ...body,
   paddingInlineStart: space[5],
@@ -134,4 +140,37 @@ export const codeBlock = style({
   whiteSpace: 'pre',
   outline: 'none',
   selectors: { '&:focus-visible': focusRing(colors.primary.focus) },
+});
+
+// Inside text, as `code` is. The mono font comes from `fonts`, so `font` can replace it.
+export const kbd = style({
+  fontSize: 'inherit',
+  paddingInline: space[1],
+  borderRadius: tokens.radius.control,
+  border: `${space[0.25]} solid ${colors.base.border}`,
+  background: colors.base.hoverBg,
+});
+
+// Pads only sideways, as `code` does, so the line keeps its height.
+export const highlight = style({
+  paddingInline: space[1],
+  borderRadius: tokens.radius.control,
+  background: colors.primary.bg,
+});
+
+// The browser draws a mark black on yellow; without a `color`, it keeps the text's.
+export const inheritColor = style({ color: 'inherit' });
+
+// Drawn as its background: the reset's top border on an hr would add to the line.
+export const separator = style({
+  border: 'none',
+  background: colors.surface.divider,
+});
+
+export const horizontal = style({
+  height: space[0.25],
+});
+
+export const vertical = style({
+  width: space[0.25],
 });

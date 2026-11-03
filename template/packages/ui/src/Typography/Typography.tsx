@@ -5,6 +5,7 @@ import React from 'react';
 import * as styles from './Typography.css';
 
 import type {
+  CaptionProps,
   CodeBlockProps,
   CodeProps,
   DescriptionDetailsProps,
@@ -31,6 +32,29 @@ export const Paragraph = ({
     data-ds=""
     className={classNames(
       styles.paragraph,
+      font && styles.fonts[font],
+      color && styles.textColors[color],
+      className,
+    )}
+  />
+);
+
+/**
+ * A small line about the text beside it: a date under a title, a note under
+ * a figure, a count beside a heading. Muted unless `color` says otherwise;
+ * size and line height stay the caption's.
+ */
+export const Caption = ({
+  font,
+  color = 'muted',
+  className,
+  ...props
+}: CaptionProps) => (
+  <p
+    {...props}
+    data-ds=""
+    className={classNames(
+      styles.caption,
       font && styles.fonts[font],
       color && styles.textColors[color],
       className,
