@@ -76,9 +76,13 @@ describe('a coding unit', () => {
     const fixTask = (await import('node:fs')).readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-fix-1.md'), 'utf8');
     expect(fixTask).toContain('CODE-002');
     expect(fixTask).toContain('The page does two jobs.');
-    // Round 1: both reviewers saw the diff and the failed check.
+    // Round 1: every reviewer saw the diff and the failed check.
     const round1 = reviews.filter((r) => r.round === 1);
-    expect(round1.map((r) => r.stage).sort()).toEqual(['code-pages-S04-review-adherence', 'code-pages-S04-review-code']);
+    expect(round1.map((r) => r.stage).sort()).toEqual([
+      'code-pages-S04-review-adherence',
+      'code-pages-S04-review-behavior',
+      'code-pages-S04-review-code',
+    ]);
     const user = String(round1[0]?.messages.at(-1)?.content);
     expect(user).toContain('books/page.tsx');
     expect(user).toContain('CODE-002');
@@ -91,8 +95,8 @@ describe('a coding unit', () => {
     const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
     expect(result.rounds).toBe(3);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
-    // Both reviewers read rounds 1 and 2; nobody reviews the final fix.
-    expect(reviews.map((r) => r.round)).toEqual([1, 1, 2, 2]);
+    // The three reviewers read rounds 1 and 2; nobody reviews the final fix.
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 2, 2, 2]);
     // The three sessions are one Muse session; another attempt at the unit starts its own.
     const ids = () => readFileSync(runPath(ctx.run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
     expect(ids()).toHaveLength(3);
@@ -174,7 +178,7 @@ describe('a coding unit resumed after its session was cut', () => {
     const resumed = { ...ctx, resume: { stage: 'code-pages-S04', round: 1 } };
     await withWrites(page, () => runUnits(resumed, 'code-pages-S04', [spec], deps)).finally(() => delete process.env.FAKE_ARGS);
     expect(ids()).toEqual(['--session-id muse-1', '--session-id muse-1']);
-    expect(reviews.map((r) => r.round)).toEqual([1, 1, 2, 2]);
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 2, 2, 2]);
     expect(readEvents(run).some((e) => e.type === 'stage:reset')).toBe(false);
     expect(git(appDir, 'log', '-3', '--format=%s').split('\n')).toEqual([
       'code-pages-S04: page-S04-fix-1',

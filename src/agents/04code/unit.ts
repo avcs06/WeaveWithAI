@@ -21,7 +21,7 @@ import { type Draft, runSpecStage, type SpecStageResult } from '../../runner/run
 import type { StageContext } from '../stages';
 
 // One coding unit of a code stage on the stage runner: its session,
-// the checks after it, and the two reviewers, code and adherence.
+// the checks after it, and the three reviewers, code, adherence and behavior.
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, `./prompts/${file}`));
 
@@ -41,11 +41,15 @@ function designSystemComponents(appDir: string): string {
   return names.sort().join(', ') || 'none';
 }
 
-/** The two output reviewers of every coding unit: the code reviewer knows the components, the adherence reviewer the UX practices. */
+/**
+ * The three output reviewers of every coding unit: the code reviewer knows the components, the adherence reviewer
+ * the UX practices, and the behavior reviewer judges state, failures and security.
+ */
 function codeReviewGuides(appDir: string): Record<string, string> {
   return {
     code: fillPrompt(load('review-code.md'), { components: designSystemComponents(appDir) }),
     adherence: fillPrompt(load('review-adherence.md'), { ux: uxPractices() }),
+    behavior: load('review-behavior.md'),
   };
 }
 

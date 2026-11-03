@@ -1,4 +1,4 @@
-The checks after your work, and the two reviewers who read your change, found the issues below. Fix them in the code you wrote for this unit.
+The checks after your work, and the reviewers who read your change, found the issues below. Fix them in the code you wrote for this unit.
 
 You built this unit earlier in this session, so you know what you changed. You need no git history. Your guidelines are in `.weave/01-scaffold/guidelines.md` and in these folders: {{folders}}. Read one again only when you need a detail you no longer have.
 

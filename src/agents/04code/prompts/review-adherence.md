@@ -17,7 +17,7 @@ First read this unit's design in the unit's inputs. Then follow each frame, scre
 
 ## Data and words
 
-- A09: Signing in works as the guidelines say. A visitor who opens a signed-in page is sent to the landing page. A member is not sent to sign in before the saved session is read. Sign-in accepts any email, even one it has not seen before.
+- A09: Signing in works as the guidelines say. A visitor who opens a signed-in page is sent to the landing page. A member is not sent to sign in before the saved session is read. Sign-in accepts any email, even one it has not seen before. It keeps no password, so a password the user types is never saved, and that is no blocker.
 - A10: What the user sees is real and in the design's words. A screen shows the record its route names and no placeholder text. Each title, label, button and message keeps the meaning of the words the design gives.
 - A11: Every value shows as the user reads it, never raw. A status shows by its label, not its key. A record shows by its name, not its id. A date shows in a readable form, not its stored form.
 
