@@ -43,7 +43,8 @@
   only H1.
 - The logo is `PageLogo` from `@app/components/PageLogo`. Place it as it
   is: it shows the app's name in the theme's logo style and leads home.
-  Never write or style the app's name by hand.
+  Never write or style the app's name by hand. When the logo has an icon,
+  pass it as `leftIcon` or `rightIcon`: it joins the name in the link.
 - Keep `web/app/(routes)/layout.tsx` as it is.
 - A frame is its layout, its parts in `web/app/blocks/` and the pieces they
   use. The route folders inside a route group are the screens'.
