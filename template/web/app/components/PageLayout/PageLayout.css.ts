@@ -26,10 +26,7 @@ export const root = style({
   minHeight: '100dvh',
 });
 
-const separations = (
-  side: 'Top' | 'Bottom' | 'Left' | 'Right',
-  on = '&',
-) => ({
+const separations = (side: 'Top' | 'Bottom' | 'Left' | 'Right', on = '&') => ({
   [`${on}[data-separation="background"]`]: { background: surface.frameBg },
   [`${on}[data-separation="divider"]`]: { [`border${side}`]: divider },
   [`${on}[data-separation="shadow"]`]: { boxShadow: tokens.boxShadow.card },

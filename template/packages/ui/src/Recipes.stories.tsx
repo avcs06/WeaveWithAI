@@ -30,6 +30,7 @@ import TextareaRecipe from './Textarea/Textarea.recipe';
 import ToastRecipe from './Toast/Toast.recipe';
 import TooltipRecipe from './Tooltip/Tooltip.recipe';
 import TruncateRecipe from './Truncate/Truncate.recipe';
+import TypographyRecipe from './Typography/Typography.recipe';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -73,3 +74,4 @@ export const Textarea: Story = { render: () => <TextareaRecipe /> };
 export const Toast: Story = { render: () => <ToastRecipe /> };
 export const Tooltip: Story = { render: () => <TooltipRecipe /> };
 export const Truncate: Story = { render: () => <TruncateRecipe /> };
+export const Typography: Story = { render: () => <TypographyRecipe /> };

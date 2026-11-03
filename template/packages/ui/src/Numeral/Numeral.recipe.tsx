@@ -17,6 +17,11 @@
  */
 import { IconButton } from '@packages/ui/Button';
 import { Numeral } from '@packages/ui/Numeral';
+import {
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+} from '@packages/ui/Typography';
 import { Minus, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -60,16 +65,16 @@ const Statistic = () => (
 
 /** Totals in a column: aligned to the end, the digits line up. */
 const Totals = () => (
-  <dl className="flex-col-gap-2">
+  <DescriptionList>
     {totals.map(({ label, amount }) => (
-      <div key={label} className="flex-row-gap-4 justify-between">
-        <dt>{label}</dt>
-        <dd>
+      <div key={label}>
+        <DescriptionTerm>{label}</DescriptionTerm>
+        <DescriptionDetails className="text-right">
           <Numeral>{euros.format(amount)}</Numeral>
-        </dd>
+        </DescriptionDetails>
       </div>
     ))}
-  </dl>
+  </DescriptionList>
 );
 
 export default function NumeralRecipe() {

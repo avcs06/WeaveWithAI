@@ -17,6 +17,11 @@
  */
 import { CheckIcon, LoadingIcon, MinusIcon } from '@packages/ui/Icons';
 import { Input } from '@packages/ui/Input';
+import {
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+} from '@packages/ui/Typography';
 import React, { useState } from 'react';
 
 // Usage: the patterns to copy.
@@ -70,28 +75,20 @@ const Standalone = () => (
  * an `aria-label`. Here, ticket features.
  */
 const TicketFeatures = () => (
-  <dl className="flex-col-gap-2">
-    <div className="flex-row-gap-2 items-center">
-      <dt>Workshop access</dt>
-      <dd>
-        <CheckIcon
-          className="icon-size-body"
-          role="img"
-          aria-label="Included"
-        />
-      </dd>
-    </div>
-    <div className="flex-row-gap-2 items-center">
-      <dt>Recordings</dt>
-      <dd>
-        <MinusIcon
-          className="icon-size-body"
-          role="img"
-          aria-label="Not included"
-        />
-      </dd>
-    </div>
-  </dl>
+  <DescriptionList className="items-center">
+    <DescriptionTerm>Workshop access</DescriptionTerm>
+    <DescriptionDetails>
+      <CheckIcon className="icon-size-body" role="img" aria-label="Included" />
+    </DescriptionDetails>
+    <DescriptionTerm>Recordings</DescriptionTerm>
+    <DescriptionDetails>
+      <MinusIcon
+        className="icon-size-body"
+        role="img"
+        aria-label="Not included"
+      />
+    </DescriptionDetails>
+  </DescriptionList>
 );
 
 /** Beside text that says it already: the icon stays hidden. */
