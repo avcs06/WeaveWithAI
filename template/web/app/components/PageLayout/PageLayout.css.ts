@@ -9,9 +9,6 @@ export const columns = createVar();
 export const rows = createVar();
 /** The header's rendered height: an overlay header's page pads by it. */
 export const headerHeight = createVar();
-export const barHeight = createVar();
-/** A bar with a set height centers its row in it; one sized by its content pads above and below too. */
-export const barPadding = createVar();
 export const padding = createVar();
 export const gap = createVar();
 export const maxWidth = createVar();
@@ -34,19 +31,20 @@ const separations = (side: 'Top' | 'Bottom' | 'Left' | 'Right', on = '&') => ({
   [`${on}[data-separation="shadow"]`]: { boxShadow: tokens.boxShadow.card },
 });
 
+// A bar's height is its items and its padding.
 const bar = {
   display: 'flex',
   alignItems: 'center',
   minWidth: 0,
-  minHeight: barHeight,
-  paddingInline: padding,
-  paddingBlock: barPadding,
+  padding,
   gap,
 } as const;
 
 // Three slots: the left and right at the bar's ends, the center in its middle whatever the sides hold.
 export const header = style({
   ...bar,
+  // The sidebar rows' margin and padding, so the header's items start where theirs do.
+  paddingInline: tokens.spacing[4],
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
   gridArea: 'header',
@@ -79,7 +77,10 @@ export const headerRight = style({ ...headerSlot, justifySelf: 'end' });
 export const footer = style({
   ...bar,
   gridArea: 'footer',
-  selectors: separations('Top'),
+  selectors: {
+    ...separations('Top'),
+    '&[data-lines]': { flexDirection: 'column', alignItems: 'stretch' },
+  },
 });
 
 // The SidebarMenu keeps the menu's spacing and scrolls its own rows; the frame gives it a column and a separation.

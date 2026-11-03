@@ -59,11 +59,15 @@ describe('part files', () => {
     expect(partSource(right, doc, wiring)).not.toContain('SidebarMenuItem');
   });
 
-  it('put a footer logo at its slot with spacers, and leave a part with nothing placed empty', () => {
-    const footer = layoutParts('App', { ...app, logo: 'footer' as const, footer: { ...app.footer, needed: true, end: 'logo' } }).find(
+  it("give a site's footer its content line and an app's its slots, place nothing in a footer, and leave a part with nothing placed empty", () => {
+    const site = { ...app, footer: { needed: true, content: 'the site links in columns', padding: '6', gap: '4', separation: 'divider' as const } };
+    const lines = layoutParts('Marketing', site).find((part) => part.slot === 'footer')!;
+    expect(lines).toEqual({ slot: 'footer', name: 'MarketingFooter', holds: 'It holds: the site links in columns.' });
+    expect(partSource(lines, undefined, wiring)).toContain('export const MarketingFooter = () => null;');
+    const row = layoutParts('App', { ...app, footer: { ...app.footer, needed: true, start: 'Help link', end: 'version' } }).find(
       (part) => part.slot === 'footer',
     )!;
-    expect(partSource(footer, undefined, wiring)).toContain('    <>\n      <div className="flex-1" />\n      <PageLogo />\n    </>');
+    expect(row.holds).toBe('Start: Help link. End: version.');
     const rows = layoutParts('App', withSidebar).find((part) => part.slot === 'sidebar')!;
     expect(partSource(rows, undefined)).toBe(
       "/**\n * The theme puts here: Rows: shelves.\n * They are the rows of the sidebar's SidebarMenu: return SidebarMenuItems, not a menu or a bar of your own.\n */\nexport const AppSidebar = () => null;\n",

@@ -29,8 +29,11 @@
   items around them.
 - A part returns its items, not a bar. It has no `header`, `aside`,
   `footer` or `SidebarMenu` of its own, and no height, padding, background
-  or border around its items. A footer lays its items in a row. Push the
-  end items over with `<div className="flex-1" />`.
+  or border around its items. An app's footer lays its items in a row. Push
+  the end items over with `<div className="flex-1" />`. A site's footer
+  stacks its lines, one under the other. Each line is one element, such as
+  a row of links or a line of small print. A footer never holds the logo or
+  the account.
 - In the sidebar, `AppSidebar` returns the rows. Each destination is a
   `SidebarMenuItem` with `as={NextLink}` and its `href`. `AppSidebarHeader`
   holds what stays fixed above the rows, such as a Create button.

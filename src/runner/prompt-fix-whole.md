@@ -5,7 +5,9 @@ Fix each problem below and apply each answer below.
 - Keep everything else exactly as it was.
 - Return the complete corrected document as JSON.
 
-Each problem has an id, such as T01, and the replies given on it in earlier rounds. In `replies`, answer each problem by its id:
+Each problem has an id, such as T01, and the replies given on it in earlier rounds. Each line under a problem is one reply, oldest first: its round, who gave it, its status and its reason. `fix` is you, in an earlier round. `review-<name>` is a reviewer. When a reviewer answered your reason, answer that reviewer's point.
+
+In `replies`, answer each problem by its id:
 
 - `closed` when you fixed it. Say what you changed.
 - `open` when you did not fix it. Give your reason in one or two sentences.

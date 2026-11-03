@@ -238,12 +238,15 @@ describe('theme rules', () => {
     expect(at((t) => (t.layouts.app.main.container = 'fixed'))).toEqual([
       'app.main.maxWidthPx',
     ]);
-    // The default md button is 40 tall; with 16 above and below it needs 72.
-    expect(at((t) => (t.layouts.marketing.header.heightPx = 64))).toEqual([
-      'marketing.header.heightPx',
-    ]);
-    expect(at((t) => (t.layouts.marketing.header.heightPx = 72))).toEqual([]);
-    expect(at((t) => (t.layouts.app.header.heightPx = 0))).toEqual([]);
+    // A site's footer holds its one line of content.
+    expect(
+      at((t) =>
+        Object.assign(t.layouts.marketing.footer, {
+          needed: true,
+          content: 'the site links in columns',
+        }),
+      ),
+    ).toEqual([]);
   });
 
   it('THEME-007 keeps every padding at least the gap inside it: 24 between sections in the main area', () => {

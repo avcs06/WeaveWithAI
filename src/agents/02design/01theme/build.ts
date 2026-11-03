@@ -167,7 +167,7 @@ const marketingLayout = (
   sidebar: NO_SIDEBAR,
   footer: marketing.footer,
   main: marketing.main,
-  logo: marketing.logo,
+  logo: 'header',
   account: marketing.account,
 });
 

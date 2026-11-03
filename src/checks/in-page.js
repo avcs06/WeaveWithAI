@@ -264,11 +264,14 @@
     },
 
     /**
-     * R-010 and R-011: each container the app spaced (flex or grid, two or more visible children, a gap) against the
-     * nearest container around it, whose gap it may not exceed, and against its own padding, which is at least
-     * its gap on every side that has one. The design system's spacing is its own, asChild parts included.
+     * R-010 and R-011: each container the app spaced in the main region (flex or grid, two or more visible children,
+     * a gap) against the nearest container around it there, whose gap it may not exceed, and against its own padding,
+     * which is at least its gap on every side that has one. The frame's spacing is the theme's, and the design
+     * system's is its own, asChild parts included.
      */
     containerSpacing() {
+      const main = document.querySelector('main');
+      if (!main) return { nesting: [], padding: [] };
       const isContainer = (element) =>
         visible(element) &&
         /flex|grid/.test(getComputedStyle(element).display) &&
@@ -281,12 +284,12 @@
         return style.flexDirection.startsWith('column') ? row : column;
       };
       const parentOf = (element) => {
-        for (let at = element.parentElement; at && at !== document.body; at = at.parentElement) if (isContainer(at)) return at;
+        for (let at = element.parentElement; at && main.contains(at); at = at.parentElement) if (isContainer(at)) return at;
         return null;
       };
       const nesting = [];
       const padding = [];
-      for (const element of [...document.body.querySelectorAll('*')].filter((e) => !dsSpaced(e) && isContainer(e))) {
+      for (const element of [...main.querySelectorAll('*')].filter((e) => !dsSpaced(e) && isContainer(e))) {
         const gap = gapOf(element);
         if (!gap) continue;
         const parent = parentOf(element);

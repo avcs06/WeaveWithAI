@@ -242,13 +242,13 @@ describe('rendered checks on the fixture pages', () => {
     expect(await firstViewport(clean)).toEqual([]);
   });
 
-  it('R-009 target gaps, R-010 nesting and R-011 padding: planted on the defects page, none on the clean page', async () => {
+  it('R-009 target gaps, R-010 nesting and R-011 padding: planted in the defects page\'s main region, none in its frame or on the clean page', async () => {
     const page = await open('defects.html');
     expect(rules(await targetGaps(page))).toEqual([
       'mandatory [data-testid="tight"] > button:nth-of-type(1) [data-testid="tight"] > button:nth-of-type(1) and [data-testid="tight"] > button:nth-of-type(2) are 4px apart; controls sit at least 8px apart',
     ]);
     expect((await containerSpacing(page)).map((f) => [f.rule, f.severity, f.element, f.message])).toEqual([
-      ['DESIGN-R-010', 'mandatory', '[data-testid="loose"]', expect.stringMatching(/^gap 32px inside body > section:nth-of-type\(3\), whose gap is 24px/)],
+      ['DESIGN-R-010', 'mandatory', '[data-testid="loose"]', expect.stringMatching(/^gap 32px inside body > main:nth-of-type\(1\), whose gap is 24px/)],
       ['DESIGN-R-011', 'mandatory', '[data-testid="cramped"]', 'padding 4px with a gap of 16px; a container\'s padding is at least its gap'],
     ]);
     const clean = await open('clean.html');

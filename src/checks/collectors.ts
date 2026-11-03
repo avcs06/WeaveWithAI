@@ -204,7 +204,7 @@ export async function numerals(page: Page): Promise<Finding[]> {
   );
 }
 
-/** R-010: a container's gap over the gap of the container around it. R-011: a container's padding under its own gap. */
+/** In the main region, R-010: a container's gap over the gap of the container around it. R-011: a container's padding under its own gap. */
 export async function containerSpacing(page: Page): Promise<Finding[]> {
   const { nesting, padding } = await inPage<{
     nesting: { element: string; gap: number; parent: string; outer: number }[];

@@ -384,7 +384,6 @@
         "start": "logo",
         "center": "",
         "end": "Shelf link, account",
-        "heightPx": 72,
         "sticky": true,
         "overlay": false,
         "padding": "3",
@@ -419,7 +418,6 @@
         "start": "",
         "center": "",
         "end": "",
-        "heightPx": 0,
         "padding": "0",
         "gap": "0",
         "separation": "none"
@@ -443,7 +441,6 @@
         "start": "logo",
         "center": "",
         "end": "account",
-        "heightPx": 72,
         "sticky": false,
         "overlay": true,
         "padding": "4",
@@ -474,10 +471,7 @@
       },
       "footer": {
         "needed": false,
-        "start": "",
-        "center": "",
-        "end": "",
-        "heightPx": 0,
+        "content": "",
         "padding": "0",
         "gap": "0",
         "separation": "none"
@@ -491,7 +485,6 @@
         "fullBleed": true,
         "separation": "none"
       },
-      "logo": "header",
       "account": "header"
     }
   },

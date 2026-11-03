@@ -8,18 +8,33 @@ export type SpacingKey = `${keyof typeof tokens.spacing}`;
 /** How a region sets off from the content: the frame background, a divider line, a shadow, or nothing. */
 export type Separation = 'background' | 'divider' | 'shadow' | 'none';
 
-/** A header or footer. `start`, `center` and `end` say what its component shows there; "" for nothing. */
+/** A header. `start`, `center` and `end` say what its component shows there; "" for nothing. */
 export type PageBar = {
   needed: boolean;
   start: string;
   center: string;
   end: string;
-  /** 0 sizes it to its content. */
-  heightPx: number;
+  /** Above and below its items: its height is its items and this padding. */
   padding: SpacingKey;
   gap: SpacingKey;
   separation: Separation;
 };
+
+type PageFooterSpacing = {
+  needed: boolean;
+  /** Around its items: its height is its items and this padding. */
+  padding: SpacingKey;
+  gap: SpacingKey;
+  separation: Separation;
+};
+
+/**
+ * A footer, which never holds the logo or the account. An app's is one row:
+ * `start`, `center` and `end` say what its component shows there. A site's
+ * `content` says what it holds, on one or several lines. "" for nothing.
+ */
+export type PageFooter = PageFooterSpacing &
+  ({ start: string; center: string; end: string } | { content: string });
 
 /** A sidebar, a menu with the menu's spacing. `top`, `items` and `bottom` say what sits fixed above, in the rows and fixed below; "" for nothing. */
 export type PageSidebar = {
@@ -43,7 +58,7 @@ export type PageLayoutConfig = {
     overlay: boolean;
   };
   sidebar: PageSidebar;
-  footer: PageBar;
+  footer: PageFooter;
   main: {
     /** fluid fills the space the frame leaves; fixed stops at `maxWidthPx`, centered. */
     container: 'fluid' | 'fixed';
@@ -56,7 +71,7 @@ export type PageLayoutConfig = {
     separation: Separation;
   };
   /** Where the scaffold placed the app's logo. */
-  logo: 'header' | 'sidebar' | 'footer';
+  logo: 'header' | 'sidebar';
   /** Where the account menu sits; none for a site without accounts. */
   account: 'header' | 'sidebar' | 'none';
 };

@@ -6,7 +6,9 @@ Each issue below is a failed check, or a reviewer's finding with the fix it asks
 
 ## Your replies
 
-Each issue below has an id, such as T01, and the replies given on it in earlier rounds. When you finish, write `.weave/replies.json` with one reply per issue:
+Each issue below has an id, such as T01, and the replies given on it in earlier rounds. Each line under an issue is one reply, oldest first: its round, who gave it, its status and its reason. `fix` is you, in an earlier round. `review-<name>` is a reviewer. When a reviewer answered your reason, answer that reviewer's point.
+
+When you finish, write `.weave/replies.json` with one reply per issue:
 
 ```json
 [

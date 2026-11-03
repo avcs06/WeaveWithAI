@@ -155,16 +155,50 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
     z
       .string()
       .describe(`What sits ${where}, e.g. "the wordmark"; "" for nothing`);
-  const bar = {
+  // A bar's height is its items and its padding. The header's sides line up with the sidebar's rows.
+  const header = {
     needed: z.boolean(),
     start: slot('at the start'),
     center: slot('in the center'),
     end: slot('at the end'),
-    heightPx: z.number().int().describe('0 sizes it to its content'),
-    padding: spacing,
+    padding: spacing.describe('Above and below its items'),
+    gap: spacing,
+    separation,
+    overlay: z
+      .boolean()
+      .describe(
+        'Lies over the first section, such as a light header on a hero, instead of above it',
+      ),
+  };
+  // The logo and the account sit in the header or the sidebar, never in a footer.
+  const footerSlot = (where: string) =>
+    z
+      .string()
+      .describe(
+        `What sits ${where}, e.g. "the site links"; never the logo or the account; "" for nothing`,
+      );
+  const footerSpacing = {
+    padding: spacing.describe('Around its items'),
     gap: spacing,
     separation,
   };
+  const appFooter = z.object({
+    needed: z.boolean(),
+    start: footerSlot('at the start'),
+    center: footerSlot('in the center'),
+    end: footerSlot('at the end'),
+    ...footerSpacing,
+  });
+  // A site's footer may run to several lines, such as columns of links over a line of small print.
+  const marketingFooter = z.object({
+    needed: z.boolean(),
+    content: z
+      .string()
+      .describe(
+        'What it holds, in a few words, on one or several lines, e.g. "the site links in columns, then a line of small print"; never the logo or the account; "" for nothing',
+      ),
+    ...footerSpacing,
+  });
   // A sidebar is a menu: its spacing is the menu's, and its rows scroll between what sits fixed above and below them.
   const Sidebar = z.object({
     needed: z.boolean(),
@@ -175,17 +209,8 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
     widthPx: z.number().int(),
     separation,
   });
-  const header = {
-    ...bar,
-    overlay: z
-      .boolean()
-      .describe(
-        'Lies over the first section, such as a light header on a hero, instead of above it',
-      ),
-  };
   // Only the marketing page scrolls as a whole; the app's frame stays in place while its main region scrolls.
   const sticky = z.boolean().describe('Stays in view while the page scrolls');
-  const footer = z.object(bar);
   const main = z.object({
     container: z
       .enum(['fluid', 'fixed'])
@@ -211,7 +236,7 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
         ),
       header: z.object(header),
       sidebar: Sidebar,
-      footer,
+      footer: appFooter,
       main,
       logo: z
         .enum(['header', 'sidebar'])
@@ -220,11 +245,11 @@ export function pageLayoutSchemas<S extends z.ZodType<string>>(spacing: S) {
         .enum(['header', 'sidebar'])
         .describe("Where the account menu sits: the header's end, or the bottom of the sidebar"),
     }),
+    // A site's logo always sits in its header.
     marketing: z.object({
       header: z.object({ ...header, sticky }),
-      footer,
+      footer: marketingFooter,
       main,
-      logo: z.enum(['header', 'footer']).describe("Where the app's logo sits"),
       account: z
         .enum(['header', 'none'])
         .describe("The account menu, Sign in for a visitor, at the header's end; none for a site without accounts"),
@@ -235,14 +260,21 @@ const anyLayouts = pageLayoutSchemas(z.string());
 /** The layouts as the theme call writes them. */
 export const CallLayouts = z.object(anyLayouts);
 export type CallLayouts = z.infer<typeof CallLayouts>;
-/** A built layout: the app's shape with the marketing header and either kind's places, so PageLayout reads both alike. */
+/** A built layout: the app's shape with the marketing header, either kind's footer and either kind's places, so PageLayout reads both alike. */
 const Layout = anyLayouts.app.extend({
   header: anyLayouts.marketing.shape.header,
-  logo: z.enum(['header', 'sidebar', 'footer']),
+  footer: z.union([anyLayouts.app.shape.footer, anyLayouts.marketing.shape.footer]),
+  logo: z.enum(['header', 'sidebar']),
   account: z.enum(['header', 'sidebar', 'none']),
 });
 export const Layouts = z.object({ app: Layout, marketing: Layout });
 export type Layouts = z.infer<typeof Layouts>;
+
+/** A footer's slots by name: a site's one `content`, or an app's `start`, `center` and `end`. */
+export const footerSlots = (footer: Layouts['app']['footer']): Record<string, string> =>
+  'content' in footer
+    ? { content: footer.content }
+    : { start: footer.start, center: footer.center, end: footer.end };
 
 /** Per component: a value for each variant its recipe defaults, and its look. */
 export type ComponentDefaults = Record<string, Record<string, string>>;

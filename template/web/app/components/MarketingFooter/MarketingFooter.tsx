@@ -11,18 +11,20 @@
  *   with `look="plain"`. Example: a `mailto:` link to the support address.
  * - A line of small print. Use a `Paragraph` from `@packages/ui/Typography`
  *   with `color="muted"`. Example: "© 2026" and the site's name.
- * - The logo. Code places `PageLogo` here when the theme puts the logo in
- *   the footer. Keep it as it is.
  *
- * PageLayout draws the bar and lays these items in a row. To push the last
- * items to the right end, put `<div className="flex-1" />` before them.
+ * PageLayout draws the bar and stacks its lines, one under the other, with
+ * the theme's gap. Return each line as one element, such as a row of links
+ * or a line of small print.
  *
  * Example:
- *   <PageLogo />
- *   <div className="flex-1" />
- *   <NextLink look="plain" href="/contact">Contact</NextLink>
+ *   <div className="flex-row-gap-4 flex-wrap">
+ *     <NextLink look="plain" href="/about">About</NextLink>
+ *     <NextLink look="plain" href="/contact">Contact</NextLink>
+ *   </div>
+ *   <Paragraph color="muted">© 2026 Hillside Bakery</Paragraph>
  *
  * Never put here:
+ * - The logo or the account. They sit in the header.
  * - A `footer` element, height, padding, background or border. PageLayout
  *   draws the bar.
  * - The header's links again.

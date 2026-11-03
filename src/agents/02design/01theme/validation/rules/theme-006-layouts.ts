@@ -1,15 +1,15 @@
 import type { Issue } from '../../../../../core/issues';
 import { defineRule } from '../../../../../core/rules';
 import { ACCOUNT, LOGO, positionIn } from '../../../config';
-import { spacingPx, type ThemeInput } from '../helpers';
+import { footerSlots } from '../../schema';
+import type { ThemeInput } from '../helpers';
 
 /**
  * THEME-006 · mandatory
  * In each page layout, a needed header, sidebar or footer holds something and
- * a needed sidebar has a width; a fixed container has a width; a header or
- * footer of fixed height fits a button of the default size and its padding;
- * the logo and the account sit in a needed part, named in the slot where
- * they sit: a bar's start, center or end, the sidebar's top for the logo and
+ * a needed sidebar has a width; a fixed container has a width; the logo and
+ * the account sit in a needed header or sidebar, named in the slot where they
+ * sit: the header's start, center or end, the sidebar's top for the logo and
  * its bottom for the account.
  * Pass: the reading-list app layout, a header with logo at its start and
  * "Shelf link, account" at its end.
@@ -18,12 +18,8 @@ import { spacingPx, type ThemeInput } from '../helpers';
 export const rule = defineRule<ThemeInput>(
   'THEME-006',
   'mandatory',
-  ({ theme, inventory }, fail) => {
+  ({ theme }, fail) => {
     const issues: Issue[] = [];
-    const px = spacingPx(inventory);
-    const size = theme.defaults.Button?.size || 'md';
-    const box = inventory.components.find((c) => c.name === 'Button')?.box;
-    const button = box?.[size]?.height ?? box?.md?.height ?? 0;
     for (const [kind, layout] of Object.entries(theme.layouts)) {
       const { header, sidebar, footer, main } = layout;
       const empty = (part: string) =>
@@ -33,21 +29,10 @@ export const rule = defineRule<ThemeInput>(
             `${kind}.${part}`,
           ),
         );
-      for (const [part, bar] of [
-        ['header', header],
-        ['footer', footer],
-      ] as const) {
-        if (bar.needed && !bar.start && !bar.center && !bar.end)
-          empty(part);
-        const least = button + 2 * px(bar.padding);
-        if (bar.needed && bar.heightPx > 0 && bar.heightPx < least)
-          issues.push(
-            fail(
-              `The ${kind} ${part} is ${bar.heightPx} tall, which does not fit a ${button} tall ${size} button and its padding; make it at least ${least}, or 0 to fit its content.`,
-              `${kind}.${part}.heightPx`,
-            ),
-          );
-      }
+      if (header.needed && !header.start && !header.center && !header.end)
+        empty('header');
+      if (footer.needed && !Object.values(footerSlots(footer)).some(Boolean))
+        empty('footer');
       if (sidebar.needed) {
         if (!sidebar.top && !sidebar.items && !sidebar.bottom) empty('sidebar');
         if (sidebar.widthPx <= 0)
@@ -58,11 +43,11 @@ export const rule = defineRule<ThemeInput>(
             ),
           );
       }
-      const shown = { header, sidebar, footer } as const;
+      const shown = { header, sidebar } as const;
       // Code places them in the slot that names them.
-      const named = (where: 'header' | 'sidebar' | 'footer', what: 'logo' | 'account') => {
+      const named = (where: 'header' | 'sidebar', what: 'logo' | 'account') => {
         const word = what === 'logo' ? LOGO : ACCOUNT;
-        if (where !== 'sidebar') return positionIn(shown[where], word) !== undefined;
+        if (where === 'header') return positionIn(header, word) !== undefined;
         return word.test(what === 'logo' ? sidebar.top : sidebar.bottom);
       };
       for (const [what, where] of [

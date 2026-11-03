@@ -132,9 +132,7 @@ export const PageLayout = ({
         [styles.areas]: grid.areas,
         [styles.columns]: grid.columns,
         [styles.rows]: grid.rows,
-        [styles.headerHeight]: px(
-          layout.header.needed ? layout.header.heightPx : 0,
-        ),
+        [styles.headerHeight]: px(0),
       })}
     >
       {layout.header.needed && (
@@ -146,10 +144,6 @@ export const PageLayout = ({
           data-separation={layout.header.separation}
           className={styles.header}
           style={assignInlineVars({
-            [styles.barHeight]: px(layout.header.heightPx),
-            [styles.barPadding]: layout.header.heightPx
-              ? '0px'
-              : space(layout.header.padding),
             [styles.padding]: space(layout.header.padding),
             [styles.gap]: space(layout.header.gap),
           })}
@@ -199,12 +193,10 @@ export const PageLayout = ({
         <footer
           data-ds=""
           data-separation={layout.footer.separation}
+          // A site's footer stacks its lines; an app's holds one row.
+          data-lines={flag('content' in layout.footer)}
           className={styles.footer}
           style={assignInlineVars({
-            [styles.barHeight]: px(layout.footer.heightPx),
-            [styles.barPadding]: layout.footer.heightPx
-              ? '0px'
-              : space(layout.footer.padding),
             [styles.padding]: space(layout.footer.padding),
             [styles.gap]: space(layout.footer.gap),
           })}
