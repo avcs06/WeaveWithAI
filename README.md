@@ -10,6 +10,8 @@ models.
 - **Input:** [a ceramics studio in Jaipur, in the owner's own words](fixtures/ideas/ecommerce-store.md).
 - **Output:** Jaipur Studio Ceramics, 18 screens in 2 h 20 min for $4.39, with
   0 axe violations against WCAG 2.2 AA. See [Example runs](#example-runs).
+- **Scope:** the generated apps are frontend only for now. Their data lives
+  in stores in the browser, behind a mock API, and sign-in is simulated.
 - **Try it:** [Run it yourself](#run-it-yourself).
 
 > The coding harness is Muse Code, Meta's coding agent. The model inside is
@@ -146,7 +148,8 @@ OpenCode instead of Muse Code.
 ## Example runs
 
 Three idea briefs from `fixtures/ideas`, each run end to end on Nov 4, 2026.
-The apps were measured on their dev servers. The generated apps are in
+The apps were measured on their dev servers. They are frontend only, on a
+mock backend in the browser. The generated apps are in
 [WeaveWithAIExamples](https://github.com/avcs06/WeaveWithAIExamples).
 
 |                                     | Jaipur Studio Ceramics                                  | SoloStudio                                                        | DashForge                                                 |
