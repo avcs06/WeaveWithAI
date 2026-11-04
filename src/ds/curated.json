@@ -1,0 +1,11 @@
+{
+  "extra": [
+    {
+      "name": "Toast",
+      "category": "Toast",
+      "description": "A short message after an action, shown over the page and gone by itself: saved, published, failed. Called from code with `toast()`, not placed on a screen.",
+      "variants": { "status": ["success", "error", "warning", "info"] },
+      "defaults": { "status": "info" }
+    }
+  ]
+}

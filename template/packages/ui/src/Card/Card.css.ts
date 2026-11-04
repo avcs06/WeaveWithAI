@@ -1,0 +1,86 @@
+import { tokens } from '@packages/styles/tokens.css';
+import { disabledColor, focusRing } from '@packages/styles/utils';
+import { createVar, style, styleVariants } from '@vanilla-extract/css';
+
+export const cardText = createVar('cardText');
+export const cardBg = createVar('cardBg');
+export const cardBgHover = createVar('cardBgHover');
+export const cardBgActive = createVar('cardBgActive');
+export const cardBorder = createVar('cardBorder');
+export const cardShadow = createVar('cardShadow');
+export const cardActiveText = createVar('cardActiveText');
+export const cardActiveBg = createVar('cardActiveBg');
+export const cardActiveBgHover = createVar('cardActiveBgHover');
+export const cardActiveBorder = createVar('cardActiveBorder');
+export const cardActiveBoxShadow = createVar('cardActiveBoxShadow');
+export const cardFocusColor = createVar('cardFocusColor');
+export const cardActiveFocusColor = createVar('cardActiveFocusColor');
+
+export const card = style({
+  paddingInline: tokens.spacing[5],
+  paddingBlock: tokens.spacing[4],
+  borderRadius: tokens.radius.surface,
+  border: '1px solid',
+  borderColor: cardBorder,
+  background: cardBg,
+  color: cardText,
+  boxShadow: cardShadow,
+  outline: 'none',
+  transition:
+    'background 140ms ease, border-color 140ms ease, box-shadow 140ms ease',
+  selectors: {
+    '&[data-clickable]:not([data-disabled])': {
+      cursor: 'pointer',
+    },
+    '&[data-clickable]:not([data-disabled]):hover': {
+      background: cardBgHover,
+    },
+    '&[data-clickable]:not([data-disabled]):active': {
+      background: cardBgActive,
+      ...focusRing(cardFocusColor, cardShadow),
+    },
+    '&:focus-visible': {
+      ...focusRing(cardFocusColor, cardShadow),
+    },
+    '&[data-state="checked"]': {
+      color: cardActiveText,
+      background: cardActiveBg,
+      borderColor: cardActiveBorder,
+      boxShadow: `${cardActiveBoxShadow}, ${cardShadow}`,
+    },
+    '&[data-state="checked"]:not([data-disabled]):hover': {
+      background: cardActiveBgHover,
+    },
+    '&[data-state="checked"]:focus-visible': {
+      ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
+    },
+    '&[data-state="checked"]:not([data-disabled]):active': {
+      ...focusRing(cardActiveFocusColor, cardActiveBoxShadow, cardShadow),
+    },
+    '&[data-disabled]': {
+      color: disabledColor(cardText),
+      background: disabledColor(cardBg),
+      borderColor: disabledColor(cardBorder),
+      cursor: 'default',
+    },
+    '&[data-disabled][data-state="checked"]': {
+      color: disabledColor(cardActiveText),
+      background: disabledColor(cardActiveBg),
+      borderColor: disabledColor(cardActiveBorder),
+      boxShadow: `inset 0 0 0 1px ${disabledColor(cardActiveBorder)}, ${cardShadow}`,
+    },
+  },
+});
+
+// As many columns as fit at 280px, the width a card's title and a photo need;
+// one column on a narrower screen.
+export const cardGrid = style({
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
+});
+
+// A fixed set's column count, which divides the set; after cardGrid, so it
+// wins. One column on a phone, where the columns would be too narrow.
+export const fixedColumns = styleVariants({ 2: 2, 3: 3, 4: 4 }, (count) => ({
+  gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))`,
+  '@media': { '(max-width: 639px)': { gridTemplateColumns: 'minmax(0, 1fr)' } },
+}));

@@ -1,0 +1,3409 @@
+[
+  {
+    "name": "Inter",
+    "googleName": "Inter",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 2,
+    "description": "A screen-tuned neo-grotesque close to Helvetica; neutral, suits UI text and headings."
+  },
+  {
+    "name": "Roboto",
+    "googleName": "Roboto",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 2,
+    "description": "Google's neo-grotesque sans close to Helvetica, neutral and clear, for UI text and headings."
+  },
+  {
+    "name": "Montserrat",
+    "googleName": "Montserrat",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 3,
+    "description": "A wide geometric sans close to Gotham, urban and confident; suits UI and headings."
+  },
+  {
+    "name": "Open Sans",
+    "googleName": "Open_Sans",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 3,
+    "description": "A clear, neutral humanist sans and common web default; suits UI text and headings."
+  },
+  {
+    "name": "Google Sans",
+    "googleName": "Google_Sans",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 4,
+    "description": "Google's geometric product sans with friendly round forms; suits UI text and headings."
+  },
+  {
+    "name": "Roboto Condensed",
+    "googleName": "Roboto_Condensed",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 6,
+    "description": "A condensed Roboto, compact and neutral, for headings and dense UI text."
+  },
+  {
+    "name": "Poppins",
+    "googleName": "Poppins",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 7,
+    "description": "A geometric sans close to Futura, round and friendly, for UI text and headings."
+  },
+  {
+    "name": "Lato",
+    "googleName": "Lato",
+    "weights": [
+      "100",
+      "300",
+      "400",
+      "700",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 8,
+    "description": "A warm, semi-rounded humanist sans; friendly and clear, suits UI text and headings."
+  },
+  {
+    "name": "Noto Sans",
+    "googleName": "Noto_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 9,
+    "description": "A neutral humanist sans close to Open Sans with huge script coverage; suits both."
+  },
+  {
+    "name": "Noto Sans JP",
+    "googleName": "Noto_Sans_JP",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 9,
+    "description": "A clean Japanese gothic sans from Source Han; suits UI text and headings."
+  },
+  {
+    "name": "Roboto Mono",
+    "googleName": "Roboto_Mono",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 9,
+    "description": "A monospaced Roboto, neutral and even, for code."
+  },
+  {
+    "name": "DM Sans",
+    "googleName": "DM_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 10,
+    "description": "Low-contrast geometric sans derived from Poppins; clean, modern; suits UI text and headings."
+  },
+  {
+    "name": "Libre Baskerville",
+    "googleName": "Libre_Baskerville",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 10,
+    "description": "A Baskerville serif tuned for screens; classic and readable, suits body text and headings."
+  },
+  {
+    "name": "Arimo",
+    "googleName": "Arimo",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 11,
+    "description": "Neutral grotesque metrically compatible with Arial; plain, familiar; suits UI text."
+  },
+  {
+    "name": "Playfair Display",
+    "googleName": "Playfair_Display",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 11,
+    "description": "A high-contrast Didone-like serif with elegant, editorial feel; for headings."
+  },
+  {
+    "name": "Rubik",
+    "googleName": "Rubik",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 11,
+    "description": "A sans with slightly rounded corners, friendly and modern, for UI text and headings."
+  },
+  {
+    "name": "Lora",
+    "googleName": "Lora",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 12,
+    "description": "A contemporary calligraphic serif with moderate contrast; readable, suits body text and headings."
+  },
+  {
+    "name": "Nunito",
+    "googleName": "Nunito",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 12,
+    "description": "A friendly rounded sans close to VAG Rounded; suits UI text and headings."
+  },
+  {
+    "name": "Changa One",
+    "googleName": "Changa_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 13,
+    "description": "Heavy, rounded display with a bold retro feel; suits headings."
+  },
+  {
+    "name": "Nunito Sans",
+    "googleName": "Nunito_Sans",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 13,
+    "description": "Nunito without rounded ends, a clean geometric sans near Avenir; suits UI and headings."
+  },
+  {
+    "name": "Outfit",
+    "googleName": "Outfit",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 15,
+    "description": "A geometric sans with clean, modern feel close to Futura; suits UI and headings."
+  },
+  {
+    "name": "Ubuntu",
+    "googleName": "Ubuntu",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 15,
+    "description": "The Ubuntu humanist sans with curved details, friendly, for UI text."
+  },
+  {
+    "name": "Merriweather",
+    "googleName": "Merriweather",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 16,
+    "description": "A sturdy, screen-friendly text serif with large x-height; suits body text and headings."
+  },
+  {
+    "name": "Oswald",
+    "googleName": "Oswald",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 16,
+    "description": "A condensed gothic sans close to Alternate Gothic with bold feel; for headings."
+  },
+  {
+    "name": "Anton",
+    "googleName": "Anton",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 17,
+    "description": "Heavy condensed grotesque close to Impact; loud poster feel; suits headings only."
+  },
+  {
+    "name": "Kanit",
+    "googleName": "Kanit",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 17,
+    "description": "A Thai-Latin sans with loopless, squarish forms; modern, suits headings and UI text."
+  },
+  {
+    "name": "Noto Sans KR",
+    "googleName": "Noto_Sans_KR",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 18,
+    "description": "A clean Korean gothic sans from Source Han; suits UI text and headings."
+  },
+  {
+    "name": "JetBrains Mono",
+    "googleName": "JetBrains_Mono",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 19,
+    "description": "A monospace with tall x-height and code ligatures; clear, suits code."
+  },
+  {
+    "name": "Archivo",
+    "googleName": "Archivo",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 20,
+    "description": "Grotesque sans for print and screen; solid, neutral; suits UI text and headings."
+  },
+  {
+    "name": "Raleway",
+    "googleName": "Raleway",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 20,
+    "description": "A refined geometric sans with thin weights, light and stylized, for headings and UI."
+  },
+  {
+    "name": "Noto Sans TC",
+    "googleName": "Noto_Sans_TC",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 21,
+    "description": "A clean Traditional Chinese gothic sans from Source Han; suits UI and headings."
+  },
+  {
+    "name": "IBM Plex Sans",
+    "googleName": "IBM_Plex_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 22,
+    "description": "IBM's neo-grotesque corporate sans with engineered details; suits UI text and headings."
+  },
+  {
+    "name": "Jost",
+    "googleName": "Jost",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 23,
+    "description": "A geometric sans closely based on Futura; clean, suits headings and UI text."
+  },
+  {
+    "name": "Noto Serif JP",
+    "googleName": "Noto_Serif_JP",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 23,
+    "description": "A refined Japanese mincho serif from Source Han; suits reading text and headings."
+  },
+  {
+    "name": "Roboto Slab",
+    "googleName": "Roboto_Slab",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 23,
+    "description": "A slab serif companion to Roboto, sturdy and mechanical, for headings."
+  },
+  {
+    "name": "Inconsolata",
+    "googleName": "Inconsolata",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 24,
+    "description": "A humanist monospace inspired by Consolas; clear and legible, suits code."
+  },
+  {
+    "name": "Manrope",
+    "googleName": "Manrope",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 25,
+    "description": "A modern geometric-grotesque sans with semi-condensed forms; clean, suits UI text and headings."
+  },
+  {
+    "name": "Barlow",
+    "googleName": "Barlow",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 26,
+    "description": "Slightly rounded grotesque inspired by California signage; clean; suits UI text and headings."
+  },
+  {
+    "name": "Saira",
+    "googleName": "Saira",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 26,
+    "description": "A squarish sans with technical, sporty forms, for headings and UI text."
+  },
+  {
+    "name": "Schibsted Grotesk",
+    "googleName": "Schibsted_Grotesk",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 26,
+    "description": "A crisp news-media grotesque, neutral and confident, for UI text and headings."
+  },
+  {
+    "name": "Black Ops One",
+    "googleName": "Black_Ops_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 27,
+    "description": "Military stencil display with bold, gritty forms; suits headings only."
+  },
+  {
+    "name": "Bricolage Grotesque",
+    "googleName": "Bricolage_Grotesque",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 28,
+    "description": "Quirky grotesque with ink traps and optical sizes; characterful; suits headings and UI text."
+  },
+  {
+    "name": "Heebo",
+    "googleName": "Heebo",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 29,
+    "description": "A Hebrew-Latin sans extending Roboto; neutral and clean, suits UI text and headings."
+  },
+  {
+    "name": "Plus Jakarta Sans",
+    "googleName": "Plus_Jakarta_Sans",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 29,
+    "description": "A geometric sans inspired by Neuzeit Grotesk, modern and friendly; suits UI and headings."
+  },
+  {
+    "name": "Noto Serif",
+    "googleName": "Noto_Serif",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 30,
+    "description": "A sturdy, neutral book serif with huge script coverage; suits reading text and headings."
+  },
+  {
+    "name": "Share Tech",
+    "googleName": "Share_Tech",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 31,
+    "description": "A squared techno sans with a digital feel, for headings."
+  },
+  {
+    "name": "Work Sans",
+    "googleName": "Work_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 31,
+    "description": "A grotesque sans with early-Grotesk roots, clean, for UI text and headings."
+  },
+  {
+    "name": "Figtree",
+    "googleName": "Figtree",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 32,
+    "description": "A clean geometric sans near Gilroy; friendly, clear, suits UI text and headings."
+  },
+  {
+    "name": "Roboto Flex",
+    "googleName": "Roboto_Flex",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 32,
+    "description": "A variable Roboto with width and optical axes, neutral, for UI text and headings."
+  },
+  {
+    "name": "Smooch Sans",
+    "googleName": "Smooch_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 32,
+    "description": "A condensed sans with a retro poster feel, for headings."
+  },
+  {
+    "name": "Bebas Neue",
+    "googleName": "Bebas_Neue",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 33,
+    "description": "All-caps condensed sans with a bold poster feel; suits headings only."
+  },
+  {
+    "name": "Dancing Script",
+    "googleName": "Dancing_Script",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 33,
+    "description": "Lively, bouncy casual script; friendly; suits decorative headings."
+  },
+  {
+    "name": "IBM Plex Mono",
+    "googleName": "IBM_Plex_Mono",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 33,
+    "description": "IBM's grotesque-based monospace with engineered forms; clear, suits code."
+  },
+  {
+    "name": "Archivo Black",
+    "googleName": "Archivo_Black",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 34,
+    "description": "Heavy grotesque sans with a strong poster feel; suits headings."
+  },
+  {
+    "name": "Libre Franklin",
+    "googleName": "Libre_Franklin",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 35,
+    "description": "A Franklin Gothic revival; sturdy American grotesque, suits headings and UI text."
+  },
+  {
+    "name": "Noto Sans SC",
+    "googleName": "Noto_Sans_SC",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 36,
+    "description": "A clean Simplified Chinese gothic sans from Source Han; suits UI and headings."
+  },
+  {
+    "name": "PT Sans",
+    "googleName": "PT_Sans",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 37,
+    "description": "A humanist sans with Russian roots, neutral and readable, for UI text."
+  },
+  {
+    "name": "Public Sans",
+    "googleName": "Public_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 37,
+    "description": "A neutral sans based on Libre Franklin, plain and clear, for UI text."
+  },
+  {
+    "name": "Crimson Pro",
+    "googleName": "Crimson_Pro",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 38,
+    "description": "Old-style book serif in the Garamond tradition; literary; suits UI text and headings."
+  },
+  {
+    "name": "Zeyada",
+    "googleName": "Zeyada",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 38,
+    "description": "A loose casual handwriting face, informal, for headings."
+  },
+  {
+    "name": "Instrument Serif",
+    "googleName": "Instrument_Serif",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 39,
+    "description": "A condensed, high-contrast display serif; editorial and refined, suits headings."
+  },
+  {
+    "name": "Mulish",
+    "googleName": "Mulish",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 40,
+    "description": "A clean minimalist sans with open, airy forms; suits UI text and headings."
+  },
+  {
+    "name": "Quicksand",
+    "googleName": "Quicksand",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 41,
+    "description": "A rounded geometric sans, soft and friendly, for headings and light UI text."
+  },
+  {
+    "name": "Cairo",
+    "googleName": "Cairo",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 42,
+    "description": "Arabic and Latin sans with contemporary geometric forms; suits UI text and headings."
+  },
+  {
+    "name": "Source Sans 3",
+    "googleName": "Source_Sans_3",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 42,
+    "description": "Adobe's humanist sans, neutral and readable, for UI text."
+  },
+  {
+    "name": "Josefin Sans",
+    "googleName": "Josefin_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 43,
+    "description": "An elegant vintage geometric sans close to Futura; suits headings and short text."
+  },
+  {
+    "name": "Geist",
+    "googleName": "Geist",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 44,
+    "description": "A crisp Swiss-style sans by Vercel, close to Inter; suits UI text and headings."
+  },
+  {
+    "name": "Domine",
+    "googleName": "Domine",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 45,
+    "description": "Sturdy text serif made for screen body text; solid; suits UI text and headings."
+  },
+  {
+    "name": "Fjalla One",
+    "googleName": "Fjalla_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 45,
+    "description": "A condensed bold sans for headlines, similar to Oswald; strong, suits headings."
+  },
+  {
+    "name": "Prompt",
+    "googleName": "Prompt",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 45,
+    "description": "Loopless Thai and Latin geometric sans, clean and modern, for UI text and headings."
+  },
+  {
+    "name": "Urbanist",
+    "googleName": "Urbanist",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 46,
+    "description": "A geometric sans with clean, modern forms, for UI text and headings."
+  },
+  {
+    "name": "DM Serif Display",
+    "googleName": "DM_Serif_Display",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 47,
+    "description": "High-contrast transitional serif for large sizes; refined; suits headings."
+  },
+  {
+    "name": "Lexend",
+    "googleName": "Lexend",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 48,
+    "description": "A readability-focused sans with wide spacing, close to Futura; clear, suits UI text."
+  },
+  {
+    "name": "Space Grotesk",
+    "googleName": "Space_Grotesk",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 49,
+    "description": "A quirky grotesque sans derived from Space Mono, for headings and UI text."
+  },
+  {
+    "name": "Cabin",
+    "googleName": "Cabin",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 50,
+    "description": "Humanist sans inspired by Gill Sans and Johnston; friendly; suits UI text and headings."
+  },
+  {
+    "name": "Fira Sans",
+    "googleName": "Fira_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 50,
+    "description": "A humanist sans close to FF Meta; warm, legible, suits UI text and headings."
+  },
+  {
+    "name": "Rajdhani",
+    "googleName": "Rajdhani",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 51,
+    "description": "A squarish condensed sans with a technical feel, for headings and compact UI text."
+  },
+  {
+    "name": "Karla",
+    "googleName": "Karla",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 51,
+    "description": "A quirky grotesque sans with compact forms; friendly, suits UI text and headings."
+  },
+  {
+    "name": "Nanum Gothic",
+    "googleName": "Nanum_Gothic",
+    "weights": [
+      "400",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 52,
+    "description": "A clean, neutral Korean gothic sans with plain Latin; suits UI and headings."
+  },
+  {
+    "name": "Source Serif 4",
+    "googleName": "Source_Serif_4",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 53,
+    "description": "Adobe's transitional serif with optical sizes, calm, for UI text and headings."
+  },
+  {
+    "name": "Cormorant Garamond",
+    "googleName": "Cormorant_Garamond",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 54,
+    "description": "Garamond-style Cormorant for larger text; refined, literary; suits headings and UI text."
+  },
+  {
+    "name": "Noto Sans Telugu",
+    "googleName": "Noto_Sans_Telugu",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 55,
+    "description": "A neutral Noto sans for the Telugu script; suits UI text and headings."
+  },
+  {
+    "name": "Red Hat Display",
+    "googleName": "Red_Hat_Display",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 55,
+    "description": "A geometric-leaning grotesque from Red Hat, crisp and modern, for headings."
+  },
+  {
+    "name": "Gelasio",
+    "googleName": "Gelasio",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 56,
+    "description": "A serif metric-compatible with Georgia; sturdy and readable, suits body text and headings."
+  },
+  {
+    "name": "Ramabhadra",
+    "googleName": "Ramabhadra",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 56,
+    "description": "A Telugu and Latin sans with bold, sturdy strokes, for headings."
+  },
+  {
+    "name": "Tajawal",
+    "googleName": "Tajawal",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 57,
+    "description": "An Arabic and Latin geometric sans, clean and modern, for UI text."
+  },
+  {
+    "name": "Google Sans Flex",
+    "googleName": "Google_Sans_Flex",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 58,
+    "description": "Google Sans with width and optical size axes; friendly, suits UI text and headings."
+  },
+  {
+    "name": "Syne",
+    "googleName": "Syne",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 58,
+    "description": "A geometric sans that widens with weight, artsy and bold, for headings."
+  },
+  {
+    "name": "Titillium Web",
+    "googleName": "Titillium_Web",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "600",
+      "700",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 58,
+    "description": "A squarish semi-technical sans from Italy, modern, for UI text and headings."
+  },
+  {
+    "name": "Barlow Condensed",
+    "googleName": "Barlow_Condensed",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 59,
+    "description": "Condensed Barlow with a highway-sign feel; compact; suits headings and labels."
+  },
+  {
+    "name": "Lobster",
+    "googleName": "Lobster",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 59,
+    "description": "A bold, connected retro script; casual and loud, suits headings only."
+  },
+  {
+    "name": "Noto Sans Khmer",
+    "googleName": "Noto_Sans_Khmer",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 59,
+    "description": "A neutral Noto sans for the Khmer script; suits UI text and headings."
+  },
+  {
+    "name": "Chakra Petch",
+    "googleName": "Chakra_Petch",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 60,
+    "description": "Squared Thai and Latin sans with a techy feel; suits headings and UI text."
+  },
+  {
+    "name": "M PLUS Rounded 1c",
+    "googleName": "M_PLUS_Rounded_1c",
+    "weights": [
+      "100",
+      "300",
+      "400",
+      "500",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 60,
+    "description": "A Japanese-Latin rounded sans; soft and friendly, suits UI text and headings."
+  },
+  {
+    "name": "Source Code Pro",
+    "googleName": "Source_Code_Pro",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 60,
+    "description": "Adobe's monospace companion to Source Sans, clean and legible, for code."
+  },
+  {
+    "name": "Cinzel",
+    "googleName": "Cinzel",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 61,
+    "description": "All-caps serif from Roman inscriptions, close to Trajan; classical; suits headings."
+  },
+  {
+    "name": "Inter Tight",
+    "googleName": "Inter_Tight",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 61,
+    "description": "A tightly spaced Inter for large sizes; neutral and crisp, suits headings."
+  },
+  {
+    "name": "Noto Serif SC",
+    "googleName": "Noto_Serif_SC",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 61,
+    "description": "A refined Simplified Chinese Song serif from Source Han; suits text and headings."
+  },
+  {
+    "name": "Kalam",
+    "googleName": "Kalam",
+    "weights": [
+      "300",
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 62,
+    "description": "A Devanagari-Latin informal handwriting face; casual, suits short headings and notes."
+  },
+  {
+    "name": "Oxygen",
+    "googleName": "Oxygen",
+    "weights": [
+      "300",
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 62,
+    "description": "A clean humanist sans made for KDE, clear on screens; suits UI and headings."
+  },
+  {
+    "name": "PT Serif",
+    "googleName": "PT_Serif",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 62,
+    "description": "A transitional serif with sturdy forms, calm and readable, for UI text and headings."
+  },
+  {
+    "name": "League Spartan",
+    "googleName": "League_Spartan",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 63,
+    "description": "A bold geometric sans close to Futura; strong, suits headings and UI text."
+  },
+  {
+    "name": "Overpass",
+    "googleName": "Overpass",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 63,
+    "description": "A plain sans based on Highway Gothic signage, clear and open; suits UI, headings."
+  },
+  {
+    "name": "Hind",
+    "googleName": "Hind",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 65,
+    "description": "A Devanagari-Latin humanist sans with clean forms; neutral, suits UI text and headings."
+  },
+  {
+    "name": "Fraunces",
+    "googleName": "Fraunces",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 66,
+    "description": "A soft, wonky old-style serif inspired by Windsor and Cooper; expressive, suits headings."
+  },
+  {
+    "name": "Slabo 27px",
+    "googleName": "Slabo_27px",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 66,
+    "description": "A slab serif tuned for 27px screen sizes, sturdy and crisp, for headings."
+  },
+  {
+    "name": "Merriweather Sans",
+    "googleName": "Merriweather_Sans",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 67,
+    "description": "A humanist sans companion to Merriweather; sturdy and clear, suits UI text and headings."
+  },
+  {
+    "name": "Zen Kaku Gothic New",
+    "googleName": "Zen_Kaku_Gothic_New",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "700",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 67,
+    "description": "A modern Japanese gothic sans, clean and neutral, for UI text."
+  },
+  {
+    "name": "Golos Text",
+    "googleName": "Golos_Text",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 68,
+    "description": "A neutral grotesque sans designed for interfaces; clear and plain, suits UI text."
+  },
+  {
+    "name": "Pacifico",
+    "googleName": "Pacifico",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 68,
+    "description": "A bold, round surf-style brush script with relaxed feel; for headings only."
+  },
+  {
+    "name": "Epilogue",
+    "googleName": "Epilogue",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 69,
+    "description": "Grotesque sans with a sharp, editorial feel; suits headings and UI text."
+  },
+  {
+    "name": "Press Start 2P",
+    "googleName": "Press_Start_2P",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 69,
+    "description": "A blocky 8-bit pixel face from arcade games, retro and loud, for headings."
+  },
+  {
+    "name": "DM Mono",
+    "googleName": "DM_Mono",
+    "weights": [
+      "300",
+      "400",
+      "500"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 70,
+    "description": "Monospace companion to DM Sans; geometric, clean; suits code."
+  },
+  {
+    "name": "EB Garamond",
+    "googleName": "EB_Garamond",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 70,
+    "description": "Faithful Garamond revival; classic, literary; suits UI text and headings."
+  },
+  {
+    "name": "Space Mono",
+    "googleName": "Space_Mono",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 72,
+    "description": "A geometric monospace with retro-futurist flavor, for code and headings."
+  },
+  {
+    "name": "PT Sans Narrow",
+    "googleName": "PT_Sans_Narrow",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 73,
+    "description": "A condensed PT Sans, compact and neutral, for headings and dense UI text."
+  },
+  {
+    "name": "Sora",
+    "googleName": "Sora",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 73,
+    "description": "A geometric sans with wide, techy forms, for headings and UI text."
+  },
+  {
+    "name": "Comfortaa",
+    "googleName": "Comfortaa",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 74,
+    "description": "Rounded geometric display sans; soft, friendly; suits headings and short UI text."
+  },
+  {
+    "name": "Bungee",
+    "googleName": "Bungee",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 75,
+    "description": "Bold signage-inspired display that also sets vertically; urban, loud; suits headings."
+  },
+  {
+    "name": "Maven Pro",
+    "googleName": "Maven_Pro",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 76,
+    "description": "A geometric sans with rounded, slightly squarish curves; clean, suits UI text and headings."
+  },
+  {
+    "name": "Caveat",
+    "googleName": "Caveat",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 77,
+    "description": "Quick, casual handwriting; personal, informal; suits annotations and decorative headings."
+  },
+  {
+    "name": "Teko",
+    "googleName": "Teko",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 77,
+    "description": "A condensed squarish sans, bold and sporty, for headings."
+  },
+  {
+    "name": "Abel",
+    "googleName": "Abel",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 78,
+    "description": "Thin, condensed sans with a clean modern feel; suits headings and short labels."
+  },
+  {
+    "name": "Acme",
+    "googleName": "Acme",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 78,
+    "description": "Bold, condensed sans from cartoon lettering; casual, punchy; suits headings."
+  },
+  {
+    "name": "Satisfy",
+    "googleName": "Satisfy",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 79,
+    "description": "A casual brush script with a retro feel, for headings."
+  },
+  {
+    "name": "Questrial",
+    "googleName": "Questrial",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 80,
+    "description": "A geometric sans close to Avant Garde, clean and simple, for UI and headings."
+  },
+  {
+    "name": "Assistant",
+    "googleName": "Assistant",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 81,
+    "description": "Hebrew and Latin sans based on Source Sans; clean, neutral; suits UI text."
+  },
+  {
+    "name": "Be Vietnam Pro",
+    "googleName": "Be_Vietnam_Pro",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 81,
+    "description": "Neo-grotesque with geometric touches and full Vietnamese support; clean; suits UI text and headings."
+  },
+  {
+    "name": "Belleza",
+    "googleName": "Belleza",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 81,
+    "description": "Light humanist sans inspired by fashion lettering; graceful; suits headings."
+  },
+  {
+    "name": "Almarai",
+    "googleName": "Almarai",
+    "weights": [
+      "300",
+      "400",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 82,
+    "description": "Clean Arabic and Latin sans; modern, neutral; suits UI text and headings."
+  },
+  {
+    "name": "Bitter",
+    "googleName": "Bitter",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 82,
+    "description": "Contemporary slab serif designed for screens; sturdy, readable; suits UI text and headings."
+  },
+  {
+    "name": "Slabo 13px",
+    "googleName": "Slabo_13px",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 82,
+    "description": "A slab serif tuned for 13px screen text, sturdy, for UI text."
+  },
+  {
+    "name": "Lilita One",
+    "googleName": "Lilita_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 83,
+    "description": "A bold, rounded display sans; friendly and punchy, suits headings only."
+  },
+  {
+    "name": "Zilla Slab",
+    "googleName": "Zilla_Slab",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 84,
+    "description": "Mozilla's contemporary slab serif, firm and readable, for UI text and headings."
+  },
+  {
+    "name": "M PLUS 1p",
+    "googleName": "M_PLUS_1p",
+    "weights": [
+      "100",
+      "300",
+      "400",
+      "500",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 85,
+    "description": "A Japanese-Latin sans with clean, modern forms; neutral, suits UI text and headings."
+  },
+  {
+    "name": "IBM Plex Sans Arabic",
+    "googleName": "IBM_Plex_Sans_Arabic",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 86,
+    "description": "Arabic-Latin IBM Plex Sans; engineered and neutral, suits UI text and headings."
+  },
+  {
+    "name": "Lobster Two",
+    "googleName": "Lobster_Two",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 86,
+    "description": "A lighter, more legible Lobster script; retro, suits headings only."
+  },
+  {
+    "name": "Saira Condensed",
+    "googleName": "Saira_Condensed",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 88,
+    "description": "A condensed Saira, squarish and technical, for headings."
+  },
+  {
+    "name": "Unbounded",
+    "googleName": "Unbounded",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 89,
+    "description": "A wide rounded geometric sans, bold and futuristic, for headings."
+  },
+  {
+    "name": "Alegreya Sans",
+    "googleName": "Alegreya_Sans",
+    "weights": [
+      "100",
+      "300",
+      "400",
+      "500",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 90,
+    "description": "Humanist sans with calligraphic roots, pairs with Alegreya; warm; suits UI text and headings."
+  },
+  {
+    "name": "Marcellus",
+    "googleName": "Marcellus",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 90,
+    "description": "A flared, Trajan-inspired serif; classical and stately, suits headings."
+  },
+  {
+    "name": "Mukta",
+    "googleName": "Mukta",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 90,
+    "description": "A humanist sans for Devanagari and Latin, clear and friendly; suits UI and headings."
+  },
+  {
+    "name": "Alfa Slab One",
+    "googleName": "Alfa_Slab_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 91,
+    "description": "Heavy contemporary slab close to Rockwell Extra Bold; loud poster feel; suits headings."
+  },
+  {
+    "name": "Courier Prime",
+    "googleName": "Courier_Prime",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 91,
+    "description": "Refined Courier made for screenplays; typewriter monospace; suits code."
+  },
+  {
+    "name": "Lexend Deca",
+    "googleName": "Lexend_Deca",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 91,
+    "description": "Lexend sans with standard tracking; readability-focused and clear, suits UI text and headings."
+  },
+  {
+    "name": "Spectral",
+    "googleName": "Spectral",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 92,
+    "description": "A screen-first serif with sharp, refined forms, for UI text and headings."
+  },
+  {
+    "name": "IBM Plex Serif",
+    "googleName": "IBM_Plex_Serif",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 93,
+    "description": "IBM's Plex serif with sturdy, engineered slab-like details; suits body text and headings."
+  },
+  {
+    "name": "Play",
+    "googleName": "Play",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 94,
+    "description": "A squarish, techy sans with clean digital feel; suits UI and headings."
+  },
+  {
+    "name": "Volkhov",
+    "googleName": "Volkhov",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 94,
+    "description": "A sturdy serif with low contrast and a large x-height, for UI text."
+  },
+  {
+    "name": "Abril Fatface",
+    "googleName": "Abril_Fatface",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 95,
+    "description": "Heavy high-contrast Didone display close to Bodoni Poster; dramatic, editorial; suits headings."
+  },
+  {
+    "name": "Newsreader",
+    "googleName": "Newsreader",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 95,
+    "description": "An editorial serif with optical sizes and calm, newsy feel; suits text and headings."
+  },
+  {
+    "name": "Comic Relief",
+    "googleName": "Comic_Relief",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 96,
+    "description": "Display metrically compatible with Comic Sans; casual, friendly; suits headings and short UI text."
+  },
+  {
+    "name": "Dosis",
+    "googleName": "Dosis",
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 96,
+    "description": "Rounded, narrow sans with a soft, friendly feel; suits headings and UI text."
+  },
+  {
+    "name": "Permanent Marker",
+    "googleName": "Permanent_Marker",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 96,
+    "description": "A bold felt-marker handwriting with energetic, casual feel; for headings only."
+  },
+  {
+    "name": "Cormorant",
+    "googleName": "Cormorant",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "display",
+    "popularity": 97,
+    "description": "Garamond-inspired display serif with high contrast; graceful; suits headings."
+  },
+  {
+    "name": "Hind Siliguri",
+    "googleName": "Hind_Siliguri",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 97,
+    "description": "Bengali-Latin Hind, a clean humanist sans; neutral, suits UI text and headings."
+  },
+  {
+    "name": "Noto Sans Bengali",
+    "googleName": "Noto_Sans_Bengali",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 97,
+    "description": "A neutral Noto sans for the Bengali script; suits UI text and headings."
+  },
+  {
+    "name": "Fredoka",
+    "googleName": "Fredoka",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 98,
+    "description": "A rounded, bubbly sans with soft terminals; friendly, suits playful headings and UI text."
+  },
+  {
+    "name": "Sawarabi Gothic",
+    "googleName": "Sawarabi_Gothic",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 98,
+    "description": "A Japanese gothic sans, plain and clean, for UI text."
+  },
+  {
+    "name": "Signika Negative",
+    "googleName": "Signika_Negative",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 98,
+    "description": "Signika tuned for light text on dark backgrounds, clear, for UI text."
+  },
+  {
+    "name": "Varela Round",
+    "googleName": "Varela_Round",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 98,
+    "description": "A rounded sans with soft terminals, friendly, for UI text and headings."
+  },
+  {
+    "name": "Sofia Sans",
+    "googleName": "Sofia_Sans",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 99,
+    "description": "A humanist-geometric sans, clean and friendly, for UI text and headings."
+  },
+  {
+    "name": "Geologica",
+    "googleName": "Geologica",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 100,
+    "description": "A geometric-humanist sans with crisp, open forms; clear, suits UI text and headings."
+  },
+  {
+    "name": "Instrument Sans",
+    "googleName": "Instrument_Sans",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 101,
+    "description": "A precise grotesque sans with balanced proportions; clean, suits UI text and headings."
+  },
+  {
+    "name": "Nanum Myeongjo",
+    "googleName": "Nanum_Myeongjo",
+    "weights": [
+      "400",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 101,
+    "description": "A Korean myeongjo serif with classic brush contrast; suits reading text and headings."
+  },
+  {
+    "name": "Anek Telugu",
+    "googleName": "Anek_Telugu",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 102,
+    "description": "Variable-width Telugu and Latin sans; clean, modern; suits UI text and headings."
+  },
+  {
+    "name": "Frank Ruhl Libre",
+    "googleName": "Frank_Ruhl_Libre",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 102,
+    "description": "A Hebrew-Latin old-style serif with classic book feel; suits body text and headings."
+  },
+  {
+    "name": "Lalezar",
+    "googleName": "Lalezar",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 102,
+    "description": "An Arabic-Latin heavy display sans with bold, compact forms; suits headings only."
+  },
+  {
+    "name": "Tektur",
+    "googleName": "Tektur",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 103,
+    "description": "A squarish techno display face, futuristic and angular, for headings."
+  },
+  {
+    "name": "Noto Kufi Arabic",
+    "googleName": "Noto_Kufi_Arabic",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 104,
+    "description": "A geometric Kufi-style Arabic sans from Noto with modern feel; suits UI and headings."
+  },
+  {
+    "name": "Sarabun",
+    "googleName": "Sarabun",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 105,
+    "description": "A Thai and Latin humanist sans, clear and modest, for UI text."
+  },
+  {
+    "name": "Gravitas One",
+    "googleName": "Gravitas_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 106,
+    "description": "A fat-face Didone display face with extreme contrast; bold, suits large headings only."
+  },
+  {
+    "name": "Orbitron",
+    "googleName": "Orbitron",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 106,
+    "description": "A squared geometric sans with sci-fi, futuristic feel; for headings only."
+  },
+  {
+    "name": "Cardo",
+    "googleName": "Cardo",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 107,
+    "description": "Scholarly old-style serif with wide language support; classic; suits UI text and headings."
+  },
+  {
+    "name": "Titan One",
+    "googleName": "Titan_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 107,
+    "description": "A heavy rounded display face, bold and playful, for headings."
+  },
+  {
+    "name": "Zen Maru Gothic",
+    "googleName": "Zen_Maru_Gothic",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "700",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 108,
+    "description": "A rounded Japanese gothic sans, soft and friendly, for UI text."
+  },
+  {
+    "name": "Delius",
+    "googleName": "Delius",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "handwriting",
+    "use": "display",
+    "popularity": 109,
+    "description": "Rounded comic-style handwriting; friendly, childlike; suits headings and short text."
+  },
+  {
+    "name": "Encode Sans Condensed",
+    "googleName": "Encode_Sans_Condensed",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 109,
+    "description": "Condensed Encode Sans; compact grotesque; suits headings and dense UI text."
+  },
+  {
+    "name": "Geist Mono",
+    "googleName": "Geist_Mono",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "monospace",
+    "use": "mono",
+    "popularity": 109,
+    "description": "Vercel's monospace companion to Geist; clean and crisp, suits code."
+  },
+  {
+    "name": "News Cycle",
+    "googleName": "News_Cycle",
+    "weights": [
+      "400",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 110,
+    "description": "A plain, journalistic gothic sans close to News Gothic; suits UI and headings."
+  },
+  {
+    "name": "Exo 2",
+    "googleName": "Exo_2",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 111,
+    "description": "Reworked Exo with more organic forms; techy, readable; suits UI text and headings."
+  },
+  {
+    "name": "Noto Sans Devanagari",
+    "googleName": "Noto_Sans_Devanagari",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 111,
+    "description": "A neutral Noto sans for the Devanagari script; suits UI text and headings."
+  },
+  {
+    "name": "Luckiest Guy",
+    "googleName": "Luckiest_Guy",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 113,
+    "description": "A bold, cartoony display face from comic lettering; loud, suits headings only."
+  },
+  {
+    "name": "Poiret One",
+    "googleName": "Poiret_One",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 113,
+    "description": "A thin geometric Art Deco display face, airy and refined, for large headings."
+  },
+  {
+    "name": "Barlow Semi Condensed",
+    "googleName": "Barlow_Semi_Condensed",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 114,
+    "description": "Semi-condensed Barlow; compact yet readable; suits UI text and headings."
+  },
+  {
+    "name": "DM Serif Text",
+    "googleName": "DM_Serif_Text",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 114,
+    "description": "Text cut of DM Serif; sturdy, high-contrast; suits UI text and headings."
+  },
+  {
+    "name": "Rethink Sans",
+    "googleName": "Rethink_Sans",
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 115,
+    "description": "A modern grotesque sans, crisp and clear, for UI text and headings."
+  },
+  {
+    "name": "Hanken Grotesk",
+    "googleName": "Hanken_Grotesk",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 116,
+    "description": "A clean grotesque sans near Gotham; neutral, suits UI text and headings."
+  },
+  {
+    "name": "Righteous",
+    "googleName": "Righteous",
+    "weights": [
+      "400"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "display",
+    "use": "display",
+    "popularity": 116,
+    "description": "A rounded geometric display face with Art Deco flavor, for headings."
+  },
+  {
+    "name": "Chivo",
+    "googleName": "Chivo",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 117,
+    "description": "Grotesque sans with a confident, newsy feel; suits headings and UI text."
+  },
+  {
+    "name": "Crimson Text",
+    "googleName": "Crimson_Text",
+    "weights": [
+      "400",
+      "600",
+      "700"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "serif",
+    "use": "ui",
+    "popularity": 117,
+    "description": "Old-style book serif in the Garamond tradition; classic; suits UI text and headings."
+  },
+  {
+    "name": "Montserrat Alternates",
+    "googleName": "Montserrat_Alternates",
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "variable": false,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "display",
+    "popularity": 118,
+    "description": "Montserrat with quirky alternate letterforms and a playful retro feel; for headings only."
+  },
+  {
+    "name": "Signika",
+    "googleName": "Signika",
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "variable": true,
+    "latin": true,
+    "category": "sans-serif",
+    "use": "ui",
+    "popularity": 119,
+    "description": "A low-contrast humanist sans, clear and soft, for UI text."
+  }
+]

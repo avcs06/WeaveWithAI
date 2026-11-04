@@ -1,0 +1,182 @@
+/**
+ * The design-system model: config, adapters, lookup API. Imports no
+ * `@modelcontextprotocol/*`, so a CLI or lint rule can reuse it.
+ */
+
+export type Severity = 'error' | 'warning';
+
+/** Where a `validate()` finding was seen: the surfaces this server walks. */
+export type Surface = 'vanilla-extract' | 'jsx' | 'tailwind';
+
+/** The repository's Tailwind rules, supplied by the host workspace. Omitted fields leave only the built-in syntax checks. */
+export interface TailwindPolicy {
+  maxClassListLength?: number;
+  maxClassListsPerElement?: number;
+  isValidClass?: (className: string) => boolean;
+  /** The class that applies a token's value, when Tailwind generates one. */
+  tokenClass?: (token: DesignToken) => string | undefined;
+}
+
+export interface DesignToken {
+  /** Semantic dot path, e.g. "color.theme.background" or "spacing.x6". */
+  name: string;
+  /**
+   * Whatever the token source calls this group (color, spacing, iconSize, ...).
+   * Not a fixed enum: category sets differ per design system.
+   */
+  group: string;
+  /** The exact code an agent should write to use this token in a style file, e.g. "tokens.spacing.x6" or "vars.color.theme.background". */
+  reference: string;
+  /** The Tailwind class that applies this token, e.g. "text-base-muted", when one exists. */
+  className?: string;
+  /**
+   * Resolved literal value (hex, px, ...), when statically readable. A theme
+   * *contract* (`createThemeContract`) declares only shape and a computed
+   * `createTheme` value can't be evaluated; those tokens have a reference but
+   * no `value`, and `nearestToken()` can't suggest them.
+   */
+  value?: string;
+}
+
+/** A `packages` entry: an installed package whose components join the inventory. */
+export interface PackageConfig {
+  package: string;
+  /** `"*"` or omitted for every component the package exports, or specific names. */
+  names?: '*' | string[];
+}
+
+export interface ComponentProp {
+  name: string;
+  type: string;
+  required: boolean;
+  default?: string;
+  description?: string;
+  /** Present when this is a variant-like prop: the closed set of allowed literal values. */
+  allowedValues?: string[];
+}
+
+export interface ComponentContract {
+  name: string;
+  category: string;
+  description: string;
+  props: ComponentProp[];
+  /** Subset of `props` names considered variant-like (i.e. have `allowedValues`). */
+  variantProps: string[];
+  /**
+   * What this component declares invalid to reach for in its place — a
+   * native element it supersedes (`@invalidAlternative button`), another
+   * component it replaces, or several. Using one directly is an error: the
+   * design system has this component for exactly that job.
+   */
+  invalidAlternatives: string[];
+  /**
+   * Props every use must set, from `@requiredProp`: a layout the component
+   * leaves to its caller, like a group's `className`. Leaving one out in app
+   * code is an error.
+   */
+  requiredProps?: string[];
+  /**
+   * Whether it passes any other HTML attribute, `data-testid` and `aria-*`
+   * included, to the element it renders. False: one set on it is lost.
+   * Unknown for a component read from a package's types.
+   */
+  passesHtmlAttributes?: boolean;
+  /** Absolute path of the file declaring the component, when it came from one. */
+  filePath?: string;
+  /**
+   * The recipe variants a `look` prop sets (all but `variant` and `size`): an
+   * on/off one by its name or `!name`, any other by one of its values.
+   */
+  looks?: { name: string; values: string[]; boolean: boolean; default?: string }[];
+}
+
+/**
+ * An invalid alternative no one component owns, from the config's file: a
+ * selector or import declaration written as a component's `@invalidAlternative`
+ * is, and what to use instead, which the finding says.
+ */
+export interface GenericAlternative {
+  selector: string;
+  use: string;
+}
+
+/**
+ * Working examples of a component: a recipe file kept beside it, served as
+ * written, with one case per distinct use and when to use it.
+ */
+export interface Recipe {
+  /** The file's base name, e.g. "Table" for `Table.recipe.tsx`. */
+  name: string;
+  /** Path relative to the config's folder. */
+  file: string;
+  /** The components it shows: every component declared in its folder. */
+  covers: string[];
+  /** The recipe's source. */
+  code: string;
+}
+
+export interface Finding {
+  /** Stable rule id, e.g. "hardcoded-literal" | "unknown-variant". */
+  rule: string;
+  severity: Severity;
+  surface: Surface;
+  line: number;
+  column: number;
+  message: string;
+  /** The exact fix, when derivable from the reverse index — e.g. a token reference. */
+  suggestion?: string;
+}
+
+/** One known scenario a validator checks: its own file under `<adapter>/rules/`, listed in that adapter. */
+export type Rule<Subject> = (subject: Subject) => Finding[];
+
+export interface ValidateResult {
+  ok: boolean;
+  findings: Finding[];
+}
+
+export interface ComponentSummary {
+  name: string;
+  description: string;
+  category: string;
+  variantProps: string[];
+  /** What it supersedes, so an agent sees what not to reach for before writing it. */
+  invalidAlternatives: string[];
+}
+
+/** One ranked result from `searchTokens`/`searchComponents`. */
+export interface SearchHit {
+  kind: 'token' | 'component';
+  name: string;
+  description: string;
+  /** A token's Tailwind class, when one applies it. */
+  className?: string;
+  /** A component's invalid alternatives, when it declares any. */
+  invalidAlternatives?: string[];
+  /**
+   * Relevance, higher is better: exact name, then substring, then body text.
+   */
+  score: number;
+}
+
+/** The MCP-independent lookup API. `mcp/server.ts` only calls this and formats the result. */
+export interface DesignSystem {
+  tokens(group?: string): DesignToken[];
+  /** Nearest token to a raw value within a group, for `Finding.suggestion`. Only searches tokens that have a resolved `value`. */
+  nearestToken(value: string, group: string): DesignToken | undefined;
+  components(category?: string): ComponentSummary[];
+  component(name: string): ComponentContract | undefined;
+  /** Fuzzy component name matches. */
+  closestComponents(name: string, limit?: number): string[];
+  /** The recipe named `name`, the one covering the component named `name`, or else the one that imports `name`. */
+  recipe(name: string): Recipe | undefined;
+  /** Every recipe's name. */
+  recipes(): string[];
+  /** Ranked token search across name, group, reference and value — for "is there a token for X?" */
+  searchTokens(query: string, limit?: number): SearchHit[];
+  /** Ranked component search across name, description, category, prop names and invalid alternatives — for "is there a component for X?" */
+  searchComponents(query: string, limit?: number): SearchHit[];
+  /** Problems found while loading, one line each — such as an `@invalidAlternative` declaration the check can't read. */
+  diagnostics(): string[];
+  validate(code: string, filename?: string): ValidateResult;
+}

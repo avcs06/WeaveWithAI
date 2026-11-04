@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the contract markdown > reads as entities, enums, operations, then what each screen loads 1`] = `
+"# Shelf: contract
+
+The records the app keeps, the operations its screens call, and what each screen and dialog loads. Every record also has id, createdAt, updatedAt. Sign up, sign in and sign out are built in.
+
+## Entities
+
+### Book
+
+Implements Book.
+
+| Field | Kind | Required |
+| ----- | ---- | -------- |
+| title | string | yes |
+| author | string | no |
+| shelf | enum Shelf | yes |
+
+## Enums
+
+- Shelf: To read (\`to_read\`), Reading (\`reading\`), Finished (\`finished\`)
+
+## Operations
+
+| Operation | Kind | Entity | Summary | Inputs | Serves |
+| --------- | ---- | ------ | ------- | ------ | ------ |
+| listBooks | list | Book | The reader's books, newest first, searchable by title or author. | none | F04.S01, F04.S02, F04.A01, F04.A02 |
+| getBook | get | Book | One of the reader's books. | none | F05.S01, F05.A01 |
+| createBook | create | Book | Adds a book to the reader's list. | FD03 Title as title, FD04 Author as author, FD05 Shelf as shelf | F03.S02, F03.A01, F03.A02 |
+| deleteBook | delete | Book | Deletes one of the reader's books for good. | none | F05.S02, F05.A02 |
+
+## What each screen loads
+
+- FR01 Public site frame: none
+- FR02 App frame: none
+- S01 Keep track of what to read next: none
+- S02 Create your account: none
+- S03 Sign in: none
+- S04 Reading list: listBooks
+- S05 The book's title: getBook
+- D01 Add a book: none
+- D02 Delete this book?: none
+"
+`;

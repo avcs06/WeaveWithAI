@@ -1,5 +1,0 @@
-{
-  "tokens": ["theme.css.ts", "tokens.ts"],
-  "components": ["components/**/*.tsx"],
-  "recipes": ["components/**/*.recipe.tsx"]
-}

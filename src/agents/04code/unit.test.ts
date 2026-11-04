@@ -1,0 +1,217 @@
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
+import { ConfigSchema } from '../../core/env';
+import type { GenerateInput, Llm } from '../../core/llm';
+import { appendEvent, createRun, readEvents, readState, runPath } from '../../core/run';
+import { pathBeside } from '../../core/utils';
+import type { Check } from '../../engine/session';
+import { git, prepareApp } from '../../engine/setup';
+import { guideIds } from '../../runner/review';
+import type { StageContext } from '../stages';
+import { resumeUnit, runUnit, runUnits, type UnitSpec } from './unit';
+
+const root = mkdtempSync(path.join(tmpdir(), 'weave-unit-'));
+afterAll(() => rmSync(root, { recursive: true, force: true }));
+const idea = path.join(root, 'idea.md');
+writeFileSync(idea, '# An idea\n');
+const fakeMuse = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-muse.mjs')];
+const fakeOpencode = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-opencode.mjs')];
+const config = ConfigSchema.parse({ MODEL_API_KEY: 'k' });
+
+/** Reviewers that block once, from the code reviewer in round 1, then pass. */
+function fakeReviewers(blockFirst: boolean) {
+  const reviews: GenerateInput<unknown>[] = [];
+  const llm: Llm = {
+    async generateStructured(input) {
+      reviews.push(input as GenerateInput<unknown>);
+      const blocking = blockFirst && input.stage.endsWith('-review-code') && input.round === 1;
+      const data = { checked: guideIds(input.messages[0]?.content ?? ''), blockers: blocking ? [{ at: 'web/app/(routes)/books/page.tsx', problem: 'The page does two jobs.', fix: 'Split the list out.' }] : [] };
+      return { data: data as never, raw: JSON.stringify(data), usage: { input: 1, cachedInput: 0, output: 1 }, costUsd: 0, replayed: false, backend: 'meta', model: 'muse-spark-1.3', durationMs: 1 };
+    },
+  };
+  return { llm, reviews };
+}
+
+function setup(id: string, blockFirst: boolean, failing: (name: string, session: number) => boolean) {
+  const run = createRun({ idea, runsDir: root, id });
+  const appDir = runPath(run, 'app');
+  mkdirSync(path.join(appDir, '.weave/04-pages/S04'), { recursive: true });
+  writeFileSync(path.join(appDir, '.weave/04-pages/guidelines.md'), 'Pages go in their route folder.');
+  writeFileSync(path.join(appDir, '.weave/04-pages/S04/page.json'), '{ "screens": [] }');
+  git(appDir, 'init', '-q');
+  prepareApp(appDir);
+  const { llm, reviews } = fakeReviewers(blockFirst);
+  const sessionsRun: string[] = [];
+  let typechecks = 0;
+  const runCheck = async (_dir: string, name: string): Promise<Check> => {
+    if (name === 'typecheck') typechecks += 1;
+    const ok = !failing(name, typechecks);
+    return { name, ok, output: ok ? '' : 'error TS2304: Cannot find name x.' };
+  };
+  const ctx: StageContext = { run, config, llm, interactive: false, backend: 'meta' };
+  const spec: UnitSpec = {
+    id: 'page-S04',
+    stage: 'code-pages-S04',
+    task: 'Build S04 from .weave/04-pages/S04/.',
+    folders: ['04-pages', '04-pages/S04'],
+  };
+  const tasks = () => sessionsRun;
+  return { run, ctx, spec, reviews, deps: { bin: fakeMuse, runCheck }, tasks };
+}
+
+const withWrites = <T>(writes: Record<string, string>, fn: () => Promise<T>) => {
+  process.env.FAKE_WRITES = JSON.stringify(writes);
+  return fn().finally(() => delete process.env.FAKE_WRITES);
+};
+const page = { 'web/app/(routes)/books/page.tsx': 'export default function Page() { return null; }\n' };
+
+describe('a coding unit', () => {
+  it('sends a failed check and a reviewer blocker to one fix session, and ends clean in round 2', async () => {
+    const { run, ctx, spec, reviews, deps } = setup('fixed', true, (name, n) => name === 'typecheck' && n === 1);
+    const result = await withWrites(page, () => runUnit(ctx, spec, deps));
+
+    expect(result.rounds).toBe(2);
+    expect(result.known).toEqual([]);
+    const fixTask = (await import('node:fs')).readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-fix-1.md'), 'utf8');
+    expect(fixTask).toContain('CODE-002');
+    expect(fixTask).toContain('The page does two jobs.');
+    // Round 1: every reviewer saw the diff and the failed check.
+    const round1 = reviews.filter((r) => r.round === 1);
+    expect(round1.map((r) => r.stage).sort()).toEqual([
+      'code-pages-S04-review-adherence',
+      'code-pages-S04-review-behavior',
+      'code-pages-S04-review-code',
+      'code-pages-S04-review-ux',
+    ]);
+    const user = String(round1[0]?.messages.at(-1)?.content);
+    expect(user).toContain('books/page.tsx');
+    expect(user).toContain('CODE-002');
+  });
+
+  it("reads the fix session's replies into the stage's threads, for the next round's reviewers", async () => {
+    const { run, ctx, spec, reviews, deps } = setup('replies', true, () => false);
+    const replies = [{ id: 'T01', status: 'open', reason: 'One job: the list is the page.' }];
+    await withWrites({ ...page, '.weave/replies.json': JSON.stringify(replies) }, () => runUnit(ctx, spec, deps));
+    const fixTask = readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-fix-1.md'), 'utf8');
+    expect(fixTask).toContain('- T01: REVIEW at web/app/(routes)/books/page.tsx: The page does two jobs. Fix: Split the list out.');
+    // The code reviewer raised T01, so only it gets the agent's reply back.
+    const round2 = reviews.filter((r) => r.round === 2);
+    const user = (name: string) => String(round2.find((r) => r.stage.endsWith(`-review-${name}`))?.messages.at(-1)?.content);
+    expect(user('code')).toContain('  - round 2, fix, open: One job: the list is the page.');
+    for (const name of ['adherence', 'behavior', 'ux']) expect(user(name)).toContain("the agent's reason.\n\nNone.");
+  });
+
+  it('records what is left after the third round as known, and returns', async () => {
+    const { ctx, spec, deps, reviews } = setup('known', false, (name) => name === 'typecheck');
+    process.env.FAKE_VARY = '1';
+    process.env.FAKE_ARGS = runPath(ctx.run, 'muse-args.log');
+    const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
+    expect(result.rounds).toBe(3);
+    expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
+    // The four reviewers read rounds 1 and 2; nobody reviews the final fix.
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 1, 2, 2, 2, 2]);
+    // The three sessions are one Muse session; another attempt at the unit starts its own.
+    const ids = () => readFileSync(runPath(ctx.run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
+    expect(ids()).toHaveLength(3);
+    expect(new Set(ids()).size).toBe(1);
+    // Each session is its own commit, failed or not, and a patch; the inputs commits touch only .weave/ and make none.
+    const appDir = runPath(ctx.run, 'app');
+    expect(git(appDir, 'status', '--porcelain')).toBe('');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-fix-2 (failed: typecheck)');
+    expect(readdirSync(runPath(ctx.run, 'patches', 'code-pages-S04'))).toEqual([
+      '001-page-S04-failed-typecheck.patch',
+      '002-page-S04-fix-1-failed-typecheck.patch',
+      '003-page-S04-fix-2-failed-typecheck.patch',
+    ]);
+    await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_ARGS);
+    expect(new Set(ids()).size).toBe(2);
+  });
+
+  it("on Baseten, continues the session OpenCode named in the unit's first session in each fix", async () => {
+    const { ctx, spec, deps } = setup('opencode', false, (name) => name === 'typecheck');
+    const baseten = { ...ctx, backend: 'baseten' as const, config: { ...config, BASETEN_API_KEY: 'bt', BASETEN_MODEL: 'meta-models/muse-spark-open-1026' } };
+    process.env.FAKE_ARGS = runPath(ctx.run, 'opencode-args.log');
+    await withWrites(page, () => runUnit(baseten, spec, { ...deps, bin: fakeOpencode })).finally(() => delete process.env.FAKE_ARGS);
+    // A run's flags sit on its first line; the fix task after them has lines of its own.
+    const runs = readFileSync(runPath(ctx.run, 'opencode-args.log'), 'utf8').match(/^run --format json.*$/gm) ?? [];
+    expect(runs).toHaveLength(3);
+    expect(runs[0]).not.toContain('--session');
+    expect(runs.slice(1).every((line) => line.includes('--session ses_fake1'))).toBe(true);
+  });
+
+  it('logs a stage start and done once, whether its unit carries its name or units have their own', async () => {
+    const { ctx, spec, deps } = setup('events', false, () => false);
+    const count = (type: string, stage: string) => readEvents(ctx.run).filter((e) => e.type === type && e.stage === stage).length;
+    await withWrites(page, () => runUnits(ctx, 'code-frames', [{ ...spec, id: 'frames', stage: 'code-frames' }], deps));
+    expect([count('stage:start', 'code-frames'), count('stage:done', 'code-frames')]).toEqual([1, 1]);
+    await withWrites(page, () => runUnits(ctx, 'code-pages', [spec], deps));
+    expect([count('stage:start', 'code-pages'), count('stage:done', 'code-pages')]).toEqual([1, 1]);
+  });
+
+  it('fails a write to a test with CODE-004', async () => {
+    const { ctx, spec, deps } = setup('outside', false, () => false);
+    const writes = { ...page, 'web/app/(routes)/books/page.test.tsx': 'export {};\n' };
+    const result = await withWrites(writes, () => runUnit(ctx, spec, deps));
+    expect(result.known.map((i) => i.rule)).toContain('CODE-004');
+  });
+});
+
+describe('a coding unit resumed after its session was cut', () => {
+  it('finishes the cut session in its Muse session, saves the round, and a run from that round reviews it and fixes on', async () => {
+    const { run, ctx, spec, reviews, deps } = setup('resumed', true, () => false);
+    const appDir = runPath(run, 'app');
+    // A killed run: the unit's inputs commit, its Muse session logged, and its files left uncommitted.
+    mkdirSync(path.join(appDir, '.weave/tasks'), { recursive: true });
+    writeFileSync(path.join(appDir, '.weave/tasks/page-S04.md'), `${spec.task}\n`);
+    git(appDir, 'add', '-A');
+    git(appDir, 'commit', '-q', '-m', 'code-pages-S04: inputs for page-S04');
+    appendEvent(run, { type: 'session:start', stage: 'session:page-S04', museSession: 'muse-1' });
+    const cut = 'web/app/(routes)/shelves/page.tsx';
+    mkdirSync(path.join(appDir, path.dirname(cut)), { recursive: true });
+    writeFileSync(path.join(appDir, cut), 'export default function Shelves() { return null; }\n');
+    process.env.FAKE_ARGS = runPath(run, 'muse-args.log');
+    const ids = () => readFileSync(runPath(run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
+
+    const { file, saved } = await withWrites(page, () => resumeUnit(ctx, spec, undefined, deps));
+    expect(file).toBe(runPath(run, 'resume', 'code-pages-S04-round-1.json'));
+    expect(saved).toMatchObject({ unit: 'page-S04', round: 1, museSession: 'muse-1' });
+    expect(saved.draft.data.diff).toContain('shelves/page.tsx');
+    expect(saved.draft.data.diff).toContain('books/page.tsx');
+    expect(readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-resume.md'), 'utf8')).toContain('.weave/tasks/page-S04.md');
+    expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-resume');
+    await expect(resumeUnit(ctx, spec, undefined, deps)).rejects.toThrow('nothing to resume');
+
+    // Round 1 is the saved one: reviewed, not run again; the code reviewer's blocker goes to a fix in the same Muse session.
+    const resumed = { ...ctx, resume: { stage: 'code-pages-S04', round: 1 } };
+    await withWrites(page, () => runUnits(resumed, 'code-pages-S04', [spec], deps)).finally(() => delete process.env.FAKE_ARGS);
+    expect(ids()).toEqual(['--session-id muse-1', '--session-id muse-1']);
+    expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 1, 2, 2, 2, 2]);
+    expect(readEvents(run).some((e) => e.type === 'stage:reset')).toBe(false);
+    expect(git(appDir, 'log', '-3', '--format=%s').split('\n')).toEqual([
+      'code-pages-S04: page-S04-fix-1',
+      'code-pages-S04: inputs for page-S04-fix-1',
+      'code-pages-S04: page-S04-resume',
+    ]);
+    expect(readState(run).stages['code-pages-S04']).toMatchObject({ status: 'done', rounds: 2, known: 0 });
+    await expect(runUnits({ ...ctx, resume: { stage: 'code-pages-S04', round: 2 } }, 'code-pages-S04', [spec], deps)).rejects.toThrow(
+      'no saved round 2',
+    );
+  });
+});
+
+describe('the recipe gate', () => {
+  const file = 'web/app/(routes)/books/page.tsx';
+  const code = "import { Dialog } from '@packages/ui/Dialog';\nexport default function Page() { return <Dialog title=\"Books\" />; }\n";
+  const read = `${JSON.stringify({ tool: 'mcp__weave_design_system__get_recipe', name: 'Dialog' })}\n`;
+
+  it('fails CODE-014 for a component used without its recipe read, and not once it was read', async () => {
+    const unread = setup('unread-recipe', false, () => false);
+    const result = await withWrites({ [file]: code, '.weave/tools.log': '' }, () => runUnit(unread.ctx, unread.spec, unread.deps));
+    expect(result.known.map((i) => [i.rule, i.at])).toContainEqual(['CODE-014', file]);
+    const done = setup('read-recipe', false, () => false);
+    const clean = await withWrites({ [file]: code, '.weave/tools.log': read }, () => runUnit(done.ctx, done.spec, done.deps));
+    expect(clean.known.filter((i) => i.rule === 'CODE-014')).toEqual([]);
+  });
+});

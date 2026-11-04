@@ -1,0 +1,160 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { buildTheme, type Theme } from '../../02design/01theme/build';
+import type { ThemeCall } from '../../02design/01theme/schema';
+import {
+  applyColors,
+  applyRecipeDefaults,
+  applyTokens,
+  fontsModule,
+  layoutsModule,
+  previewHead,
+  variantValues,
+} from './apply';
+
+// The template's own files, read only; the theme is the reading-list fixture.
+const template = (file: string) => readFileSync(`template/${file}`, 'utf8');
+const fixture = (name: string) =>
+  JSON.parse(readFileSync(`src/agents/02design/__fixtures__/reading-list.${name}.json`, 'utf8')) as unknown;
+const theme: Theme = buildTheme(fixture('theme') as ThemeCall);
+
+describe('applyColors', () => {
+  const before = template('colors.ts');
+  const after = applyColors(before, theme);
+
+  it('writes the brand, base and status sets and the page colors in each mode', () => {
+    const light = theme.colors.light!;
+    expect(after).toContain(`accentBg: '${light.theme.accentBg}'`);
+    expect(after).toContain(`pageBg: '${light.page.pageBg}'`);
+    expect(after).toContain(`frameBg: '${theme.colors.dark!.page.frameBg}'`);
+    const base = (text: string) => text.slice(text.indexOf('base: {'), text.indexOf('surface: {'));
+    expect(base(after)).toContain(`border: '${light.base.border}'`);
+    expect(base(after)).toContain(`fg: '${theme.colors.dark!.base.fg}'`);
+    const status = (text: string) => text.slice(text.indexOf('status: {'), text.indexOf('entity: {'));
+    expect(status(after)).not.toBe(status(before));
+    const error = (text: string) => status(text).slice(status(text).indexOf('error: {'), status(text).indexOf('info: {'));
+    expect(error(after)).toContain(`accentBg: '${light.status.error.accentBg}'`);
+    expect(status(after)).toContain(`fg: '${theme.colors.dark!.status.info.fg}'`);
+    expect(after).toContain(`divider: '${light.page.divider}'`);
+    // The page background is CSS, a gradient here, beside its solid pageBg.
+    expect(after).toContain(`pageBackground: '${light.page.pageBackground}'`);
+    expect(after).toContain(`pageBackground: '${theme.colors.dark!.page.pageBackground}'`);
+    for (const mode of theme.modes) {
+      expect(after).toContain(`logo: '${theme.logo.colors[mode]}'`);
+    }
+  });
+
+  it('escapes a quote in a page background inside its string', () => {
+    const quoted = structuredClone(theme);
+    quoted.colors.light!.page.pageBackground = "linear-gradient(180deg, #FFF 0%, #EEE 100%) /* 'paper' */";
+    expect(applyColors(before, quoted)).toContain("pageBackground: 'linear-gradient(180deg, #FFF 0%, #EEE 100%) /* \\'paper\\' */'");
+  });
+
+  it('adds a set per colored entity in each mode, and gives the same file when applied twice', () => {
+    expect(after.match(/ {6}shelf: \{/g)).toHaveLength(2);
+    expect(after).toContain(`bg: '${theme.colors.light!.entity.shelf!.bg}'`);
+    expect(applyColors(after, theme)).toBe(after);
+  });
+});
+
+describe('applyTokens', () => {
+  it.each(['ui', 'display', 'mono'] as const)('maps the logo family to the %s token', (role) => {
+    const chosen = { ...theme, logo: { ...theme.logo, family: theme.fonts[role], weight: '600', case: 'upper' as const, letterSpacing: '0.12em' } };
+    const after = applyTokens(template('tokens.ts'), chosen);
+    expect(after).toContain(`fontFamily: fontFamily.${role}`);
+    expect(after).toContain("fontWeight: '600'");
+    expect(after).toContain("textTransform: 'uppercase'");
+    expect(after).toContain("letterSpacing: '0.12em'");
+    expect(applyTokens(after, chosen)).toBe(after);
+  });
+
+  it.each([['as written', 'none'], ['lower', 'lowercase']] as const)('maps logo case %s', (value, css) => {
+    expect(applyTokens(template('tokens.ts'), { ...theme, logo: { ...theme.logo, case: value } })).toContain(`textTransform: '${css}'`);
+  });
+
+  it('rejects a logo family outside the theme fonts', () => {
+    expect(() => applyTokens(template('tokens.ts'), { ...theme, logo: { ...theme.logo, family: 'Unknown' } })).toThrow('not a theme font');
+  });
+
+  it('sets the radius of surfaces and controls and the focus ring', () => {
+    const after = applyTokens(template('tokens.ts'), {
+      ...theme,
+      radius: { surface: '16px', control: '10px' },
+      focusRing: 'glow',
+    });
+    expect(after).toContain("surface: '16px'");
+    expect(after).toContain("control: '10px'");
+    expect(after).toContain("focusRing: 'glow'");
+  });
+});
+
+describe('fonts', () => {
+  it('loads the three families with next/font, ui first, at the weights the design system uses', () => {
+    const module = fontsModule(theme);
+    expect(module).toContain(
+      "import { Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google';",
+    );
+    expect(module).toContain(
+      "const playfairDisplay = Playfair_Display({\n  subsets: ['latin'],\n  weight: ['400', '500', '600', '700'],\n  variable: '--font-display',",
+    );
+    expect(module).toContain('  inter.className,\n  inter.variable,');
+  });
+
+  it("loads the wordmark's weight with the family that sets it", () => {
+    const heavy = { ...theme, logo: { ...theme.logo, family: theme.fonts.display, weight: '800' } };
+    expect(fontsModule(heavy)).toContain(
+      "weight: ['400', '500', '600', '700', '800'],\n  variable: '--font-display',",
+    );
+    expect(previewHead(heavy)).toContain('family=Playfair+Display:wght@400;500;600;700;800');
+  });
+
+  it("gives Storybook the same families from Google Fonts, since next/font runs only in Next", () => {
+    const head = previewHead(theme);
+    expect(head).toContain('family=Playfair+Display:wght@400;500;600;700');
+    expect(head).toContain("--font-display: 'Playfair Display';");
+  });
+});
+
+describe('layouts', () => {
+  it("writes the theme's app and marketing layouts as PageLayout's typed layouts", () => {
+    const module = layoutsModule(theme);
+    expect(module).toContain("export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {");
+    const literal = module.slice(module.indexOf('= ') + 2, module.lastIndexOf(';'));
+    expect(JSON.parse(literal)).toEqual(theme.layouts);
+  });
+});
+
+describe('recipe defaults', () => {
+  const button = template('packages/ui/src/Button/Button.recipes.css.ts');
+  const variants = {
+    variant: ['base', 'default', 'danger'],
+    size: ['sm', 'md'],
+    rounded: ['true', 'false'],
+    ghost: ['true', 'false'],
+  };
+
+  it('turns a look into its flags and keeps every other default', () => {
+    expect(variantValues(variants, { size: 'md', look: 'rounded ghost' })).toEqual({
+      size: 'md',
+      rounded: true,
+      ghost: true,
+    });
+    expect(variantValues({ bordered: ['true', 'false'] }, { look: '!bordered' })).toEqual({
+      bordered: false,
+    });
+    expect(variantValues({ border: ['outline', 'open'] }, { look: 'open' })).toEqual({
+      border: 'open',
+    });
+  });
+
+  it("writes them into the recipe's defaultVariants", () => {
+    const after = applyRecipeDefaults(button, 'buttonRecipe', {
+      size: 'md',
+      ghost: true,
+    });
+    const defaults = after.slice(after.indexOf('defaultVariants'));
+    expect(defaults).toMatch(/size: 'md'/);
+    expect(defaults).toMatch(/ghost: true/);
+    expect(defaults).toMatch(/variant: 'default'/);
+  });
+});

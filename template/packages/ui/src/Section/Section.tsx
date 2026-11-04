@@ -1,0 +1,228 @@
+'use client';
+
+import { classNames } from '@packages/styles/classNames';
+import React, {
+  type ComponentProps,
+  createContext,
+  type ReactNode,
+  useContext,
+} from 'react';
+
+import { hasContent, useIconAddon } from '../utils';
+
+import {
+  section,
+  sectionDescription,
+  sectionGroup,
+  sectionTitle,
+} from './Section.css';
+
+import type { SectionGroupProps, SectionProps } from './Section.types';
+
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+// The page's own title is the h1.
+const HeadingLevelContext = createContext<HeadingLevel>(1);
+
+/**
+ * Sections stacked with a fixed gap between them. A Section right inside a
+ * group leaves the spacing to it; one outside a group pads itself above and
+ * below instead.
+ */
+export const SectionGroup = ({ className, ...props }: SectionGroupProps) => (
+  <div
+    {...props}
+    data-ds=""
+    data-slot="section-group"
+    className={classNames(sectionGroup, 'flex-col-gap-6', className)}
+  />
+);
+
+/**
+ * The heading level of a section here: one below the section around it.
+ *
+ * @internal
+ */
+export const useSectionLevel = (): HeadingLevel =>
+  Math.min(useContext(HeadingLevelContext) + 1, 6) as HeadingLevel;
+
+/**
+ * A section's heading element at `level`: its icons and add-ons on one row
+ * with the title. The caller gives the font.
+ *
+ * @internal
+ */
+export const SectionHeading = ({
+  level,
+  className,
+  ...props
+}: ComponentProps<'h2'> & { level: HeadingLevel }) => {
+  const Heading = `h${level}` as const;
+  return (
+    <Heading
+      {...props}
+      data-ds=""
+      className={classNames('flex-row-gap-2 items-center', className)}
+    />
+  );
+};
+
+/**
+ * The muted line under a section's heading.
+ *
+ * @internal
+ */
+export const SectionDescription = ({
+  id,
+  children,
+}: {
+  id?: string;
+  children: ReactNode;
+}) =>
+  hasContent(children) ? (
+    <p
+      id={id}
+      data-slot="description"
+      className={sectionDescription}
+      data-ds=""
+    >
+      {children}
+    </p>
+  ) : null;
+
+/**
+ * A section's box: the room between its header and content, the same for
+ * every Section and Accordion item. Padding above and below comes from the
+ * Section or the Accordion item. It has no side padding: the container
+ * around it gives the sides, so a section lines up with what sits beside it.
+ *
+ * @internal
+ */
+export const SectionFrame = ({
+  className,
+  ...props
+}: ComponentProps<'section'>) => (
+  // Unnamed, so not a landmark: headings already outline the page.
+  <section
+    {...props}
+    data-ds=""
+    data-slot="section"
+    className={classNames('flex-col-gap-4', className)}
+  />
+);
+
+/**
+ * A section's heading, with its description 4px under it and its actions at
+ * the end.
+ *
+ * @internal
+ */
+export const SectionHeader = ({
+  heading,
+  description,
+  descriptionId,
+  action,
+}: {
+  heading: ReactNode;
+  description?: ReactNode;
+  descriptionId?: string;
+  action?: ReactNode;
+}) => (
+  <div data-slot="header" className="flex-row-gap-4 items-start" data-ds="">
+    <div className="flex-col-gap-1 flex-fill-x" data-ds="">
+      {heading}
+      <SectionDescription id={descriptionId}>{description}</SectionDescription>
+    </div>
+    {hasContent(action) && (
+      <div
+        data-slot="header-actions"
+        className="flex-row-gap-2 items-center shrink-0"
+        data-ds=""
+      >
+        {action}
+      </div>
+    )}
+  </div>
+);
+
+/**
+ * A section's content, whose sections are a level deeper.
+ *
+ * @internal
+ */
+export const SectionContent = ({
+  level,
+  children,
+}: {
+  level: HeadingLevel;
+  children: ReactNode;
+}) => (
+  // Takes the height left in a section given one, so a FlexScrollArea in it
+  // scrolls.
+  // Its gap spaces the sections in it, as a group's does.
+  <div
+    data-slot="content"
+    className={classNames(sectionGroup, 'flex-col-gap-4 flex-fill-y')}
+    data-ds=""
+  >
+    <HeadingLevelContext value={level}>{children}</HeadingLevelContext>
+  </div>
+);
+
+/**
+ * A titled part of a page: a heading, an optional muted description, then its
+ * content, with the same sizes and spacing everywhere. A section inside a
+ * section gets the next heading level. One that opens and closes is a
+ * Collapsible, several are an Accordion. It has no side padding by default:
+ * the page's container, or the Card or panel around it, gives the sides. A
+ * section that needs its own takes them through `className`.
+ *
+ * @invalidAlternative section
+ */
+export const Section = ({
+  title,
+  titleId,
+  headingAs,
+  description,
+  headerAction,
+  leftIcon,
+  rightIcon,
+  leftAddOn,
+  rightAddOn,
+  className,
+  children,
+  ...props
+}: SectionProps) => {
+  const nestedLevel = useSectionLevel();
+  const level = headingAs
+    ? (Number(headingAs.slice(1)) as HeadingLevel)
+    : nestedLevel;
+
+  const { leftSlot, rightSlot } = useIconAddon({
+    leftIcon,
+    rightIcon,
+    leftAddOn,
+    rightAddOn,
+  });
+
+  return (
+    <SectionFrame {...props} className={classNames(section, className)}>
+      <SectionHeader
+        heading={
+          <SectionHeading level={level} id={titleId} className={sectionTitle}>
+            {leftSlot}
+            <span className="min-w-0" data-ds="">
+              {title}
+            </span>
+            {rightSlot}
+          </SectionHeading>
+        }
+        description={description}
+        action={headerAction}
+      />
+      {hasContent(children) && (
+        <SectionContent level={level}>{children}</SectionContent>
+      )}
+    </SectionFrame>
+  );
+};
