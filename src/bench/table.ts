@@ -62,6 +62,14 @@ export function runTable(bench: Benchmark): [string, string][] {
   return rows;
 }
 
+/** The table for a terminal: labels padded into one column, values beside them, the dev-server note under them. */
+export function renderTerminalTable(bench: Benchmark): string {
+  const rows = runTable(bench);
+  const width = Math.max(...rows.map(([label]) => label.length));
+  const lines = rows.map(([label, value]) => `  ${label.padEnd(width)}  ${value}`);
+  return [`Benchmark of ${bench.runId}`, ...lines, ...(bench.routes?.length ? ['', TABLE_NOTE.replaceAll('`', '')] : [])].join('\n');
+}
+
 /** The table as markdown, with the dev-server note under it when it has browser numbers. */
 export function renderRunTable(bench: Benchmark): string {
   const rows = runTable(bench);

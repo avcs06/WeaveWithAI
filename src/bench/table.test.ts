@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GenerationReport } from './generation';
 import type { Benchmark } from './report';
-import { renderRunTable, runTable, TABLE_NOTE } from './table';
+import { renderRunTable, renderTerminalTable, runTable, TABLE_NOTE } from './table';
 
 const generation: GenerationReport = {
   backend: 'meta',
@@ -44,5 +44,13 @@ describe('the run table', () => {
     expect(markdown).toContain('| Total cost | $6.62 |');
     expect(markdown).not.toContain('Muse Code subscription');
     expect(markdown).not.toContain(TABLE_NOTE);
+  });
+
+  it('lines the values up in one column for a terminal', () => {
+    const lines = renderTerminalTable({ runId: 'r1', createdAt: '', server: 'next dev', generation }).split('\n');
+    expect(lines[0]).toBe('Benchmark of r1');
+    const starts = lines.slice(1).map((line) => line.search(/\S/) + line.trimStart().search(/ {2}\S/) + 2);
+    expect(new Set(starts).size).toBe(1);
+    expect(lines).toContain(`  ${'Coding agent'.padEnd('Muse Code subscription'.length)}  Muse Code`);
   });
 });
