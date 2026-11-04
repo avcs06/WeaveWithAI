@@ -43,6 +43,8 @@ Existed before the event:
 - Design-system components: Avatar, Button, Card, Chip, Dropdown,
   ErrorBoundary, Form with its controller, FormControl, Icons, Link, Menu,
   Table, Tag, Tooltip and Truncate.
+- Design specs for the rest of the design system. Its components were built
+  from them during the event.
 - Fonts, the token system, and the state and style utilities.
 - The design-system MCP with all its methods (`list_components`,
   `search_components`, `get_component`, `get_recipe`, `list_tokens`,
