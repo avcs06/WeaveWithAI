@@ -1,9 +1,0 @@
-{
-  "tokens": ["packages/styles/src/tokens.css.ts"],
-  "components": ["packages/ui/src/*/index.{ts,tsx}"],
-  "recipes": [
-    "packages/ui/src/*/*.recipe.tsx",
-    "packages/utils/src/*/*.recipe.tsx",
-    "packages/recipes/src/*/*.recipe.tsx"
-  ]
-}

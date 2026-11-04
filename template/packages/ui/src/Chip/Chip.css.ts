@@ -1,0 +1,67 @@
+import { disabledColor, focusRing } from '@packages/styles/utils';
+import { createVar, globalStyle, style } from '@vanilla-extract/css';
+
+export const chipActiveFg = createVar('chipActiveFg');
+export const chipActiveBg = createVar('chipActiveBg');
+export const chipActiveHoverBg = createVar('chipActiveHoverBg');
+export const chipActiveBorder = createVar('chipActiveBorder');
+export const chipActiveFocusColor = createVar('chipActiveFocusColor');
+
+// Thicker than a button's border, so an active chip reads as selected.
+const activeBorder = (color: string) => `0 0 0 2px ${color} inset`;
+
+/** The active look over the button look; colors come from the vars. */
+export const chip = style({
+  selectors: {
+    '&[data-state="checked"]': {
+      color: chipActiveFg,
+      background: chipActiveBg,
+      boxShadow: activeBorder(chipActiveBorder),
+    },
+    '&[data-state="checked"]:not([data-disabled]):hover': {
+      color: chipActiveFg,
+      background: chipActiveHoverBg,
+      boxShadow: activeBorder(chipActiveBorder),
+    },
+    '&[data-state="checked"]:not([data-disabled]):is(:focus-visible, :active)':
+      {
+        color: chipActiveFg,
+        background: chipActiveHoverBg,
+        ...focusRing(chipActiveFocusColor, activeBorder(chipActiveBorder)),
+      },
+    '&[data-state="checked"][data-disabled]': {
+      color: disabledColor(chipActiveFg),
+      background: disabledColor(chipActiveBg),
+      boxShadow: activeBorder(disabledColor(chipActiveBorder)),
+    },
+    '&[data-state="checked"][data-disabled]:focus-visible': focusRing(
+      disabledColor(chipActiveFocusColor),
+      activeBorder(disabledColor(chipActiveBorder)),
+    ),
+  },
+});
+
+/** ChipGroup's `collapsed` look: its chips join into one bar. */
+export const chipGroupCollapsed = style({});
+
+// Each chip overlaps the one before by its border's width, so a shared edge
+// draws one border. Chips are buttons; the group's other children aren't.
+globalStyle(`${chipGroupCollapsed} > ${chip}:not(:first-of-type)`, {
+  marginLeft: '-1px',
+  borderTopLeftRadius: 0,
+  borderBottomLeftRadius: 0,
+});
+
+globalStyle(`${chipGroupCollapsed} > ${chip}:not(:last-of-type)`, {
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+});
+
+// The chip in front shows its whole border, and a focused one its ring.
+globalStyle(
+  `${chipGroupCollapsed} > ${chip}:is(:hover, [data-state="checked"])`,
+  { zIndex: 1 },
+);
+globalStyle(`${chipGroupCollapsed} > ${chip}:is(:focus-visible, :active)`, {
+  zIndex: 2,
+});

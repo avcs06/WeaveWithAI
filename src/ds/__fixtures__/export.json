@@ -1,0 +1,5062 @@
+{
+  "components": [
+    {
+      "name": "Truncate",
+      "file": "packages/ui/src/Truncate/index.tsx",
+      "category": "Truncate",
+      "description": "One line of text that ends in an ellipsis when it doesn't fit, with the\nfull text in a tooltip. For a tooltip of your own, use `tooltip` rather than\nwrapping it in a `Tooltip`.",
+      "variantProps": [],
+      "invalidAlternatives": [".truncate", ".text-ellipsis"],
+      "recipe": "Truncate",
+      "props": [
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown above the full text when truncated, alone otherwise. Hover only: also\nprovide it elsewhere."
+        },
+        { "name": "alwaysShowTooltip", "type": "boolean", "required": false }
+      ]
+    },
+    {
+      "name": "Tooltip",
+      "file": "packages/ui/src/Tooltip/index.tsx",
+      "category": "Tooltip",
+      "description": "A short hint on a focusable element that isn't a control, shown on hover\nand keyboard focus. Controls take a `tooltip` prop. Never the only label.",
+      "variantProps": ["side", "align"],
+      "invalidAlternatives": [
+        "[role=\"tooltip\"]",
+        "[data-tooltip]",
+        "button[title]",
+        "a[title]",
+        "span[title]",
+        "div[title]",
+        "p[title]",
+        "i[title]",
+        "img[title]",
+        "svg[title]",
+        "input[title]",
+        "label[title]",
+        "li[title]",
+        "td[title]",
+        "th[title]",
+        "Button[title]",
+        "IconButton[title]",
+        "PlainButton[title]",
+        "Link[title]",
+        "NextLink[title]",
+        "Tag[title]",
+        "Chip[title]",
+        "Avatar[title]",
+        "Truncate[title]",
+        "Card[title]",
+        "Input[title]",
+        "Dropdown.Item[title]"
+      ],
+      "recipe": "Tooltip",
+      "props": [
+        {
+          "name": "tooltip",
+          "type": "ReactNode | ReactNode[]",
+          "required": false,
+          "description": "What it shows. Array entries stack 8px apart; empty ones are skipped.\nNothing to show: never opens."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode | ReactNode[]",
+          "required": false,
+          "description": "The trigger's description for screen readers; defaults to `tooltip`. Omit\ntext the trigger already says; `null` for none."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement<TooltipTriggerProps, string | JSXElementConstructor<any>>",
+          "required": true,
+          "description": "The trigger: an element, or a component that passes its props to one."
+        },
+        {
+          "name": "side",
+          "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+          "required": false,
+          "allowedValues": ["top", "right", "bottom", "left"]
+        },
+        {
+          "name": "align",
+          "type": "\"center\" | \"start\" | \"end\"",
+          "required": false,
+          "allowedValues": ["center", "start", "end"]
+        },
+        { "name": "className", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "Textarea",
+      "file": "packages/ui/src/Textarea/index.tsx",
+      "category": "Textarea",
+      "description": "A multi-line text field: a description, a note, a message. Shows 3 lines by\ndefault; the user can drag it taller. In a form, wire it through\n`Controller`; `delay` saves as the user types. One line of text is an Input.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "textarea",
+        "[role=\"textbox\"][aria-multiline=\"true\"]"
+      ],
+      "recipe": "Textarea",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "undefined", "required": false },
+        { "name": "rightIcon", "type": "undefined", "required": false },
+        { "name": "leftAddOn", "type": "undefined", "required": false },
+        { "name": "rightAddOn", "type": "undefined", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": true
+        },
+        {
+          "name": "delay",
+          "type": "number",
+          "required": false,
+          "description": "`onChange` waits this many ms without typing; the text shows at once.\nBlur and unmounting send a waiting edit at once."
+        }
+      ]
+    },
+    {
+      "name": "Tag",
+      "file": "packages/ui/src/Tag/index.tsx",
+      "category": "Tag",
+      "description": "A short label that only informs: a status, a category, a count, or a\nchosen filter the user removes with its close button (`closable`). A tag\nis never clicked: a toggle is a Chip, an action a Button.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [".badge", ".tag", ".pill"],
+      "recipe": "Tag",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"sm\" | \"xs\"",
+          "required": false,
+          "allowedValues": ["sm", "xs"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"success\" | \"default\" | \"error\" | \"warning\" | \"info\" | \"accent\"",
+          "required": false,
+          "allowedValues": [
+            "base",
+            "success",
+            "default",
+            "error",
+            "warning",
+            "info",
+            "accent"
+          ]
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `!bordered` drops the border."
+        },
+        {
+          "name": "closable",
+          "type": "boolean",
+          "required": false,
+          "description": "Adds a close button, read as \"Remove\" and the label."
+        },
+        {
+          "name": "onClose",
+          "type": "MouseEventHandler<HTMLButtonElement>",
+          "required": false
+        },
+        {
+          "name": "closeRef",
+          "type": "Ref<HTMLButtonElement>",
+          "required": false,
+          "description": "The close button. Removing the tag removes the focused button, so move\nfocus to the next tag's close button."
+        },
+        {
+          "name": "closeTabIndex",
+          "type": "number",
+          "required": false,
+          "description": "`-1` inside a widget that moves focus between its tags itself."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "On a closable tag, the close button shows it with the disabled reason on\nhover and focus, and screen readers read both. A tag that can't close\ntakes no focus, so only hover shows them: nothing essential here."
+        }
+      ]
+    },
+    {
+      "name": "Tab",
+      "file": "packages/ui/src/Tabs/index.tsx",
+      "category": "Tabs",
+      "description": "One tab of a Tabs: `title` and icons in the tab list, children as the\npanel shown while it's active. It renders nothing itself.",
+      "variantProps": [],
+      "invalidAlternatives": ["[role=\"tab\"]", "[role=\"tabpanel\"]"],
+      "recipe": "Tabs",
+      "props": [
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "description": "Names the tab for `activeTab` and `onTabChange`."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Shown in the tab list, between the icons."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The panel, rendered while the tab is active."
+        },
+        {
+          "name": "keepMounted",
+          "type": "boolean",
+          "required": false,
+          "description": "Renders the panel from the start and hides it while another tab is\nactive, so what it keeps itself, like scroll position, survives."
+        }
+      ]
+    },
+    {
+      "name": "Tabs",
+      "file": "packages/ui/src/Tabs/index.tsx",
+      "category": "Tabs",
+      "description": "Views of one subject that share a place on the page, one shown at a time:\na session's details, speakers and feedback. Its `Tab` children are the\ntabs, each with its panel. Another page is a Link, not a tab.",
+      "variantProps": ["variant"],
+      "invalidAlternatives": [
+        "[role=\"tablist\"]",
+        "import('@radix-ui/react-tabs')"
+      ],
+      "recipe": "Tabs",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "activeTab",
+          "type": "string",
+          "required": false,
+          "description": "The active tab's `value`. Without it, Tabs keeps its own, starting at the\nfirst enabled tab; with every tab disabled, none is active."
+        },
+        {
+          "name": "onTabChange",
+          "type": "((value: V) => void)",
+          "required": false
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "`Tab` elements, one per tab."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the root, around the tab list and the panel."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "Names the tab list, for a page with more than one."
+        },
+        { "name": "aria-labelledby", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "Table",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Rows of records to scan, sort, filter, select and act on. Configure with\n`Table.*` children: a `Table.Column` per column, plus the features needed\n(`Table.Selection`, `Table.Pagination`, …).",
+      "variantProps": [],
+      "invalidAlternatives": ["table", "[role=\"table\"]", "[role=\"cell\"]"],
+      "recipe": "Table",
+      "props": [
+        { "name": "data", "type": "readonly T[]", "required": true },
+        {
+          "name": "rowKey",
+          "type": "(row: T) => TableRowKey",
+          "required": true,
+          "description": "A row's identity: the same key for the same row on every render."
+        },
+        {
+          "name": "caption",
+          "type": "string",
+          "required": true,
+          "description": "Accessible name of the table."
+        },
+        { "name": "mode", "type": "TableMode", "required": false },
+        {
+          "name": "virtualized",
+          "type": "boolean",
+          "required": false,
+          "description": "Renders only visible rows; give the container a fixed height."
+        },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "emptyMessage", "type": "ReactNode", "required": false },
+        {
+          "name": "onRowClick",
+          "type": "((row: T, event: MouseEvent<HTMLTableRowElement, MouseEvent>) => void)",
+          "required": false,
+          "description": "A click on a row outside its controls: a pointer shortcut for its main\naction. Keyboard and screen-reader users can't click a row, so the action\nmust also be a link or button in the row, like a `Link` in its name cell.\nIgnored with `Table.Expansion`, where a row click toggles the row."
+        },
+        { "name": "className", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "Table.Column",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: registers its props and renderer; renders nothing.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        { "name": "id", "type": "string", "required": true },
+        { "name": "title", "type": "ReactNode", "required": true },
+        { "name": "sortable", "type": "boolean", "required": false },
+        { "name": "width", "type": "TableColumnWidth", "required": false },
+        { "name": "align", "type": "TableAlign", "required": false },
+        {
+          "name": "rowHeader",
+          "type": "boolean",
+          "required": false,
+          "description": "Names each row, like an attendee's name: its cells are row headers, read\nwith every cell of the row, and its value names the row's controls (\"Select\nAda Lovelace\"). One per table; without one, the first column with a value\ndoes."
+        },
+        { "name": "dataKey", "type": "string", "required": false },
+        {
+          "name": "computed",
+          "type": "((value: T[keyof T & string], row: T) => C) | ((value: undefined, row: T) => C)",
+          "required": false
+        },
+        { "name": "filter", "type": "TableColumnFilter", "required": false }
+      ]
+    },
+    {
+      "name": "Table.Sort",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: controlled with `value`, uncontrolled otherwise.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        { "name": "value", "type": "TableSortValue", "required": false },
+        { "name": "defaultValue", "type": "TableSortValue", "required": false },
+        {
+          "name": "onChange",
+          "type": "((value: TableSortValue) => void)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Table.Filter",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: controlled with `value`, uncontrolled otherwise.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        { "name": "value", "type": "TableFilterValue", "required": false },
+        {
+          "name": "defaultValue",
+          "type": "TableFilterValue",
+          "required": false
+        },
+        {
+          "name": "onChange",
+          "type": "((value: TableFilterValue) => void)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Table.Selection",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: adds the selection column; controlled with `value`.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        {
+          "name": "value",
+          "type": "readonly TableRowKey[]",
+          "required": false
+        },
+        {
+          "name": "defaultValue",
+          "type": "readonly TableRowKey[]",
+          "required": false
+        },
+        {
+          "name": "onChange",
+          "type": "((value: TableRowKey[]) => void)",
+          "required": false
+        },
+        {
+          "name": "isRowSelectable",
+          "type": "((row: T) => boolean)",
+          "required": false,
+          "description": "`false` leaves the cell empty, unless the row is already selected."
+        },
+        {
+          "name": "isRowDisabled",
+          "type": "((row: T) => boolean)",
+          "required": false,
+          "description": "`true` shows a disabled checkbox; select-all leaves the row as is."
+        }
+      ]
+    },
+    {
+      "name": "Table.Expansion",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: adds the expansion column; controlled with `value`.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        {
+          "name": "value",
+          "type": "readonly TableRowKey[]",
+          "required": false
+        },
+        {
+          "name": "defaultValue",
+          "type": "readonly TableRowKey[]",
+          "required": false
+        },
+        {
+          "name": "onChange",
+          "type": "((value: TableRowKey[]) => void)",
+          "required": false
+        },
+        {
+          "name": "isRowExpandable",
+          "type": "((row: T) => boolean)",
+          "required": false,
+          "description": "`false` leaves the cell empty, unless the row is already expanded."
+        },
+        {
+          "name": "isRowDisabled",
+          "type": "((row: T) => boolean)",
+          "required": false,
+          "description": "`true` shows a disabled expand button."
+        }
+      ]
+    },
+    {
+      "name": "Table.Reorder",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: adds the drag handle column.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        {
+          "name": "onReorder",
+          "type": "(event: TableRowReorderEvent<T>) => void",
+          "required": true
+        },
+        {
+          "name": "isRowDisabled",
+          "type": "((row: T) => boolean)",
+          "required": false,
+          "description": "`true` disables the row's drag handle; other rows still move past it."
+        }
+      ]
+    },
+    {
+      "name": "Table.Pagination",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: controlled with `value`, uncontrolled otherwise.",
+      "variantProps": ["size", "content"],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        { "name": "value", "type": "PaginationValue", "required": false },
+        {
+          "name": "defaultValue",
+          "type": "PaginationValue",
+          "required": false
+        },
+        {
+          "name": "onChange",
+          "type": "((value: PaginationValue) => void)",
+          "required": false
+        },
+        {
+          "name": "size",
+          "type": "\"full\" | \"minimal\"",
+          "required": false,
+          "allowedValues": ["full", "minimal"],
+          "description": "`full` (default): First, Previous, up to five page numbers, Next, Last.\n`minimal`: Previous, the current page, Next."
+        },
+        {
+          "name": "content",
+          "type": "\"text\" | \"icons\"",
+          "required": false,
+          "allowedValues": ["text", "icons"],
+          "description": "First, Previous, Next and Last as words (default) or icons."
+        },
+        {
+          "name": "pageSizeOptions",
+          "type": "readonly number[]",
+          "required": false,
+          "description": "Page sizes to pick from; the first is the default."
+        },
+        {
+          "name": "totalItems",
+          "type": "number",
+          "required": false,
+          "description": "Server mode: rows matching the current filters."
+        },
+        {
+          "name": "unfilteredTotalItems",
+          "type": "number",
+          "required": false,
+          "description": "Server mode: rows before filtering, shown in the filtered stat."
+        }
+      ]
+    },
+    {
+      "name": "Table.InfiniteScroll",
+      "file": "packages/ui/src/Table/index.tsx",
+      "category": "Table",
+      "description": "Config component: server mode loads more rows as the body nears its end.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Table",
+      "props": [
+        {
+          "name": "totalItems",
+          "type": "number",
+          "required": true,
+          "description": "Rows matching the current filters; loading stops once `data` has them all."
+        },
+        {
+          "name": "onLoadMore",
+          "type": "() => void",
+          "required": true,
+          "description": "Called when the body nears its end, and by the footer's load more button."
+        }
+      ]
+    },
+    {
+      "name": "Switch",
+      "file": "packages/ui/src/Switch/index.tsx",
+      "category": "Switch",
+      "description": "A switch labeled by its children, to its right: a setting that takes effect\nwhen flipped, like notifications. A choice confirmed by a form's submit is a\nCheckbox.",
+      "variantProps": ["variant", "size"],
+      "invalidAlternatives": [
+        "[role=\"switch\"]",
+        "input[type=\"checkbox\"][role=\"switch\"]",
+        "import('@radix-ui/react-switch')"
+      ],
+      "recipe": "Switch",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "aria-checked", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        {
+          "name": "checked",
+          "type": "boolean",
+          "required": true,
+          "description": "Whether it's on: yours to hold in state, with `onCheckedChange`."
+        },
+        {
+          "name": "onCheckedChange",
+          "type": "(checked: boolean) => void",
+          "required": true
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the track, and on focus, above any reason."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The track's id; generated when left out."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the row, around the track and its label."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "For the row, around the track and its label."
+        },
+        {
+          "name": "children",
+          "type": "string",
+          "required": false,
+          "description": "The label, to the right of the track."
+        }
+      ]
+    },
+    {
+      "name": "MultiSelect",
+      "file": "packages/ui/src/Select/index.tsx",
+      "category": "Select",
+      "description": "A form field for choosing several values from a list: teams, tracks,\nspeakers. Each chosen value is a removable tag, and the menu stays open\nwhile choosing. One value: Select.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "select[multiple]",
+        "[role=\"listbox\"][aria-multiselectable]",
+        "Select[multiple]"
+      ],
+      "recipe": "Select",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "allowSearch", "type": "boolean", "required": false },
+        { "name": "search", "type": "string", "required": false },
+        {
+          "name": "onSearch",
+          "type": "((text: string) => void)",
+          "required": false
+        },
+        {
+          "name": "allowClear",
+          "type": "boolean",
+          "required": false,
+          "description": "Lets the user clear the selection, with Delete or the clear button."
+        },
+        {
+          "name": "showCheckbox",
+          "type": "boolean",
+          "required": false,
+          "description": "A checkbox before each option, ticked when selected."
+        },
+        {
+          "name": "showCheckmark",
+          "type": "boolean",
+          "required": false,
+          "description": "A check mark after each selected option; on by default."
+        },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the Select: trigger, search and menu."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "Names a Select without a label; the placeholder does otherwise."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the field's root."
+        },
+        { "name": "value", "type": "readonly V[]", "required": true },
+        {
+          "name": "onChange",
+          "type": "(values: V[], options: SelectOptionData<V, D>[]) => void",
+          "required": true,
+          "description": "The values in selection order, and their options in that order."
+        },
+        {
+          "name": "renderTrigger",
+          "type": "((trigger: { selected: SelectOptionData<V, D>[]; open: boolean; }) => ReactNode)",
+          "required": false,
+          "description": "Replaces the tags."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "`SelectOption` elements, one per option, or in `SelectGroup`s."
+        }
+      ]
+    },
+    {
+      "name": "Select",
+      "file": "packages/ui/src/Select/index.tsx",
+      "category": "Select",
+      "description": "A form field for choosing one value from a list: a venue, a ticket type, a\nsort order. Its options are `SelectOption` children; typing filters them,\nor `onSearch` asks the server. Several values: MultiSelect.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "select",
+        "[role=\"combobox\"]",
+        "[role=\"listbox\"]",
+        "[aria-haspopup=\"listbox\"]"
+      ],
+      "recipe": "Select",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "allowSearch", "type": "boolean", "required": false },
+        { "name": "search", "type": "string", "required": false },
+        {
+          "name": "onSearch",
+          "type": "((text: string) => void)",
+          "required": false
+        },
+        {
+          "name": "allowClear",
+          "type": "boolean",
+          "required": false,
+          "description": "Lets the user clear the selection, with Delete or the clear button."
+        },
+        {
+          "name": "showCheckbox",
+          "type": "boolean",
+          "required": false,
+          "description": "A checkbox before each option, ticked when selected."
+        },
+        {
+          "name": "showCheckmark",
+          "type": "boolean",
+          "required": false,
+          "description": "A check mark after each selected option; on by default."
+        },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the Select: trigger, search and menu."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "Names a Select without a label; the placeholder does otherwise."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the field's root."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "description": "`''` is nothing selected."
+        },
+        {
+          "name": "onChange",
+          "type": "(value: \"\" | V, option: SelectOptionData<V, D> | undefined) => void",
+          "required": true
+        },
+        {
+          "name": "renderTrigger",
+          "type": "((trigger: { selected: SelectOptionData<V, D>; open: boolean; }) => ReactNode)",
+          "required": false,
+          "description": "Replaces the selected label."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "`SelectOption` elements, one per option, or in `SelectGroup`s."
+        }
+      ]
+    },
+    {
+      "name": "SelectGroup",
+      "file": "packages/ui/src/Select/index.tsx",
+      "category": "Select",
+      "description": "A labelled group of options in a Select's menu: sessions by day, venues by\ncity. Its children are `SelectOption` elements.",
+      "variantProps": [],
+      "invalidAlternatives": ["optgroup"],
+      "recipe": "Select",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Shown above the group's options, and names the group."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The group's `SelectOption` elements."
+        }
+      ]
+    },
+    {
+      "name": "SelectOption",
+      "file": "packages/ui/src/Select/index.tsx",
+      "category": "Select",
+      "description": "One option of a Select or MultiSelect. It renders nothing itself: `value`\nand `label` are the option, its children draw its menu row, and other props\nare data passed to `onChange`.",
+      "variantProps": [],
+      "invalidAlternatives": ["[role=\"option\"]"],
+      "recipe": "Select",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "What the trigger shows and search matches."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The row's content in the menu; the label without it."
+        }
+      ]
+    },
+    {
+      "name": "Section",
+      "file": "packages/ui/src/Section/index.tsx",
+      "category": "Section",
+      "description": "A titled part of a page: a heading, an optional muted description, then its\ncontent, with the same sizes and spacing everywhere. A section inside a\nsection gets the next heading level. One that opens and closes is a\nCollapsible, several are an Accordion.",
+      "variantProps": ["headingAs"],
+      "invalidAlternatives": ["section"],
+      "recipe": "Section",
+      "props": [
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The heading's text; its level comes from how deep the section sits."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A muted line under the heading that says what the section holds."
+        },
+        {
+          "name": "headerAction",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Controls at the header's end, like a Create button."
+        },
+        {
+          "name": "titleId",
+          "type": "string",
+          "required": false,
+          "description": "The heading's id, for a control it names with `aria-labelledby`."
+        },
+        {
+          "name": "headingAs",
+          "type": "\"h1\" | \"h2\" | \"h3\" | \"h4\" | \"h5\" | \"h6\"",
+          "required": false,
+          "allowedValues": ["h1", "h2", "h3", "h4", "h5", "h6"],
+          "description": "The heading element, over the one nesting picks: `h1` for the page's\nown title. Sections inside follow from it; the size stays the same."
+        }
+      ]
+    },
+    {
+      "name": "FlexScrollArea",
+      "file": "packages/ui/src/ScrollArea/index.tsx",
+      "category": "ScrollArea",
+      "description": "A ScrollArea for a flex column, like a panel or dialog body: it takes its\ncontent's height until the column is full, then scrolls.",
+      "variantProps": ["orientation"],
+      "invalidAlternatives": [
+        ".min-h-0.overflow-auto",
+        ".min-h-0.overflow-y-auto",
+        ".flex-fill-y.overflow-auto",
+        ".flex-fill-y.overflow-y-auto"
+      ],
+      "recipe": "ScrollArea",
+      "props": [
+        {
+          "name": "orientation",
+          "type": "\"both\" | \"horizontal\" | \"vertical\"",
+          "required": false,
+          "allowedValues": ["both", "horizontal", "vertical"],
+          "description": "The scroll directions; `both` by default. `vertical` leaves wide content,\nlike a table, to scroll sideways itself."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the scrolling element; every other prop goes on the root."
+        }
+      ]
+    },
+    {
+      "name": "ScrollArea",
+      "file": "packages/ui/src/ScrollArea/index.tsx",
+      "category": "ScrollArea",
+      "description": "A box that scrolls its own content, for a box with its own height (`h-*`\nor `max-h-*`). Scrollbars show while the content overflows.",
+      "variantProps": ["orientation"],
+      "invalidAlternatives": [
+        "import('@radix-ui/react-scroll-area')",
+        ".overflow-auto",
+        ".overflow-scroll",
+        ".overflow-y-auto",
+        ".overflow-y-scroll",
+        ".overflow-x-auto",
+        ".overflow-x-scroll"
+      ],
+      "recipe": "ScrollArea",
+      "props": [
+        {
+          "name": "orientation",
+          "type": "\"both\" | \"horizontal\" | \"vertical\"",
+          "required": false,
+          "allowedValues": ["both", "horizontal", "vertical"],
+          "description": "The scroll directions; `both` by default. `vertical` leaves wide content,\nlike a table, to scroll sideways itself."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the scrolling element; every other prop goes on the root."
+        }
+      ]
+    },
+    {
+      "name": "UIRoot",
+      "file": "packages/ui/src/Root/index.tsx",
+      "category": "Root",
+      "description": "The app's `<html>` and `<body>`, rendered once in the root layout: global\nstyles, the light or dark theme before first paint, the tooltip provider\nand the toast queue. The app puts its own error boundary inside it, around\nits pages.",
+      "variantProps": [],
+      "invalidAlternatives": ["html", "body", "TooltipProvider"],
+      "recipe": null,
+      "props": [
+        {
+          "name": "lang",
+          "type": "string",
+          "required": false,
+          "description": "The page's language, read by screen readers and translators."
+        }
+      ]
+    },
+    {
+      "name": "Radio",
+      "file": "packages/ui/src/Radio/index.tsx",
+      "category": "Radio",
+      "description": "One choice of a RadioGroup, with its label, its children, to its right.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": ["input[type=\"radio\"]", "[role=\"radio\"]"],
+      "recipe": "Radio",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "aria-checked", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "description": "What choosing it sets its RadioGroup's value to."
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the radio, and on focus, above any reason."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The radio's id; generated when left out."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the row, around the radio and its label."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "For the row, around the radio and its label."
+        },
+        {
+          "name": "children",
+          "type": "string",
+          "required": false,
+          "description": "The label, to the right of the radio."
+        }
+      ]
+    },
+    {
+      "name": "RadioGroup",
+      "file": "packages/ui/src/Radio/index.tsx",
+      "category": "Radio",
+      "description": "Radios for one choice from a few visible ones, like a ticket type. A form\nfield with label, help text and error; no layout: lay out with `className`.",
+      "variantProps": [],
+      "invalidAlternatives": [
+        "[role=\"radiogroup\"]",
+        "import('@radix-ui/react-radio-group')"
+      ],
+      "recipe": "Radio",
+      "props": [
+        { "name": "label", "type": "string", "required": false },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        { "name": "success", "type": "string | boolean", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the group."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the group's element, which takes focus from its label."
+        },
+        { "name": "aria-labelledby", "type": "string", "required": false },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Popover",
+      "file": "packages/ui/src/Popover/index.tsx",
+      "category": "Popover",
+      "description": "A panel of the caller's own content opened from a button: a filter form, a\ndetails card, a quick edit. A non-modal dialog by default: focus moves in on\nopen and back to the trigger on close; Escape, a click outside or tabbing\nout closes it.",
+      "variantProps": ["align"],
+      "invalidAlternatives": [
+        "import('@radix-ui/react-popover')",
+        "[popover]",
+        "[popovertarget]",
+        "[popoverTarget]",
+        "[popovertargetaction]",
+        "[popoverTargetAction]",
+        "button[aria-haspopup=\"dialog\"]",
+        "Button[aria-haspopup=\"dialog\"]",
+        "IconButton[aria-haspopup=\"dialog\"]",
+        "PlainButton[aria-haspopup=\"dialog\"]"
+      ],
+      "recipe": "Popover",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        {
+          "name": "children",
+          "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+          "required": true,
+          "description": "One trigger element that forwards refs, events and attributes."
+        },
+        {
+          "name": "menu",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The content, with its own padding and layout."
+        },
+        {
+          "name": "align",
+          "type": "\"start\" | \"end\"",
+          "required": false,
+          "allowedValues": ["start", "end"],
+          "description": "Defaults to `end`."
+        },
+        { "name": "open", "type": "boolean", "required": false },
+        { "name": "defaultOpen", "type": "boolean", "required": false },
+        {
+          "name": "onOpenChange",
+          "type": "((open: boolean) => void)",
+          "required": false
+        },
+        {
+          "name": "modal",
+          "type": "boolean",
+          "required": false,
+          "description": "Keeps focus in the content and blocks the page while open; default `false`."
+        },
+        {
+          "name": "menuClassName",
+          "type": "string",
+          "required": false,
+          "description": "For the content, which renders outside the trigger's parent."
+        },
+        { "name": "aria-label", "type": "string", "required": false },
+        { "name": "aria-labelledby", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "PopoverButton",
+      "file": "packages/ui/src/Popover/index.tsx",
+      "category": "Popover",
+      "description": "A Popover's trigger: a base Button with an up-down chevron that shows the\nPopover's disabled or loading state and reason in its own tooltip.",
+      "variantProps": ["variant", "size"],
+      "invalidAlternatives": [],
+      "recipe": "Popover",
+      "props": [
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        {
+          "name": "tooltip",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null",
+          "required": false,
+          "description": "Shown on hover and focus, above any state reason. Read as the description\nunless it repeats the name."
+        },
+        {
+          "name": "leftIcon",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null",
+          "required": false
+        },
+        {
+          "name": "rightIcon",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null",
+          "required": false
+        },
+        {
+          "name": "leftAddOn",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null",
+          "required": false
+        },
+        {
+          "name": "rightAddOn",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null",
+          "required": false
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\" | \"danger\"",
+          "required": false,
+          "allowedValues": ["base", "default", "danger"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles, in any order: `ghost`, `rounded`."
+        },
+        {
+          "name": "as",
+          "type": "ButtonTarget",
+          "required": false,
+          "description": "Forwards props, ref and className to the interactive root, whose look\nButton owns; inline styles and important rules override it."
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        }
+      ]
+    },
+    {
+      "name": "Pagination",
+      "file": "packages/ui/src/Pagination/index.tsx",
+      "category": "Pagination",
+      "description": "Pages of a long list: \"Showing 11 to 20 of 95 items\" on the left, then a\npage-size select and First, Previous, page numbers, Next and Last. A table's\npages are `Table.Pagination`, built on it.",
+      "variantProps": ["size", "content"],
+      "invalidAlternatives": [
+        "nav[aria-label*=\"pagination\" i]",
+        "nav[aria-label*=\"pages\" i]"
+      ],
+      "recipe": "Pagination",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"full\" | \"minimal\"",
+          "required": false,
+          "allowedValues": ["full", "minimal"],
+          "description": "`full` (default): First, Previous, up to five page numbers, Next, Last.\n`minimal`: Previous, the current page, Next."
+        },
+        {
+          "name": "content",
+          "type": "\"text\" | \"icons\"",
+          "required": false,
+          "allowedValues": ["text", "icons"],
+          "description": "First, Previous, Next and Last as words (default) or icons."
+        },
+        {
+          "name": "pageSizeOptions",
+          "type": "readonly number[]",
+          "required": false,
+          "description": "Page sizes to pick from; the first is the default."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Names the page navigation, unique on the page: \"Sessions pagination\"."
+        },
+        {
+          "name": "totalItems",
+          "type": "number",
+          "required": true,
+          "description": "Items across every page; the page count comes from it."
+        },
+        {
+          "name": "value",
+          "type": "PaginationValue",
+          "required": false,
+          "description": "Controlled: pass with `onChange`. A new page size starts at page one."
+        },
+        {
+          "name": "defaultValue",
+          "type": "PaginationValue",
+          "required": false
+        },
+        {
+          "name": "onChange",
+          "type": "((value: PaginationValue) => void)",
+          "required": false
+        },
+        {
+          "name": "showInfo",
+          "type": "boolean",
+          "required": false,
+          "description": "\"Showing 11 to 20 of 95 items\" beside the controls (default)."
+        },
+        {
+          "name": "itemName",
+          "type": "readonly [string, string]",
+          "required": false,
+          "description": "The items' name, one and many: `['session', 'sessions']`."
+        },
+        {
+          "name": "filtered",
+          "type": "boolean",
+          "required": false,
+          "description": "The items are filtered: counted as matches."
+        },
+        {
+          "name": "unfilteredTotal",
+          "type": "number",
+          "required": false,
+          "description": "Items before filtering: \"Filtered from 120\"."
+        },
+        {
+          "name": "selectedCount",
+          "type": "number",
+          "required": false,
+          "description": "Items chosen across pages: \"3 sessions selected\"."
+        },
+        { "name": "className", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "MenuGroup",
+      "file": "packages/ui/src/Menu/index.tsx",
+      "category": "Menu",
+      "description": "Rows of a Popover's content kept together, apart from the next group.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Popover",
+      "props": []
+    },
+    {
+      "name": "MenuItem",
+      "file": "packages/ui/src/Menu/index.tsx",
+      "category": "Menu",
+      "description": "A row's look: icon, label, add-ons and a selected row's check, for rows\ninside a Popover's content. No behavior of its own: wrap it in a\nPlainButton to press it. For a menu of actions or choices use a Dropdown,\nwhose rows bring menu roles and arrow keys.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Popover",
+      "props": [
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "description": "Left out on a row with no checked state, like an action."
+        },
+        {
+          "name": "checkbox",
+          "type": "boolean",
+          "required": false,
+          "description": "A checkbox before a row with a checked state, ticked when selected."
+        },
+        {
+          "name": "checkmark",
+          "type": "boolean",
+          "required": false,
+          "description": "The check mark at the end of a selected row; on by default."
+        },
+        {
+          "name": "nested",
+          "type": "boolean",
+          "required": false,
+          "description": "Shows the chevron of a row that opens a submenu."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover after the cut label, such as a disabled reason."
+        }
+      ]
+    },
+    {
+      "name": "Link",
+      "file": "packages/ui/src/Link/index.tsx",
+      "category": "Link",
+      "description": "Text that takes the user to another page: another site, an email\n(`mailto:`), a phone number (`tel:`) or a file to download. In the Next\napp, a route of the app is the app's NextLink, built on Link; an action is\na Button.",
+      "variantProps": ["variant"],
+      "invalidAlternatives": ["a[href]", "a[download]", "[role=\"link\"]"],
+      "recipe": "Link",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `plain` drops the dotted line, for a link its place\nalready marks, like a site name in a header."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "href", "type": "string", "required": false },
+        {
+          "name": "asChild",
+          "type": "boolean",
+          "required": false,
+          "description": "Styles its only child, a link component that takes the `href`."
+        }
+      ]
+    },
+    {
+      "name": "Input",
+      "file": "packages/ui/src/Input/index.tsx",
+      "category": "Input",
+      "description": "A single-line text field: names, emails, phones, links, titles. In a form,\nwire it through `Controller`; `delay` saves as the user types.",
+      "variantProps": ["size", "variant", "type"],
+      "invalidAlternatives": [
+        "input:not([type])",
+        "input[type=\"text\"]",
+        "input[type=\"email\"]",
+        "input[type=\"tel\"]",
+        "input[type=\"url\"]",
+        "[role=\"textbox\"]:not([aria-multiline])"
+      ],
+      "recipe": "Input",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": true
+        },
+        {
+          "name": "autoComplete",
+          "type": "string",
+          "required": true,
+          "description": "What the field holds, for autofill and assistive tech: `email`, `name`,\n`new-password`… `off` for a field not about the user, like an event's\ntitle."
+        },
+        {
+          "name": "delay",
+          "type": "number",
+          "required": false,
+          "description": "`onChange` waits this many ms without typing; the text shows at once. Blur,\nEnter and unmounting send a waiting edit at once."
+        },
+        {
+          "name": "type",
+          "type": "\"text\" | \"tel\" | \"url\" | \"email\"",
+          "required": false,
+          "allowedValues": ["text", "tel", "url", "email"],
+          "description": "`email`, `tel` and `url` bring phone keyboards. Numbers take NumberInput,\npasswords PasswordInput, searches SearchInput."
+        }
+      ]
+    },
+    {
+      "name": "NumberInput",
+      "file": "packages/ui/src/Input/index.tsx",
+      "category": "Input",
+      "description": "A number field: a price, a count, a capacity. `onChange` gets the number as\nit's typed, or after `delay`; `null` while empty. Arrow keys and\nPageUp/PageDown step it, Home and End go to `min` and `max`, and blur or\nEnter moves it into them.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "input[type=\"number\"]",
+        "Input[type=\"number\"]",
+        "[role=\"spinbutton\"]",
+        "input[inputMode=\"decimal\"]",
+        "Input[inputMode=\"decimal\"]"
+      ],
+      "recipe": "Input",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        {
+          "name": "value",
+          "type": "number | null",
+          "required": true,
+          "description": "`null` while the field is empty."
+        },
+        {
+          "name": "onChange",
+          "type": "(value: number | null) => void",
+          "required": true
+        },
+        { "name": "autoComplete", "type": "string", "required": true },
+        {
+          "name": "delay",
+          "type": "number",
+          "required": false,
+          "description": "`onChange` waits this many ms without edits; the number shows at once.\nBlur, Enter and unmounting send a waiting edit at once."
+        },
+        { "name": "min", "type": "number", "required": false },
+        { "name": "max", "type": "number", "required": false },
+        { "name": "step", "type": "number", "required": false },
+        { "name": "allowDecimal", "type": "boolean", "required": false },
+        { "name": "allowNegative", "type": "boolean", "required": false }
+      ]
+    },
+    {
+      "name": "PasswordInput",
+      "file": "packages/ui/src/Input/index.tsx",
+      "category": "Input",
+      "description": "A password field with a button at its end that shows or hides the text.\n`autoComplete` says which: `current-password` to sign in, `new-password` to\nsign up or change it.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "input[type=\"password\"]",
+        "Input[type=\"password\"]",
+        "input[autoComplete*=\"password\"]",
+        "Input[autoComplete*=\"password\"]"
+      ],
+      "recipe": "Input",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "undefined", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "undefined", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": true
+        },
+        {
+          "name": "autoComplete",
+          "type": "string",
+          "required": true,
+          "description": "What the field holds, for autofill and assistive tech: `email`, `name`,\n`new-password`… `off` for a field not about the user, like an event's\ntitle."
+        },
+        {
+          "name": "delay",
+          "type": "undefined",
+          "required": false,
+          "description": "`onChange` waits this many ms without typing; the text shows at once. Blur,\nEnter and unmounting send a waiting edit at once."
+        },
+        {
+          "name": "type",
+          "type": "undefined",
+          "required": false,
+          "description": "`email`, `tel` and `url` bring phone keyboards. Numbers take NumberInput,\npasswords PasswordInput, searches SearchInput."
+        }
+      ]
+    },
+    {
+      "name": "SearchInput",
+      "file": "packages/ui/src/Input/index.tsx",
+      "category": "Input",
+      "description": "A search field: filters a list or searches a source as the user types. Shows\nwhat's typed at once and sends `onChange` after a pause; Enter sends it at\nonce, Escape and the clear button empty it.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "input[type=\"search\"]",
+        "Input[type=\"search\"]",
+        "[role=\"searchbox\"]",
+        "Input[placeholder*=\"search\" i]",
+        "Input[aria-label*=\"search\" i]",
+        "input[placeholder*=\"search\" i]",
+        "input[aria-label*=\"search\" i]"
+      ],
+      "recipe": "Input",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "undefined", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "undefined", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        { "name": "value", "type": "string", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "CheckIcon",
+      "file": "packages/ui/src/Icons/index.tsx",
+      "category": "Icons",
+      "description": "The check mark of checkboxes and selected rows, heavier than a plain icon for\nsmall sizes. General checks come from lucide-react.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Icons",
+      "props": []
+    },
+    {
+      "name": "LoadingIcon",
+      "file": "packages/ui/src/Icons/index.tsx",
+      "category": "Icons",
+      "description": "A spinning icon for work in progress, hidden from assistive tech unless\nnamed with `aria-label`. Beside text or in a live region, not inside a\nButton or Select: they have a `loading` prop.",
+      "variantProps": [],
+      "invalidAlternatives": [
+        "LoaderCircle",
+        "LoaderCircleIcon",
+        "LucideLoaderCircle",
+        "Loader2",
+        "Loader2Icon",
+        "LucideLoader2",
+        "LucideLoader",
+        "LoaderPinwheel",
+        "LoaderPinwheelIcon",
+        "LucideLoaderPinwheel",
+        ".animate-spin",
+        "import('lucide-react'){LoaderCircle,LoaderCircleIcon,LucideLoaderCircle,Loader2,Loader2Icon,LucideLoader2,Loader,LoaderIcon,LucideLoader,LoaderPinwheel,LoaderPinwheelIcon,LucideLoaderPinwheel}"
+      ],
+      "recipe": "Icons",
+      "props": []
+    },
+    {
+      "name": "MinusIcon",
+      "file": "packages/ui/src/Icons/index.tsx",
+      "category": "Icons",
+      "description": "The minus mark of checkboxes and selected rows partly on, heavier than a\nplain icon for small sizes. General minus glyphs come from lucide-react.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "Icons",
+      "props": []
+    },
+    {
+      "name": "FormControl",
+      "file": "packages/ui/src/FormControl/index.tsx",
+      "category": "FormControl",
+      "description": "A form field's label, control box, and help text or status message, around a\ncontrol the design system has no component for. Input, NumberInput,\nPasswordInput, SearchInput and Select are built on it: prefer those. With\n`Controller`, `{...field}` is all it needs.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "label",
+        "[aria-invalid]",
+        "[aria-required]",
+        "[aria-errormessage]"
+      ],
+      "recipe": "FormControl",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-describedby", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-invalid", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "The ids of elements that name the control, like a section's heading,\nfor a control with no `label`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "label", "type": "string", "required": false },
+        { "name": "placeholder", "type": "string", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        { "name": "success", "type": "string | boolean", "required": false },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "Reaches the control's focusable element."
+        },
+        {
+          "name": "children",
+          "type": "(controlProps: ControlProps) => ReactElement<unknown, string | JSXElementConstructor<any>>",
+          "required": true,
+          "description": "Renders the control, given its element's attributes."
+        },
+        {
+          "name": "withControlBox",
+          "type": "boolean",
+          "required": false,
+          "description": "Draws the control box around the control; `true` by default. `false`\nfor a control that is its own box, like Select's trigger: it renders a\n`ControlBox`, and the control gets the box's props."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the field's root, around the label, the box and the messages."
+        }
+      ]
+    },
+    {
+      "name": "ControlBox",
+      "file": "packages/ui/src/FormControl/index.tsx",
+      "category": "FormControl",
+      "description": "The control's box: look, icons, add-ons, spinner and tooltip. FormControl\ndraws it around the control; a control that is its own box renders it, and\nFormControl passes the state.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [],
+      "recipe": "FormControl",
+      "props": [
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, above any disabled reason."
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `outline` (default) or `open`."
+        },
+        { "name": "status", "type": "ControlStatus", "required": false },
+        { "name": "isDisabled", "type": "boolean", "required": false },
+        { "name": "isLoading", "type": "boolean", "required": false },
+        { "name": "stateTooltip", "type": "string", "required": false },
+        {
+          "name": "controlRef",
+          "type": "RefObject<HTMLElement | null>",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "ControlMessage",
+      "file": "packages/ui/src/FormControl/index.tsx",
+      "category": "FormControl",
+      "description": "A field's status message: a live region kept on the page while empty, so a\nnew message is announced. Without a status it's styled as help text.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "FormControl",
+      "props": [
+        { "name": "id", "type": "string", "required": false },
+        {
+          "name": "status",
+          "type": "ControlStatus | undefined",
+          "required": true,
+          "description": "Styles the message as that status; without one, it's help text."
+        },
+        { "name": "message", "type": "ReactNode", "required": true }
+      ]
+    },
+    {
+      "name": "ControlLabel",
+      "file": "packages/ui/src/FormControl/index.tsx",
+      "category": "FormControl",
+      "description": "The label's row: the label, its required mark and hint, then `rightAddOn`.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "FormControl",
+      "props": [
+        { "name": "id", "type": "string", "required": true },
+        { "name": "htmlFor", "type": "string", "required": true },
+        { "name": "label", "type": "string | undefined", "required": true },
+        { "name": "required", "type": "boolean", "required": true },
+        { "name": "hint", "type": "ReactNode", "required": true },
+        { "name": "rightAddOn", "type": "ReactNode", "required": true },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover of the label, above its full text when cut off."
+        },
+        {
+          "name": "onClick",
+          "type": "((event: MouseEvent<HTMLLabelElement, MouseEvent>) => void)",
+          "required": false,
+          "description": "Left out, a press activates the labelled control natively."
+        }
+      ]
+    },
+    {
+      "name": "Controller",
+      "file": "packages/ui/src/Form/index.ts",
+      "category": "Form",
+      "description": "Puts one form field under react-hook-form: validation goes in `rules`, and\n`{...field}` gives the control its name, value, `onChange`, focus on a failed\nsubmit, `required` mark and `error`. Every field in a `useForm` form renders\nthrough it.",
+      "variantProps": [],
+      "invalidAlternatives": ["import('react-hook-form'){Controller}"],
+      "recipe": "Form",
+      "props": [
+        { "name": "name", "type": "string", "required": true },
+        {
+          "name": "rules",
+          "type": "Omit<RegisterOptions<TFieldValues, TName>, \"disabled\" | \"valueAsNumber\" | \"valueAsDate\" | \"setValueAs\">",
+          "required": false
+        },
+        { "name": "shouldUnregister", "type": "boolean", "required": false },
+        { "name": "defaultValue", "type": "any", "required": false },
+        {
+          "name": "control",
+          "type": "Control<TFieldValues, any, TTransformedValues>",
+          "required": false
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "exact", "type": "boolean", "required": false },
+        {
+          "name": "children",
+          "type": "(controller: UseControllerReturn<TFieldValues, TName>) => ReactElement<unknown, string | JSXElementConstructor<any>>",
+          "required": true,
+          "description": "Renders the field's control: `{({ field }) => <Input {...field} />}`."
+        }
+      ]
+    },
+    {
+      "name": "ErrorBoundary",
+      "file": "packages/ui/src/ErrorBoundary/index.tsx",
+      "category": "ErrorBoundary",
+      "description": "Shows a fallback in place of `children` once they throw while rendering,\nso one broken part doesn't take down the page. It doesn't catch errors in\nevent handlers, effects, promises or iframes. The fallback can offer\n`reset`, and `resetKeys` renders `children` again on its own.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": "ErrorBoundary",
+      "props": [
+        {
+          "name": "fallback",
+          "type": "ReactNode | ((props: ErrorBoundaryFallbackProps) => ReactNode)",
+          "required": false,
+          "description": "Shown in place of `children` once something below throws, inside an\nalert; `null` renders nothing. Default: \"Something went wrong.\" and a\n\"Try again\" button. A function gets `error` and `reset`."
+        },
+        {
+          "name": "resetKeys",
+          "type": "readonly unknown[]",
+          "required": false,
+          "description": "While failed, a change in any of these renders `children` again."
+        },
+        {
+          "name": "onError",
+          "type": "((error: unknown, info: ErrorInfo) => void)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Dropdown",
+      "file": "packages/ui/src/Dropdown/index.tsx",
+      "category": "Dropdown",
+      "description": "A menu of actions or choices behind a trigger button: row actions, an\naccount menu, sort by, view options. Menu roles, focus and keyboard built in.",
+      "variantProps": ["align"],
+      "invalidAlternatives": [
+        "import('@radix-ui/react-dropdown-menu')",
+        "[role=\"menu\"]",
+        "[aria-haspopup=\"menu\"]",
+        "[aria-haspopup=\"true\"]",
+        "div[role=\"menuitem\"]",
+        "li[role=\"menuitem\"]",
+        "button[role=\"menuitem\"]",
+        "a[role=\"menuitem\"]",
+        "span[role=\"menuitem\"]",
+        "div[role=\"menuitemcheckbox\"]",
+        "li[role=\"menuitemcheckbox\"]",
+        "button[role=\"menuitemcheckbox\"]",
+        "div[role=\"menuitemradio\"]",
+        "li[role=\"menuitemradio\"]",
+        "button[role=\"menuitemradio\"]"
+      ],
+      "recipe": "Dropdown",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        { "name": "open", "type": "boolean", "required": false },
+        { "name": "defaultOpen", "type": "boolean", "required": false },
+        {
+          "name": "onOpenChange",
+          "type": "((open: boolean) => void)",
+          "required": false
+        },
+        { "name": "modal", "type": "boolean", "required": false },
+        {
+          "name": "showCheckbox",
+          "type": "boolean",
+          "required": false,
+          "description": "A checkbox before each row with a checked state."
+        },
+        {
+          "name": "showCheckmark",
+          "type": "boolean",
+          "required": false,
+          "description": "A check mark after each checked row; on by default."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement<DisabledProps, string | JSXElementConstructor<any>>",
+          "required": true,
+          "description": "One trigger element that forwards refs, events and attributes:\n`Dropdown.Button`, an `IconButton`… The Dropdown's reason reaches it as\n`disabledWithReason` or `loadingWithReason`, for its tooltip."
+        },
+        { "name": "menu", "type": "ReactNode", "required": true },
+        {
+          "name": "align",
+          "type": "\"start\" | \"end\"",
+          "required": false,
+          "allowedValues": ["start", "end"],
+          "description": "Defaults to `end`."
+        }
+      ]
+    },
+    {
+      "name": "Dialog",
+      "file": "packages/ui/src/Dialog/index.tsx",
+      "category": "Dialog",
+      "description": "A task over the page that waits until it's done or dismissed: editing a\nsession, inviting a speaker. Its children are the body, which scrolls\nbetween the title and the footer's actions. A yes-or-no question is\nopenConfirmationDialog.",
+      "variantProps": ["size"],
+      "invalidAlternatives": [
+        "dialog",
+        "[role=\"dialog\"]",
+        "[aria-modal=\"true\"]",
+        "import('@radix-ui/react-dialog')"
+      ],
+      "recipe": "Dialog",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "allowedValues": ["sm", "md", "lg"]
+        },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "Names the dialog, at its top."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Under the title, and what screen readers read after it."
+        },
+        {
+          "name": "headerAction",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The dialog's own action, like Invite, before the close button. Outside\nthe title: it doesn't name the dialog."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The body: it scrolls between the header and the footer."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode | ((close: () => void) => ReactNode)",
+          "required": false,
+          "description": "The actions, or a function given `close`, which closes the dialog."
+        },
+        {
+          "name": "trigger",
+          "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+          "required": false,
+          "description": "Opens the dialog on press: one element that forwards refs and events."
+        },
+        { "name": "open", "type": "boolean", "required": false },
+        { "name": "defaultOpen", "type": "boolean", "required": false },
+        {
+          "name": "onOpenChange",
+          "type": "((open: boolean) => void)",
+          "required": false
+        },
+        {
+          "name": "closable",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the close button, Escape and a press outside close it; `true`\nby default. Without them, only the footer's actions do."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the dialog, which renders outside the trigger's parent."
+        }
+      ]
+    },
+    {
+      "name": "Chip",
+      "file": "packages/ui/src/Chip/index.tsx",
+      "category": "Chip",
+      "description": "A compact toggle showing whether it's on: a standalone filter (`active`,\n\"Starred only\") or one choice of a ChipGroup. Read as a checkbox, or a radio\nin a single-choice group. A removable chosen value is a Tag; an action is a\nButton.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "button[aria-pressed]",
+        "Button[aria-pressed]",
+        "Tag[onClick]",
+        ".chip"
+      ],
+      "recipe": "Chip",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles, any order: `outline` or `filled` (a group's mode\npicks one), `ghost`, `rounded`."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover and focus, above any state reason. Read as the description\nunless it repeats the name."
+        },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        { "name": "value", "type": "string", "required": false },
+        { "name": "active", "type": "boolean", "required": false },
+        {
+          "name": "onActiveChange",
+          "type": "((active: boolean) => void)",
+          "required": false
+        },
+        { "name": "role", "type": "undefined", "required": false },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-checked", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false }
+      ]
+    },
+    {
+      "name": "ChipGroup",
+      "file": "packages/ui/src/Chip/index.tsx",
+      "category": "Chip",
+      "description": "Chips for 2 to about 8 short visible choices: one (`mode=\"single\"`, default,\nlike radios) or any number (`mode=\"multiple\"`, like checkboxes). Named by\n`label`, `aria-label` or `aria-labelledby`. A form field with label, help\ntext and message; in a form, `{...field}` from Controller is all it needs.\nLonger lists are a Select or MultiSelect.",
+      "variantProps": ["mode"],
+      "invalidAlternatives": [],
+      "recipe": "Chip",
+      "props": [
+        { "name": "label", "type": "string", "required": false },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        { "name": "success", "type": "string | boolean", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the group."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the group's element, which takes focus from its label."
+        },
+        { "name": "aria-labelledby", "type": "string", "required": false },
+        { "name": "value", "type": "string | string[]", "required": true },
+        {
+          "name": "onChange",
+          "type": "((value: string) => void) | ((value: string[]) => void)",
+          "required": true
+        },
+        {
+          "name": "mode",
+          "type": "\"multiple\" | \"single\"",
+          "required": false,
+          "allowedValues": ["multiple", "single"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `collapsed` joins the chips into one bar, its\nown row, with one border between chips and rounded outer corners only."
+        }
+      ]
+    },
+    {
+      "name": "Checkbox",
+      "file": "packages/ui/src/Checkbox/index.tsx",
+      "category": "Checkbox",
+      "description": "A checkbox labeled by its children, to its right: a yes/no choice like\nconsent or a setting, or one of a CheckboxGroup.",
+      "variantProps": ["variant", "size"],
+      "invalidAlternatives": [
+        "input[type=\"checkbox\"]",
+        "[role=\"checkbox\"]",
+        "import('@radix-ui/react-checkbox')"
+      ],
+      "recipe": "Checkbox",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\"",
+          "required": false,
+          "allowedValues": ["sm", "md"]
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "aria-checked", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        { "name": "aria-readonly", "type": "undefined", "required": false },
+        { "name": "aria-required", "type": "undefined", "required": false },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        {
+          "name": "required",
+          "type": "boolean",
+          "required": false,
+          "description": "Marks the label with `*`."
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover over the box, and on focus, above any reason."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Outside a CheckboxGroup, what it submits under `name` in a form."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The box's id; generated when left out."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "For the row, around the box and its label."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "For the row, around the box and its label."
+        },
+        {
+          "name": "checked",
+          "type": "CheckedState",
+          "required": false,
+          "description": "Checked state, yours to hold with `onCheckedChange`; `'indeterminate'`\nfor a parent with partly checked children.\nIn a CheckboxGroup, the group's `value` decides it."
+        },
+        {
+          "name": "onCheckedChange",
+          "type": "((checked: boolean) => void)",
+          "required": false,
+          "description": "A click on an indeterminate box checks it."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "What it submits under `name` in a form.\nWhat it adds to its CheckboxGroup's value."
+        },
+        {
+          "name": "children",
+          "type": "string",
+          "required": false,
+          "description": "The label, to the right of the box."
+        }
+      ]
+    },
+    {
+      "name": "CheckboxGroup",
+      "file": "packages/ui/src/Checkbox/index.tsx",
+      "category": "Checkbox",
+      "description": "Checkboxes answering one question, with label, help text and error. Its value\nis the checked boxes' values. No layout: lay out with `className`.",
+      "variantProps": [],
+      "invalidAlternatives": ["SelectableGroup[mode=\"multiple\"]"],
+      "recipe": "Checkbox",
+      "props": [
+        { "name": "label", "type": "string", "required": false },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        { "name": "success", "type": "string | boolean", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the group."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the group's element, which takes focus from its label."
+        },
+        { "name": "aria-labelledby", "type": "string", "required": false },
+        { "name": "value", "type": "string[]", "required": true },
+        {
+          "name": "onChange",
+          "type": "(value: string[]) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Card",
+      "file": "packages/ui/src/Card/index.tsx",
+      "category": "Card",
+      "description": "A bordered container with padding and gap, for one item's content or a large\noption in a CardGroup. `onClick` makes the whole card one button; a card with\nits own links or buttons stays static.",
+      "variantProps": ["variant"],
+      "invalidAlternatives": ["article[onClick]"],
+      "recipe": "Card",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles, any order: `outline` or `filled` (a group's mode\npicks one), `elevated`, `ghost`."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "value", "type": "string", "required": false },
+        { "name": "active", "type": "boolean", "required": false },
+        {
+          "name": "onActiveChange",
+          "type": "((active: boolean) => void)",
+          "required": false
+        },
+        { "name": "tabIndex", "type": "undefined", "required": false },
+        { "name": "role", "type": "undefined", "required": false },
+        { "name": "aria-checked", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        {
+          "name": "asChild",
+          "type": "boolean",
+          "required": false,
+          "description": "Render the child element as the card, such as an `li` of a list."
+        },
+        {
+          "name": "ref",
+          "type": "((instance: HTMLDivElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLDivElement | null> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...> | null",
+          "required": false
+        },
+        {
+          "name": "onClick",
+          "type": "MouseEventHandler<HTMLElement>",
+          "required": false,
+          "description": "Makes the whole card a button; not with `asChild`, which would make\nthe child one too."
+        }
+      ]
+    },
+    {
+      "name": "CardGroup",
+      "file": "packages/ui/src/Card/index.tsx",
+      "category": "Card",
+      "description": "Cards for a few large visible choices: one (`mode=\"single\"`, default, like\nradios) or any number (`mode=\"multiple\"`, like checkboxes). A form field with\nlabel, help text and message; in a form, `{...field}` from Controller is all\nit needs.",
+      "variantProps": ["mode"],
+      "invalidAlternatives": [],
+      "recipe": "Card",
+      "props": [
+        { "name": "label", "type": "string", "required": false },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "description": "The control's id; generated when left out."
+        },
+        {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown in a tooltip from the info icon after the label."
+        },
+        { "name": "success", "type": "string | boolean", "required": false },
+        {
+          "name": "error",
+          "type": "string | boolean",
+          "required": false,
+          "description": "Each status takes `true` for the style alone, or a message to show.\nError wins over warning, and warning over success."
+        },
+        { "name": "warning", "type": "string | boolean", "required": false },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The control's name; else the label, the placeholder, then the id."
+        },
+        { "name": "required", "type": "boolean", "required": false },
+        {
+          "name": "labelRightSlot",
+          "type": "ReactNode",
+          "required": false,
+          "description": "At the end of the label's row; shown only with a label."
+        },
+        { "name": "helpText", "type": "ReactNode", "required": false },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        {
+          "name": "onBlur",
+          "type": "(() => void)",
+          "required": false,
+          "description": "Runs once focus leaves the group."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "Reaches the group's element, which takes focus from its label."
+        },
+        { "name": "aria-labelledby", "type": "string", "required": false },
+        { "name": "value", "type": "string | string[]", "required": true },
+        {
+          "name": "onChange",
+          "type": "((value: string) => void) | ((value: string[]) => void)",
+          "required": true
+        },
+        {
+          "name": "mode",
+          "type": "\"multiple\" | \"single\"",
+          "required": false,
+          "allowedValues": ["multiple", "single"]
+        }
+      ]
+    },
+    {
+      "name": "Button",
+      "file": "packages/ui/src/Button/index.tsx",
+      "category": "Button",
+      "description": "An action the user takes: submit a form, save, publish, delete, open a\nmenu. `variant=\"default\"` is the main action of a view, `base` a secondary\none, `danger` one that destroys. Navigation is a Link or NextLink, or a\nButton `as` Next.js's Link where it must look like one; an icon alone is an\nIconButton.",
+      "variantProps": ["size", "variant"],
+      "invalidAlternatives": [
+        "button",
+        "input[type=\"button\"]",
+        "input[type=\"submit\"]",
+        "input[type=\"reset\"]",
+        "input[type=\"image\"]",
+        "a[role=\"button\"]",
+        "a[href=\"#\"]"
+      ],
+      "recipe": "Button",
+      "props": [
+        {
+          "name": "as",
+          "type": "ButtonTarget",
+          "required": false,
+          "description": "Forwards props, ref and className to the interactive root, whose look\nButton owns; inline styles and important rules override it."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover and focus, above any state reason. Read as the description\nunless it repeats the name."
+        },
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"icon-xs\" | \"icon-sm\" | \"icon-md\"",
+          "required": false,
+          "allowedValues": ["sm", "md", "icon-xs", "icon-sm", "icon-md"]
+        },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\" | \"danger\"",
+          "required": false,
+          "allowedValues": ["base", "default", "danger"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles, in any order: `ghost`, `rounded`."
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false }
+      ]
+    },
+    {
+      "name": "IconButton",
+      "file": "packages/ui/src/Button/index.tsx",
+      "category": "Button",
+      "description": "An action shown as an icon alone, where space is tight or the icon is\nuniversal: settings, close, delete, more. Its `tooltip` shows the name and\nis its accessible name; `aria-label` or `aria-labelledby` gives another.",
+      "variantProps": ["variant", "size"],
+      "invalidAlternatives": [
+        "button[aria-label]",
+        "button[aria-labelledby]",
+        "Button[size=\"icon-xs\"]",
+        "Button[size=\"icon-sm\"]",
+        "Button[size=\"icon-md\"]"
+      ],
+      "recipe": "Button",
+      "props": [
+        {
+          "name": "as",
+          "type": "ButtonTarget",
+          "required": false,
+          "description": "Forwards props, ref and className to the interactive root, whose look\nButton owns; inline styles and important rules override it."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\" | \"danger\"",
+          "required": false,
+          "allowedValues": ["base", "default", "danger"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles, in any order: `ghost`, `rounded`."
+        },
+        { "name": "aria-busy", "type": "undefined", "required": false },
+        { "name": "aria-disabled", "type": "undefined", "required": false },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"xs\"",
+          "required": false,
+          "allowedValues": ["sm", "md", "xs"]
+        },
+        { "name": "tooltip", "type": "ReactNode", "required": true }
+      ]
+    },
+    {
+      "name": "PlainButton",
+      "file": "packages/ui/src/Button/index.tsx",
+      "category": "Button",
+      "description": "Button behavior with no look, for an element that must act as a button but\nkeep its own look: an avatar, an info icon, an image. Its one child, a\nnon-interactive element like a `span` or `img`, becomes the button: named,\nfocusable, pressed by Enter and Space. A styled action is a Button or\nIconButton; a card is a Card.",
+      "variantProps": [],
+      "invalidAlternatives": [
+        "[role=\"button\"]",
+        "div[onClick]:not([role])",
+        "span[onClick]:not([role])",
+        "li[onClick]:not([role])",
+        "p[onClick]:not([role])",
+        "i[onClick]:not([role])",
+        "img[onClick]",
+        "svg[onClick]",
+        "a[onClick]:not([href])",
+        "Avatar[onClick]"
+      ],
+      "recipe": "Button",
+      "props": [
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        { "name": "readOnly", "type": "boolean", "required": false },
+        { "name": "readOnlyWithReason", "type": "string", "required": false },
+        { "name": "loading", "type": "boolean", "required": false },
+        { "name": "loadingWithReason", "type": "string", "required": false },
+        { "name": "disableWhileLoading", "type": "boolean", "required": false },
+        {
+          "name": "onClick",
+          "type": "MouseEventHandler<HTMLElement>",
+          "required": false
+        },
+        {
+          "name": "onPointerDown",
+          "type": "PointerEventHandler<HTMLElement>",
+          "required": false
+        },
+        {
+          "name": "onKeyDown",
+          "type": "KeyboardEventHandler<HTMLElement>",
+          "required": false
+        },
+        {
+          "name": "onKeyUp",
+          "type": "KeyboardEventHandler<HTMLElement>",
+          "required": false
+        },
+        {
+          "name": "tooltip",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Shown on hover and focus, above any state reason. Read as the description\nunless it repeats the name."
+        }
+      ]
+    },
+    {
+      "name": "Avatar",
+      "file": "packages/ui/src/Avatar/index.tsx",
+      "category": "Avatar",
+      "description": "A round picture of a person, or their initials without one. Hidden from\nassistive tech by default, with no tooltip: it usually sits beside the\nvisible name. Pass `aria-hidden={false}` when it stands for the person on\nits own, and it can be focused to show the name in a tooltip.",
+      "variantProps": ["size"],
+      "invalidAlternatives": ["img.rounded-full", "Image.rounded-full"],
+      "recipe": "Avatar",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "allowedValues": ["sm", "md", "lg"]
+        },
+        { "name": "name", "type": "string", "required": true },
+        { "name": "src", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "Accordion",
+      "file": "packages/ui/src/Accordion/index.tsx",
+      "category": "Accordion",
+      "description": "Sections that open and close under their headings: an FAQ, a long form's\noptional parts. Each `Accordion.Item` is one section. One open at a time\n(`mode=\"single\"`, default) or any number (`mode=\"multiple\"`). Arrow keys,\nHome and End move between the headings. One section alone is a\nCollapsible; one that always shows is a Section.",
+      "variantProps": ["mode"],
+      "invalidAlternatives": [
+        "import('@radix-ui/react-accordion')",
+        "details[name]"
+      ],
+      "recipe": "Accordion",
+      "props": [
+        {
+          "name": "mode",
+          "type": "\"multiple\" | \"single\"",
+          "required": false,
+          "allowedValues": ["multiple", "single"],
+          "description": "One section open at a time (default); opening one closes the other.\nAny number of sections open."
+        },
+        {
+          "name": "value",
+          "type": "string | string[]",
+          "required": false,
+          "description": "The open section's `value`; `''` for none.\nThe open sections' `value`s."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string | string[]",
+          "required": false
+        },
+        {
+          "name": "onValueChange",
+          "type": "((value: string) => void) | ((value: string[]) => void)",
+          "required": false
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "`bordered` (default): a frame around the sections. `open`: dividers only."
+        },
+        { "name": "className", "type": "string", "required": false },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "`Accordion.Item`s."
+        }
+      ]
+    },
+    {
+      "name": "Collapsible",
+      "file": "packages/ui/src/Accordion/index.tsx",
+      "category": "Accordion",
+      "description": "One Section whose heading shows and hides its content: details the user\nopens on demand, like advanced settings. Several are an Accordion.",
+      "variantProps": [],
+      "invalidAlternatives": ["details", "summary"],
+      "recipe": "Accordion",
+      "props": [
+        { "name": "leftIcon", "type": "ReactNode", "required": false },
+        { "name": "rightIcon", "type": "ReactNode", "required": false },
+        { "name": "leftAddOn", "type": "ReactNode", "required": false },
+        { "name": "rightAddOn", "type": "ReactNode", "required": false },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The heading's text; its level comes from how deep the section sits."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A muted line under the heading that says what the section holds."
+        },
+        {
+          "name": "headerAction",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Controls at the header's end, like a Create button."
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "`bordered` (default): a frame around the sections. `open`: dividers only."
+        },
+        { "name": "open", "type": "boolean", "required": false },
+        { "name": "defaultOpen", "type": "boolean", "required": false },
+        {
+          "name": "onOpenChange",
+          "type": "((open: boolean) => void)",
+          "required": false
+        },
+        { "name": "className", "type": "string", "required": false }
+      ]
+    },
+    {
+      "name": "PageErrorBoundary",
+      "file": "web/app/components/PageErrorBoundary.tsx",
+      "category": "components",
+      "description": "The error boundary around every page: a page that throws shows the\nfallback, and the next navigation retries. The path is known only on the\nclient, so this sits inside UIRoot, a server component.",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": null,
+      "props": []
+    },
+    {
+      "name": "PageLayout",
+      "file": "web/app/components/PageLayout.tsx",
+      "category": "components",
+      "description": "",
+      "variantProps": [],
+      "invalidAlternatives": [],
+      "recipe": null,
+      "props": []
+    },
+    {
+      "name": "NextLink",
+      "file": "web/app/components/NextLink/index.ts",
+      "category": "NextLink",
+      "description": "A link to a route of this app, like `/events/42`: Next.js navigates to it\nwithout reloading the page, and prefetches it. It looks like Link, which\nis for other sites, emails and files.",
+      "variantProps": ["variant"],
+      "invalidAlternatives": ["import('next/link')"],
+      "recipe": "NextLink",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"base\" | \"default\"",
+          "required": false,
+          "allowedValues": ["base", "default"]
+        },
+        {
+          "name": "look",
+          "type": "string",
+          "required": false,
+          "description": "Space-separated styles: `plain` drops the dotted line, for a link its place\nalready marks, like a site name in a header."
+        },
+        { "name": "disabled", "type": "boolean", "required": false },
+        { "name": "disabledWithReason", "type": "string", "required": false },
+        {
+          "name": "href",
+          "type": "Url",
+          "required": true,
+          "description": "The path or URL to navigate to. It can also be an object.\n@example https://nextjs.org/docs/api-reference/next/link#with-url-object"
+        },
+        {
+          "name": "replace",
+          "type": "boolean",
+          "required": false,
+          "description": "Replace the current `history` state instead of adding a new url into the stack.\n@defaultValue `false`"
+        },
+        {
+          "name": "scroll",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether to override the default scroll behavior\n@example https://nextjs.org/docs/api-reference/next/link#disable-scrolling-to-the-top-of-the-page\n@defaultValue `true`"
+        },
+        {
+          "name": "prefetch",
+          "type": "boolean | \"auto\" | null",
+          "required": false,
+          "description": "Prefetch the page in the background.\nAny `<Link />` that is in the viewport (initially or through scroll) will be prefetched.\nPrefetch can be disabled by passing `prefetch={false}`. Prefetching is only enabled in production.\n\nIn App Router:\n- \"auto\", null, undefined (default): For statically generated pages, this will prefetch the full React Server Component data. For dynamic pages, this will prefetch up to the nearest route segment with a [`loading.js`](https://nextjs.org/docs/app/api-reference/file-conventions/loading) file. If there is no loading file, it will not fetch the full tree to avoid fetching too much data.\n- `true`: This will prefetch the full React Server Component data for all route segments, regardless of whether they contain a segment with `loading.js`.\n- `false`: This will not prefetch any data, even on hover.\n\nIn Pages Router:\n- `true` (default): The full route & its data will be prefetched.\n- `false`: Prefetching will not happen when entering the viewport, but will still happen on hover.\n@defaultValue `true` (pages router) or `null` (app router)"
+        },
+        {
+          "name": "onNavigate",
+          "type": "OnNavigateEventHandler",
+          "required": false,
+          "description": "Optional event handler for when the `<Link>` is navigated."
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    "events",
+    "useBoundState",
+    "useControlledValue",
+    "useDebouncedCallback",
+    "useDebouncedSearch",
+    "useDebouncedValue",
+    "useDepsChanged",
+    "useLatestRef",
+    "useOnChange",
+    "useOnce",
+    "usePersistentCallback",
+    "configOrder",
+    "configSync",
+    "createContext",
+    "createStore",
+    "createStoreContext",
+    "Accordion",
+    "Avatar",
+    "Button",
+    "Card",
+    "Checkbox",
+    "Chip",
+    "Dialog",
+    "Dropdown",
+    "ErrorBoundary",
+    "Form",
+    "FormControl",
+    "Icons",
+    "Input",
+    "Link",
+    "Pagination",
+    "Popover",
+    "Radio",
+    "ScrollArea",
+    "Section",
+    "Select",
+    "Switch",
+    "Table",
+    "Tabs",
+    "Tag",
+    "Textarea",
+    "Toast",
+    "Tooltip",
+    "Truncate",
+    "NextLink",
+    "useOnRouteChange"
+  ],
+  "tokens": [
+    {
+      "name": "fontFamily.display",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.display",
+      "value": "var(--font-display), Georgia, serif"
+    },
+    {
+      "name": "fontFamily.ui",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.ui",
+      "value": "var(--font-ui), system-ui, -apple-system, sans-serif",
+      "className": "font-ui"
+    },
+    {
+      "name": "fontFamily.mono",
+      "group": "fontFamily",
+      "reference": "tokens.fontFamily.mono",
+      "value": "var(--font-mono), monospace",
+      "className": "font-mono"
+    },
+    {
+      "name": "lineHeight.0",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"0\"]",
+      "value": "0px",
+      "className": "leading-0"
+    },
+    {
+      "name": "lineHeight.3",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"3\"]",
+      "value": "12px",
+      "className": "leading-3"
+    },
+    {
+      "name": "lineHeight.4",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"4\"]",
+      "value": "16px",
+      "className": "leading-4"
+    },
+    {
+      "name": "lineHeight.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"5\"]",
+      "value": "20px",
+      "className": "leading-5"
+    },
+    {
+      "name": "lineHeight.6",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"6\"]",
+      "value": "24px",
+      "className": "leading-6"
+    },
+    {
+      "name": "lineHeight.7",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"7\"]",
+      "value": "28px",
+      "className": "leading-7"
+    },
+    {
+      "name": "lineHeight.8",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"8\"]",
+      "value": "32px",
+      "className": "leading-8"
+    },
+    {
+      "name": "lineHeight.9",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"9\"]",
+      "value": "36px",
+      "className": "leading-9"
+    },
+    {
+      "name": "lineHeight.10",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"10\"]",
+      "value": "40px",
+      "className": "leading-10"
+    },
+    {
+      "name": "lineHeight.11",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"11\"]",
+      "value": "44px",
+      "className": "leading-11"
+    },
+    {
+      "name": "lineHeight.12",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"12\"]",
+      "value": "48px",
+      "className": "leading-12"
+    },
+    {
+      "name": "lineHeight.13",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"13\"]",
+      "value": "52px",
+      "className": "leading-13"
+    },
+    {
+      "name": "lineHeight.14",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"14\"]",
+      "value": "56px",
+      "className": "leading-14"
+    },
+    {
+      "name": "lineHeight.15",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"15\"]",
+      "value": "60px",
+      "className": "leading-15"
+    },
+    {
+      "name": "lineHeight.16",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"16\"]",
+      "value": "64px",
+      "className": "leading-16"
+    },
+    {
+      "name": "lineHeight.3.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"3.5\"]",
+      "value": "14px",
+      "className": "leading-3.5"
+    },
+    {
+      "name": "lineHeight.4.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"4.5\"]",
+      "value": "18px",
+      "className": "leading-4.5"
+    },
+    {
+      "name": "lineHeight.5.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"5.5\"]",
+      "value": "22px",
+      "className": "leading-5.5"
+    },
+    {
+      "name": "lineHeight.6.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"6.5\"]",
+      "value": "26px",
+      "className": "leading-6.5"
+    },
+    {
+      "name": "lineHeight.7.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"7.5\"]",
+      "value": "30px",
+      "className": "leading-7.5"
+    },
+    {
+      "name": "lineHeight.8.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"8.5\"]",
+      "value": "34px",
+      "className": "leading-8.5"
+    },
+    {
+      "name": "lineHeight.9.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"9.5\"]",
+      "value": "38px",
+      "className": "leading-9.5"
+    },
+    {
+      "name": "lineHeight.10.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"10.5\"]",
+      "value": "42px",
+      "className": "leading-10.5"
+    },
+    {
+      "name": "lineHeight.11.5",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight[\"11.5\"]",
+      "value": "46px",
+      "className": "leading-11.5"
+    },
+    {
+      "name": "lineHeight.display",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.display",
+      "value": "44px",
+      "className": "leading-display"
+    },
+    {
+      "name": "lineHeight.title",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.title",
+      "value": "32px",
+      "className": "leading-title"
+    },
+    {
+      "name": "lineHeight.heading",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.heading",
+      "value": "28px",
+      "className": "leading-heading"
+    },
+    {
+      "name": "lineHeight.subheading",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.subheading",
+      "value": "24px",
+      "className": "leading-subheading"
+    },
+    {
+      "name": "lineHeight.body",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.body",
+      "value": "20px",
+      "className": "leading-body"
+    },
+    {
+      "name": "lineHeight.label",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.label",
+      "value": "16px",
+      "className": "leading-label"
+    },
+    {
+      "name": "lineHeight.caption",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.caption",
+      "value": "18px",
+      "className": "leading-caption"
+    },
+    {
+      "name": "lineHeight.micro",
+      "group": "lineHeight",
+      "reference": "tokens.lineHeight.micro",
+      "value": "14px",
+      "className": "leading-micro"
+    },
+    {
+      "name": "fontSize.display",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.display",
+      "value": "36px",
+      "className": "text-display"
+    },
+    {
+      "name": "fontSize.title",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.title",
+      "value": "24px",
+      "className": "text-title"
+    },
+    {
+      "name": "fontSize.heading",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.heading",
+      "value": "20px",
+      "className": "text-heading"
+    },
+    {
+      "name": "fontSize.subheading",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.subheading",
+      "value": "16px",
+      "className": "text-subheading"
+    },
+    {
+      "name": "fontSize.body",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.body",
+      "value": "14px",
+      "className": "text-body"
+    },
+    {
+      "name": "fontSize.label",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.label",
+      "value": "13px",
+      "className": "text-label"
+    },
+    {
+      "name": "fontSize.caption",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.caption",
+      "value": "13px",
+      "className": "text-caption"
+    },
+    {
+      "name": "fontSize.micro",
+      "group": "fontSize",
+      "reference": "tokens.fontSize.micro",
+      "value": "11px",
+      "className": "text-micro"
+    },
+    {
+      "name": "iconSize.display",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.display",
+      "value": "40px"
+    },
+    {
+      "name": "iconSize.title",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.title",
+      "value": "28px"
+    },
+    {
+      "name": "iconSize.heading",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.heading",
+      "value": "24px"
+    },
+    {
+      "name": "iconSize.subheading",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.subheading",
+      "value": "18px"
+    },
+    {
+      "name": "iconSize.body",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.body",
+      "value": "16px"
+    },
+    {
+      "name": "iconSize.label",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.label",
+      "value": "14px"
+    },
+    {
+      "name": "iconSize.caption",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.caption",
+      "value": "14px"
+    },
+    {
+      "name": "iconSize.micro",
+      "group": "iconSize",
+      "reference": "tokens.iconSize.micro",
+      "value": "12px"
+    },
+    {
+      "name": "fontWeight.regular",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.regular",
+      "value": "400",
+      "className": "font-regular"
+    },
+    {
+      "name": "fontWeight.medium",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.medium",
+      "value": "500",
+      "className": "font-medium"
+    },
+    {
+      "name": "fontWeight.semibold",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.semibold",
+      "value": "600",
+      "className": "font-semibold"
+    },
+    {
+      "name": "fontWeight.bold",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.bold",
+      "value": "700",
+      "className": "font-bold"
+    },
+    {
+      "name": "fontWeight.display",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.display",
+      "value": "600",
+      "className": "font-semibold"
+    },
+    {
+      "name": "fontWeight.title",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.title",
+      "value": "600",
+      "className": "font-title"
+    },
+    {
+      "name": "fontWeight.heading",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.heading",
+      "value": "600",
+      "className": "font-heading"
+    },
+    {
+      "name": "fontWeight.subheading",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.subheading",
+      "value": "600",
+      "className": "font-subheading"
+    },
+    {
+      "name": "fontWeight.body",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.body",
+      "value": "400",
+      "className": "font-body"
+    },
+    {
+      "name": "fontWeight.label",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.label",
+      "value": "500",
+      "className": "font-label"
+    },
+    {
+      "name": "fontWeight.caption",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.caption",
+      "value": "400",
+      "className": "font-caption"
+    },
+    {
+      "name": "fontWeight.micro",
+      "group": "fontWeight",
+      "reference": "tokens.fontWeight.micro",
+      "value": "500",
+      "className": "font-micro"
+    },
+    {
+      "name": "zIndex.modal",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.modal",
+      "value": "40",
+      "className": "z-modal"
+    },
+    {
+      "name": "zIndex.popover",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.popover",
+      "value": "50",
+      "className": "z-popover"
+    },
+    {
+      "name": "zIndex.dropdown",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.dropdown",
+      "value": "60",
+      "className": "z-dropdown"
+    },
+    {
+      "name": "zIndex.toast",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.toast",
+      "value": "70",
+      "className": "z-toast"
+    },
+    {
+      "name": "zIndex.tooltip",
+      "group": "zIndex",
+      "reference": "tokens.zIndex.tooltip",
+      "value": "80",
+      "className": "z-tooltip"
+    },
+    {
+      "name": "spacing.0",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0\"]",
+      "value": "0px"
+    },
+    {
+      "name": "spacing.1",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"1\"]",
+      "value": "4px"
+    },
+    {
+      "name": "spacing.2",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"2\"]",
+      "value": "8px"
+    },
+    {
+      "name": "spacing.3",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"3\"]",
+      "value": "12px"
+    },
+    {
+      "name": "spacing.4",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"4\"]",
+      "value": "16px"
+    },
+    {
+      "name": "spacing.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"5\"]",
+      "value": "20px"
+    },
+    {
+      "name": "spacing.6",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"6\"]",
+      "value": "24px"
+    },
+    {
+      "name": "spacing.7",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"7\"]",
+      "value": "28px"
+    },
+    {
+      "name": "spacing.8",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"8\"]",
+      "value": "32px"
+    },
+    {
+      "name": "spacing.9",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"9\"]",
+      "value": "36px"
+    },
+    {
+      "name": "spacing.10",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"10\"]",
+      "value": "40px"
+    },
+    {
+      "name": "spacing.11",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"11\"]",
+      "value": "44px"
+    },
+    {
+      "name": "spacing.12",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"12\"]",
+      "value": "48px"
+    },
+    {
+      "name": "spacing.13",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"13\"]",
+      "value": "52px"
+    },
+    {
+      "name": "spacing.14",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"14\"]",
+      "value": "56px"
+    },
+    {
+      "name": "spacing.15",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"15\"]",
+      "value": "60px"
+    },
+    {
+      "name": "spacing.16",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"16\"]",
+      "value": "64px"
+    },
+    {
+      "name": "spacing.0.25",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.25\"]",
+      "value": "1px"
+    },
+    {
+      "name": "spacing.0.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.5\"]",
+      "value": "2px"
+    },
+    {
+      "name": "spacing.0.75",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"0.75\"]",
+      "value": "3px"
+    },
+    {
+      "name": "spacing.1.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"1.5\"]",
+      "value": "6px"
+    },
+    {
+      "name": "spacing.2.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"2.5\"]",
+      "value": "10px"
+    },
+    {
+      "name": "spacing.3.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"3.5\"]",
+      "value": "14px"
+    },
+    {
+      "name": "spacing.4.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"4.5\"]",
+      "value": "18px"
+    },
+    {
+      "name": "spacing.5.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"5.5\"]",
+      "value": "22px"
+    },
+    {
+      "name": "spacing.6.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"6.5\"]",
+      "value": "26px"
+    },
+    {
+      "name": "spacing.7.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"7.5\"]",
+      "value": "30px"
+    },
+    {
+      "name": "spacing.8.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"8.5\"]",
+      "value": "34px"
+    },
+    {
+      "name": "spacing.9.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"9.5\"]",
+      "value": "38px"
+    },
+    {
+      "name": "spacing.10.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"10.5\"]",
+      "value": "42px"
+    },
+    {
+      "name": "spacing.11.5",
+      "group": "spacing",
+      "reference": "tokens.spacing[\"11.5\"]",
+      "value": "46px"
+    },
+    {
+      "name": "radius.0",
+      "group": "radius",
+      "reference": "tokens.radius[\"0\"]",
+      "value": "0px",
+      "className": "rounded-0"
+    },
+    {
+      "name": "radius.1",
+      "group": "radius",
+      "reference": "tokens.radius[\"1\"]",
+      "value": "4px",
+      "className": "rounded-1"
+    },
+    {
+      "name": "radius.2",
+      "group": "radius",
+      "reference": "tokens.radius[\"2\"]",
+      "value": "8px",
+      "className": "rounded-2"
+    },
+    {
+      "name": "radius.3",
+      "group": "radius",
+      "reference": "tokens.radius[\"3\"]",
+      "value": "12px",
+      "className": "rounded-3"
+    },
+    {
+      "name": "radius.4",
+      "group": "radius",
+      "reference": "tokens.radius[\"4\"]",
+      "value": "16px",
+      "className": "rounded-4"
+    },
+    {
+      "name": "radius.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"5\"]",
+      "value": "20px",
+      "className": "rounded-5"
+    },
+    {
+      "name": "radius.6",
+      "group": "radius",
+      "reference": "tokens.radius[\"6\"]",
+      "value": "24px",
+      "className": "rounded-6"
+    },
+    {
+      "name": "radius.7",
+      "group": "radius",
+      "reference": "tokens.radius[\"7\"]",
+      "value": "28px",
+      "className": "rounded-7"
+    },
+    {
+      "name": "radius.8",
+      "group": "radius",
+      "reference": "tokens.radius[\"8\"]",
+      "value": "32px",
+      "className": "rounded-8"
+    },
+    {
+      "name": "radius.9",
+      "group": "radius",
+      "reference": "tokens.radius[\"9\"]",
+      "value": "36px",
+      "className": "rounded-9"
+    },
+    {
+      "name": "radius.10",
+      "group": "radius",
+      "reference": "tokens.radius[\"10\"]",
+      "value": "40px",
+      "className": "rounded-10"
+    },
+    {
+      "name": "radius.11",
+      "group": "radius",
+      "reference": "tokens.radius[\"11\"]",
+      "value": "44px",
+      "className": "rounded-11"
+    },
+    {
+      "name": "radius.12",
+      "group": "radius",
+      "reference": "tokens.radius[\"12\"]",
+      "value": "48px",
+      "className": "rounded-12"
+    },
+    {
+      "name": "radius.13",
+      "group": "radius",
+      "reference": "tokens.radius[\"13\"]",
+      "value": "52px",
+      "className": "rounded-13"
+    },
+    {
+      "name": "radius.14",
+      "group": "radius",
+      "reference": "tokens.radius[\"14\"]",
+      "value": "56px",
+      "className": "rounded-14"
+    },
+    {
+      "name": "radius.15",
+      "group": "radius",
+      "reference": "tokens.radius[\"15\"]",
+      "value": "60px",
+      "className": "rounded-15"
+    },
+    {
+      "name": "radius.16",
+      "group": "radius",
+      "reference": "tokens.radius[\"16\"]",
+      "value": "64px",
+      "className": "rounded-16"
+    },
+    {
+      "name": "radius.0.25",
+      "group": "radius",
+      "reference": "tokens.radius[\"0.25\"]",
+      "value": "1px",
+      "className": "rounded-0.25"
+    },
+    {
+      "name": "radius.0.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"0.5\"]",
+      "value": "2px",
+      "className": "rounded-0.5"
+    },
+    {
+      "name": "radius.1.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"1.5\"]",
+      "value": "6px",
+      "className": "rounded-1.5"
+    },
+    {
+      "name": "radius.2.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"2.5\"]",
+      "value": "10px",
+      "className": "rounded-2.5"
+    },
+    {
+      "name": "radius.3.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"3.5\"]",
+      "value": "14px",
+      "className": "rounded-3.5"
+    },
+    {
+      "name": "radius.4.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"4.5\"]",
+      "value": "18px",
+      "className": "rounded-4.5"
+    },
+    {
+      "name": "radius.5.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"5.5\"]",
+      "value": "22px",
+      "className": "rounded-5.5"
+    },
+    {
+      "name": "radius.6.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"6.5\"]",
+      "value": "26px",
+      "className": "rounded-6.5"
+    },
+    {
+      "name": "radius.7.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"7.5\"]",
+      "value": "30px",
+      "className": "rounded-7.5"
+    },
+    {
+      "name": "radius.8.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"8.5\"]",
+      "value": "34px",
+      "className": "rounded-8.5"
+    },
+    {
+      "name": "radius.9.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"9.5\"]",
+      "value": "38px",
+      "className": "rounded-9.5"
+    },
+    {
+      "name": "radius.10.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"10.5\"]",
+      "value": "42px",
+      "className": "rounded-10.5"
+    },
+    {
+      "name": "radius.11.5",
+      "group": "radius",
+      "reference": "tokens.radius[\"11.5\"]",
+      "value": "46px",
+      "className": "rounded-11.5"
+    },
+    {
+      "name": "radius.full",
+      "group": "radius",
+      "reference": "tokens.radius.full",
+      "value": "9999px",
+      "className": "rounded-full"
+    },
+    {
+      "name": "radius.surface",
+      "group": "radius",
+      "reference": "tokens.radius.surface",
+      "value": "8px",
+      "className": "rounded-surface"
+    },
+    {
+      "name": "radius.control",
+      "group": "radius",
+      "reference": "tokens.radius.control",
+      "value": "6px",
+      "className": "rounded-control"
+    },
+    {
+      "name": "focusRing",
+      "group": "focusRing",
+      "reference": "tokens.focusRing",
+      "value": "halo"
+    },
+    {
+      "name": "color.base.bg",
+      "group": "color",
+      "reference": "tokens.color.base.bg",
+      "value": "var(--weave-color-base-bg)",
+      "className": "bg-base"
+    },
+    {
+      "name": "color.base.fg",
+      "group": "color",
+      "reference": "tokens.color.base.fg",
+      "value": "var(--weave-color-base-fg)",
+      "className": "text-base"
+    },
+    {
+      "name": "color.base.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.base.fgMuted",
+      "value": "var(--weave-color-base-fg-muted)",
+      "className": "text-base-muted"
+    },
+    {
+      "name": "color.base.border",
+      "group": "color",
+      "reference": "tokens.color.base.border",
+      "value": "var(--weave-color-base-border)",
+      "className": "border-base"
+    },
+    {
+      "name": "color.base.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.base.hoverBg",
+      "value": "var(--weave-color-base-hover-bg)",
+      "className": "bg-base-hover"
+    },
+    {
+      "name": "color.base.accentBg",
+      "group": "color",
+      "reference": "tokens.color.base.accentBg",
+      "value": "var(--weave-color-base-accent-bg)",
+      "className": "bg-base-accent"
+    },
+    {
+      "name": "color.base.accentFg",
+      "group": "color",
+      "reference": "tokens.color.base.accentFg",
+      "value": "var(--weave-color-base-accent-fg)",
+      "className": "text-base-accent"
+    },
+    {
+      "name": "color.base.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.base.accentBorder",
+      "value": "var(--weave-color-base-accent-border)",
+      "className": "border-base-accent"
+    },
+    {
+      "name": "color.base.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.base.accentHoverBg",
+      "value": "var(--weave-color-base-accent-hover-bg)",
+      "className": "bg-base-accent-hover"
+    },
+    {
+      "name": "color.base.focus",
+      "group": "color",
+      "reference": "tokens.color.base.focus",
+      "value": "var(--weave-color-base-focus)"
+    },
+    {
+      "name": "color.base.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.base.accentFocus",
+      "value": "var(--weave-color-base-accent-focus)"
+    },
+    {
+      "name": "color.base.shadow",
+      "group": "color",
+      "reference": "tokens.color.base.shadow",
+      "value": "var(--weave-color-base-shadow)"
+    },
+    {
+      "name": "color.surface.pageBg",
+      "group": "color",
+      "reference": "tokens.color.surface.pageBg",
+      "value": "var(--weave-color-surface-page-bg)",
+      "className": "bg-surface-page"
+    },
+    {
+      "name": "color.surface.frameBg",
+      "group": "color",
+      "reference": "tokens.color.surface.frameBg",
+      "value": "var(--weave-color-surface-frame-bg)",
+      "className": "bg-surface-frame"
+    },
+    {
+      "name": "color.surface.pageFg",
+      "group": "color",
+      "reference": "tokens.color.surface.pageFg",
+      "value": "var(--weave-color-surface-page-fg)",
+      "className": "text-surface-page"
+    },
+    {
+      "name": "color.surface.pageFgMuted",
+      "group": "color",
+      "reference": "tokens.color.surface.pageFgMuted",
+      "value": "var(--weave-color-surface-page-fg-muted)",
+      "className": "text-surface-page-muted"
+    },
+    {
+      "name": "color.surface.divider",
+      "group": "color",
+      "reference": "tokens.color.surface.divider",
+      "value": "var(--weave-color-surface-divider)"
+    },
+    {
+      "name": "color.surface.backdrop",
+      "group": "color",
+      "reference": "tokens.color.surface.backdrop",
+      "value": "var(--weave-color-surface-backdrop)"
+    },
+    {
+      "name": "color.surface.skeleton",
+      "group": "color",
+      "reference": "tokens.color.surface.skeleton",
+      "value": "var(--weave-color-surface-skeleton)"
+    },
+    {
+      "name": "color.primary.bg",
+      "group": "color",
+      "reference": "tokens.color.primary.bg",
+      "value": "var(--weave-color-primary-bg)",
+      "className": "bg-primary"
+    },
+    {
+      "name": "color.primary.fg",
+      "group": "color",
+      "reference": "tokens.color.primary.fg",
+      "value": "var(--weave-color-primary-fg)",
+      "className": "text-primary"
+    },
+    {
+      "name": "color.primary.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.primary.fgMuted",
+      "value": "var(--weave-color-primary-fg-muted)",
+      "className": "text-primary-muted"
+    },
+    {
+      "name": "color.primary.border",
+      "group": "color",
+      "reference": "tokens.color.primary.border",
+      "value": "var(--weave-color-primary-border)",
+      "className": "border-primary"
+    },
+    {
+      "name": "color.primary.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.primary.hoverBg",
+      "value": "var(--weave-color-primary-hover-bg)",
+      "className": "bg-primary-hover"
+    },
+    {
+      "name": "color.primary.accentBg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentBg",
+      "value": "var(--weave-color-primary-accent-bg)",
+      "className": "bg-primary-accent"
+    },
+    {
+      "name": "color.primary.accentFg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentFg",
+      "value": "var(--weave-color-primary-accent-fg)",
+      "className": "text-primary-accent"
+    },
+    {
+      "name": "color.primary.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.primary.accentBorder",
+      "value": "var(--weave-color-primary-accent-border)",
+      "className": "border-primary-accent"
+    },
+    {
+      "name": "color.primary.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.primary.accentHoverBg",
+      "value": "var(--weave-color-primary-accent-hover-bg)",
+      "className": "bg-primary-accent-hover"
+    },
+    {
+      "name": "color.primary.focus",
+      "group": "color",
+      "reference": "tokens.color.primary.focus",
+      "value": "var(--weave-color-primary-focus)"
+    },
+    {
+      "name": "color.primary.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.primary.accentFocus",
+      "value": "var(--weave-color-primary-accent-focus)"
+    },
+    {
+      "name": "color.primary.shadow",
+      "group": "color",
+      "reference": "tokens.color.primary.shadow",
+      "value": "var(--weave-color-primary-shadow)"
+    },
+    {
+      "name": "color.success.bg",
+      "group": "color",
+      "reference": "tokens.color.success.bg",
+      "value": "var(--weave-color-success-bg)",
+      "className": "bg-success"
+    },
+    {
+      "name": "color.success.fg",
+      "group": "color",
+      "reference": "tokens.color.success.fg",
+      "value": "var(--weave-color-success-fg)",
+      "className": "text-success"
+    },
+    {
+      "name": "color.success.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.success.fgMuted",
+      "value": "var(--weave-color-success-fg-muted)",
+      "className": "text-success-muted"
+    },
+    {
+      "name": "color.success.border",
+      "group": "color",
+      "reference": "tokens.color.success.border",
+      "value": "var(--weave-color-success-border)",
+      "className": "border-success"
+    },
+    {
+      "name": "color.success.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.success.hoverBg",
+      "value": "var(--weave-color-success-hover-bg)",
+      "className": "bg-success-hover"
+    },
+    {
+      "name": "color.success.accentBg",
+      "group": "color",
+      "reference": "tokens.color.success.accentBg",
+      "value": "var(--weave-color-success-accent-bg)",
+      "className": "bg-success-accent"
+    },
+    {
+      "name": "color.success.accentFg",
+      "group": "color",
+      "reference": "tokens.color.success.accentFg",
+      "value": "var(--weave-color-success-accent-fg)",
+      "className": "text-success-accent"
+    },
+    {
+      "name": "color.success.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.success.accentBorder",
+      "value": "var(--weave-color-success-accent-border)",
+      "className": "border-success-accent"
+    },
+    {
+      "name": "color.success.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.success.accentHoverBg",
+      "value": "var(--weave-color-success-accent-hover-bg)",
+      "className": "bg-success-accent-hover"
+    },
+    {
+      "name": "color.success.focus",
+      "group": "color",
+      "reference": "tokens.color.success.focus",
+      "value": "var(--weave-color-success-focus)"
+    },
+    {
+      "name": "color.success.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.success.accentFocus",
+      "value": "var(--weave-color-success-accent-focus)"
+    },
+    {
+      "name": "color.success.shadow",
+      "group": "color",
+      "reference": "tokens.color.success.shadow",
+      "value": "var(--weave-color-success-shadow)"
+    },
+    {
+      "name": "color.warning.bg",
+      "group": "color",
+      "reference": "tokens.color.warning.bg",
+      "value": "var(--weave-color-warning-bg)",
+      "className": "bg-warning"
+    },
+    {
+      "name": "color.warning.fg",
+      "group": "color",
+      "reference": "tokens.color.warning.fg",
+      "value": "var(--weave-color-warning-fg)",
+      "className": "text-warning"
+    },
+    {
+      "name": "color.warning.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.warning.fgMuted",
+      "value": "var(--weave-color-warning-fg-muted)",
+      "className": "text-warning-muted"
+    },
+    {
+      "name": "color.warning.border",
+      "group": "color",
+      "reference": "tokens.color.warning.border",
+      "value": "var(--weave-color-warning-border)",
+      "className": "border-warning"
+    },
+    {
+      "name": "color.warning.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.warning.hoverBg",
+      "value": "var(--weave-color-warning-hover-bg)",
+      "className": "bg-warning-hover"
+    },
+    {
+      "name": "color.warning.accentBg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentBg",
+      "value": "var(--weave-color-warning-accent-bg)",
+      "className": "bg-warning-accent"
+    },
+    {
+      "name": "color.warning.accentFg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentFg",
+      "value": "var(--weave-color-warning-accent-fg)",
+      "className": "text-warning-accent"
+    },
+    {
+      "name": "color.warning.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.warning.accentBorder",
+      "value": "var(--weave-color-warning-accent-border)",
+      "className": "border-warning-accent"
+    },
+    {
+      "name": "color.warning.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.warning.accentHoverBg",
+      "value": "var(--weave-color-warning-accent-hover-bg)",
+      "className": "bg-warning-accent-hover"
+    },
+    {
+      "name": "color.warning.focus",
+      "group": "color",
+      "reference": "tokens.color.warning.focus",
+      "value": "var(--weave-color-warning-focus)"
+    },
+    {
+      "name": "color.warning.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.warning.accentFocus",
+      "value": "var(--weave-color-warning-accent-focus)"
+    },
+    {
+      "name": "color.warning.shadow",
+      "group": "color",
+      "reference": "tokens.color.warning.shadow",
+      "value": "var(--weave-color-warning-shadow)"
+    },
+    {
+      "name": "color.error.bg",
+      "group": "color",
+      "reference": "tokens.color.error.bg",
+      "value": "var(--weave-color-error-bg)",
+      "className": "bg-error"
+    },
+    {
+      "name": "color.error.fg",
+      "group": "color",
+      "reference": "tokens.color.error.fg",
+      "value": "var(--weave-color-error-fg)",
+      "className": "text-error"
+    },
+    {
+      "name": "color.error.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.error.fgMuted",
+      "value": "var(--weave-color-error-fg-muted)",
+      "className": "text-error-muted"
+    },
+    {
+      "name": "color.error.border",
+      "group": "color",
+      "reference": "tokens.color.error.border",
+      "value": "var(--weave-color-error-border)",
+      "className": "border-error"
+    },
+    {
+      "name": "color.error.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.error.hoverBg",
+      "value": "var(--weave-color-error-hover-bg)",
+      "className": "bg-error-hover"
+    },
+    {
+      "name": "color.error.accentBg",
+      "group": "color",
+      "reference": "tokens.color.error.accentBg",
+      "value": "var(--weave-color-error-accent-bg)",
+      "className": "bg-error-accent"
+    },
+    {
+      "name": "color.error.accentFg",
+      "group": "color",
+      "reference": "tokens.color.error.accentFg",
+      "value": "var(--weave-color-error-accent-fg)",
+      "className": "text-error-accent"
+    },
+    {
+      "name": "color.error.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.error.accentBorder",
+      "value": "var(--weave-color-error-accent-border)",
+      "className": "border-error-accent"
+    },
+    {
+      "name": "color.error.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.error.accentHoverBg",
+      "value": "var(--weave-color-error-accent-hover-bg)",
+      "className": "bg-error-accent-hover"
+    },
+    {
+      "name": "color.error.focus",
+      "group": "color",
+      "reference": "tokens.color.error.focus",
+      "value": "var(--weave-color-error-focus)"
+    },
+    {
+      "name": "color.error.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.error.accentFocus",
+      "value": "var(--weave-color-error-accent-focus)"
+    },
+    {
+      "name": "color.error.shadow",
+      "group": "color",
+      "reference": "tokens.color.error.shadow",
+      "value": "var(--weave-color-error-shadow)"
+    },
+    {
+      "name": "color.info.bg",
+      "group": "color",
+      "reference": "tokens.color.info.bg",
+      "value": "var(--weave-color-info-bg)",
+      "className": "bg-info"
+    },
+    {
+      "name": "color.info.fg",
+      "group": "color",
+      "reference": "tokens.color.info.fg",
+      "value": "var(--weave-color-info-fg)",
+      "className": "text-info"
+    },
+    {
+      "name": "color.info.fgMuted",
+      "group": "color",
+      "reference": "tokens.color.info.fgMuted",
+      "value": "var(--weave-color-info-fg-muted)",
+      "className": "text-info-muted"
+    },
+    {
+      "name": "color.info.border",
+      "group": "color",
+      "reference": "tokens.color.info.border",
+      "value": "var(--weave-color-info-border)",
+      "className": "border-info"
+    },
+    {
+      "name": "color.info.hoverBg",
+      "group": "color",
+      "reference": "tokens.color.info.hoverBg",
+      "value": "var(--weave-color-info-hover-bg)",
+      "className": "bg-info-hover"
+    },
+    {
+      "name": "color.info.accentBg",
+      "group": "color",
+      "reference": "tokens.color.info.accentBg",
+      "value": "var(--weave-color-info-accent-bg)",
+      "className": "bg-info-accent"
+    },
+    {
+      "name": "color.info.accentFg",
+      "group": "color",
+      "reference": "tokens.color.info.accentFg",
+      "value": "var(--weave-color-info-accent-fg)",
+      "className": "text-info-accent"
+    },
+    {
+      "name": "color.info.accentBorder",
+      "group": "color",
+      "reference": "tokens.color.info.accentBorder",
+      "value": "var(--weave-color-info-accent-border)",
+      "className": "border-info-accent"
+    },
+    {
+      "name": "color.info.accentHoverBg",
+      "group": "color",
+      "reference": "tokens.color.info.accentHoverBg",
+      "value": "var(--weave-color-info-accent-hover-bg)",
+      "className": "bg-info-accent-hover"
+    },
+    {
+      "name": "color.info.focus",
+      "group": "color",
+      "reference": "tokens.color.info.focus",
+      "value": "var(--weave-color-info-focus)"
+    },
+    {
+      "name": "color.info.accentFocus",
+      "group": "color",
+      "reference": "tokens.color.info.accentFocus",
+      "value": "var(--weave-color-info-accent-focus)"
+    },
+    {
+      "name": "color.info.shadow",
+      "group": "color",
+      "reference": "tokens.color.info.shadow",
+      "value": "var(--weave-color-info-shadow)"
+    },
+    {
+      "name": "boxShadow.card",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.card",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.control",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.control",
+      "value": "0 1px 2px 0 color-mix(in srgb, var(--weave-color-base-shadow) 5%, transparent)"
+    },
+    {
+      "name": "boxShadow.tooltip",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.tooltip",
+      "value": "0 2px 5px 0 color-mix(in srgb, var(--weave-color-base-shadow) 10%, transparent)"
+    },
+    {
+      "name": "boxShadow.dropdown",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.dropdown",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.popover",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.popover",
+      "value": "0 4px 12px 0 color-mix(in srgb, var(--weave-color-base-shadow) 8%, transparent)"
+    },
+    {
+      "name": "boxShadow.toast",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.toast",
+      "value": "0 6px 16px 0 color-mix(in srgb, var(--weave-color-base-shadow) 10%, transparent)"
+    },
+    {
+      "name": "boxShadow.modal",
+      "group": "boxShadow",
+      "reference": "tokens.boxShadow.modal",
+      "value": "0 12px 32px 0 color-mix(in srgb, var(--weave-color-base-shadow) 12%, transparent)"
+    },
+    {
+      "name": "controlShadow.primary.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.primary.border",
+      "value": "0 0 0 1px var(--weave-color-primary-border) inset"
+    },
+    {
+      "name": "controlShadow.primary.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.primary.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-primary-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.base.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.base.border",
+      "value": "0 0 0 1px var(--weave-color-base-border) inset"
+    },
+    {
+      "name": "controlShadow.base.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.base.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-base-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.success.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.success.border",
+      "value": "0 0 0 1px var(--weave-color-success-border) inset"
+    },
+    {
+      "name": "controlShadow.success.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.success.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-success-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.warning.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.warning.border",
+      "value": "0 0 0 1px var(--weave-color-warning-border) inset"
+    },
+    {
+      "name": "controlShadow.warning.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.warning.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-warning-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.error.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.error.border",
+      "value": "0 0 0 1px var(--weave-color-error-border) inset"
+    },
+    {
+      "name": "controlShadow.error.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.error.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-error-accent-border) inset"
+    },
+    {
+      "name": "controlShadow.info.border",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.info.border",
+      "value": "0 0 0 1px var(--weave-color-info-border) inset"
+    },
+    {
+      "name": "controlShadow.info.accentBorder",
+      "group": "controlShadow",
+      "reference": "tokens.controlShadow.info.accentBorder",
+      "value": "0 0 0 1px var(--weave-color-info-accent-border) inset"
+    }
+  ]
+}

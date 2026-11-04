@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defects</title>
+<style>
+  :root { --font-mono: "Courier New"; }
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  section, main { display: flex; flex-direction: column; gap: 24px; padding: 0 24px; }
+  button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+  .no-ring:focus, .no-ring:focus-visible { outline: none; }
+  .tiny { width: 12px; height: 12px; min-height: 0; padding: 0; }
+  .wide { width: 2000px; height: 8px; background: #ffffff; }
+  .tight { display: flex; gap: 4px; }
+  .loose { display: flex; flex-direction: column; gap: 32px; }
+  .cramped { display: flex; gap: 16px; padding: 4px; }
+  .crowded { display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+<!-- R-010 and R-011 judge only the main region: this frame bar's padding under its gap is not reported. -->
+<header class="cramped" data-testid="frame-cramped"><span>Frame</span><span>bar</span></header>
+<section>
+  <p style="color:#949494">Grey text on white at about 3:1.</p>
+  <p style="color:#333333">Dark text in a color the theme does not have.</p>
+  <p style="font-size:12px">Small print at twelve pixels.</p>
+  <p>This paragraph runs the full width of a wide window, so each of its lines holds far more than ninety characters, which makes it slow to read and easy to lose the place in, the kind of measure a reader should never meet.</p>
+</section>
+<section data-testid="controls">
+  <button type="button">Start</button>
+  <button type="button" class="icon"><svg width="16" height="16" aria-hidden="true"><rect width="16" height="16" fill="#ffffff"/></svg></button>
+  <button type="button" class="tiny" aria-label="Close">x</button>
+  <button type="button" class="no-ring" tabindex="2">No ring</button>
+  <a href="/more" tabindex="-1">More</a>
+  <div role="button" tabindex="0" data-testid="fake" onclick="this.dataset.clicked = '1'">Fake button</div>
+</section>
+<main style="margin-top: 24px">
+  <div class="tight" data-testid="tight"><button type="button">Save</button><button type="button">Cancel</button></div>
+  <div class="loose" data-testid="loose"><span>Inside a group</span><span>spaced wider than the groups</span></div>
+  <div class="cramped" data-testid="cramped"><span>Padding</span><span>under the gap</span></div>
+  <!-- Two 12px buttons 10px apart: their 24px circles overlap (R-004), though their edges keep 8px (R-009). -->
+  <div class="crowded" data-testid="crowded"><button type="button" class="tiny" aria-label="Minimize"></button><button type="button" class="tiny" aria-label="Maximize"></button></div>
+  <div><span>Pages read</span> <span data-testid="plain-number">1,834</span></div>
+</main>
+<!-- R-014: a block off the container's content edge. R-015: a label and its value at a wide row's far ends. R-016: four items in three columns. -->
+<div data-slot="container" style="display:flex; flex-direction:column; gap:8px; padding:0 16px">
+  <p>On the content edge</p>
+  <p data-testid="indented" style="margin-left:20px">Twenty pixels in</p>
+</div>
+<div data-testid="spread" style="display:flex; justify-content:space-between; width:900px"><span>Pickup</span><span>Free</span></div>
+<div data-testid="orphan" style="display:grid; grid-template-columns:repeat(3, 100px); gap:8px"><span>One</span><span>Two</span><span>Three</span><span>Four</span></div>
+<div class="wide"></div>
+<div style="height:1000px"></div>
+<h1>Below the fold</h1>
+</body>
+</html>

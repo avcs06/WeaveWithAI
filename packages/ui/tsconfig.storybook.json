@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.lib.json",
-  "compilerOptions": {
-    "noEmit": true
-  },
-  "exclude": [],
-  "include": ["src/**/*.stories.ts", "src/**/*.stories.tsx"]
-}

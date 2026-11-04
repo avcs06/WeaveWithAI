@@ -1,0 +1,223 @@
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { afterAll, describe, expect, it } from 'vitest';
+import {
+  dsCommand,
+  goldenCommand,
+  runCommand,
+  sessionResumeCommand,
+  showCommand,
+  UsageError,
+  validateCommand,
+} from './cli';
+import { readArtifact } from './core/artifacts';
+import type { Config } from './core/env';
+import type { Llm } from './core/llm';
+import { readState, type Run, runPath } from './core/run';
+import { guideIds } from './runner/review';
+
+const runsDir = mkdtempSync(path.join(tmpdir(), 'weave-cli-'));
+afterAll(() => rmSync(runsDir, { recursive: true, force: true }));
+const fixture = (name: string) =>
+  fileURLToPath(new URL(`./ds/__fixtures__/${name}`, import.meta.url));
+const printFile = (file: string) => ({
+  file: 'node',
+  args: [
+    '-e',
+    'process.stdout.write(require("fs").readFileSync(process.argv[1], "utf8"))',
+    file,
+  ],
+});
+
+const config: Config = {
+  MODEL_API_KEY: 'test-key',
+  LLM_BASE_URL: 'https://api.meta.ai/v1',
+  LLM_MODEL: 'muse-spark-1.3',
+  LLM_MODEL_STRONG: 'muse-wonder-1.0',
+  LLM_REPLAY: true,
+  LLM_BACKEND: 'meta',
+  BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
+  MUSE_BIN: 'muse',
+  MUSE_DOCKER: false,
+  MUSE_AUTH: 'api',
+  OPENCODE_BIN: 'opencode',
+};
+const load = (name: string): unknown =>
+  JSON.parse(
+    readFileSync(
+      new URL(`./agents/01flows/__fixtures__/${name}`, import.meta.url),
+      'utf8',
+    ),
+  );
+const byScheme: Record<string, unknown> = {
+  Scope: load('reading-list.scope.json'),
+};
+/** The fixtures for the stages, an empty review for the reviewers; 10 tokens in, 5 out, $0.001 per call. */
+const llm: Llm = {
+  async generateStructured(input) {
+    const data =
+      input.schemaName === 'Review'
+        ? { checked: guideIds(input.messages[0]?.content ?? ''), blockers: [] }
+        : byScheme[input.schemaName];
+    if (!data) throw new Error(`unexpected schema ${input.schemaName}`);
+    return {
+      data: data as never,
+      raw: JSON.stringify(data),
+      usage: { input: 10, cachedInput: 0, output: 5 },
+      costUsd: 0.001,
+      replayed: false,
+      backend: 'meta',
+      model: 'muse-spark-1.3',
+      durationMs: 1,
+    };
+  },
+};
+const lines: string[] = [];
+const deps = { runsDir, config, llm, out: (line: string) => lines.push(line) };
+const idea = 'fixtures/ideas/freelancer-workspace.md';
+
+describe('weave run', () => {
+  let run: Run;
+
+  it('creates the run folder and runs the scope stage', async () => {
+    run = await runCommand({ idea, to: 'flows-scope' }, deps);
+    expect(run.id).toMatch(/^\d{8}-\d{4}-freelancer-workspace$/);
+    expect(existsSync(runPath(run, 'input', 'idea.md'))).toBe(true);
+    expect(readArtifact(run, 'flows-scope').meta).toMatchObject({
+      version: 1,
+      model: 'muse-spark-1.3',
+      stage: 'flows-scope',
+      rounds: 1,
+    });
+    expect(readState(run).stages['flows-scope']).toMatchObject({
+      status: 'done',
+      version: 1,
+    });
+    const call = '(muse-spark-1.3, 10 in, 5 out, $0.0010, 0.0s)';
+    expect(lines).toEqual([
+      `run ${run.id} (${run.dir})`,
+      'flows',
+      '  scope',
+      '    scope running',
+      '    scope round 1 started',
+      `    scope round 1 written ${call}`,
+      '    scope round 1 validate passed',
+      '    scope round 1 review peer started',
+      '    scope round 1 review output started',
+      `    scope round 1 review peer found 0 blockers ${call}`,
+      `    scope round 1 review output found 0 blockers ${call}`,
+      '    scope round 1 finished: nothing pending',
+      '    scope done v1, 1 rounds',
+    ]);
+  });
+
+  it('skips a stage that is done and not stale on a rerun', async () => {
+    lines.length = 0;
+    await runCommand({ idea, run: run.id, to: 'flows-scope' }, deps);
+    expect(readArtifact(run, 'flows-scope').meta.version).toBe(1);
+    expect(lines.slice(1)).toEqual(['flows', '  scope', '    scope up to date (v1)']);
+  });
+
+  it('reruns from the stage named by --from', async () => {
+    await runCommand(
+      { idea, run: run.id, from: 'flows-scope', to: 'flows-scope' },
+      deps,
+    );
+    expect(readArtifact(run, 'flows-scope').meta.version).toBe(2);
+  });
+
+  it('rejects an unknown stage before touching the disk', async () => {
+    await expect(
+      runCommand({ idea, to: 'nowhere' }, deps),
+    ).rejects.toBeInstanceOf(UsageError);
+    await expect(runCommand({ idea, to: 'nowhere' }, deps)).rejects.toThrow(
+      /Known stages: flows-scope, flows-catalog/,
+    );
+  });
+
+  it('takes --round only with --run and --from a code stage, and a session-resume only of a code stage', async () => {
+    const roundError = /--round 1: give a round number with --run <id> and --from one of code-frames, code-pages/;
+    await expect(runCommand({ idea, from: 'code-pages', round: '1' }, deps)).rejects.toThrow(roundError);
+    await expect(runCommand({ idea, run: run.id, from: 'flows-scope', round: '1' }, deps)).rejects.toThrow(roundError);
+    await expect(runCommand({ idea, run: run.id, from: 'code-pages', round: '0' }, deps)).rejects.toBeInstanceOf(UsageError);
+    await expect(sessionResumeCommand(run.id, 'flows-scope', {}, deps)).rejects.toThrow(
+      'flows-scope: session-resume takes a code stage: code-frames, code-pages',
+    );
+  });
+
+  it('show prints the stage table and the totals', () => {
+    const text = showCommand(run.id, deps);
+    expect(text).toContain(`run ${run.id}`);
+    expect(text).toMatch(/stage\s+status\s+version\s+rounds\s+known\s+updated/);
+    expect(text).toMatch(/flows-scope\s+done\s+2/);
+    // Two scope runs (the first and the --from rerun), each one generation and two reviews.
+    expect(text).toContain('6 calls, 60 tokens in, 30 out, $0.0060');
+  });
+
+  it('golden copies the accepted artifacts and their markdown, and prints the stage totals', () => {
+    lines.length = 0;
+    // Writes into the real fixtures/golden; a throwaway idea name, removed at the end.
+    const ideaName = `tmp-test-${process.pid}`;
+    const dest = path.join('fixtures', 'golden', ideaName);
+    try {
+      const printed = goldenCommand(run.id, ideaName, 'flows-scope', deps);
+      expect(existsSync(path.join(dest, '01-flows/01-scope.json'))).toBe(true);
+      expect(existsSync(path.join(dest, '01-flows/01-scope.md'))).toBe(true);
+      expect(printed).toEqual([
+        'flows-scope: 1 rounds, 0 known issues, 3 calls, 30 tokens in, 15 out, $0.0030',
+      ]);
+      expect(lines[0]).toContain(
+        `golden ${ideaName}: 01-flows/01-scope.json, 01-flows/01-scope.md ->`,
+      );
+      expect(() =>
+        goldenCommand(run.id, ideaName, 'flows-expand', deps),
+      ).toThrow(/no flows-expand artifact/);
+      expect(() => goldenCommand(run.id, ideaName, 'nope', deps)).toThrow(
+        UsageError,
+      );
+    } finally {
+      rmSync(dest, { recursive: true, force: true });
+    }
+  });
+
+  it('validate reruns the rules on the stored scope, reports a missing flows artifact and rejects unknown stages', () => {
+    lines.length = 0;
+    expect(validateCommand(run.id, undefined, deps)).toEqual([]);
+    expect(lines).toEqual([
+      'flows-scope: 0 mandatory, 0 warnings',
+      'flows-catalog: no artifact to validate',
+      'flows-expand: no artifact to validate',
+      'design-theme: no artifact to validate',
+      'design-architect: no artifact to validate',
+      'contract: no validators registered',
+      'code-scaffold: no validators registered',
+      'code-contract: no validators registered',
+      'code-frames: no validators registered',
+      'code-pages: no validators registered',
+      'bench: no validators registered',
+    ]);
+    expect(() => validateCommand(run.id, 'nowhere', deps)).toThrow(UsageError);
+  });
+});
+
+describe('weave ds', () => {
+  it('prints the counts, the summary size and the project settings', async () => {
+    lines.length = 0;
+    // Fake tools print the fixtures; the cache lives in the temp folder.
+    const printed = await dsCommand({
+      templateDir: 'template',
+      cacheDir: path.join(runsDir, 'cache'),
+      exporter: printFile(fixture('export.json')),
+      boxesFile: fixture('boxes.json'),
+      out: deps.out,
+    });
+    expect(printed).toEqual(lines);
+    expect(lines[0]).toMatch(/^\d+ components, \d+ with looks, \d+ tokens$/);
+    expect(lines[1]).toMatch(/^prose \d+ bytes$/);
+    expect(lines[2]).toMatch(/^box: \d+ components measured$/);
+    expect(lines[3]).toMatch(/^project: focus ring halo, .* entity sets$/);
+  });
+});
+

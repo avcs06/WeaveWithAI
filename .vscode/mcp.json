@@ -3,7 +3,7 @@
     "weave-design-system": {
       "type": "stdio",
       "command": "node",
-      "args": ["${workspaceFolder}/tools/design-system-mcp.mjs"]
+      "args": ["${workspaceFolder}/template/tools/design-system-mcp.mjs"]
     }
   }
 }

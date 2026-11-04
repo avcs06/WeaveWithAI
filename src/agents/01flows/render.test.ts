@@ -1,0 +1,80 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { renderScope } from './01scope/render';
+import { renderCatalog } from './02catalog/render';
+import { renderFlows } from './03expand/render';
+import { Scope } from './01scope/schema';
+import { Catalog } from './02catalog/schema';
+import { Flows } from './schema';
+
+const load = (name: string): unknown =>
+  JSON.parse(
+    readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), 'utf8'),
+  );
+const scope = Scope.parse(load('reading-list.scope.json'));
+const flows = Flows.parse(load('reading-list.flows.json'));
+const catalog = Catalog.parse(load('reading-list.catalog.json'));
+
+describe('render', () => {
+  it('scope reads as a short spec page', () => {
+    expect(renderScope(scope)).toMatchSnapshot();
+  });
+
+  it('flows read as numbered steps, fields with rules, changes, other paths, outcome', () => {
+    const text = renderFlows(flows, scope);
+    expect(text).toContain('## F03 Add a book to the reading list');
+    expect(text).toContain(
+      'Reader · create Book · Goal: Remember a book to read later.',
+    );
+    expect(text).toContain(
+      '   - Title (required, up to 200 characters), e.g. "The Left Hand of Darkness"',
+    );
+    expect(text).toContain('   Changes: creates Book.');
+    expect(text).toContain(
+      '- F03.A01 (from 2, invalid) The title is empty:\n  1. (system) The website marks the field and keeps what was typed.\n  Back to 2.',
+    );
+    expect(text).toContain(
+      '- F03.A03 (from 1, cancel) The reader cancels:\n  1. (system) Nothing is saved; the website shows the reading list as it was.\n  Flow ends.',
+    );
+    expect(text).toContain(
+      '- F01.A03 (from 2, conflict) The email already has an account:\n  1. (system) The website says so and offers to sign in instead.\n  2. The visitor chooses to sign in. The website shows the sign-in form.\n  Flow ends.',
+    );
+    expect(text).toContain(
+      '2. The reader fills in the book and saves it. (Book form)',
+    );
+    expect(text).toContain(
+      '2. The reader chooses Delete on the book. The website asks the reader to confirm deleting the book.',
+    );
+    expect(text).toContain('## Fields');
+    expect(text).toMatchSnapshot();
+  });
+
+  it('a choice from records names the records it offers', () => {
+    const fromShelves = structuredClone(flows);
+    const shelf = fromShelves.fields.find((field) => field.id === 'FD05');
+    if (!shelf) throw new Error('fixture changed');
+    shelf.options = [];
+    shelf.optionsFrom = 'Shelf';
+    expect(renderFlows(fromShelves, scope)).toContain('one of the Shelf records');
+  });
+
+  it('a multi-choice says any of', () => {
+    const multi = structuredClone(flows);
+    const shelf = multi.fields.find((field) => field.id === 'FD05');
+    if (!shelf) throw new Error('fixture changed');
+    shelf.type = 'multiChoice';
+    expect(renderFlows(multi, scope)).toContain(
+      'any of: To read, Reading, Finished',
+    );
+  });
+
+  it('catalog lists every flow with its description, the skipped pairs and the reusable parts', () => {
+    const text = renderCatalog(catalog, scope);
+    expect(text).toContain(
+      '- F03 Add a book to the reading list (Reader, create Book, starts On the reading list): The reader adds a book',
+    );
+    expect(text).toContain('- Reader, edit Book: A book is typed once;');
+    expect(text).toContain('- FM01 Book form: FD03, FD04, FD05');
+    expect(text).toMatchSnapshot();
+  });
+});

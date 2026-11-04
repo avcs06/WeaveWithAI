@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Date input</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { padding: 24px 16px; }
+  input, button { min-height: 44px; }
+  button { background: #3d63b8; color: #ffffff; border: 0; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>New discount code</h1>
+  <!-- Chromium's Tab steps through a native date input's month, day, year and picker, all on the one input. -->
+  <form>
+    <label>Code <input type="text" name="code"></label>
+    <label>Expiry date <input type="date" name="expiry"></label>
+    <button type="submit">Save</button>
+  </form>
+</main>
+</body>
+</html>

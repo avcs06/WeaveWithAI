@@ -1,0 +1,77 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+
+import { axe } from '../test-utils';
+import { Tooltip } from '../Tooltip';
+
+import { UIProviders } from './UIProviders';
+
+// Rendered bare: `renderUI` would add these providers and hide their absence.
+// `UIRoot` loads next/font, which jest can't: only its providers are tested.
+
+const tooltipTree = (
+  <Tooltip tooltip="Saves a draft">
+    <button type="button">Save</button>
+  </Tooltip>
+);
+
+// The shown tooltip is aria-hidden (the trigger's description says it), so
+// role queries include hidden elements.
+const findTooltip = () => screen.findByRole('tooltip', { hidden: true });
+const queryTooltip = () => screen.queryByRole('tooltip', { hidden: true });
+
+const saveButton = () => screen.getByRole('button', { name: 'Save' });
+
+describe('UIProviders', () => {
+  it('renders its children as they are', async () => {
+    const { container } = render(
+      <UIProviders>
+        <h1>Day one</h1>
+        <button type="button">Check in</button>
+      </UIProviders>,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Day one' }),
+    ).toBeInTheDocument();
+    await userEvent.tab();
+    expect(screen.getByRole('button', { name: 'Check in' })).toHaveFocus();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('gives its children the tooltip provider UIRoot gives the app', async () => {
+    render(<UIProviders tooltipDelay={0}>{tooltipTree}</UIProviders>);
+
+    // Without the provider the Tooltip can't render; the trigger is described
+    // before anything shows.
+    expect(saveButton()).toHaveAccessibleDescription('Saves a draft');
+    expect(queryTooltip()).toBeNull();
+
+    await userEvent.hover(saveButton());
+    expect(await findTooltip()).toHaveTextContent('Saves a draft');
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
+
+  it('a Tooltip inside opens on keyboard focus and closes on Escape', async () => {
+    render(<UIProviders tooltipDelay={0}>{tooltipTree}</UIProviders>);
+
+    await userEvent.tab();
+    expect(saveButton()).toHaveFocus();
+    expect(await findTooltip()).toHaveTextContent('Saves a draft');
+
+    await userEvent.keyboard('{Escape}');
+    expect(queryTooltip()).toBeNull();
+    expect(saveButton()).toHaveFocus();
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
+
+  it('tooltipDelay reaches the provider: the default delay holds the tooltip back, then it opens', async () => {
+    render(<UIProviders tooltipDelay={600}>{tooltipTree}</UIProviders>);
+
+    await userEvent.hover(saveButton());
+    expect(queryTooltip()).toBeNull();
+    expect(await findTooltip()).toHaveTextContent('Saves a draft');
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
+});

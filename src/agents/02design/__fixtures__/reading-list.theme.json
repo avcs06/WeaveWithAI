@@ -1,0 +1,577 @@
+{
+  "brief": {
+    "audience": "People who read a lot and lose track of what they meant to read next.",
+    "personality": [
+      "calm",
+      "literary",
+      "quiet",
+      "warm"
+    ],
+    "voice": "plain, warm, second person",
+    "density": "comfortable",
+    "signature": "Bookish Playfair Display headings over a warm paper gradient in each mode.",
+    "feel": [
+      "minimal",
+      "bookish"
+    ],
+    "colorScheme": "both",
+    "seedHue": 200,
+    "seedChroma": "muted",
+    "frameHue": 200,
+    "frameChroma": "muted",
+    "baseHue": 200,
+    "baseChroma": "muted",
+    "statusHues": {
+      "success": 150,
+      "warning": 80,
+      "error": 25,
+      "info": 240
+    },
+    "fonts": {
+      "ui": [
+        {
+          "family": "Inter",
+          "reason": "Plain and legible at small sizes, for a calm list read often."
+        },
+        {
+          "family": "Open Sans",
+          "reason": "Friendly and open, a close second for long titles."
+        },
+        {
+          "family": "Roboto",
+          "reason": "Neutral and compact, but colder than the brief wants."
+        }
+      ],
+      "display": [
+        {
+          "family": "Playfair Display",
+          "reason": "A bookish serif for page titles, warm against the plain text."
+        },
+        {
+          "family": "Montserrat",
+          "reason": "Clean and confident, but less literary."
+        },
+        {
+          "family": "Oswald",
+          "reason": "Condensed and strong, louder than a quiet reading app."
+        }
+      ],
+      "mono": [
+        {
+          "family": "JetBrains Mono",
+          "reason": "Clear digits for page counts and dates."
+        },
+        {
+          "family": "IBM Plex Mono",
+          "reason": "Softer shapes, a good second."
+        },
+        {
+          "family": "Roboto Mono",
+          "reason": "Plain, with less character."
+        }
+      ]
+    },
+    "radius": "soft",
+    "focusRing": "halo",
+    "entities": [
+      {
+        "noun": "Book",
+        "colored": false,
+        "hue": 0
+      },
+      {
+        "noun": "Shelf",
+        "colored": true,
+        "hue": 230
+      }
+    ],
+    "imagery": "icons",
+    "references": []
+  },
+  "logo": {
+    "font": "display",
+    "weight": "600",
+    "case": "as written",
+    "letterSpacing": "normal"
+  },
+  "colors": [
+    {
+      "mode": "light",
+      "background": "linear-gradient(180deg, #FDFBF7 0%, #F4EFE6 100%)",
+      "theme": {
+        "bg": 2,
+        "hoverBg": 3,
+        "fg": 12,
+        "fgMuted": 10,
+        "border": 8,
+        "accentBg": 9,
+        "accentHoverBg": 10,
+        "accentBorder": 10,
+        "accentFg": 1,
+        "focus": 9,
+        "accentFocus": 10,
+        "shadow": 12
+      },
+      "base": {
+        "bg": 2,
+        "hoverBg": 3,
+        "fg": 12,
+        "fgMuted": 10,
+        "border": 8,
+        "accentBg": 9,
+        "accentHoverBg": 10,
+        "accentBorder": 10,
+        "accentFg": 1,
+        "focus": 9,
+        "accentFocus": 10,
+        "shadow": 12
+      },
+      "page": {
+        "pageBg": {
+          "ramp": "base",
+          "step": 1
+        },
+        "pageFg": {
+          "ramp": "base",
+          "step": 12
+        },
+        "pageFgMuted": {
+          "ramp": "base",
+          "step": 10
+        },
+        "frameBg": 2,
+        "divider": {
+          "ramp": "base",
+          "step": 5
+        },
+        "backdrop": {
+          "ramp": "base",
+          "step": 12
+        },
+        "skeleton": {
+          "ramp": "base",
+          "step": 4
+        }
+      },
+      "logo": {
+        "ramp": "theme",
+        "step": 11
+      },
+      "status": {
+        "success": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "warning": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "error": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        },
+        "info": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 12
+        }
+      },
+      "entities": [
+        {
+          "noun": "Shelf",
+          "steps": {
+            "bg": 2,
+            "hoverBg": 3,
+            "fg": 12,
+            "fgMuted": 10,
+            "border": 8,
+            "accentBg": 9,
+            "accentHoverBg": 10,
+            "accentBorder": 10,
+            "accentFg": 1,
+            "focus": 9,
+            "accentFocus": 10,
+            "shadow": 12
+          }
+        }
+      ]
+    },
+    {
+      "mode": "dark",
+      "background": "linear-gradient(180deg, #1B1A18 0%, #282622 100%)",
+      "theme": {
+        "bg": 2,
+        "hoverBg": 3,
+        "fg": 12,
+        "fgMuted": 10,
+        "border": 8,
+        "accentBg": 9,
+        "accentHoverBg": 10,
+        "accentBorder": 10,
+        "accentFg": 1,
+        "focus": 9,
+        "accentFocus": 10,
+        "shadow": 1
+      },
+      "base": {
+        "bg": 2,
+        "hoverBg": 3,
+        "fg": 12,
+        "fgMuted": 10,
+        "border": 8,
+        "accentBg": 9,
+        "accentHoverBg": 10,
+        "accentBorder": 10,
+        "accentFg": 1,
+        "focus": 9,
+        "accentFocus": 10,
+        "shadow": 1
+      },
+      "page": {
+        "pageBg": {
+          "ramp": "base",
+          "step": 2
+        },
+        "pageFg": {
+          "ramp": "base",
+          "step": 12
+        },
+        "pageFgMuted": {
+          "ramp": "base",
+          "step": 10
+        },
+        "frameBg": 3,
+        "divider": {
+          "ramp": "base",
+          "step": 6
+        },
+        "backdrop": {
+          "ramp": "base",
+          "step": 1
+        },
+        "skeleton": {
+          "ramp": "base",
+          "step": 5
+        }
+      },
+      "logo": {
+        "ramp": "theme",
+        "step": 11
+      },
+      "status": {
+        "success": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "warning": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "error": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        },
+        "info": {
+          "bg": 2,
+          "hoverBg": 3,
+          "fg": 12,
+          "fgMuted": 10,
+          "border": 8,
+          "accentBg": 9,
+          "accentHoverBg": 10,
+          "accentBorder": 10,
+          "accentFg": 1,
+          "focus": 9,
+          "accentFocus": 10,
+          "shadow": 1
+        }
+      },
+      "entities": [
+        {
+          "noun": "Shelf",
+          "steps": {
+            "bg": 2,
+            "hoverBg": 3,
+            "fg": 12,
+            "fgMuted": 10,
+            "border": 8,
+            "accentBg": 9,
+            "accentHoverBg": 10,
+            "accentBorder": 10,
+            "accentFg": 1,
+            "focus": 9,
+            "accentFocus": 10,
+            "shadow": 1
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": {
+    "app": {
+      "docksFirst": "header",
+      "header": {
+        "needed": true,
+        "start": "logo",
+        "center": "",
+        "end": "Shelf link, account",
+        "sticky": true,
+        "overlay": false,
+        "separation": "divider"
+      },
+      "sidebar": {
+        "needed": false,
+        "side": "left",
+        "top": "",
+        "items": "",
+        "bottom": "",
+        "widthPx": 0,
+        "sticky": false,
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "extraSidebar": {
+        "needed": false,
+        "side": "right",
+        "top": "",
+        "bottom": "",
+        "widthPx": 0,
+        "sticky": false,
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "footer": {
+        "needed": false,
+        "start": "",
+        "center": "",
+        "end": "",
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "main": {
+        "container": "fluid",
+        "maxWidthPx": 0,
+        "padding": "6",
+        "align": "center",
+        "sectionGap": "6",
+        "fullBleed": false,
+        "separation": "none"
+      },
+      "logo": "header",
+      "account": "header"
+    },
+    "marketing": {
+      "docksFirst": "header",
+      "header": {
+        "needed": true,
+        "start": "logo",
+        "center": "",
+        "end": "account",
+        "sticky": false,
+        "overlay": true,
+        "separation": "none"
+      },
+      "sidebar": {
+        "needed": false,
+        "side": "left",
+        "top": "",
+        "bottom": "",
+        "widthPx": 0,
+        "sticky": false,
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "extraSidebar": {
+        "needed": false,
+        "side": "right",
+        "top": "",
+        "bottom": "",
+        "widthPx": 0,
+        "sticky": false,
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "footer": {
+        "needed": false,
+        "content": "",
+        "padding": "0",
+        "gap": "0",
+        "separation": "none"
+      },
+      "main": {
+        "container": "fluid",
+        "maxWidthPx": 0,
+        "padding": "9",
+        "align": "center",
+        "sectionGap": "6",
+        "fullBleed": true,
+        "separation": "none"
+      },
+      "account": "header"
+    }
+  },
+  "defaults": {
+    "Textarea": {
+      "look": "outline"
+    },
+    "Tag": {
+      "variant": "base",
+      "size": "sm",
+      "look": "bordered"
+    },
+    "Tabs": {
+      "variant": "default"
+    },
+    "Switch": {
+      "variant": "default",
+      "size": "sm"
+    },
+    "MultiSelect": {
+      "look": "outline"
+    },
+    "Select": {
+      "look": "outline"
+    },
+    "Radio": {
+      "variant": "default",
+      "size": "sm"
+    },
+    "PopoverButton": {
+      "look": ""
+    },
+    "Link": {
+      "variant": "default",
+      "look": ""
+    },
+    "Input": {
+      "look": "outline"
+    },
+    "NumberInput": {
+      "look": "outline"
+    },
+    "PasswordInput": {
+      "look": "outline"
+    },
+    "SearchInput": {
+      "look": "outline"
+    },
+    "FormControl": {
+      "variant": "default",
+      "size": "sm",
+      "look": "outline"
+    },
+    "Dialog": {
+      "size": "md"
+    },
+    "Chip": {
+      "variant": "default",
+      "size": "sm",
+      "look": "outline"
+    },
+    "ChipGroup": {
+      "look": ""
+    },
+    "Checkbox": {
+      "variant": "default",
+      "size": "sm"
+    },
+    "Card": {
+      "variant": "default",
+      "look": "outline"
+    },
+    "Button": {
+      "variant": "default",
+      "size": "md",
+      "look": ""
+    },
+    "IconButton": {
+      "look": ""
+    },
+    "Avatar": {
+      "size": "md"
+    },
+    "Accordion": {
+      "look": "bordered"
+    },
+    "Collapsible": {
+      "look": "bordered"
+    },
+    "Toast": {
+      "status": "info"
+    }
+  }
+}

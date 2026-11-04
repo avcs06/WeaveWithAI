@@ -1,0 +1,647 @@
+import { z } from 'zod';
+import {
+  clearReport,
+  formatIssues,
+  type Issue,
+  splitIssues,
+  writeReport,
+} from '../core/issues';
+import {
+  type ChatMessage,
+  type GenerateInput,
+  type GenerateResult,
+  type ImageInput,
+  type Llm,
+  type ModelChoice,
+  ModelOutputInvalid,
+  ModelOutputTruncated,
+  type ReasoningEffort,
+  type Temperature,
+} from '../core/llm';
+import { costUsd, isPriced } from '../core/prices';
+import { fillPrompt, loadPrompt } from '../core/prompt';
+import { applyPatch, type PatchKeys, patchFormat, patchSchema } from './patch';
+import { guideIds, Review, toIssues } from './review';
+import { closedByFix, formatThreads, leftWithReason, Reply, type Thread, threadBook } from './threads';
+import { appendEvent, type Run, runPath, updateStage } from '../core/run';
+import { pathBeside, writeJsonAtomic } from '../core/utils';
+
+/** Question id to the question as asked and the answer given; the question text survives reruns, the id alone does not. */
+export type Answer = { question: string; answer: string };
+export type Answers = Record<string, Answer>;
+
+/**
+ * A stage's review guides: the peer challenges the decisions, the output reviewer finds what the validators cannot.
+ * Without a peer guide only the output reviewer runs. Named output guides are several output reviewers, one call each (code units).
+ */
+export type ReviewGuides = { peer?: string; output: string | Record<string, string> };
+
+/** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
+export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
+
+/** What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, and a fix's replies to its threads. */
+export type Draft<T> = { data: T; raw: string; model: string; replies?: Reply[] };
+
+/** One reviewer call's share of the review: its slice of the input and of the output, and the images it looks at; what it leaves out is the whole. */
+export type ReviewScope = { user?: string; output?: string; images?: ImageInput[] };
+
+/** One model call made for the stage; it is logged as an `llm:call` event and runs on the default model unless it names one. */
+export type Call = <U>(
+  input: Omit<GenerateInput<U>, 'round' | 'runDir' | 'model'> & {
+    model?: GenerateInput<U>['model'];
+  },
+) => Promise<GenerateResult<U>>;
+
+/** How a stage produces its document: the first draft, and a fix that answers the pending threads and applies the answers to the current one. */
+export type Compose<T> = {
+  draft(call: Call): Promise<Draft<T>>;
+  fix(
+    call: Call,
+    current: Draft<T>,
+    pending: Thread[],
+    answers: Answers,
+  ): Promise<Draft<T>>;
+};
+
+export type SpecStageOptions<T> = {
+  run: Run;
+  stage: string;
+  schema: z.ZodType<T>;
+  schemaName: string;
+  /** The filled system prompt; the reviewers see it as the instructions the writer had. */
+  system: string;
+  /** The user message of the writer's first call; the reviewers see it as the input the writer had. */
+  user: string;
+  validate: (output: T) => Issue[];
+  /** The stage's review guides. Without them no reviewer calls run. */
+  review?: ReviewGuides;
+  /** The rounds; default the three of SCHEDULE. */
+  schedule?: Round[];
+  /** The reviewers' user message, with the placeholders system, user, output, known and threads; default prompt-review-input.md. */
+  reviewInput?: string;
+  /** Reviewers see the mandatory issues as known, the ones the next fix takes, instead of the warnings. */
+  reviewersSeeMandatory?: boolean;
+  /**
+   * Per named output guide, the calls its review makes on a draft, each with its own scope, such as three screens'
+   * design, code and screenshots. Two or more calls are reviewers `<name>-1`, `<name>-2` and on; a guide with none
+   * is one call on the whole.
+   */
+  reviewScopes?: (draft: Draft<T>) => Record<string, ReviewScope[]>;
+  /** Interactive stages only: asked after every round that produced new output. Answers never force a generation. */
+  ask?: (output: T) => Promise<Answers>;
+  /** Output budget for the writer's calls, reasoning included; the client doubles it once when the answer is cut. */
+  maxTokens?: number;
+  /** Reasoning effort for the first draft, and medium for every fix; omitted, the model picks its own level for both. */
+  reasoningEffort?: ReasoningEffort;
+  /** Temperature for the first draft; default 0.2. Fixes and reviewers always run at 0.2. */
+  temperature?: Temperature;
+  /** The model of the first draft only; fixes always use the default model. */
+  draftModel?: ModelChoice;
+  /** How the document is produced; the default is one conversation with the model. */
+  compose?: Compose<T>;
+  /** A document to start from: round 1 validates it instead of generating one, and the fixes patch it. */
+  start?: Draft<T>;
+  /**
+   * A round to resume at, with the document made for it outside this call, such as by a resumed coding session:
+   * the round validates and reviews it with no generation, the report keeps the rounds before it, and the rounds
+   * after it run as usual.
+   */
+  resume?: { round: number; draft: Draft<T> };
+  /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
+  patchKeys?: PatchKeys;
+  llm: Llm;
+};
+
+export type SpecStageResult<T> = {
+  output: T;
+  warnings: Issue[];
+  known: Issue[];
+  /** Every answer given during the stage, applied or carried forward. */
+  answers: Answers;
+  /** The model that produced the output. */
+  model: string;
+  rounds: number;
+};
+
+// Three rounds: a fix runs only when something is pending; reviewers look at the output whatever the validators found.
+// Both reviewers check the draft of round 1 and the fix of round 2; round 3 is the final fix, and what it leaves is known.
+const SCHEDULE: Round[] = [
+  { fix: false, reviewers: ['peer', 'output'] },
+  { fix: true, reviewers: ['peer', 'output'] },
+  { fix: true, reviewers: [] },
+];
+const FIX_EFFORT = 'medium';
+// Reviewers walk every guide point and look past the guide, so their tokens are mostly reasoning; medium keeps it considered but bounded.
+const REVIEW_EFFORT = 'medium';
+const REVIEW_MAX_TOKENS = 16_384;
+const NOT_REREVIEWED = ' (addressed in the final fix, not re-reviewed)';
+
+const fixPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-fix-whole.md'),
+);
+const patchFixPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-fix.md'),
+);
+const reviewPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review.md'),
+);
+const reviewInput = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review-input.md'),
+);
+const recheckPrompt = loadPrompt(
+  pathBeside(import.meta.url, './prompt-review-recheck.md'),
+);
+
+/**
+ * Produce, validate, review on schedule, fix what is pending; whatever is left at the end is known, never fatal.
+ * The document comes from `start`, or from `compose.draft`; every later generation is `compose.fix`.
+ */
+export async function runSpecStage<T>(
+  o: SpecStageOptions<T>,
+): Promise<SpecStageResult<T>> {
+  const schedule = o.schedule ?? SCHEDULE;
+  const first = o.resume?.round ?? 1;
+  if (o.resume) {
+    const step = schedule[first - 1];
+    if (!step) throw new Error(`${o.stage}: no round ${first} to resume; the schedule has ${schedule.length}`);
+    if (o.start) throw new Error(`${o.stage}: both resume and start given; a resumed round brings its own document`);
+    // The blockers a round passes on come from its reviewers; resumed where none run, those of the round before would be lost.
+    if (o.review && !step.reviewers.some((reviewer) => o.review?.[reviewer]))
+      throw new Error(`${o.stage}: round ${first} has no reviewers, so resuming there loses the blockers of round ${first - 1}; resume at a round with reviewers`);
+  }
+  appendEvent(o.run, { type: 'stage:start', stage: o.stage });
+  updateStage(o.run, o.stage, { status: 'running' });
+  clearReport(o.run, o.stage, first);
+
+  const compose = o.compose ?? conversation(o);
+  const answers: Answers = {};
+  // Answers given since the last generation; they ride along with the next fix, never cause one.
+  let unapplied: Answers = {};
+
+  const produce = async (
+    round: number,
+    make: (call: Call) => Promise<Draft<T>>,
+    fixing: number,
+    fatal = true,
+  ) => {
+    const call = callerFor(o, round);
+    appendEvent(o.run, { type: 'round:start', stage: o.stage, round, fixing });
+    try {
+      const draft = await make(call);
+      return { draft, issues: o.validate(draft.data) };
+    } catch (error) {
+      if (!fatal) throw error;
+      // A model error on the first draft ends the run; leave the state honest for `weave show`.
+      updateStage(o.run, o.stage, {
+        status: 'failed',
+        rounds: round,
+      });
+      appendEvent(o.run, {
+        type: 'stage:failed',
+        stage: o.stage,
+        round,
+        error: String(error),
+      });
+      throw error;
+    }
+  };
+
+  const askAbout = async (output: T) => {
+    if (!o.ask) return;
+    const given = await o.ask(output);
+    const count = Object.keys(given).length;
+    if (count === 0) return;
+    Object.assign(answers, given);
+    Object.assign(unapplied, given);
+    appendEvent(o.run, { type: 'stage:answers', stage: o.stage, count });
+  };
+
+  // A resumed round's document, like a given one, is validated here and never generated.
+  const given = o.resume?.draft ?? o.start;
+  if (o.resume) appendEvent(o.run, { type: 'round:resumed', stage: o.stage, round: first });
+  let last = given
+    ? { draft: given, issues: o.validate(given.data) }
+    : await produce(1, (call) => compose.draft(call), 0);
+  await askAbout(last.draft.data);
+
+  const book = threadBook();
+  // The threads the next fix takes, the reviewers' open ones, and what is left when no fix clears them.
+  let pending: Thread[] = [];
+  let reviewThreads: Thread[] = [];
+  let known: Issue[] = [];
+  let rounds = first;
+  for (const [index, step] of schedule.entries()) {
+    const round = index + 1;
+    if (round < first) continue;
+    rounds = round;
+    const hasPendingIssues = pending.length > 0;
+    if (step.fix && hasPendingIssues) {
+      const toApply = unapplied;
+      unapplied = {};
+      try {
+        last = await produce(
+          round,
+          (call) => compose.fix(call, last.draft, pending, toApply),
+          pending.length,
+          false,
+        );
+      } catch (error) {
+        // A fix the model cannot answer keeps the last document; what was pending stays as known issues and the run goes on.
+        appendEvent(o.run, {
+          type: 'warning',
+          stage: o.stage,
+          message: `${o.stage} round ${round}: the fix failed (${String(error).split('\n')[0]}); the stage keeps the document of round ${round - 1}`,
+        });
+        break;
+      }
+      book.reply(last.draft.replies ?? [], round, 'fix');
+      await askAbout(last.draft.data);
+    }
+    // The first round produced unless it started from a given document (a resumed one was produced outside);
+    // later rounds only when something was pending.
+    const produced = round === first ? !o.start : hasPendingIssues;
+
+    const { mandatory, warnings } = splitIssues(last.issues);
+    if (round === 1 || produced)
+      appendEvent(o.run, {
+        type: 'round:validated',
+        stage: o.stage,
+        round,
+        mandatory: mandatory.length,
+        warnings: warnings.length,
+        rules: mandatory.map((issue) => issue.rule),
+      });
+    const checks = book.checks(mandatory, round);
+    const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
+    const reviewed = Boolean(o.review) && reviewers.length > 0;
+    if (o.review && reviewed) {
+      // Each reviewer reads the threads it raised that the fix left open, then answers each one or raises new blockers.
+      const { blockers, replies } = await review(
+        o,
+        o.review,
+        round,
+        reviewers,
+        last.draft,
+        o.reviewersSeeMandatory ? mandatory : warnings,
+        reviewThreads.filter((thread) => !closedByFix(thread, round)),
+      );
+      book.raise(blockers, round);
+      for (const answer of replies) book.reply(answer.replies, round, answer.by);
+      reviewThreads = book.reviews(round);
+    }
+    // The final fix addressed these; nobody checked the result.
+    const reviewIssues = reviewThreads.map((thread) =>
+      !reviewed && produced ? { ...thread.issue, message: thread.issue.message + NOT_REREVIEWED } : thread.issue,
+    );
+
+    // A check the fixer left with a reason is known but not fixed again.
+    pending = [...checks.filter((thread) => !leftWithReason(thread)), ...reviewThreads];
+    known = [...checks.map((thread) => thread.issue), ...reviewIssues];
+    writeReport(o.run, o.stage, round, [...last.issues, ...reviewIssues]);
+    writeJsonAtomic(runPath(o.run, 'reports', `${o.stage}.threads.json`), book.threads);
+    appendEvent(o.run, {
+      type: 'stage:round',
+      stage: o.stage,
+      round,
+      generated: produced,
+      mandatory: mandatory.length,
+      warnings: warnings.length,
+      blockers: reviewThreads.length,
+    });
+    if (pending.length === 0 && (reviewers.length > 0 || !o.review)) break;
+  }
+
+  const { warnings } = splitIssues(last.issues);
+  appendEvent(o.run, {
+    type: 'stage:done',
+    stage: o.stage,
+    rounds,
+    known: known.length,
+  });
+  updateStage(o.run, o.stage, { rounds, known: known.length });
+
+  return {
+    output: last.draft.data,
+    warnings,
+    known,
+    answers,
+    model: last.draft.model,
+    rounds,
+  };
+}
+
+/** The default way to produce a document: one conversation, the fix message appended after each round. */
+function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
+  const messages: ChatMessage[] = [
+    { role: 'system', content: o.system },
+    { role: 'user', content: o.user },
+  ];
+  const generate = async (
+    call: Call,
+    settings: Pick<
+      GenerateInput<T>,
+      'model' | 'reasoningEffort' | 'temperature'
+    >,
+  ): Promise<Draft<T>> => {
+    const result = await call({
+      stage: o.stage,
+      schema: o.schema,
+      schemaName: o.schemaName,
+      messages,
+      maxTokens: o.maxTokens,
+      ...settings,
+    });
+    return { data: result.data, raw: result.raw, model: result.model };
+  };
+  return {
+    draft: (call) =>
+      generate(call, {
+        model: o.draftModel,
+        reasoningEffort: o.reasoningEffort,
+        temperature: o.temperature,
+      }),
+    // A fix edits the named issues and nothing else, so it runs at the default 0.2, and at medium when the stage sets an effort.
+    async fix(call, current, pending, answers) {
+      const reasoningEffort = o.reasoningEffort ? FIX_EFFORT : undefined;
+      const keys = o.patchKeys;
+      messages.push(
+        { role: 'assistant', content: current.raw },
+        {
+          role: 'user',
+          content: keys
+            ? patchFixMessage(pending, answers)
+            : fixMessage(pending, answers),
+        },
+      );
+      const result = await call({
+        stage: o.stage,
+        schema: withReplies(keys ? patchSchema(o.schema, keys) : o.schema),
+        schemaName: keys ? `${o.schemaName}Patch` : o.schemaName,
+        messages,
+        maxTokens: o.maxTokens,
+        reasoningEffort,
+      });
+      // The replies go to the threads, not into the document.
+      const { replies = [], ...answer } = result.data as Record<string, unknown> & { replies?: Reply[] };
+      const data = keys ? o.schema.parse(applyPatch(current.data as object, answer, keys)) : (answer as T);
+      return { data, raw: JSON.stringify(data), model: result.model, replies };
+    },
+  };
+}
+
+/** A fix's answer: the document or its patch, and a reply to each thread it was given. */
+function withReplies(schema: z.ZodType): z.ZodObject {
+  if (!(schema instanceof z.ZodObject)) throw new Error('a fix needs an object schema');
+  return schema.extend({ replies: z.array(Reply).describe('One answer for each problem, by its id') });
+}
+
+/** The fix message for a document with no keyed lists: the pending threads and the answers given since the last generation. */
+export function fixMessage(pending: Thread[], answers: Answers): string {
+  return fillPrompt(fixPrompt, {
+    issues: formatThreads(pending),
+    answers: Object.keys(answers).length > 0 ? formatAnswers(answers) : 'None.',
+  });
+}
+
+/** The fix message for a document with keyed lists: the same, asking for a patch. */
+function patchFixMessage(pending: Thread[], answers: Answers): string {
+  return fillPrompt(patchFixPrompt, {
+    patch: patchFormat,
+    issues: formatThreads(pending),
+    answers: Object.keys(answers).length > 0 ? formatAnswers(answers) : 'None.',
+  });
+}
+
+/** What a failed try cost: an answer the schema refuses or one cut at the output limit was paid for. */
+function logFailedCall<T>(o: SpecStageOptions<T>, stage: string, round: number, error: unknown): void {
+  if (error instanceof ModelOutputInvalid && error.paid) {
+    const { model, usage } = error.paid;
+    appendEvent(o.run, {
+      type: 'llm:call',
+      stage,
+      round,
+      invalid: true,
+      model,
+      input: usage.input,
+      cachedInput: usage.cachedInput,
+      output: usage.output,
+      costUsd: costUsd(model, usage),
+    });
+    warnUnpriced(o.run, stage, model);
+  } else if (error instanceof ModelOutputTruncated) {
+    appendEvent(o.run, {
+      type: 'llm:call',
+      stage,
+      round,
+      truncated: true,
+      model: error.model,
+      input: error.usage.input,
+      cachedInput: error.usage.cachedInput,
+      output: error.usage.output,
+      costUsd: costUsd(error.model, error.usage),
+      contentLength: error.contentLength,
+    });
+    warnUnpriced(o.run, stage, error.model);
+  }
+}
+
+/**
+ * One model call with one retry on any failure, in the same round: the other
+ * calls of the round run once, and the retry is no round of its own. A second
+ * failure is the caller's to handle.
+ */
+async function withRetry<T, R>(
+  o: SpecStageOptions<T>,
+  stage: string,
+  round: number,
+  call: () => Promise<R>,
+): Promise<R> {
+  const attempt = () =>
+    call().catch((error: unknown) => {
+      logFailedCall(o, stage, round, error);
+      throw error;
+    });
+  try {
+    return await attempt();
+  } catch (error) {
+    const why =
+      error instanceof ModelOutputInvalid
+        ? `the answer did not match the schema (${error.message})`
+        : error instanceof ModelOutputTruncated
+          ? 'the answer was cut at the output limit'
+          : `the call failed (${String(error).split('\n')[0]})`;
+    appendEvent(o.run, {
+      type: 'warning',
+      stage,
+      message: `${stage} round ${round}: ${why}; retrying once`,
+    });
+    return await attempt();
+  }
+}
+
+/**
+ * A `Call` for one round: logs every call as an `llm:call` event, and retries a
+ * failed one once here, not around the compose, so a compose's side effects never repeat.
+ */
+function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
+  return async (input) => {
+    const request = {
+      ...input,
+      round,
+      model: input.model ?? 'default',
+      runDir: o.run.dir,
+    };
+    const result = await withRetry(o, input.stage, round, () => o.llm.generateStructured(request));
+    logCall(o.run, input.stage, round, result);
+    return result;
+  };
+}
+
+/** The reviewers of a round: their blockers, each to open a thread, and their replies to the threads each raised that the fix left open. */
+async function review<T>(
+  o: SpecStageOptions<T>,
+  guides: ReviewGuides,
+  round: number,
+  reviewers: (keyof ReviewGuides)[],
+  draft: Draft<T>,
+  warnings: Issue[],
+  threads: Thread[],
+) {
+  const known = warnings.length > 0 ? formatIssues(warnings) : 'None.';
+  // A named output guide is a reviewer of its own, `<stage>-review-<name>`, or one per scope, `<stage>-review-<name>-1`.
+  const scopes = o.reviewScopes?.(draft) ?? {};
+  const calls = reviewers.flatMap((reviewer): [string, string, ReviewScope][] => {
+    const guide = guides[reviewer];
+    const named: [string, string][] = typeof guide === 'object' ? Object.entries(guide) : [[reviewer, guide ?? '']];
+    return named.flatMap(([name, text]) => {
+      const own = scopes[name] ?? [];
+      if (own.length < 2) return [[name, text, own[0] ?? {}]];
+      return own.map((scope, i): [string, string, ReviewScope] => [`${name}-${i + 1}`, text, scope]);
+    });
+  });
+  const reviews = await Promise.all(
+    calls.map(async ([reviewer, guide, scope]) => {
+      const by = `review-${reviewer}`;
+      const own = threads.filter((thread) => thread.by === by);
+      const user = fillPrompt(o.reviewInput ?? reviewInput, {
+        system: o.system,
+        user: scope.user ?? o.user,
+        output: scope.output ?? draft.raw,
+        known,
+        threads: own.length > 0 ? formatThreads(own) : 'None.',
+      });
+      const said = (data: Review) => ({
+        blockers: toIssues(data).map((issue) => ({ issue, by })),
+        replies: [{ by, replies: data.replies ?? [] }],
+      });
+      const messages: ChatMessage[] = [
+        { role: 'system', content: fillPrompt(reviewPrompt, { guide }) },
+        { role: 'user', content: user, ...(scope.images?.length && { images: scope.images }) },
+      ];
+      // A reviewer the model cannot answer adds no blockers: the run goes on without its review.
+      const skip = (name: string, error: unknown) => {
+        appendEvent(o.run, {
+          type: 'warning',
+          stage: o.stage,
+          message: `${o.stage} round ${round}: the ${name} review failed (${String(error).split('\n')[0]}); its blockers are left out`,
+        });
+        return { blockers: [], replies: [] };
+      };
+      let first;
+      try {
+        first = await reviewCall(o, round, reviewer, messages, guideIds(guide));
+      } catch (error) {
+        return skip(reviewer, error);
+      }
+      if (first.missed.length === 0) return said(first.data);
+      // One more turn for the points it left unchecked; what it still leaves is only logged.
+      messages.push(
+        { role: 'assistant', content: first.raw },
+        { role: 'user', content: fillPrompt(recheckPrompt, { missed: first.missed.map((id) => `- ${id}`).join('\n') }) },
+      );
+      let second;
+      try {
+        second = await reviewCall(o, round, `${reviewer}-recheck`, messages, first.missed);
+      } catch (error) {
+        skip(`${reviewer}-recheck`, error);
+        return said(first.data);
+      }
+      const [a, b] = [said(first.data), said(second.data)];
+      return { blockers: [...a.blockers, ...b.blockers], replies: [...a.replies, ...b.replies] };
+    }),
+  );
+  return {
+    blockers: reviews.flatMap((r) => r.blockers),
+    replies: reviews.flatMap((r) => r.replies),
+  };
+}
+
+/** One reviewer call, logged with its blockers and the points of `points` it did not list as checked. */
+async function reviewCall<T>(
+  o: SpecStageOptions<T>,
+  round: number,
+  reviewer: string,
+  messages: ChatMessage[],
+  points: string[],
+) {
+  const stage = `${o.stage}-review-${reviewer}`;
+  appendEvent(o.run, { type: 'review:start', stage: o.stage, round, reviewer });
+  const result = await withRetry(o, stage, round, () =>
+    o.llm.generateStructured({
+      stage,
+      round,
+      schema: Review,
+      schemaName: 'Review',
+      messages: [...messages],
+      model: 'default',
+      reasoningEffort: REVIEW_EFFORT,
+      maxTokens: REVIEW_MAX_TOKENS,
+      runDir: o.run.dir,
+    }),
+  );
+  const checked = new Set(result.data.checked);
+  const missed = points.filter((id) => !checked.has(id));
+  logCall(o.run, stage, round, result, { reviewer, blockers: result.data.blockers.length, missed });
+  return { ...result, missed };
+}
+
+/** One `- Q01 "question": answer` line per answer, the way answers go to the model. */
+export function formatAnswers(answers: Answers): string {
+  return Object.entries(answers)
+    .map(([id, { question, answer }]) => `- ${id} "${question}": ${answer}`)
+    .join('\n');
+}
+
+/** A live call to a model with no price costs 0 in the totals; say so. */
+function warnUnpriced(run: Run, stage: string, model: string): void {
+  if (isPriced(model)) return;
+  appendEvent(run, {
+    type: 'warning',
+    stage,
+    message: `${model} has no price in src/core/prices.ts; its calls count as $0`,
+  });
+}
+
+function logCall(
+  run: Run,
+  stage: string,
+  round: number,
+  result: GenerateResult<unknown>,
+  review?: { reviewer: string; blockers: number; missed: string[] },
+): void {
+  if (!result.replayed) warnUnpriced(run, stage, result.model);
+  appendEvent(run, {
+    type: 'llm:call',
+    stage,
+    round,
+    ...review,
+    backend: result.backend,
+    model: result.model,
+    input: result.usage.input,
+    cachedInput: result.usage.cachedInput,
+    output: result.usage.output,
+    costUsd: result.costUsd,
+    replayed: result.replayed,
+    durationMs: result.durationMs,
+  });
+}

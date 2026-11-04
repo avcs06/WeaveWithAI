@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layouts that pass</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  h2 { margin: 0; }
+</style>
+</head>
+<body>
+<!-- A page whose one block is a list beside a detail column, the detail holding a grid whose heading spans its row. -->
+<div data-slot="container" style="padding: 24px">
+  <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px">
+    <p>The list</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px">
+      <h2 style="grid-column: 1 / -1">Tiles</h2>
+      <span>One</span><span>Two</span><span>Three</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

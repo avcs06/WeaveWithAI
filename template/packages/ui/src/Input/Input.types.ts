@@ -1,0 +1,141 @@
+import type { Constant } from '@packages/utils/types';
+
+// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- FormControl's own props, for the controls built on it.
+import type { FormControlOwnProps } from '../FormControl/FormControl.types';
+import type { DisabledState, SetByComponent } from '../utils';
+import type {
+  ComponentPropsWithoutRef,
+  ComponentPropsWithRef,
+  ReactElement,
+} from 'react';
+
+// Controlled, so `defaultValue` would be ignored; an input has no children.
+type NativeInputProps<Excluded extends string = never> = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  | keyof FormControlOwnProps
+  | 'value'
+  | 'onChange'
+  | 'autoComplete'
+  | 'defaultValue'
+  | 'children'
+  | Excluded
+>;
+
+type TextFieldProps<Excluded extends string = never> = FormControlOwnProps &
+  NativeInputProps<Excluded> & {
+    value: string;
+    onChange: (value: string) => void;
+  };
+
+// A placeholder or a tooltip is no substitute for a name.
+type FieldName =
+  | { label: string }
+  | { 'aria-label': string }
+  | { 'aria-labelledby': string };
+
+type DelayProps<D extends number> = {
+  /**
+   * What the field holds, for autofill and assistive tech: `email`, `name`,
+   * `new-password`… `off` for a field not about the user, like an event's
+   * title.
+   */
+  autoComplete: string;
+  /**
+   * `onChange` waits this many ms without typing; the text shows at once. Blur,
+   * Enter and unmounting send a waiting edit at once.
+   */
+  delay?: Constant<number, D>;
+};
+
+/** A bare `<input>`: controlled text, with an optional `delay`. */
+export type BareInputProps<D extends number = never> = Omit<
+  ComponentPropsWithRef<'input'>,
+  'value' | 'onChange' | 'defaultValue' | 'children'
+> & {
+  value: string;
+  onChange: (value: string) => void;
+  /**
+   * `onChange` waits this many ms without typing; the text shows at once. Blur,
+   * Enter and unmounting send a waiting edit at once.
+   */
+  delay?: Constant<number, D>;
+};
+
+/** The field the Input components render; their own types check its props. */
+export type InputBaseProps<D extends number = never> = TextFieldProps &
+  DelayProps<D>;
+
+export type InputProps<D extends number = never> = TextFieldProps<'type'> &
+  FieldName &
+  DelayProps<D> & {
+    /**
+     * `email`, `tel` and `url` bring phone keyboards. Numbers take NumberInput,
+     * passwords PasswordInput, searches SearchInput.
+     */
+    type?: 'text' | 'email' | 'tel' | 'url';
+  };
+
+/** The clear button takes the right side. */
+export type SearchInputProps = TextFieldProps<'type'> &
+  FieldName &
+  SetByComponent<'rightIcon' | 'rightAddOn'>;
+
+/** The browser's own date picker; every value is a day, `2026-11-07`. */
+export type DateInputProps = TextFieldProps<'type' | 'min' | 'max' | 'step'> &
+  FieldName &
+  Pick<DelayProps<never>, 'autoComplete'> & {
+    /** The first day it takes, as `2026-11-07`. */
+    min?: string;
+    /** The last day it takes, as `2026-11-07`. */
+    max?: string;
+  };
+
+/** The toggle takes the right side and switches `type`. */
+export type PasswordInputProps = InputProps &
+  SetByComponent<'type' | 'rightIcon' | 'rightAddOn'>;
+
+export type NumberInputProps<D extends number = never> = FormControlOwnProps &
+  NativeInputProps<'type' | 'inputMode' | 'min' | 'max' | 'step' | 'role'> &
+  FieldName &
+  SetByComponent<'aria-valuemin' | 'aria-valuemax' | 'aria-valuenow'> & {
+    /** `null` while the field is empty. */
+    value: number | null;
+    onChange: (value: number | null) => void;
+    autoComplete: string;
+    /**
+     * `onChange` waits this many ms without edits; the number shows at once.
+     * Blur, Enter and unmounting send a waiting edit at once.
+     */
+    delay?: Constant<number, D>;
+    min?: number;
+    max?: number;
+    step?: number;
+    allowDecimal?: boolean;
+    allowNegative?: boolean;
+  };
+
+/** Whole numbers between its own buttons. */
+export type QuantitySelectorProps = NumberInputProps &
+  SetByComponent<
+    | 'allowDecimal'
+    | 'allowNegative'
+    | 'leftIcon'
+    | 'rightIcon'
+    | 'leftAddOn'
+    | 'rightAddOn'
+  > & {
+  /** Why − can't go lower at `min`, in its tooltip; "Already the fewest" unless set. */
+  minReason?: string;
+  /** Why + can't go higher at `max`, such as "Only 5 in stock"; "No more" unless set. */
+  maxReason?: string;
+};
+
+export type FieldButtonProps = DisabledState & {
+  /** The button's name, also shown in its tooltip. */
+  label: string;
+  /** -1 keeps it out of the tab order, when the field's keys do the same. */
+  tabIndex?: number;
+  'aria-pressed'?: boolean;
+  onClick: () => void;
+  children: ReactElement;
+};

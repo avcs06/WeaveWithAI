@@ -1,0 +1,81 @@
+import type { PageLayoutConfig } from './PageLayout.types';
+
+// The theme's page layouts: the scaffold writes the run's theme over these.
+export const layouts: Record<'app' | 'marketing', PageLayoutConfig> = {
+  app: {
+    docksFirst: 'header',
+    header: {
+      needed: true,
+      start: 'logo',
+      center: '',
+      end: 'account',
+      separation: 'divider',
+      sticky: false,
+      overlay: false,
+    },
+    sidebar: {
+      needed: true,
+      side: 'left',
+      top: '',
+      items: 'the navigation',
+      bottom: '',
+      widthPx: 240,
+      separation: 'divider',
+    },
+    footer: {
+      needed: false,
+      start: '',
+      center: '',
+      end: '',
+      padding: '4',
+      gap: '4',
+      separation: 'none',
+    },
+    main: {
+      container: 'fluid',
+      maxWidthPx: 0,
+      padding: '6',
+      align: 'start',
+      separation: 'none',
+    },
+    logo: 'header',
+    account: 'header',
+  },
+  marketing: {
+    docksFirst: 'header',
+    header: {
+      needed: true,
+      start: 'logo',
+      center: 'the mode switch',
+      end: 'account',
+      separation: 'divider',
+      sticky: true,
+      overlay: false,
+    },
+    sidebar: {
+      needed: false,
+      side: 'left',
+      top: '',
+      items: '',
+      bottom: '',
+      widthPx: 0,
+      separation: 'none',
+    },
+    footer: {
+      needed: false,
+      content: '',
+      padding: '6',
+      gap: '4',
+      separation: 'divider',
+    },
+    main: {
+      container: 'fixed',
+      maxWidthPx: 1120,
+      padding: '8',
+      align: 'start',
+      separation: 'none',
+    },
+    logo: 'header',
+    account: 'header',
+  },
+};
