@@ -1,4 +1,4 @@
-// Every stage of a run, in order; `stages` registers the ones built so far.
+// Every stage of a run, in order.
 
 export const PIPELINE: string[] = [
   'flows-scope',
@@ -12,6 +12,4 @@ export const PIPELINE: string[] = [
   'code-frames',
   'code-pages',
   'bench',
-  'e2e',
-  'repair',
 ];

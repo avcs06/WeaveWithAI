@@ -22,7 +22,6 @@ export const ConfigSchema = z.object({
   LLM_BASE_URL: z.url().default('https://api.meta.ai/v1'),
   LLM_MODEL: z.string().default('muse-spark-1.3'),
   LLM_MODEL_STRONG: z.string().default('muse-wonder-1.0'),
-  LLM_MODEL_VISION: z.string().default('muse-spark-1.3'),
   LLM_REPLAY: Flag,
   LLM_BACKEND: BackendName,
   MODAL_BASE_URL: OptionalUrl,

@@ -8,7 +8,7 @@ Hackathon (submissions close 2026-11-05 07:30 IST).
 | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `src/`      | The generator: CLI, runner, agents (one folder per stage), core. See "Where the code lives"   | You                                                  |
 | `template/` | The design-system workspace (packages, web, server, tools). Copied into every generated app    | Only tasks that name `template/`                     |
-| `mcps/`     | MCP servers, one folder each; `design-system` does design-system lookup and code validation    | Only tasks that name `mcps/`                         |
+| `mcps/`     | MCP servers, one folder each; `frontend` does design-system lookup and code validation         | Only tasks that name `mcps/`                         |
 | `docs/`     | The benchmark spec                                                                             | Never change decisions                               |
 | `fixtures/` | Reference idea briefs, and golden artifacts saved by `weave golden`                            | Add files; don't rewrite existing ones               |
 | `runs/`     | Output of generator runs (gitignored)                                                          | Written by the generator only                        |

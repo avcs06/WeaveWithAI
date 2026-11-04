@@ -18,7 +18,7 @@ import { git } from './setup';
 // test or a protected path.
 
 export type Session = {
-  /** 'frames', 'pages', 'repair:R03' */
+  /** 'frames', 'pages' */
   id: string;
   /** The short prompt: it names the `.weave/` input files and the guidelines. */
   task: string;
