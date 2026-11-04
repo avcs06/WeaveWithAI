@@ -1,7 +1,20 @@
-# Weave
+# <img src="assets/logo.svg" alt="WeaveWithAI" width="480">
 
 An agent that turns an idea, written at any level of detail, into a website
-that needs no cleanup after it is generated. Built on Meta's Muse models.
+that needs no cleanup after it is generated. Built on Meta's Muse
+models.
+
+- **For:** teams that will own and maintain the code it writes. Every screen
+  reuses the design system's components instead of hand-built copies, and
+  review agents argue each issue in a thread until it is fixed or explained.
+- **Input:** [a ceramics studio in Jaipur, in the owner's own words](fixtures/ideas/ecommerce-store.md).
+- **Output:** Jaipur Studio Ceramics, 18 screens in 2 h 20 min for $4.39, with
+  0 axe violations against WCAG 2.2 AA. See [Example runs](#example-runs).
+- **Try it:** [Run it yourself](#run-it-yourself).
+
+> The coding harness is Muse Code, Meta's coding agent. The model inside is
+> Muse Spark (`muse-spark-1.3` on the Meta Model API). Every model call in a
+> run goes to a Meta model.
 
 ## Built during the hackathon
 
@@ -93,18 +106,18 @@ a test or a protected path fails.
 
 ### The stages
 
-| Stage              | Purpose                                                                                                                    |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `flows-scope`      | Reads the idea and sets the app's summary, audience, roles, vocabulary and what is in and out of scope. Gaps become questions in interactive runs and assumptions otherwise. |
-| `flows-catalog`    | Lists every flow with its header and description, plus the fields and forms the flows use.                                 |
-| `flows-expand`     | Expands each flow into its steps. Each group of flows, by role and record, is its own call, and the groups run in parallel. |
-| `design-theme`     | One call writes a design brief and the theme it becomes: every color, both page layouts and the component defaults.       |
-| `design-architect` | Describes every frame, screen and dialog in prose, from the flows and the theme.                                           |
-| `contract`         | Defines the records and the operations behind every screen.                                                                |
-| `code-scaffold`    | Copies the template into the run, applies the theme by code, and writes the session inputs and agent config. No model call. |
-| `code-contract`    | Writes the entity layer from the contract by code. One model call writes the seed rows.                                    |
-| `code-frames`      | A coding session fills the frames: the headers, sidebars and footers around the pages.                                     |
-| `code-pages`       | One coding session builds every screen in its route folder.                                                                |
+| Stage              | Purpose                                                                                                                                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flows-scope`      | Reads the idea and sets the app's summary, audience, roles, vocabulary and what is in and out of scope. Gaps become questions in interactive runs and assumptions otherwise.              |
+| `flows-catalog`    | Lists every flow with its header and description, plus the fields and forms the flows use.                                                                                                |
+| `flows-expand`     | Expands each flow into its steps. Each group of flows, by role and record, is its own call, and the groups run in parallel.                                                               |
+| `design-theme`     | One call writes a design brief and the theme it becomes: every color, both page layouts and the component defaults.                                                                       |
+| `design-architect` | Describes every frame, screen and dialog in prose, from the flows and the theme.                                                                                                          |
+| `contract`         | Defines the records and the operations behind every screen.                                                                                                                               |
+| `code-scaffold`    | Copies the template into the run, applies the theme by code, and writes the session inputs and agent config. No model call.                                                               |
+| `code-contract`    | Writes the entity layer from the contract by code. One model call writes the seed rows.                                                                                                   |
+| `code-frames`      | A coding session fills the frames: the headers, sidebars and footers around the pages.                                                                                                    |
+| `code-pages`       | One coding session builds every screen in its route folder.                                                                                                                               |
 | `bench`            | Measures the app (accessibility, keyboard, the accessibility tree, duplicated code, code quality) and the run (time, cost, rounds, what the checks and reviewers caught). No model calls. |
 
 Each stage writes `<NN>-<group>/<NN>-<name>.json` in the run, with its
@@ -112,13 +125,13 @@ markdown beside it. The bench writes `benchmark.json` and `05-benchmark.md`.
 
 ### Models, temperature and reasoning
 
-| Where                                                                       | Model                                | Temperature | Reasoning |
-| --------------------------------------------------------------------------- | ------------------------------------ | ----------- | --------- |
-| First drafts of `flows-scope` and `design-theme`                            | Strong (`muse-wonder-1.0`)           | 0.7         | high      |
-| First draft of `design-architect`                                           | Strong (`muse-wonder-1.0`)           | 0.2         | high      |
-| `flows-catalog`, `flows-expand`, `contract`                                 | Default (`muse-spark-1.3`)           | 0.2         | medium    |
-| Every fix and every reviewer                                                | Default (`muse-spark-1.3`)           | 0.2         | medium    |
-| Coding sessions (Muse Code)                                                 | Default (`muse-spark-1.3`)           | n/a         | medium    |
+| Where                                            | Model                      | Temperature | Reasoning |
+| ------------------------------------------------ | -------------------------- | ----------- | --------- |
+| First drafts of `flows-scope` and `design-theme` | Strong (`muse-wonder-1.0`) | 0.7         | high      |
+| First draft of `design-architect`                | Strong (`muse-wonder-1.0`) | 0.2         | high      |
+| `flows-catalog`, `flows-expand`, `contract`      | Default (`muse-spark-1.3`) | 0.2         | medium    |
+| Every fix and every reviewer                     | Default (`muse-spark-1.3`) | 0.2         | medium    |
+| Coding sessions (Muse Code)                      | Default (`muse-spark-1.3`) | n/a         | medium    |
 
 Scope, theme and architect set the app's direction, so their first drafts
 run on the strong model. A better first draft leaves fewer issues for the
@@ -130,36 +143,100 @@ Modal, Muse Spark Open on Baseten. There, a call meant for the strong model
 raises its reasoning one level instead. On Baseten the coding sessions run
 OpenCode instead of Muse Code.
 
+## Example runs
+
+Three idea briefs from `fixtures/ideas`, each run end to end on Nov 4, 2026.
+The apps were measured on their dev servers. The generated apps are in
+[WeaveWithAIExamples](https://github.com/avcs06/WeaveWithAIExamples).
+
+|                                     | Jaipur Studio Ceramics                                  | SoloStudio                                                        | DashForge                                                 |
+| ----------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
+| Idea                                | [ecommerce-store.md](fixtures/ideas/ecommerce-store.md) | [freelancer-workspace.md](fixtures/ideas/freelancer-workspace.md) | [dashboard-editor.md](fixtures/ideas/dashboard-editor.md) |
+| Models and coding harness           | Muse Wonder and Muse Spark, Muse Code                   | Muse Wonder and Muse Spark, Muse Code                             | Muse Spark Open on Baseten, OpenCode                      |
+| Screens                             | 18                                                      | 14                                                                | 4                                                         |
+| Time                                | 2 h 20 min                                              | 1 h 40 min                                                        | 58 min                                                    |
+| Cost                                | $4.39                                                   | $6.62                                                             | $8.60                                                     |
+| Issues caught / fixed and rechecked | 37 / 33                                                 | 53 / 41                                                           | 129 / 101                                                 |
+| Known issues                        | 4                                                       | 12                                                                | 29                                                        |
+| axe violations (WCAG 2.2 AA)        | 0                                                       | 0                                                                 | 0                                                         |
+| Type, lint and design-system errors | 0                                                       | 0                                                                 | 0                                                         |
+| Keyboard: focus visible             | 87.9%                                                   | 98.3%                                                             | 92.2%                                                     |
+
+A known issue is a fix from the last round, which no reviewer checks again,
+or a thread a fix left open with its reason. Each run records them:
+
+- **Jaipur Studio Ceramics:** 4 fixed in the last round. The home page
+  preview hid sold-out pieces, order statuses showed raw keys, the account
+  page had no signed-out state, and cancelling an order restored stock by
+  piece title instead of id.
+- **SoloStudio:** 11 fixed in the last round, among them dialogs that showed
+  "gone" while still loading and two task filters without labels. 1 left
+  open: availability times use a raw time input, because the design-system
+  Input takes no `time` type.
+- **DashForge:** 26 fixed in the last round, most in the planning stages. 2
+  left open: a duplicate-dashboard step has no create operation behind it,
+  and one flow branches from a step of another flow.
+
+All three apps also miss a skip link, and one or two headings skip a level.
+
 ## Repository
 
 | Path        | Contents                                                                                    |
 | ----------- | ------------------------------------------------------------------------------------------- |
 | `src/`      | The generator: CLI, stage runner, stages, validators, rendered checks, coding engine, bench |
-| `template/` | The design-system workspace that every generated app is copied from: packages, web, tools  |
-| `mcps/`     | MCP servers; `frontend` makes the design system queryable and checks code against it       |
+| `template/` | The design-system workspace that every generated app is copied from: packages, web, tools   |
+| `mcps/`     | MCP servers; `frontend` makes the design system queryable and checks code against it        |
 | `modal/`    | Serving Muse Glimmer on Modal                                                               |
 | `docker/`   | The container the coding sessions run in                                                    |
 | `docs/`     | The benchmark spec                                                                          |
 | `fixtures/` | Idea briefs and golden artifacts                                                            |
 
-## Quick start
+## Run it yourself
 
-Requires Node 22.18+ (24.11 recommended, see `mcps/frontend/.nvmrc`) and pnpm.
+You need:
+
+- Linux or WSL2, where it was built and tested.
+- Node 24 and pnpm 10. The coding sessions run in a Node 24 container on the
+  app's `node_modules`, which are installed on your machine, so the majors
+  must match.
+- Docker, running. The agent's image builds itself on the first coding
+  session.
+- Muse Code on your `PATH` as `muse`. The runner passes it your key, so it
+  needs no `muse login`.
+- A Meta Model API key.
+
+Set it up once:
 
 ```sh
-pnpm template:setup        # install the template, build and check the MCP
-pnpm install               # the generator's own dependencies
-cp .env.example .env       # then set MODEL_API_KEY
-pnpm smoke                 # one structured call to the Meta Model API
-pnpm weave run fixtures/ideas/freelancer-workspace.md
+git clone https://github.com/avcs06/WeaveWithAI.git
+cd WeaveWithAI
+pnpm install                                # the generator's own dependencies
+pnpm template:setup                         # install the template, build and check the MCP
+pnpm exec playwright-core install chromium  # the browser for the rendered checks and screenshots
+cp .env.example .env                        # then set MODEL_API_KEY
+pnpm smoke                                  # one structured call to the Meta Model API
 ```
 
+Write your idea in a markdown file, in as much or as little detail as you
+like, and run it:
+
+```sh
+pnpm weave run my-idea.md                   # prints the run id; --interactive asks you the scope questions
+pnpm weave show <runId>                     # each stage's status, rounds and known issues
+pnpm --dir runs/<runId>/app dev             # the generated app at http://localhost:3001
+```
+
+A run takes 1 to 2.5 hours and costs $4 to $9, as in the example runs. It
+lands in `runs/<runId>/`: the artifacts with their markdown, the generated
+app with a git commit per session and round, screenshots of each round, the
+event log and the benchmark.
+
 `LLM_BACKEND` (or `--backend`) picks where calls go: `meta` (default),
-`modal` or `baseten`. Runs land in `runs/<runId>/`: the artifacts, the
-generated app with a git commit per session and round, screenshots of each
-round, the event log and the benchmark.
+`modal` or `baseten`. See `modal/README.md` for the open-weight backends.
 
 ## Commands
+
+Run each as `pnpm weave <command>`.
 
 ```text
 weave run <idea.md>          run the pipeline; --from, --to and --run resume or stop at a stage

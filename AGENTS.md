@@ -1,6 +1,6 @@
 # Agent rules
 
-This repository builds **Weave**: a generator agent that turns an idea into a
+This repository builds **WeaveWithAI**: a generator agent that turns an idea into a
 deployable website, built on Meta's Muse models for the Meta Global AI Developer
 Hackathon (submissions close 2026-11-05 07:30 IST).
 
