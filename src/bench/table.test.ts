@@ -49,8 +49,15 @@ describe('the run table', () => {
   it('lines the values up in one column for a terminal', () => {
     const lines = renderTerminalTable({ runId: 'r1', createdAt: '', server: 'next dev', generation }).split('\n');
     expect(lines[0]).toBe('Benchmark of r1');
-    const starts = lines.slice(1).map((line) => line.search(/\S/) + line.trimStart().search(/ {2}\S/) + 2);
+    // Brief lines under a label sit indented in the label column and carry no value.
+    const starts = lines.slice(1).filter((line) => !line.startsWith('    ')).map((line) => line.search(/\S/) + line.trimStart().search(/ {2}\S/) + 2);
     expect(new Set(starts).size).toBe(1);
     expect(lines).toContain(`  ${'Coding agent'.padEnd('Muse Code subscription'.length)}  Muse Code`);
+  });
+
+  it('says under AI discussion threads what they count, in two short lines', () => {
+    const bench: Benchmark = { runId: 'r1', createdAt: '', server: 'next dev', generation };
+    expect(renderRunTable(bench)).toContain('| AI discussion threads<br><sub>Issues an agent kept<br>open to discuss</sub> | 1 |');
+    expect(renderTerminalTable(bench).split('\n')).toEqual(expect.arrayContaining(['    Issues an agent kept', '    open to discuss']));
   });
 });

@@ -1,13 +1,12 @@
 import type { RouteReport } from './browser';
 import type { CodeReport } from './code';
 import type { GenerationReport } from './generation';
-import { median } from './perf';
 
 // The benchmark as one record per app and as markdown: the run's own table,
 // and one table that sets apps side by side.
 
 export const SERVER_NOTE =
-  "Measured on the app's dev server (`next dev`), not a production build. Accessibility, keyboard and code numbers hold for production too; the load numbers are slower and bigger than production would be, so they compare apps with each other only. Pages are judged whole, design-system components included.";
+  "Measured on the app's dev server (`next dev`), not a production build. Pages are judged whole, design-system components included.";
 
 export type Benchmark = {
   runId: string;
@@ -29,7 +28,7 @@ const millions = (n: number) => `${one(n / 1e6)}M`;
 const table = (head: string[], rows: string[][]) =>
   [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...rows.map((r) => `| ${r.join(' | ')} |`)].join('\n');
 
-/** The app-wide numbers: sums over routes, percentages of the sums, medians of the load numbers. */
+/** The app-wide numbers: sums over routes, and percentages of the sums. */
 export function summarize(bench: Benchmark): Record<string, string> {
   const out: Record<string, string> = {};
   const g = bench.generation;
@@ -70,10 +69,6 @@ export function summarize(bench: Benchmark): Record<string, string> {
     out['Keyboard: Enter and Space work'] = `${one(pct(sum((r) => k(r).enterOk + k(r).spaceOk), 2 * sum((r) => k(r).buttons)))}%`;
     out['Keyboard: traps / order inversions'] = `${routes.filter((r) => k(r).trap).length} / ${sum((r) => k(r).inversions)}`;
     out['Keyboard: skip link'] = `${routes.filter((r) => k(r).skipLink).length} of ${routes.length}`;
-    const load = (pick: (r: RouteReport) => number | null) => median(routes.map((r) => pick(r)).filter((v): v is number => v !== null));
-    out['Load, median route (dev): FCP / LCP'] = `${int(load((r) => r.perf!.fcpMs))} / ${int(load((r) => r.perf!.lcpMs))} ms`;
-    out['Load, median route (dev): TBT / CLS'] = `${int(load((r) => r.perf!.tbtMs))} ms / ${load((r) => r.perf!.cls).toFixed(3)}`;
-    out['Load, median route (dev): DOM nodes / JS'] = `${int(load((r) => r.perf!.domNodes))} / ${int(load((r) => r.perf!.jsKb))} KB`;
   }
   const c = bench.code;
   if (c) {
@@ -105,14 +100,6 @@ function routeTables(routes: RouteReport[]): string[] {
       ok.map((r) => {
         const k = r.keyboard!;
         return [r.route, `${k.interactive}`, `${k.reachable}`, `${k.focusVisible}`, `${k.enterOk + k.spaceOk} of ${2 * k.buttons}`, k.trap ? 'yes' : 'no', `${k.inversions}`, k.skipLink ? 'yes' : 'no'];
-      }),
-    ),
-    '## Load (dev server)',
-    table(
-      ['Route', 'FCP ms', 'LCP ms', 'CLS', 'TBT ms', 'DOM nodes', 'JS KB', 'Load ms'],
-      ok.map((r) => {
-        const p = r.perf!;
-        return [r.route, p.fcpMs === null ? '-' : int(p.fcpMs), p.lcpMs === null ? '-' : int(p.lcpMs), p.cls.toFixed(3), int(p.tbtMs), int(p.domNodes), int(p.jsKb), int(p.loadMs)];
       }),
     ),
   ];

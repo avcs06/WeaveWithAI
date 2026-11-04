@@ -12,11 +12,10 @@ import { readArtifact } from '../core/artifacts';
 import { type Run, runPath } from '../core/run';
 import { withDevServer } from '../engine/server';
 import { readTree, type TreeReport } from './aria';
-import { measureLoad, type PerfReport } from './perf';
 
 // Every screen the pages session built, opened on the app's dev server the way
 // the coding gate opens it, signed in where the screen needs it: accessibility,
-// what a screen reader gets, the keyboard walk, and load numbers. The page is
+// what a screen reader gets, and the keyboard walk. The page is
 // judged whole, design-system components included, as a user meets it.
 
 export type RouteReport = {
@@ -35,7 +34,6 @@ export type RouteReport = {
     tree: TreeReport;
   };
   keyboard?: { interactive: number; reachable: number; focusVisible: number; inversions: number; trap: boolean; buttons: number; enterOk: number; spaceOk: number; skipLink: boolean };
-  perf?: PerfReport;
 };
 
 /** The screens of the run's pages stage, as its gate samples them. */
@@ -84,7 +82,6 @@ async function measureRoute(browser: Browser, sample: RouteSample): Promise<Rout
         spaceOk: walk.activation.spaceOk,
         skipLink: walk.skipLink,
       },
-      perf: await measureLoad(browser, sample),
     };
   } catch (error) {
     return { ...base, error: String(error).split('\n')[0] };
