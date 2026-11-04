@@ -14,6 +14,7 @@ import { scaffoldStage } from './04code/01scaffold/stage';
 import { contractCodeStage } from './04code/02contract/stage';
 import { framesStage } from './04code/03frames/stage';
 import { pagesStage } from './04code/04pages/stage';
+import { benchStage } from '../bench/stage';
 import type { UnitSpec } from './04code/unit';
 
 export type StageContext = {
@@ -37,21 +38,7 @@ export type StageDef = {
   units?(ctx: StageContext): UnitSpec[];
 };
 
-export const PIPELINE: string[] = [
-  'flows-scope',
-  'flows-catalog',
-  'flows-expand',
-  'design-theme',
-  'design-architect',
-  'contract',
-  'code-scaffold',
-  'code-contract',
-  'code-frames',
-  'code-pages',
-  'bench',
-  'e2e',
-  'repair',
-];
+export { PIPELINE } from './pipeline';
 
 export const stages: StageDef[] = [
   scopeStage,
@@ -64,4 +51,5 @@ export const stages: StageDef[] = [
   contractCodeStage,
   framesStage,
   pagesStage,
+  benchStage,
 ];

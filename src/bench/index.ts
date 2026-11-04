@@ -18,7 +18,7 @@ export async function runBenchmark(run: Run, runsDir: string, opts: { skip?: Par
   const skip = new Set(opts.skip ?? []);
   // A skipped part keeps what the run's last benchmark measured, so refreshing one part loses no other.
   const file = runPath(run, 'benchmark.json');
-  const previous: Partial<Benchmark> = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
+  const previous: Partial<Benchmark> = readBenchmark(run) ?? {};
   const bench: Benchmark = { runId: run.id, createdAt: new Date().toISOString(), server: 'next dev' };
   appendEvent(run, { type: 'bench:start', skip: [...skip] });
   // Each part on its own: one that fails is left out of the report, and the others still run.
@@ -45,9 +45,19 @@ export async function runBenchmark(run: Run, runsDir: string, opts: { skip?: Par
   return bench;
 }
 
+/** The run's latest benchmark, if it has one. */
+export function readBenchmark(run: Run): Benchmark | undefined {
+  const file = runPath(run, 'benchmark.json');
+  return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as Benchmark) : undefined;
+}
+
 /** Sets the latest benchmark of each run side by side, in `<runsDir>/benchmark-comparison.md`. */
 export function compareBenchmarks(runs: Run[], runsDir: string): string {
-  const benches = runs.map((run) => JSON.parse(readFileSync(runPath(run, 'benchmark.json'), 'utf8')) as Benchmark);
+  const benches = runs.map((run) => {
+    const bench = readBenchmark(run);
+    if (!bench) throw new Error(`${run.id} has no benchmark yet; run weave bench ${run.id}`);
+    return bench;
+  });
   const markdown = renderComparison(benches);
   writeFileSync(path.join(runsDir, 'benchmark-comparison.md'), markdown);
   return markdown;

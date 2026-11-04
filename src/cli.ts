@@ -37,7 +37,8 @@ import { runLog } from './core/log';
 import { PIPELINE, type StageContext, stages } from './agents/stages';
 import type { Themed } from './agents/02design/01theme/build';
 import { cleanAgentImages } from './engine/docker';
-import { compareBenchmarks, type Part, PARTS, runBenchmark } from './bench';
+import { compareBenchmarks, type Part, PARTS, readBenchmark, runBenchmark } from './bench';
+import { renderRunTable } from './bench/table';
 
 export class UsageError extends Error {}
 
@@ -154,6 +155,9 @@ export async function runCommand(
         : '';
       log.line(name, `${after?.status ?? 'done'}${version}${rounds}${known}`);
     }
+    // A run that reached the benchmark ends with its table.
+    const bench = order.includes('bench') ? readBenchmark(run) : undefined;
+    if (bench) out(`\n${renderRunTable(bench)}`);
   } finally {
     stopLog();
   }
@@ -404,8 +408,8 @@ async function benchCommand(ids: string[], values: { skip?: string; compare?: bo
   if (!values.compare)
     for (const run of runs) {
       console.log(`bench ${run.id}`);
-      await runBenchmark(run, DEFAULT_RUNS_DIR, { skip });
-      console.log(`  ${runPath(run, '05-benchmark.md')}`);
+      const bench = await runBenchmark(run, DEFAULT_RUNS_DIR, { skip });
+      console.log(`  ${runPath(run, '05-benchmark.md')}\n\n${renderRunTable(bench)}\n`);
     }
   if (values.compare || runs.length > 1) console.log(compareBenchmarks(runs, DEFAULT_RUNS_DIR));
 }

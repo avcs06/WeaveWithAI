@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { PIPELINE } from '../agents/stages';
+import { PIPELINE } from '../agents/pipeline';
 import { type Event, readEvents, readState, type Run, runPath } from '../core/run';
 import type { Thread } from '../runner/threads';
 
@@ -35,12 +35,14 @@ export type GenerationReport = {
 type Call = Event & { model?: string; backend?: string; calls?: number; input?: number; cachedInput?: number; output?: number; costUsd?: number; billing?: string; allowance?: { week: number } };
 
 const at = (event: Event) => Date.parse(event.ts);
+/** The stages that make the app; the benchmark after them is not the run's time. */
+const MADE_BY = PIPELINE.slice(0, PIPELINE.indexOf('code-pages') + 1);
 
 /** First start to last done of each stage, and the two spans the apps are compared on: scope to contract, frames to pages. */
 function times(events: Event[]): GenerationReport['timeMs'] {
   const spans = new Map<string, { start: number; done: number }>();
   for (const event of events) {
-    if (!event.stage || !PIPELINE.includes(event.stage)) continue;
+    if (!event.stage || !MADE_BY.includes(event.stage)) continue;
     const span = spans.get(event.stage) ?? { start: Infinity, done: 0 };
     if (event.type === 'stage:start') span.start = Math.min(span.start, at(event));
     if (event.type === 'stage:done') span.done = Math.max(span.done, at(event));
