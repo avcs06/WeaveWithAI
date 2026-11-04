@@ -9,7 +9,8 @@ The hackathon's building period ran from Oct 27 to Nov 4, 2026.
 
 Built during the event:
 
-- Everything outside `template/`: the generator in `src/` (the pipeline,
+- The agent, designed and built from scratch: everything outside
+  `template/` and `mcps/`. That is the generator in `src/` (the pipeline,
   stage runner, validators, reviewers, rendered checks, coding engine and
   benchmark), the open-weight backends (`modal/`, `docker/`), the idea
   briefs in `fixtures/` and the docs.
