@@ -6,8 +6,10 @@
  * Group rows with `Dropdown.Group`, open a submenu from a `Dropdown.Item`
  * inside `Dropdown.SubMenu`. `showCheckbox` and `showCheckmark` set how
  * checked rows show. The trigger is one focusable element that forwards its
- * props: `Dropdown.Button`, or an `IconButton` named for what the menu holds.
- * Tab closes the menu, back to the trigger.
+ * props: `Dropdown.Button`, an `IconButton` named for what the menu holds,
+ * or for an avatar a `PlainButton` around the Avatar, as the Avatar recipe
+ * shows; never an Avatar inside an IconButton. Tab closes the menu, back to
+ * the trigger.
  *
  * Not for navigation (use `Link`, the app's NextLink for its routes), one
  * on/off toggle (`Button` or `Chip`), a form value (`Select`) or free-form

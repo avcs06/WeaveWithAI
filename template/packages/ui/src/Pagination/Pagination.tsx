@@ -49,6 +49,7 @@ export const Pagination = ({
   return (
     <div
       data-slot="pagination"
+      data-ds=""
       className={classNames(
         pagination,
         'flex-row-gap-3 items-center justify-between flex-wrap',

@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React, { useState } from 'react';
+import React, { StrictMode, useEffect, useState } from 'react';
 
 import { Button } from '../Button';
 import { Dropdown } from '../Dropdown';
@@ -710,6 +710,32 @@ describe('Table column order', () => {
     expect(headers()).toEqual(['Name', 'Team', 'Toggle', 'Active']);
     await userEvent.click(screen.getByRole('button', { name: 'toggle' }));
     expect(headers()).toEqual(['Name', 'Team', 'Salary', 'Toggle', 'Active']);
+    await userEvent.click(screen.getByRole('button', { name: 'toggle' }));
+    expect(headers()).toEqual(['Name', 'Team', 'Toggle', 'Active']);
+  });
+
+  it('keeps its columns when Strict Mode mounts them twice', async () => {
+    const AfterLoading = () => {
+      const [loaded, setLoaded] = useState(false);
+      useEffect(() => setLoaded(true), []);
+      if (!loaded) return <p>Loading</p>;
+      return (
+        <Table<Person> caption="People" data={people} rowKey={(row) => row.id}>
+          <Table.Column<Person> id="name" title="Name" dataKey="name" />
+          <Table.Column<Person> id="team" title="Team" dataKey="team" />
+        </Table>
+      );
+    };
+    renderUI(
+      <StrictMode>
+        <AfterLoading />
+      </StrictMode>,
+    );
+    await screen.findByRole('table');
+    expect(
+      screen.getAllByRole('columnheader').map((th) => th.textContent),
+    ).toEqual(['Name', 'Team']);
+    expect(names()).toEqual(['Ada', 'Grace', 'Linus', 'Edsger']);
   });
 });
 

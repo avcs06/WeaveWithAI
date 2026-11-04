@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Scrolling main region</title>
+    <style>
+      body { margin: 0; height: 100vh; display: grid; grid-template-rows: 60px 1fr; }
+      header { background: #18181b; color: #ffffff; }
+      main { overflow-y: auto; }
+      section { height: 2400px; }
+    </style>
+  </head>
+  <body>
+    <header>App frame</header>
+    <main><section><h1>A long page</h1></section></main>
+  </body>
+</html>

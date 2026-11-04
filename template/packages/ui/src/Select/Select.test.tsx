@@ -132,7 +132,8 @@ describe('Select', () => {
       expect(trigger).toHaveAttribute('aria-expanded', 'false');
       expect(trigger).toHaveAttribute('aria-haspopup', 'listbox');
       expect(trigger).not.toHaveAttribute('name');
-      expect(trigger).toHaveTextContent('Select Country');
+      // The label reads inside the sentence.
+      expect(trigger).toHaveTextContent('Select country');
       await userEvent.tab();
       expect(trigger).toHaveFocus();
       await userEvent.tab();
@@ -162,7 +163,7 @@ describe('Select', () => {
         </Providers>,
       );
       expect(html).toContain('Chile');
-      expect(html).not.toContain('Select Country');
+      expect(html).not.toContain('Select country');
     });
 
     it('renderTrigger replaces what the box shows; the chevron and the search field stay', async () => {

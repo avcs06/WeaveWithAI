@@ -1,0 +1,65 @@
+{
+  "enums": [
+    {
+      "name": "Shelf",
+      "values": [
+        { "key": "to_read", "label": "To read" },
+        { "key": "reading", "label": "Reading" },
+        { "key": "finished", "label": "Finished" }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "Book",
+      "noun": "Book",
+      "fields": [
+        { "name": "title", "kind": "string", "enum": "", "ref": "", "list": false, "required": true },
+        { "name": "author", "kind": "string", "enum": "", "ref": "", "list": false, "required": false },
+        { "name": "shelf", "kind": "enum", "enum": "Shelf", "ref": "", "list": false, "required": true }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "id": "listBooks",
+      "kind": "list",
+      "entity": "Book",
+      "summary": "The reader's books, newest first, searchable by title or author.",
+      "inputs": [],
+      "flowSteps": ["F04.S01", "F04.S02", "F04.A01", "F04.A02"]
+    },
+    {
+      "id": "getBook",
+      "kind": "get",
+      "entity": "Book",
+      "summary": "One of the reader's books.",
+      "inputs": [],
+      "flowSteps": ["F05.S01", "F05.A01"]
+    },
+    {
+      "id": "createBook",
+      "kind": "create",
+      "entity": "Book",
+      "summary": "Adds a book to the reader's list.",
+      "inputs": [
+        { "field": "FD03", "as": "title" },
+        { "field": "FD04", "as": "author" },
+        { "field": "FD05", "as": "shelf" }
+      ],
+      "flowSteps": ["F03.S02", "F03.A01", "F03.A02"]
+    },
+    {
+      "id": "deleteBook",
+      "kind": "delete",
+      "entity": "Book",
+      "summary": "Deletes one of the reader's books for good.",
+      "inputs": [],
+      "flowSteps": ["F05.S02", "F05.A02"]
+    }
+  ],
+  "screens": [
+    { "screen": "S04", "reads": ["listBooks"] },
+    { "screen": "S05", "reads": ["getBook"] }
+  ]
+}

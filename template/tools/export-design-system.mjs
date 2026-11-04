@@ -1,6 +1,7 @@
 // Prints this design system as JSON for the generator agent: UI components
-// with their props, variant values and superseded alternatives, recipe names,
-// and tokens. Run from anywhere: node tools/export-design-system.mjs > out.json
+// with their file, props, variant values and superseded alternatives, recipe
+// names, and tokens. Run from anywhere: node tools/export-design-system.mjs > out.json
+import { relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadWorkspaceConfig } from './load-design-system-config.mjs';
@@ -24,6 +25,7 @@ const components = system
     const contract = system.component(name);
     return {
       name,
+      file: contract.filePath && relative(root, contract.filePath),
       category: contract.category,
       description: contract.description,
       variantProps: contract.variantProps,

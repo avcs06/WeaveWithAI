@@ -23,6 +23,7 @@ const Scrollbar = ({
   return (
     <ScrollAreaPrimitive.Scrollbar
       orientation={orientation}
+      data-ds=""
       data-slot="scrollbar"
       className={classNames(
         scrollbar,
@@ -35,6 +36,7 @@ const Scrollbar = ({
           thumb,
           isVertical ? 'flex-fill-x' : 'flex-fill-y',
         )}
+        data-ds=""
       />
     </ScrollAreaPrimitive.Scrollbar>
   );
@@ -95,6 +97,7 @@ export const ScrollArea = ({
       // with `:has(> [data-orientation])`.
       type="auto"
       {...props}
+      data-ds=""
       className={classNames('flex-col-gap-0', className)}
     >
       <ScrollAreaPrimitive.Viewport
@@ -108,29 +111,31 @@ export const ScrollArea = ({
         // Clips absolutely placed content too, like visually hidden text that
         // would widen the page.
         className={classNames(viewportClassName, 'flex-fill-y', 'relative')}
+        data-ds=""
       >
         <ScrollAreaPrimitive.Content
           data-slot="content"
           // Radix sizes content to its widest child; vertical-only takes the
           // viewport's width.
           style={orientation === 'vertical' ? { display: 'block' } : undefined}
+          data-ds=""
         >
           {children}
         </ScrollAreaPrimitive.Content>
       </ScrollAreaPrimitive.Viewport>
       {orientation !== 'horizontal' && <Scrollbar orientation="vertical" />}
       {orientation !== 'vertical' && <Scrollbar orientation="horizontal" />}
-      {orientation === 'both' && <ScrollAreaPrimitive.Corner />}
+      {orientation === 'both' && <ScrollAreaPrimitive.Corner data-ds="" />}
     </ScrollAreaPrimitive.Root>
   );
 };
 
 /**
- * A ScrollArea for a flex column, like a panel or dialog body: it takes its
- * content's height until the column is full, then scrolls.
+ * A ScrollArea for a flex column, like a panel or dialog body: it grows into
+ * the room the column leaves it, and scrolls once its content needs more.
  *
  * @invalidAlternative .min-h-0.overflow-auto, .min-h-0.overflow-y-auto, .flex-fill-y.overflow-auto, .flex-fill-y.overflow-y-auto
  */
 export const FlexScrollArea = ({ className, ...props }: ScrollAreaProps) => (
-  <ScrollArea {...props} className={classNames('min-h-0', className)} />
+  <ScrollArea {...props} className={classNames('min-h-0 flex-1', className)} />
 );

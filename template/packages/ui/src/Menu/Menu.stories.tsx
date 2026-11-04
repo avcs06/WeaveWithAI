@@ -58,6 +58,16 @@ const MenuStories = () => {
             <MenuItem leftIcon={<Trash2 />}>Delete</MenuItem>
           </Menu>
         </Row>
+        <Row label="A header above the list and a footer below it, both outside the menu">
+          <Menu
+            header={<input type="search" aria-label="Search pages" />}
+            footer={<span className={mutedText}>12 pages</span>}
+          >
+            <MenuItem>Home</MenuItem>
+            <MenuItem>Pricing</MenuItem>
+            <MenuItem>Contact</MenuItem>
+          </Menu>
+        </Row>
       </StorySection>
 
       <StorySection title="Rows">
@@ -87,6 +97,16 @@ const MenuStories = () => {
                 </div>
               </MenuItem>
             ))}
+          </Menu>
+        </Row>
+        <Row label="Links (as): the selected one is the current page, with no check">
+          <Menu>
+            <MenuItem as="a" href="#overview" selected checkmark={false}>
+              Overview
+            </MenuItem>
+            <MenuItem as="a" href="#activity">
+              Activity
+            </MenuItem>
           </Menu>
         </Row>
       </StorySection>

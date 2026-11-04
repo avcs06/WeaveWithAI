@@ -1,7 +1,7 @@
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Link } from 'lucide-react';
-import React, { createRef } from 'react';
+import React, { type ComponentPropsWithRef, createRef } from 'react';
 
 import { axe, renderUI } from '../test-utils';
 
@@ -173,7 +173,36 @@ describe('Menu', () => {
     expect(shell).toContainElement(
       screen.getByRole('searchbox', { name: 'Search countries' }),
     );
+    // The list takes the shell's padding from the header only.
+    expect(listbox).toHaveAttribute('data-after-header', 'true');
+    expect(listbox).not.toHaveAttribute('data-before-footer');
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('puts a footer below the list, outside the menu, and leaves it out when there is none', () => {
+    const { container, rerender } = renderUI(
+      <Menu role="menu" aria-label="Pages" data-testid="menu" footer={<span>member@example.com</span>}>
+        <MenuItem role="menuitem">Rename</MenuItem>
+      </Menu>,
+    );
+    const footer = slot(screen.getByTestId('menu'), 'footer');
+    expect(footer).toContainElement(screen.getByText('member@example.com'));
+    expect(screen.getByRole('menu')).not.toContainElement(footer);
+    const list = slot(screen.getByTestId('menu'), 'list')!;
+    expect(list.compareDocumentPosition(footer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The list takes the shell's padding from the footer only.
+    expect(list).toHaveAttribute('data-before-footer', 'true');
+    expect(list).not.toHaveAttribute('data-after-header');
+    rerender(
+      <Menu role="menu" aria-label="Pages" data-testid="menu">
+        <MenuItem role="menuitem">Rename</MenuItem>
+      </Menu>,
+    );
+    expect(slot(screen.getByTestId('menu'), 'footer')).toBeNull();
+    expect(container.querySelector('[data-slot="footer"]')).toBeNull();
+    expect(slot(screen.getByTestId('menu'), 'list')).not.toHaveAttribute(
+      'data-before-footer',
+    );
   });
 
   it('forwards refs and props to every part', () => {
@@ -219,7 +248,51 @@ describe('Menu', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('as an aside, the shell keeps its own role and the list takes the role and name', async () => {
+    const { container } = renderUI(
+      <Menu as="aside" role="navigation" aria-label="Pages" data-testid="menu">
+        <MenuItem as="a" href="/home">
+          Home
+        </MenuItem>
+      </Menu>,
+    );
+    const shell = screen.getByTestId('menu');
+    expect(shell.tagName).toBe('ASIDE');
+    expect(shell).not.toHaveAttribute('role');
+    expect(shell).not.toHaveAttribute('aria-label');
+    expect(screen.getByRole('navigation', { name: 'Pages' })).toBe(
+      slot(shell, 'list'),
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   describe('MenuItem', () => {
+    it('as a link, an anchor or a link component keeps its href, and a selected one is the current page', () => {
+      const PageLink = ({ children, ...props }: ComponentPropsWithRef<'a'>) => (
+        <a {...props} data-kind="page-link">
+          {children}
+        </a>
+      );
+      renderUI(
+        <>
+          <MenuItem as="a" href="/a" selected checkmark={false}>
+            A
+          </MenuItem>
+          <MenuItem as={PageLink} href="/b">
+            B
+          </MenuItem>
+        </>,
+      );
+      const current = screen.getByRole('link', { name: 'A' });
+      expect(current).toHaveAttribute('href', '/a');
+      expect(current).toHaveAttribute('aria-current', 'page');
+      expect(current).toHaveAttribute('data-slot', 'item');
+      const other = screen.getByRole('link', { name: 'B' });
+      expect(other).toHaveAttribute('href', '/b');
+      expect(other).toHaveAttribute('data-kind', 'page-link');
+      expect(other).not.toHaveAttribute('aria-current');
+    });
+
     it('puts the icon, the label, the add-on, then the check in their slots', async () => {
       const { container } = renderUI(
         <MenuItem

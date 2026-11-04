@@ -12,11 +12,19 @@
  * Pitfalls:
  * - The heading level comes from nesting: a Section is an `h2`, one inside a
  *   Section an `h3`, and so on. Don't wrap `title` in a heading of your own.
- * - `headingAs` picks the heading element instead: `h1` for the page's own
- *   title, once per page. Sections inside continue from it.
+ * - A Section is never the page's H1. A page's H1 is its PageHeader's
+ *   title. In `web/app/(routes)/(marketing)/page.tsx`, the page at `/`, it is the Hero's
+ *   headline.
+ * - `headingAs` picks another level when nesting picks the wrong one.
+ *   Sections inside continue from it.
  * - Titles are one size at every level: don't restyle a nested one.
- * - Section adds no margin around itself: stack sections with the parent's
- *   `flex-col-gap-*`.
+ * - Stack sections in a SectionGroup, which puts a fixed gap between them.
+ *   A Section on its own pads itself above and below. A page's sections
+ *   need no group: the page spaces them.
+ * - A Section has no side padding by default, so its heading lines up with
+ *   the PageHeader and the text around it. The sides come from what wraps
+ *   it: the page's container, a Card or a panel. Where one section needs
+ *   sides of its own, give them with `className`, such as `px-4`.
  * - `description` is one muted line about the section; anything longer, or
  *   anything to act on, goes in the content.
  * - `headerAction` holds the section's own actions, like Add, at the
@@ -25,25 +33,27 @@
  *   like a Tag, are read as part of the heading: no buttons or links.
  */
 import { Button } from '@packages/ui/Button';
+import { Card } from '@packages/ui/Card';
 import { Input } from '@packages/ui/Input';
-import { Section } from '@packages/ui/Section';
+import { Section, SectionGroup } from '@packages/ui/Section';
 import { Switch } from '@packages/ui/Switch';
 import { Tag } from '@packages/ui/Tag';
+import { Paragraph } from '@packages/ui/Typography';
 import { Bell, User } from 'lucide-react';
 import React, { useState } from 'react';
 
 // Usage: the patterns to copy.
 /**
- * A page of sections: each with its heading and description, then its
- * content. The page stacks them; the last has no description. An icon marks
- * a heading; a Tag after it (`rightAddOn`) shows a state.
+ * Sections stacked in a SectionGroup: each with its heading and description,
+ * then its content; the last has no description. An icon marks a heading; a
+ * Tag after it (`rightAddOn`) shows a state.
  */
 const SettingsSections = () => {
   const [name, setName] = useState('Ada Lovelace');
   const [reminders, setReminders] = useState(true);
 
   return (
-    <div className="flex-col-gap-8">
+    <SectionGroup>
       <Section
         title="Profile"
         description="How other attendees see you"
@@ -71,7 +81,7 @@ const SettingsSections = () => {
           <Button variant="danger">Delete account</Button>
         </div>
       </Section>
-    </div>
+    </SectionGroup>
   );
 };
 
@@ -96,23 +106,33 @@ const NestedSections = () => (
 );
 
 /**
- * The page's own title: the outermost Section takes `headingAs="h1"`, so its
- * sections are `h2`s.
+ * The wrapper gives the sides: a Card's padding here, the page's container
+ * on a page. A plain heading, a paragraph and the sections all start on its
+ * one left edge.
  */
-const PageSection = () => (
-  <Section title="Settings" headingAs="h1" description="Your account">
-    <Section title="Language">
-      <p>English (United Kingdom)</p>
-    </Section>
-  </Section>
+const SharedLeftEdge = () => (
+  <Card>
+    <h2 className="font-display text-heading font-heading">
+      Frontend summit
+    </h2>
+    <Paragraph>Two days of talks on the web platform, in Lisbon.</Paragraph>
+    <SectionGroup>
+      <Section title="Hall A" description="Second floor">
+        <Paragraph>300 seats, with a stage and two screens.</Paragraph>
+      </Section>
+      <Section title="Hall B" description="Ground floor">
+        <Paragraph>120 seats, for the workshops.</Paragraph>
+      </Section>
+    </SectionGroup>
+  </Card>
 );
 
 export default function SectionRecipe() {
   return (
     <div className="flex-col-gap-8">
-      <PageSection />
       <SettingsSections />
       <NestedSections />
+      <SharedLeftEdge />
     </div>
   );
 }

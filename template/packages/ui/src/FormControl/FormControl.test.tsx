@@ -26,7 +26,7 @@ const textbox = (name = 'Email') => screen.getByRole('textbox', { name });
 const box = (container: HTMLElement) =>
   container.querySelector<HTMLElement>('[data-slot="box"]')!;
 const message = (container: HTMLElement) =>
-  container.querySelector('[data-slot="message"]')!;
+  container.querySelector<HTMLElement>('[data-slot="message"]')!;
 
 describe('FormControl', () => {
   it('labels the control: the label names it, and its id is the label’s htmlFor', async () => {
@@ -109,6 +109,19 @@ describe('FormControl', () => {
       <Field label="Email" helpText="For receipts" />,
     );
     expect(textbox()).toHaveAccessibleDescription('For receipts');
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('shows help text the error repeats word for word once, as the error', async () => {
+    const { container } = renderUI(
+      <Field
+        label="Email"
+        helpText="Use your work email"
+        error="Use your work email"
+      />,
+    );
+    expect(screen.getAllByText('Use your work email')).toHaveLength(1);
+    expect(textbox()).toHaveAccessibleDescription('Use your work email');
     expect(await axe(container)).toHaveNoViolations();
   });
 
@@ -494,5 +507,38 @@ describe('controlAttributes', () => {
       maxLength: 40,
       autoComplete: 'email',
     });
+  });
+});
+
+describe('a field with an action, and its width', () => {
+  it('puts the action beside the box, under the label and above the messages', () => {
+    const { container } = renderUI(
+      <Field
+        label="Invite"
+        helpText="One address"
+        error="Not an email"
+        action={<button type="button">Send</button>}
+      />,
+    );
+    const row = container.querySelector('[data-slot="action-row"]')!;
+    expect(row).toContainElement(box(container));
+    expect(row).toContainElement(screen.getByRole('button', { name: 'Send' }));
+    expect(row).not.toContainElement(message(container));
+    const label = screen.getByText('Invite').closest('label')!;
+    expect(
+      label.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      row.compareDocumentPosition(message(container)) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('carries its width for the Form, and none when left out', () => {
+    const { container, rerender } = renderUI(<Field label="Code" width="0.5x" />);
+    const root = () => container.querySelector('[data-slot="form-control"]');
+    expect(root()).toHaveAttribute('data-width', '0.5x');
+    rerender(<Field label="Code" />);
+    expect(root()).not.toHaveAttribute('data-width');
   });
 });

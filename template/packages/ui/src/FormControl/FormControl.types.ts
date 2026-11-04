@@ -19,6 +19,9 @@ type FormControlRecipeVariants = NonNullable<
 
 export type ControlStatus = 'error' | 'warning' | 'success';
 
+/** A field's width inside a Form, as a multiple of the form's field width. */
+export type FieldWidth = '0.5x' | '0.75x' | '1x' | '1.5x' | '2x';
+
 /** Every prop form controls share; Input and Select take them as their own. */
 export type FormControlOwnProps = DisabledProps &
   Pick<IconAddonProps, 'leftIcon' | 'rightIcon' | 'leftAddOn' | 'rightAddOn'> &
@@ -55,6 +58,17 @@ export type FormControlOwnProps = DisabledProps &
     look?: string;
     /** Shown on hover over the box, above any disabled reason. */
     tooltip?: ReactNode;
+    /**
+     * A button that acts on this field's value, such as Send, Apply or Move,
+     * beside the box and lined up with it: the label stays above both and
+     * the messages below both. Any field takes it, in a form or out of one.
+     */
+    action?: ReactNode;
+    /**
+     * Its width inside a Form, a multiple of the form's field width; 1x when
+     * left out. Fields in one form share these widths, so they line up.
+     */
+    width?: FieldWidth;
     /** Reaches the control's focusable element. */
     ref?: Ref<HTMLElement>;
   };

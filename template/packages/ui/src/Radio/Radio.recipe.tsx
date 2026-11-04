@@ -20,7 +20,7 @@
  *   reachable by arrow keys, so the reason is read.
  */
 import { Button } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import { Radio, RadioGroup } from '@packages/ui/Radio';
 import { Section } from '@packages/ui/Section';
 import React, { useState } from 'react';
@@ -51,10 +51,9 @@ const TicketForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Register</Button>}
     >
       <Controller
         name="ticket"
@@ -78,9 +77,8 @@ const TicketForm = () => {
           </RadioGroup>
         )}
       </Controller>
-      <Button type="submit">Register</Button>
       <p role="status">{status}</p>
-    </form>
+    </Form>
   );
 };
 

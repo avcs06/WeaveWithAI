@@ -52,6 +52,7 @@ export const ControlChoice = ({
         'inline-flex-row-gap-1.5 items-center max-w-full',
         className,
       )}
+      data-ds=""
     >
       {children({
         ref: (node) => {
@@ -79,7 +80,7 @@ export const ControlChoice = ({
         }}
       />
       {hasHint && (
-        <span id={hintId} hidden>
+        <span id={hintId} hidden data-ds="">
           {hint}
         </span>
       )}

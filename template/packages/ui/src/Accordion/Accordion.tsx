@@ -67,9 +67,12 @@ const AccordionItem = ({
                 'flex-row-gap-2 items-center flex-fill-x',
                 'cursor-pointer',
               )}
+              data-ds=""
             >
               {leftSlot}
-              <span className="flex-fill-x">{title}</span>
+              <span className="flex-fill-x" data-ds="">
+                {title}
+              </span>
               {rightSlot}
             </span>
           </PlainButton>
@@ -80,7 +83,11 @@ const AccordionItem = ({
 
   return (
     <AccordionPrimitive.Item value={value} asChild>
-      <SectionFrame className={classNames(accordionItem, className)}>
+      {/* Its own sides, unlike a Section: the header's press area and focus
+          ring reach out into them. */}
+      <SectionFrame
+        className={classNames('px-4 py-5', accordionItem, className)}
+      >
         <SectionHeader
           heading={heading}
           description={description}
@@ -90,11 +97,11 @@ const AccordionItem = ({
           action={
             <>
               {headerAction}
-              <ChevronDown aria-hidden data-slot="chevron" />
+              <ChevronDown aria-hidden data-slot="chevron" data-ds="" />
             </>
           }
         />
-        <AccordionPrimitive.Content data-slot="panel">
+        <AccordionPrimitive.Content data-slot="panel" data-ds="">
           <SectionContent level={level}>{children}</SectionContent>
         </AccordionPrimitive.Content>
       </SectionFrame>
@@ -128,6 +135,7 @@ const AccordionRoot = (props: AccordionProps) => {
   return (
     <AccordionPrimitive.Root
       {...root}
+      data-ds=""
       data-slot="accordion"
       className={classNames(rootClassName, 'flex-col-gap-0', className)}
     >

@@ -1,4 +1,4 @@
-import type { ReactNode, Ref, RefCallback } from 'react';
+import type { MouseEvent, ReactNode, Ref, RefCallback } from 'react';
 
 /** Whether React draws anything for `node`. */
 export const hasContent = (node: ReactNode) =>
@@ -41,3 +41,21 @@ export const tabbable = [
 ]
   .map((selector) => `${selector}:not([tabindex="-1"])`)
   .join(', ');
+
+// Clicks on controls inside the area (its own or a child's) stay theirs.
+const CONTROLS =
+  'a, button, input, select, textarea, label, [role="button"], [role="checkbox"], [contenteditable="true"]';
+
+/**
+ * Whether a click on a clickable area, such as a table row or a card, is the
+ * area's: not on a control inside it, not from a portal, not ending a text
+ * selection.
+ */
+export const isAreaClick = (event: MouseEvent<HTMLElement>) => {
+  // A portalled menu or popover bubbles here through React, not the DOM.
+  if (!event.currentTarget.contains(event.target as Node)) return false;
+  const control = (event.target as Element).closest(CONTROLS);
+  if (control && event.currentTarget.contains(control)) return false;
+  // Selecting text ends in a click; it isn't one.
+  return !window.getSelection()?.toString();
+};

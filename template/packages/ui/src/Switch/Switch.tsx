@@ -70,8 +70,9 @@ export const Switch = ({
                 trackClassName,
                 'block shrink-0 cursor-pointer',
               )}
+              data-ds=""
             >
-              <span data-slot="thumb" className="block" />
+              <span data-slot="thumb" className="block" data-ds="" />
             </span>
           </PlainButton>
         </SwitchPrimitive.Root>

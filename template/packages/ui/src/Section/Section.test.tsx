@@ -6,7 +6,9 @@ import { Button } from '../Button';
 import { Radio, RadioGroup } from '../Radio';
 import { axe, renderUI } from '../test-utils';
 
-import { Section } from '.';
+import * as styles from './Section.css';
+
+import { Section, SectionGroup } from '.';
 
 const heading = (level: number, name: string) =>
   screen.getByRole('heading', { level, name });
@@ -24,7 +26,9 @@ describe('Section', () => {
       'data-slot',
       'description',
     );
-    expect(section).toHaveClass('flex-col-gap-5', 'p-5');
+    expect(section).toHaveClass('flex-col-gap-4');
+    // The container around it gives the sides.
+    expect(section).not.toHaveClass('px-4');
     expect(section?.querySelector('[data-slot="header"]')).toBeInTheDocument();
     expect(section?.querySelector('[data-slot="content"]')).toHaveClass(
       'flex-col-gap-4',
@@ -135,6 +139,31 @@ describe('Section', () => {
     const section = container.querySelector('section');
     expect(section).toHaveAttribute('id', 'profile');
     expect(section).toHaveAttribute('data-kind', 'settings');
-    expect(section).toHaveClass('w-full', 'p-5');
+    expect(section).toHaveClass('w-full');
+  });
+
+  it('pads itself above and below unless its parent spaces it: a SectionGroup or a section’s content', async () => {
+    const { container } = renderUI(
+      <>
+        <Section title="Alone" data-testid="alone" />
+        <SectionGroup data-testid="group">
+          <Section title="Grouped" data-testid="grouped" />
+        </SectionGroup>
+        <Section title="Outer">
+          <Section title="Inner" data-testid="inner" />
+        </Section>
+      </>,
+    );
+    // The padding is CSS on `section`: `:not(sectionGroup) > section`.
+    const alone = screen.getByTestId('alone');
+    expect(alone).toHaveClass(styles.section);
+    expect(alone.parentElement).not.toHaveClass(styles.sectionGroup);
+    const group = screen.getByTestId('group');
+    expect(group).toHaveClass(styles.sectionGroup, 'flex-col-gap-6');
+    expect(screen.getByTestId('grouped').parentElement).toBe(group);
+    const inner = screen.getByTestId('inner');
+    expect(inner).toHaveClass(styles.section);
+    expect(inner.parentElement).toHaveClass(styles.sectionGroup);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

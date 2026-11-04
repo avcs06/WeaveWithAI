@@ -11,7 +11,7 @@ export type ColumnsSlice = {
   columnOrder: string[];
   setColumn: (column: TableColumnData) => void;
   setColumnRender: (id: string, render: TableColumnRender | undefined) => void;
-  /** Also drops the id from the order. */
+  /** Keeps the id in the order; readers skip ids without a column. */
   removeColumn: (id: string) => void;
   setColumnOrder: (ids: string[]) => void;
 };
@@ -45,13 +45,12 @@ export const createColumnsSlice: TableSlice<ColumnsSlice> = (set) => ({
     set((state) => ({
       columnRenders: { ...state.columnRenders, [id]: render },
     })),
+  // The order pass writes only a changed order, so a column that mounts
+  // again with the same order (Strict Mode's remount) would never be listed.
   removeColumn: (id) =>
     set((state) => ({
       columns: omit(state.columns, id),
       columnRenders: omit(state.columnRenders, id),
-      columnOrder: state.columnOrder.includes(id)
-        ? state.columnOrder.filter((other) => other !== id)
-        : state.columnOrder,
     })),
   // Keeps the previous array when nothing moved, so subscribers don't
   // re-render.

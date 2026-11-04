@@ -84,6 +84,7 @@ export const ControlBox = ({
     <Tooltip tooltip={[tooltip, stateTooltip]} description={null}>
       <div
         {...props}
+        data-ds=""
         data-slot="box"
         data-status={status}
         data-disabled={isDisabled || undefined}
@@ -121,19 +122,31 @@ export const ControlLabel = ({
   if (!label) return null;
 
   return (
-    <div data-slot="label-row" className="flex-row-gap-2 items-center px-1">
-      <div className="flex-fill-x inline-flex-row-gap-1 items-center">
+    <div
+      data-slot="label-row"
+      className="flex-row-gap-2 items-center px-1"
+      data-ds=""
+    >
+      <div
+        className="flex-fill-x inline-flex-row-gap-1 items-center"
+        data-ds=""
+      >
         <label
           id={id}
           htmlFor={htmlFor}
           onClick={onClick}
           className={classNames(controlLabel, 'inline-flex-row-gap-0 min-w-0')}
+          data-ds=""
         >
           <Truncate className="min-w-0" tooltip={tooltip}>
             {label}
           </Truncate>
           {required && (
-            <span aria-hidden className={classNames(requiredMark, 'relative')}>
+            <span
+              aria-hidden
+              className={classNames(requiredMark, 'relative')}
+              data-ds=""
+            >
               *
             </span>
           )}
@@ -146,8 +159,9 @@ export const ControlLabel = ({
                 'inline-flex items-center',
                 'p-0',
               )}
+              data-ds=""
             >
-              <Info aria-hidden data-slot="icon" />
+              <Info aria-hidden data-slot="icon" data-ds="" />
             </span>
           </PlainButton>
         )}
@@ -172,6 +186,7 @@ export const ControlMessage = ({
     data-slot="message"
     data-status={status}
     className={controlMessage}
+    data-ds=""
   >
     {message}
   </div>

@@ -67,9 +67,12 @@ const TooltipLayer = () => {
         onPointerEnter={controller.stay}
         onPointerLeave={() => controller.leave(id)}
         className={classNames(tooltipClassName, 'flex-col-gap-2', className)}
+        data-ds=""
       >
         {entries.map((entry, index) => (
-          <div key={index}>{entry}</div>
+          <div key={index} data-ds="">
+            {entry}
+          </div>
         ))}
       </Popper.Content>
     </Popper.Root>,

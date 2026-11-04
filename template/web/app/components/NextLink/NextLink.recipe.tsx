@@ -1,14 +1,19 @@
 /**
  * NextLink: a link to a route of this app (`/events/42`). Next.js navigates
  * to it without reloading the page and prefetches it. It looks like Link,
- * which is for other sites, emails, phone numbers and files.
+ * which is for other sites, emails, phone numbers and files: a dotted line
+ * inside text, `look="plain"` as a control.
  *
  * When not to use:
  * - Another site, an email, a phone number or a file: Link.
  * - An action (save, delete, open a menu): Button. A link goes somewhere.
- * - A whole card that opens a page: Card, with a NextLink on its title.
+ * - A whole card that opens a page: Card with `stretchLink`, and a plain
+ *   NextLink on its title.
  *
  * Pitfalls:
+ * - The dotted line is for a link inside text only. A link that stands on its
+ *   own as a control, such as a way back, a breadcrumb or a navigation item,
+ *   is `look="plain"`.
  * - A route as Link reloads the whole page: use NextLink.
  * - A route that must look like a button is `Button as={NextLink}`, not a
  *   bare NextLink, whose dotted line clashes with a button.
@@ -41,30 +46,38 @@ const KeepScroll = () => (
   </NextLink>
 );
 
-/** Replaces the current history entry instead of adding another one. */
+/**
+ * A way back that replaces the current history entry instead of adding
+ * another one. It works as a control, so it is `plain`.
+ */
 const ReplaceHistory = () => (
-  <NextLink href="/events" replace>
+  <NextLink look="plain" href="/events" replace>
     Back to events
   </NextLink>
 );
 
 /**
  * The current page in a navigation: `aria-current="page"` tells screen
- * readers which link they're on. The nav itself is named.
+ * readers which link they're on. The nav itself is named, and its links are
+ * `plain`: they work as controls.
  */
 const Navigation = () => (
   <nav aria-label="Event sections">
     <ul className="flex-row-gap-4">
       <li>
-        <NextLink href="/events/42" aria-current="page">
+        <NextLink look="plain" href="/events/42" aria-current="page">
           Overview
         </NextLink>
       </li>
       <li>
-        <NextLink href="/events/42/sessions">Sessions</NextLink>
+        <NextLink look="plain" href="/events/42/sessions">
+          Sessions
+        </NextLink>
       </li>
       <li>
-        <NextLink href="/events/42/attendees">Attendees</NextLink>
+        <NextLink look="plain" href="/events/42/attendees">
+          Attendees
+        </NextLink>
       </li>
     </ul>
   </nav>
@@ -112,6 +125,7 @@ const GuardedNavigation = () => {
         Save
       </Button>
       <NextLink
+        look="plain"
         href="/events"
         onNavigate={(event) => {
           if (!unsaved) return;

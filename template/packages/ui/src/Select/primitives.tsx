@@ -53,6 +53,7 @@ export const SelectMenuMessage = ({
       // The Select's status region announces it.
       aria-hidden
       data-slot="message"
+      data-ds=""
       className={classNames(
         selectMenuMessage,
         'flex-row-gap-2 items-center justify-center py-4 px-3',

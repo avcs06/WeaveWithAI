@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shelf</title>
+<style>
+  * { box-sizing: border-box; }
+  :root { --font-mono: "Courier New"; }
+  .numeral { font-family: var(--font-mono), monospace; }
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  .skip { position: absolute; left: 8px; top: -60px; padding: 12px 16px; background: #ffffff; color: #3d63b8; }
+  .skip:focus { top: 8px; }
+  main { display: flex; flex-direction: column; gap: 40px; max-width: 640px; margin: 0 auto; padding: 40px; }
+  section { display: flex; flex-direction: column; gap: 12px; }
+  h1, h2 { margin: 0; line-height: 1.25; }
+  p { margin: 0; max-width: 34em; }
+  button { min-width: 44px; min-height: 44px; padding: 10px 16px; border: 0; border-radius: 6px; background: #3d63b8; color: #ffffff; font: inherit; }
+  :focus-visible { outline: 3px solid #3d63b8; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<!-- The markers stand in for the frame's PageLogo and UserMenu. -->
+<a class="skip" href="#main" data-page-logo="">Skip to the content</a>
+<main id="main" data-slot="container">
+  <section>
+    <h1 data-slot="page-title">Shelf</h1>
+    <p>Keep every book you mean to read in one quiet list. Add a book with its title and author, keep it on a shelf that says where you are with it, and find it again later.</p>
+    <div><button type="button" data-user-menu="">Add a book</button></div>
+  </section>
+  <section>
+    <h2>Your books</h2>
+    <p>The books you added appear here, newest first, each with its title, its author and its shelf.</p>
+  </section>
+  <section>
+    <h2>This week</h2>
+    <p>You finished <strong>3</strong> books.</p>
+    <div><span>Pages read</span> <span class="numeral">1,834</span></div>
+  </section>
+  <section>
+    <h2>Your club</h2>
+    <div><span>Phone</span> <span>9829012345</span></div>
+    <div><span>Desk</span> <span>+91 98290 12345</span></div>
+  </section>
+</main>
+<nextjs-portal></nextjs-portal>
+<script>
+  // The overlay `next dev` adds: a shadow root with its own button, last in the body.
+  document.querySelector('nextjs-portal').attachShadow({ mode: 'open' }).innerHTML = '<button type="button" style="outline:none">N</button>';
+</script>
+</body>
+</html>

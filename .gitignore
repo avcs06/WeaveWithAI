@@ -4,14 +4,16 @@ dist
 *.tsbuildinfo
 .pnpm-store
 
-# generator runs and caches
+# generator runs, the apps they make, and caches
 /runs/
+/apps/
 /.weave-cache/
 
 # local environment
 .env
 .env.*
 !.env.example
+.proxy.*
 
 # editors and OS
 .DS_Store

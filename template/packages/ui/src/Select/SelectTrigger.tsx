@@ -22,6 +22,7 @@ import { Truncate } from '../Truncate';
 import { mergeRefs } from '../utils';
 
 import {
+  selectClear,
   selectLineBox,
   selectPlaceholder,
   selectSearch,
@@ -166,8 +167,10 @@ export const SelectEnd = ({
   onClear: (() => void) | undefined;
 }) => {
   const iconClassName = controlIcon({ size });
+  const clearClassName = selectClear[size ?? 'sm'];
   return (
     <span
+      data-ds=""
       className={classNames(
         selectLineBox,
         'inline-flex-row-gap-1 items-center shrink-0',
@@ -182,11 +185,17 @@ export const SelectEnd = ({
           tabIndex={-1}
           tooltip="Clear selection"
           onClick={onClear}
+          className={clearClassName}
         >
-          <X />
+          <X data-ds="" />
         </IconButton>
       )}
-      <ChevronDown aria-hidden data-slot="chevron" className={iconClassName} />
+      <ChevronDown
+        aria-hidden
+        data-slot="chevron"
+        className={iconClassName}
+        data-ds=""
+      />
     </span>
   );
 };
@@ -200,6 +209,7 @@ export const SelectContent = ({
 }) => (
   <span
     data-slot="value"
+    data-ds=""
     className="flex-fill-x flex-row-gap-1 flex-wrap items-center"
   >
     {value}

@@ -14,13 +14,30 @@ import {
   useSelectableVariant,
 } from '../Selectable';
 import { Tooltip } from '../Tooltip';
-import { createLook, useIsDisabled } from '../utils';
+import { createLook, isAreaClick, useIsDisabled } from '../utils';
 
 import { cardRecipe } from './Card.recipes.css';
 
 import type { CardGroupProps, CardProps, CardSurfaceProps } from './Card.types';
 
 const cardLook = createLook(cardRecipe);
+
+// The card's first link gets the click with its modifier keys, so Ctrl or Cmd
+// still opens a new tab. A click on the link itself is the link's own.
+const followLink = (event: React.MouseEvent<HTMLElement>) => {
+  if (!isAreaClick(event)) return;
+  const { ctrlKey, metaKey, shiftKey, altKey } = event;
+  event.currentTarget.querySelector('a[href]')?.dispatchEvent(
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      ctrlKey,
+      metaKey,
+      shiftKey,
+      altKey,
+    }),
+  );
+};
 
 const CardSurface = ({
   asChild,
@@ -47,7 +64,7 @@ const CardSurface = ({
   // Inside the element a Slot clones, which ignores the props of a tooltip.
   return (
     <Tooltip tooltip={reason}>
-      <Comp {...props} {...state} />
+      <Comp {...props} {...state} data-ds={asChild ? undefined : ''} />
     </Tooltip>
   );
 };
@@ -55,7 +72,8 @@ const CardSurface = ({
 /**
  * A bordered container with padding and gap, for one item's content or a large
  * option in a CardGroup. `onClick` makes the whole card one button; a card with
- * its own links or buttons stays static.
+ * its own links or buttons stays static, and `stretchLink` opens its first
+ * link from anywhere on it.
  *
  * @invalidAlternative article[onClick]
  */
@@ -70,6 +88,7 @@ export const Card = ({
   readOnly,
   readOnlyWithReason,
   onClick,
+  stretchLink = false,
   className,
   ...props
 }: CardProps) => {
@@ -139,6 +158,8 @@ export const Card = ({
       // hover.
       reason={stateTooltip || undefined}
       {...(isDisabled && { 'data-disabled': true })}
+      {...(stretchLink &&
+        !isDisabled && { onClick: followLink, 'data-clickable': true })}
     />
   );
 };

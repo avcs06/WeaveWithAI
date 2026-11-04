@@ -3,7 +3,7 @@
 import { classNames } from '@packages/styles/classNames';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import { ChevronRight } from 'lucide-react';
-import React from 'react';
+import React, { type ElementType } from 'react';
 
 // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- shared styles for the icon at the end of a trigger.
 import { controlIcon } from '../Button/Button.recipes.css';
@@ -13,7 +13,7 @@ import { CheckIcon } from '../Icons';
 import { FlexScrollArea } from '../ScrollArea';
 import { Tooltip } from '../Tooltip';
 import { useTruncation } from '../Truncate';
-import { useIconAddon } from '../utils';
+import { hasContent, useIconAddon } from '../utils';
 
 import {
   menu,
@@ -29,7 +29,9 @@ import {
 
 import type {
   MenuGroupProps,
+  MenuItemBaseProps,
   MenuItemProps,
+  MenuItemTarget,
   MenuLabelProps,
   MenuProps,
   MenuSeparatorProps,
@@ -37,21 +39,28 @@ import type {
 
 /**
  * The shell; its list scrolls inside the shell's max height. A `header`, like
- * a search field, sits above the list, outside the menu.
+ * a search field, sits above the list and a `footer` below it, both outside
+ * the menu.
  *
  * @internal
  */
 export const Menu = ({
+  as: Shell = 'div',
   availableHeight,
   loading,
   header,
+  footer,
   style,
   className,
   children,
   ...props
 }: MenuProps) => {
-  // With a header, the menu's role, id and name move to the list, which holds
-  // only the rows: a menu can't hold a field.
+  const hasHeader = hasContent(header);
+  const hasFooter = hasContent(footer);
+  // With a header or a footer, the menu's role, id and name move to the list,
+  // which holds only the rows: a menu can't hold a field or a button. An
+  // aside keeps its own role, so they move there too.
+  const outside = Shell === 'aside' || hasHeader || hasFooter;
   const {
     role,
     id,
@@ -71,10 +80,11 @@ export const Menu = ({
   };
 
   return (
-    <div
-      {...(header
+    <Shell
+      {...(outside
         ? shellProps
         : { ...props, 'aria-busy': loading || undefined })}
+      data-ds=""
       style={{
         ...(availableHeight &&
           assignInlineVars({ [menuAvailableHeight]: availableHeight })),
@@ -106,24 +116,32 @@ export const Menu = ({
         })}
       >
         <div
-          {...(header && listSemantics)}
+          {...(outside && listSemantics)}
+          data-ds=""
           data-slot="list"
+          data-after-header={hasHeader || undefined}
+          data-before-footer={hasFooter || undefined}
           className={classNames(menuList, 'flex-col-gap-0.5')}
         >
           {children}
         </div>
       </FlexScrollArea>
-    </div>
+      {hasFooter && (
+        <div data-slot="footer" data-ds="" className="shrink-0">
+          {footer}
+        </div>
+      )}
+    </Shell>
   );
 };
 
 /**
- * A row's look: icon, label, add-ons and a selected row's check, for rows
- * inside a Popover's content. No behavior of its own: wrap it in a
- * PlainButton to press it. For a menu of actions or choices use a Dropdown,
- * whose rows bring menu roles and arrow keys.
+ * A row's look and parts, for MenuItem and the rows built on it.
+ *
+ * @internal
  */
-export const MenuItem = ({
+export const MenuItemBase = ({
+  as,
   leftIcon,
   rightIcon,
   leftAddOn,
@@ -138,7 +156,9 @@ export const MenuItem = ({
   className,
   children,
   ...props
-}: MenuItemProps) => {
+}: MenuItemBaseProps) => {
+  const Row = (as ?? 'div') as ElementType;
+  const isLink = as !== undefined && as !== 'div';
   const {
     ref: labelRef,
     className: labelClassName,
@@ -161,8 +181,9 @@ export const MenuItem = ({
 
   return (
     <Tooltip tooltip={[truncated && children, tooltip]} description={tooltip}>
-      <div
+      <Row
         {...props}
+        data-ds=""
         role={role}
         // `selected` in the attribute the row's role has. A menuitem has no
         // checked state: the chosen one is the current one.
@@ -172,7 +193,12 @@ export const MenuItem = ({
             ? selected
             : undefined
         }
-        aria-current={(role === 'menuitem' && selected) || undefined}
+        // A link row that is selected is the page the user is on.
+        aria-current={
+          isLink
+            ? (selected && 'page') || undefined
+            : (role === 'menuitem' && selected) || undefined
+        }
         data-slot="item"
         data-left={leftSlot || hasCheckbox ? true : undefined}
         data-right={rightSlot || hasCheck || nested ? true : undefined}
@@ -181,6 +207,8 @@ export const MenuItem = ({
         className={classNames(
           menuItem,
           'flex-row-gap-2.5 items-center cursor-pointer',
+          // A row rendered as a Link drops Link's `w-fit` and spans the menu.
+          'w-auto',
           className,
         )}
       >
@@ -189,6 +217,7 @@ export const MenuItem = ({
             aria-hidden
             data-slot="checkbox"
             data-state={selected ? 'checked' : 'unchecked'}
+            data-ds=""
             className={classNames(
               checkboxClassName,
               'grid place-items-center shrink-0',
@@ -201,6 +230,7 @@ export const MenuItem = ({
         <span
           ref={labelRef}
           data-slot="label"
+          data-ds=""
           className={classNames(labelClassName, 'flex-fill-x')}
         >
           {children}
@@ -217,18 +247,30 @@ export const MenuItem = ({
           <ChevronRight
             aria-hidden
             data-slot="chevron"
+            data-ds=""
             className={classNames(chevronClassName, menuChevron, 'shrink-0')}
           />
         )}
-      </div>
+      </Row>
     </Tooltip>
   );
 };
+
+/**
+ * A row's look: icon, label, add-ons and a selected row's check, for rows
+ * inside a Popover's content. No behavior of its own: wrap it in a
+ * PlainButton to press it. For a menu of actions or choices use a Dropdown,
+ * whose rows bring menu roles and arrow keys. With `as`, the row is a link.
+ */
+export const MenuItem = <C extends MenuItemTarget = 'div'>(
+  props: MenuItemProps<C>,
+) => <MenuItemBase {...props} />;
 
 /** Rows of a Popover's content kept together, apart from the next group. */
 export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="group"
     className={classNames(menuGroup, 'flex-col-gap-0.5', className)}
   />
@@ -238,6 +280,7 @@ export const MenuGroup = ({ className, ...props }: MenuGroupProps) => (
 export const MenuLabel = ({ className, ...props }: MenuLabelProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="group-label"
     className={classNames(menuLabel, className)}
   />
@@ -247,6 +290,7 @@ export const MenuLabel = ({ className, ...props }: MenuLabelProps) => (
 export const MenuSeparator = ({ className, ...props }: MenuSeparatorProps) => (
   <div
     {...props}
+    data-ds=""
     data-slot="separator"
     className={classNames(menuSeparator, className)}
   />

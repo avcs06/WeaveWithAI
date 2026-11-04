@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Focus trap</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { padding: 24px 16px; }
+  button { background: #3d63b8; color: #ffffff; border: 0; min-height: 44px; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Focus trap</h1>
+  <a href="/more">More</a>
+  <div id="trap">
+    <button type="button">One</button>
+    <button type="button">Two</button>
+    <button type="button">Three</button>
+  </div>
+</main>
+<script>
+  // Tab on the last button goes back to the first, so focus never leaves the three.
+  const buttons = document.querySelectorAll('#trap button');
+  buttons[buttons.length - 1].addEventListener('keydown', (event) => {
+    if (event.key === 'Tab' && !event.shiftKey) {
+      event.preventDefault();
+      buttons[0].focus();
+    }
+  });
+</script>
+</body>
+</html>

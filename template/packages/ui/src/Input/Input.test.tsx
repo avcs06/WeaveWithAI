@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AtSign } from 'lucide-react';
 import React, { createRef, useState } from 'react';
@@ -7,7 +7,13 @@ import { useForm } from 'react-hook-form';
 import { Controller } from '../Form';
 import { axe, renderUI } from '../test-utils';
 
-import { NumberInput, PasswordInput, SearchInput } from './auxiliary';
+import {
+  DateInput,
+  NumberInput,
+  PasswordInput,
+  QuantitySelector,
+  SearchInput,
+} from './auxiliary';
 import { Input } from './Input';
 
 import type { InputProps, NumberInputProps } from './Input.types';
@@ -337,6 +343,48 @@ describe('Input', () => {
         expect.anything(),
       );
     });
+  });
+});
+
+describe('DateInput', () => {
+  const Day = (props: Partial<React.ComponentProps<typeof DateInput>>) => {
+    const [value, setValue] = useState('2026-11-07');
+    return (
+      <>
+        <DateInput
+          label="Event day"
+          autoComplete="off"
+          min="2026-01-01"
+          max="2026-12-31"
+          {...props}
+          value={value}
+          onChange={setValue}
+        />
+        <output>{value || 'empty'}</output>
+      </>
+    );
+  };
+
+  it('is a date field named by its label, bounded by min and max; onChange gets the day', async () => {
+    const { container } = renderUI(<Day />);
+    const field = screen.getByLabelText('Event day');
+    expect(field).toHaveAttribute('type', 'date');
+    expect(field).toHaveValue('2026-11-07');
+    expect(field).toHaveAttribute('min', '2026-01-01');
+    expect(field).toHaveAttribute('max', '2026-12-31');
+    fireEvent.change(field, { target: { value: '2026-12-24' } });
+    expect(screen.getByText('2026-12-24')).toBeInTheDocument();
+    fireEvent.change(field, { target: { value: '' } });
+    expect(screen.getByText('empty')).toBeInTheDocument();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('when disabled with a reason: read-only and unchanged, still a tab stop', async () => {
+    renderUI(<Day disabledWithReason="Locked once tickets are on sale" />);
+    const field = screen.getByLabelText('Event day');
+    expect(field).toHaveAttribute('readonly');
+    await userEvent.tab();
+    expect(field).toHaveFocus();
   });
 });
 
@@ -740,5 +788,84 @@ describe('SearchInput', () => {
     expect(search()).toHaveValue('rock');
     expect(onChange).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe('QuantitySelector', () => {
+  const Quantity = ({
+    initial = 1,
+    disabled = false,
+    ...props
+  }: {
+    initial?: number | null;
+    min?: number;
+    max?: number;
+    step?: number;
+    maxReason?: string;
+    disabled?: boolean;
+  }) => {
+    const [value, setValue] = useState<number | null>(initial);
+    return (
+      <QuantitySelector
+        aria-label="Quantity"
+        autoComplete="off"
+        value={value}
+        onChange={setValue}
+        {...props}
+        {...(disabled && { disabled: true })}
+      />
+    );
+  };
+  const quantity = () => spinbutton('Quantity');
+  const decrease = () => screen.getByRole('button', { name: 'Decrease' });
+  const increase = () => screen.getByRole('button', { name: 'Increase' });
+
+  it('steps with its buttons, which stay out of the tab order', async () => {
+    const { container } = renderUI(<Quantity initial={2} />);
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('3');
+    await userEvent.click(decrease());
+    await userEvent.click(decrease());
+    expect(quantity()).toHaveValue('1');
+    expect(decrease()).toHaveAttribute('tabindex', '-1');
+    expect(increase()).toHaveAttribute('tabindex', '-1');
+    // From the field, Tab leaves the selector: the arrow keys step it instead.
+    quantity().focus();
+    await userEvent.tab();
+    expect(increase()).not.toHaveFocus();
+    expect(quantity()).not.toHaveFocus();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('stops at min and max, each button disabled with its reason', async () => {
+    renderUI(<Quantity max={2} maxReason="Only 2 in stock" />);
+    expect(decrease()).toHaveAttribute('aria-disabled', 'true');
+    expect(decrease()).toHaveAccessibleDescription('Already the fewest');
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('2');
+    expect(increase()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).toHaveAccessibleDescription('Only 2 in stock');
+    await userEvent.click(increase());
+    expect(quantity()).toHaveValue('2');
+    expect(decrease()).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('takes typed whole numbers and steps with the arrow keys as the buttons do', async () => {
+    renderUI(<Quantity step={2} max={9} />);
+    await userEvent.clear(quantity());
+    await userEvent.type(quantity(), '3.5');
+    expect(quantity()).toHaveValue('35');
+    await userEvent.clear(quantity());
+    await userEvent.type(quantity(), '4{ArrowUp}');
+    expect(quantity()).toHaveValue('6');
+    expect(quantity()).toHaveAttribute('aria-valuemin', '1');
+    expect(quantity()).toHaveAttribute('aria-valuemax', '9');
+  });
+
+  it('disabled, holds both buttons with no reason of their own', () => {
+    renderUI(<Quantity disabled />);
+    expect(decrease()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).toHaveAttribute('aria-disabled', 'true');
+    expect(increase()).not.toHaveAccessibleDescription('No more');
   });
 });

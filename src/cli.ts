@@ -1,0 +1,502 @@
+import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import {
+  screenshotComponents,
+  writeAllComponentsStory,
+} from './agents/02design/01theme/preview/storybook';
+import { applyTheme } from './agents/04code/01scaffold/apply';
+import { applyMode, ensureApp } from './agents/04code/01scaffold/app';
+import { resumeUnit } from './agents/04code/unit';
+import {
+  type ArtifactName,
+  FILE_OF,
+  hasArtifact,
+  isStale,
+  readArtifact,
+} from './core/artifacts';
+import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
+import { type Config, config as loadConfig } from './core/env';
+import { formatForTerminal, type Issue, splitIssues } from './core/issues';
+import { createLlm, type Llm } from './core/llm';
+import { inventory, type InventoryOptions } from './ds/inventory';
+import { inventoryProse } from './ds/prose';
+import {
+  createRun,
+  DEFAULT_RUNS_DIR,
+  openRun,
+  readEvents,
+  readState,
+  type Run,
+  runPath,
+  totals,
+  watchEvents,
+} from './core/run';
+import { runLog } from './core/log';
+import { PIPELINE, type StageContext, stages } from './agents/stages';
+import type { Themed } from './agents/02design/01theme/build';
+import { cleanAgentImages } from './engine/docker';
+import { compareBenchmarks, type Part, PARTS, readBenchmark, runBenchmark } from './bench';
+import { renderTerminalTable } from './bench/table';
+
+export class UsageError extends Error {}
+
+export type RunArgs = {
+  idea: string;
+  run?: string;
+  from?: string;
+  /** With --run and --from a code stage: start that stage at the round `weave session-resume` saved. */
+  round?: string;
+  to?: string;
+  interactive?: boolean;
+  replay?: boolean;
+  backend?: string;
+};
+
+/** Tests pass a temp folder, a hand-built config, a fake llm and an output sink. */
+export type CliDeps = {
+  runsDir?: string;
+  config?: Config;
+  llm?: Llm;
+  out?: (line: string) => void;
+};
+
+const USAGE = `usage:
+  weave run <idea.md> [--run <id>] [--from <stage>] [--round <n>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
+  weave session-resume <runId> <stage> [--muse-session <uuid>] [--backend <name>]
+                                 finish a code stage's cut session; then weave run --run <id> --from <stage> --round <n>
+  weave validate <runId> [stage]
+  weave show <runId>
+  weave golden <runId> <ideaName> [--stages flows-scope,flows-expand]
+  weave ds
+  weave app <runId>
+  weave bench <runId> [<runId> …] [--skip generation,code,browser] [--compare]
+                                 measure each run's app on its dev server; several runs also get a side-by-side table
+  weave docker-clean [--all]     remove the agent's old images; --all removes the current one too`;
+
+export async function runCommand(
+  args: RunArgs,
+  deps: CliDeps = {},
+): Promise<Run> {
+  const out = deps.out ?? console.log;
+  const runsDir = deps.runsDir ?? DEFAULT_RUNS_DIR;
+  const to = args.to ?? stages[stages.length - 1]?.name;
+  for (const [flag, value] of [
+    ['--to', to],
+    ['--from', args.from],
+  ] as const) {
+    if (value !== undefined && !PIPELINE.includes(value)) {
+      throw new UsageError(
+        `${flag} ${value}: unknown stage. Known stages: ${PIPELINE.join(', ')}`,
+      );
+    }
+  }
+
+  if (args.backend !== undefined && !isBackendName(args.backend)) {
+    throw new UsageError(
+      `--backend ${args.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`,
+    );
+  }
+
+  const round = args.round === undefined ? undefined : Number(args.round);
+  if (round !== undefined) {
+    const codeStages = stages.filter((stage) => stage.units).map((stage) => stage.name);
+    if (!args.run || !args.from || !codeStages.includes(args.from) || !Number.isInteger(round) || round < 1)
+      throw new UsageError(
+        `--round ${args.round}: give a round number with --run <id> and --from one of ${codeStages.join(', ')}`,
+      );
+  }
+
+  const loaded = deps.config ?? loadConfig();
+  const config: Config =
+    args.replay === false ? { ...loaded, LLM_REPLAY: false } : loaded;
+  const run = args.run
+    ? openRun(args.run, runsDir)
+    : createRun({ idea: args.idea, runsDir });
+  const backend = resolveBackend(config, args.backend);
+
+  const ctx: StageContext = {
+    run,
+    config,
+    llm: deps.llm ?? createLlm({ config, backend }),
+    interactive: args.interactive ?? false,
+    backend: backend.name,
+    ...(round !== undefined && args.from && { resume: { stage: args.from, round } }),
+  };
+  out(`run ${run.id} (${run.dir})`);
+  const log = runLog(PIPELINE, out);
+  const stopLog = watchEvents(run, log.event);
+
+  try {
+    let forced = false;
+    const order = PIPELINE.slice(0, to ? PIPELINE.indexOf(to) + 1 : undefined);
+    for (const name of order) {
+      if (name === args.from) forced = true;
+      const def = stages.find((stage) => stage.name === name);
+      if (!def) continue;
+      const before = readState(run).stages[name];
+      const upToDate =
+        before?.status === 'done' &&
+        def.produces.every(
+          (artifact) => hasArtifact(run, artifact) && !isStale(run, artifact),
+        );
+      if (upToDate && !forced) {
+        log.line(name, `up to date (v${before.version ?? '?'})`);
+        continue;
+      }
+      log.line(name, 'running');
+      await def.run(ctx);
+      const after = readState(run).stages[name];
+      const version = after?.version ? ` v${after.version}` : '';
+      const rounds = after?.rounds ? `, ${after.rounds} rounds` : '';
+      const known = after?.known
+        ? `, ${after.known} known ${after.known === 1 ? 'issue' : 'issues'}`
+        : '';
+      log.line(name, `${after?.status ?? 'done'}${version}${rounds}${known}`);
+    }
+    // A run that reached the benchmark ends with its table.
+    const bench = order.includes('bench') ? readBenchmark(run) : undefined;
+    if (bench) out(`\n${renderTerminalTable(bench)}`);
+  } finally {
+    stopLog();
+  }
+  return run;
+}
+
+/**
+ * Finishes the Muse session a code stage's run left cut, such as a killed run's, and saves its round's output, for
+ * `weave run --run <id> --from <stage> --round <n>` to review and fix from without running that session again.
+ */
+export async function sessionResumeCommand(
+  runId: string,
+  stage: string,
+  options: { museSession?: string; backend?: string },
+  deps: CliDeps = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const def = stages.find((s) => s.name === stage);
+  const codeStages = stages.filter((s) => s.units).map((s) => s.name);
+  if (!def?.units) throw new UsageError(`${stage}: session-resume takes a code stage: ${codeStages.join(', ')}`);
+  if (options.backend !== undefined && !isBackendName(options.backend))
+    throw new UsageError(`--backend ${options.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`);
+  const config = deps.config ?? loadConfig();
+  const backend = resolveBackend(config, options.backend);
+  const ctx: StageContext = {
+    run,
+    config,
+    llm: deps.llm ?? createLlm({ config, backend }),
+    interactive: false,
+    backend: backend.name,
+  };
+  const [spec, ...more] = def.units(ctx);
+  if (!spec || more.length) throw new UsageError(`${stage}: session-resume needs a stage of one unit`);
+  const log = runLog(PIPELINE, out);
+  const stopLog = watchEvents(run, log.event);
+  try {
+    const { file, saved } = await resumeUnit(ctx, spec, options.museSession);
+    const lines = [
+      `${stage} round ${saved.round}: the resumed session ended ${saved.draft.data.session.status}; saved ${file}`,
+      `next: weave run ${readState(run).idea} --run ${run.id} --from ${stage} --round ${saved.round}`,
+    ];
+    for (const line of lines) out(line);
+    return lines;
+  } finally {
+    stopLog();
+  }
+}
+
+/** Validators only, no model calls. Returns every issue found. */
+export function validateCommand(
+  runId: string,
+  stage: string | undefined,
+  deps: CliDeps = {},
+): Issue[] {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const targets =
+    stage === undefined ? stages : stages.filter((def) => def.name === stage);
+  if (targets.length === 0) {
+    throw new UsageError(
+      `${stage}: no such stage. Registered: ${stages.map((def) => def.name).join(', ')}`,
+    );
+  }
+  const issues: Issue[] = [];
+  for (const def of targets) {
+    if (!def.validate) {
+      out(`${def.name}: no validators registered`);
+    } else if (!def.produces.every((artifact) => hasArtifact(run, artifact))) {
+      out(`${def.name}: no artifact to validate`);
+    } else {
+      const found = def.validate(run);
+      out(`${def.name}: ${formatForTerminal(found)}`);
+      issues.push(...found);
+    }
+  }
+  return issues;
+}
+
+export function showCommand(runId: string, deps: CliDeps = {}): string {
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const state = readState(run);
+  const header = ['stage', 'status', 'version', 'rounds', 'known', 'updated'];
+  const row = (name: string, label: string) => {
+    const stage = state.stages[name];
+    if (!stage) return [];
+    return [
+      [
+        label,
+        stage.status,
+        String(stage.version ?? ''),
+        String(stage.rounds ?? ''),
+        String(stage.known ?? ''),
+        stage.updatedAt,
+      ],
+    ];
+  };
+  // A stage that ran its work as child stages, such as flows-expand-1, lists them indented under it.
+  const rows = PIPELINE.flatMap((name) => [
+    ...row(name, name),
+    ...Object.keys(state.stages)
+      .filter((child) => child.startsWith(`${name}-`) && !PIPELINE.includes(child))
+      .sort()
+      .flatMap((child) => row(child, `  ${child}`)),
+  ]);
+  const widths = header.map((cell, i) =>
+    Math.max(cell.length, ...rows.map((row) => row[i]?.length ?? 0)),
+  );
+  const line = (cells: string[]) =>
+    cells
+      .map((cell, i) => cell.padEnd(widths[i] ?? 0))
+      .join('  ')
+      .trimEnd();
+  const sums = totals(run);
+  return [
+    `run ${state.id}`,
+    `idea ${state.idea}`,
+    '',
+    line(header),
+    ...rows.map(line),
+    '',
+    `${sums.calls} calls, ${sums.input} tokens in, ${sums.output} out, $${sums.costUsd.toFixed(4)}`,
+  ].join('\n');
+}
+
+const DEFAULT_GOLDEN_DIR = 'fixtures/golden';
+
+/** Copies a run's accepted artifacts (and their markdown) to fixtures/golden/<idea>/ and prints rounds, tokens and cost per stage. */
+export function goldenCommand(
+  runId: string,
+  ideaName: string,
+  stageList: string | undefined,
+  deps: CliDeps = {},
+): string[] {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const names = (stageList ?? 'flows-scope,flows-catalog,flows-expand')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+  const dest = path.join(DEFAULT_GOLDEN_DIR, ideaName);
+  mkdirSync(dest, { recursive: true });
+  const copied: string[] = [];
+  const lines: string[] = [];
+  const state = readState(run);
+  const events = readEvents(run);
+  for (const name of names) {
+    if (!(name in FILE_OF)) {
+      throw new UsageError(
+        `${name}: no such artifact. Known: ${Object.keys(FILE_OF).join(', ')}`,
+      );
+    }
+    const artifact = name as ArtifactName;
+    if (!hasArtifact(run, artifact))
+      throw new UsageError(`run ${runId} has no ${name} artifact yet`);
+    const json = FILE_OF[artifact];
+    const markdown = json.replace(/\.json$/, '.md');
+    for (const file of [json, markdown]) {
+      if (!existsSync(runPath(run, file))) continue;
+      mkdirSync(path.dirname(path.join(dest, file)), { recursive: true });
+      copyFileSync(runPath(run, file), path.join(dest, file));
+      copied.push(file);
+    }
+    // The last run of the stage: its calls, its reviewers' and its children's, up to the next stage that is not one of its own.
+    const starts = events.flatMap((event, i) =>
+      event.type === 'stage:start' && event.stage === name ? [i] : [],
+    );
+    const from = starts.at(-1) ?? events.length;
+    const segment = events.slice(from + 1);
+    const end = segment.findIndex(
+      (event) =>
+        event.type === 'stage:start' && !String(event.stage).startsWith(name),
+    );
+    const own = (end === -1 ? segment : segment.slice(0, end)).filter(
+      (event) => event.type === 'llm:call',
+    );
+    const sum = (key: string) =>
+      own.reduce((total, event) => total + Number(event[key] ?? 0), 0);
+    lines.push(
+      `${name}: ${state.stages[name]?.rounds ?? '?'} rounds, ${state.stages[name]?.known ?? 0} known issues, ${own.length} calls, ${sum('input')} tokens in, ${sum('output')} out, $${sum('costUsd').toFixed(4)}`,
+    );
+  }
+  out(`golden ${ideaName}: ${copied.join(', ')} -> ${dest}`);
+  for (const line of lines) out(line);
+  return lines;
+}
+
+/** Loads the design-system inventory, exporting it on a cache miss, and prints its counts. */
+export async function dsCommand(
+  deps: InventoryOptions & Pick<CliDeps, 'out'> = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const inv = await inventory(deps);
+  const { project } = inv;
+  const lines = [
+    `${inv.components.length} components, ${inv.components.filter((c) => c.looks).length} with looks, ${inv.tokens.length} tokens`,
+    `prose ${Buffer.byteLength(inventoryProse(inv))} bytes`,
+    `box: ${inv.components.filter((c) => c.box).length} components measured`,
+    `project: focus ring ${project.focusRing.value}, radius ${project.radius.surface} surface ${project.radius.control} control, fonts ${project.fonts.ui} ${project.fonts.display} ${project.fonts.mono}, ${project.colors.entity.length} entity sets`,
+  ];
+  for (const line of lines) out(line);
+  return lines;
+}
+
+/**
+ * The run's theme applied to the run's own app, the one the code stages build
+ * on (made by the scaffold on first use), and every component screenshotted in
+ * each mode into the run.
+ */
+export async function appCommand(
+  runId: string,
+  deps: Pick<CliDeps, 'out' | 'runsDir'> = {},
+): Promise<string[]> {
+  const out = deps.out ?? console.log;
+  const run = openRun(runId, deps.runsDir ?? DEFAULT_RUNS_DIR);
+  const { theme } = readArtifact<Themed>(run, 'design-theme').data;
+  const appDir = runPath(run, 'app');
+  await ensureApp(appDir);
+  const { changed, skipped } = applyTheme(appDir, theme);
+  if (applyMode(appDir, theme)) changed.push('packages/ui/src/Root/UIRoot.tsx');
+  const story = writeAllComponentsStory(appDir);
+  // Only the modes the theme has; the other would show the template's colors.
+  const shots = await screenshotComponents(
+    appDir,
+    Object.fromEntries(
+      theme.modes.map((mode) => [mode, runPath(run, `02-design/01-theme-${mode}.png`)]),
+    ),
+  );
+  // The preview story is the generator's, not the app's: it leaves with the screenshots.
+  rmSync(story);
+  const lines = [
+    `app ${appDir}`,
+    `changed ${changed.join(', ') || 'nothing'}`,
+    ...skipped.map((reason) => `not applied: ${reason}`),
+    ...shots,
+  ];
+  for (const line of lines) out(line);
+  return lines;
+}
+
+/** Benchmarks each run, or with `compare` only sets the benchmarks they have side by side. */
+async function benchCommand(ids: string[], values: { skip?: string; compare?: boolean }): Promise<void> {
+  if (!ids.length) throw new UsageError('bench needs a run id');
+  const skip = (values.skip?.split(',').filter(Boolean) ?? []) as Part[];
+  const unknown = skip.filter((part) => !PARTS.includes(part));
+  if (unknown.length) throw new UsageError(`--skip ${unknown.join(',')}: known parts are ${PARTS.join(', ')}`);
+  const runs = ids.map((id) => openRun(id));
+  if (!values.compare)
+    for (const run of runs) {
+      console.log(`bench ${run.id}`);
+      const bench = await runBenchmark(run, DEFAULT_RUNS_DIR, { skip });
+      console.log(`  ${runPath(run, '05-benchmark.md')}\n\n${renderTerminalTable(bench)}\n`);
+    }
+  if (values.compare || runs.length > 1) console.log(compareBenchmarks(runs, DEFAULT_RUNS_DIR));
+}
+
+/** Exit codes: 0 ok, 1 error, 2 usage. */
+export async function main(argv: string[]): Promise<number> {
+  // Every app command the run starts, Nx included, inherits this: an Nx daemon outlives the run, holds memory, and
+  // writes into an app's folder after the scaffold moves it aside.
+  process.env.NX_DAEMON ??= 'false';
+  try {
+    const { positionals, values } = parseArgs({
+      args: argv,
+      allowPositionals: true,
+      allowNegative: true,
+      options: {
+        run: { type: 'string' },
+        from: { type: 'string' },
+        round: { type: 'string' },
+        'muse-session': { type: 'string' },
+        to: { type: 'string' },
+        interactive: { type: 'boolean' },
+        replay: { type: 'boolean' },
+        backend: { type: 'string' },
+        stages: { type: 'string' },
+        all: { type: 'boolean' },
+        skip: { type: 'string' },
+        compare: { type: 'boolean' },
+      },
+    });
+    const [command, first, second] = positionals;
+    switch (command) {
+      case 'run':
+        if (!first) throw new UsageError('run needs an idea file');
+        await runCommand({ idea: first, ...values });
+        return 0;
+      case 'session-resume':
+        if (!first || !second) throw new UsageError('session-resume needs a run id and a code stage');
+        await sessionResumeCommand(first, second, { museSession: values['muse-session'], backend: values.backend });
+        return 0;
+      case 'validate':
+        if (!first) throw new UsageError('validate needs a run id');
+        return splitIssues(validateCommand(first, second)).mandatory.length > 0
+          ? 1
+          : 0;
+      case 'show':
+        if (!first) throw new UsageError('show needs a run id');
+        console.log(showCommand(first));
+        return 0;
+      case 'golden':
+        if (!first || !second)
+          throw new UsageError('golden needs a run id and an idea name');
+        goldenCommand(first, second, values.stages);
+        return 0;
+      case 'ds':
+        await dsCommand();
+        return 0;
+      case 'app':
+        if (!first) throw new UsageError('app needs a run id');
+        await appCommand(first);
+        return 0;
+      case 'bench':
+        await benchCommand(positionals.slice(1), values);
+        return 0;
+      case 'docker-clean': {
+        const removed = await cleanAgentImages({ all: values.all });
+        console.log(removed.length ? `removed ${removed.join(', ')}` : 'no agent images to remove');
+        return 0;
+      }
+      default:
+        throw new UsageError(
+          command ? `unknown command: ${command}` : 'no command given',
+        );
+    }
+  } catch (error) {
+    const usage =
+      error instanceof UsageError ||
+      (error as NodeJS.ErrnoException).code?.startsWith('ERR_PARSE_ARGS');
+    console.error(error instanceof Error ? error.message : String(error));
+    if (usage) {
+      console.error(USAGE);
+      return 2;
+    }
+    return 1;
+  }
+}
+
+const isEntry =
+  process.argv[1] !== undefined &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isEntry) process.exitCode = await main(process.argv.slice(2));

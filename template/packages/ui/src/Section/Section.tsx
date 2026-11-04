@@ -10,14 +10,33 @@ import React, {
 
 import { hasContent, useIconAddon } from '../utils';
 
-import { sectionDescription, sectionTitle } from './Section.css';
+import {
+  section,
+  sectionDescription,
+  sectionGroup,
+  sectionTitle,
+} from './Section.css';
 
-import type { SectionProps } from './Section.types';
+import type { SectionGroupProps, SectionProps } from './Section.types';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 // The page's own title is the h1.
 const HeadingLevelContext = createContext<HeadingLevel>(1);
+
+/**
+ * Sections stacked with a fixed gap between them. A Section right inside a
+ * group leaves the spacing to it; one outside a group pads itself above and
+ * below instead.
+ */
+export const SectionGroup = ({ className, ...props }: SectionGroupProps) => (
+  <div
+    {...props}
+    data-ds=""
+    data-slot="section-group"
+    className={classNames(sectionGroup, 'flex-col-gap-6', className)}
+  />
+);
 
 /**
  * The heading level of a section here: one below the section around it.
@@ -42,6 +61,7 @@ export const SectionHeading = ({
   return (
     <Heading
       {...props}
+      data-ds=""
       className={classNames('flex-row-gap-2 items-center', className)}
     />
   );
@@ -60,14 +80,21 @@ export const SectionDescription = ({
   children: ReactNode;
 }) =>
   hasContent(children) ? (
-    <p id={id} data-slot="description" className={sectionDescription}>
+    <p
+      id={id}
+      data-slot="description"
+      className={sectionDescription}
+      data-ds=""
+    >
       {children}
     </p>
   ) : null;
 
 /**
- * A section's box: its padding and the room between its header and content,
- * the same for every Section and Accordion item.
+ * A section's box: the room between its header and content, the same for
+ * every Section and Accordion item. Padding above and below comes from the
+ * Section or the Accordion item. It has no side padding: the container
+ * around it gives the sides, so a section lines up with what sits beside it.
  *
  * @internal
  */
@@ -78,8 +105,9 @@ export const SectionFrame = ({
   // Unnamed, so not a landmark: headings already outline the page.
   <section
     {...props}
+    data-ds=""
     data-slot="section"
-    className={classNames('flex-col-gap-5 p-5', className)}
+    className={classNames('flex-col-gap-4', className)}
   />
 );
 
@@ -100,8 +128,8 @@ export const SectionHeader = ({
   descriptionId?: string;
   action?: ReactNode;
 }) => (
-  <div data-slot="header" className="flex-row-gap-4 items-start">
-    <div className="flex-col-gap-1 flex-fill-x">
+  <div data-slot="header" className="flex-row-gap-4 items-start" data-ds="">
+    <div className="flex-col-gap-1 flex-fill-x" data-ds="">
       {heading}
       <SectionDescription id={descriptionId}>{description}</SectionDescription>
     </div>
@@ -109,6 +137,7 @@ export const SectionHeader = ({
       <div
         data-slot="header-actions"
         className="flex-row-gap-2 items-center shrink-0"
+        data-ds=""
       >
         {action}
       </div>
@@ -130,7 +159,12 @@ export const SectionContent = ({
 }) => (
   // Takes the height left in a section given one, so a FlexScrollArea in it
   // scrolls.
-  <div data-slot="content" className="flex-col-gap-4 flex-fill-y">
+  // Its gap spaces the sections in it, as a group's does.
+  <div
+    data-slot="content"
+    className={classNames(sectionGroup, 'flex-col-gap-4 flex-fill-y')}
+    data-ds=""
+  >
     <HeadingLevelContext value={level}>{children}</HeadingLevelContext>
   </div>
 );
@@ -139,7 +173,9 @@ export const SectionContent = ({
  * A titled part of a page: a heading, an optional muted description, then its
  * content, with the same sizes and spacing everywhere. A section inside a
  * section gets the next heading level. One that opens and closes is a
- * Collapsible, several are an Accordion.
+ * Collapsible, several are an Accordion. It has no side padding by default:
+ * the page's container, or the Card or panel around it, gives the sides. A
+ * section that needs its own takes them through `className`.
  *
  * @invalidAlternative section
  */
@@ -170,12 +206,14 @@ export const Section = ({
   });
 
   return (
-    <SectionFrame {...props} className={className}>
+    <SectionFrame {...props} className={classNames(section, className)}>
       <SectionHeader
         heading={
           <SectionHeading level={level} id={titleId} className={sectionTitle}>
             {leftSlot}
-            <span className="min-w-0">{title}</span>
+            <span className="min-w-0" data-ds="">
+              {title}
+            </span>
             {rightSlot}
           </SectionHeading>
         }

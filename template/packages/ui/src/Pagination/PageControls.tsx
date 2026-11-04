@@ -14,10 +14,22 @@ import { pageSizeSelect } from './Pagination.css';
 import { getPageWindow } from './utils';
 
 const PAGE_ACTIONS = {
-  first: { text: 'First', label: 'First page', icon: <ChevronsLeft /> },
-  previous: { text: 'Previous', label: 'Previous page', icon: <ChevronLeft /> },
-  next: { text: 'Next', label: 'Next page', icon: <ChevronRight /> },
-  last: { text: 'Last', label: 'Last page', icon: <ChevronsRight /> },
+  first: {
+    text: 'First',
+    label: 'First page',
+    icon: <ChevronsLeft data-ds="" />,
+  },
+  previous: {
+    text: 'Previous',
+    label: 'Previous page',
+    icon: <ChevronLeft data-ds="" />,
+  },
+  next: { text: 'Next', label: 'Next page', icon: <ChevronRight data-ds="" /> },
+  last: {
+    text: 'Last',
+    label: 'Last page',
+    icon: <ChevronsRight data-ds="" />,
+  },
 };
 
 type PageButtonProps = {
@@ -68,7 +80,9 @@ const PageNumber = ({
     {...state}
     onClick={current ? undefined : onClick}
   >
-    <div className="text-center min-w-4">{pageIndex + 1}</div>
+    <div className="text-center min-w-4" data-ds="">
+      {pageIndex + 1}
+    </div>
   </Button>
 );
 
@@ -128,6 +142,7 @@ export const PageControls = ({
       aria-label={label}
       data-slot="pagination-nav"
       className="flex-row-gap-2 flex-wrap items-center"
+      data-ds=""
     >
       <Select
         name={pageSizeName}
@@ -147,7 +162,7 @@ export const PageControls = ({
           />
         ))}
       </Select>
-      <div className="flex-row-gap-2 flex-wrap items-center">
+      <div className="flex-row-gap-2 flex-wrap items-center" data-ds="">
         {isFull && (
           <PageButton
             action="first"

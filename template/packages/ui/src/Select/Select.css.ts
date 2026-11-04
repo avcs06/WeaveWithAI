@@ -1,5 +1,8 @@
 import { tokens } from '@packages/styles/tokens.css';
-import { globalStyle, style } from '@vanilla-extract/css';
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
+
+// eslint-disable-next-line import-rules/barrel-only-sibling-imports -- the icon size a Button's slot reads.
+import { buttonIconSize } from '../Button/Button.css';
 
 const colors = tokens.color.base;
 
@@ -32,6 +35,20 @@ globalStyle(`${selectSearch}::placeholder`, {
 export const selectLineBox = style({
   height: '1lh',
 });
+
+// The clear button as big as the chevron beside it, its X 4px smaller.
+export const selectClear = styleVariants(
+  { sm: tokens.spacing[4.5], md: tokens.spacing[5] },
+  (size) => ({
+    selectors: {
+      // Over the Button recipe's size, which triples its class.
+      '&&&&': {
+        padding: tokens.spacing[0.5],
+        vars: { [buttonIconSize]: `calc(${size} - ${tokens.spacing[1]})` },
+      },
+    },
+  }),
+);
 
 export const selectMenu = style({
   width: 'var(--radix-dropdown-menu-trigger-width)',

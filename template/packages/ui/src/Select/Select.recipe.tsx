@@ -12,6 +12,11 @@
  * a Select can't create an option.
  *
  * Pitfalls:
+ * - A button that acts on the field's value, such as Send, Apply or Move,
+ *   goes in its `action`, in a form or out of one, such as a filter bar or a
+ *   toolbar. A button beside the field in a flex row lines up with the label,
+ *   not the box.
+ * - Clearing is the Select's own clear button: no Clear button beside it.
  * - Native form submission (`FormData`, `<form action>`) isn't supported:
  *   read values through `Controller` and `handleSubmit`.
  * - Give the form `defaultValues`: `''` for a Select, `[]` for a MultiSelect.
@@ -23,7 +28,7 @@
  */
 import { Avatar } from '@packages/ui/Avatar';
 import { Button } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import {
   MultiSelect,
   Select,
@@ -141,10 +146,16 @@ const RegistrationForm = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(registerAttendee)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Registering…' : undefined}
+        >
+          Register
+        </Button>
+      }
     >
       <Controller
         name="ticketType"
@@ -187,13 +198,7 @@ const RegistrationForm = () => {
           </MultiSelect>
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Registering…' : undefined}
-      >
-        Register
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -283,6 +288,42 @@ const TeamFilter = () => {
         <SelectOption key={team} value={team} label={team} />
       ))}
     </MultiSelect>
+  );
+};
+
+const days = ['Friday', 'Saturday', 'Sunday'];
+
+/**
+ * A button that acts on the choice, here moving a session to another day:
+ * `action` lines it up with the box, so the label stays above both. The same
+ * outside a form, as in a toolbar or a filter bar.
+ */
+const MoveSession = () => {
+  const [day, setDay] = useState('');
+  const [moved, setMoved] = useState('');
+  return (
+    <div className="flex-col-gap-2">
+      <Select
+        label="Move to day"
+        allowSearch={false}
+        value={day}
+        onChange={setDay}
+        action={
+          <Button
+            variant="base" // Moving is the quiet action beside the choice.
+            disabledWithReason={day === '' ? 'Pick a day first' : undefined}
+            onClick={() => setMoved(`Moved to ${day}`)}
+          >
+            Move
+          </Button>
+        }
+      >
+        {days.map((option) => (
+          <SelectOption key={option} value={option} label={option} />
+        ))}
+      </Select>
+      <p role="status">{moved}</p>
+    </div>
   );
 };
 
@@ -581,6 +622,7 @@ export default function SelectRecipe() {
       <TicketTypeSelect />
       <SortSelect />
       <TeamFilter />
+      <MoveSession />
       <VenueSearch />
       <SpeakerSearch />
       <AssigneeSelect />

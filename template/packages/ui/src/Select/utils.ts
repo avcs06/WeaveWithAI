@@ -8,6 +8,15 @@ export const contains = (
   node: EventTarget | null,
 ) => node instanceof Node && Boolean(ref.current?.contains(node));
 
+/**
+ * A label as it reads inside a sentence: "Category" as "category". One that
+ * starts with an acronym, like "UPI app", stays as it is.
+ */
+export const inSentence = (label: string) =>
+  /^[A-Z][a-z]/.test(label)
+    ? label.charAt(0).toLowerCase() + label.slice(1)
+    : label;
+
 export const menuMessage = (
   loading: boolean,
   count: number,

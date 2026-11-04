@@ -3,6 +3,10 @@
 // widths for runtime and hydration errors and layout that doesn't fit.
 //
 //   pnpm verify /events [/other …]     app routes, on the dev server (:3001)
+//   pnpm verify /orders --storage f    the routes with f's localStorage entries
+//                                      (a JSON object) set before each load,
+//                                      such as a signed-in session
+//   pnpm verify /orders --widths 1280  at these widths only (default 320,375,1280)
 //   pnpm verify --recipes              every recipe story, on Storybook (:6006)
 import { spawn, spawnSync } from 'node:child_process';
 import {
@@ -21,7 +25,7 @@ import ts from 'typescript';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const appUrl = 'http://localhost:3001';
 const storybookUrl = 'http://localhost:6006';
-const widths = [320, 375, 1280];
+let widths = [320, 375, 1280];
 const screenshots = join(root, 'tmp/verify');
 
 const webDir = join(root, 'web');
@@ -114,15 +118,31 @@ function validates(files) {
   return status === 0;
 }
 
-const isUp = (url) =>
+/** The server's status for `url`: 0 while nothing answers. */
+const status = (url) =>
   fetch(url).then(
-    () => true,
-    () => false,
+    (response) => response.status,
+    () => 0,
   );
+const wait = () => new Promise((resolve) => setTimeout(resolve, 500));
+
+/**
+ * Waits until the dev server answers `url` with something other than a 5xx:
+ * its first compile of a route can answer 500 while it writes its manifests,
+ * and a page opened then fails for nothing. A 5xx that lasts is the app's own,
+ * so after 30 s of it the checks go on and report it.
+ */
+async function warmUp(url) {
+  for (let waited = 0; (await status(url)) >= 500 && waited < 30_000; waited += 500)
+    await wait();
+}
 
 /** Uses the running dev server, or starts one and returns a stop function. */
-async function ensureAppServer() {
-  if (await isUp(appUrl)) return () => undefined;
+async function ensureAppServer(firstUrl) {
+  if (await status(appUrl)) {
+    await warmUp(firstUrl);
+    return () => undefined;
+  }
   console.log(`Starting the dev server on ${appUrl}…`);
   const server = spawn('pnpm', ['dev'], {
     cwd: root,
@@ -130,13 +150,14 @@ async function ensureAppServer() {
     stdio: 'ignore',
   });
   const stop = () => process.kill(-server.pid);
-  for (let waited = 0; !(await isUp(appUrl)); waited += 500) {
+  for (let waited = 0; !(await status(appUrl)); waited += 500) {
     if (waited > 120_000) {
       stop();
       throw new Error('The dev server did not start within 2 minutes.');
     }
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await wait();
   }
+  await warmUp(firstUrl);
   return stop;
 }
 
@@ -214,6 +235,10 @@ const measureLayout = () => {
 
 async function check(browser, { name, url, allowConsoleErrors }, width) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript((entries) => {
+    for (const [key, value] of Object.entries(entries))
+      localStorage.setItem(key, value);
+  }, storage);
   const problems = [];
   page.on('pageerror', (error) => problems.push(`error: ${error.message}`));
   page.on('console', (message) => {
@@ -230,8 +255,19 @@ async function check(browser, { name, url, allowConsoleErrors }, width) {
 }
 
 const args = process.argv.slice(2);
+const storageAt = args.indexOf('--storage');
+const storage =
+  storageAt === -1 ? {} : JSON.parse(readFileSync(args[storageAt + 1], 'utf8'));
+if (storageAt !== -1) args.splice(storageAt, 2);
+const widthsAt = args.indexOf('--widths');
+if (widthsAt !== -1) {
+  widths = args[widthsAt + 1].split(',').map(Number);
+  args.splice(widthsAt, 2);
+}
 if (!args.length) {
-  console.error('Usage: pnpm verify <route> [<route> …] | pnpm verify --recipes');
+  console.error(
+    'Usage: pnpm verify <route> [<route> …] [--storage <file>] [--widths <a,b>] | pnpm verify --recipes',
+  );
   process.exit(2);
 }
 
@@ -245,7 +281,7 @@ try {
   const targets = recipes
     ? await recipeTargets()
     : args.map((route) => ({ name: route, url: new URL(route, appUrl).href }));
-  if (!recipes) stop = await ensureAppServer();
+  if (!recipes) stop = await ensureAppServer(targets[0].url);
 
   mkdirSync(screenshots, { recursive: true });
   const browser = await chromium.launch().catch((error) => {

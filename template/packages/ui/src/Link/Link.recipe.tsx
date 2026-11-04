@@ -1,16 +1,21 @@
 /**
- * Link: text that takes the user to another page, marked with a dotted line
- * instead of an underline: another site, an email (`mailto:`), a phone
- * number (`tel:`) or a file. In the Next app, a route of the app is the app's
- * NextLink, which looks the same and navigates without reloading the page.
+ * Link: text that takes the user to another page: another site, an email
+ * (`mailto:`), a phone number (`tel:`) or a file. Inside text it has a dotted
+ * line instead of an underline; a link that works as a control, such as a way
+ * back, a breadcrumb or a navigation item, is `look="plain"`. In the Next
+ * app, a route of the app is the app's NextLink, which looks the same and
+ * navigates without reloading the page.
  *
  * When not to use:
  * - An action (save, delete, open a menu): Button. A link goes somewhere.
  * - A route of the Next app: its NextLink. One that must look like a button
  *   is `Button as={NextLink}`.
- * - A whole card that opens a page: Card.
+ * - A whole card that opens a page: Card with `stretchLink`.
  *
  * Pitfalls:
+ * - The dotted line is for a link inside text only. A link that stands on its
+ *   own as a control, such as a way back, a breadcrumb, a navigation item or a
+ *   footer's links, is `look="plain"`.
  * - In the Next app, a route as Link reloads the whole page: use NextLink.
  * - `target="_blank"` needs `rel="noopener noreferrer"` and text saying it
  *   opens a new tab.
@@ -45,6 +50,22 @@ const ExternalSite = () => (
     Harbor Hall venue page
     <span className="sr-only"> (opens in a new tab)</span>
   </Link>
+);
+
+/**
+ * A link that works as a control, here a footer's links: `look="plain"`, since
+ * its place already says it is a link. The dotted line stays for links inside
+ * text.
+ */
+const ControlLinks = () => (
+  <nav aria-label="Help" className="flex-row-gap-4 flex-wrap">
+    <Link look="plain" href="https://example.com/help">
+      Help center
+    </Link>
+    <Link look="plain" href="https://example.com/status">
+      Service status
+    </Link>
+  </nav>
 );
 
 /** An email address: `mailto:` opens the user's mail app. */
@@ -83,6 +104,7 @@ export default function LinkRecipe() {
     <div className="flex-col-gap-4 items-start">
       <InText />
       <ExternalSite />
+      <ControlLinks />
       <Email />
       <Phone />
       <Download />

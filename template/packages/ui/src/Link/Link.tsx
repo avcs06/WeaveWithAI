@@ -50,6 +50,7 @@ export const Link = ({
       <Tooltip tooltip={disabledWithReason}>
         <a
           {...anchorProps}
+          data-ds=""
           // Without `href`, an anchor isn't read as a link.
           role="link"
           aria-disabled
@@ -58,7 +59,12 @@ export const Link = ({
           // order.
           tabIndex={disabledWithReason ? 0 : -1}
           onClick={(event) => event.preventDefault()}
-          className={classNames(linkClassName, childClassName, className)}
+          className={classNames(
+            linkClassName,
+            'w-fit max-w-full',
+            childClassName,
+            className,
+          )}
         >
           {child ? child.props.children : children}
         </a>
@@ -68,7 +74,13 @@ export const Link = ({
 
   const Anchor = asChild ? Slot : 'a';
   return (
-    <Anchor {...props} className={classNames(linkClassName, className)}>
+    <Anchor
+      {...props}
+      // Its text's width, not its column's: a stretched link draws its dotted
+      // line across the row. Never wider than its column, so a Truncate in it cuts.
+      className={classNames(linkClassName, 'w-fit max-w-full', className)}
+      data-ds={asChild ? undefined : ''}
+    >
       {children}
     </Anchor>
   );

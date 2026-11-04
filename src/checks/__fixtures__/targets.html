@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Target sizes</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { padding: 24px 16px; }
+  a { color: #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Target sizes</h1>
+  <!-- Small and close together, but inside a sentence: the inline exception. -->
+  <p>Pick a size, <a href="#s" data-testid="size-s">S</a>/<a href="#m" data-testid="size-m">M</a>, before you order.</p>
+  <!-- Small, with no other target near it: the spacing exception. -->
+  <p><a href="#alone" data-testid="alone">Alone</a></p>
+  <!-- Small, close together and in no sentence: both fail. -->
+  <p><a href="#a" data-testid="nav-a">A</a><a href="#b" data-testid="nav-b">B</a></p>
+</main>
+</body>
+</html>

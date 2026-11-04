@@ -123,9 +123,12 @@ const TabTrigger = ({ tab }: { tab: TabItem }) => {
             'inline-flex-row-gap-2.5 items-center',
             'relative whitespace-nowrap cursor-pointer',
           )}
+          data-ds=""
         >
           {leftSlot}
-          <span data-slot="label">{title}</span>
+          <span data-slot="label" data-ds="">
+            {title}
+          </span>
           {rightSlot}
         </span>
       </PlainButton>
@@ -145,12 +148,13 @@ const TabPanel = ({ tab, isActive }: { tab: TabItem; isActive: boolean }) => (
     // Not a tab stop: Tab goes from the tabs to the panel's content. A
     // scrolling panel with nothing to Tab to gets its scroll area's stop.
     tabIndex={undefined}
+    data-ds=""
     data-slot="panel"
     className={isActive ? 'flex-col-gap-0 flex-fill-y' : 'hidden'}
   >
     {/* Named for when it takes focus to scroll. */}
     <FlexScrollArea orientation="vertical" aria-labelledby={triggerId(tab)}>
-      <div className="p-2">
+      <div className="p-2" data-ds="">
         <TabContent id={tab.id} />
       </div>
     </FlexScrollArea>
@@ -192,6 +196,7 @@ const TabsView = <V extends string>({
         if (tab && !tab.isDisabled) select(value as V);
       }}
       className={classNames(rootClassName, 'flex-col-gap-5', className)}
+      data-ds=""
     >
       <ScrollArea orientation="horizontal">
         <TabsPrimitive.List
@@ -212,6 +217,7 @@ const TabsView = <V extends string>({
               delete event.currentTarget.dataset.pointer;
           }}
           className={classNames(tabsList, 'flex-row-gap-1')}
+          data-ds=""
         >
           {tabs.map((tab) => (
             <TabTrigger key={tab.id} tab={tab} />

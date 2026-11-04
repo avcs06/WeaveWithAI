@@ -55,10 +55,12 @@ const ConfirmationDialog = ({
         <DialogPrimitive.Overlay
           data-slot="overlay"
           className={classNames(dialogOverlay, 'fixed inset-0')}
+          data-ds=""
         />
         <DialogPrimitive.Content
           role="alertdialog"
           {...(hasDescription ? {} : { 'aria-describedby': undefined })}
+          data-ds=""
           onEscapeKeyDown={preventDefault}
           onInteractOutside={preventDefault}
           // No trigger for Radix to return focus to: back to what had it.
@@ -74,15 +76,16 @@ const ConfirmationDialog = ({
             className,
           )}
         >
-          <div className="flex-row-gap-4 items-start">
+          <div className="flex-row-gap-4 items-start" data-ds="">
             <span
               data-slot="glyph"
               className={classNames(
                 glyphClassName,
                 'grid place-items-center shrink-0',
               )}
+              data-ds=""
             >
-              <Glyph aria-hidden />
+              <Glyph aria-hidden data-ds="" />
             </span>
             <div
               data-slot="text"
@@ -90,12 +93,16 @@ const ConfirmationDialog = ({
                 confirmationText,
                 'flex-col-gap-1 flex-fill-x',
               )}
+              data-ds=""
             >
-              <DialogPrimitive.Title className={dialogTitle}>
+              <DialogPrimitive.Title className={dialogTitle} data-ds="">
                 {title}
               </DialogPrimitive.Title>
               {hasDescription && (
-                <DialogPrimitive.Description className={dialogDescription}>
+                <DialogPrimitive.Description
+                  className={dialogDescription}
+                  data-ds=""
+                >
                   {content}
                 </DialogPrimitive.Description>
               )}
@@ -104,6 +111,7 @@ const ConfirmationDialog = ({
           <div
             data-slot="footer"
             className={classNames(dialogFooter, 'flex-row-gap-2 justify-end')}
+            data-ds=""
           >
             {footer(closeDialog)}
           </div>
@@ -130,6 +138,7 @@ export const openConfirmationDialog = (options: ConfirmationDialogOptions) =>
         ? document.activeElement
         : null;
     const host = document.createElement('div');
+    host.dataset.ds = '';
     document.body.append(host);
     const root = createRoot(host);
     let isClosed = false;

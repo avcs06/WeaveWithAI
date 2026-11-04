@@ -1,15 +1,19 @@
 /**
  * Card: a bordered container with padding and gap, for one item's content (an
  * event in a gallery), as a whole-card button, or, in a CardGroup, as a large
- * selectable option with room for a description.
+ * selectable option with room for a description. CardList lays records out
+ * as a column of full-width cards or a grid, with its own Pagination when
+ * asked; with `stretchLink`, each card opens its record's page.
  *
  * When not to use:
  * - A short toggle or filter: Chip. A yes/no setting: Checkbox.
  * - A group of fields or a page section with no item behind it: plain markup.
- * - A card that opens a page: put a Link on its title (link card). Do not
- *   make the card a button that navigates.
+ * - A card that opens a page: `stretchLink`, with the name on its title as
+ *   the link it follows (link card). Never `onClick` that navigates.
  *
  * Pitfalls:
+ * - CardList draws the card: `renderItem` returns the card's content, never a
+ *   Card of its own. Each record needs an `id`.
  * - A card is exactly one of: static (no `onClick`), a button (`onClick`), or
  *   selectable (in a CardGroup, or with `active` and `onActiveChange`). Never
  *   put links or buttons inside a button or selectable card: their children are
@@ -21,17 +25,19 @@
  * - `onClick` and `asChild` don't mix: a list item can't be a button.
  * - Name a button or selectable card with `aria-labelledby` on its title and
  *   `aria-describedby` on its details; its whole text is its name otherwise.
- * - A grid of cards is a list: `<ul role="list">` of `<Card asChild><li>`, with
- *   `<h3>` titles. Columns go in a colocated .css.ts: `gridTemplateColumns:
- *   'repeat(auto-fill, minmax(min(100%, 280px), 1fr))'`, with Tailwind `grid
- *   gap-4` beside it.
+ * - A list of cards is a `CardList`: a column, or a grid with
+ *   `layout="grid"`, and `columns` for a fixed set. Never a `ul` or a grid
+ *   of Cards built by hand.
+ * - A CardGroup's choices side by side take their columns from a colocated
+ *   .css.ts: `gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%,
+ *   280px), 1fr))'`, with Tailwind `grid gap-4` beside it.
  * - A card in a group takes the group's `disabled` or `disabledWithReason`; a
  *   card's own reason wins.
  */
 import { classNames } from '@packages/styles/classNames';
 import { Button } from '@packages/ui/Button';
-import { Card, CardGroup } from '@packages/ui/Card';
-import { Controller } from '@packages/ui/Form';
+import { Card, CardGroup, CardList } from '@packages/ui/Card';
+import { Controller, Form } from '@packages/ui/Form';
 import { Link } from '@packages/ui/Link';
 import React, { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -42,43 +48,86 @@ import { cardColumns } from './Card.recipe.css';
 // Stands in for a request to a server.
 const register = (registration: Registration) =>
   new Promise((resolve) => setTimeout(resolve, 400, registration));
+const projects = Array.from({ length: 24 }, (_, index) => ({
+  id: index + 1,
+  name: `Project ${index + 1}`,
+  owner: index % 2 ? 'Alex Morgan' : 'Sam Lee',
+}));
+type Project = (typeof projects)[number];
+const reasons = [
+  { id: 'plan', title: 'Plan in minutes', line: 'Drag tasks into the days.' },
+  {
+    id: 'share',
+    title: 'Share the week',
+    line: 'Everyone sees the same plan.',
+  },
+  { id: 'track', title: 'Track what is done', line: 'Tick tasks as you go.' },
+  { id: 'review', title: 'Review the week', line: 'See what moved and why.' },
+];
+const events = [
+  {
+    id: 'meetup',
+    name: 'Design systems meetup',
+    summary: 'Talks on tokens, theming and docs.',
+  },
+  {
+    id: 'summit',
+    name: 'Frontend summit',
+    summary: 'A day of talks on the web platform.',
+  },
+];
 
 // Usage: the patterns to copy.
 /**
- * Content cards: a gallery of items. A list of cards is a list, so each is an
- * `li` via `asChild`, with a heading for screen-reader navigation.
- * `look="elevated"` adds a shadow; `!elevated`, the default, has none.
+ * Content cards: a gallery of items is a CardList with `layout="grid"`, each
+ * title a heading for screen-reader navigation.
  */
 const ContentCards = () => (
-  // eslint-disable-next-line jsx-a11y/no-redundant-roles -- Safari drops list semantics once list-style is none.
-  <ul role="list" className={classNames(cardColumns, 'grid gap-4')}>
-    <Card asChild>
-      <li>
-        <h3>Design systems meetup</h3>
-        <p>Talks on tokens, theming and docs.</p>
-      </li>
-    </Card>
-    <Card asChild look="elevated">
-      <li>
-        <h3>Frontend summit</h3>
-        <p>A day of talks on the web platform.</p>
-      </li>
-    </Card>
-  </ul>
+  <CardList
+    aria-label="Events"
+    items={events}
+    layout="grid"
+    renderItem={(event) => (
+      <>
+        <h3>{event.name}</h3>
+        <p>{event.summary}</p>
+      </>
+    )}
+  />
+);
+
+/** `look="elevated"` adds a shadow; `!elevated`, the default, has none. */
+const ElevatedCard = () => (
+  <Card
+    look="elevated" // The shadow lifts the one card the page features.
+  >
+    <h3>Frontend summit</h3>
+    <p>A day of talks on the web platform.</p>
+  </Card>
 );
 
 /**
- * Link card: the title is the link and the card stays static, so the link is a
- * normal tab stop read by its text.
+ * Link card: `stretchLink` opens the card's first link, the title, from
+ * anywhere on the card, as a Table row's click does. The title stays the tab
+ * stop, read by its text, and is `plain`: the whole card shows it opens. A
+ * button inside keeps its own click.
  */
-const LinkCard = () => (
-  <Card>
-    <h3>
-      <Link href="/events/42">Design systems meetup</Link>
-    </h3>
-    <p>Thursday 18:00 at Hall B.</p>
-  </Card>
-);
+const LinkCard = () => {
+  const [saved, setSaved] = useState(false);
+  return (
+    <Card stretchLink>
+      <h3>
+        <Link look="plain" href="/events/42">
+          Design systems meetup
+        </Link>
+      </h3>
+      <p>Thursday 18:00 at Hall B.</p>
+      <Button variant="base" onClick={() => setSaved(!saved)}>
+        {saved ? 'Saved' : 'Save for later'}
+      </Button>
+    </Card>
+  );
+};
 
 /**
  * A card with its own actions: keep it static and put Buttons in it. Adding
@@ -225,10 +274,9 @@ const TicketForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Register</Button>}
     >
       <Controller
         name="ticket"
@@ -253,9 +301,8 @@ const TicketForm = () => {
           </CardGroup>
         )}
       </Controller>
-      <Button type="submit">Register</Button>
       <p role="status">{status}</p>
-    </form>
+    </Form>
   );
 };
 
@@ -330,10 +377,84 @@ const ToggleCard = () => {
   );
 };
 
+/**
+ * A record's card content, for CardList to draw the card around. Its name is
+ * the link to the record's page.
+ */
+const ProjectCard = ({ project }: { project: Project }) => (
+  <>
+    <h3>
+      <Link look="plain" href={`/projects/${project.id}`}>
+        {project.name}
+      </Link>
+    </h3>
+    <p>{project.owner}</p>
+  </>
+);
+
+/**
+ * Records as full-width cards, every one shown, even for a few: the card's
+ * border keeps a record's details together across a wide screen.
+ * `stretchLink` opens each record's page from anywhere on its card.
+ */
+const RecordCards = () => (
+  <CardList
+    aria-label="Projects"
+    items={projects.slice(0, 3)}
+    stretchLink
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
+/**
+ * Records the user browses side by side, such as products with photos:
+ * `layout="grid"` fits as many columns as there is room for at 280px each.
+ */
+const RecordGrid = () => (
+  <CardList
+    aria-label="Featured projects"
+    items={projects.slice(0, 6)}
+    layout="grid"
+    stretchLink
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
+/**
+ * A fixed set, such as four reasons to join: `columns` sets a count that
+ * divides it, so no card sits alone in the last row.
+ */
+const FixedSet = () => (
+  <CardList
+    aria-label="Reasons to join"
+    items={reasons}
+    layout="grid"
+    columns={2}
+    renderItem={(reason) => (
+      <>
+        <h3>{reason.title}</h3>
+        <p>{reason.line}</p>
+      </>
+    )}
+  />
+);
+
+/** A long list in pages, with the list's own Pagination under the cards. */
+const PagedRecordCards = () => (
+  <CardList
+    aria-label="All projects"
+    items={projects}
+    stretchLink
+    pagination={{ itemName: ['project', 'projects'], pageSize: 5 }}
+    renderItem={(project) => <ProjectCard project={project} />}
+  />
+);
+
 export default function CardRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContentCards />
+      <ElevatedCard />
       <LinkCard />
       <CardWithActions />
       <ClickableCard />
@@ -343,6 +464,10 @@ export default function CardRecipe() {
       <TicketForm />
       <UnavailableOptions />
       <ToggleCard />
+      <RecordCards />
+      <RecordGrid />
+      <FixedSet />
+      <PagedRecordCards />
     </div>
   );
 }

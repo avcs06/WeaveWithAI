@@ -51,6 +51,8 @@ export const FormControl = ({
   variant,
   look,
   tooltip,
+  action,
+  width,
   ref,
   leftIcon,
   rightIcon,
@@ -89,6 +91,8 @@ export const FormControl = ({
 
   const { status, message } = winningStatus({ error, warning, success });
   const controlId = id ?? generatedId;
+  // Help text the message repeats word for word shows once, as the message.
+  const showsHelp = hasContent(helpText) && helpText !== message;
 
   // Also kept hidden in the page for screen readers.
   const hiddenDescriptions = [
@@ -106,7 +110,7 @@ export const FormControl = ({
     // The message first: it says what's wrong, help text what's asked.
     'aria-describedby': joinIds(
       hasContent(message) && messageId,
-      hasContent(helpText) && helpId,
+      showsHelp && helpId,
       ...hiddenDescriptions.map((description) => description.id),
     ),
     'aria-invalid': status === 'error' || undefined,
@@ -142,10 +146,18 @@ export const FormControl = ({
   };
 
   const control = children(controlProps);
+  const boxed = withControlBox ? (
+    <ControlBox {...box}>{control}</ControlBox>
+  ) : (
+    // The control is its own box: it gets the box's props.
+    <Slot {...box}>{control}</Slot>
+  );
   return (
     <div
       data-slot="form-control"
+      data-width={width}
       className={classNames('flex-col-gap-2', className)}
+      data-ds=""
     >
       <ControlLabel
         id={labelId}
@@ -156,20 +168,29 @@ export const FormControl = ({
         rightAddOn={labelRightSlot}
         onClick={focusFromLabel}
       />
-      {withControlBox ? (
-        <ControlBox {...box}>{control}</ControlBox>
+      {hasContent(action) ? (
+        // Beside the box, not the label, so a message below moves neither.
+        <div
+          data-slot="action-row"
+          className="flex-row-gap-2 items-start"
+          data-ds=""
+        >
+          <div className="flex-fill-x" data-ds="">
+            {boxed}
+          </div>
+          {action}
+        </div>
       ) : (
-        // The control is its own box: it gets the box's props.
-        <Slot {...box}>{control}</Slot>
+        boxed
       )}
-      {hasContent(helpText) && (
-        <div id={helpId} data-slot="help" className={controlMessage}>
+      {showsHelp && (
+        <div id={helpId} data-slot="help" className={controlMessage} data-ds="">
           {helpText}
         </div>
       )}
       <ControlMessage id={messageId} status={status} message={message} />
       {hiddenDescriptions.map((description) => (
-        <span key={description.id} id={description.id} hidden>
+        <span key={description.id} id={description.id} hidden data-ds="">
           {description.text}
         </span>
       ))}

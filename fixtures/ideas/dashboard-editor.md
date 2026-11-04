@@ -17,4 +17,8 @@ Dashboards have a name and can be renamed, duplicated and deleted. A list shows 
 of a user's dashboards with when each was last edited. The editor saves changes
 automatically.
 
-Playful but tidy.
+It should look like it comes from the future: a dark, screen-like interface that
+glows. Neon light picks out the controls, the edges and the numbers, the way a
+spaceship console or a hacker's terminal does, with computer type for figures and
+a faint grid behind the widgets. It can be bold and a little theatrical, as long
+as every widget stays easy to read and use.

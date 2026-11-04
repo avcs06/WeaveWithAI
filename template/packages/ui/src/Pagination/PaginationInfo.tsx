@@ -9,7 +9,9 @@ import type { PaginationInfoProps } from './Pagination.types';
 const numberFormat = new Intl.NumberFormat('en-US');
 
 const Count = ({ value }: { value: number }) => (
-  <strong className={count}>{numberFormat.format(value)}</strong>
+  <strong className={count} data-ds="">
+    {numberFormat.format(value)}
+  </strong>
 );
 
 const plural = (count: number, one: string, many: string) =>
@@ -35,7 +37,7 @@ export const PaginationInfo = ({
 
   // Announces page and filter changes.
   details.push(
-    <span key="showing" aria-live="polite">
+    <span key="showing" aria-live="polite" data-ds="">
       Showing{' '}
       {range ? (
         <>
@@ -53,23 +55,23 @@ export const PaginationInfo = ({
 
   if (filtered && unfilteredTotal !== undefined)
     details.push(
-      <span key="filtered">
+      <span key="filtered" data-ds="">
         Filtered from <Count value={unfilteredTotal} />
       </span>,
     );
 
   if (selectedCount !== undefined && selectedCount > 0)
     details.push(
-      <span key="selected">
+      <span key="selected" data-ds="">
         <Count value={selectedCount} /> {plural(selectedCount, one, many)}{' '}
         selected
       </span>,
     );
 
   return (
-    <div data-slot="pagination-info" className="flex-col-gap-0.5">
+    <div data-slot="pagination-info" className="flex-col-gap-0.5" data-ds="">
       {details.length > 0 && (
-        <span>
+        <span data-ds="">
           {details.flatMap((detail, index) =>
             index === 0 ? [detail] : [' · ', detail],
           )}

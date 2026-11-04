@@ -1,5 +1,7 @@
 {
-  "tokens": ["packages/styles/src/tokens.css.ts"],
+  "tokens": [
+    "packages/styles/src/tokens.css.ts"
+  ],
   "components": [
     "packages/ui/src/*/index.{ts,tsx}",
     "packages/utils/src/hooks/index.ts",
@@ -15,5 +17,11 @@
     "web/app/components/*/*.recipe.tsx",
     "web/app/shared/*.recipe.tsx"
   ],
-  "importExceptions": ["packages/ui/src/Selectable/Selectable.tsx"]
+  "importExceptions": [
+    "packages/ui/src/Selectable/Selectable.tsx"
+  ],
+  "designSystemFolders": [
+    "packages"
+  ],
+  "invalidAlternatives": "invalid-alternatives.json"
 }

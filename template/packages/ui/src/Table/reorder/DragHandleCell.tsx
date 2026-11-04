@@ -43,7 +43,7 @@ export const DragHandleCell = memo(
         {...props}
         className={classNames(styles.cellControl, styles.dragHandle)}
       >
-        <GripVertical size={16} />
+        <GripVertical size={16} data-ds="" />
       </IconButton>
     </Primitives.Cell>
   ),

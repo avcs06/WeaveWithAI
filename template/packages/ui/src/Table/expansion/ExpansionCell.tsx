@@ -32,7 +32,10 @@ export const ExpansionCell = memo(
       <Primitives.Cell data-slot="expansion-cell">
         {/* A block, so the cell centers it; inline, it sits on the baseline. */}
         {expandable && (
-          <div className="flex-row-gap-0 items-center justify-center">
+          <div
+            className="flex-row-gap-0 items-center justify-center"
+            data-ds=""
+          >
             <IconButton
               size="xs"
               variant="base"
@@ -45,7 +48,11 @@ export const ExpansionCell = memo(
               disabled={disabled}
               onClick={() => store('toggleRowExpansion')(rowKey)}
             >
-              {expanded ? <ChevronDown /> : <ChevronRight />}
+              {expanded ? (
+                <ChevronDown data-ds="" />
+              ) : (
+                <ChevronRight data-ds="" />
+              )}
             </IconButton>
           </div>
         )}

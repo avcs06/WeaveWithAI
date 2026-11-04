@@ -1,19 +1,25 @@
 /**
  * Input: a single-line text field. `onChange` gets the text, not an event. With
  * `delay`, the text shows at once and `onChange` waits for a pause in typing.
- * PasswordInput, SearchInput and NumberInput are the fields for those values.
+ * PasswordInput, SearchInput and NumberInput are the fields for those values;
+ * QuantitySelector is a small count stepped with − and + or typed.
  * In a `useForm` form, every field renders through `Controller`, and
  * `{...field}` gives it its name, value, `onChange`, `required` mark, `error`
  * and focus on a failed submit.
  *
  * When not to use:
  * - A password: PasswordInput. A search: SearchInput. A number: NumberInput.
- * - A choice from a list: Select. A date or time: FormControl around the native
- *   input.
+ *   A small count, like an item's quantity: QuantitySelector.
+ * - A choice from a list: Select. A date: DateInput. A time: FormControl around
+ *   the native input.
  *
  * Pitfalls:
  * - Every field needs a name: `label`, `aria-label` or `aria-labelledby`. A
  *   placeholder is not a name.
+ * - A button that acts on the field's value, such as Send, Apply or Move,
+ *   goes in its `action`, in a form or out of one, such as a filter bar or a
+ *   toolbar. A button beside the field in a flex row lines up with the label,
+ *   not the box.
  * - Set `required` through the `rules` of `Controller`, which also marks the
  *   field. `{...field}` overwrites a `required` or `error` given before it, so
  *   spread it first when you override either.
@@ -27,13 +33,18 @@
  * - SearchInput's `loading` locks typing unless `disableWhileLoading={false}`.
  * - NumberInput shows a text keyboard on phones unless `min` is 0 or more or
  *   `allowNegative={false}`: number keypads have no minus key.
+ * - QuantitySelector starts at `min`, 1 unless set. Give `maxReason` the
+ *   reason the count stops, such as "Only 5 in stock", and name it for its
+ *   item: `aria-label="Quantity of …"`.
  */
 import { Button, IconButton } from '@packages/ui/Button';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import {
+  DateInput,
   Input,
   NumberInput,
   PasswordInput,
+  QuantitySelector,
   SearchInput,
 } from '@packages/ui/Input';
 import { Link } from '@packages/ui/Link';
@@ -82,10 +93,16 @@ const ContactForm = () => {
   } = useForm<Contact>({ defaultValues: { name: '', email: '', phone: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(saveContact)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Saving your contact' : undefined}
+        >
+          Save
+        </Button>
+      }
     >
       <Controller
         name="name"
@@ -127,13 +144,7 @@ const ContactForm = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Saving your contact' : undefined}
-      >
-        Save
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -329,10 +340,16 @@ const EventAddressField = () => {
   } = useForm<Address>({ mode: 'onChange', defaultValues: { address: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(reserveAddress)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Reserving the address' : undefined}
+        >
+          Reserve
+        </Button>
+      }
     >
       <Controller
         name="address"
@@ -360,13 +377,7 @@ const EventAddressField = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Reserving the address' : undefined}
-      >
-        Reserve
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -506,10 +517,16 @@ const GuestCount = () => {
   } = useForm<Guests>({ defaultValues: { guests: null } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(addGuests)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Adding your guests' : undefined}
+        >
+          Add guests
+        </Button>
+      }
     >
       <Controller
         name="guests"
@@ -529,13 +546,7 @@ const GuestCount = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Adding your guests' : undefined}
-      >
-        Add guests
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -561,10 +572,16 @@ const SignInForm = () => {
   };
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(submit)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
+        >
+          Sign in
+        </Button>
+      }
     >
       <Controller
         name="password"
@@ -582,13 +599,7 @@ const SignInForm = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Signing you in' : undefined}
-      >
-        Sign in
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -608,10 +619,16 @@ const SignUpPassword = () => {
   } = useForm<SignUp>({ defaultValues: { password: '', confirm: '' } });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(createAccount)}
-      className="flex-col-gap-4 items-start"
+      actions={
+        <Button
+          type="submit"
+          loadingWithReason={isSubmitting ? 'Creating your account' : undefined}
+        >
+          Create account
+        </Button>
+      }
     >
       <Controller
         name="password"
@@ -648,13 +665,7 @@ const SignUpPassword = () => {
           />
         )}
       </Controller>
-      <Button
-        type="submit"
-        loadingWithReason={isSubmitting ? 'Creating your account' : undefined}
-      >
-        Create account
-      </Button>
-    </form>
+    </Form>
   );
 };
 
@@ -733,10 +744,78 @@ const VenueSearch = () => {
   );
 };
 
+/**
+ * A day on the browser's own picker: `value` is the day as `2026-11-07`, `''`
+ * while empty, and `min` and `max` bound it the same way.
+ */
+const EventDay = () => {
+  const [day, setDay] = useState('');
+  return (
+    <DateInput
+      label="Event day"
+      autoComplete="off"
+      min="2026-01-01"
+      value={day}
+      onChange={setDay}
+    />
+  );
+};
+
+/**
+ * A button beside the field: `action` lines it up with the box, so the label
+ * stays above both and a message below both. The button says why it waits.
+ */
+const InviteByEmail = () => {
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState('');
+  const invalid = email !== '' && !email.includes('@');
+
+  return (
+    <div className="flex-col-gap-2">
+      <Input
+        label="Invite by email"
+        type="email"
+        autoComplete="off"
+        value={email}
+        onChange={setEmail}
+        error={invalid ? 'Enter an email like name@example.com' : undefined}
+        action={
+          <Button
+            disabledWithReason={
+              email === '' || invalid ? 'Enter an email first' : undefined
+            }
+            onClick={() => setSent(`Invited ${email}`)}
+          >
+            Send
+          </Button>
+        }
+      />
+      <p role="status">{sent}</p>
+    </div>
+  );
+};
+
+/** A count stepped or typed, such as an item's quantity, with the reason it stops. */
+const ItemQuantity = () => {
+  const [quantity, setQuantity] = useState<number | null>(1);
+  return (
+    <QuantitySelector
+      aria-label="Quantity of the item"
+      autoComplete="off"
+      value={quantity}
+      onChange={setQuantity}
+      max={5}
+      maxReason="Only 5 in stock"
+    />
+  );
+};
+
 export default function InputRecipe() {
   return (
     <div className="flex-col-gap-6">
       <ContactForm />
+      <EventDay />
+      <InviteByEmail />
       <AutosavedTitle />
       <PromoCode />
       <Tagline />
@@ -752,6 +831,7 @@ export default function InputRecipe() {
       <VenueCapacity />
       <AgendaShift />
       <GuestCount />
+      <ItemQuantity />
       <SignInForm />
       <SignUpPassword />
       <EventSearch />

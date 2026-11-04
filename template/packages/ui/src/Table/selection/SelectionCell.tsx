@@ -22,7 +22,10 @@ export const SelectionCell = memo(
       <Primitives.Cell data-slot="selection-cell">
         {/* A block, so the cell centers it; inline, it sits on the baseline. */}
         {selectable && (
-          <div className="flex-row-gap-0 items-center justify-center">
+          <div
+            className="flex-row-gap-0 items-center justify-center"
+            data-ds=""
+          >
             <Checkbox
               aria-label={`Select ${label}`}
               disabled={disabled}

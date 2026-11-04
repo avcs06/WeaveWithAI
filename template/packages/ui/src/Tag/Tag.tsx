@@ -74,18 +74,24 @@ export const Tag = ({
     >
       <span
         {...props}
+        data-ds=""
         data-closable={closable || undefined}
         data-disabled={isDisabled || undefined}
         className={classNames(
           'inline-flex-row-gap-0 items-center',
-          'max-w-full',
+          'max-w-full w-fit',
           tagClassName,
           className,
         )}
       >
         {leftSlot}
         <Tooltip tooltip={closable ? hoverTooltip : null} description={null}>
-          <span id={labelId} ref={labelRef} className={labelClassName}>
+          <span
+            id={labelId}
+            ref={labelRef}
+            className={labelClassName}
+            data-ds=""
+          >
             {children}
           </span>
         </Tooltip>
@@ -107,7 +113,7 @@ export const Tag = ({
             onClick={onClose}
             className={classNames(tagClose, 'shrink-0')}
           >
-            <X />
+            <X data-ds="" />
           </IconButton>
         )}
       </span>

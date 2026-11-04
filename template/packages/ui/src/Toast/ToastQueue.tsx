@@ -84,6 +84,7 @@ const ToastItem = ({ id, open, config }: ToastEntry) => {
         toastSurface,
         'flex-row-gap-3 items-center shrink-0',
       )}
+      data-ds=""
     >
       <span
         data-slot="status"
@@ -91,21 +92,24 @@ const ToastItem = ({ id, open, config }: ToastEntry) => {
           statusClassName,
           'grid place-items-center shrink-0',
         )}
+        data-ds=""
       >
-        {icon ?? <Glyph aria-hidden />}
-        {label && <span className="sr-only">{`${label}: `}</span>}
+        {icon ?? <Glyph aria-hidden data-ds="" />}
+        {label && <span className="sr-only" data-ds="">{`${label}: `}</span>}
       </span>
       <div
         data-slot="text"
         className={classNames(toastText, 'flex-col-gap-1 flex-fill-x')}
+        data-ds=""
       >
-        <ToastPrimitive.Title ref={titleRef} className={toastTitle}>
+        <ToastPrimitive.Title ref={titleRef} className={toastTitle} data-ds="">
           <Truncate>{title}</Truncate>
         </ToastPrimitive.Title>
         {hasContent(description) && (
           <ToastPrimitive.Description
             ref={descriptionRef}
             className={toastDescription}
+            data-ds=""
           >
             {description}
           </ToastPrimitive.Description>
@@ -121,7 +125,7 @@ const ToastItem = ({ id, open, config }: ToastEntry) => {
       {closable && (
         <ToastPrimitive.Close asChild>
           <IconButton tooltip="Close" size="xs" variant="base" look="ghost">
-            <X />
+            <X data-ds="" />
           </IconButton>
         </ToastPrimitive.Close>
       )}
@@ -142,14 +146,18 @@ export const ToastQueue = () => {
   return (
     <ToastPrimitive.Provider swipeDirection="right">
       {/* Always mounted, so changes are read; a new key rereads the same text. */}
-      <div role="status" className="sr-only">
+      <div role="status" className="sr-only" data-ds="">
         {announcement && !announcement.isUrgent && (
-          <span key={announcement.key}>{announcement.text}</span>
+          <span key={announcement.key} data-ds="">
+            {announcement.text}
+          </span>
         )}
       </div>
-      <div role="alert" className="sr-only">
+      <div role="alert" className="sr-only" data-ds="">
         {announcement?.isUrgent && (
-          <span key={announcement.key}>{announcement.text}</span>
+          <span key={announcement.key} data-ds="">
+            {announcement.text}
+          </span>
         )}
       </div>
       {toasts.map((entry) => (
@@ -165,6 +173,7 @@ export const ToastQueue = () => {
           'fixed right-0 bottom-0 m-0',
           'overflow-x-hidden',
         )}
+        data-ds=""
       />
     </ToastPrimitive.Provider>
   );

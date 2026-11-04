@@ -94,6 +94,7 @@ export const Checkbox = ({
                 boxClassName,
                 'grid place-items-center shrink-0 cursor-pointer',
               )}
+              data-ds=""
             >
               {isChecked && <Mark aria-hidden data-slot="icon" />}
             </span>

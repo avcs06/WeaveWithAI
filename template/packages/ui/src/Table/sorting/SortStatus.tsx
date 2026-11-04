@@ -22,7 +22,7 @@ export const SortStatus = () => {
   if (sorted && !wasSorted) setWasSorted(true);
 
   return (
-    <span role="status" className="sr-only">
+    <span role="status" className="sr-only" data-ds="">
       {sorted || (wasSorted ? 'Sorting cleared' : '')}
     </span>
   );

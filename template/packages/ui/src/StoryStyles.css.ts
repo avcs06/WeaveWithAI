@@ -33,6 +33,14 @@ export const panelRadius = style({ borderRadius: tokens.radius.surface });
 export const dashedBorder = style({ borderStyle: 'dashed' });
 export const caption = style({ fontSize: tokens.fontSize.caption });
 export const canvas = style({ maxWidth: '1200px' });
+// A stand-in for an app's sidebar: its width, the height under a header, and the frame's background.
+export const sidebarFrame = style({
+  width: '264px',
+  height: '360px',
+  padding: tokens.spacing[4],
+  background: tokens.color.surface.frameBg,
+  borderRadius: tokens.radius.surface,
+});
 export const mediumTwoColumns = style({
   '@media': {
     '(min-width: 768px)': { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' },

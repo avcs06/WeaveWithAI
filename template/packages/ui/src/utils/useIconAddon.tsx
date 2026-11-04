@@ -39,6 +39,7 @@ export const useIconAddon = ({
         data-slot="icon-box"
         className="inline-flex justify-center items-center"
         style={{ height: fixedHeight }}
+        data-ds=""
       >
         {slot}
       </div>
@@ -52,7 +53,7 @@ export const useIconAddon = ({
         {addOn}
       </Slot>
     ) : (
-      <span key={key} data-slot="add-on">
+      <span key={key} data-slot="add-on" data-ds="">
         {addOn}
       </span>
     );

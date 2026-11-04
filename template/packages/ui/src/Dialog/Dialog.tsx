@@ -78,10 +78,12 @@ export const Dialog = ({
         <DialogPrimitive.Overlay
           data-slot="overlay"
           className={classNames(dialogOverlay, 'fixed inset-0')}
+          data-ds=""
         />
         <DialogPrimitive.Content
           // Radix points to a description even when there's none.
           {...(hasDescription ? {} : { 'aria-describedby': undefined })}
+          data-ds=""
           onEscapeKeyDown={blockUnlessClosable}
           onInteractOutside={blockUnlessClosable}
           // Radix refocuses only its own trigger: back to whatever opened it.
@@ -111,13 +113,15 @@ export const Dialog = ({
           <div
             data-slot="header"
             className={classNames(dialogHeader, 'flex-row-gap-4 items-start')}
+            data-ds=""
           >
-            <div className="flex-col-gap-1 flex-fill-x">
+            <div className="flex-col-gap-1 flex-fill-x" data-ds="">
               <DialogPrimitive.Title
                 className={classNames(
                   dialogTitle,
                   'flex-row-gap-2 items-center',
                 )}
+                data-ds=""
               >
                 {leftSlot}
                 {/* Its id names the body; Radix keeps the title's own. */}
@@ -127,7 +131,10 @@ export const Dialog = ({
                 {rightSlot}
               </DialogPrimitive.Title>
               {hasDescription && (
-                <DialogPrimitive.Description className={dialogDescription}>
+                <DialogPrimitive.Description
+                  className={dialogDescription}
+                  data-ds=""
+                >
                   {description}
                 </DialogPrimitive.Description>
               )}
@@ -136,6 +143,7 @@ export const Dialog = ({
               <div
                 data-slot="header-actions"
                 className="flex-row-gap-2 items-center shrink-0"
+                data-ds=""
               >
                 {headerAction}
                 {closable && (
@@ -146,7 +154,7 @@ export const Dialog = ({
                       variant="base"
                       look="ghost rounded"
                     >
-                      <X />
+                      <X data-ds="" />
                     </IconButton>
                   </DialogPrimitive.Close>
                 )}
@@ -160,7 +168,7 @@ export const Dialog = ({
               aria-labelledby={titleId}
               data-slot="body"
             >
-              <div data-slot="body-content" className={dialogBody}>
+              <div data-slot="body-content" className={dialogBody} data-ds="">
                 {children}
               </div>
             </FlexScrollArea>
@@ -169,6 +177,7 @@ export const Dialog = ({
             <div
               data-slot="footer"
               className={classNames(dialogFooter, 'flex-row-gap-2 justify-end')}
+              data-ds=""
             >
               {footerContent}
             </div>

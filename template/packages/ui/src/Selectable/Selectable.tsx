@@ -148,7 +148,7 @@ const GroupRoot = ({ group, element, state }: GroupRootProps) => {
       >
         {/* Focus from its label or a failed submit reads the group's name
             and message; Tab goes to the items. */}
-        <div {...props} {...attributes} role="group" tabIndex={-1} />
+        <div {...props} {...attributes} role="group" tabIndex={-1} data-ds="" />
       </SelectableGroupProvider>
     );
   }
@@ -161,6 +161,7 @@ const GroupRoot = ({ group, element, state }: GroupRootProps) => {
       <RadioGroupPrimitive.Root
         {...props}
         {...element}
+        data-ds=""
         // react-hook-form's value is `undefined` until the form has a default.
         value={value ?? ''}
         onValueChange={onChange}

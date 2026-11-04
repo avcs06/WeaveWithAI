@@ -13,4 +13,5 @@ export type {
   ControlProps,
   FormControlProps,
   ControlStatus,
+  FieldWidth,
 } from './FormControl.types';

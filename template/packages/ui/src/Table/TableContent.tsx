@@ -79,6 +79,10 @@ export const TableContent = ({
       ),
     [columnOrder, columnsById],
   );
+  const columnIds = useMemo(
+    () => columns.map((column) => column.id),
+    [columns],
+  );
 
   // Shared by select-all, the body and the pagination counts.
   const rows = useClientRows({
@@ -130,7 +134,7 @@ export const TableContent = ({
           rows={rows}
           rowKey={getRowKey}
           slots={slots}
-          columnIds={columnOrder}
+          columnIds={columnIds}
           virtualized={virtualized}
           reorderEnabled={reorderEnabled}
           infiniteScrollEnabled={infiniteScrollEnabled}
@@ -141,7 +145,7 @@ export const TableContent = ({
       </Primitives.Frame>
 
       {/* Loading rows are hidden from assistive tech; this announces them. */}
-      <span role="status" className="sr-only">
+      <span role="status" className="sr-only" data-ds="">
         {loading ? 'Loading…' : ''}
       </span>
       <SortStatus />

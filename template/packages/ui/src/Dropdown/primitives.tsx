@@ -504,7 +504,7 @@ export const DropdownSearch = ({
 
   return (
     <>
-      <div data-slot="search" className="mx-1.5 py-1">
+      <div data-slot="search" className="mx-1.5 py-1" data-ds="">
         <SearchInput
           {...props}
           ref={mergeRefs(ref, search.ref)}
@@ -512,7 +512,7 @@ export const DropdownSearch = ({
         />
         {/* In the menu: a modal menu hides everything else from assistive
             tech, live regions too. */}
-        <span role="status" className="sr-only">
+        <span role="status" className="sr-only" data-ds="">
           {isSearching && (isEmpty ? 'No matches' : results)}
         </span>
       </div>
@@ -521,6 +521,7 @@ export const DropdownSearch = ({
           // The status announces it.
           aria-hidden
           data-slot="message"
+          data-ds=""
           className={classNames(searchMessage, 'py-4 px-3 text-center')}
         >
           No matches

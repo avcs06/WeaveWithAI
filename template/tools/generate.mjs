@@ -135,7 +135,7 @@ export async function generate(
   await cp(source, target, {
     recursive: true,
     force: false,
-    // tools/weave-design-system-mcp is a link to ../../mcps/design-system; copy its files.
+    // tools/weave-design-system-mcp is a link to ../../mcps/frontend; copy its files.
     dereference: true,
     errorOnExist: true,
     filter(path) {

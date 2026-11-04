@@ -45,8 +45,11 @@ export const UIRoot = ({ lang = 'en', children }: UIRootProps) => {
       data-dark-class={darkThemeClass}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: systemThemeScript }} />
+      <head data-ds="">
+        <script
+          dangerouslySetInnerHTML={{ __html: systemThemeScript }}
+          data-ds=""
+        />
       </head>
       <body>
         <UIProviders>

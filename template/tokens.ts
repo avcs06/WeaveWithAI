@@ -1,8 +1,16 @@
+const fontFamily = {
+  display: 'var(--font-display), Georgia, serif',
+  ui: 'var(--font-ui), system-ui, -apple-system, sans-serif',
+  mono: 'var(--font-mono), monospace',
+} as const;
+
 export const tokens = {
-  fontFamily: {
-    display: 'var(--font-display), Georgia, serif',
-    ui: 'var(--font-ui), system-ui, -apple-system, sans-serif',
-    mono: 'var(--font-mono), monospace',
+  fontFamily,
+  logo: {
+    fontFamily: fontFamily.ui,
+    fontWeight: '700',
+    textTransform: 'none',
+    letterSpacing: '0em',
   },
   lineHeight: {
     0: '0px',

@@ -25,7 +25,7 @@
  */
 import { Button } from '@packages/ui/Button';
 import { Checkbox, CheckboxGroup } from '@packages/ui/Checkbox';
-import { Controller } from '@packages/ui/Form';
+import { Controller, Form } from '@packages/ui/Form';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -184,10 +184,9 @@ const NotificationChannels = () => {
   });
 
   return (
-    <form
-      noValidate
+    <Form
       onSubmit={handleSubmit(savePreferences)}
-      className="flex-col-gap-4 items-start"
+      actions={<Button type="submit">Save preferences</Button>}
     >
       <Controller
         name="channels"
@@ -212,8 +211,7 @@ const NotificationChannels = () => {
           </CheckboxGroup>
         )}
       </Controller>
-      <Button type="submit">Save preferences</Button>
-    </form>
+    </Form>
   );
 };
 

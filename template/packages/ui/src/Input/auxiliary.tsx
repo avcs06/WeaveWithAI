@@ -4,7 +4,7 @@ import { classNames } from '@packages/styles/classNames';
 import { SEARCH_DEBOUNCE_MS } from '@packages/utils/constants';
 import { composeHandlers } from '@packages/utils/events';
 import { useBoundState } from '@packages/utils/hooks';
-import { Eye, EyeOff, Search, X } from 'lucide-react';
+import { Eye, EyeOff, Minus, Plus, Search, X } from 'lucide-react';
 import React, {
   type KeyboardEvent,
   useLayoutEffect,
@@ -16,24 +16,25 @@ import { IconButton } from '../Button';
 import { mergeRefs, useIsDisabled } from '../utils';
 
 import { InputBase } from './Input';
-import { fieldButton, searchField } from './Input.css';
+import { fieldButton, quantityField, searchField } from './Input.css';
 
 import type {
+  DateInputProps,
   FieldButtonProps,
   NumberInputProps,
   PasswordInputProps,
+  QuantitySelectorProps,
   SearchInputProps,
 } from './Input.types';
 
 /**
  * A button in the field's box, as tall as its line so the box keeps its height.
  */
-const FieldButton = ({ label, size, ...props }: FieldButtonProps) => (
+const FieldButton = ({ label, ...props }: FieldButtonProps) => (
   <IconButton
     {...props}
     variant="base"
     look="ghost"
-    size={size === 'md' ? 'sm' : 'xs'}
     tooltip={label}
     className={fieldButton}
   />
@@ -51,7 +52,7 @@ export const SearchInput = ({
   value,
   onChange,
   variant = 'base',
-  leftIcon = <Search aria-hidden />,
+  leftIcon = <Search aria-hidden data-ds="" />,
   ref,
   onBlur,
   onKeyDown,
@@ -102,13 +103,12 @@ export const SearchInput = ({
         !isDisabled && (
           <FieldButton
             label="Clear search"
-            size={props.size}
             onClick={() => {
               search('');
               inputRef.current?.focus();
             }}
           >
-            <X />
+            <X data-ds="" />
           </FieldButton>
         )
       }
@@ -137,17 +137,28 @@ export const PasswordInput = (props: PasswordInputProps) => {
         // button often isn't announced.
         <FieldButton
           label="Show password"
-          size={props.size}
           disabled={isDisabled}
           aria-pressed={visible}
           onClick={() => setVisible(!visible)}
         >
-          {visible ? <EyeOff /> : <Eye />}
+          {visible ? <EyeOff data-ds="" /> : <Eye data-ds="" />}
         </FieldButton>
       }
     />
   );
 };
+
+/**
+ * A date field on the browser's own picker: `value` and `onChange` are the
+ * day as `2026-11-07`, `''` while empty, and `min` and `max` bound it the
+ * same way. The picker shows the day in the browser's language; show a saved
+ * day with Typography's `Time`.
+ *
+ * @invalidAlternative input[type="date"], Input[type="date"]
+ */
+export const DateInput = (props: DateInputProps) => (
+  <InputBase {...props} type="date" />
+);
 
 const toText = (number: number | null) => (number === null ? '' : `${number}`);
 
@@ -270,6 +281,67 @@ export const NumberInput = <D extends number = never>({
         settle();
         onBlur?.(event);
       }}
+    />
+  );
+};
+
+/**
+ * A small count the user steps or types, such as an item's quantity in a
+ * cart: a number field between a − and a + button. Whole numbers from `min`,
+ * 1 unless set, to `max`; at either limit its button says why it goes no
+ * further. The arrow keys step it as the buttons do.
+ */
+export const QuantitySelector = ({
+  value,
+  onChange,
+  min = 1,
+  max = Infinity,
+  step = 1,
+  minReason = 'Already the fewest',
+  maxReason = 'No more',
+  className,
+  ...props
+}: QuantitySelectorProps) => {
+  const { isDisabled } = useIsDisabled(props);
+  const current = value ?? min;
+  const stepTo = (next: number) => onChange(Math.min(max, Math.max(min, next)));
+
+  return (
+    <NumberInput
+      {...props}
+      value={value}
+      onChange={onChange}
+      min={min}
+      max={max}
+      step={step}
+      allowDecimal={false}
+      allowNegative={min < 0}
+      className={classNames('w-fit', quantityField, className)}
+      leftAddOn={
+        <FieldButton
+          label="Decrease"
+          // The field's arrow keys step it already.
+          tabIndex={-1}
+          {...(isDisabled
+            ? { disabled: true }
+            : { disabledWithReason: current <= min ? minReason : undefined })}
+          onClick={() => stepTo(current - step)}
+        >
+          <Minus />
+        </FieldButton>
+      }
+      rightAddOn={
+        <FieldButton
+          label="Increase"
+          tabIndex={-1}
+          {...(isDisabled
+            ? { disabled: true }
+            : { disabledWithReason: current >= max ? maxReason : undefined })}
+          onClick={() => stepTo(current + step)}
+        >
+          <Plus />
+        </FieldButton>
+      }
     />
   );
 };

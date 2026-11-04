@@ -41,4 +41,7 @@ export type RadioProps = Omit<
   RadioName;
 
 /** The chosen radio's value is its `value`; the caller lays the radios out. */
-export type RadioGroupProps = SelectableSingleGroupProps;
+export type RadioGroupProps = SelectableSingleGroupProps & {
+  /** The layout of the radios, such as `flex-col-gap-2`: the group lays out nothing itself. */
+  className?: string;
+};

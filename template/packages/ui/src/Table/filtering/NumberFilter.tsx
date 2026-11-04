@@ -54,7 +54,7 @@ export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
       align="end"
       menu={
         // Inset like the enum filter's search row.
-        <div className="flex-col-gap-2 mx-1.5">
+        <div className="flex-col-gap-2 mx-1.5" data-ds="">
           {OPERATORS.map(({ key, symbol, placeholder }) => (
             <NumberInput
               key={key}
@@ -68,6 +68,7 @@ export const NumberFilter = ({ label, value, onChange }: NumberFilterProps) => {
               leftAddOn={
                 <span
                   className={classNames(styles.filterOperator, 'text-center')}
+                  data-ds=""
                 >
                   {symbol}
                 </span>

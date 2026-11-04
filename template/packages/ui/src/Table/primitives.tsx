@@ -13,6 +13,7 @@ export type RootProps = ComponentProps<'div'>;
 export const Root = ({ className, ...props }: RootProps) => (
   <div
     {...props}
+    data-ds=""
     // Own stacking context: the body's z-index (over the header's edge) stays
     // below portalled popovers.
     className={classNames(
@@ -30,6 +31,7 @@ export const Frame = ({ className, ...props }: FrameProps) => (
   <div
     role="table"
     {...props}
+    data-ds=""
     className={classNames('flex-col-gap-0 min-h-0 flex-initial', className)}
   />
 );
@@ -42,6 +44,7 @@ export const HeaderViewport = ({
 }: HeaderViewportProps) => (
   <div
     {...props}
+    data-ds=""
     // Clips the header's visually hidden text, which would widen the page.
     className={classNames(
       styles.headerViewport,
@@ -57,18 +60,21 @@ export const Table = ({ className, ...props }: TableProps) => (
   <table
     role="presentation"
     {...props}
+    data-ds=""
     className={classNames(styles.table, 'w-full', className)}
   />
 );
 
 export type ColumnGroupProps = ComponentProps<'colgroup'>;
-export const ColumnGroup = (props: ColumnGroupProps) => <colgroup {...props} />;
+export const ColumnGroup = (props: ColumnGroupProps) => (
+  <colgroup {...props} data-ds="" />
+);
 
 export type ColumnProps = Omit<ComponentProps<'col'>, 'width'> & {
   width?: TableColumnWidth;
 };
 export const Column = ({ width, style, ...props }: ColumnProps) => (
-  <col {...props} style={{ width, ...style }} />
+  <col {...props} style={{ width, ...style }} data-ds="" />
 );
 
 // Explicit roles aren't redundant: `Table` is role="presentation", which drops
@@ -77,7 +83,7 @@ export const Column = ({ width, style, ...props }: ColumnProps) => (
 export type HeaderProps = ComponentProps<'thead'>;
 export const Header = (props: HeaderProps) => (
   // eslint-disable-next-line jsx-a11y/no-redundant-roles -- see above
-  <thead role="rowgroup" {...props} />
+  <thead role="rowgroup" {...props} data-ds="" />
 );
 
 export type BodyProps = ComponentProps<'tbody'>;
@@ -86,13 +92,19 @@ export const Body = ({ className, ...props }: BodyProps) => (
   <tbody
     role="rowgroup"
     {...props}
+    data-ds=""
     className={classNames(styles.body, className)}
   />
 );
 
 export type RowProps = ComponentProps<'tr'>;
 export const Row = ({ className, ...props }: RowProps) => (
-  <tr role="row" {...props} className={classNames(styles.row, className)} />
+  <tr
+    role="row"
+    {...props}
+    className={classNames(styles.row, className)}
+    data-ds=""
+  />
 );
 
 export type HeaderCellProps = ComponentProps<'th'>;
@@ -102,6 +114,7 @@ export const HeaderCell = ({ className, ...props }: HeaderCellProps) => (
     scope="col"
     role="columnheader"
     {...props}
+    data-ds=""
     className={classNames(styles.columnHeaderCell, 'align-middle', className)}
   />
 );
@@ -124,6 +137,7 @@ export const Cell = ({
       scope={rowHeader ? 'row' : undefined}
       role={rowHeader ? 'rowheader' : 'cell'}
       {...props}
+      data-ds=""
       className={classNames(
         styles.cell,
         alignClassName,

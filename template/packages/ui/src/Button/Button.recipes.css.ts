@@ -156,6 +156,16 @@ export const buttonRecipe = recipe({
     ghost: { true: buttonStyle(buttonGhostStyle), false: {} },
   },
   compoundVariants: [
+    // A pill's round ends take up its side padding, so a rounded button gets
+    // more of it; the icon sizes stay square.
+    {
+      variants: { size: 'sm', rounded: true },
+      style: buttonStyle({ paddingInline: spacing[3] }),
+    },
+    {
+      variants: { size: 'md', rounded: true },
+      style: buttonStyle({ paddingInline: spacing[4] }),
+    },
     {
       variants: { variant: 'default', ghost: true },
       style: ghostColors(

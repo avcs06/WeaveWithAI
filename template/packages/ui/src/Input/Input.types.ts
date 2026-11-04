@@ -2,7 +2,7 @@ import type { Constant } from '@packages/utils/types';
 
 // eslint-disable-next-line import-rules/barrel-only-sibling-imports -- FormControl's own props, for the controls built on it.
 import type { FormControlOwnProps } from '../FormControl/FormControl.types';
-import type { SetByComponent } from '../utils';
+import type { DisabledState, SetByComponent } from '../utils';
 import type {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
@@ -80,6 +80,16 @@ export type SearchInputProps = TextFieldProps<'type'> &
   FieldName &
   SetByComponent<'rightIcon' | 'rightAddOn'>;
 
+/** The browser's own date picker; every value is a day, `2026-11-07`. */
+export type DateInputProps = TextFieldProps<'type' | 'min' | 'max' | 'step'> &
+  FieldName &
+  Pick<DelayProps<never>, 'autoComplete'> & {
+    /** The first day it takes, as `2026-11-07`. */
+    min?: string;
+    /** The last day it takes, as `2026-11-07`. */
+    max?: string;
+  };
+
 /** The toggle takes the right side and switches `type`. */
 export type PasswordInputProps = InputProps &
   SetByComponent<'type' | 'rightIcon' | 'rightAddOn'>;
@@ -104,11 +114,27 @@ export type NumberInputProps<D extends number = never> = FormControlOwnProps &
     allowNegative?: boolean;
   };
 
-export type FieldButtonProps = {
+/** Whole numbers between its own buttons. */
+export type QuantitySelectorProps = NumberInputProps &
+  SetByComponent<
+    | 'allowDecimal'
+    | 'allowNegative'
+    | 'leftIcon'
+    | 'rightIcon'
+    | 'leftAddOn'
+    | 'rightAddOn'
+  > & {
+  /** Why − can't go lower at `min`, in its tooltip; "Already the fewest" unless set. */
+  minReason?: string;
+  /** Why + can't go higher at `max`, such as "Only 5 in stock"; "No more" unless set. */
+  maxReason?: string;
+};
+
+export type FieldButtonProps = DisabledState & {
   /** The button's name, also shown in its tooltip. */
   label: string;
-  size: FormControlOwnProps['size'];
-  disabled?: boolean;
+  /** -1 keeps it out of the tab order, when the field's keys do the same. */
+  tabIndex?: number;
   'aria-pressed'?: boolean;
   onClick: () => void;
   children: ReactElement;

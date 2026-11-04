@@ -4,6 +4,7 @@ import { classNames } from '@packages/styles/classNames';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Tooltip } from '../Tooltip';
+import { useImageFailed } from '../utils';
 
 import { avatarRecipe } from './Avatar.recipes.css';
 
@@ -19,27 +20,6 @@ const getInitials = (name: string) => {
       .join('')
       .toUpperCase()
   );
-};
-
-/**
- * Whether `src` failed to load. It can fail before hydration, missing React's
- * error event, so a settled image is checked: `decode()` rejects when broken.
- */
-const useImageFailed = (src: string | undefined) => {
-  const ref = useRef<HTMLImageElement>(null);
-  const [failedSrc, setFailedSrc] = useState<string>();
-
-  useEffect(() => {
-    const image = ref.current;
-    // jsdom has no `decode`.
-    if (image?.complete) image.decode?.().catch(() => setFailedSrc(src));
-  }, [src]);
-
-  return {
-    ref,
-    failed: src !== undefined && failedSrc === src,
-    onError: () => setFailedSrc(src),
-  };
 };
 
 /**
@@ -90,6 +70,7 @@ export const Avatar = ({
         // Without a tab stop, keyboard users can't reach the name tooltip.
         tabIndex={focusable ? 0 : undefined}
         {...props}
+        data-ds=""
         className={classNames(
           avatarClassName,
           'inline-flex-row-gap-0 items-center justify-center shrink-0',
@@ -105,9 +86,10 @@ export const Avatar = ({
             data-slot="image"
             onError={image.onError}
             className="w-full h-full object-cover"
+            data-ds=""
           />
         ) : (
-          <span aria-hidden data-slot="initials">
+          <span aria-hidden data-slot="initials" data-ds="">
             {getInitials(name)}
           </span>
         )}

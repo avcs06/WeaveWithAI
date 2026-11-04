@@ -79,6 +79,22 @@ describe('Dropdown', () => {
     );
   });
 
+  it('opens below its trigger, or to its right with side="right"', async () => {
+    const { unmount } = renderUI(<ActionsMenu menu={basicMenu()} />);
+    await userEvent.click(button('Actions'));
+    expect(await screen.findByRole('menu')).toHaveAttribute(
+      'data-side',
+      'bottom',
+    );
+    unmount();
+    renderUI(<ActionsMenu side="right" menu={basicMenu()} />);
+    await userEvent.click(button('Actions'));
+    expect(await screen.findByRole('menu')).toHaveAttribute(
+      'data-side',
+      'right',
+    );
+  });
+
   it('from the keyboard: Enter opens on the first item, arrows move, Escape closes back to the trigger', async () => {
     renderUI(<ActionsMenu menu={basicMenu()} />);
     await openWithKeyboard();
