@@ -68,7 +68,7 @@ export function pagesSpec(architecture: Architecture, contract: Contract, flows:
 }
 
 /** How the browser checks open a screen: the landing page also checks its first viewport, and a page behind sign-in loads with a member's session. */
-const pageSample = (run: Run, screen: Screen, route: CheckedRoute): RouteSample =>
+export const pageSample = (run: Run, screen: Screen, route: CheckedRoute): RouteSample =>
   routeSample(route.url, screen.id, screen.route === '/', route.signedIn ? signedIn(storagePrefix(run)) : undefined);
 
 function pagesUnits(ctx: StageContext): UnitSpec[] {

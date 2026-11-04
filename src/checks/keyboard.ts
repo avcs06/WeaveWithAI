@@ -6,7 +6,8 @@ import { type Finding, finding } from './types';
 // order, shows its focus, and does not trap it; buttons act on Enter and
 // Space. Requests that could change data are aborted while it walks.
 
-type Focusable = { element: string; app: boolean; button: boolean; skip: boolean };
+/** `group` names the composite widget a control sits in, such as a radio group: the group is one Tab stop. */
+type Focusable = { element: string; app: boolean; button: boolean; skip: boolean; group: string; radio: boolean; addOn: boolean };
 type Active = { element: string; style: string };
 type Press = { clicks: number; expanded: string; popups: number };
 
@@ -25,16 +26,17 @@ const R = 'DESIGN-R-003';
 
 export async function keyboardWalk(
   page: Page,
-  opts: { blockMutations: true },
+  opts: { blockMutations: true; whole?: boolean },
 ): Promise<KeyboardReport> {
   if (opts.blockMutations)
     await page.route('**/*', (route) =>
       route.request().method() === 'GET' ? route.continue() : route.abort(),
     );
   const findings: Finding[] = [];
-  // Tab passes every control, the design system's too, to reach the app's; only the app's are judged.
+  // Tab passes every control, the design system's too, to reach the app's; only the app's are judged, unless
+  // `whole` asks for the page as a user meets it, as the benchmark does.
   const controls = await inPage<Focusable[]>(page, 'focusables');
-  const ours = controls.filter((c) => c.app);
+  const ours = (opts.whole ? controls : controls.filter((c) => c.app)).filter((c) => !c.addOn);
   const order = new Map(ours.map((c, i) => [c.element, i]));
 
   // Tab from the top until focus leaves the page or the presses run out. A native date input holds focus
@@ -52,10 +54,15 @@ export async function keyboardWalk(
     if (active.element !== visits.at(-1)?.element) visits.push(active);
   }
   const reached = new Set(visits.map((v) => v.element));
-  for (const control of ours)
-    if (!reached.has(control.element))
+  // A composite widget is one stop, reached when Tab lands on any control in it; arrow keys reach the rest.
+  const groupOf = new Map(controls.map((c) => [c.element, c.group]));
+  const reachedGroups = new Set(visits.map((v) => groupOf.get(v.element)).filter(Boolean));
+  const stops = [...new Map(ours.map((c) => [c.group || c.element, c])).values()];
+  const isReached = (c: Focusable) => (c.group ? reachedGroups.has(c.group) : reached.has(c.element));
+  for (const control of stops)
+    if (!isReached(control))
       findings.push(
-        finding(R, 'mandatory', 'not reachable with Tab', control.element),
+        finding(R, 'mandatory', 'not reachable with Tab', control.group || control.element),
       );
   // A trap holds focus on the page through every press and never comes back to where Tab started.
   const trap =
@@ -113,7 +120,8 @@ export async function keyboardWalk(
 
   // Enter and Space on every button; Escape closes the dialog, menu or listbox a button opened, before the next key.
   await inPage(page, 'watchClicks');
-  const buttons = ours.filter((c) => c.button);
+  // A radio follows the radio pattern, arrow keys and Space, not a button's Enter.
+  const buttons = ours.filter((c) => c.button && !c.radio);
   const activation = { buttons: buttons.length, enterOk: 0, spaceOk: 0 };
   for (const button of buttons)
     for (const key of ['Enter', 'Space'] as const) {
@@ -142,8 +150,8 @@ export async function keyboardWalk(
   if (opts.blockMutations) await page.unroute('**/*');
 
   return {
-    interactive: ours.length,
-    reachable: ours.filter((c) => reached.has(c.element)).length,
+    interactive: stops.length,
+    reachable: stops.filter(isReached).length,
     focusVisible,
     inversions,
     trap,

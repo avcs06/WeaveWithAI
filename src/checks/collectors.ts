@@ -15,10 +15,12 @@ type AxeViolation = Awaited<
 /** R-001: axe on WCAG 2.0 to 2.2 A and AA; serious and critical violations are mandatory. */
 export async function axeCheck(
   page: Page,
-): Promise<{ findings: Finding[]; violations: AxeViolation[] }> {
-  // The design system's own subtrees are its tests' to check; `next dev` injects its own overlay.
-  await inPage(page, 'skipDesignSystem');
-  const { violations } = await new AxeBuilder({ page })
+  opts: { whole?: boolean } = {},
+): Promise<{ findings: Finding[]; violations: AxeViolation[]; passes: number }> {
+  // The design system's own subtrees are its tests' to check, unless `whole` asks for the page as a user meets it;
+  // `next dev` injects its own overlay.
+  if (!opts.whole) await inPage(page, 'skipDesignSystem');
+  const { violations, passes } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
     .exclude('[data-weave-skip]')
     .exclude('nextjs-portal')
@@ -35,7 +37,7 @@ export async function axeCheck(
       ),
     ),
   );
-  return { findings, violations };
+  return { findings, violations, passes: passes.length };
 }
 
 type ContrastFailure = {

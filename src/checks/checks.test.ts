@@ -224,6 +224,15 @@ describe('rendered checks on the fixture pages', () => {
     expect(dated.reachable).toBe(3);
   });
 
+  it("R-003 keyboard: a radio group is one Tab stop, its radios answer to arrow keys and Space, not Enter, and a number field's step buttons leave Tab to the field; a link left out of Tab fails", async () => {
+    const walk = await keyboardWalk(await open('radio-group.html'), { blockMutations: true, whole: true });
+    expect(walk.findings.filter((f) => f.severity === 'mandatory')).toEqual([]);
+    expect({ interactive: walk.interactive, reachable: walk.reachable, buttons: walk.activation.buttons }).toEqual({ interactive: 4, reachable: 4, buttons: 0 });
+    const bad = await keyboardWalk(await open('defects.html'), { blockMutations: true, whole: true });
+    expect(bad.findings.map((f) => f.message)).toContain('not reachable with Tab');
+    expect(bad.reachable).toBeLessThan(bad.interactive);
+  });
+
   it('R-005 overflow, R-006 first viewport', async () => {
     const page = await open('defects.html');
     expect(await overflowCheck(page)).toEqual([

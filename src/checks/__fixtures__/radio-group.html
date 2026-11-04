@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio group</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+  main { padding: 24px 16px; }
+  button { background: #ffffff; color: #18181b; border: 1px solid #52525b; min-height: 44px; padding: 8px 16px; }
+  :focus-visible { outline: 3px solid #3d63b8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pick a glaze</h1>
+  <a href="/more">More</a>
+  <!-- Roving focus: only the checked radio takes Tab, arrow keys move the choice, Space checks. -->
+  <div role="radiogroup" aria-label="Glaze" id="glaze">
+    <button type="button" role="radio" aria-checked="true" tabindex="0">Sage</button>
+    <button type="button" role="radio" aria-checked="false" tabindex="-1">Mustard</button>
+    <button type="button" role="radio" aria-checked="false" tabindex="-1">Ash</button>
+  </div>
+  <!-- A number field: its step buttons stay out of Tab, the field's arrow keys step the value. -->
+  <div>
+    <button type="button" aria-label="Decrease" tabindex="-1">-</button>
+    <input type="number" aria-label="Quantity" value="1">
+    <button type="button" aria-label="Increase" tabindex="-1">+</button>
+  </div>
+  <a href="/cart">Cart</a>
+</main>
+<script>
+  const radios = [...document.querySelectorAll('[role=radio]')];
+  const check = (radio) => {
+    for (const r of radios) {
+      r.setAttribute('aria-checked', String(r === radio));
+      r.tabIndex = r === radio ? 0 : -1;
+    }
+    radio.focus();
+  };
+  for (const radio of radios) {
+    radio.addEventListener('click', () => check(radio));
+    radio.addEventListener('keydown', (event) => {
+      const at = radios.indexOf(radio);
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') check(radios[(at + 1) % radios.length]);
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') check(radios[(at + radios.length - 1) % radios.length]);
+    });
+  }
+</script>
+</body>
+</html>

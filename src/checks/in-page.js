@@ -344,12 +344,20 @@
     focusables() {
       return [...document.querySelectorAll(FOCUSABLE)]
         .filter((element) => visible(element) && !element.disabled && element.getAttribute('aria-disabled') !== 'true')
-        .map((element) => ({
-          element: name(element),
-          app: appMade(element),
-          button: element.tagName === 'BUTTON' || element.getAttribute('role') === 'button',
-          skip: element.tagName === 'A' && /^#./.test(element.getAttribute('href') || ''),
-        }));
+        .map((element) => {
+          // A radio group, tab list, toolbar, menu bar or listbox is one Tab stop; arrow keys move inside it.
+          const group = element.closest('[role=radiogroup],[role=tablist],[role=toolbar],[role=menubar],[role=listbox],[role=grid],[role=tree]');
+          return {
+            element: name(element),
+            app: appMade(element),
+            button: element.tagName === 'BUTTON' || element.getAttribute('role') === 'button',
+            skip: element.tagName === 'A' && /^#./.test(element.getAttribute('href') || ''),
+            group: group ? name(group) : '',
+            radio: element.getAttribute('role') === 'radio' || element.type === 'radio',
+            // A field's add-on out of Tab, such as a number input's step button: the field is the stop, its arrow keys step.
+            addOn: element.tabIndex < 0 && Boolean(element.parentElement?.querySelector('input, textarea, [role=spinbutton]')),
+          };
+        });
     },
     /** The focused element and how it looks; '' for the page itself, and for the dev server's overlay, which is not the app's. */
     active() {

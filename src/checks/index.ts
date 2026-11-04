@@ -84,7 +84,7 @@ export async function checkRoute(
   try {
     // First, as the page loaded: the checks after it press keys and may open things.
     const shotTaken = shot ? await guard('DESIGN-R-000', false, async () => (await fullScreenshot(page, shot), true)) : false;
-    const axe = await guard('DESIGN-R-001', { findings: [], violations: [] }, () => axeCheck(page));
+    const axe = await guard('DESIGN-R-001', { findings: [], violations: [], passes: 0 }, () => axeCheck(page));
     const contrast = await guard('DESIGN-R-002', { findings: [], failures: [], unknown: 0 }, () => contrastCheck(page));
     const targets = await guard('DESIGN-R-004', { findings: [], small24: 0 }, () => targetSizes(page));
     const rest = [

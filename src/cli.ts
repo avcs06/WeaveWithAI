@@ -37,6 +37,7 @@ import { runLog } from './core/log';
 import { PIPELINE, type StageContext, stages } from './agents/stages';
 import type { Themed } from './agents/02design/01theme/build';
 import { cleanAgentImages } from './engine/docker';
+import { compareBenchmarks, type Part, PARTS, runBenchmark } from './bench';
 
 export class UsageError extends Error {}
 
@@ -69,7 +70,8 @@ const USAGE = `usage:
   weave golden <runId> <ideaName> [--stages flows-scope,flows-expand]
   weave ds
   weave app <runId>
-  weave bench <runId>
+  weave bench <runId> [<runId> …] [--skip generation,code,browser] [--compare]
+                                 measure each run's app on its dev server; several runs also get a side-by-side table
   weave docker-clean [--all]     remove the agent's old images; --all removes the current one too`;
 
 export async function runCommand(
@@ -392,6 +394,22 @@ export async function appCommand(
   return lines;
 }
 
+/** Benchmarks each run, or with `compare` only sets the benchmarks they have side by side. */
+async function benchCommand(ids: string[], values: { skip?: string; compare?: boolean }): Promise<void> {
+  if (!ids.length) throw new UsageError('bench needs a run id');
+  const skip = (values.skip?.split(',').filter(Boolean) ?? []) as Part[];
+  const unknown = skip.filter((part) => !PARTS.includes(part));
+  if (unknown.length) throw new UsageError(`--skip ${unknown.join(',')}: known parts are ${PARTS.join(', ')}`);
+  const runs = ids.map((id) => openRun(id));
+  if (!values.compare)
+    for (const run of runs) {
+      console.log(`bench ${run.id}`);
+      await runBenchmark(run, DEFAULT_RUNS_DIR, { skip });
+      console.log(`  ${runPath(run, '05-benchmark.md')}`);
+    }
+  if (values.compare || runs.length > 1) console.log(compareBenchmarks(runs, DEFAULT_RUNS_DIR));
+}
+
 /** Exit codes: 0 ok, 1 error, 2 usage. */
 export async function main(argv: string[]): Promise<number> {
   // Every app command the run starts, Nx included, inherits this: an Nx daemon outlives the run, holds memory, and
@@ -413,6 +431,8 @@ export async function main(argv: string[]): Promise<number> {
         backend: { type: 'string' },
         stages: { type: 'string' },
         all: { type: 'boolean' },
+        skip: { type: 'string' },
+        compare: { type: 'boolean' },
       },
     });
     const [command, first, second] = positionals;
@@ -447,7 +467,7 @@ export async function main(argv: string[]): Promise<number> {
         await appCommand(first);
         return 0;
       case 'bench':
-        console.log('bench: not built yet (docs/specs/benchmark.md)');
+        await benchCommand(positionals.slice(1), values);
         return 0;
       case 'docker-clean': {
         const removed = await cleanAgentImages({ all: values.all });
