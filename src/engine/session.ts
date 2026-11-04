@@ -7,7 +7,7 @@ import { costUsd } from '../core/prices';
 import { appendEvent, runPath } from '../core/run';
 import type { StageContext } from '../agents/stages';
 import { checkScreen, type ScreenExpect } from './conformance';
-import { dockerArgs, ensureAgentImage, museDir } from './docker';
+import { dockerArgs, ensureAgentImage, museDir, seedModelCatalog } from './docker';
 import { appendLedger } from './ledger';
 import { savePatch } from './patches';
 import { freeAppPort } from './server';
@@ -167,6 +167,7 @@ export async function runSession(
     : [ctx.config.MUSE_BIN]);
   const [bin = 'muse', ...pre] = command;
   mkdirSync(runPath(run, 'muse'), { recursive: true });
+  if (inContainer && backend.name !== 'meta') seedModelCatalog(runPath(run, 'muse'));
   const args = museArgs(backend, {
     promptFile,
     maxSteps: session.maxSteps ?? 60,
@@ -263,7 +264,8 @@ export async function runSession(
 
   const result: SessionResult = {
     status,
-    summary: usage.summary,
+    // A Muse that fails before it starts, such as on a model catalog it cannot fetch, says why only on stderr.
+    summary: usage.summary || (exec.stderr.trim().split('\n').at(-1) ?? ''),
     changed,
     protectedHits,
     usage: { calls: usage.calls, input: usage.input, cached: usage.cached, output: usage.output, reasoning: usage.reasoning },

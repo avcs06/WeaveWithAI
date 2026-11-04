@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readFileSync, realpathSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, realpathSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { execa, execaSync } from 'execa';
 
@@ -37,6 +38,19 @@ export async function cleanAgentImages(opts: { all?: boolean } = {}, docker = 'd
   }
   if (tags.length) await execa(docker, ['rmi', ...tags]);
   return tags;
+}
+
+/**
+ * Copies the model catalog the host's Muse Code cached from the Meta API into a run's Muse data folder. An
+ * open-weight endpoint serves no catalog, so Muse with a new data folder fails before its first call without one.
+ */
+export function seedModelCatalog(data: string, home = os.homedir()): void {
+  const to = path.join(data, 'model-catalog');
+  if (existsSync(to)) return;
+  const from = path.join(home, '.local', 'share', 'muse', 'model-catalog');
+  if (!existsSync(from))
+    throw new Error(`Muse Code has no model catalog at ${from}. Run muse once signed in to the Meta API, which caches it, then run again.`);
+  cpSync(from, to, { recursive: true });
 }
 
 /** The folder Muse Code is installed in: its launcher's, with the binary beside it. */

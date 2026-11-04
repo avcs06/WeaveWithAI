@@ -5,6 +5,11 @@ import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path';
 
 const key = readFileSync(0, 'utf8');
+// FAKE_STDERR fails the run before it starts, with only that line on stderr.
+if (process.env.FAKE_STDERR) {
+  console.error(process.env.FAKE_STDERR);
+  process.exit(1);
+}
 // FAKE_ARGS names a file each run appends its arguments to.
 if (process.env.FAKE_ARGS) appendFileSync(process.env.FAKE_ARGS, `${process.argv.slice(2).join(' ')}\n`);
 // FAKE_VARY makes each run's files differ, as a real fix session's would.

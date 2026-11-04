@@ -143,6 +143,14 @@ describe('runSession', () => {
     expect(result.checks.find((c) => c.name === 'typecheck')?.ok).toBe(false);
   });
 
+  it("keeps the reason a Muse that fails before it starts gives on stderr as the session's summary", async () => {
+    const { appDir, ctx } = setup('stderr');
+    process.env.FAKE_STDERR = 'failed to fetch model catalog: API error 405: empty response body';
+    const result = await runSession(ctx, appDir, session, { bin: fake, runCheck: checks() }).finally(() => delete process.env.FAKE_STDERR);
+    expect(result.status).toBe('failed');
+    expect(result.summary).toBe('failed to fetch model catalog: API error 405: empty response body');
+  });
+
   it('fails a session that reinstalls the packages, and puts them back from the lockfile before the checks', async () => {
     const { appDir, ctx } = setup('install');
     mkdirSync(path.join(appDir, 'node_modules'), { recursive: true });

@@ -1,10 +1,10 @@
-import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { resolveBackend } from '../core/backends';
 import { ConfigSchema } from '../core/env';
-import { agentImage, cleanAgentImages, dockerArgs, ensureAgentImage } from './docker';
+import { agentImage, cleanAgentImages, dockerArgs, ensureAgentImage, seedModelCatalog } from './docker';
 import { museArgs } from './muse';
 
 const root = mkdtempSync(path.join(tmpdir(), 'weave-docker-'));
@@ -62,5 +62,26 @@ describe('the agent container', () => {
     const present = fakeDocker(true);
     await ensureAgentImage(present.bin);
     expect(readFileSync(present.log, 'utf8')).not.toContain('build');
+  });
+});
+
+describe("the run's Muse model catalog", () => {
+  it("copies the host's cached catalog into a run's Muse data once, and says what to do when the host has none", () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'weave-catalog-'));
+    const home = path.join(root, 'home');
+    const data = path.join(root, 'data');
+    const cached = path.join(home, '.local/share/muse/model-catalog');
+    mkdirSync(cached, { recursive: true });
+    writeFileSync(path.join(cached, 'meta.json'), '{"rows":[]}');
+    seedModelCatalog(data, home);
+    expect(readFileSync(path.join(data, 'model-catalog/meta.json'), 'utf8')).toBe('{"rows":[]}');
+    // A run's own copy, which Muse may have refreshed, stays.
+    writeFileSync(path.join(data, 'model-catalog/meta.json'), '{"rows":[1]}');
+    seedModelCatalog(data, home);
+    expect(readFileSync(path.join(data, 'model-catalog/meta.json'), 'utf8')).toBe('{"rows":[1]}');
+    const bare = path.join(root, 'bare');
+    expect(() => seedModelCatalog(path.join(root, 'other'), bare)).toThrow('Run muse once signed in to the Meta API');
+    expect(existsSync(path.join(root, 'other/model-catalog'))).toBe(false);
+    rmSync(root, { recursive: true, force: true });
   });
 });
