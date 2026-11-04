@@ -1,12 +1,15 @@
 import type { Config } from './env';
 
 export type BackendName = 'meta' | 'modal' | 'baseten';
+export type AgentName = 'muse' | 'opencode';
 export type Backend = {
   name: BackendName;
   baseURL: string;
   apiKey: string;
   model: string;
   strongModel: string;
+  /** The coding agent the code stages run. Baseten's Responses API drops Muse Code's tool calls, so Baseten runs OpenCode, on chat completions. */
+  agent: AgentName;
   /** How long a 503 counts as a cold start and is retried past the usual attempts. */
   coldStartMs?: number;
 };
@@ -39,6 +42,7 @@ export function resolveBackend(config: Config, override?: string): Backend {
         apiKey: config.MODEL_API_KEY,
         model: config.LLM_MODEL,
         strongModel: config.LLM_MODEL_STRONG,
+        agent: 'muse',
       };
     case 'modal': {
       const { MODAL_BASE_URL, MODAL_PROXY_TOKEN, MODAL_MODEL } = required(
@@ -52,6 +56,7 @@ export function resolveBackend(config: Config, override?: string): Backend {
         apiKey: MODAL_PROXY_TOKEN,
         model: MODAL_MODEL,
         strongModel: MODAL_MODEL,
+        agent: 'muse',
         coldStartMs: MODAL_COLD_START_MS,
       };
     }
@@ -66,6 +71,7 @@ export function resolveBackend(config: Config, override?: string): Backend {
         apiKey: BASETEN_API_KEY,
         model: BASETEN_MODEL,
         strongModel: BASETEN_MODEL,
+        agent: 'opencode',
       };
     }
   }

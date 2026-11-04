@@ -35,6 +35,7 @@ const config: Config = {
   MUSE_BIN: 'muse',
   MUSE_DOCKER: false,
   MUSE_AUTH: 'api',
+  OPENCODE_BIN: 'opencode',
 };
 const modalBackend: Backend = {
   name: 'modal',
@@ -42,6 +43,7 @@ const modalBackend: Backend = {
   apiKey: 'wk-id.ws-secret',
   model: 'hackathon',
   strongModel: 'hackathon',
+  agent: 'muse',
 };
 const basetenBackend: Backend = {
   name: 'baseten',
@@ -49,6 +51,7 @@ const basetenBackend: Backend = {
   apiKey: 'bt-key',
   model: 'meta-models/muse-spark-open-1026',
   strongModel: 'meta-models/muse-spark-open-1026',
+  agent: 'opencode',
 };
 
 const Doc = z.object({ title: z.string() });

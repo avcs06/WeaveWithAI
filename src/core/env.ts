@@ -36,6 +36,7 @@ export const ConfigSchema = z.object({
   MUSE_BIN: blankable(z.string().default('muse')),
   MUSE_DOCKER: blankable(Flag),
   MUSE_AUTH: blankable(z.enum(['api', 'subscription']).default('api')),
+  OPENCODE_BIN: blankable(z.string().default('opencode')),
 });
 export type Config = z.infer<typeof ConfigSchema>;
 

@@ -43,6 +43,7 @@ const config: Config = {
   MUSE_BIN: 'muse',
   MUSE_DOCKER: false,
   MUSE_AUTH: 'api',
+  OPENCODE_BIN: 'opencode',
 };
 const load = (name: string): unknown =>
   JSON.parse(

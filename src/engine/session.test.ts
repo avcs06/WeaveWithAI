@@ -26,6 +26,7 @@ const config = ConfigSchema.parse({
   MODAL_MODEL: 'hackathon',
 });
 const fake = [process.execPath, pathBeside(import.meta.url, './__fixtures__/fake-muse.mjs')];
+const fakeOpencode = [process.execPath, pathBeside(import.meta.url, './__fixtures__/fake-opencode.mjs')];
 
 /** A run and an app folder prepared for Muse Code, with one file in its baseline. */
 function setup(id: string) {
@@ -58,6 +59,7 @@ describe('prepareApp', () => {
     const hooks = JSON.parse(readFileSync(path.join(appDir, '.muse/hooks.json'), 'utf8'));
     expect(hooks.hooks.PostToolUse[0].hooks[0].command).toBe('node .weave/hooks/validate-edit.mjs');
     expect(existsSync(path.join(appDir, '.weave/hooks/validate-edit.mjs'))).toBe(true);
+    expect(existsSync(path.join(appDir, '.weave/hooks/opencode-plugin.mjs'))).toBe(true);
     expect(git(appDir, 'status', '--porcelain')).toBe('');
   });
 });
@@ -93,6 +95,19 @@ describe('runSession', () => {
     expect(result.costUsd).toBe(0);
     expect(readEvents(run).find((e) => e.type === 'llm:call')).toMatchObject({ input: 30000, costUsd: 0, billing: 'subscription' });
     expect(totals(run)).toMatchObject({ calls: 3, costUsd: 0 });
+  });
+
+  it('runs OpenCode on Baseten with its key and config in the environment, in the session given, and returns it', async () => {
+    const { run, appDir, ctx } = setup('opencode');
+    process.env.FAKE_ARGS = runPath(run, 'opencode-args.log');
+    const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
+      runSession({ ...ctx, backend: 'baseten' }, appDir, { ...session, museSession: 'ses_7' }, { bin: fakeOpencode, runCheck: checks() }),
+    ).finally(() => delete process.env.FAKE_ARGS);
+    expect(result.status).toBe('done');
+    expect(result.summary).toBe('built it with key 11 on weave/meta-models/muse-spark-open-1026');
+    expect(result.usage).toMatchObject({ calls: 2, input: 2000, cached: 1200, output: 100 });
+    expect(result.agentSession).toBe('ses_7');
+    expect(readFileSync(runPath(run, 'opencode-args.log'), 'utf8')).toContain('--session ses_7');
   });
 
   it('runs pnpm verify at the desktop width, signed in as a member on a route behind sign-in', async () => {

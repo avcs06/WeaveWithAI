@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -55,5 +55,24 @@ describe('the edit hook', () => {
     const result = call(app('marker', read('Avatar') + read('Button') + marker), write);
     expect(result.status).toBe(2);
     expect(result.stderr).toContain('Avatar, Button');
+  });
+});
+
+describe('the OpenCode plugin', () => {
+  it('runs the edit hook on every tool call and adds what it refuses to the tool output', async () => {
+    const dir = app('plugin', read('Button'));
+    mkdirSync(path.join(dir, '.weave/hooks'), { recursive: true });
+    copyFileSync(hook, path.join(dir, '.weave/hooks/validate-edit.mjs'));
+    const { WeaveHooks } = await import(pathBeside(import.meta.url, './hooks/opencode-plugin.mjs'));
+    const hooks = await WeaveHooks({ directory: dir });
+    const at = (tool: string) => ({ tool, sessionID: 'ses_1', callID: 'call_1', args: { filePath: path.join(dir, write.tool_input.path) } });
+    const written = { title: '', output: 'Wrote file successfully.', metadata: {} };
+    await hooks['tool.execute.after'](at('write'), written);
+    expect(written.output).toMatch(/^Wrote file successfully\.\n\n.*uses Avatar without reading the recipe/s);
+    const readOnly = { title: '', output: 'export const AccountMenu', metadata: {} };
+    await hooks['tool.execute.after'](at('read'), readOnly);
+    expect(readOnly.output).toBe('export const AccountMenu');
+    const tools = readFileSync(path.join(dir, '.weave/tools.log'), 'utf8').trim().split('\n').slice(1);
+    expect(tools.map((line) => JSON.parse(line).tool)).toEqual(['write', 'read']);
   });
 });

@@ -14,6 +14,7 @@ const config: Config = {
   MUSE_BIN: 'muse',
   MUSE_DOCKER: false,
   MUSE_AUTH: 'api',
+  OPENCODE_BIN: 'opencode',
 };
 const modal = {
   MODAL_BASE_URL: 'https://acme--ep-hackathon-server.us-west.modal.direct/v1',
@@ -33,6 +34,7 @@ describe('resolveBackend', () => {
       apiKey: 'meta-key',
       model: 'muse-spark-1.3',
       strongModel: 'muse-wonder-1.0',
+      agent: 'muse',
     });
   });
 
@@ -43,17 +45,19 @@ describe('resolveBackend', () => {
       apiKey: 'wk-id.ws-secret',
       model: 'hackathon',
       strongModel: 'hackathon',
+      agent: 'muse',
       coldStartMs: 300_000,
     });
   });
 
-  it('baseten needs its key and model slug; strong is the same model', () => {
+  it('baseten needs its key and model slug; strong is the same model, and its code stages run OpenCode', () => {
     expect(resolveBackend({ ...config, ...baseten }, 'baseten')).toEqual({
       name: 'baseten',
       baseURL: 'https://inference.baseten.co/v1',
       apiKey: 'bt-key',
       model: 'meta-models/muse-spark-open',
       strongModel: 'meta-models/muse-spark-open',
+      agent: 'opencode',
     });
   });
 

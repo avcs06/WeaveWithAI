@@ -3,9 +3,10 @@ import { cpSync, existsSync, readFileSync, realpathSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execa, execaSync } from 'execa';
+import type { AgentName } from '../core/backends';
 
-// The coding agent's sandbox: Muse Code runs in a container that sees
-// only the app, from the host's own install mounted read-only.
+// The coding agent's sandbox: Muse Code or OpenCode runs in a container that
+// sees only the app, from the host's own install mounted read-only.
 
 const DOCKERFILE = 'docker/agent.Dockerfile';
 
@@ -53,19 +54,33 @@ export function seedModelCatalog(data: string, home = os.homedir()): void {
   cpSync(from, to, { recursive: true });
 }
 
-/** The folder Muse Code is installed in: its launcher's, with the binary beside it. */
-export function museDir(bin: string): string {
+/** The folder a coding agent is installed in: its launcher's, with the binary beside it. */
+export function agentDir(bin: string): string {
   const found = bin.includes('/') ? bin : execaSync('which', [bin]).stdout.trim();
   return path.dirname(realpathSync(found));
 }
 
+/** Where each agent's install and its data sit in the container. */
+export const IN_CONTAINER = {
+  app: '/app',
+  muse: { dir: '/opt/muse', bin: '/opt/muse/muse', data: '/tmp/.local/share/muse' },
+  opencode: { dir: '/opt/opencode', bin: '/opt/opencode/opencode', data: '/tmp/.local/share/opencode' },
+};
+
 /**
  * `docker run` up to the image, then the launcher: the app at /app, run as the user so files stay theirs.
  * `login` mounts the host's Muse login for the subscription, writable so Muse can refresh its token;
- * `data` keeps Muse's sessions between containers, so a fix session can continue the one before it.
+ * `data` keeps the agent's sessions between containers, so a fix session can continue the one before it;
+ * `env` names variables passed on from the runner, whose values stay out of the arguments.
  */
-export function dockerArgs(image: string, appDir: string, muse: string, mounts: { login?: string; data?: string } = {}): string[] {
-  const { login, data } = mounts;
+export function dockerArgs(
+  image: string,
+  appDir: string,
+  installed: string,
+  opts: { agent?: AgentName; login?: string; data?: string; env?: string[] } = {},
+): string[] {
+  const { login, data, env = [] } = opts;
+  const agent = IN_CONTAINER[opts.agent ?? 'muse'];
   const user = `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`;
   return [
     'run', '--rm', '-i',
@@ -73,12 +88,13 @@ export function dockerArgs(image: string, appDir: string, muse: string, mounts: 
     '-e', 'HOME=/tmp',
     // The agent's lint runs need no Nx daemon; one would only slow each command down.
     '-e', 'NX_DAEMON=false',
-    '-v', `${path.resolve(appDir)}:/app`,
-    '-v', `${muse}:/opt/muse:ro`,
+    ...env.flatMap((name) => ['-e', name]),
+    '-v', `${path.resolve(appDir)}:${IN_CONTAINER.app}`,
+    '-v', `${installed}:${agent.dir}:ro`,
     ...(login ? ['-v', `${login}:/tmp/.config/muse`] : []),
-    ...(data ? ['-v', `${path.resolve(data)}:/tmp/.local/share/muse`] : []),
-    '-w', '/app',
+    ...(data ? ['-v', `${path.resolve(data)}:${agent.data}`] : []),
+    '-w', IN_CONTAINER.app,
     image,
-    '/opt/muse/muse',
+    agent.bin,
   ];
 }

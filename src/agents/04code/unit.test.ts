@@ -17,6 +17,7 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 const idea = path.join(root, 'idea.md');
 writeFileSync(idea, '# An idea\n');
 const fakeMuse = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-muse.mjs')];
+const fakeOpencode = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-opencode.mjs')];
 const config = ConfigSchema.parse({ MODEL_API_KEY: 'k' });
 
 /** Reviewers that block once, from the code reviewer in round 1, then pass. */
@@ -126,6 +127,18 @@ describe('a coding unit', () => {
     ]);
     await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_ARGS);
     expect(new Set(ids()).size).toBe(2);
+  });
+
+  it("on Baseten, continues the session OpenCode named in the unit's first session in each fix", async () => {
+    const { ctx, spec, deps } = setup('opencode', false, (name) => name === 'typecheck');
+    const baseten = { ...ctx, backend: 'baseten' as const, config: { ...config, BASETEN_API_KEY: 'bt', BASETEN_MODEL: 'meta-models/muse-spark-open-1026' } };
+    process.env.FAKE_ARGS = runPath(ctx.run, 'opencode-args.log');
+    await withWrites(page, () => runUnit(baseten, spec, { ...deps, bin: fakeOpencode })).finally(() => delete process.env.FAKE_ARGS);
+    // A run's flags sit on its first line; the fix task after them has lines of its own.
+    const runs = readFileSync(runPath(ctx.run, 'opencode-args.log'), 'utf8').match(/^run --format json.*$/gm) ?? [];
+    expect(runs).toHaveLength(3);
+    expect(runs[0]).not.toContain('--session');
+    expect(runs.slice(1).every((line) => line.includes('--session ses_fake1'))).toBe(true);
   });
 
   it('logs a stage start and done once, whether its unit carries its name or units have their own', async () => {

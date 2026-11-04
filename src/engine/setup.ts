@@ -5,9 +5,10 @@ import { pathBeside } from '../core/utils';
 
 // Muse Code's config in a generated app: the MCP servers it loads
 // from `.mcp.json`, the hook that validates every file it writes, and a git
-// baseline its diff starts from. The scaffold writes the guidelines.
+// baseline its diff starts from. OpenCode gets the same servers from its
+// config, and the same hook through a plugin. The scaffold writes the guidelines.
 
-const MCP = {
+export const MCP = {
   mcpServers: {
     'weave-design-system': { command: 'node', args: ['tools/design-system-mcp.mjs'] },
   },
@@ -33,6 +34,7 @@ export function prepareApp(appDir: string, message = 'weave: agent setup'): void
   writeFileSync(at('.mcp.json'), `${JSON.stringify(MCP, null, 2)}\n`);
   writeFileSync(at('.muse', 'hooks.json'), `${JSON.stringify(HOOKS, null, 2)}\n`);
   copyFileSync(pathBeside(import.meta.url, './hooks/validate-edit.mjs'), at('.weave', 'hooks', 'validate-edit.mjs'));
+  copyFileSync(pathBeside(import.meta.url, './hooks/opencode-plugin.mjs'), at('.weave', 'hooks', 'opencode-plugin.mjs'));
   if (!existsSync(at('.git'))) git(appDir, 'init', '-q');
   git(appDir, 'add', '-A');
   git(appDir, 'commit', '-q', '--allow-empty', '-m', message);

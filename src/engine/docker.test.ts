@@ -37,6 +37,15 @@ describe('the agent container', () => {
     expect(args).toContain(`${path.resolve('runs/x/muse')}:/tmp/.local/share/muse`);
   });
 
+  it("mounts OpenCode's install and the run's OpenCode data, and passes named variables on without their values", () => {
+    const env = ['WEAVE_AGENT_KEY', 'OPENCODE_CONFIG_CONTENT'];
+    const args = dockerArgs('weave-agent:abc', 'runs/x/app', '/home/u/.opencode/bin', { agent: 'opencode', data: 'runs/x/opencode', env });
+    expect(args).toContain('/home/u/.opencode/bin:/opt/opencode:ro');
+    expect(args).toContain(`${path.resolve('runs/x/opencode')}:/tmp/.local/share/opencode`);
+    expect(args.join(' ')).toContain('-e WEAVE_AGENT_KEY -e OPENCODE_CONFIG_CONTENT');
+    expect(args.at(-1)).toBe('/opt/opencode/opencode');
+  });
+
   it("turns Muse's own sandbox off only inside the container", () => {
     const backend = resolveBackend(ConfigSchema.parse({ MODEL_API_KEY: 'k' }), 'meta');
     const opts = { promptFile: '.weave/tasks/x.md', maxSteps: 60, effort: 'medium' };

@@ -1,20 +1,18 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { execa } from 'execa';
 import { resolveBackend } from '../core/backends';
 import { costUsd } from '../core/prices';
 import { appendEvent, runPath } from '../core/run';
 import type { StageContext } from '../agents/stages';
+import { agentRun } from './agent';
 import { checkScreen, type ScreenExpect } from './conformance';
-import { dockerArgs, ensureAgentImage, museDir, seedModelCatalog } from './docker';
 import { appendLedger } from './ledger';
 import { savePatch } from './patches';
 import { freeAppPort } from './server';
-import { museArgs, readUsage } from './muse';
 import { git } from './setup';
 
-// One coding session on Muse Code headless. The agent can read
+// One coding session on the backend's agent headless, Muse Code or OpenCode. The agent can read
 // anything in the app; this code judges the result: it reruns the checks,
 // records the diff in the ledger, and fails a session whose diff touches a
 // test or a protected path.
@@ -30,7 +28,10 @@ export type Session = {
   expects?: ScreenExpect[];
   /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
   stage?: string;
-  /** The Muse Code session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built. */
+  /**
+   * The agent session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built.
+   * Muse Code takes the id the runner gives; OpenCode names its own in the first session, and the fixes continue that.
+   */
   museSession?: string;
   maxSteps?: number;
   timeoutMs?: number;
@@ -46,6 +47,8 @@ export type SessionResult = {
   usage: { calls: number; input: number; cached: number; output: number; reasoning: number };
   costUsd: number;
   checks: Check[];
+  /** The session the agent named, when it names its own. */
+  agentSession?: string;
 };
 
 /** Tests swap the executable and the check runner. */
@@ -56,7 +59,7 @@ export type SessionDeps = {
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
 /** What the guidelines tell the agent never to change: the tools that run the checks, and the config. */
-const PROTECTED = ['tools/**', '.muse/**', '.mcp.json'];
+const PROTECTED = ['tools/**', '.muse/**', '.mcp.json', '.opencode/**', 'opencode.json', 'opencode.jsonc'];
 
 /** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
 export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
@@ -157,32 +160,23 @@ export async function runSession(
     model: backend.model,
     museSession: session.museSession,
   });
-  // Tests pass their own executable; otherwise Muse Code runs in the agent container unless MUSE_DOCKER is false.
-  const inContainer = !deps.bin && ctx.config.MUSE_DOCKER === true;
-  // The subscription is a Muse Code login on the Meta API; the open-weight backends have only keys.
-  const subscription = ctx.config.MUSE_AUTH === 'subscription' && backend.name === 'meta';
-  const login = subscription ? path.join(os.homedir(), '.config', 'muse') : undefined;
-  const command = deps.bin ?? (inContainer
-    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, museDir(ctx.config.MUSE_BIN), { login, data: runPath(run, 'muse') })]
-    : [ctx.config.MUSE_BIN]);
-  const [bin = 'muse', ...pre] = command;
-  mkdirSync(runPath(run, 'muse'), { recursive: true });
-  if (inContainer && backend.name !== 'meta') seedModelCatalog(runPath(run, 'muse'));
-  const args = museArgs(backend, {
-    promptFile,
-    maxSteps: session.maxSteps ?? 60,
-    effort: 'medium',
-    inContainer,
-    subscription,
-    sessionId: session.museSession,
-  });
+  const agent = await agentRun(
+    ctx,
+    backend,
+    appDir,
+    { task: session.task, promptFile, maxSteps: session.maxSteps ?? 60, sessionId: session.museSession },
+    deps.bin,
+  );
+  const { subscription } = agent;
+  const [bin = 'muse', ...args] = agent.command;
   // The packages are the scaffold's; a session that changes them breaks every check after it.
   const installedBefore = installState(appDir);
   // The hook logs every tool call; this session's lines are the ones after this offset.
   const toolsFrom = existsSync(at(TOOLS_LOG)) ? statSync(at(TOOLS_LOG)).size : 0;
-  const exec = await execa(bin, [...pre, ...args], {
+  const exec = await execa(bin, args, {
     cwd: appDir,
-    input: subscription ? '' : backend.apiKey,
+    input: agent.input,
+    env: agent.env,
     timeout: session.timeoutMs ?? 30 * 60_000,
     reject: false,
   });
@@ -192,7 +186,7 @@ export async function runSession(
   const wholeLog = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)) : Buffer.alloc(0);
   const tools = wholeLog.subarray(wholeLog.length < toolsFrom ? 0 : toolsFrom).toString('utf8');
   writeFileSync(runPath(run, 'sessions', `${slug}.tools.jsonl`), tools);
-  const usage = readUsage(exec.stdout);
+  const usage = agent.read(exec.stdout);
   if (!usage.childrenIncluded && usage.children > 0)
     appendEvent(run, {
       type: 'warning',
@@ -271,6 +265,7 @@ export async function runSession(
     usage: { calls: usage.calls, input: usage.input, cached: usage.cached, output: usage.output, reasoning: usage.reasoning },
     costUsd: cost,
     checks,
+    ...(usage.session && { agentSession: usage.session }),
   };
   appendEvent(run, {
     type: 'session:end',

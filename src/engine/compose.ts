@@ -91,8 +91,9 @@ export function sessionCompose(
   resumed?: UnitResume,
 ): Compose<UnitResult> {
   const baseline = resumed?.baseline ?? git(appDir, 'rev-parse', 'HEAD');
-  // One Muse session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
-  const museSession = resumed?.museSession ?? randomUUID();
+  // One agent session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
+  // OpenCode names its own in the unit's first session.
+  let museSession = resumed?.museSession ?? (resolveBackend(ctx.config, ctx.backend).agent === 'muse' ? randomUUID() : undefined);
   let sessions = resumed?.sessions ?? 0;
   const run = async (task: string): Promise<Draft<UnitResult>> => {
     sessions += 1;
@@ -124,6 +125,7 @@ export function sessionCompose(
       costUsd: 0,
       checks: [],
     }));
+    museSession ??= result.agentSession;
     return unitDraft(ctx, appDir, unit, baseline, result, id);
   };
   return {
