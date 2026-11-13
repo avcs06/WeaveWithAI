@@ -131,7 +131,6 @@ export function screenFolder(
   return `web/app/(routes)${group ? `/(${group})` : ''}${route}`;
 }
 
-/** The dialogs a screen opens. */
 export const dialogsOf = (architecture: Architecture, screen: Screen) =>
   architecture.dialogs.filter((dialog) =>
     dialog.openedFrom.includes(screen.id),

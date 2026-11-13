@@ -42,7 +42,7 @@ const flowsFixture = Flows.parse(load('reading-list.flows.json'));
 
 const catalogFixture = Catalog.parse(load('reading-list.catalog.json'));
 
-const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
+const config = { ANTHROPIC_API_KEY: 'k' } as Config;
 
 /** Answers by schema: the fixtures for scope and catalog, the fixture flow named in the message for an expansion, nothing to review. */
 function fakeLlm() {
@@ -77,8 +77,7 @@ function fakeLlm() {
         usage: { input: 10, cachedInput: 0, output: 5 },
         costUsd: 0.001,
         replayed: false,
-        backend: 'meta',
-        model: 'muse-spark-1.3',
+        model: 'claude-sonnet-5-5',
         durationMs: 1,
       };
     },
@@ -95,7 +94,6 @@ describe('the three stages', () => {
       config,
       llm,
       interactive: false,
-      backend: 'meta',
     };
 
     await scopeStage.run(ctx);

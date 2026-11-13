@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { FLOW_KINDS, Flow, Flows } from '../schema';
 
-// A catalog flow is a flow's header with a description in place of its steps and alternatives.
 export const FlowHeader = Flow.omit({ steps: true, alternatives: true }).extend(
   {
     description: z
@@ -28,7 +27,3 @@ export const Catalog = Flows.extend({
 });
 
 export type Catalog = z.infer<typeof Catalog>;
-
-export type FlowHeader = z.infer<typeof FlowHeader>;
-
-export type Skipped = z.infer<typeof Skipped>;

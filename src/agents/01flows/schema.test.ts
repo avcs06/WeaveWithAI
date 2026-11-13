@@ -4,7 +4,6 @@ import { keysOf } from '../../core/utils';
 import { Scope } from './01scope/schema';
 import { Flows } from './schema';
 
-/** Every key at every level, so a test can prove a key is absent. */
 describe('flows stage schemas', () => {
   it.each([
     ['Scope', Scope],

@@ -32,17 +32,13 @@ const printFile = (file: string) => ({
 });
 
 const config: Config = {
-  MODEL_API_KEY: 'test-key',
-  LLM_BASE_URL: 'https://api.meta.ai/v1',
-  LLM_MODEL: 'muse-spark-1.3',
-  LLM_MODEL_STRONG: 'muse-wonder-1.0',
+  ANTHROPIC_API_KEY: 'test-key',
+  LLM_MODEL: 'claude-sonnet-5-5',
+  LLM_MODEL_STRONG: 'claude-opus-5-5',
   LLM_REPLAY: true,
-  LLM_BACKEND: 'meta',
-  BASETEN_BASE_URL: 'https://inference.baseten.co/v1',
-  MUSE_BIN: 'muse',
-  MUSE_DOCKER: false,
-  MUSE_AUTH: 'api',
-  OPENCODE_BIN: 'opencode',
+  CLAUDE_BIN: 'claude',
+  CLAUDE_DOCKER: false,
+  CLAUDE_AUTH: 'api',
 };
 const load = (name: string): unknown =>
   JSON.parse(
@@ -68,8 +64,7 @@ const llm: Llm = {
       usage: { input: 10, cachedInput: 0, output: 5 },
       costUsd: 0.001,
       replayed: false,
-      backend: 'meta',
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       durationMs: 1,
     };
   },
@@ -87,7 +82,7 @@ describe('weave run', () => {
     expect(existsSync(runPath(run, 'input', 'idea.md'))).toBe(true);
     expect(readArtifact(run, 'flows-scope').meta).toMatchObject({
       version: 1,
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       stage: 'flows-scope',
       rounds: 1,
     });
@@ -95,7 +90,7 @@ describe('weave run', () => {
       status: 'done',
       version: 1,
     });
-    const call = '(muse-spark-1.3, 10 in, 5 out, $0.0010, 0.0s)';
+    const call = '(claude-sonnet-5-5, 10 in, 5 out, $0.0010, 0.0s)';
     expect(lines).toEqual([
       `run ${run.id} (${run.dir})`,
       'flows',

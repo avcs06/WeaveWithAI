@@ -33,15 +33,11 @@ export function summarize(bench: Benchmark): Record<string, string> {
   const out: Record<string, string> = {};
   const g = bench.generation;
   if (g) {
-    out['Backend · agent'] = `${g.backend} · ${g.agent}`;
     out['Models'] = g.models.map((m) => m.model).join(', ');
     out['End-to-end time'] = minutes(g.timeMs.total);
     out['Scope to contract'] = minutes(g.timeMs.planning);
     out['Frames to pages'] = minutes(g.timeMs.code);
     out['Cost'] = `$${g.costUsd.toFixed(2)}`;
-    if (g.subscription)
-      out['Muse Code weekly allowance'] =
-        g.subscription.weekFrom === undefined ? `${g.subscription.weekTo}% after` : `${g.subscription.weekTo - g.subscription.weekFrom}% (${g.subscription.weekFrom}% to ${g.subscription.weekTo}%)`;
     out['Model calls'] = int(g.calls);
     out['Tokens in / out'] = `${millions(g.tokensIn)} / ${millions(g.tokensOut)}`;
     out['Rounds / known issues'] = `${g.rounds} / ${g.known}`;

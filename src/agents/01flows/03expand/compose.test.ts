@@ -83,7 +83,6 @@ describe('assemble', () => {
     ]);
   });
 
-  /** The flow with its first step also asking for `field`. */
   const asking = (id: string, field: string): Flow => {
     const base = flow(id);
     return {

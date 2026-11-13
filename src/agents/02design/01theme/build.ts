@@ -132,7 +132,6 @@ export function colorSets(
   });
 }
 
-/** Letter spacing presets for the wordmark, in em. */
 const LETTER_SPACING: Record<ThemeCall['logo']['letterSpacing'], string> = {
   tight: '-0.02em',
   normal: '0em',

@@ -16,10 +16,8 @@ import { validateScope } from './validation/validation';
 // Reasoning tokens count toward the budget.
 const SCOPE_MAX_TOKENS = 16_384;
 
-// Scope sets the app's direction, so it reasons longer and samples more openly than the calls that follow it.
+// Scope sets the app's direction, so it reasons longer than the calls that follow it.
 const SCOPE_EFFORT = 'high';
-
-const SCOPE_TEMPERATURE = 0.7;
 
 // For the same reason its first draft runs on the strong model.
 const SCOPE_DRAFT_MODEL = 'strong';
@@ -40,7 +38,6 @@ async function runScope(ctx: StageContext): Promise<void> {
       ask: ctx.interactive ? terminalAsk(answers) : undefined,
       maxTokens: SCOPE_MAX_TOKENS,
       reasoningEffort: SCOPE_EFFORT,
-      temperature: SCOPE_TEMPERATURE,
       draftModel: SCOPE_DRAFT_MODEL,
     },
     { artifact: 'flows-scope', inputs: [], render: renderScope },

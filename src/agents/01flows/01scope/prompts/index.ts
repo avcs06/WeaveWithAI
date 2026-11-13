@@ -15,7 +15,6 @@ export function scopeSystemPrompt(answers: Answers): string {
   });
 }
 
-/** The call's two review guides: the product manager peer, then the output reviewer. */
 export const scopeReviewGuides = (): ReviewGuides => ({
   peer: fillPrompt(load('./review-peer.md'), {
     productManager: productManager(),

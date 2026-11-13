@@ -11,7 +11,6 @@ export const Reply = z.object({
     .describe('closed: it is fixed, or the reason given for leaving it holds. open: it is not fixed, or that reason does not hold'),
   reason: z.string().describe('Why, in one or two sentences'),
 });
-/** One answer about one thread. */
 export type Reply = z.infer<typeof Reply>;
 
 /** A reply as its thread keeps it: who gave it, `fix` or `review-<name>`, and in which round. */
@@ -39,7 +38,6 @@ export function threadBook() {
       );
       return [...new Set(found)];
     },
-    /** A new thread for each reviewer's blocker. */
     raise(blockers: { issue: Issue; by: string }[], round: number): void {
       for (const { issue, by } of blockers) open(issue, by, round);
     },

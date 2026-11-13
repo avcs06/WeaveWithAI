@@ -17,7 +17,6 @@
       Number(style.opacity) > 0
     );
   };
-  /** An element's own handle: its test id, else its id. */
   const handle = (element) =>
     element.dataset?.testid
       ? `[data-testid="${element.dataset.testid}"]`
@@ -34,7 +33,7 @@
     }
     return [at && at !== document.body ? handle(at) : 'body', ...parts].join(' > ');
   };
-  /** How a finding names an element: its test id, its id, or a CSS path from the nearest one. */
+  /** How a finding names an element. */
   const name = (element) => handle(element) || cssPath(element);
   const find = (selector) => document.querySelector(selector);
 
@@ -77,7 +76,6 @@
   const appMade = (element) => !element.hasAttribute('data-ds');
   /** Spaced by the design system: its own elements, and an app element it styles through asChild, which gets data-slot but not data-ds. */
   const dsSpaced = (element) => element.hasAttribute('data-ds') || element.hasAttribute('data-slot');
-  /** What a button can open. */
   const POPUPS = '[role="dialog"], dialog[open], [role="menu"], [role="listbox"]';
   const textElements = () =>
     [...document.body.querySelectorAll('*')].filter(
@@ -366,7 +364,6 @@
       const style = getComputedStyle(element);
       return { element: name(element), style: `${style.outlineStyle} ${style.outlineWidth} ${style.boxShadow}` };
     },
-    /** How an element looks without focus. */
     blurredStyle(selector) {
       const element = find(selector);
       if (!element) return '';

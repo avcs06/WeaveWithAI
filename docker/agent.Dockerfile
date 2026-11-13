@@ -1,4 +1,4 @@
-# The coding agent's sandbox: Muse Code runs here with only the app mounted.
+# The coding agent's sandbox: Claude Code runs here with only the app mounted.
 # Node's major matches the host's, since node_modules is installed on the host.
 FROM node:24-bookworm
 
@@ -12,6 +12,7 @@ RUN npm install -g pnpm@10.20.0
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN npx -y playwright-core@1.56.1 install --with-deps chromium && chmod -R a+rX /ms-playwright
 
-# Muse Code is mounted from the host at /opt/muse; it must not update itself in here.
-ENV MUSE_UPDATE_INTERVAL_SECONDS=31536000
+# Claude Code is mounted from the host at /opt/claude; it must not update itself
+# in here, and needs no telemetry.
+ENV DISABLE_AUTOUPDATER=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 WORKDIR /app

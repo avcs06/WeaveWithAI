@@ -1,13 +1,15 @@
 import { existsSync, rmSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import type { z } from 'zod';
-import { type Backend, resolveBackend } from './backends';
 import type { Config } from './env';
 import { costUsd, type Usage } from './prices';
 import { toJsonSchema } from './schema';
 import { canonicalJson, sha256, writeJsonAtomic } from './utils';
+
+type Params = Anthropic.Beta.Messages.MessageCreateParamsNonStreaming;
+type Message = Anthropic.Beta.Messages.BetaMessage;
 
 /** A PNG on disk, such as a screen's screenshot, with the line that names it for the model. */
 export type ImageInput = { label: string; file: string };
@@ -19,16 +21,8 @@ export type ChatMessage = {
   images?: ImageInput[];
 };
 export type ModelChoice = 'default' | 'strong';
-/** Meta's `reasoning_effort`; omitted, the model picks its own level. Reasoning tokens count toward max_tokens. */
-export type ReasoningEffort =
-  | 'minimal'
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'xhigh'
-  | 'max';
-/** Two modes: 0.2 for exact values, 0.7 for the calls that set a direction. */
-export type Temperature = 0.2 | 0.7;
+/** Claude's `output_config.effort`; omitted, the model's own default. Thinking tokens count toward max_tokens. */
+export type ReasoningEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
 export type GenerateInput<T> = {
   stage: string;
@@ -38,9 +32,7 @@ export type GenerateInput<T> = {
   messages: ChatMessage[];
   model?: ModelChoice;
   maxTokens?: number;
-  /** Default 0.2; part of the replay key. */
-  temperature?: Temperature;
-  /** Omitted by default; part of the replay key. A strong call without a strong model steps it up. */
+  /** Omitted by default; part of the replay key. */
   reasoningEffort?: ReasoningEffort;
   /** When given, the call is written to `<runDir>/llm/<stage>-r<round>.json`. */
   runDir?: string;
@@ -52,7 +44,6 @@ export type GenerateResult<T> = {
   usage: Usage;
   costUsd: number;
   replayed: boolean;
-  backend: string;
   model: string;
   durationMs: number;
 };
@@ -93,18 +84,14 @@ export class ModelOutputInvalid extends Error {
   }
 }
 
-/** The one SDK method this module calls. A plain async function satisfies it, so tests need no cast. */
-export type ChatClient = {
-  create(
-    body: OpenAI.ChatCompletionCreateParamsNonStreaming,
-  ): Promise<OpenAI.ChatCompletion>;
+/** The one SDK call this module makes. A plain async function satisfies it, so tests need no cast. */
+export type MessagesClient = {
+  create(body: Params): Promise<Message>;
 };
 
 export type LlmDeps = {
   config: Config;
-  /** Defaults to the backend LLM_BACKEND names. */
-  backend?: Backend;
-  client?: ChatClient;
+  client?: MessagesClient;
   replayDir?: string;
   sleep?: (ms: number) => Promise<void>;
   now?: () => number;
@@ -114,12 +101,8 @@ export type Llm = {
   generateStructured<T>(input: GenerateInput<T>): Promise<GenerateResult<T>>;
 };
 
-const TEMPERATURE = 0.2;
-// A backend whose strong model is missing or the base model escalates by effort instead, never to max.
-const STEP_UP: Partial<Record<ReasoningEffort, ReasoningEffort>> = {
-  medium: 'high',
-  high: 'xhigh',
-};
+// A refusal is answered again on the model the API picks for its category, inside the same call.
+const FALLBACK_BETA = 'server-side-fallback-2026-07-01';
 const DEFAULT_MAX_TOKENS = 8192;
 const MAX_OUTPUT_TOKENS = 98_304;
 const MAX_ATTEMPTS = 5;
@@ -132,21 +115,19 @@ const JITTER_MS = 250;
 type KeyedMessage = { role: ChatMessage['role']; content: string; images?: { label: string; sha256: string }[] };
 
 type Request = {
-  backend: string;
   model: string;
   messages: KeyedMessage[];
-  temperature: number;
   reasoningEffort?: ReasoningEffort;
   schemaName: string;
   schema: Record<string, unknown>;
 };
 
-type Completed = { content: string; finishReason: string; usage: Usage };
+/** `model` is the one that answered, which differs from the request's after a refusal fallback. */
+type Completed = { content: string; finishReason: string; model: string; usage: Usage };
 type ReplayRecord = Completed & { request: Request; createdAt: string };
 
 export function createLlm(deps: LlmDeps): Llm {
   const { config } = deps;
-  const backend = deps.backend ?? resolveBackend(config);
   const replayDir = deps.replayDir ?? '.weave-cache/replay';
   const sleep =
     deps.sleep ??
@@ -154,25 +135,19 @@ export function createLlm(deps: LlmDeps): Llm {
   const now = deps.now ?? Date.now;
   let client = deps.client;
 
-  const getClient = (): ChatClient =>
-    (client ??= new OpenAI({
-      apiKey: backend.apiKey,
-      baseURL: backend.baseURL,
-      maxRetries: 0,
-    }).chat.completions);
+  // Streamed, since a long answer at a high max_tokens outlasts the SDK's timeout for one plain request.
+  const getClient = (): MessagesClient => {
+    if (client) return client;
+    const sdk = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY, maxRetries: 0 });
+    client = { create: (body) => sdk.beta.messages.stream(body).finalMessage() };
+    return client;
+  };
 
   async function generateStructured<T>(
     input: GenerateInput<T>,
   ): Promise<GenerateResult<T>> {
     const started = now();
-    const hasStrong =
-      !!backend.strongModel && backend.strongModel !== backend.model;
-    const strong = input.model === 'strong';
-    const model = strong && hasStrong ? backend.strongModel : backend.model;
-    const reasoningEffort =
-      strong && !hasStrong && input.reasoningEffort
-        ? (STEP_UP[input.reasoningEffort] ?? input.reasoningEffort)
-        : input.reasoningEffort;
+    const requested = input.model === 'strong' ? config.LLM_MODEL_STRONG : config.LLM_MODEL;
     const bridged = toJsonSchema(input.schema, input.schemaName);
     const images = new Map<string, Buffer>();
     const messages = await Promise.all(
@@ -190,11 +165,9 @@ export function createLlm(deps: LlmDeps): Llm {
       }),
     );
     const request: Request = {
-      backend: backend.name,
-      model,
+      model: requested,
       messages,
-      temperature: input.temperature ?? TEMPERATURE,
-      ...(reasoningEffort ? { reasoningEffort } : {}),
+      ...(input.reasoningEffort ? { reasoningEffort: input.reasoningEffort } : {}),
       schemaName: input.schemaName,
       schema: bridged.schema,
     };
@@ -215,7 +188,7 @@ export function createLlm(deps: LlmDeps): Llm {
         );
       } catch (error) {
         if (error instanceof ModelOutputTruncated && input.runDir)
-          writeCut(input, model, error);
+          writeCut(input, error);
         throw error;
       }
       record = {
@@ -224,10 +197,13 @@ export function createLlm(deps: LlmDeps): Llm {
         createdAt: new Date(now()).toISOString(),
       };
     }
+    const { model } = record;
 
     // Only an answer the schema takes is cached, so a retry asks the model again.
     let data: T;
     try {
+      if (record.finishReason === 'refusal')
+        throw new ModelOutputInvalid(`${model} declined to answer`, []);
       data = parseContent(input.schema, record.content);
     } catch (error) {
       if (!(error instanceof ModelOutputInvalid)) throw error;
@@ -243,7 +219,6 @@ export function createLlm(deps: LlmDeps): Llm {
       usage: record.usage,
       costUsd: replayed ? 0 : costUsd(model, record.usage),
       replayed,
-      backend: backend.name,
       model,
       durationMs: now() - started,
     };
@@ -253,7 +228,6 @@ export function createLlm(deps: LlmDeps): Llm {
         path.join(input.runDir, 'llm', `${input.stage}-r${input.round}.json`),
         {
           request: {
-            backend: backend.name,
             model,
             messages: input.messages,
             schemaName: input.schemaName,
@@ -272,7 +246,6 @@ export function createLlm(deps: LlmDeps): Llm {
   /** A cut answer as far as it got, in `<runDir>/llm/<stage>-r<round>-cut.json`, so a runaway can be read; a second cut in the round gets `-cut-2`. */
   function writeCut(
     input: GenerateInput<unknown>,
-    model: string,
     error: ModelOutputTruncated,
   ): void {
     const dir = path.join(input.runDir ?? '', 'llm');
@@ -282,15 +255,14 @@ export function createLlm(deps: LlmDeps): Llm {
     while (existsSync(name(n))) n += 1;
     writeJsonAtomic(name(n), {
       request: {
-        backend: backend.name,
-        model,
+        model: error.model,
         messages: input.messages,
         schemaName: input.schemaName,
       },
       error: error.message,
       response: error.content,
       usage: error.usage,
-      costUsd: costUsd(model, error.usage),
+      costUsd: costUsd(error.model, error.usage),
     });
   }
 
@@ -307,7 +279,7 @@ export function createLlm(deps: LlmDeps): Llm {
     let n = 1;
     while (existsSync(name(n))) n += 1;
     writeJsonAtomic(name(n), {
-      request: { backend: backend.name, model, messages: input.messages, schemaName: input.schemaName },
+      request: { model, messages: input.messages, schemaName: input.schemaName },
       error: error.message,
       response: content,
     });
@@ -322,78 +294,52 @@ export function createLlm(deps: LlmDeps): Llm {
     let limit = maxTokens;
     const cut: Usage = { input: 0, cachedInput: 0, output: 0 };
     for (let grown = false; ; grown = true) {
-      const completion = await requestWithRetries({
+      const message = await requestWithRetries({
         model: request.model,
-        messages: toWire(request.messages, images),
-        temperature: request.temperature,
-        ...(request.reasoningEffort
-          ? { reasoning_effort: request.reasoningEffort }
-          : {}),
         max_tokens: limit,
-        response_format: {
-          type: 'json_schema',
-          // Strict decoding keeps the answer to the schema: no prose, no wrong types.
-          json_schema: { name: request.schemaName, schema: request.schema, strict: true },
+        ...toWire(request.messages, images),
+        output_config: {
+          format: { type: 'json_schema', schema: request.schema },
+          ...(request.reasoningEffort ? { effort: request.reasoningEffort } : {}),
         },
+        betas: [FALLBACK_BETA],
+        fallbacks: 'default',
       });
-      const choice = completion.choices[0];
-      if (!choice)
-        throw new ModelOutputInvalid(
-          `${request.model} returned no choices`,
-          [],
-        );
+      const content = message.content
+        .flatMap((block) => (block.type === 'text' ? [block.text] : []))
+        .join('');
+      const usage = usageOf(message.usage);
 
-      if (choice.finish_reason === 'length') {
-        cut.input += completion.usage?.prompt_tokens ?? 0;
-        cut.cachedInput +=
-          completion.usage?.prompt_tokens_details?.cached_tokens ?? 0;
-        cut.output += completion.usage?.completion_tokens ?? 0;
+      if (message.stop_reason === 'max_tokens') {
+        cut.input += usage.input;
+        cut.cachedInput += usage.cachedInput;
+        cut.output += usage.output;
         const larger = Math.min(MAX_OUTPUT_TOKENS, limit * 2);
         if (grown || larger === limit) {
           throw new ModelOutputTruncated(
-            `${request.model} output was cut at ${limit} tokens (visible JSON so far: ${choice.message.content?.length ?? 0} characters, ${completion.usage?.completion_tokens ?? 0} output tokens including reasoning)`,
-            request.model,
+            `${message.model} output was cut at ${limit} tokens (visible JSON so far: ${content.length} characters, ${usage.output} output tokens including thinking)`,
+            message.model,
             cut,
-            choice.message.content?.length ?? 0,
-            choice.message.content ?? '',
+            content.length,
+            content,
           );
         }
         limit = larger;
         continue;
       }
-
-      const content = choice.message.content;
-      if (content === null) {
-        throw new ModelOutputInvalid(
-          `${request.model} returned no content (${choice.finish_reason})`,
-          [],
-        );
-      }
-      const usage = completion.usage;
-      return {
-        content,
-        finishReason: choice.finish_reason,
-        usage: {
-          input: usage?.prompt_tokens ?? 0,
-          cachedInput: usage?.prompt_tokens_details?.cached_tokens ?? 0,
-          output: usage?.completion_tokens ?? 0,
-        },
-      };
+      return { content, finishReason: message.stop_reason ?? '', model: message.model, usage };
     }
   }
 
-  async function requestWithRetries(
-    body: OpenAI.ChatCompletionCreateParamsNonStreaming,
-  ): Promise<OpenAI.ChatCompletion> {
-    const first = now();
+  async function requestWithRetries(body: Params): Promise<Message> {
     for (let attempt = 0; ; attempt += 1) {
       try {
         return await getClient().create(body);
       } catch (error) {
-        if (!(error instanceof OpenAI.APIError)) throw error;
+        if (!(error instanceof Anthropic.APIError)) throw error;
         const { status } = error;
         const retryable =
-          error instanceof OpenAI.APIConnectionError ||
+          error instanceof Anthropic.APIConnectionError ||
           status === 429 ||
           (status !== undefined && status >= 500 && status < 600);
         if (!retryable)
@@ -401,9 +347,7 @@ export function createLlm(deps: LlmDeps): Llm {
             `${body.model}: ${error.message}`,
             status,
           );
-        const coldStart =
-          status === 503 && now() - first < (backend.coldStartMs ?? 0);
-        if (attempt + 1 >= MAX_ATTEMPTS && !coldStart) {
+        if (attempt + 1 >= MAX_ATTEMPTS) {
           throw new ModelRequestFailed(
             `${body.model}: ${error.message} (gave up after ${attempt + 1} attempts)`,
             status,
@@ -417,18 +361,31 @@ export function createLlm(deps: LlmDeps): Llm {
   return { generateStructured };
 }
 
-/** The messages as the API takes them: the text, then each image's label and the image inline as a base64 data URL. */
-function toWire(messages: KeyedMessage[], images: Map<string, Buffer>): OpenAI.ChatCompletionMessageParam[] {
-  return messages.map(({ role, content, images: attached }) => {
-    if (!attached?.length) return { role, content };
-    const parts: OpenAI.ChatCompletionContentPart[] = [{ type: 'text', text: content }];
+/** Token counts with `input` including the cache reads and writes, as `Usage` counts them. */
+function usageOf(usage: Anthropic.Beta.Messages.BetaUsage): Usage {
+  const read = usage.cache_read_input_tokens ?? 0;
+  const written = usage.cache_creation_input_tokens ?? 0;
+  return { input: usage.input_tokens + read + written, cachedInput: read, output: usage.output_tokens };
+}
+
+/** The request's system prompt and turns: each image after the text, under its label, as base64. */
+function toWire(
+  messages: KeyedMessage[],
+  images: Map<string, Buffer>,
+): Pick<Params, 'system' | 'messages'> {
+  const system = messages.filter((m) => m.role === 'system').map((m) => m.content).join('\n\n');
+  const turns = messages.flatMap(({ role, content, images: attached }): Anthropic.Beta.Messages.BetaMessageParam[] => {
+    if (role === 'system') return [];
+    if (!attached?.length) return [{ role, content }];
+    const blocks: Anthropic.Beta.Messages.BetaContentBlockParam[] = [{ type: 'text', text: content }];
     for (const { label, sha256: hash } of attached)
-      parts.push(
+      blocks.push(
         { type: 'text', text: label },
-        { type: 'image_url', image_url: { url: `data:image/png;base64,${images.get(hash)?.toString('base64') ?? ''}` } },
+        { type: 'image', source: { type: 'base64', media_type: 'image/png', data: images.get(hash)?.toString('base64') ?? '' } },
       );
-    return { role: 'user', content: parts };
+    return [{ role: 'user', content: blocks }];
   });
+  return { ...(system ? { system } : {}), messages: turns };
 }
 
 /**

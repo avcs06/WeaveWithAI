@@ -3,8 +3,8 @@ import { ACCOUNT, type BarPosition, LOGO, positionIn } from '../02design/config'
 
 // A frame's layout file and its parts in web/app/components. The scaffold
 // writes the app's and the marketing site's from the template's parts, with
-// the logo where the theme put it; the frames step adds sign-in and the
-// account menu, and writes the layout of any further frame.
+// the logo and the account menu where the theme put them; the frames step
+// writes the layout of any further frame.
 
 type Layout = Theme['layouts']['app'];
 export type Kind = 'app' | 'marketing';

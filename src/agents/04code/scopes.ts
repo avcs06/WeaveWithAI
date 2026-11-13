@@ -5,10 +5,8 @@ import type { ReviewScope } from '../../runner/runSpecStage';
 // their design, their code and their screenshots, so each call looks at every
 // element of its screens. One call over 18 screens found almost nothing. Pure.
 
-/** The screens one UX call judges. */
 export const SCREENS_PER_UX_CALL = 3;
 
-/** A screen the unit builds, and its route folder. */
 export type UnitScreen = { id: string; folder: string };
 
 /** A file of the unit's .weave folder: its path in .weave, such as `04-pages/S01.md`, and its text. */

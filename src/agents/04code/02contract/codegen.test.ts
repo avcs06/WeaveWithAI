@@ -8,7 +8,6 @@ const contract = JSON.parse(
   readFileSync(new URL('../../03contract/__fixtures__/reading-list.contract.json', import.meta.url), 'utf8'),
 ) as Contract;
 
-// The browser storage keys carry the run id: two apps on one origin never read each other's records or session.
 describe('storage keys', () => {
   const prefix = storagePrefix({ id: '20261102-1425-dashboard-editor' });
   const files = entityFiles(contract, {}, prefix);

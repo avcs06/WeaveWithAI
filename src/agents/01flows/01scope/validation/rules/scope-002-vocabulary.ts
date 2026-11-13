@@ -9,7 +9,6 @@ import type { Issue } from '../../../../../core/issues';
 import { defineRule, duplicates, isPascal } from '../../../../../core/rules';
 import type { Scope } from '../../schema';
 
-// Plural heuristic: a trailing "s" except the singular endings "ss", "us", "is".
 const looksPlural = (noun: string): boolean =>
   /s$/.test(noun) && !/(ss|us|is)$/.test(noun);
 

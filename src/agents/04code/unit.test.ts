@@ -16,9 +16,8 @@ const root = mkdtempSync(path.join(tmpdir(), 'weave-unit-'));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 const idea = path.join(root, 'idea.md');
 writeFileSync(idea, '# An idea\n');
-const fakeMuse = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-muse.mjs')];
-const fakeOpencode = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-opencode.mjs')];
-const config = ConfigSchema.parse({ MODEL_API_KEY: 'k' });
+const fakeClaude = [process.execPath, pathBeside(import.meta.url, '../../engine/__fixtures__/fake-claude.mjs')];
+const config = ConfigSchema.parse({ ANTHROPIC_API_KEY: 'k' });
 
 /** Reviewers that block once, from the code reviewer in round 1, then pass. */
 function fakeReviewers(blockFirst: boolean) {
@@ -28,7 +27,7 @@ function fakeReviewers(blockFirst: boolean) {
       reviews.push(input as GenerateInput<unknown>);
       const blocking = blockFirst && input.stage.endsWith('-review-code') && input.round === 1;
       const data = { checked: guideIds(input.messages[0]?.content ?? ''), blockers: blocking ? [{ at: 'web/app/(routes)/books/page.tsx', problem: 'The page does two jobs.', fix: 'Split the list out.' }] : [] };
-      return { data: data as never, raw: JSON.stringify(data), usage: { input: 1, cachedInput: 0, output: 1 }, costUsd: 0, replayed: false, backend: 'meta', model: 'muse-spark-1.3', durationMs: 1 };
+      return { data: data as never, raw: JSON.stringify(data), usage: { input: 1, cachedInput: 0, output: 1 }, costUsd: 0, replayed: false, model: 'claude-sonnet-5-5', durationMs: 1 };
     },
   };
   return { llm, reviews };
@@ -50,7 +49,7 @@ function setup(id: string, blockFirst: boolean, failing: (name: string, session:
     const ok = !failing(name, typechecks);
     return { name, ok, output: ok ? '' : 'error TS2304: Cannot find name x.' };
   };
-  const ctx: StageContext = { run, config, llm, interactive: false, backend: 'meta' };
+  const ctx: StageContext = { run, config, llm, interactive: false };
   const spec: UnitSpec = {
     id: 'page-S04',
     stage: 'code-pages-S04',
@@ -58,7 +57,7 @@ function setup(id: string, blockFirst: boolean, failing: (name: string, session:
     folders: ['04-pages', '04-pages/S04'],
   };
   const tasks = () => sessionsRun;
-  return { run, ctx, spec, reviews, deps: { bin: fakeMuse, runCheck }, tasks };
+  return { run, ctx, spec, reviews, deps: { bin: fakeClaude, runCheck }, tasks };
 }
 
 const withWrites = <T>(writes: Record<string, string>, fn: () => Promise<T>) => {
@@ -106,16 +105,17 @@ describe('a coding unit', () => {
   it('records what is left after the third round as known, and returns', async () => {
     const { ctx, spec, deps, reviews } = setup('known', false, (name) => name === 'typecheck');
     process.env.FAKE_VARY = '1';
-    process.env.FAKE_ARGS = runPath(ctx.run, 'muse-args.log');
+    process.env.FAKE_ARGS = runPath(ctx.run, 'claude-args.log');
     const result = await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_VARY);
     expect(result.rounds).toBe(3);
     expect(result.known.map((i) => i.rule)).toEqual(['CODE-002']);
     // The four reviewers read rounds 1 and 2; nobody reviews the final fix.
     expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 1, 2, 2, 2, 2]);
-    // The three sessions are one Muse session; another attempt at the unit starts its own.
-    const ids = () => readFileSync(runPath(ctx.run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
-    expect(ids()).toHaveLength(3);
-    expect(new Set(ids()).size).toBe(1);
+    // The three sessions are one Claude Code session, which the fixes resume; another attempt at the unit starts its own.
+    const sessions = () => readFileSync(runPath(ctx.run, 'claude-args.log'), 'utf8').match(/--(?:session-id|resume) \S+/g) ?? [];
+    const [first = '', ...fixes] = sessions();
+    expect(first).toMatch(/^--session-id \S+$/);
+    expect(fixes).toEqual([first, first].map((flag) => flag.replace('--session-id', '--resume')));
     // Each session is its own commit, failed or not, and a patch; the inputs commits touch only .weave/ and make none.
     const appDir = runPath(ctx.run, 'app');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
@@ -126,19 +126,9 @@ describe('a coding unit', () => {
       '003-page-S04-fix-2-failed-typecheck.patch',
     ]);
     await withWrites(page, () => runUnit(ctx, spec, deps)).finally(() => delete process.env.FAKE_ARGS);
-    expect(new Set(ids()).size).toBe(2);
-  });
-
-  it("on Baseten, continues the session OpenCode named in the unit's first session in each fix", async () => {
-    const { ctx, spec, deps } = setup('opencode', false, (name) => name === 'typecheck');
-    const baseten = { ...ctx, backend: 'baseten' as const, config: { ...config, BASETEN_API_KEY: 'bt', BASETEN_MODEL: 'meta-models/muse-spark-open-1026' } };
-    process.env.FAKE_ARGS = runPath(ctx.run, 'opencode-args.log');
-    await withWrites(page, () => runUnit(baseten, spec, { ...deps, bin: fakeOpencode })).finally(() => delete process.env.FAKE_ARGS);
-    // A run's flags sit on its first line; the fix task after them has lines of its own.
-    const runs = readFileSync(runPath(ctx.run, 'opencode-args.log'), 'utf8').match(/^run --format json.*$/gm) ?? [];
-    expect(runs).toHaveLength(3);
-    expect(runs[0]).not.toContain('--session');
-    expect(runs.slice(1).every((line) => line.includes('--session ses_fake1'))).toBe(true);
+    const next = sessions()[3] ?? '';
+    expect(next).toMatch(/^--session-id \S+$/);
+    expect(next).not.toBe(first);
   });
 
   it('logs a stage start and done once, whether its unit carries its name or units have their own', async () => {
@@ -159,34 +149,34 @@ describe('a coding unit', () => {
 });
 
 describe('a coding unit resumed after its session was cut', () => {
-  it('finishes the cut session in its Muse session, saves the round, and a run from that round reviews it and fixes on', async () => {
+  it('finishes the cut session in its Claude Code session, saves the round, and a run from that round reviews it and fixes on', async () => {
     const { run, ctx, spec, reviews, deps } = setup('resumed', true, () => false);
     const appDir = runPath(run, 'app');
-    // A killed run: the unit's inputs commit, its Muse session logged, and its files left uncommitted.
+    // A killed run: the unit's inputs commit, its Claude Code session logged, and its files left uncommitted.
     mkdirSync(path.join(appDir, '.weave/tasks'), { recursive: true });
     writeFileSync(path.join(appDir, '.weave/tasks/page-S04.md'), `${spec.task}\n`);
     git(appDir, 'add', '-A');
     git(appDir, 'commit', '-q', '-m', 'code-pages-S04: inputs for page-S04');
-    appendEvent(run, { type: 'session:start', stage: 'session:page-S04', museSession: 'muse-1' });
+    appendEvent(run, { type: 'session:start', stage: 'session:page-S04', claudeSession: 'claude-1' });
     const cut = 'web/app/(routes)/shelves/page.tsx';
     mkdirSync(path.join(appDir, path.dirname(cut)), { recursive: true });
     writeFileSync(path.join(appDir, cut), 'export default function Shelves() { return null; }\n');
-    process.env.FAKE_ARGS = runPath(run, 'muse-args.log');
-    const ids = () => readFileSync(runPath(run, 'muse-args.log'), 'utf8').match(/--session-id \S+/g) ?? [];
+    process.env.FAKE_ARGS = runPath(run, 'claude-args.log');
+    const sessions = () => readFileSync(runPath(run, 'claude-args.log'), 'utf8').match(/--(?:session-id|resume) \S+/g) ?? [];
 
     const { file, saved } = await withWrites(page, () => resumeUnit(ctx, spec, undefined, deps));
     expect(file).toBe(runPath(run, 'resume', 'code-pages-S04-round-1.json'));
-    expect(saved).toMatchObject({ unit: 'page-S04', round: 1, museSession: 'muse-1' });
+    expect(saved).toMatchObject({ unit: 'page-S04', round: 1, claudeSession: 'claude-1' });
     expect(saved.draft.data.diff).toContain('shelves/page.tsx');
     expect(saved.draft.data.diff).toContain('books/page.tsx');
     expect(readFileSync(runPath(run, 'app', '.weave/tasks/page-S04-resume.md'), 'utf8')).toContain('.weave/tasks/page-S04.md');
     expect(git(appDir, 'log', '-1', '--format=%s')).toBe('code-pages-S04: page-S04-resume');
     await expect(resumeUnit(ctx, spec, undefined, deps)).rejects.toThrow('nothing to resume');
 
-    // Round 1 is the saved one: reviewed, not run again; the code reviewer's blocker goes to a fix in the same Muse session.
+    // Round 1 is the saved one: reviewed, not run again; the code reviewer's blocker goes to a fix in the same Claude Code session.
     const resumed = { ...ctx, resume: { stage: 'code-pages-S04', round: 1 } };
     await withWrites(page, () => runUnits(resumed, 'code-pages-S04', [spec], deps)).finally(() => delete process.env.FAKE_ARGS);
-    expect(ids()).toEqual(['--session-id muse-1', '--session-id muse-1']);
+    expect(sessions()).toEqual(['--resume claude-1', '--resume claude-1']);
     expect(reviews.map((r) => r.round)).toEqual([1, 1, 1, 1, 2, 2, 2, 2]);
     expect(readEvents(run).some((e) => e.type === 'stage:reset')).toBe(false);
     expect(git(appDir, 'log', '-3', '--format=%s').split('\n')).toEqual([

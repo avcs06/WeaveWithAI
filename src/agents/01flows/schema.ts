@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Every field is required; "none" is "", [] or null. Nesting stays within 8 levels (Meta allows 10).
+// Every field is required; "none" is "", [] or null. Nesting stays within 8 levels (the schema bridge allows 10).
 
 export const FIELD_TYPES = [
   'text',
@@ -200,8 +200,6 @@ export type Question = z.infer<typeof Question>;
 export type Field = z.infer<typeof Field>;
 
 export type Form = z.infer<typeof Form>;
-
-export type Effect = z.infer<typeof Effect>;
 
 export type Step = z.infer<typeof Step>;
 

@@ -11,7 +11,7 @@ export type BridgedSchema = {
 
 export const MAX_DEPTH = 10;
 
-/** Converts a zod schema to the JSON Schema the Meta Model API takes for `response_format`. */
+/** Converts a zod schema to the JSON Schema Claude's structured outputs take in `output_config.format`. */
 export function toJsonSchema(schema: z.ZodType, name: string): BridgedSchema {
   let raw: JsonSchema;
   try {
@@ -41,7 +41,7 @@ export function assertWithinLimits(
   const { name, stats } = bridged;
   if (stats.depth > MAX_DEPTH) {
     throw new SchemaBridgeError(
-      `${name} nests ${stats.depth} levels; Meta allows ${MAX_DEPTH}`,
+      `${name} nests ${stats.depth} levels; the limit is ${MAX_DEPTH}`,
     );
   }
   if (limits.properties !== undefined && stats.properties > limits.properties) {
@@ -56,13 +56,20 @@ export function assertWithinLimits(
   }
 }
 
-/** Renames every `oneOf` to `anyOf`, the form the API accepts in strict mode too. */
+// Structured outputs refuse these; zod checks them on the answer instead.
+const UNSUPPORTED = new Set(['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf', 'minLength', 'maxLength']);
+
+/** Renames every `oneOf` to `anyOf`, the form structured outputs take, and drops the keywords they refuse. */
 function rewrite(node: unknown): unknown {
   if (Array.isArray(node)) return node.map(rewrite);
   if (!isRecord(node)) return node;
   const out: JsonSchema = {};
   for (const [key, value] of Object.entries(node)) {
-    if (key !== 'oneOf') out[key] = rewrite(value);
+    if (key === 'oneOf' || UNSUPPORTED.has(key)) continue;
+    // Property names are the document's, not keywords.
+    out[key] = key === 'properties' && isRecord(value)
+      ? Object.fromEntries(Object.entries(value).map(([name, child]) => [name, rewrite(child)]))
+      : rewrite(value);
   }
   if (Array.isArray(node.oneOf)) {
     const kept = Array.isArray(out.anyOf) ? out.anyOf : [];

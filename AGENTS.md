@@ -1,15 +1,13 @@
 # Agent rules
 
 This repository builds **WeaveWithAI**: a generator agent that turns an idea into a
-deployable website, built on Meta's Muse models for the Meta Global AI Developer
-Hackathon (submissions close 2026-11-05 07:30 IST).
+deployable website, built on Claude models.
 
 | Path        | What it is                                                                                     | Who changes it                                       |
 | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `src/`      | The generator: CLI, runner, agents (one folder per stage), core. See "Where the code lives"   | You                                                  |
 | `template/` | The design-system workspace (packages, web, server, tools). Copied into every generated app    | Only tasks that name `template/`                     |
 | `mcps/`     | MCP servers, one folder each; `frontend` does design-system lookup and code validation         | Only tasks that name `mcps/`                         |
-| `docs/`     | The benchmark spec                                                                             | Never change decisions                               |
 | `fixtures/` | Reference idea briefs, and golden artifacts saved by `weave golden`                            | Add files; don't rewrite existing ones               |
 | `runs/`     | Output of generator runs (gitignored)                                                          | Written by the generator only                        |
 
@@ -23,7 +21,8 @@ src/
   ds/                    the design-system inventory the agents read
   checks/                rendered checks on a built app (DESIGN-R-001 to 017), in a real browser,
                          and the screenshot of each route the UX reviewer reads
-  engine/                the Muse Code runner: app setup, one coding session, the gate after it
+  engine/                the Claude Code runner: app setup, one coding session, the gate after it
+  bench/                 the bench stage: measures a finished app and its run, no model calls
   agents/
     stages.ts            the pipeline order
     01flows/             scope, catalog, expand; the flow shapes and rules they share
@@ -53,9 +52,7 @@ sits in the group folder, never in a stage of its own: `01flows/schema.ts`,
 
 ## How to work
 
-All work happens on the `hackathonv3` branch, or on short-lived branches merged
-back into it. `hackathon` (the design system) and `hackathonv2` (the
-restructure) stay as they are.
+All work happens on `master`, or on short-lived branches merged back into it.
 
 1. Do only what was asked. Name work you discover to the user, with one line
    saying why. Don't do it now.
@@ -73,14 +70,9 @@ restructure) stay as they are.
 - No agent frameworks (LangChain, LangGraph, Mastra and the like). The
   orchestrator is plain TypeScript you can read top to bottom.
 - Every model call of the generator's own stages goes through
-  `src/core/llm.ts`. The coding stages run Muse Code headless, which
-  makes its own calls; the runner reads their usage from its JSONL events.
-  Product runs use Meta's
-  models only: the Meta Model API by default, or Meta open-weight models (Muse
-  Spark Open, Muse Glimmer) served on Modal or Baseten, chosen with
-  `LLM_BACKEND`. Meta tooling is 25% of the score and the open-weight
-  run qualifies for a bonus prize. Another vendor's models are allowed only
-  behind env vars for local experiments, never as a default.
+  `src/core/llm.ts`, on the Anthropic API. The coding stages run Claude
+  Code headless, which makes its own calls; the runner reads their usage
+  from its stream-json events.
 - Tests never touch the network. Use the replay cache in `src/core/llm.ts`, a
   fake client, or fixtures.
 - Artifacts are JSON validated by zod schemas in the stage's `schema.ts`.
@@ -108,10 +100,9 @@ restructure) stay as they are.
   it by searching upward and `pnpm mcp:check` breaks. The agent's config is
   `src/tsconfig.json`.
 - Generated apps have no backend and no deployment: the contract becomes
-  entity stores inside the app, and a planned benchmark stage
-  (`docs/specs/benchmark.md`) will measure the frontend.
+  entity stores inside the app.
 - Code the generator writes into an app is recorded in the app's ledger with
-  its origin. A Muse Code session may change any app file, the design system
+  its origin. A Claude Code session may change any app file, the design system
   and the entities included, but tools, config and tests. The runner records its
   git diff in the ledger, commits it with a patch in the run whether it passed
   or not, and fails the session when the diff touches a test or a protected

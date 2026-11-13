@@ -42,7 +42,6 @@ export const FILE_OF: Record<ArtifactName, string> = {
   'code-contract': '04-code/02-contract.json',
 };
 
-/** The markdown an artifact is rendered to, beside it. */
 export const markdownOf = (name: ArtifactName): string =>
   FILE_OF[name].replace(/\.json$/, '.md');
 

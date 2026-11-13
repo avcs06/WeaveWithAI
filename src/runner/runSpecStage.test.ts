@@ -64,14 +64,13 @@ function fakeLlm(outputs: Array<Doc | Review | Error>) {
       if (!data) throw new Error('script exhausted');
       if (data instanceof Error) throw data;
       const model =
-        input.model === 'strong' ? 'muse-wonder-1.0' : 'muse-spark-1.3';
+        input.model === 'strong' ? 'claude-opus-5-5' : 'claude-sonnet-5-5';
       return {
         data: data as never,
         raw: JSON.stringify(data),
         usage: { input: 10, cachedInput: 0, output: 5 },
         costUsd: 0.001,
         replayed: false,
-        backend: 'meta',
         model,
         durationMs: 1,
       };
@@ -122,7 +121,7 @@ describe('runSpecStage with reviewers', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       rounds: 1,
     });
     expect(inputs.map((input) => input.stage)).toEqual([
@@ -136,14 +135,13 @@ describe('runSpecStage with reviewers', () => {
         .map((input) => [
           input.round,
           input.model,
-          input.temperature,
           input.reasoningEffort,
           input.maxTokens,
           input.schemaName,
         ]),
     ).toEqual([
-      [1, 'default', undefined, 'medium', 16_384, 'Review'],
-      [1, 'default', undefined, 'medium', 16_384, 'Review'],
+      [1, 'default', 'medium', 16_384, 'Review'],
+      [1, 'default', 'medium', 16_384, 'Review'],
     ]);
     // Both read the same input; each has its own guide.
     const review1 = lastUser(inputs[1]);
@@ -184,39 +182,6 @@ describe('runSpecStage with reviewers', () => {
         .map((event) => event.generated),
     ).toEqual([true]);
     expect(readState(run).stages.doc).toMatchObject({ rounds: 1, known: 0 });
-  });
-
-  it("gives the stage's temperature to the first draft, and fixes and reviewers the default", async () => {
-    const { llm, inputs } = fakeLlm([
-      { title: '' },
-      clean,
-      clean,
-      { title: 'Cats' },
-      clean,
-      clean,
-    ]);
-    const run = createRun({ idea, runsDir: root, id: 'temperature' });
-    await runSpecStage({
-      run,
-      stage: 'doc',
-      schema: Doc,
-      schemaName: 'Doc',
-      system: 'Write a doc.',
-      user: 'About cats.',
-      validate: requireTitle,
-      review: guide,
-      temperature: 0.7,
-      llm,
-    });
-
-    expect(inputs.map((input) => [input.stage, input.temperature])).toEqual([
-      ['doc', 0.7],
-      ['doc-review-peer', undefined],
-      ['doc-review-output', undefined],
-      ['doc', undefined],
-      ['doc-review-peer', undefined],
-      ['doc-review-output', undefined],
-    ]);
   });
 
   it('runs only the output reviewer when the stage gives no peer guide', async () => {
@@ -311,7 +276,7 @@ describe('runSpecStage with reviewers', () => {
       warnings: [],
       known: [],
       answers: {},
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       rounds: 2,
     });
     expect(inputs.map((input) => input.stage)).toEqual([
@@ -590,7 +555,7 @@ describe('runSpecStage without a review guide', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       rounds: 1,
     });
     expect(inputs).toHaveLength(1);
@@ -622,7 +587,7 @@ describe('runSpecStage without a review guide', () => {
       warnings: [longTitle],
       known: [],
       answers: {},
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       rounds: 2,
     });
     const messages = inputs[1]?.messages ?? [];
@@ -877,9 +842,9 @@ describe('runSpecStage with a model that has no price', () => {
     const { llm } = fakeLlm([{ title: 'Cats' }, clean, clean]);
     // Live and unpriced, live and priced, replayed and unpriced.
     const script = [
-      { model: 'hackathon', replayed: false },
-      { model: 'muse-spark-1.3', replayed: false },
-      { model: 'hackathon', replayed: true },
+      { model: 'unpriced-model', replayed: false },
+      { model: 'claude-sonnet-5-5', replayed: false },
+      { model: 'unpriced-model', replayed: true },
     ];
     const unpriced: Llm = {
       async generateStructured(input) {
@@ -895,7 +860,7 @@ describe('runSpecStage with a model that has no price', () => {
       expect.objectContaining({
         stage: 'doc',
         message:
-          'hackathon has no price in src/core/prices.ts; its calls count as $0',
+          'unpriced-model has no price in src/core/prices.ts; its calls count as $0',
       }),
     ]);
   });
@@ -904,8 +869,8 @@ describe('runSpecStage with a model that has no price', () => {
 describe('runSpecStage with an answer cut at the output limit', () => {
   const cut = () =>
     new ModelOutputTruncated(
-      'muse-spark-1.3 output was cut at 8192 tokens',
-      'muse-spark-1.3',
+      'claude-sonnet-5-5 output was cut at 8192 tokens',
+      'claude-sonnet-5-5',
       { input: 10, cachedInput: 0, output: 8192 },
       120,
     );
@@ -938,7 +903,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
       stage: 'doc',
       round: 1,
       truncated: true,
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       input: 10,
       cachedInput: 0,
       output: 8192,
@@ -956,7 +921,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
   it('retries once an answer the schema refuses, logging what it cost, and fails on a second', async () => {
     const invalid = () => {
       const error = new ModelOutputInvalid('output is not JSON: Unexpected token', []);
-      error.paid = { model: 'muse-spark-1.3', usage: { input: 10, cachedInput: 0, output: 40 } };
+      error.paid = { model: 'claude-sonnet-5-5', usage: { input: 10, cachedInput: 0, output: 40 } };
       return error;
     };
     const once = fakeLlm([invalid(), { title: 'Cats' }]);
@@ -993,7 +958,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
       async generateStructured(input) {
         calls[input.stage] = (calls[input.stage] ?? 0) + 1;
         if (input.stage === 'doc-review-peer' && calls[input.stage]! <= failures)
-          throw new Error('Meta API 500');
+          throw new Error('API 500');
         const data = input.stage === 'doc' ? { title: 'Cats' } : clean;
         return {
           data: data as never,
@@ -1001,8 +966,7 @@ describe('runSpecStage with an answer cut at the output limit', () => {
           usage: { input: 10, cachedInput: 0, output: 5 },
           costUsd: 0.001,
           replayed: false,
-          backend: 'meta',
-          model: 'muse-spark-1.3',
+          model: 'claude-sonnet-5-5',
           durationMs: 1,
         };
       },

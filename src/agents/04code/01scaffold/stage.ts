@@ -73,7 +73,7 @@ export async function runScaffold(ctx: StageContext, deps: ScaffoldDeps = {}): P
     ...changed.map((file) => ({ path: file, status: 'M', origin: 'code' as const, stage: STAGE })),
     ...layouts.removed.map((file) => ({ path: file, status: 'D', origin: 'code' as const, stage: STAGE })),
   ]);
-  if (ctx.config.MUSE_DOCKER === true) await ensureAgentImage();
+  if (ctx.config.CLAUDE_DOCKER === true) await ensureAgentImage();
   // Before the baseline commit, so every session's diff starts with its inputs in place.
   writeWeave(appDir, weaveFolders(readCodeInputs(run)));
   prepareApp(appDir, `${STAGE}: theme, .weave inputs and agent config`);

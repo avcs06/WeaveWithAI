@@ -16,7 +16,6 @@ import {
   isStale,
   readArtifact,
 } from './core/artifacts';
-import { BACKEND_NAMES, isBackendName, resolveBackend } from './core/backends';
 import { type Config, config as loadConfig } from './core/env';
 import { formatForTerminal, type Issue, splitIssues } from './core/issues';
 import { createLlm, type Llm } from './core/llm';
@@ -51,7 +50,6 @@ export type RunArgs = {
   to?: string;
   interactive?: boolean;
   replay?: boolean;
-  backend?: string;
 };
 
 /** Tests pass a temp folder, a hand-built config, a fake llm and an output sink. */
@@ -63,8 +61,8 @@ export type CliDeps = {
 };
 
 const USAGE = `usage:
-  weave run <idea.md> [--run <id>] [--from <stage>] [--round <n>] [--to <stage>] [--interactive] [--no-replay] [--backend <name>]
-  weave session-resume <runId> <stage> [--muse-session <uuid>] [--backend <name>]
+  weave run <idea.md> [--run <id>] [--from <stage>] [--round <n>] [--to <stage>] [--interactive] [--no-replay]
+  weave session-resume <runId> <stage> [--claude-session <uuid>]
                                  finish a code stage's cut session; then weave run --run <id> --from <stage> --round <n>
   weave validate <runId> [stage]
   weave show <runId>
@@ -93,12 +91,6 @@ export async function runCommand(
     }
   }
 
-  if (args.backend !== undefined && !isBackendName(args.backend)) {
-    throw new UsageError(
-      `--backend ${args.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`,
-    );
-  }
-
   const round = args.round === undefined ? undefined : Number(args.round);
   if (round !== undefined) {
     const codeStages = stages.filter((stage) => stage.units).map((stage) => stage.name);
@@ -114,14 +106,12 @@ export async function runCommand(
   const run = args.run
     ? openRun(args.run, runsDir)
     : createRun({ idea: args.idea, runsDir });
-  const backend = resolveBackend(config, args.backend);
 
   const ctx: StageContext = {
     run,
     config,
-    llm: deps.llm ?? createLlm({ config, backend }),
+    llm: deps.llm ?? createLlm({ config }),
     interactive: args.interactive ?? false,
-    backend: backend.name,
     ...(round !== undefined && args.from && { resume: { stage: args.from, round } }),
   };
   out(`run ${run.id} (${run.dir})`);
@@ -165,13 +155,13 @@ export async function runCommand(
 }
 
 /**
- * Finishes the Muse session a code stage's run left cut, such as a killed run's, and saves its round's output, for
+ * Finishes the Claude Code session a code stage's run left cut, such as a killed run's, and saves its round's output, for
  * `weave run --run <id> --from <stage> --round <n>` to review and fix from without running that session again.
  */
 export async function sessionResumeCommand(
   runId: string,
   stage: string,
-  options: { museSession?: string; backend?: string },
+  options: { claudeSession?: string },
   deps: CliDeps = {},
 ): Promise<string[]> {
   const out = deps.out ?? console.log;
@@ -179,23 +169,19 @@ export async function sessionResumeCommand(
   const def = stages.find((s) => s.name === stage);
   const codeStages = stages.filter((s) => s.units).map((s) => s.name);
   if (!def?.units) throw new UsageError(`${stage}: session-resume takes a code stage: ${codeStages.join(', ')}`);
-  if (options.backend !== undefined && !isBackendName(options.backend))
-    throw new UsageError(`--backend ${options.backend}: unknown backend. Known backends: ${BACKEND_NAMES.join(', ')}`);
   const config = deps.config ?? loadConfig();
-  const backend = resolveBackend(config, options.backend);
   const ctx: StageContext = {
     run,
     config,
-    llm: deps.llm ?? createLlm({ config, backend }),
+    llm: deps.llm ?? createLlm({ config }),
     interactive: false,
-    backend: backend.name,
   };
   const [spec, ...more] = def.units(ctx);
   if (!spec || more.length) throw new UsageError(`${stage}: session-resume needs a stage of one unit`);
   const log = runLog(PIPELINE, out);
   const stopLog = watchEvents(run, log.event);
   try {
-    const { file, saved } = await resumeUnit(ctx, spec, options.museSession);
+    const { file, saved } = await resumeUnit(ctx, spec, options.claudeSession);
     const lines = [
       `${stage} round ${saved.round}: the resumed session ended ${saved.draft.data.session.status}; saved ${file}`,
       `next: weave run ${readState(run).idea} --run ${run.id} --from ${stage} --round ${saved.round}`,
@@ -207,7 +193,7 @@ export async function sessionResumeCommand(
   }
 }
 
-/** Validators only, no model calls. Returns every issue found. */
+/** Validators only, no model calls. */
 export function validateCommand(
   runId: string,
   stage: string | undefined,
@@ -408,7 +394,7 @@ async function benchCommand(ids: string[], values: { skip?: string; compare?: bo
   if (!values.compare)
     for (const run of runs) {
       console.log(`bench ${run.id}`);
-      const bench = await runBenchmark(run, DEFAULT_RUNS_DIR, { skip });
+      const bench = await runBenchmark(run, { skip });
       console.log(`  ${runPath(run, '05-benchmark.md')}\n\n${renderTerminalTable(bench)}\n`);
     }
   if (values.compare || runs.length > 1) console.log(compareBenchmarks(runs, DEFAULT_RUNS_DIR));
@@ -428,11 +414,10 @@ export async function main(argv: string[]): Promise<number> {
         run: { type: 'string' },
         from: { type: 'string' },
         round: { type: 'string' },
-        'muse-session': { type: 'string' },
+        'claude-session': { type: 'string' },
         to: { type: 'string' },
         interactive: { type: 'boolean' },
         replay: { type: 'boolean' },
-        backend: { type: 'string' },
         stages: { type: 'string' },
         all: { type: 'boolean' },
         skip: { type: 'string' },
@@ -447,7 +432,7 @@ export async function main(argv: string[]): Promise<number> {
         return 0;
       case 'session-resume':
         if (!first || !second) throw new UsageError('session-resume needs a run id and a code stage');
-        await sessionResumeCommand(first, second, { museSession: values['muse-session'], backend: values.backend });
+        await sessionResumeCommand(first, second, { claudeSession: values['claude-session'] });
         return 0;
       case 'validate':
         if (!first) throw new UsageError('validate needs a run id');

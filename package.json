@@ -2,7 +2,7 @@
   "name": "WeaveWithAI",
   "version": "0.0.0",
   "private": true,
-  "description": "Generator agent: idea to flows, design, contracts and a deployable app, on Meta's Muse models.",
+  "description": "Generator agent: idea to flows, design, contracts and a deployable app, on Claude models.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -20,12 +20,11 @@
     "docker:clean": "tsx src/cli.ts docker-clean"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@axe-core/playwright": "^4.14.0",
     "culori": "^4.0.2",
     "execa": "^10.2.1",
     "jscpd": "^5.4.2",
-    "openai": "^7.45.1",
-    "p-limit": "^7.3.3",
     "playwright-core": "1.56.1",
     "zod": "^4.6.7"
   },

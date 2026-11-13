@@ -70,18 +70,18 @@ function weaveFiles(appDir: string, folder: string): WeaveFile[] {
 const folderText = (appDir: string, folder: string) => weaveFiles(appDir, folder).map(fileSection).join('\n\n');
 
 /** A unit's round that `weave session-resume` finished, for `weave run --round` to review: what the session made, and where the unit picks up. */
-export type SavedRound = { stage: string; unit: string; round: number; museSession: string; baseline: string; draft: Draft<UnitResult> };
+export type SavedRound = { stage: string; unit: string; round: number; claudeSession: string; baseline: string; draft: Draft<UnitResult> };
 
 const savedRoundFile = (run: Run, stage: string, round: number) => runPath(run, 'resume', `${stage}-round-${round}.json`);
 
 /**
- * Finishes the cut session of a code stage's unit, such as one a killed run left mid-task, in its own Muse session,
+ * Finishes the cut session of a code stage's unit, such as one a killed run left mid-task, in its own Claude Code session,
  * and saves what it made as its round's output.
  */
 export async function resumeUnit(
   ctx: StageContext,
   spec: UnitSpec,
-  museSession?: string,
+  claudeSession?: string,
   deps: SessionDeps = {},
 ): Promise<{ file: string; saved: SavedRound }> {
   const appDir = runPath(ctx.run, 'app');
@@ -98,12 +98,11 @@ export async function resumeUnit(
   const first = commits.find((line) => line.slice(41) === `${inputs}${spec.id}`);
   if (!first) throw new Error(`${spec.stage}: no inputs commit for unit ${spec.id}`);
   const baseline = git(appDir, 'rev-parse', `${first.slice(0, 40)}^`).trim();
-  // Sessions log their Muse session from now on; a run from before gives it by hand, from runs/<id>/muse/sessions/.
   const logged = readEvents(ctx.run)
-    .filter((e) => e.type === 'session:start' && String(e.stage).startsWith(`session:${spec.id}`) && typeof e.museSession === 'string')
-    .at(-1)?.museSession;
-  const id = museSession ?? (logged as string | undefined);
-  if (!id) throw new Error(`${spec.stage}: no Muse session logged for ${cut}; pass --muse-session with its id`);
+    .filter((e) => e.type === 'session:start' && String(e.stage).startsWith(`session:${spec.id}`) && typeof e.claudeSession === 'string')
+    .at(-1)?.claudeSession;
+  const id = claudeSession ?? (logged as string | undefined);
+  if (!id) throw new Error(`${spec.stage}: no Claude Code session logged for ${cut}; pass --claude-session with its id`);
 
   const result = await resumeSession(
     ctx,
@@ -114,7 +113,7 @@ export async function resumeUnit(
       routes: spec.routes,
       expects: spec.expects,
       stage: spec.stage,
-      museSession: id,
+      claudeSession: id,
       maxSteps: spec.maxSteps,
       timeoutMs: spec.timeoutMs,
     },
@@ -124,7 +123,7 @@ export async function resumeUnit(
     stage: spec.stage,
     unit: spec.id,
     round: Number(fix) + 1,
-    museSession: id,
+    claudeSession: id,
     baseline,
     draft: await unitDraft(ctx, appDir, spec, baseline, result, `${cut}-resume`),
   };
@@ -164,7 +163,6 @@ export async function runUnit(
     review: { output: codeReviewGuides(appDir) },
     reviewInput: load('review-input.md'),
     reviewersSeeMandatory: true,
-    // The UX reviewer judges a few screens a call, each from its screenshot.
     reviewScopes: (draft) => ({ ux: uxScopes(spec.screens ?? [], ownFiles, draft.raw, draft.data.shots ?? []) }),
     schedule: CODE_SCHEDULE,
     compose: sessionCompose(
@@ -172,7 +170,7 @@ export async function runUnit(
       appDir,
       unit,
       deps,
-      saved && { museSession: saved.museSession, sessions: saved.round, baseline: saved.baseline },
+      saved && { claudeSession: saved.claudeSession, sessions: saved.round, baseline: saved.baseline },
     ),
     resume: saved && { round: saved.round, draft: saved.draft },
   });

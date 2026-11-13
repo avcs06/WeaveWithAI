@@ -15,8 +15,6 @@ export type ReviewCount = { reviewer: string; part: 'planning' | 'code'; caught:
 export type ThreadCount = { issues: number; threads: number };
 
 export type GenerationReport = {
-  backend: string;
-  agent: 'Muse Code' | 'OpenCode';
   models: { model: string; calls: number }[];
   timeMs: { total: number; planning: number; code: number; stages: { stage: string; ms: number }[] };
   calls: number;
@@ -24,15 +22,15 @@ export type GenerationReport = {
   tokensCached: number;
   tokensOut: number;
   costUsd: number;
-  /** The Muse Code subscription's weekly allowance, in percent, before the run's first session and after its last. */
-  subscription?: { weekFrom?: number; weekTo: number };
+  /** True when the coding sessions ran on a Claude subscription, whose allowance paid for them. */
+  subscription: boolean;
   rounds: number;
   known: number;
   review: ReviewCount[];
   threads: ThreadCount;
 };
 
-type Call = Event & { model?: string; backend?: string; calls?: number; input?: number; cachedInput?: number; output?: number; costUsd?: number; billing?: string; allowance?: { week: number } };
+type Call = Event & { model?: string; calls?: number; input?: number; cachedInput?: number; output?: number; costUsd?: number; billing?: string };
 
 const at = (event: Event) => Date.parse(event.ts);
 /** The stages that make the app; the benchmark after them is not the run's time. */
@@ -58,17 +56,6 @@ function times(events: Event[]): GenerationReport['timeMs'] {
     code: between('code-frames', 'code-pages'),
     stages: [...spans].filter(([, s]) => s.done > s.start).map(([stage, s]) => ({ stage, ms: s.done - s.start })),
   };
-}
-
-/** Every subscription reading of every run, oldest first, so a run's starting allowance is the last reading before it. */
-function allowanceReadings(runsDir: string): { ts: string; run: string; week: number }[] {
-  if (!existsSync(runsDir)) return [];
-  const readings = readdirSync(runsDir).flatMap((id) =>
-    readEvents({ id, dir: path.join(runsDir, id) })
-      .filter((e): e is Call => e.type === 'llm:call' && (e as Call).billing === 'subscription' && Boolean((e as Call).allowance))
-      .map((e) => ({ ts: e.ts, run: id, week: e.allowance!.week })),
-  );
-  return readings.sort((a, b) => a.ts.localeCompare(b.ts));
 }
 
 /** The `stage:round`s an event type covers: a review read that round's fix, or the validators ran on it. */
@@ -117,23 +104,18 @@ function readThreads(run: Run): Record<string, Thread[]> {
   return Object.fromEntries(files.map((file) => [file.replace('.threads.json', ''), JSON.parse(readFileSync(path.join(dir, file), 'utf8')) as Thread[]]));
 }
 
-export function readGeneration(run: Run, runsDir: string): GenerationReport {
+export function readGeneration(run: Run): GenerationReport {
   const events = readEvents(run);
   const calls = events.filter((e): e is Call => e.type === 'llm:call');
   const models = new Map<string, number>();
   for (const call of calls) models.set(call.model ?? '?', (models.get(call.model ?? '?') ?? 0) + (call.calls ?? 1));
   const sum = (pick: (call: Call) => number | undefined) => calls.reduce((total, call) => total + (pick(call) ?? 0), 0);
 
-  const readings = allowanceReadings(runsDir);
-  const mine = readings.filter((r) => r.run === run.id);
-  const before = mine[0] && readings.filter((r) => r.ts < mine[0]!.ts).at(-1);
   const state = readState(run).stages;
   const threads = readThreads(run);
   const top = PIPELINE.map((stage) => state[stage]).filter((s) => s !== undefined);
 
   return {
-    backend: calls[0]?.backend ?? '?',
-    agent: existsSync(runPath(run, 'opencode')) ? 'OpenCode' : 'Muse Code',
     models: [...models].map(([model, n]) => ({ model, calls: n })).sort((a, b) => b.calls - a.calls),
     timeMs: times(events),
     calls: sum((c) => c.calls ?? 1),
@@ -141,7 +123,7 @@ export function readGeneration(run: Run, runsDir: string): GenerationReport {
     tokensCached: sum((c) => c.cachedInput),
     tokensOut: sum((c) => c.output),
     costUsd: sum((c) => c.costUsd),
-    ...(mine.length && { subscription: { ...(before && { weekFrom: before.week }), weekTo: mine.at(-1)!.week } }),
+    subscription: calls.some((c) => c.billing === 'subscription'),
     rounds: top.reduce((n, s) => n + (s.rounds ?? 0), 0),
     known: top.reduce((n, s) => n + (s.known ?? 0), 0),
     review: reviewCounts(threads, roundsOf(events, 'review:start'), roundsOf(events, 'round:validated')),

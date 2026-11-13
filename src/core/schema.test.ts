@@ -12,7 +12,6 @@ const Person = z.object({
   }),
 });
 
-/** Every key at every level, so a test can prove a key is gone. */
 describe('toJsonSchema', () => {
   it('converts a nested object and reports its size', () => {
     const bridged = toJsonSchema(Person, 'person');
@@ -55,6 +54,13 @@ describe('toJsonSchema', () => {
     const { schema } = toJsonSchema(Shape, 'shape');
     expect(schema.anyOf).toHaveLength(2);
     expect(keysOf(schema)).not.toContain('oneOf');
+  });
+
+  it('drops the numeric and string bounds structured outputs refuse, but keeps a property named like one', () => {
+    const { schema } = toJsonSchema(z.object({ count: z.number().int(), minimum: z.string(), code: z.string().max(4) }), 'Bounds');
+    expect(keysOf(schema)).not.toContain('maximum');
+    expect(keysOf(schema)).not.toContain('maxLength');
+    expect(schema.properties).toEqual({ count: { type: 'integer' }, minimum: { type: 'string' }, code: { type: 'string' } });
   });
 
   it('drops the $schema key at the root', () => {

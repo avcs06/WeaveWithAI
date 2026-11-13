@@ -1,72 +1,45 @@
 import { mkdirSync } from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import type { StageContext } from '../agents/stages';
-import type { Backend } from '../core/backends';
 import { runPath } from '../core/run';
-import { agentDir, dockerArgs, ensureAgentImage, IN_CONTAINER, seedModelCatalog } from './docker';
-import { museArgs, type MuseUsage, readUsage } from './muse';
-import { KEY_VARIABLE, opencodeArgs, opencodeConfig, readOpencodeUsage } from './opencode';
+import { type ClaudeUsage, claudeArgs, readClaudeUsage } from './claude';
+import { agentBinary, dockerArgs, ensureAgentImage } from './docker';
 
-// How a session starts its backend's coding agent: Muse Code, or OpenCode on
-// Baseten. Either runs in the agent container unless MUSE_DOCKER is false;
-// tests pass their own executable.
+// How a session starts Claude Code: in the agent container unless CLAUDE_DOCKER
+// is false; tests pass their own executable.
 
 export type AgentRun = {
   command: string[];
-  /** What goes on stdin: Muse Code reads its key there. */
+  /** What goes on stdin: the task. */
   input: string;
-  env: Record<string, string>;
-  /** A Muse Code login on the Meta API, whose allowance pays instead of a key. */
+  /** The whole environment: the runner's own, with only the credential this session uses. */
+  env: Record<string, string | undefined>;
+  /** A Claude subscription's token, whose allowance pays instead of a key. */
   subscription: boolean;
-  /** The usage from the agent's stdout, and the session it ran in when the agent names its own. */
-  read: (stdout: string) => MuseUsage & { session?: string };
+  read: (stdout: string) => ClaudeUsage;
 };
 
 export async function agentRun(
   ctx: StageContext,
-  backend: Backend,
   appDir: string,
-  opts: { task: string; promptFile: string; maxSteps: number; sessionId?: string },
+  opts: { task: string; maxSteps: number; session?: string; continues?: boolean },
   bin?: string[],
 ): Promise<AgentRun> {
-  const inContainer = !bin && ctx.config.MUSE_DOCKER === true;
-  const data = runPath(ctx.run, backend.agent);
-  mkdirSync(data, { recursive: true });
+  const { config } = ctx;
+  const inContainer = !bin && config.CLAUDE_DOCKER === true;
+  const subscription = config.CLAUDE_AUTH === 'subscription';
+  // Claude Code prefers a key to a token, so a subscription session must not inherit the key from .env.
+  const { ANTHROPIC_API_KEY: _key, CLAUDE_CODE_OAUTH_TOKEN: _token, ...inherited } = process.env;
+  const credential: Record<string, string> = subscription
+    ? { CLAUDE_CODE_OAUTH_TOKEN: config.CLAUDE_CODE_OAUTH_TOKEN ?? '' }
+    : { ANTHROPIC_API_KEY: config.ANTHROPIC_API_KEY };
 
-  if (backend.agent === 'opencode') {
-    const env: Record<string, string> = {
-      [KEY_VARIABLE]: backend.apiKey,
-      OPENCODE_CONFIG_CONTENT: opencodeConfig(backend, {
-        appDir: inContainer ? IN_CONTAINER.app : path.resolve(appDir),
-        maxSteps: opts.maxSteps,
-        effort: 'medium',
-      }),
-      OPENCODE_DISABLE_AUTOUPDATE: '1',
-      OPENCODE_DISABLE_MODELS_FETCH: '1',
-      // OpenCode installs its plugin SDK in its config folder; in the run's data that happens once a run, not every session.
-      // Its state goes there too: Docker makes the data mount's parent, /tmp/.local, root's, so OpenCode cannot add state beside it.
-      ...(inContainer && { OPENCODE_CONFIG_DIR: `${IN_CONTAINER.opencode.data}/config`, XDG_STATE_HOME: `${IN_CONTAINER.opencode.data}/state` }),
-    };
-    const command = bin ?? (inContainer
-      ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, agentDir(ctx.config.OPENCODE_BIN), { agent: 'opencode', data, env: Object.keys(env) })]
-      : [ctx.config.OPENCODE_BIN]);
-    return {
-      command: [...command, ...opencodeArgs(backend, { task: opts.task, sessionId: opts.sessionId })],
-      input: '',
-      env,
-      subscription: false,
-      read: readOpencodeUsage,
-    };
+  let command = bin ?? [config.CLAUDE_BIN];
+  if (inContainer) {
+    // Claude Code's sessions stay in the run, so a fix session can continue the one before it.
+    const data = runPath(ctx.run, 'claude');
+    mkdirSync(data, { recursive: true });
+    command = ['docker', ...dockerArgs(await ensureAgentImage(), appDir, agentBinary(config.CLAUDE_BIN), { data, env: Object.keys(credential) })];
   }
-
-  // The subscription is a Muse Code login on the Meta API; the open-weight backends have only keys.
-  const subscription = ctx.config.MUSE_AUTH === 'subscription' && backend.name === 'meta';
-  const login = subscription ? path.join(os.homedir(), '.config', 'muse') : undefined;
-  if (inContainer && backend.name !== 'meta') seedModelCatalog(data);
-  const command = bin ?? (inContainer
-    ? ['docker', ...dockerArgs(await ensureAgentImage(), appDir, agentDir(ctx.config.MUSE_BIN), { login, data })]
-    : [ctx.config.MUSE_BIN]);
-  const args = museArgs(backend, { promptFile: opts.promptFile, maxSteps: opts.maxSteps, effort: 'medium', inContainer, subscription, sessionId: opts.sessionId });
-  return { command: [...command, ...args], input: subscription ? '' : backend.apiKey, env: {}, subscription, read: readUsage };
+  const args = claudeArgs({ model: config.LLM_MODEL, maxTurns: opts.maxSteps, effort: 'medium', session: opts.session, continues: opts.continues });
+  return { command: [...command, ...args], input: opts.task, env: { ...inherited, ...credential }, subscription, read: readClaudeUsage };
 }

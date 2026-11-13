@@ -27,7 +27,7 @@ const flows = Flows.parse(read('../../01flows/__fixtures__/reading-list.flows.js
 const inventory = read('../../../ds/__fixtures__/inventory.json') as Inventory;
 const call = read('../__fixtures__/reading-list.theme.json') as ThemeCall;
 
-const config = { MODEL_API_KEY: 'k', LLM_BACKEND: 'meta' } as Config;
+const config = { ANTHROPIC_API_KEY: 'k' } as Config;
 
 /** Answers by schema: the reading-list theme call, and nothing for the reviewers to block. */
 function fakeLlm() {
@@ -47,8 +47,7 @@ function fakeLlm() {
         usage: { input: 10, cachedInput: 0, output: 5 },
         costUsd: 0.001,
         replayed: false,
-        backend: 'meta',
-        model: 'muse-spark-1.3',
+        model: 'claude-sonnet-5-5',
         durationMs: 1,
       };
     },
@@ -74,7 +73,7 @@ function runWithFlows(id: string) {
 }
 
 describe('the theme stage', () => {
-  it('writes the brief and the built theme from one call, its draft on the strong model at high reasoning and 0.7', async () => {
+  it('writes the brief and the built theme from one call, its draft on the strong model at high reasoning', async () => {
     const run = runWithFlows('both');
     const { llm, inputs } = fakeLlm();
     const ctx: StageContext = {
@@ -82,7 +81,6 @@ describe('the theme stage', () => {
       config,
       llm,
       interactive: false,
-      backend: 'meta',
     };
 
     await runTheme(ctx, inventory);
@@ -101,13 +99,12 @@ describe('the theme stage', () => {
         input.stage,
         input.model,
         input.reasoningEffort,
-        input.temperature,
         input.maxTokens,
       ]),
     ).toEqual([
-      ['design-theme', 'strong', 'high', 0.7, 32_768],
-      ['design-theme-review-peer', 'default', 'medium', undefined, 16_384],
-      ['design-theme-review-output', 'default', 'medium', undefined, 16_384],
+      ['design-theme', 'strong', 'high', 32_768],
+      ['design-theme-review-peer', 'default', 'medium', 16_384],
+      ['design-theme-review-output', 'default', 'medium', 16_384],
     ]);
     expect(inputs[0]?.messages[1]?.content).toContain('A reading list for one reader.');
     expect(inputs[0]?.messages[1]?.content).toContain('# Flows, what each flow is');

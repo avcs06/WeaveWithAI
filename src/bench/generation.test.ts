@@ -67,27 +67,24 @@ describe('readGeneration', () => {
     const text = Array.isArray(value) && file.endsWith('.jsonl') ? value.map((v) => JSON.stringify(v)).join('\n') : JSON.stringify(value);
     writeFileSync(path.join(runsDir, id, file), text);
   };
-  write('a-earlier', 'events.jsonl', [
-    { ts: '2026-11-03T10:00:00.000Z', type: 'llm:call', stage: 'session:pages', billing: 'subscription', allowance: { week: 24, window: 1 } },
-  ]);
   write('b-run', 'events.jsonl', [
     { ts: '2026-11-04T10:00:00.000Z', type: 'stage:start', stage: 'flows-scope' },
-    { ts: '2026-11-04T10:01:00.000Z', type: 'llm:call', stage: 'flows-scope', backend: 'meta', model: 'muse-wonder-1.0', input: 100, cachedInput: 0, output: 10, costUsd: 0.5 },
+    { ts: '2026-11-04T10:01:00.000Z', type: 'llm:call', stage: 'flows-scope', model: 'claude-opus-5-5', input: 100, cachedInput: 0, output: 10, costUsd: 0.5 },
     { ts: '2026-11-04T10:30:00.000Z', type: 'stage:done', stage: 'contract' },
     { ts: '2026-11-04T10:32:00.000Z', type: 'stage:start', stage: 'code-frames' },
-    { ts: '2026-11-04T10:40:00.000Z', type: 'llm:call', stage: 'session:frames', backend: 'meta', model: 'muse-spark-1.3', calls: 9, input: 1000, cachedInput: 900, output: 50, costUsd: 0, billing: 'subscription', allowance: { week: 27, window: 3 } },
+    { ts: '2026-11-04T10:40:00.000Z', type: 'llm:call', stage: 'session:frames', model: 'claude-sonnet-5-5', calls: 9, input: 1000, cachedInput: 900, output: 50, costUsd: 0, billing: 'subscription' },
     { ts: '2026-11-04T11:32:00.000Z', type: 'stage:done', stage: 'code-pages' },
     { ts: '2026-11-04T15:00:00.000Z', type: 'bench:start' },
   ]);
   write('b-run', 'state.json', { id: 'b-run', idea: 'x', createdAt: '', stages: { 'code-pages': { status: 'done', updatedAt: '', rounds: 3, known: 2 }, 'flows-expand-1': { status: 'done', updatedAt: '', rounds: 5 } } });
   write('b-run', 'reports/code-pages.threads.json', [thread('review-code', [[2, 'fix', 'closed']])]);
 
-  it('reads time from the stages, spend and calls from the calls, and the allowance from the reading before the run', () => {
-    const g = readGeneration({ id: 'b-run', dir: path.join(runsDir, 'b-run') }, runsDir);
+  it('reads time from the stages, spend and calls from the calls, and whether a subscription paid for a call', () => {
+    const g = readGeneration({ id: 'b-run', dir: path.join(runsDir, 'b-run') });
     expect(g.timeMs).toMatchObject({ total: 92 * 60_000, planning: 30 * 60_000, code: 60 * 60_000 });
-    expect(g).toMatchObject({ backend: 'meta', agent: 'Muse Code', calls: 10, tokensIn: 1100, tokensCached: 900, tokensOut: 60, costUsd: 0.5 });
-    expect(g.models).toEqual([{ model: 'muse-spark-1.3', calls: 9 }, { model: 'muse-wonder-1.0', calls: 1 }]);
-    expect(g.subscription).toEqual({ weekFrom: 24, weekTo: 27 });
+    expect(g).toMatchObject({ calls: 10, tokensIn: 1100, tokensCached: 900, tokensOut: 60, costUsd: 0.5 });
+    expect(g.models).toEqual([{ model: 'claude-sonnet-5-5', calls: 9 }, { model: 'claude-opus-5-5', calls: 1 }]);
+    expect(g.subscription).toBe(true);
     // A unit's rounds are inside its stage's; only pipeline stages count.
     expect(g).toMatchObject({ rounds: 3, known: 2 });
     expect(g.review).toEqual([{ reviewer: 'code', part: 'code', caught: 1, fixed: 0, unchecked: 1, open: 0, threads: 0 }]);

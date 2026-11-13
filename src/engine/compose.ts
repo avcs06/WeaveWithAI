@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { resolveBackend } from '../core/backends';
 import type { Issue } from '../core/issues';
 import type { ImageInput } from '../core/llm';
 import { runPath } from '../core/run';
@@ -15,7 +14,7 @@ import { UNIT_MARKER, type UnreadRecipe, unreadInFiles } from './recipes';
 import { type CheckedRoute, protectedOf, runSession, type SessionDeps, type SessionResult } from './session';
 import { git } from './setup';
 
-// A coding unit on the stage runner: its draft and its fixes are Muse
+// A coding unit on the stage runner: its draft and its fixes are Claude
 // Code sessions, its validators are the checks after each session, and its
 // reviewers read the unit's whole diff.
 
@@ -40,11 +39,9 @@ export type Unit = {
   /** The run's stage of the unit, such as `code-pages`. */
   stage?: string;
   task: string;
-  /** The fix session's task for the pending threads. */
   fixTask: (pending: Thread[]) => string;
   /** The routes `pnpm verify` checks after each session. */
   routes?: CheckedRoute[];
-  /** What each of its screens' code must name. */
   expects?: ScreenExpect[];
   /** The rendered checks on the unit's routes, once its app builds, with a screenshot of each route in `shotsDir`. */
   rendered?: (shotsDir: string) => Promise<Rendered>;
@@ -56,7 +53,6 @@ export type Unit = {
 /** Where the agent's summary starts in the text the reviewers read, after the unit's diff. */
 export const SUMMARY_HEAD = "## The agent's summary\n\n";
 
-/** A route's screenshot, with the screen it shows. */
 export type Shot = ImageInput & { screen: string };
 
 /** What the rendered checks give back: their issues, and each route's screenshot for the reviewers that look at them. */
@@ -80,8 +76,8 @@ export function unitIssues(result: UnitResult): Issue[] {
   return [...checkIssues(result.session), ...result.rendered];
 }
 
-/** Where a unit picks up after a resumed session: its Muse session, the sessions it has run, and the commit its diff starts from. */
-export type UnitResume = { museSession: string; sessions: number; baseline: string };
+/** Where a unit picks up after a resumed session: its Claude Code session, the sessions it has run, and the commit its diff starts from. */
+export type UnitResume = { claudeSession: string; sessions: number; baseline: string };
 
 export function sessionCompose(
   ctx: StageContext,
@@ -91,14 +87,13 @@ export function sessionCompose(
   resumed?: UnitResume,
 ): Compose<UnitResult> {
   const baseline = resumed?.baseline ?? git(appDir, 'rev-parse', 'HEAD');
-  // One agent session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
-  // OpenCode names its own in the unit's first session.
-  let museSession = resumed?.museSession ?? (resolveBackend(ctx.config, ctx.backend).agent === 'muse' ? randomUUID() : undefined);
+  // One Claude Code session per attempt at the unit: its fixes continue it, and a restarted stage starts a new one.
+  const claudeSession = resumed?.claudeSession ?? randomUUID();
   let sessions = resumed?.sessions ?? 0;
   const run = async (task: string): Promise<Draft<UnitResult>> => {
     sessions += 1;
     const id = sessions === 1 ? unit.id : `${unit.id}-fix-${sessions - 1}`;
-    // The recipe gate counts reads from here: the unit's fixes continue its Muse session, which holds what it read.
+    // The recipe gate counts reads from here: the unit's fixes continue its Claude Code session, which holds what it read.
     if (sessions === 1)
       appendFileSync(path.join(appDir, '.weave', 'tools.log'), `${JSON.stringify({ at: new Date().toISOString(), tool: UNIT_MARKER, unit: unit.id })}\n`);
     // A session that cannot run at all, such as one whose container never starts, is a failed session: the run goes on.
@@ -111,7 +106,8 @@ export function sessionCompose(
         routes: unit.routes,
         expects: unit.expects,
         stage: unit.stage,
-        museSession,
+        claudeSession,
+        continues: sessions > 1,
         maxSteps: unit.maxSteps,
         timeoutMs: unit.timeoutMs,
       },
@@ -125,7 +121,6 @@ export function sessionCompose(
       costUsd: 0,
       checks: [],
     }));
-    museSession ??= result.agentSession;
     return unitDraft(ctx, appDir, unit, baseline, result, id);
   };
   return {
@@ -189,6 +184,6 @@ export async function unitDraft(
   return {
     data: { session: { status, summary, checks, protectedHits, changed, unreadRecipes, longFiles }, rendered, diff, shots },
     raw: `${diff}\n\n${SUMMARY_HEAD}${summary}`,
-    model: resolveBackend(ctx.config, ctx.backend).model,
+    model: ctx.config.LLM_MODEL,
   };
 }

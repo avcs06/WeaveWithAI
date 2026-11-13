@@ -229,8 +229,8 @@ meet them already. A control you build yourself must meet them too.
 ## Never
 
 - Never write or change a test.
-- Never change `tools/`, `.muse/` or a config file. A session that changes
-  one fails.
+- Never change `tools/`, `.claude/`, `CLAUDE.md` or a config file. A session
+  that changes one fails.
 - Never install, add or remove a package (`pnpm install`, `pnpm add`). The
   app's packages are fixed. When a command fails because of the install,
   stop and say so in your summary.

@@ -11,31 +11,19 @@ const Flag = z
 const blankToUndefined = (value: unknown) => (value === '' ? undefined : value);
 const blankable = <S extends z.ZodType>(schema: S) =>
   z.preprocess(blankToUndefined, schema);
-const Optional = blankable(z.string().optional());
-const OptionalUrl = blankable(z.url().optional());
-const BackendName = blankable(
-  z.enum(['meta', 'modal', 'baseten']).default('meta'),
-);
 
 export const ConfigSchema = z.object({
-  MODEL_API_KEY: z.string().min(1, 'set it in .env (copy .env.example)'),
-  LLM_BASE_URL: z.url().default('https://api.meta.ai/v1'),
-  LLM_MODEL: z.string().default('muse-spark-1.3'),
-  LLM_MODEL_STRONG: z.string().default('muse-wonder-1.0'),
+  ANTHROPIC_API_KEY: z.string().min(1, 'set it in .env (copy .env.example)'),
+  LLM_MODEL: blankable(z.string().default('claude-sonnet-5-5')),
+  LLM_MODEL_STRONG: blankable(z.string().default('claude-opus-5-5')),
   LLM_REPLAY: Flag,
-  LLM_BACKEND: BackendName,
-  MODAL_BASE_URL: OptionalUrl,
-  MODAL_PROXY_TOKEN: Optional,
-  MODAL_MODEL: Optional,
-  BASETEN_BASE_URL: blankable(
-    z.url().default('https://inference.baseten.co/v1'),
-  ),
-  BASETEN_API_KEY: Optional,
-  BASETEN_MODEL: Optional,
-  MUSE_BIN: blankable(z.string().default('muse')),
-  MUSE_DOCKER: blankable(Flag),
-  MUSE_AUTH: blankable(z.enum(['api', 'subscription']).default('api')),
-  OPENCODE_BIN: blankable(z.string().default('opencode')),
+  CLAUDE_BIN: blankable(z.string().default('claude')),
+  CLAUDE_DOCKER: blankable(Flag),
+  CLAUDE_AUTH: blankable(z.enum(['api', 'subscription']).default('api')),
+  CLAUDE_CODE_OAUTH_TOKEN: blankable(z.string().optional()),
+}).refine((env) => env.CLAUDE_AUTH !== 'subscription' || env.CLAUDE_CODE_OAUTH_TOKEN, {
+  path: ['CLAUDE_CODE_OAUTH_TOKEN'],
+  message: 'CLAUDE_AUTH=subscription needs it; `claude setup-token` prints one',
 });
 export type Config = z.infer<typeof ConfigSchema>;
 
@@ -56,5 +44,5 @@ export function loadEnv(
 }
 
 let cached: Config | undefined;
-/** The process's config, loaded once. Tests call `loadEnv` directly. */
+/** Tests call `loadEnv` directly. */
 export const config = () => (cached ??= loadEnv());

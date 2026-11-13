@@ -58,7 +58,6 @@ export type PageColors = z.infer<typeof PageColors>;
 
 /** A step of a ramp: 1 is the lightest in light mode and the darkest in dark mode, 12 the other end. */
 export const STEPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
-export type Step = (typeof STEPS)[number];
 const Step = z.literal(STEPS).describe('A step of its ramp, 1 to 12');
 const steps = <K extends string>(keys: readonly K[]) =>
   Object.fromEntries(keys.map((key) => [key, Step])) as Record<K, typeof Step>;
@@ -79,7 +78,6 @@ export const PageSteps = z.object({
   backdrop: PageStep,
   skeleton: PageStep,
 });
-export type PageSteps = z.infer<typeof PageSteps>;
 
 /** One mode's colors as the call picks them: its background, and each set by step. */
 export const ModeSteps = z.object({
@@ -126,7 +124,6 @@ export const Logo = z.object({
 });
 export type Logo = z.infer<typeof Logo>;
 
-/** The modes the brief's color scheme names. */
 export const modesOf = (brief: Brief): Mode[] =>
   brief.colorScheme === 'both' ? ['light', 'dark'] : [brief.colorScheme];
 
@@ -134,7 +131,6 @@ export const modesOf = (brief: Brief): Mode[] =>
 export const setName = (noun: string) =>
   noun.slice(0, 1).toLowerCase() + noun.slice(1);
 
-/** The colored entities' set names and hues. */
 export const entitySets = (brief: Brief): { name: string; hue: number }[] =>
   brief.entities
     .filter((entity) => entity.colored)

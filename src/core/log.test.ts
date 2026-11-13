@@ -3,7 +3,7 @@ import { runLog } from './log';
 import type { EventInput } from './run';
 
 const PIPELINE = ['flows-scope', 'flows-expand', 'design-draw', 'design-frame'];
-const call = { model: 'muse', input: 12_300, cachedInput: 8_000, output: 950, costUsd: 0.0123, durationMs: 41_200 };
+const call = { model: 'claude-sonnet-5-5', input: 12_300, cachedInput: 8_000, output: 950, costUsd: 0.0123, durationMs: 41_200 };
 
 function logged(events: EventInput[]): string[] {
   const lines: string[] = [];
@@ -35,14 +35,14 @@ describe('the run log', () => {
       '  expand',
       '    expand-2 running',
       '    expand-2 round 1 started',
-      '    expand-2 round 1 written (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
+      '    expand-2 round 1 written (claude-sonnet-5-5, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
       '    expand-2 round 1 validate found 3 mandatory (FLOW-007 ×2, FLOW-012), 1 warning',
       '    expand-2 round 1 finished: 3 pending (3 mandatory, 0 blockers)',
       '    expand-2 round 2 started, fixing 3 issues',
       '    expand-2 round 2 review peer started',
-      '    expand-2 round 2 review peer found 1 blocker, missed P07, P12 (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
+      '    expand-2 round 2 review peer found 1 blocker, missed P07, P12 (claude-sonnet-5-5, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
       '    expand-2 round 2 review peer-recheck started',
-      '    expand-2 round 2 review peer-recheck found 0 blockers (muse, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
+      '    expand-2 round 2 review peer-recheck found 0 blockers (claude-sonnet-5-5, 12.3k in (8.0k cached), 950 out, $0.0123, 41.2s)',
       '    expand-2 done: 3 rounds, 1 known issue',
     ]);
   });
@@ -81,15 +81,14 @@ describe('the run log', () => {
     const { durationMs: _, ...paid } = call;
     expect(
       logged([{ type: 'llm:call', stage: 'flows-scope', round: 1, invalid: true, ...paid }]).at(-1),
-    ).toBe('    scope round 1 answer did not match the schema (muse, 12.3k in (8.0k cached), 950 out, $0.0123)');
+    ).toBe('    scope round 1 answer did not match the schema (claude-sonnet-5-5, 12.3k in (8.0k cached), 950 out, $0.0123)');
   });
 });
 
 describe('a coding session on the subscription', () => {
-  it('shows the allowance after it in place of a price', () => {
+  it('shows the subscription in place of a price', () => {
     const { durationMs: _, ...used } = call;
     const session = { type: 'llm:call', stage: 'session:frames', ...used, costUsd: 0, billing: 'subscription' };
-    expect(logged([{ ...session, allowance: { week: 31, window: 6 } }]).at(-1)).toContain('950 out, subscription, week 31%, window 6%');
     expect(logged([session]).at(-1)).toContain('950 out, subscription');
   });
 });

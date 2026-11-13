@@ -16,7 +16,6 @@ import {
   ModelOutputInvalid,
   ModelOutputTruncated,
   type ReasoningEffort,
-  type Temperature,
 } from '../core/llm';
 import { costUsd, isPriced } from '../core/prices';
 import { fillPrompt, loadPrompt } from '../core/prompt';
@@ -36,7 +35,6 @@ export type Answers = Record<string, Answer>;
  */
 export type ReviewGuides = { peer?: string; output: string | Record<string, string> };
 
-/** One round of a schedule: whether it fixes what is pending, and which reviewers look after it. */
 export type Round = { fix: boolean; reviewers: (keyof ReviewGuides)[] };
 
 /** What a stage produces in a round: the typed document, the text the reviewers read, which model wrote it, and a fix's replies to its threads. */
@@ -73,7 +71,7 @@ export type SpecStageOptions<T> = {
   /** The user message of the writer's first call; the reviewers see it as the input the writer had. */
   user: string;
   validate: (output: T) => Issue[];
-  /** The stage's review guides. Without them no reviewer calls run. */
+  /** Without it no reviewer calls run. */
   review?: ReviewGuides;
   /** The rounds; default the three of SCHEDULE. */
   schedule?: Round[];
@@ -93,8 +91,6 @@ export type SpecStageOptions<T> = {
   maxTokens?: number;
   /** Reasoning effort for the first draft, and medium for every fix; omitted, the model picks its own level for both. */
   reasoningEffort?: ReasoningEffort;
-  /** Temperature for the first draft; default 0.2. Fixes and reviewers always run at 0.2. */
-  temperature?: Temperature;
   /** The model of the first draft only; fixes always use the default model. */
   draftModel?: ModelChoice;
   /** How the document is produced; the default is one conversation with the model. */
@@ -107,6 +103,8 @@ export type SpecStageOptions<T> = {
    * after it run as usual.
    */
   resume?: { round: number; draft: Draft<T> };
+  /** The caller already logged the stage's start and set it running, such as a creative runner before its candidates. */
+  started?: boolean;
   /** The document's keyed lists. With them a fix of the default conversation returns a patch the runner merges; without them, the whole document. */
   patchKeys?: PatchKeys;
   llm: Llm;
@@ -118,7 +116,6 @@ export type SpecStageResult<T> = {
   known: Issue[];
   /** Every answer given during the stage, applied or carried forward. */
   answers: Answers;
-  /** The model that produced the output. */
   model: string;
   rounds: number;
 };
@@ -169,8 +166,10 @@ export async function runSpecStage<T>(
     if (o.review && !step.reviewers.some((reviewer) => o.review?.[reviewer]))
       throw new Error(`${o.stage}: round ${first} has no reviewers, so resuming there loses the blockers of round ${first - 1}; resume at a round with reviewers`);
   }
-  appendEvent(o.run, { type: 'stage:start', stage: o.stage });
-  updateStage(o.run, o.stage, { status: 'running' });
+  if (!o.started) {
+    appendEvent(o.run, { type: 'stage:start', stage: o.stage });
+    updateStage(o.run, o.stage, { status: 'running' });
+  }
   clearReport(o.run, o.stage, first);
 
   const compose = o.compose ?? conversation(o);
@@ -191,17 +190,8 @@ export async function runSpecStage<T>(
       return { draft, issues: o.validate(draft.data) };
     } catch (error) {
       if (!fatal) throw error;
-      // A model error on the first draft ends the run; leave the state honest for `weave show`.
-      updateStage(o.run, o.stage, {
-        status: 'failed',
-        rounds: round,
-      });
-      appendEvent(o.run, {
-        type: 'stage:failed',
-        stage: o.stage,
-        round,
-        error: String(error),
-      });
+      // A model error on the first draft ends the run.
+      failStage(o.run, o.stage, round, error);
       throw error;
     }
   };
@@ -275,7 +265,6 @@ export async function runSpecStage<T>(
     const reviewers = step.reviewers.filter((reviewer) => o.review?.[reviewer]);
     const reviewed = Boolean(o.review) && reviewers.length > 0;
     if (o.review && reviewed) {
-      // Each reviewer reads the threads it raised that the fix left open, then answers each one or raises new blockers.
       const { blockers, replies } = await review(
         o,
         o.review,
@@ -340,7 +329,7 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
     call: Call,
     settings: Pick<
       GenerateInput<T>,
-      'model' | 'reasoningEffort' | 'temperature'
+      'model' | 'reasoningEffort'
     >,
   ): Promise<Draft<T>> => {
     const result = await call({
@@ -358,9 +347,8 @@ function conversation<T>(o: SpecStageOptions<T>): Compose<T> {
       generate(call, {
         model: o.draftModel,
         reasoningEffort: o.reasoningEffort,
-        temperature: o.temperature,
       }),
-    // A fix edits the named issues and nothing else, so it runs at the default 0.2, and at medium when the stage sets an effort.
+    // A fix edits the named issues and nothing else, so it runs at medium when the stage sets an effort.
     async fix(call, current, pending, answers) {
       const reasoningEffort = o.reasoningEffort ? FIX_EFFORT : undefined;
       const keys = o.patchKeys;
@@ -479,11 +467,17 @@ async function withRetry<T, R>(
   }
 }
 
+/** A stage that cannot produce its first document fails; leave the state honest for `weave show`. */
+export function failStage(run: Run, stage: string, round: number, error: unknown): void {
+  updateStage(run, stage, { status: 'failed', rounds: round });
+  appendEvent(run, { type: 'stage:failed', stage, round, error: String(error) });
+}
+
 /**
  * A `Call` for one round: logs every call as an `llm:call` event, and retries a
  * failed one once here, not around the compose, so a compose's side effects never repeat.
  */
-function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
+export function callerFor<T>(o: SpecStageOptions<T>, round: number): Call {
   return async (input) => {
     const request = {
       ...input,
@@ -635,7 +629,6 @@ function logCall(
     stage,
     round,
     ...review,
-    backend: result.backend,
     model: result.model,
     input: result.usage.input,
     cachedInput: result.usage.cachedInput,

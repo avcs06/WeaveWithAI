@@ -3,12 +3,10 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import type { StageContext } from '../agents/stages';
-import { resolveBackend } from '../core/backends';
 import { ConfigSchema } from '../core/env';
 import type { Llm } from '../core/llm';
 import { createRun, readEvents, runPath, totals } from '../core/run';
 import { pathBeside } from '../core/utils';
-import { museArgs, readUsage } from './muse';
 import { appCheck, type Check, resumeSession, runSession } from './session';
 import { git, prepareApp } from './setup';
 
@@ -17,25 +15,17 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 const idea = path.join(root, 'idea.md');
 writeFileSync(idea, '<!-- test -->\n\nA reading list.\n');
 
-const config = ConfigSchema.parse({
-  MODEL_API_KEY: 'meta-key',
-  BASETEN_API_KEY: 'baseten-key',
-  BASETEN_MODEL: 'meta-models/muse-spark-open-1026',
-  MODAL_BASE_URL: 'https://modal.example/v1',
-  MODAL_PROXY_TOKEN: 'wk-1.ws-2',
-  MODAL_MODEL: 'hackathon',
-});
-const fake = [process.execPath, pathBeside(import.meta.url, './__fixtures__/fake-muse.mjs')];
-const fakeOpencode = [process.execPath, pathBeside(import.meta.url, './__fixtures__/fake-opencode.mjs')];
+const config = ConfigSchema.parse({ ANTHROPIC_API_KEY: 'test-key' });
+const fake = [process.execPath, pathBeside(import.meta.url, './__fixtures__/fake-claude.mjs')];
 
-/** A run and an app folder prepared for Muse Code, with one file in its baseline. */
+/** A run and an app folder prepared for Claude Code, with one file in its baseline. */
 function setup(id: string) {
   const run = createRun({ idea, runsDir: root, id });
   const appDir = path.join(run.dir, 'app');
   git(path.dirname(appDir), 'init', '-q', 'app');
   writeFileSync(path.join(appDir, 'README.md'), 'app\n');
   prepareApp(appDir);
-  const ctx: StageContext = { run, config, llm: {} as Llm, interactive: false, backend: 'meta' };
+  const ctx: StageContext = { run, config, llm: {} as Llm, interactive: false };
   return { run, appDir, ctx };
 }
 
@@ -48,18 +38,25 @@ function withWrites<T>(writes: Record<string, string>, fn: () => Promise<T>): Pr
   return fn().finally(() => delete process.env.FAKE_WRITES);
 }
 
+function withEnv<T>(env: Record<string, string>, fn: () => Promise<T>): Promise<T> {
+  Object.assign(process.env, env);
+  return fn().finally(() => {
+    for (const name of Object.keys(env)) delete process.env[name];
+  });
+}
+
 const page = 'web/app/(routes)/books/page.tsx';
 const session = { id: 'pages', task: 'Build S04 from `.weave/04-pages/S04.md`.', routes: [{ url: '/books', signedIn: false }] };
 
 describe('prepareApp', () => {
-  it('writes the MCP and hook config and the hook, and commits a baseline', () => {
+  it('writes the MCP and hook config, the hook and a CLAUDE.md that reads AGENTS.md, and commits a baseline', () => {
     const { appDir } = setup('prepare');
     const mcp = JSON.parse(readFileSync(path.join(appDir, '.mcp.json'), 'utf8'));
     expect(Object.keys(mcp.mcpServers)).toEqual(['weave-design-system']);
-    const hooks = JSON.parse(readFileSync(path.join(appDir, '.muse/hooks.json'), 'utf8'));
-    expect(hooks.hooks.PostToolUse[0].hooks[0].command).toBe('node .weave/hooks/validate-edit.mjs');
+    const settings = JSON.parse(readFileSync(path.join(appDir, '.claude/settings.json'), 'utf8'));
+    expect(settings.hooks.PostToolUse[0]).toEqual({ matcher: '*', hooks: [{ type: 'command', command: 'node .weave/hooks/validate-edit.mjs' }] });
     expect(existsSync(path.join(appDir, '.weave/hooks/validate-edit.mjs'))).toBe(true);
-    expect(existsSync(path.join(appDir, '.weave/hooks/opencode-plugin.mjs'))).toBe(true);
+    expect(readFileSync(path.join(appDir, 'CLAUDE.md'), 'utf8')).toBe('@AGENTS.md\n');
     expect(git(appDir, 'status', '--porcelain')).toBe('');
   });
 });
@@ -71,10 +68,12 @@ describe('runSession', () => {
       runSession(ctx, appDir, session, { bin: fake, runCheck: checks() }),
     );
     expect(result.status).toBe('done');
-    expect(result.summary).toBe('built it with key 8');
+    // The task goes on stdin, with the key in the environment.
+    expect(result.summary).toBe(`built it (${session.task.length} characters of task, key)`);
     expect(result.changed).toEqual([page]);
-    expect(result.usage).toMatchObject({ calls: 3, input: 30000, cached: 20000, output: 1000 });
-    expect(result.costUsd).toBeCloseTo((10000 * 1.25 + 20000 * 0.15 + 1000 * 4.25) / 1e6);
+    expect(result.usage).toMatchObject({ calls: 3, input: 21000, cached: 18000, output: 900, reasoning: 180 });
+    // Claude Code's own estimate, which covers every model the session called.
+    expect(result.costUsd).toBeCloseTo(0.03);
     expect(result.checks.map((c) => c.name)).toEqual(['validate', 'typecheck', 'lint', 'verify']);
     const ledger = JSON.parse(readFileSync(path.join(appDir, '.weave/ledger.json'), 'utf8'));
     expect(ledger).toEqual([{ status: 'A', path: page, origin: 'model', session: 'pages' }]);
@@ -86,28 +85,40 @@ describe('runSession', () => {
     expect(readEvents(run).map((e) => e.type)).toEqual(['session:start', 'llm:call', 'session:end']);
   });
 
-  it('runs a Meta session on the subscription with no key, and counts its tokens but no spend', async () => {
+  it("runs on the subscription's token without the key .env holds, and counts its tokens but no spend", async () => {
     const { run, appDir, ctx } = setup('subscription');
-    const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
-      runSession({ ...ctx, config: { ...config, MUSE_AUTH: 'subscription' } }, appDir, session, { bin: fake, runCheck: checks() }),
+    const subscription = { ...config, CLAUDE_AUTH: 'subscription' as const, CLAUDE_CODE_OAUTH_TOKEN: 'oauth-token' };
+    const result = await withEnv({ ANTHROPIC_API_KEY: 'from-dotenv' }, () =>
+      withWrites({ [page]: 'export default 1;\n' }, () =>
+        runSession({ ...ctx, config: subscription }, appDir, session, { bin: fake, runCheck: checks() }),
+      ),
     );
-    expect(result.summary).toBe('no key');
+    expect(result.summary).toBe(`built it (${session.task.length} characters of task, token)`);
     expect(result.costUsd).toBe(0);
-    expect(readEvents(run).find((e) => e.type === 'llm:call')).toMatchObject({ input: 30000, costUsd: 0, billing: 'subscription' });
+    expect(readEvents(run).find((e) => e.type === 'llm:call')).toMatchObject({ input: 21000, costUsd: 0, billing: 'subscription' });
     expect(totals(run)).toMatchObject({ calls: 3, costUsd: 0 });
   });
 
-  it('runs OpenCode on Baseten with its key and config in the environment, in the session given, and returns it', async () => {
-    const { run, appDir, ctx } = setup('opencode');
-    process.env.FAKE_ARGS = runPath(run, 'opencode-args.log');
-    const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
-      runSession({ ...ctx, backend: 'baseten' }, appDir, { ...session, museSession: 'ses_7' }, { bin: fakeOpencode, runCheck: checks() }),
-    ).finally(() => delete process.env.FAKE_ARGS);
-    expect(result.status).toBe('done');
-    expect(result.summary).toBe('built it with key 11 on weave/meta-models/muse-spark-open-1026');
-    expect(result.usage).toMatchObject({ calls: 2, input: 2000, cached: 1200, output: 100 });
-    expect(result.agentSession).toBe('ses_7');
-    expect(readFileSync(runPath(run, 'opencode-args.log'), 'utf8')).toContain('--session ses_7');
+  it("starts the unit's Claude Code session, and a fix resumes it and counts only its own share of the totals", async () => {
+    const { run, appDir, ctx } = setup('continue');
+    const claudeSession = '0d6a1b52-7c1e-4f0a-9a43-2f1b6b0e3c11';
+    const args = runPath(run, 'claude-args.log');
+    const first = await withEnv({ FAKE_ARGS: args }, () =>
+      withWrites({ [page]: 'export default 1;\n' }, () => runSession(ctx, appDir, { ...session, claudeSession }, { bin: fake, runCheck: checks() })),
+    );
+    // Claude Code carries the first session's 3 turns into the resumed one's totals.
+    const fix = await withEnv({ FAKE_ARGS: args, FAKE_BEFORE: '3', FAKE_VARY: '1' }, () =>
+      withWrites({ [page]: 'export default 2;\n' }, () =>
+        runSession(ctx, appDir, { ...session, id: 'pages-fix-1', claudeSession, continues: true }, { bin: fake, runCheck: checks() }),
+      ),
+    );
+    const [started, resumed] = readFileSync(args, 'utf8').trim().split('\n');
+    expect(started).toContain(`--session-id ${claudeSession}`);
+    expect(resumed).toContain(`--resume ${claudeSession}`);
+    expect(first.usage).toMatchObject({ calls: 3, input: 21000 });
+    expect(fix.usage).toMatchObject({ calls: 3, input: 21000, cached: 18000, output: 900 });
+    expect(fix.costUsd).toBeCloseTo(0.03);
+    expect(totals(run).calls).toBe(6);
   });
 
   it('runs pnpm verify at the desktop width, signed in as a member on a route behind sign-in', async () => {
@@ -158,12 +169,12 @@ describe('runSession', () => {
     expect(result.checks.find((c) => c.name === 'typecheck')?.ok).toBe(false);
   });
 
-  it("keeps the reason a Muse that fails before it starts gives on stderr as the session's summary", async () => {
+  it("keeps the reason a Claude Code that fails before it starts gives on stderr as the session's summary", async () => {
     const { appDir, ctx } = setup('stderr');
-    process.env.FAKE_STDERR = 'failed to fetch model catalog: API error 405: empty response body';
+    process.env.FAKE_STDERR = 'Invalid API key · Fix external API key';
     const result = await runSession(ctx, appDir, session, { bin: fake, runCheck: checks() }).finally(() => delete process.env.FAKE_STDERR);
     expect(result.status).toBe('failed');
-    expect(result.summary).toBe('failed to fetch model catalog: API error 405: empty response body');
+    expect(result.summary).toBe('Invalid API key · Fix external API key');
   });
 
   it('fails a session that reinstalls the packages, and puts them back from the lockfile before the checks', async () => {
@@ -200,19 +211,19 @@ describe('runSession', () => {
 });
 
 describe('resumeSession', () => {
-  it("continues the cut Muse session by its id, and counts the cut session's uncommitted files as its own", async () => {
+  it("resumes the cut Claude Code session by its id, and counts the cut session's uncommitted files as its own", async () => {
     const { run, appDir, ctx } = setup('resume');
-    const museSession = '6fc17888-93c9-445e-a984-940be5c78d23';
+    const claudeSession = '6fc17888-93c9-445e-a984-940be5c78d23';
     // What the cut session wrote before the run was killed: in the app, never committed.
     const cut = 'web/app/(routes)/shelves/page.tsx';
     mkdirSync(path.join(appDir, path.dirname(cut)), { recursive: true });
     writeFileSync(path.join(appDir, cut), 'export default 2;\n');
-    process.env.FAKE_ARGS = runPath(run, 'muse-args.log');
+    process.env.FAKE_ARGS = runPath(run, 'claude-args.log');
     const result = await withWrites({ [page]: 'export default 1;\n' }, () =>
-      resumeSession(ctx, appDir, { ...session, id: 'pages-resume', museSession }, { bin: fake, runCheck: checks() }),
+      resumeSession(ctx, appDir, { ...session, id: 'pages-resume', claudeSession }, { bin: fake, runCheck: checks() }),
     ).finally(() => delete process.env.FAKE_ARGS);
 
-    expect(readFileSync(runPath(run, 'muse-args.log'), 'utf8')).toContain(`--session-id ${museSession}`);
+    expect(readFileSync(runPath(run, 'claude-args.log'), 'utf8')).toContain(`--resume ${claudeSession}`);
     expect(result.status).toBe('done');
     expect(result.changed.sort()).toEqual([page, cut]);
     // The inputs commit holds the task alone; the session's commit holds both pages.
@@ -223,51 +234,6 @@ describe('resumeSession', () => {
       [page, 'pages-resume'],
       [cut, 'pages-resume'],
     ]);
-    expect(readEvents(run).find((e) => e.type === 'session:start')).toMatchObject({ museSession });
-  });
-});
-
-describe('museArgs and readUsage', () => {
-  it('pins the model, turns contributor mode off and trusts the workspace on every backend', () => {
-    const opts = { promptFile: '.weave/tasks/x.md', maxSteps: 60, effort: 'medium' };
-    const meta = museArgs(resolveBackend(config, 'meta'), opts);
-    expect(meta).toEqual(expect.arrayContaining(['--trust-workspace', '--api-key-stdin', '--model', 'muse-spark-1.3']));
-    expect(meta.join(' ')).toContain('--contributor-mode off');
-    expect(meta).toEqual(
-      expect.arrayContaining(['--disable-reminders', '--disable-web-tools', '--disable-request-user-input', '--no-foreign-personal-context']),
-    );
-    expect(meta).not.toContain('-c');
-    const baseten = museArgs(resolveBackend(config, 'baseten'), opts);
-    expect(baseten.at(-1)).toBe('endpoint_transport={"base_url":"https://inference.baseten.co/v1","auth":"bearer"}');
-    expect(baseten).toContain('meta-models/muse-spark-open-1026');
-    const modal = museArgs(resolveBackend(config, 'modal'), opts);
-    expect(modal.at(-1)).toContain('"base_url":"https://modal.example/v1"');
-    expect(museArgs(resolveBackend(config, 'meta'), { ...opts, subscription: true })).not.toContain('--api-key-stdin');
-    expect(museArgs(resolveBackend(config, 'meta'), { ...opts, sessionId: 'u-1' }).join(' ')).toContain('--session-id u-1');
-    expect(meta).not.toContain('--session-id');
-  });
-
-  it("reads the subscription's allowance after the run, and none on a key", () => {
-    const usage = (payload: unknown) => readUsage(JSON.stringify({ payload_type: 'run.usage', payload }));
-    expect(usage({ models: [], allowance: { weekly: { used_percent: 31 }, window: { used_percent: 6 } } }).allowance).toEqual({ week: 31, window: 6 });
-    expect(usage({ models: [] }).allowance).toBeUndefined();
-  });
-
-  it('reads a failed run as not completed, with its message', () => {
-    const usage = readUsage('{"payload_type":"run.terminal.failed","payload":{"reason":"API error 401"}}\nnot json\n');
-    expect(usage).toMatchObject({ completed: false, summary: 'API error 401', calls: 0 });
-  });
-
-  it("counts the side agents Muse leaves out of its totals", () => {
-    const event = (payload_type: string, payload: unknown) => JSON.stringify({ payload_type, payload });
-    const usage = readUsage(
-      [
-        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'reminder.agent.skill-reminder' } }),
-        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'model.meta.response' } }),
-        event('task.lifecycle.proposed', { event: { kind: 'proposed', task_kind: 'tool.bash' } }),
-        event('run.usage', { children_included: false, models: [{ model: 'muse-spark-1.3', calls: 1, input_tokens: 10, cached_tokens: 0, output_tokens: 1 }] }),
-      ].join('\n'),
-    );
-    expect(usage).toMatchObject({ childrenIncluded: false, children: 1, calls: 1 });
+    expect(readEvents(run).find((e) => e.type === 'session:start')).toMatchObject({ claudeSession });
   });
 });

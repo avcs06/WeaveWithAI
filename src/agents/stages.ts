@@ -22,14 +22,13 @@ export type StageContext = {
   config: Config;
   llm: Llm;
   interactive: boolean;
-  backend: string;
   /** The code stage `weave run --round` resumes, at the round `weave session-resume` saved. */
   resume?: { stage: string; round: number };
 };
 
 export type StageDef = {
   name: string;
-  /** Artifacts the stage writes; staleness is judged on them. Empty for stages that write other files. */
+  /** Staleness is judged on them. Empty for stages that write other files. */
   produces: ArtifactName[];
   run(ctx: StageContext): Promise<void>;
   /** Reruns the stage's validators on the artifacts on disk, for `weave validate`. */

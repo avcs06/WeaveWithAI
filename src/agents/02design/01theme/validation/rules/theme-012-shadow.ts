@@ -3,7 +3,6 @@ import { defineRule } from '../../../../../core/rules';
 import { STATUSES } from '../../brief';
 import type { CallInput } from '../helpers';
 
-/** The darkest step of a ramp in each mode: the last in light, the first in dark. */
 const DARKEST = { light: 12, dark: 1 } as const;
 
 /**

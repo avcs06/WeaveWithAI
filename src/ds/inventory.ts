@@ -124,7 +124,6 @@ export function sourcesHash(templateDir: string): string {
   return sha256(lines.join('\n'));
 }
 
-/** Runs a template tool and parses the JSON it prints. */
 async function runTool<T>(
   templateDir: string,
   command: Command,

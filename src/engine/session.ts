@@ -1,18 +1,18 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execa } from 'execa';
-import { resolveBackend } from '../core/backends';
-import { costUsd } from '../core/prices';
-import { appendEvent, runPath } from '../core/run';
+import { appendEvent, type Run, runPath } from '../core/run';
+import { writeJsonAtomic } from '../core/utils';
 import type { StageContext } from '../agents/stages';
 import { agentRun } from './agent';
+import { type ClaudeUsage, sinceBefore, type Totals } from './claude';
 import { checkScreen, type ScreenExpect } from './conformance';
 import { appendLedger } from './ledger';
 import { savePatch } from './patches';
 import { freeAppPort } from './server';
 import { git } from './setup';
 
-// One coding session on the backend's agent headless, Muse Code or OpenCode. The agent can read
+// One Claude Code session, headless. The agent can read
 // anything in the app; this code judges the result: it reruns the checks,
 // records the diff in the ledger, and fails a session whose diff touches a
 // test or a protected path.
@@ -22,17 +22,15 @@ export type Session = {
   id: string;
   /** The short prompt: it names the `.weave/` input files and the guidelines. */
   task: string;
-  /** The routes `pnpm verify` checks. */
   routes?: CheckedRoute[];
   /** What each screen's route folder must name, from its design and the contract. */
   expects?: ScreenExpect[];
   /** The run's stage the session belongs to: its commits' subjects start with it, and its patches go in its folder. */
   stage?: string;
-  /**
-   * The agent session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built.
-   * Muse Code takes the id the runner gives; OpenCode names its own in the first session, and the fixes continue that.
-   */
-  museSession?: string;
+  /** The Claude Code session it runs in: a unit's sessions share one, so its fix rounds keep what its first read and built. */
+  claudeSession?: string;
+  /** True when an earlier session started `claudeSession`, so this one resumes it. */
+  continues?: boolean;
   maxSteps?: number;
   timeoutMs?: number;
 };
@@ -47,8 +45,6 @@ export type SessionResult = {
   usage: { calls: number; input: number; cached: number; output: number; reasoning: number };
   costUsd: number;
   checks: Check[];
-  /** The session the agent named, when it names its own. */
-  agentSession?: string;
 };
 
 /** Tests swap the executable and the check runner. */
@@ -59,7 +55,7 @@ export type SessionDeps = {
 
 const TESTS = /(^|\/)(__tests__|e2e)\/|\.(test|spec)\.tsx?$/;
 /** What the guidelines tell the agent never to change: the tools that run the checks, and the config. */
-const PROTECTED = ['tools/**', '.muse/**', '.mcp.json', '.opencode/**', 'opencode.json', 'opencode.jsonc'];
+const PROTECTED = ['tools/**', '.claude/**', '.mcp.json', 'CLAUDE.md'];
 
 /** The browser storage of a signed-in member, which `pnpm verify --storage` writes before a signed-in page loads. */
 export const SIGNED_IN_FILE = '.weave/02-contract/signed-in.json';
@@ -115,16 +111,16 @@ export async function appCheck(appDir: string, name: string, args: string[]): Pr
 export const sessionSlug = (id: string) => id.replace(/[^a-zA-Z0-9]+/g, '-');
 
 /**
- * Continues a Muse session that was cut off mid-task, such as by a killed run: Muse picks it up by its id, and what
- * the cut session left uncommitted counts as this session's, in its ledger, its checks and its commit.
+ * Continues a Claude Code session that was cut off mid-task, such as by a killed run, by its id; what the cut
+ * session left uncommitted counts as this session's, in its ledger, its checks and its commit.
  */
 export function resumeSession(
   ctx: StageContext,
   appDir: string,
-  session: Session & { museSession: string },
+  session: Session & { claudeSession: string },
   deps: SessionDeps = {},
 ): Promise<SessionResult> {
-  return runSession(ctx, appDir, session, deps, true);
+  return runSession(ctx, appDir, { ...session, continues: true }, deps, true);
 }
 
 export async function runSession(
@@ -135,7 +131,6 @@ export async function runSession(
   resuming = false,
 ): Promise<SessionResult> {
   const { run } = ctx;
-  const backend = resolveBackend(ctx.config, ctx.backend);
   const slug = sessionSlug(session.id);
   const stage = session.stage ?? 'session';
   const at = (...parts: string[]) => path.join(appDir, ...parts);
@@ -152,23 +147,21 @@ export async function runSession(
     git(appDir, 'commit', '-q', '--allow-empty', '-m', `${stage}: inputs for ${session.id}`);
   }
 
-  // The Muse session id is what a resume needs once a run is cut.
+  // The Claude Code session id is what a resume needs once a run is cut.
   appendEvent(run, {
     type: 'session:start',
     stage: `session:${session.id}`,
-    backend: backend.name,
-    model: backend.model,
-    museSession: session.museSession,
+    model: ctx.config.LLM_MODEL,
+    claudeSession: session.claudeSession,
   });
   const agent = await agentRun(
     ctx,
-    backend,
     appDir,
-    { task: session.task, promptFile, maxSteps: session.maxSteps ?? 60, sessionId: session.museSession },
+    { task: session.task, maxSteps: session.maxSteps ?? 60, session: session.claudeSession, continues: session.continues },
     deps.bin,
   );
   const { subscription } = agent;
-  const [bin = 'muse', ...args] = agent.command;
+  const [bin = 'claude', ...args] = agent.command;
   // The packages are the scaffold's; a session that changes them breaks every check after it.
   const installedBefore = installState(appDir);
   // The hook logs every tool call; this session's lines are the ones after this offset.
@@ -177,6 +170,7 @@ export async function runSession(
     cwd: appDir,
     input: agent.input,
     env: agent.env,
+    extendEnv: false,
     timeout: session.timeoutMs ?? 30 * 60_000,
     reject: false,
   });
@@ -186,26 +180,19 @@ export async function runSession(
   const wholeLog = existsSync(at(TOOLS_LOG)) ? readFileSync(at(TOOLS_LOG)) : Buffer.alloc(0);
   const tools = wholeLog.subarray(wholeLog.length < toolsFrom ? 0 : toolsFrom).toString('utf8');
   writeFileSync(runPath(run, 'sessions', `${slug}.tools.jsonl`), tools);
-  const usage = agent.read(exec.stdout);
-  if (!usage.childrenIncluded && usage.children > 0)
-    appendEvent(run, {
-      type: 'warning',
-      stage: session.stage ?? `session:${session.id}`,
-      message: `Muse left ${usage.children} side agents out of this session's usage, so its cost is short by their share; the bill shows it.`,
-    });
+  const usage = ownUsage(run, session.claudeSession, agent.read(exec.stdout));
   // The subscription's allowance pays for these tokens, so they add nothing to the run's spend.
-  const cost = subscription ? 0 : costUsd(usage.model || backend.model, { input: usage.input, cachedInput: usage.cached, output: usage.output });
+  const cost = subscription ? 0 : usage.costUsd;
   appendEvent(run, {
     type: 'llm:call',
     stage: `session:${session.id}`,
-    backend: backend.name,
-    model: usage.model || backend.model,
+    model: usage.model || ctx.config.LLM_MODEL,
     calls: usage.calls,
     input: usage.input,
     cachedInput: usage.cached,
     output: usage.output,
     costUsd: cost,
-    ...(subscription ? { billing: 'subscription', allowance: usage.allowance } : {}),
+    ...(subscription ? { billing: 'subscription' } : {}),
   });
 
   git(appDir, 'add', '-A');
@@ -258,14 +245,13 @@ export async function runSession(
 
   const result: SessionResult = {
     status,
-    // A Muse that fails before it starts, such as on a model catalog it cannot fetch, says why only on stderr.
+    // A Claude Code that fails before it starts, such as on a bad credential, says why only on stderr.
     summary: usage.summary || (exec.stderr.trim().split('\n').at(-1) ?? ''),
     changed,
     protectedHits,
     usage: { calls: usage.calls, input: usage.input, cached: usage.cached, output: usage.output, reasoning: usage.reasoning },
     costUsd: cost,
     checks,
-    ...(usage.session && { agentSession: usage.session }),
   };
   appendEvent(run, {
     type: 'session:end',
@@ -277,4 +263,18 @@ export async function runSession(
     costUsd: cost,
   });
   return result;
+}
+
+/**
+ * The session's own usage. A session that continues a Claude Code session reports the totals since that one
+ * began, so the totals each one reported are kept in the run, by Claude Code session, and the last ones subtracted.
+ */
+function ownUsage(run: Run, claudeSession: string | undefined, usage: ClaudeUsage): ClaudeUsage {
+  if (!claudeSession || !usage.reported) return usage;
+  const file = runPath(run, 'sessions', 'claude-totals.json');
+  const totals: Record<string, Totals> = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
+  const own = sinceBefore(usage, totals[claudeSession]);
+  const { calls, input, cached, output, reasoning, costUsd } = usage;
+  writeJsonAtomic(file, { ...totals, [claudeSession]: { calls, input, cached, output, reasoning, costUsd } });
+  return own;
 }

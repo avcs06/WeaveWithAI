@@ -1,18 +1,21 @@
-// Muse Code PostToolUse hook, copied into each app: logs every tool call to
+// Claude Code PostToolUse hook, copied into each app: logs every tool call to
 // .weave/tools.log, so the runner sees what the agent read, refuses a file
 // that uses a design-system component whose recipe this unit has not read,
 // and runs MCP validate on a file the agent just wrote, sending the findings
 // back (exit 2).
 import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 
 let input = {};
 try {
   input = JSON.parse(readFileSync(0, 'utf8'));
 } catch {}
 const tool = input.tool_name ?? '';
-const file = input.tool_input?.path ?? input.tool_input?.file_path ?? '';
-const command = input.tool_input?.command ?? input.tool_input?.cmd ?? '';
+// Claude Code names files by absolute path; the log and the checks use the app's own.
+const given = input.tool_input?.file_path ?? '';
+const file = path.isAbsolute(given) ? path.relative(process.cwd(), given) : given;
+const command = input.tool_input?.command ?? '';
 const name = typeof input.tool_input?.name === 'string' ? input.tool_input.name : '';
 // `at` is when the call finished, so the gap to the line before is the model's turn and the tool's run.
 appendFileSync('.weave/tools.log', `${JSON.stringify({ at: new Date().toISOString(), tool, path: file || undefined, command: command || undefined, name: name || undefined })}\n`);

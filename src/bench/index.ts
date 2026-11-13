@@ -13,7 +13,7 @@ import { type Benchmark, renderBenchmark, renderComparison } from './report';
 export const PARTS = ['generation', 'code', 'browser'] as const;
 export type Part = (typeof PARTS)[number];
 
-export async function runBenchmark(run: Run, runsDir: string, opts: { skip?: Part[]; out?: (line: string) => void } = {}): Promise<Benchmark> {
+export async function runBenchmark(run: Run, opts: { skip?: Part[]; out?: (line: string) => void } = {}): Promise<Benchmark> {
   const out = opts.out ?? console.log;
   const skip = new Set(opts.skip ?? []);
   // A skipped part keeps what the run's last benchmark measured, so refreshing one part loses no other.
@@ -34,7 +34,7 @@ export async function runBenchmark(run: Run, runsDir: string, opts: { skip?: Par
       return undefined;
     }
   };
-  bench.generation = skip.has('generation') ? previous.generation : await step('generation', () => readGeneration(run, runsDir));
+  bench.generation = skip.has('generation') ? previous.generation : await step('generation', () => readGeneration(run));
   bench.code = skip.has('code') ? previous.code : await step('code', () => runCodeQuality(run));
   bench.routes = skip.has('browser')
     ? previous.routes
@@ -45,7 +45,6 @@ export async function runBenchmark(run: Run, runsDir: string, opts: { skip?: Par
   return bench;
 }
 
-/** The run's latest benchmark, if it has one. */
 export function readBenchmark(run: Run): Benchmark | undefined {
   const file = runPath(run, 'benchmark.json');
   return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as Benchmark) : undefined;

@@ -1,12 +1,10 @@
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, readFileSync, realpathSync } from 'node:fs';
-import os from 'node:os';
+import { readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execa, execaSync } from 'execa';
-import type { AgentName } from '../core/backends';
 
-// The coding agent's sandbox: Muse Code or OpenCode runs in a container that
-// sees only the app, from the host's own install mounted read-only.
+// The coding agent's sandbox: Claude Code runs in a container that sees only
+// the app, from the host's own install mounted read-only.
 
 const DOCKERFILE = 'docker/agent.Dockerfile';
 
@@ -41,46 +39,27 @@ export async function cleanAgentImages(opts: { all?: boolean } = {}, docker = 'd
   return tags;
 }
 
-/**
- * Copies the model catalog the host's Muse Code cached from the Meta API into a run's Muse data folder. An
- * open-weight endpoint serves no catalog, so Muse with a new data folder fails before its first call without one.
- */
-export function seedModelCatalog(data: string, home = os.homedir()): void {
-  const to = path.join(data, 'model-catalog');
-  if (existsSync(to)) return;
-  const from = path.join(home, '.local', 'share', 'muse', 'model-catalog');
-  if (!existsSync(from))
-    throw new Error(`Muse Code has no model catalog at ${from}. Run muse once signed in to the Meta API, which caches it, then run again.`);
-  cpSync(from, to, { recursive: true });
-}
-
-/** The folder a coding agent is installed in: its launcher's, with the binary beside it. */
-export function agentDir(bin: string): string {
+/** The file an installed `claude` runs: the native build's versioned binary, or the npm build's script. */
+export function agentBinary(bin: string): string {
   const found = bin.includes('/') ? bin : execaSync('which', [bin]).stdout.trim();
-  return path.dirname(realpathSync(found));
+  return realpathSync(found);
 }
 
-/** Where each agent's install and its data sit in the container. */
-export const IN_CONTAINER = {
-  app: '/app',
-  muse: { dir: '/opt/muse', bin: '/opt/muse/muse', data: '/tmp/.local/share/muse' },
-  opencode: { dir: '/opt/opencode', bin: '/opt/opencode/opencode', data: '/tmp/.local/share/opencode' },
-};
+export const IN_CONTAINER = { app: '/app', install: '/opt/claude', data: '/tmp/.claude' };
 
 /**
- * `docker run` up to the image, then the launcher: the app at /app, run as the user so files stay theirs.
- * `login` mounts the host's Muse login for the subscription, writable so Muse can refresh its token;
- * `data` keeps the agent's sessions between containers, so a fix session can continue the one before it;
+ * `docker run` up to the image, then the binary: the app at /app, run as the user so files stay theirs.
+ * The binary's folder is mounted, since an npm install's script needs the files beside it;
+ * `data` keeps Claude Code's sessions between containers, so a fix session can continue the one before it;
  * `env` names variables passed on from the runner, whose values stay out of the arguments.
  */
 export function dockerArgs(
   image: string,
   appDir: string,
-  installed: string,
-  opts: { agent?: AgentName; login?: string; data?: string; env?: string[] } = {},
+  binary: string,
+  opts: { data?: string; env?: string[] } = {},
 ): string[] {
-  const { login, data, env = [] } = opts;
-  const agent = IN_CONTAINER[opts.agent ?? 'muse'];
+  const { data, env = [] } = opts;
   const user = `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`;
   return [
     'run', '--rm', '-i',
@@ -90,11 +69,10 @@ export function dockerArgs(
     '-e', 'NX_DAEMON=false',
     ...env.flatMap((name) => ['-e', name]),
     '-v', `${path.resolve(appDir)}:${IN_CONTAINER.app}`,
-    '-v', `${installed}:${agent.dir}:ro`,
-    ...(login ? ['-v', `${login}:/tmp/.config/muse`] : []),
-    ...(data ? ['-v', `${path.resolve(data)}:${agent.data}`] : []),
+    '-v', `${path.dirname(binary)}:${IN_CONTAINER.install}:ro`,
+    ...(data ? ['-v', `${path.resolve(data)}:${IN_CONTAINER.data}`] : []),
     '-w', IN_CONTAINER.app,
     image,
-    agent.bin,
+    `${IN_CONTAINER.install}/${path.basename(binary)}`,
   ];
 }

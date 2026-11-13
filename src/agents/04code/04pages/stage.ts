@@ -19,7 +19,7 @@ import { runUnits, type UnitSpec } from '../unit';
 
 const STAGE = 'code-pages';
 
-// One session builds every screen, so it gets for each screen the budget a session had when it built one page.
+// One session builds every screen, so it gets a budget for each screen.
 const STEPS_PER_SCREEN = 60;
 const MINUTES_PER_SCREEN = 30;
 

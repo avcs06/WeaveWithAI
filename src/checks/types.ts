@@ -1,6 +1,6 @@
 import type { Severity } from '../core/issues';
 
-/** One rendered-check result: the rule, how bad, what is wrong and where. */
+/** One rendered-check result. */
 export type Finding = {
   rule: string;
   severity: Severity;

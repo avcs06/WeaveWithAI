@@ -22,10 +22,8 @@ import { briefRules, layoutRules, validateTheme } from './validation/validation'
 // Reasoning tokens count toward the budget: the call reasons at high and writes the brief and the theme.
 const THEME_MAX_TOKENS = 32_768;
 
-// The direction needs the most reasoning and room to be creative, so the first draft also runs at 0.7.
+// The direction needs the most reasoning.
 const THEME_EFFORT = 'high';
-
-const THEME_TEMPERATURE = 0.7;
 
 // A better first draft leaves fewer issues for the fixes, so it runs on the strong model.
 const THEME_DRAFT_MODEL = 'strong';
@@ -49,7 +47,6 @@ export async function runTheme(ctx: StageContext, inv: Inventory): Promise<void>
     review: themeReviewGuides(),
     maxTokens: THEME_MAX_TOKENS,
     reasoningEffort: THEME_EFFORT,
-    temperature: THEME_TEMPERATURE,
     draftModel: THEME_DRAFT_MODEL,
   });
   writeArtifact(run, 'design-theme', themed(result.output), {

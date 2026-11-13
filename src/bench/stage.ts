@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { StageDef } from '../agents/stages';
 import { appendEvent, updateStage } from '../core/run';
 import { runBenchmark } from './index';
@@ -15,7 +14,7 @@ export const benchStage: StageDef = {
     appendEvent(ctx.run, { type: 'stage:start', stage: STAGE });
     updateStage(ctx.run, STAGE, { status: 'running' });
     // Its runs folder holds the other runs, whose readings give the subscription's allowance before this one.
-    await runBenchmark(ctx.run, path.dirname(ctx.run.dir), { out: () => {} });
+    await runBenchmark(ctx.run, { out: () => {} });
     updateStage(ctx.run, STAGE, { status: 'done' });
     appendEvent(ctx.run, { type: 'stage:done', stage: STAGE });
   },

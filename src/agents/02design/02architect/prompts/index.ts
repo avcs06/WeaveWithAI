@@ -12,7 +12,6 @@ const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 export const architectSystemPrompt = (): string =>
   fillPrompt(load('./prompt.md'), { ux: uxPractices(DESIGN_SECTIONS) });
 
-/** The architect's user message: the scope, the flows, the brief and the theme's two page layouts. */
 export function architectUserMessage(
   scope: Scope,
   flows: Flows,

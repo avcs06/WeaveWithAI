@@ -7,7 +7,6 @@ import { fenced, productManager } from '../../prompts/index';
 
 const load = (file: string) => loadPrompt(pathBeside(import.meta.url, file));
 
-/** The call's two review guides: the product manager peer, then the output reviewer. */
 export const expandReviewGuides = (): ReviewGuides => ({
   peer: fillPrompt(load('./review-peer.md'), {
     productManager: productManager(),
@@ -15,7 +14,7 @@ export const expandReviewGuides = (): ReviewGuides => ({
   output: fillPrompt(load('./review-output.md'), {}),
 });
 
-/** The user message of the assembly round: the idea and the scope; the document follows as the assistant's turn. */
+/** The document follows as the assistant's turn. */
 export function assembleUserMessage(idea: string, scope: Scope): string {
   return fillPrompt(load('./assemble.md'), {
     idea: stripComments(idea),
@@ -23,7 +22,6 @@ export function assembleUserMessage(idea: string, scope: Scope): string {
   });
 }
 
-/** The user message of one expansion call: the idea, the scope, the whole catalog, and the flows to expand, one line each. */
 export function expandUserMessage(
   idea: string,
   scope: Scope,

@@ -11,7 +11,7 @@ const idea = path.join(root, 'idea.md');
 writeFileSync(idea, '# Idea\n');
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
-const meta = { stage: 'flows-expand', model: 'muse-spark-1.3', rounds: 1 };
+const meta = { stage: 'flows-expand', model: 'claude-sonnet-5-5', rounds: 1 };
 
 describe('writeArtifact', () => {
   it('increments the version and records the inputs it was made from', () => {
@@ -32,7 +32,7 @@ describe('writeArtifact', () => {
     expect(scope2.meta).toMatchObject({
       artifact: 'flows-scope',
       stage: 'flows-expand',
-      model: 'muse-spark-1.3',
+      model: 'claude-sonnet-5-5',
       hash: hashOf({ name: 'v2' }),
     });
 

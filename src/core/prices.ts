@@ -2,20 +2,8 @@
 export type Price = { input: number; cachedInput: number; output: number };
 
 export const PRICES: Record<string, Price> = {
-  'muse-spark-1.3': { input: 1.25, cachedInput: 0.15, output: 4.25 },
-  'muse-wonder-1.0': { input: 4, cachedInput: 4, output: 20 },
-  // Muse Spark Open as Baseten names it (same list price as the Meta API); the
-  // -1026 id is the one the hackathon key may call.
-  'meta-models/muse-spark-open': {
-    input: 1.25,
-    cachedInput: 0.15,
-    output: 4.25,
-  },
-  'meta-models/muse-spark-open-1026': {
-    input: 1.25,
-    cachedInput: 0.15,
-    output: 4.25,
-  },
+  'claude-sonnet-5-5': { input: 2, cachedInput: 0.2, output: 10 },
+  'claude-opus-5-5': { input: 4, cachedInput: 0.2, output: 20 },
 };
 
 /** Token counts as the API reports them: `input` already includes the `cachedInput` tokens. */
