@@ -57,11 +57,8 @@ All work happens on `master`, or on short-lived branches merged back into it.
 1. Do only what was asked. Name work you discover to the user, with one line
    saying why. Don't do it now.
 2. Run the checks that prove the work. All must pass.
-3. Never stage or commit: leave every change unstaged. After each task, keep a
-   snapshot of every file that differs from HEAD, outside the repo, so that
-   once the user has reviewed, each task becomes its own commit even when
-   later tasks touched the same files. The user says "commit"; the message is
-   one line saying what changed.
+3. Never stage or commit: leave every change unstaged. When the user says
+   "commit", make one commit, with a one-line message saying what changed.
 4. Blocked: say what and why, and stop for the user.
 
 ## Rules
